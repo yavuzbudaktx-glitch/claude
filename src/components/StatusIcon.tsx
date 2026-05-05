@@ -21,7 +21,6 @@ export function StatusIcon({
 }) {
   const def = TASK_STATUSES.find((s) => s.id === status) ?? TASK_STATUSES[0];
   const r = (size - 2) / 2;
-  const fillPath = piePath(def.fill, r);
 
   return (
     <svg
@@ -32,12 +31,13 @@ export function StatusIcon({
       aria-hidden
     >
       <circle cx="0" cy="0" r={r} fill="none" stroke="currentColor" strokeWidth="1" />
-      {fillPath && <path d={fillPath} fill="currentColor" />}
-      {def.hold && (
-        <g stroke="var(--paper)" strokeWidth="1" strokeLinecap="round">
-          <line x1="-1.5" y1="-2.2" x2="-1.5" y2="2.2" />
-          <line x1="1.5"  y1="-2.2" x2="1.5"  y2="2.2" />
+      {def.hold ? (
+        <g stroke="currentColor" strokeWidth={Math.max(1, size * 0.13)} strokeLinecap="round">
+          <line x1={-r * 0.3} y1={-r * 0.45} x2={-r * 0.3} y2={r * 0.45} />
+          <line x1={ r * 0.3} y1={-r * 0.45} x2={ r * 0.3} y2={r * 0.45} />
         </g>
+      ) : (
+        def.fill > 0 && <path d={piePath(def.fill, r)} fill="currentColor" />
       )}
     </svg>
   );

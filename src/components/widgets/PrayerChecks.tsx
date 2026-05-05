@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 
 const PRAYERS = [
-  { id: "sabah",  label: "Sabah"  },
-  { id: "ogle",   label: "Öğle"   },
-  { id: "ikindi", label: "İkindi" },
-  { id: "aksam",  label: "Akşam"  },
-  { id: "yatsi",  label: "Yatsı"  },
+  { id: "fajr",    label: "Fajr"    },
+  { id: "dhuhr",   label: "Dhuhr"   },
+  { id: "asr",     label: "Asr"     },
+  { id: "maghrib", label: "Maghrib" },
+  { id: "isha",    label: "Isha"    },
 ] as const;
 
 type PrayerId = typeof PRAYERS[number]["id"];
@@ -21,7 +21,7 @@ function todayKey() {
 
 export function PrayerChecks() {
   const [done, setDone] = useState<Record<PrayerId, boolean>>({
-    sabah: false, ogle: false, ikindi: false, aksam: false, yatsi: false,
+    fajr: false, dhuhr: false, asr: false, maghrib: false, isha: false,
   });
   const [hydrated, setHydrated] = useState(false);
 
@@ -37,7 +37,7 @@ export function PrayerChecks() {
       try {
         const raw = localStorage.getItem(k);
         if (!raw) {
-          setDone({ sabah: false, ogle: false, ikindi: false, aksam: false, yatsi: false });
+          setDone({ fajr: false, dhuhr: false, asr: false, maghrib: false, isha: false });
         }
       } catch {}
     };
@@ -58,7 +58,7 @@ export function PrayerChecks() {
   return (
     <div>
       <div className="flex items-baseline justify-between mb-3">
-        <div className="label">Namaz</div>
+        <div className="label">Prayer</div>
         <div className="font-mono text-[10px] uppercase tracking-wider text-muted">
           {hydrated ? `${completedCount} / 5` : ""}
         </div>
