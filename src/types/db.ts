@@ -12,6 +12,15 @@ export const QUADRANTS: {
   { id: "eliminate", number: "IV",  title: "Eliminate",  subtitle: "Neither" },
 ];
 
+export type TaskStatus = "planning" | "in_progress" | "on_hold" | "complete";
+
+export const TASK_STATUSES: { id: TaskStatus; label: string; fill: number; hold?: boolean }[] = [
+  { id: "planning",    label: "Planning",    fill: 0.12 },
+  { id: "in_progress", label: "In Progress", fill: 0.6 },
+  { id: "on_hold",     label: "On Hold",     fill: 0.4, hold: true },
+  { id: "complete",    label: "Complete",    fill: 1 },
+];
+
 export interface Task {
   id: string;
   user_id: string;
@@ -19,6 +28,7 @@ export interface Task {
   due_date: string | null;
   quadrant: Quadrant;
   completed: boolean;
+  status: TaskStatus;
   created_at: string;
   updated_at: string;
 }

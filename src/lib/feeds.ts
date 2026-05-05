@@ -133,7 +133,7 @@ function extractImage(item: CustomItem): string | undefined {
   return undefined;
 }
 
-export async function fetchAllFeeds(perCategory = 6): Promise<Record<NewsCategory, NewsItem[]>> {
+export async function fetchAllFeeds(perCategory = 8): Promise<Record<NewsCategory, NewsItem[]>> {
   const results = await Promise.allSettled(
     FEEDS.map(async (f): Promise<NewsItem[]> => {
       try {
@@ -159,9 +159,14 @@ export async function fetchAllFeeds(perCategory = 6): Promise<Record<NewsCategor
   for (const item of all) grouped[item.category].push(item);
 
   for (const cat of Object.keys(grouped) as NewsCategory[]) {
+    const sourceCount: Record<string, number> = {};
     grouped[cat] = grouped[cat]
       .filter((v, i, arr) => arr.findIndex((x) => x.title === v.title) === i)
       .sort((a, b) => +new Date(b.pubDate) - +new Date(a.pubDate))
+      .filter((item) => {
+        sourceCount[item.source] = (sourceCount[item.source] ?? 0) + 1;
+        return sourceCount[item.source] <= 2;
+      })
       .slice(0, perCategory);
   }
 

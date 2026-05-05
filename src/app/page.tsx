@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Masthead } from "@/components/widgets/Masthead";
 import { AnalogClock } from "@/components/AnalogClock";
-import { WeatherVerseCard } from "@/components/widgets/WeatherVerseCard";
+import { PrayersVerseCard } from "@/components/widgets/PrayersVerseCard";
 import { CalendarCard } from "@/components/widgets/CalendarCard";
 import { NewsCard } from "@/components/widgets/NewsCard";
 import { EisenhowerMatrix } from "@/components/widgets/EisenhowerMatrix";
@@ -22,18 +22,17 @@ export default async function Page() {
     user.email?.split("@")[0];
 
   return (
-    <main className="max-w-[1480px] mx-auto px-5 md:px-10 py-6 md:py-7 space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-6 items-stretch">
-        <div className="flex flex-col justify-between gap-4">
-          <Masthead name={name} />
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <SignOutButton />
-            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted ml-auto">
-              Hand-typeset · No ads · No tracking
-            </span>
-          </div>
-        </div>
+    <main className="max-w-[1480px] mx-auto px-5 md:px-10 py-5 md:py-6 space-y-5">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-6 items-center">
+        <Masthead
+          name={name}
+          actions={
+            <>
+              <ThemeToggle />
+              <SignOutButton />
+            </>
+          }
+        />
         <div className="flex items-center justify-center lg:justify-end">
           <AnalogClock />
         </div>
@@ -41,15 +40,11 @@ export default async function Page() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         <CalendarCard />
-        <WeatherVerseCard />
+        <PrayersVerseCard />
         <NewsCard />
       </div>
 
       <EisenhowerMatrix userId={user.id} />
-
-      <footer className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted text-center pt-6 border-t rule">
-        Established 2026 · Printed for one · Synced everywhere
-      </footer>
     </main>
   );
 }

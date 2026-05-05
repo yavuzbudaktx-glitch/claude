@@ -28,8 +28,8 @@ export function AnalogClock() {
   const numerals = ["XII", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI"];
 
   return (
-    <div className="flex flex-col items-center w-full">
-      <svg viewBox="-110 -110 220 220" className="w-full max-w-[260px] aspect-square">
+    <div className="flex items-center justify-center w-full">
+      <svg viewBox="-110 -110 220 220" className="w-full max-w-[240px] aspect-square">
         <defs>
           <radialGradient id="clockface" cx="50%" cy="50%" r="55%">
             <stop offset="0%" stopColor="var(--paper)" />
@@ -106,9 +106,6 @@ export function AnalogClock() {
         <circle cx="0" cy="0" r="4" fill="var(--ink)" />
         <circle cx="0" cy="0" r="1.5" fill="var(--accent)" />
       </svg>
-      <div className="mt-3 font-mono text-[10px] tracking-[0.18em] text-muted uppercase">
-        {format(now, "EEEE · MMM d")}
-      </div>
     </div>
   );
 }

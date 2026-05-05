@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { format } from "date-fns";
+import { WeatherSummary } from "./WeatherSummary";
 
-export function Masthead({ name }: { name?: string }) {
+export function Masthead({ name, actions }: { name?: string; actions?: ReactNode }) {
   const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -21,20 +22,21 @@ export function Masthead({ name }: { name?: string }) {
     return "Good evening";
   })();
 
-  const issue = now ? `Vol. I · No. ${Math.floor((+now - +new Date(now.getFullYear(),0,0)) / 86400000)}` : "";
-
   return (
-    <header className="border-b rule pb-4">
-      <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.22em] text-muted mb-2">
-        <span>The Morning Edition</span>
-        <span>{now ? format(now, "EEEE, MMMM d, yyyy") : ""}</span>
-        <span>{issue}</span>
+    <header className="space-y-2">
+      <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted flex items-center gap-3 flex-wrap">
+        <span>{now ? format(now, "EEE, MMM d") : ""}</span>
+        <span className="opacity-50">·</span>
+        <WeatherSummary />
       </div>
-      <h1 className="font-serif text-5xl md:text-6xl font-light tracking-[-0.02em] leading-none">
-        {greeting}
-        {name ? <span>, <em className="not-italic font-medium">{name}</em></span> : ""}
-        <span className="text-accent">.</span>
-      </h1>
+      <div className="flex items-baseline justify-between gap-4 flex-wrap">
+        <h1 className="font-serif text-5xl md:text-6xl font-light tracking-[-0.02em] leading-[1] m-0">
+          {greeting}
+          {name ? <span>, <em className="not-italic font-medium">{name}</em></span> : ""}
+          <span className="text-accent">.</span>
+        </h1>
+        {actions && <div className="flex items-center gap-2 shrink-0">{actions}</div>}
+      </div>
     </header>
   );
 }
