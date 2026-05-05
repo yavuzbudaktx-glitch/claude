@@ -34,9 +34,9 @@ export function AddTaskInline({
     return (
       <button
         onClick={() => setOpen(true)}
-        className="mt-3 flex items-center gap-1 text-xs text-muted hover:text-amber-500 transition"
+        className="mt-3 flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider text-muted hover:text-accent transition"
       >
-        <Plus className="h-3.5 w-3.5" /> Add task
+        <Plus className="h-3 w-3" /> add
       </button>
     );
   }
@@ -48,21 +48,21 @@ export function AddTaskInline({
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="What needs doing?"
-        className="w-full bg-[var(--glass-strong)] border border-[var(--border)] rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ring)]"
+        className="w-full bg-transparent border-b rule px-0 py-1 text-sm focus:outline-none focus:border-[var(--ink)]"
       />
       <div className="flex items-center gap-2">
         <input
           type="date"
           value={due}
           onChange={(e) => setDue(e.target.value)}
-          className="bg-[var(--glass-strong)] border border-[var(--border)] rounded-lg px-2 py-1 text-xs text-muted focus:outline-none focus:ring-2 focus:ring-[var(--ring)]"
+          className="bg-transparent border-b rule px-0 py-1 font-mono text-[11px] text-muted focus:outline-none focus:border-[var(--ink)]"
         />
         <button
           type="submit"
           disabled={busy}
-          className="ml-auto text-xs px-3 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-900 font-medium disabled:opacity-50 transition"
+          className="ml-auto font-mono text-[10px] uppercase tracking-wider px-3 py-1.5 border rule hover:bg-[var(--ink)] hover:text-[var(--bg)] hover:border-[var(--ink)] transition disabled:opacity-50"
         >
-          Add
+          add
         </button>
         <button
           type="button"
@@ -71,9 +71,9 @@ export function AddTaskInline({
             setTitle("");
             setDue("");
           }}
-          className="text-xs text-muted hover:text-current"
+          className="font-mono text-[10px] uppercase tracking-wider text-muted hover:text-ink"
         >
-          Cancel
+          cancel
         </button>
       </div>
     </form>

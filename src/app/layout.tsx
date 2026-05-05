@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Morning Dashboard",
-  description: "Date, weather, verse, tasks, calendar and headlines — all in one morning view.",
+  title: "Morning — Daily Edition",
+  description: "Your morning paper: time, weather, verse, calendar, headlines and tasks.",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Morning" },
   icons: {
@@ -38,13 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="antialiased">
-        <div className="aurora" aria-hidden>
-          <span className="b3" />
-          <span className="b4" />
-        </div>
-        {children}
-      </body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

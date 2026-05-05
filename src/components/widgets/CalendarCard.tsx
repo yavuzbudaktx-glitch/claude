@@ -1,8 +1,9 @@
 "use client";
 
 import useSWR from "swr";
-import { Calendar, ExternalLink } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
+import { EyeOff, Eye, RotateCcw } from "lucide-react";
 import { Card } from "@/components/Card";
 import type { CalendarEvent } from "@/lib/google/calendar";
 
@@ -13,56 +14,136 @@ interface CalResp {
 }
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<CalResp>);
+const HIDDEN_KEY = "morning.hiddenEvents.v1";
+
+function loadHidden(): Set<string> {
+  if (typeof window === "undefined") return new Set();
+  try {
+    const raw = localStorage.getItem(HIDDEN_KEY);
+    return new Set(raw ? (JSON.parse(raw) as string[]) : []);
+  } catch {
+    return new Set();
+  }
+}
+function saveHidden(s: Set<string>) {
+  try { localStorage.setItem(HIDDEN_KEY, JSON.stringify([...s])); } catch {}
+}
 
 export function CalendarCard() {
   const { data, error, isLoading } = useSWR<CalResp>("/api/calendar", fetcher, {
     refreshInterval: 1000 * 60 * 5,
   });
+  const [hidden, setHidden] = useState<Set<string>>(new Set());
+  const [showHidden, setShowHidden] = useState(false);
+
+  useEffect(() => { setHidden(loadHidden()); }, []);
+
+  function hide(id: string) {
+    const next = new Set(hidden);
+    next.add(id);
+    setHidden(next);
+    saveHidden(next);
+  }
+  function unhide(id: string) {
+    const next = new Set(hidden);
+    next.delete(id);
+    setHidden(next);
+    saveHidden(next);
+  }
+  function clearHidden() {
+    const next = new Set<string>();
+    setHidden(next);
+    saveHidden(next);
+  }
+
+  const all = useMemo(() => data?.events ?? [], [data]);
+  const visible = useMemo(() => all.filter((e) => !hidden.has(e.id)), [all, hidden]);
+  const hiddenList = useMemo(() => all.filter((e) => hidden.has(e.id)), [all, hidden]);
+
+  const action = (
+    <>
+      {hidden.size > 0 && (
+        <button
+          onClick={() => setShowHidden((v) => !v)}
+          title={showHidden ? "Hide hidden" : `Show ${hidden.size} hidden`}
+          className="font-mono text-[10px] uppercase tracking-wider text-muted hover:text-ink"
+        >
+          {showHidden ? "hide" : `${hidden.size} hidden`}
+        </button>
+      )}
+    </>
+  );
 
   return (
-    <Card title="Upcoming" icon={<Calendar className="h-3.5 w-3.5" />}>
-      {isLoading && <p className="text-muted">Loading…</p>}
-      {error && <p className="text-rose-400">Couldn&rsquo;t load calendar.</p>}
+    <Card num="02" title="Upcoming" action={action}>
+      {isLoading && <p className="text-muted text-sm">Loading…</p>}
+      {error && <p className="text-accent text-sm">Couldn&rsquo;t load calendar.</p>}
       {data?.needsReauth && (
         <a href="/login" className="text-sm underline">
-          Re-connect Google to see calendar →
+          Re-connect Google →
         </a>
       )}
-      {data?.events && data.events.length === 0 && (
-        <p className="text-muted text-sm">Nothing on the calendar. Enjoy your day.</p>
+      {data && !data.needsReauth && visible.length === 0 && hiddenList.length === 0 && (
+        <p className="text-muted text-sm italic">Nothing scheduled. Enjoy the day.</p>
       )}
-      {data?.events && data.events.length > 0 && (
-        <ul className="space-y-3">
-          {data.events.map((e) => (
-            <li
-              key={e.id}
-              className="flex items-start justify-between gap-3 group"
-            >
-              <div className="flex gap-3 min-w-0">
-                <div className="mt-1 h-2 w-2 rounded-full bg-amber-400 shrink-0" />
-                <div className="min-w-0">
-                  <div className="font-medium leading-tight truncate">{e.summary}</div>
-                  <div className="text-xs text-muted mt-0.5">
-                    {e.allDay
-                      ? format(new Date(e.start), "EEE MMM d")
-                      : format(new Date(e.start), "EEE MMM d · h:mm a")}
-                    {e.location ? ` · ${e.location}` : ""}
-                  </div>
-                </div>
+
+      <ul className="divide-rule max-h-[260px] overflow-y-auto pr-1">
+        {visible.map((e) => (
+          <li key={e.id} className="group flex items-start gap-3 py-2.5">
+            <div className="font-mono text-[10px] uppercase tracking-wider text-muted pt-1 w-12 shrink-0">
+              {e.allDay ? format(new Date(e.start), "MMM d") : format(new Date(e.start), "MMM d")}
+              <div className="text-[10px] mt-0.5 text-accent">
+                {e.allDay ? "all day" : format(new Date(e.start), "h:mma").toLowerCase()}
               </div>
-              {e.htmlLink && (
-                <a
-                  href={e.htmlLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-muted opacity-0 group-hover:opacity-100 transition"
-                >
-                  <ExternalLink className="h-4 w-4" />
-                </a>
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-sm leading-snug truncate">{e.summary}</div>
+              {e.location && (
+                <div className="text-[11px] text-muted mt-0.5 truncate">{e.location}</div>
               )}
-            </li>
-          ))}
-        </ul>
+            </div>
+            <button
+              onClick={() => hide(e.id)}
+              title="Hide this event"
+              className="opacity-0 group-hover:opacity-100 text-muted hover:text-accent transition shrink-0"
+            >
+              <EyeOff className="h-4 w-4" />
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      {showHidden && hiddenList.length > 0 && (
+        <div className="mt-3 pt-3 border-t rule">
+          <div className="flex items-center justify-between mb-2">
+            <span className="label">Hidden</span>
+            <button
+              onClick={clearHidden}
+              className="font-mono text-[10px] uppercase tracking-wider text-muted hover:text-ink inline-flex items-center gap-1"
+            >
+              <RotateCcw className="h-3 w-3" /> restore all
+            </button>
+          </div>
+          <ul className="divide-rule">
+            {hiddenList.map((e) => (
+              <li key={e.id} className="group flex items-start gap-3 py-2 opacity-60">
+                <div className="font-mono text-[10px] uppercase tracking-wider text-muted pt-1 w-12 shrink-0">
+                  {format(new Date(e.start), "MMM d")}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm leading-snug line-through truncate">{e.summary}</div>
+                </div>
+                <button
+                  onClick={() => unhide(e.id)}
+                  title="Show this event"
+                  className="text-muted hover:text-ink transition shrink-0"
+                >
+                  <Eye className="h-4 w-4" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </Card>
   );

@@ -1,29 +1,30 @@
 import { ReactNode } from "react";
 
 export function Card({
+  num,
   title,
-  icon,
+  meta,
+  action,
   children,
   className = "",
-  action,
 }: {
-  title?: string;
-  icon?: ReactNode;
+  num?: string;
+  title: string;
+  meta?: ReactNode;
+  action?: ReactNode;
   children: ReactNode;
   className?: string;
-  action?: ReactNode;
 }) {
   return (
-    <section className={`glass rounded-3xl p-6 animate-fadeIn ${className}`}>
-      {(title || action) && (
-        <header className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
-            {icon}
-            {title && <h2>{title}</h2>}
-          </div>
-          {action}
-        </header>
-      )}
+    <section className={`card animate-fadeIn ${className}`}>
+      <header className="headrule">
+        <span className="label">
+          {num ? <span className="text-accent mr-2">№ {num}</span> : null}
+          {title}
+        </span>
+        <div className="ml-auto flex items-center gap-2">{action}</div>
+        {meta && <div className="ml-2 label">{meta}</div>}
+      </header>
       {children}
     </section>
   );

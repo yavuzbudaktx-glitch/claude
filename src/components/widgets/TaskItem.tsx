@@ -19,33 +19,42 @@ export function TaskItem({
 
   return (
     <li className="group flex items-start gap-2.5 py-2">
-      <input
-        type="checkbox"
-        checked={task.completed}
-        onChange={() => onToggle(task)}
-        className="mt-1 h-4 w-4 rounded border-current/30 accent-amber-500"
-      />
+      <button
+        onClick={() => onToggle(task)}
+        aria-label={task.completed ? "Mark incomplete" : "Mark complete"}
+        className={`mt-1 h-4 w-4 shrink-0 rounded-sm border transition flex items-center justify-center ${
+          task.completed
+            ? "bg-[var(--ink)] border-[var(--ink)]"
+            : "border-[var(--rule)] hover:border-[var(--ink)]"
+        }`}
+      >
+        {task.completed && (
+          <svg viewBox="0 0 12 12" className="h-3 w-3 text-[var(--bg)]">
+            <path d="M2.5 6.5l2.5 2 4-5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
+      </button>
       <div className="flex-1 min-w-0">
         <div className={`text-sm leading-snug ${task.completed ? "line-through text-muted" : ""}`}>
           {task.title}
         </div>
         {due && (
           <div
-            className={`text-[11px] mt-0.5 ${
-              overdue ? "text-rose-500" : today ? "text-amber-500" : "text-muted"
+            className={`font-mono text-[10px] uppercase tracking-wider mt-0.5 ${
+              overdue ? "text-accent" : today ? "text-accent" : "text-muted"
             }`}
           >
-            {overdue ? "Overdue · " : today ? "Today · " : ""}
+            {overdue ? "overdue · " : today ? "today · " : ""}
             {format(due, "MMM d")}
           </div>
         )}
       </div>
       <button
         onClick={() => onDelete(task)}
-        className="opacity-0 group-hover:opacity-100 text-muted hover:text-rose-500 transition shrink-0"
+        className="opacity-0 group-hover:opacity-100 text-muted hover:text-accent transition shrink-0"
         aria-label="Delete task"
       >
-        <Trash2 className="h-4 w-4" />
+        <Trash2 className="h-3.5 w-3.5" />
       </button>
     </li>
   );

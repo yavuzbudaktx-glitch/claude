@@ -11,7 +11,7 @@ export function SignOutButton() {
         await supabase.auth.signOut();
         window.location.href = "/login";
       }}
-      className="glass rounded-full h-9 w-9 flex items-center justify-center hover:scale-105 active:scale-95 transition"
+      className="btn-ghost"
       aria-label="Sign out"
     >
       <LogOut className="h-4 w-4" />

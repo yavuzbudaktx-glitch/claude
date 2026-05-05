@@ -1,10 +1,15 @@
 export type Quadrant = "do" | "schedule" | "delegate" | "eliminate";
 
-export const QUADRANTS: { id: Quadrant; title: string; subtitle: string; dot: string; aura: string }[] = [
-  { id: "do",        title: "Do",        subtitle: "Urgent · Important",      dot: "bg-rose-400",    aura: "before:bg-rose-400/30" },
-  { id: "schedule",  title: "Schedule",  subtitle: "Important · Not Urgent",  dot: "bg-emerald-400", aura: "before:bg-emerald-400/30" },
-  { id: "delegate",  title: "Delegate",  subtitle: "Urgent · Not Important",  dot: "bg-amber-400",   aura: "before:bg-amber-400/30" },
-  { id: "eliminate", title: "Eliminate", subtitle: "Neither",                 dot: "bg-slate-400",   aura: "before:bg-slate-400/30" },
+export const QUADRANTS: {
+  id: Quadrant;
+  title: string;
+  subtitle: string;
+  number: string;
+}[] = [
+  { id: "do",        number: "I",   title: "Do Now",     subtitle: "Urgent · Important" },
+  { id: "schedule",  number: "II",  title: "Schedule",   subtitle: "Important · Not Urgent" },
+  { id: "delegate",  number: "III", title: "Delegate",   subtitle: "Urgent · Not Important" },
+  { id: "eliminate", number: "IV",  title: "Eliminate",  subtitle: "Neither" },
 ];
 
 export interface Task {

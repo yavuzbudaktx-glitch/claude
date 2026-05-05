@@ -1,61 +1,77 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element */
 import useSWR from "swr";
 import { useState } from "react";
-import { Newspaper } from "lucide-react";
 import { Card } from "@/components/Card";
-import { CATEGORY_LABELS, type NewsCategory, type NewsItem } from "@/lib/feeds";
+import { CATEGORY_LABELS, CATEGORY_ORDER, type NewsCategory, type NewsItem } from "@/lib/feeds";
 
 type Resp = Record<NewsCategory, NewsItem[]>;
 const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<Resp>);
-const ORDER: NewsCategory[] = ["turkey", "tech", "world", "science"];
 
 export function NewsCard() {
   const { data, error, isLoading } = useSWR<Resp>("/api/news", fetcher, {
     refreshInterval: 1000 * 60 * 15,
   });
-  const [active, setActive] = useState<NewsCategory>("turkey");
+  const [active, setActive] = useState<NewsCategory>("world");
 
   return (
-    <Card title="Headlines" icon={<Newspaper className="h-3.5 w-3.5" />}>
-      <div className="flex gap-1.5 mb-4 flex-wrap">
-        {ORDER.map((c) => (
+    <Card num="03" title="The Wire">
+      <div className="flex flex-wrap gap-1.5 mb-4">
+        {CATEGORY_ORDER.map((c) => (
           <button
             key={c}
             onClick={() => setActive(c)}
-            className={`text-xs px-3 py-1 rounded-full border transition ${
-              active === c
-                ? "bg-amber-400/90 border-amber-400 text-slate-900 font-medium"
-                : "border-[var(--border)] text-muted hover:text-current hover:bg-[var(--glass-strong)]"
-            }`}
+            className={`chip ${active === c ? "chip-active" : ""}`}
           >
             {CATEGORY_LABELS[c]}
           </button>
         ))}
       </div>
-      {isLoading && <p className="text-muted">Loading…</p>}
-      {error && <p className="text-rose-400">Couldn&rsquo;t load news.</p>}
+
+      {isLoading && <p className="text-muted text-sm">Loading…</p>}
+      {error && <p className="text-accent text-sm">Couldn&rsquo;t load news.</p>}
       {data && (
-        <ul className="space-y-3">
+        <ul className="space-y-3 max-h-[260px] overflow-y-auto pr-1">
           {(data[active] ?? []).map((item) => (
             <li key={item.link}>
               <a
                 href={item.link}
                 target="_blank"
                 rel="noreferrer"
-                className="block group"
+                className="group flex gap-3 items-start"
               >
-                <div className="text-sm leading-snug group-hover:underline underline-offset-2">
-                  {item.title}
+                <div className="shrink-0 w-16 h-16 rounded-md overflow-hidden border rule-soft bg-hl">
+                  {item.image ? (
+                    <img
+                      src={item.image}
+                      alt=""
+                      loading="lazy"
+                      referrerPolicy="no-referrer"
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).style.display = "none";
+                      }}
+                    />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center font-mono text-[9px] text-muted">
+                      {item.source.split(" ")[0]}
+                    </div>
+                  )}
                 </div>
-                <div className="text-[11px] uppercase tracking-wider text-muted mt-0.5">
-                  {item.source}
+                <div className="min-w-0 flex-1">
+                  <div className="text-[13px] leading-snug font-medium group-hover:underline underline-offset-2 line-clamp-3">
+                    {item.title}
+                  </div>
+                  <div className="font-mono text-[10px] uppercase tracking-wider text-muted mt-1">
+                    {item.source}
+                  </div>
                 </div>
               </a>
             </li>
           ))}
           {(data[active] ?? []).length === 0 && (
-            <li className="text-muted text-sm">No headlines right now.</li>
+            <li className="text-muted text-sm">No headlines.</li>
           )}
         </ul>
       )}
