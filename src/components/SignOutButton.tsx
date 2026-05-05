@@ -11,10 +11,10 @@ export function SignOutButton() {
         await supabase.auth.signOut();
         window.location.href = "/login";
       }}
-      className="text-muted hover:text-white text-xs flex items-center gap-1 mt-2"
+      className="glass rounded-full h-9 w-9 flex items-center justify-center hover:scale-105 active:scale-95 transition"
       aria-label="Sign out"
     >
-      <LogOut className="h-3.5 w-3.5" /> Sign out
+      <LogOut className="h-4 w-4" />
     </button>
   );
 }

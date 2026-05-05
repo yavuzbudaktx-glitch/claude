@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { ListChecks } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { QUADRANTS, type Task, type Quadrant } from "@/types/db";
 import { Card } from "@/components/Card";
@@ -58,27 +59,31 @@ export function EisenhowerMatrix({ userId }: { userId: string }) {
   }
 
   return (
-    <Card title="Tasks · Eisenhower Matrix">
+    <Card title="Tasks · Eisenhower Matrix" icon={<ListChecks className="h-3.5 w-3.5" />}>
       {loading ? (
         <p className="text-muted">Loading…</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {QUADRANTS.map((q) => {
             const items = tasks.filter((t) => t.quadrant === q.id);
+            const open = items.filter((i) => !i.completed).length;
             return (
               <div
                 key={q.id}
-                className={`rounded-xl border bg-gradient-to-br p-3 ${q.tone}`}
+                className={`relative rounded-2xl glass-strong p-4 overflow-hidden before:content-[''] before:absolute before:-top-12 before:-right-12 before:h-32 before:w-32 before:rounded-full before:blur-3xl ${q.aura}`}
               >
-                <div className="flex items-baseline justify-between mb-1">
-                  <h3 className="font-semibold text-white/90">{q.title}</h3>
-                  <span className="text-[10px] uppercase tracking-wider text-muted">
-                    {q.subtitle}
+                <div className="flex items-baseline justify-between mb-2 relative">
+                  <div className="flex items-center gap-2">
+                    <span className={`h-2 w-2 rounded-full ${q.dot}`} />
+                    <h3 className="font-serif text-lg font-medium">{q.title}</h3>
+                  </div>
+                  <span className="text-[10px] uppercase tracking-[0.16em] text-muted">
+                    {open} open · {q.subtitle}
                   </span>
                 </div>
-                <ul className="divide-y divide-white/5">
+                <ul className="divide-y divide-[var(--border)] relative">
                   {items.length === 0 && (
-                    <li className="text-muted text-xs py-1">Nothing here.</li>
+                    <li className="text-muted text-xs py-2 italic">No tasks yet.</li>
                   )}
                   {items.map((t) => (
                     <TaskItem key={t.id} task={t} onToggle={toggle} onDelete={remove} />

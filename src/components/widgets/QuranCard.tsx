@@ -11,11 +11,11 @@ export function QuranCard() {
   const { data, error, isLoading } = useSWR<AyahPayload>("/api/quran", fetcher);
 
   return (
-    <Card title="Verse of the Day" icon={<BookOpen className="h-4 w-4" />}>
+    <Card title="Verse of the Day" icon={<BookOpen className="h-3.5 w-3.5" />}>
       {isLoading && <p className="text-muted">Loading…</p>}
       {error && <p className="text-rose-400">Couldn&rsquo;t load verse.</p>}
       {data && (
-        <div className="space-y-3">
+        <div className="space-y-4">
           <p
             dir="rtl"
             lang="ar"
@@ -23,9 +23,11 @@ export function QuranCard() {
           >
             {data.arabic}
           </p>
-          <p className="text-white/90 leading-relaxed">{data.translation}</p>
-          <p className="text-xs text-muted">
-            Sûre {data.surahName} ({data.surahNameTranslation}) · âyet {data.numberInSurah}
+          <p className="font-serif text-base md:text-lg leading-relaxed italic">
+            &ldquo;{data.translation}&rdquo;
+          </p>
+          <p className="text-[11px] uppercase tracking-[0.18em] text-muted">
+            {data.surahName} · {data.surahNameTranslation} · {data.numberInSurah}
           </p>
         </div>
       )}

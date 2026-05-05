@@ -17,16 +17,16 @@ export function NewsCard() {
   const [active, setActive] = useState<NewsCategory>("turkey");
 
   return (
-    <Card title="Headlines" icon={<Newspaper className="h-4 w-4" />}>
-      <div className="flex gap-1 mb-3 flex-wrap">
+    <Card title="Headlines" icon={<Newspaper className="h-3.5 w-3.5" />}>
+      <div className="flex gap-1.5 mb-4 flex-wrap">
         {ORDER.map((c) => (
           <button
             key={c}
             onClick={() => setActive(c)}
-            className={`text-xs px-2.5 py-1 rounded-full border transition ${
+            className={`text-xs px-3 py-1 rounded-full border transition ${
               active === c
-                ? "bg-accent/20 border-accent/50 text-white"
-                : "border-white/10 text-muted hover:text-white"
+                ? "bg-amber-400/90 border-amber-400 text-slate-900 font-medium"
+                : "border-[var(--border)] text-muted hover:text-current hover:bg-[var(--glass-strong)]"
             }`}
           >
             {CATEGORY_LABELS[c]}
@@ -36,17 +36,21 @@ export function NewsCard() {
       {isLoading && <p className="text-muted">Loading…</p>}
       {error && <p className="text-rose-400">Couldn&rsquo;t load news.</p>}
       {data && (
-        <ul className="space-y-2.5">
+        <ul className="space-y-3">
           {(data[active] ?? []).map((item) => (
             <li key={item.link}>
               <a
                 href={item.link}
                 target="_blank"
                 rel="noreferrer"
-                className="block hover:bg-white/5 -mx-2 px-2 py-1 rounded transition"
+                className="block group"
               >
-                <div className="text-sm leading-snug">{item.title}</div>
-                <div className="text-xs text-muted mt-0.5">{item.source}</div>
+                <div className="text-sm leading-snug group-hover:underline underline-offset-2">
+                  {item.title}
+                </div>
+                <div className="text-[11px] uppercase tracking-wider text-muted mt-0.5">
+                  {item.source}
+                </div>
               </a>
             </li>
           ))}

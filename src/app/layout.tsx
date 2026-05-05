@@ -16,16 +16,35 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b1020",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
 };
 
+const themeScript = `
+  (function() {
+    try {
+      var stored = localStorage.getItem('theme');
+      var prefers = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var theme = stored || (prefers ? 'dark' : 'light');
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+    } catch (e) {}
+  })();
+`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className="antialiased">{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className="antialiased">
+        <div className="aurora" aria-hidden>
+          <span className="b3" />
+          <span className="b4" />
+        </div>
+        {children}
+      </body>
     </html>
   );
 }

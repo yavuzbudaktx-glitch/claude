@@ -14,10 +14,10 @@ export function Card({
   action?: ReactNode;
 }) {
   return (
-    <section className={`rounded-2xl border border-white/10 bg-panel/70 backdrop-blur p-5 shadow-xl shadow-black/20 ${className}`}>
+    <section className={`glass rounded-3xl p-6 animate-fadeIn ${className}`}>
       {(title || action) && (
-        <header className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2 text-sm uppercase tracking-wider text-muted">
+        <header className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
             {icon}
             {title && <h2>{title}</h2>}
           </div>

@@ -34,7 +34,7 @@ export function AddTaskInline({
     return (
       <button
         onClick={() => setOpen(true)}
-        className="mt-2 flex items-center gap-1 text-xs text-muted hover:text-white"
+        className="mt-3 flex items-center gap-1 text-xs text-muted hover:text-amber-500 transition"
       >
         <Plus className="h-3.5 w-3.5" /> Add task
       </button>
@@ -42,25 +42,25 @@ export function AddTaskInline({
   }
 
   return (
-    <form onSubmit={submit} className="mt-2 space-y-2">
+    <form onSubmit={submit} className="mt-3 space-y-2">
       <input
         autoFocus
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="What needs doing?"
-        className="w-full bg-white/5 border border-white/10 rounded px-2 py-1.5 text-sm focus:outline-none focus:border-accent/50"
+        className="w-full bg-[var(--glass-strong)] border border-[var(--border)] rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ring)]"
       />
       <div className="flex items-center gap-2">
         <input
           type="date"
           value={due}
           onChange={(e) => setDue(e.target.value)}
-          className="bg-white/5 border border-white/10 rounded px-2 py-1 text-xs text-muted focus:outline-none focus:border-accent/50"
+          className="bg-[var(--glass-strong)] border border-[var(--border)] rounded-lg px-2 py-1 text-xs text-muted focus:outline-none focus:ring-2 focus:ring-[var(--ring)]"
         />
         <button
           type="submit"
           disabled={busy}
-          className="ml-auto text-xs px-3 py-1 rounded bg-accent/80 hover:bg-accent text-white disabled:opacity-50"
+          className="ml-auto text-xs px-3 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-900 font-medium disabled:opacity-50 transition"
         >
           Add
         </button>
@@ -71,7 +71,7 @@ export function AddTaskInline({
             setTitle("");
             setDue("");
           }}
-          className="text-xs text-muted hover:text-white"
+          className="text-xs text-muted hover:text-current"
         >
           Cancel
         </button>

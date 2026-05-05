@@ -18,12 +18,12 @@ export function TaskItem({
   const today = due && isToday(due);
 
   return (
-    <li className="group flex items-start gap-2 py-1.5">
+    <li className="group flex items-start gap-2.5 py-2">
       <input
         type="checkbox"
         checked={task.completed}
         onChange={() => onToggle(task)}
-        className="mt-1 h-4 w-4 rounded border-white/20 bg-white/5 accent-accent"
+        className="mt-1 h-4 w-4 rounded border-current/30 accent-amber-500"
       />
       <div className="flex-1 min-w-0">
         <div className={`text-sm leading-snug ${task.completed ? "line-through text-muted" : ""}`}>
@@ -31,8 +31,8 @@ export function TaskItem({
         </div>
         {due && (
           <div
-            className={`text-xs mt-0.5 ${
-              overdue ? "text-rose-400" : today ? "text-amber-300" : "text-muted"
+            className={`text-[11px] mt-0.5 ${
+              overdue ? "text-rose-500" : today ? "text-amber-500" : "text-muted"
             }`}
           >
             {overdue ? "Overdue · " : today ? "Today · " : ""}
@@ -42,7 +42,7 @@ export function TaskItem({
       </div>
       <button
         onClick={() => onDelete(task)}
-        className="opacity-0 group-hover:opacity-100 text-muted hover:text-rose-400 transition"
+        className="opacity-0 group-hover:opacity-100 text-muted hover:text-rose-500 transition shrink-0"
         aria-label="Delete task"
       >
         <Trash2 className="h-4 w-4" />

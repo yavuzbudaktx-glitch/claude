@@ -2,18 +2,144 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Fraunces:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap");
+
+:root {
+  --bg: #fbf6ef;
+  --fg: #1a1530;
+  --muted: #5b5878;
+  --border: rgba(20, 12, 50, 0.08);
+  --glass: rgba(255, 255, 255, 0.55);
+  --glass-strong: rgba(255, 255, 255, 0.7);
+  --ring: rgba(124, 92, 255, 0.45);
+  --aurora-1: #ff7eb3;
+  --aurora-2: #ffd86b;
+  --aurora-3: #7afcff;
+  --aurora-4: #b48bff;
+}
+
+.dark {
+  --bg: #08081a;
+  --fg: #ecebff;
+  --muted: #a4a3c8;
+  --border: rgba(255, 255, 255, 0.1);
+  --glass: rgba(255, 255, 255, 0.06);
+  --glass-strong: rgba(255, 255, 255, 0.1);
+  --ring: rgba(124, 92, 255, 0.55);
+  --aurora-1: #ff4fa3;
+  --aurora-2: #ffae3a;
+  --aurora-3: #00e5ff;
+  --aurora-4: #8b5cf6;
+}
 
 html,
 body {
-  background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(124, 92, 255, 0.18), transparent 60%),
-    radial-gradient(1000px 500px at 100% 0%, rgba(56, 189, 248, 0.12), transparent 60%),
-    #0b1020;
-  color: #e8ecff;
+  background: var(--bg);
+  color: var(--fg);
   min-height: 100dvh;
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.aurora::before,
+.aurora::after,
+.aurora .b3,
+.aurora .b4 {
+  content: "";
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.55;
+}
+
+.dark .aurora::before,
+.dark .aurora::after,
+.dark .aurora .b3,
+.dark .aurora .b4 {
+  opacity: 0.35;
+  filter: blur(100px);
+}
+
+.aurora::before {
+  width: 540px;
+  height: 540px;
+  left: -120px;
+  top: -120px;
+  background: radial-gradient(circle at 30% 30%, var(--aurora-1), transparent 60%);
+  animation: drift 22s ease-in-out infinite;
+}
+
+.aurora::after {
+  width: 620px;
+  height: 620px;
+  right: -160px;
+  top: 80px;
+  background: radial-gradient(circle at 70% 30%, var(--aurora-2), transparent 60%);
+  animation: drift2 28s ease-in-out infinite;
+}
+
+.aurora .b3 {
+  width: 520px;
+  height: 520px;
+  left: 30%;
+  bottom: -180px;
+  background: radial-gradient(circle at 50% 50%, var(--aurora-3), transparent 60%);
+  animation: drift3 26s ease-in-out infinite;
+}
+
+.aurora .b4 {
+  width: 460px;
+  height: 460px;
+  right: 10%;
+  bottom: -220px;
+  background: radial-gradient(circle at 50% 50%, var(--aurora-4), transparent 60%);
+  animation: drift 30s ease-in-out infinite reverse;
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate3d(0,0,0) scale(1); }
+  50% { transform: translate3d(40px,-30px,0) scale(1.08); }
+}
+@keyframes drift2 {
+  0%, 100% { transform: translate3d(0,0,0) scale(1); }
+  50% { transform: translate3d(-50px,40px,0) scale(0.95); }
+}
+@keyframes drift3 {
+  0%, 100% { transform: translate3d(0,0,0) scale(1.05); }
+  50% { transform: translate3d(30px,30px,0) scale(1); }
+}
+
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 30px rgba(20, 12, 50, 0.08);
+}
+
+.dark .glass {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.glass-strong {
+  background: var(--glass-strong);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border: 1px solid var(--border);
+}
+
+.text-muted {
+  color: var(--muted);
 }
