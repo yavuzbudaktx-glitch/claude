@@ -34,8 +34,7 @@ interface Match {
 }
 
 interface Resp {
-  season: string;
-  besiktasId: string;
+  source?: string;
   standings: Standing[];
   last: Match | null;
   next: Match | null;
@@ -114,7 +113,7 @@ export function SuperLigCard() {
 
           {data.standings.length === 0 ? (
             <p className="text-muted text-xs italic">
-              Standings unavailable {data.season ? `for ${data.season}` : ""}.
+              Standings unavailable.
             </p>
           ) : (
             <div className="overflow-hidden">
@@ -125,7 +124,7 @@ export function SuperLigCard() {
                 <span className="text-right">GD</span>
                 <span className="text-right">Pts</span>
               </div>
-              <ul className="divide-rule max-h-[520px] overflow-y-auto pr-1">
+              <ul className="divide-rule">
                 {data.standings.map((s) => {
                   const bk = isBesiktas(s.team);
                   return (
@@ -162,9 +161,9 @@ export function SuperLigCard() {
             </div>
           )}
 
-          {data.season && (
+          {data.source && (
             <div className="font-mono text-[9px] uppercase tracking-wider text-muted mt-3">
-              Season {data.season} · TheSportsDB
+              Source · {data.source === "espn" ? "ESPN" : "TheSportsDB"}
             </div>
           )}
         </>

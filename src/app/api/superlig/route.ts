@@ -1,46 +1,18 @@
 import { NextResponse } from "next/server";
 
-// TheSportsDB free public key "3" — Turkish Süper Lig league id 4339, Beşiktaş id 133611.
-const KEY = "3";
-const LEAGUE_ID = "4339";
-const BESIKTAS_ID = "133611";
+// ESPN's unofficial public APIs (used by espn.com itself). Stable for years,
+// no auth, returns JSON. Turkish Süper Lig is "tur.1".
 
-export const revalidate = 900; // 15 minutes
+export const revalidate = 600; // 10 minutes
 
-interface RawStanding {
-  idStanding?: string;
-  intRank?: string;
-  idTeam?: string;
-  strTeam?: string;
-  strBadge?: string;
-  intPlayed?: string;
-  intWin?: string;
-  intLoss?: string;
-  intDraw?: string;
-  intGoalsFor?: string;
-  intGoalsAgainst?: string;
-  intGoalDifference?: string;
-  intPoints?: string;
-  strForm?: string;
-  strSeason?: string;
-}
+const UA =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36";
 
-interface RawEvent {
-  idEvent?: string;
-  strEvent?: string;
-  strHomeTeam?: string;
-  strAwayTeam?: string;
-  idHomeTeam?: string;
-  idAwayTeam?: string;
-  intHomeScore?: string | null;
-  intAwayScore?: string | null;
-  dateEvent?: string;
-  strTime?: string;
-  strTimestamp?: string;
-  strVenue?: string;
-  strLeague?: string;
-  idLeague?: string;
-  strStatus?: string;
+const BESIKTAS_NAMES = ["beşiktaş", "besiktas"];
+function isBesiktas(s: string | undefined | null): boolean {
+  if (!s) return false;
+  const lower = s.toLowerCase();
+  return BESIKTAS_NAMES.some((n) => lower.includes(n));
 }
 
 export interface Standing {
@@ -71,24 +43,44 @@ export interface Match {
   isFinished: boolean;
 }
 
-function currentSeasonCandidates(): string[] {
-  const now = new Date();
-  const y = now.getFullYear();
-  const startsThisYear = now.getMonth() >= 6;
-  const a = startsThisYear ? `${y}-${y + 1}` : `${y - 1}-${y}`;
-  const b = startsThisYear ? `${y - 1}-${y}` : `${y - 2}-${y - 1}`;
-  const c = startsThisYear ? `${y - 2}-${y - 1}` : `${y - 3}-${y - 2}`;
-  return [a, b, c];
+interface EspnStandingStat { name?: string; value?: number; displayValue?: string }
+interface EspnTeamLogo { href?: string }
+interface EspnStandingEntry {
+  team?: { id?: string; displayName?: string; shortDisplayName?: string; logos?: EspnTeamLogo[] };
+  stats?: EspnStandingStat[];
+}
+interface EspnStandingsResp {
+  children?: { name?: string; standings?: { entries?: EspnStandingEntry[] } }[];
 }
 
-const UA =
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36";
+interface EspnCompetitor {
+  homeAway?: "home" | "away";
+  team?: { displayName?: string; shortDisplayName?: string; abbreviation?: string };
+  score?: string;
+}
+interface EspnCompetition {
+  competitors?: EspnCompetitor[];
+  status?: { type?: { completed?: boolean; state?: string } };
+  venue?: { fullName?: string };
+}
+interface EspnEvent {
+  id?: string;
+  date?: string;
+  name?: string;
+  shortName?: string;
+  competitions?: EspnCompetition[];
+}
+interface EspnScoreboardResp {
+  events?: EspnEvent[];
+  leagues?: { name?: string }[];
+  season?: { year?: number };
+}
 
 async function jsonFetch<T>(url: string): Promise<T | null> {
   try {
     const res = await fetch(url, {
       headers: { "User-Agent": UA, Accept: "application/json" },
-      next: { revalidate: 900 },
+      next: { revalidate: 600 },
     });
     if (!res.ok) return null;
     return (await res.json()) as T;
@@ -97,171 +89,158 @@ async function jsonFetch<T>(url: string): Promise<T | null> {
   }
 }
 
-async function fetchTable(season: string): Promise<RawStanding[] | null> {
-  const data = await jsonFetch<{ table?: RawStanding[] | null }>(
-    `https://www.thesportsdb.com/api/v1/json/${KEY}/lookuptable.php?l=${LEAGUE_ID}&s=${season}`,
+function statBy(stats: EspnStandingStat[] | undefined, name: string): number {
+  if (!stats) return 0;
+  const s = stats.find((x) => x.name === name);
+  if (!s) return 0;
+  if (typeof s.value === "number") return s.value;
+  const n = Number(s.displayValue);
+  return Number.isFinite(n) ? n : 0;
+}
+
+async function fetchStandings(): Promise<Standing[]> {
+  const json = await jsonFetch<EspnStandingsResp>(
+    "https://site.api.espn.com/apis/v2/sports/soccer/tur.1/standings",
   );
-  return data?.table ?? null;
+  const entries = json?.children?.[0]?.standings?.entries ?? [];
+  return entries
+    .map((e) => {
+      const team = e.team;
+      const rank = statBy(e.stats, "rank");
+      const wins = statBy(e.stats, "wins");
+      const losses = statBy(e.stats, "losses");
+      const ties = statBy(e.stats, "ties");
+      const gp = statBy(e.stats, "gamesPlayed");
+      const gf = statBy(e.stats, "pointsFor");
+      const ga = statBy(e.stats, "pointsAgainst");
+      const gd = statBy(e.stats, "pointDifferential");
+      const points = statBy(e.stats, "points");
+      return {
+        rank,
+        team: team?.displayName ?? team?.shortDisplayName ?? "",
+        teamId: team?.id ?? "",
+        badge: team?.logos?.[0]?.href ?? null,
+        played: gp,
+        win: wins,
+        draw: ties,
+        loss: losses,
+        gf,
+        ga,
+        gd,
+        points,
+        form: null,
+      } satisfies Standing;
+    })
+    .filter((s) => s.team)
+    .sort((a, b) => a.rank - b.rank);
 }
 
-async function fetchSeasonEvents(season: string): Promise<RawEvent[]> {
-  const data = await jsonFetch<{ events?: RawEvent[] | null }>(
-    `https://www.thesportsdb.com/api/v1/json/${KEY}/eventsseason.php?id=${LEAGUE_ID}&s=${season}`,
+function pad(n: number) { return String(n).padStart(2, "0"); }
+function ymd(d: Date) { return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}`; }
+
+async function fetchScoreboard(daysBack: number, daysForward: number): Promise<EspnEvent[]> {
+  const now = new Date();
+  const from = new Date(now.getTime() - daysBack * 86400000);
+  const to = new Date(now.getTime() + daysForward * 86400000);
+  const range = `${ymd(from)}-${ymd(to)}`;
+  const json = await jsonFetch<EspnScoreboardResp>(
+    `https://site.api.espn.com/apis/site/v2/sports/soccer/tur.1/scoreboard?dates=${range}`,
   );
-  return data?.events ?? [];
+  return json?.events ?? [];
 }
 
-async function fetchTeamLast(): Promise<RawEvent[]> {
-  const data = await jsonFetch<{ results?: RawEvent[] | null }>(
-    `https://www.thesportsdb.com/api/v1/json/${KEY}/eventslast.php?id=${BESIKTAS_ID}`,
-  );
-  return data?.results ?? [];
-}
-
-async function fetchTeamNext(): Promise<RawEvent[]> {
-  const data = await jsonFetch<{ events?: RawEvent[] | null }>(
-    `https://www.thesportsdb.com/api/v1/json/${KEY}/eventsnext.php?id=${BESIKTAS_ID}`,
-  );
-  return data?.events ?? [];
-}
-
-function eventTimestamp(e: RawEvent): number {
-  if (e.strTimestamp) {
-    const ms = Date.parse(e.strTimestamp.includes("Z") ? e.strTimestamp : e.strTimestamp + "Z");
-    if (!Number.isNaN(ms)) return ms;
-  }
-  if (e.dateEvent) {
-    const ms = Date.parse(`${e.dateEvent}T${e.strTime || "00:00:00"}Z`);
-    if (!Number.isNaN(ms)) return ms;
-  }
-  return 0;
-}
-
-const BESIKTAS_NAMES = ["beşiktaş", "besiktas"];
-function isBesiktas(e: RawEvent): boolean {
-  if (e.idHomeTeam === BESIKTAS_ID || e.idAwayTeam === BESIKTAS_ID) return true;
-  const h = (e.strHomeTeam ?? "").toLowerCase();
-  const a = (e.strAwayTeam ?? "").toLowerCase();
-  return BESIKTAS_NAMES.some((n) => h.includes(n) || a.includes(n));
-}
-
-function hasScore(e: RawEvent): boolean {
-  return (
-    e.intHomeScore != null && e.intHomeScore !== "" &&
-    e.intAwayScore != null && e.intAwayScore !== ""
-  );
-}
-
-function mapEvent(e: RawEvent): Match {
-  const ts = eventTimestamp(e);
-  const date =
-    e.strTimestamp ||
-    (e.dateEvent ? `${e.dateEvent}T${e.strTime ?? "00:00:00"}Z` : new Date().toISOString());
-  const hs = e.intHomeScore == null || e.intHomeScore === "" ? null : Number(e.intHomeScore);
-  const as = e.intAwayScore == null || e.intAwayScore === "" ? null : Number(e.intAwayScore);
-  const finished =
-    Number.isFinite(hs as number) && Number.isFinite(as as number) && ts > 0 && ts <= Date.now();
+function eventToMatch(e: EspnEvent): Match | null {
+  const c = e.competitions?.[0];
+  if (!c) return null;
+  const home = c.competitors?.find((x) => x.homeAway === "home");
+  const away = c.competitors?.find((x) => x.homeAway === "away");
+  if (!home?.team || !away?.team) return null;
+  const homeName = home.team.displayName ?? home.team.shortDisplayName ?? "";
+  const awayName = away.team.displayName ?? away.team.shortDisplayName ?? "";
+  const homeScore = home.score != null && home.score !== "" ? Number(home.score) : null;
+  const awayScore = away.score != null && away.score !== "" ? Number(away.score) : null;
   return {
-    id: e.idEvent ?? "",
-    home: e.strHomeTeam ?? "",
-    away: e.strAwayTeam ?? "",
-    homeScore: Number.isFinite(hs as number) ? (hs as number) : null,
-    awayScore: Number.isFinite(as as number) ? (as as number) : null,
-    date,
-    venue: e.strVenue ?? null,
-    league: e.strLeague ?? null,
-    isFinished: !!finished,
+    id: e.id ?? "",
+    home: homeName,
+    away: awayName,
+    homeScore: Number.isFinite(homeScore as number) ? (homeScore as number) : null,
+    awayScore: Number.isFinite(awayScore as number) ? (awayScore as number) : null,
+    date: e.date ?? new Date().toISOString(),
+    venue: c.venue?.fullName ?? null,
+    league: "Süper Lig",
+    isFinished: !!c.status?.type?.completed,
   };
 }
 
-function dedupe(events: RawEvent[]): RawEvent[] {
-  const seen = new Set<string>();
-  const out: RawEvent[] = [];
-  for (const e of events) {
-    const k = e.idEvent ?? `${e.dateEvent}|${e.strHomeTeam}|${e.strAwayTeam}`;
-    if (seen.has(k)) continue;
-    seen.add(k);
-    out.push(e);
-  }
-  return out;
-}
+async function fetchBesiktasMatches(): Promise<{ last: Match | null; next: Match | null }> {
+  const events = await fetchScoreboard(120, 120);
+  const matches = events
+    .map(eventToMatch)
+    .filter((m): m is Match => !!m && (isBesiktas(m.home) || isBesiktas(m.away)))
+    .sort((a, b) => +new Date(a.date) - +new Date(b.date));
 
-function pickLastAndNext(events: RawEvent[]): { last: Match | null; next: Match | null } {
   const now = Date.now();
-  const annotated = events
-    .filter(isBesiktas)
-    .map((e) => ({ e, ts: eventTimestamp(e) }))
-    .filter((x) => x.ts > 0)
-    .sort((a, b) => a.ts - b.ts);
-
-  // Last: most recent event with a final score; allow past-without-score as a fallback.
-  let lastWithScore: RawEvent | null = null;
-  let lastAny: RawEvent | null = null;
-  for (const { e, ts } of annotated) {
-    if (ts <= now) {
-      lastAny = e;
-      if (hasScore(e)) lastWithScore = e;
+  let last: Match | null = null;
+  let next: Match | null = null;
+  for (const m of matches) {
+    const t = +new Date(m.date);
+    if (t <= now || m.isFinished) {
+      last = m;
+    } else if (!next) {
+      next = m;
     }
   }
-  // Next: earliest future event.
-  let next: RawEvent | null = null;
-  for (const { e, ts } of annotated) {
-    if (ts > now) {
-      next = e;
-      break;
+  return { last, next };
+}
+
+// TheSportsDB legacy fallback (kept in case ESPN's response shape ever shifts)
+async function fallbackStandingsFromSportsDb(): Promise<Standing[]> {
+  const seasons = (() => {
+    const now = new Date();
+    const y = now.getFullYear();
+    const startsThisYear = now.getMonth() >= 6;
+    return startsThisYear
+      ? [`${y}-${y + 1}`, `${y - 1}-${y}`]
+      : [`${y - 1}-${y}`, `${y - 2}-${y - 1}`];
+  })();
+  for (const s of seasons) {
+    const json = await jsonFetch<{ table?: Array<{ intRank?: string; idTeam?: string; strTeam?: string; strBadge?: string; intPlayed?: string; intWin?: string; intLoss?: string; intDraw?: string; intGoalsFor?: string; intGoalsAgainst?: string; intGoalDifference?: string; intPoints?: string }> }>(
+      `https://www.thesportsdb.com/api/v1/json/3/lookuptable.php?l=4339&s=${s}`,
+    );
+    const rows = json?.table ?? [];
+    if (rows.length > 0) {
+      return rows.map((r) => ({
+        rank: Number(r.intRank ?? 0),
+        team: r.strTeam ?? "",
+        teamId: r.idTeam ?? "",
+        badge: r.strBadge ?? null,
+        played: Number(r.intPlayed ?? 0),
+        win: Number(r.intWin ?? 0),
+        draw: Number(r.intDraw ?? 0),
+        loss: Number(r.intLoss ?? 0),
+        gf: Number(r.intGoalsFor ?? 0),
+        ga: Number(r.intGoalsAgainst ?? 0),
+        gd: Number(r.intGoalDifference ?? 0),
+        points: Number(r.intPoints ?? 0),
+        form: null,
+      }));
     }
   }
-
-  return {
-    last: (lastWithScore ?? lastAny) ? mapEvent(lastWithScore ?? lastAny!) : null,
-    next: next ? mapEvent(next) : null,
-  };
+  return [];
 }
 
 export async function GET() {
-  // Standings
-  let table: RawStanding[] | null = null;
-  let usedSeason = "";
-  for (const s of currentSeasonCandidates()) {
-    const t = await fetchTable(s);
-    if (t && t.length > 0) {
-      table = t;
-      usedSeason = s;
-      break;
-    }
-  }
+  const [standings, matches] = await Promise.all([
+    fetchStandings(),
+    fetchBesiktasMatches(),
+  ]);
 
-  const standings: Standing[] = (table ?? []).map((r) => ({
-    rank: Number(r.intRank ?? 0),
-    team: r.strTeam ?? "",
-    teamId: r.idTeam ?? "",
-    badge: r.strBadge ?? null,
-    played: Number(r.intPlayed ?? 0),
-    win: Number(r.intWin ?? 0),
-    draw: Number(r.intDraw ?? 0),
-    loss: Number(r.intLoss ?? 0),
-    gf: Number(r.intGoalsFor ?? 0),
-    ga: Number(r.intGoalsAgainst ?? 0),
-    gd: Number(r.intGoalDifference ?? 0),
-    points: Number(r.intPoints ?? 0),
-    form: r.strForm ?? null,
-  }));
-
-  // Pull from every available source, dedupe, then compute last/next once.
-  // Order: team-specific endpoints first (highest signal), then league-season
-  // for each candidate season.
-  const [teamLast, teamNext] = await Promise.all([fetchTeamLast(), fetchTeamNext()]);
-  const seasonResults = await Promise.all(
-    currentSeasonCandidates().map((s) => fetchSeasonEvents(s)),
-  );
-  const allEvents = dedupe([...teamLast, ...teamNext, ...seasonResults.flat()]);
-  const { last, next } = pickLastAndNext(allEvents);
+  const finalStandings = standings.length > 0 ? standings : await fallbackStandingsFromSportsDb();
 
   return NextResponse.json({
-    season: usedSeason,
-    besiktasId: BESIKTAS_ID,
-    standings,
-    last,
-    next,
+    source: standings.length > 0 ? "espn" : "thesportsdb",
+    standings: finalStandings,
+    last: matches.last,
+    next: matches.next,
   });
 }

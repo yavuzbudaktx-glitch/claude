@@ -1,16 +1,22 @@
 "use client";
 
 import useSWR from "swr";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Plus, Trash2, TrendingUp, TrendingDown } from "lucide-react";
 import { Card } from "@/components/Card";
 import { Sparkline, ValueChart } from "@/components/Sparkline";
 import { MoversStrip } from "./MoversStrip";
+import { createClient } from "@/lib/supabase/client";
 
 interface Holding {
   symbol: string;
   shares: number;
-  costBasis?: number;
+  cost_basis: number | null;
+}
+
+interface Snapshot {
+  date: string;
+  value: number;
 }
 
 interface Quote {
@@ -21,19 +27,17 @@ interface Quote {
   change: number | null;
   changePct: number | null;
   currency: string | null;
+  asOf: number | null;
   history: number[];
+  source: "yahoo-v7" | "yahoo-v8" | "stooq" | "none";
 }
 
-interface ValuePoint {
-  date: string;
-  value: number;
+interface PortfolioResp {
+  quotes: Quote[];
+  asOf: number;
 }
 
-const HOLDINGS_KEY = "morning.portfolio.holdings.v1";
-const HISTORY_KEY = "morning.portfolio.history.v1";
-const HISTORY_MAX = 90;
-
-const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<{ quotes: Quote[] }>);
+const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<PortfolioResp>);
 
 function todayKey() {
   const d = new Date();
@@ -42,51 +46,66 @@ function todayKey() {
   ).padStart(2, "0")}`;
 }
 
-function loadHoldings(): Holding[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = localStorage.getItem(HOLDINGS_KEY);
-    return raw ? (JSON.parse(raw) as Holding[]) : [];
-  } catch { return []; }
-}
-function saveHoldings(h: Holding[]) {
-  try { localStorage.setItem(HOLDINGS_KEY, JSON.stringify(h)); } catch {}
-}
-
-function loadHistory(): ValuePoint[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = localStorage.getItem(HISTORY_KEY);
-    return raw ? (JSON.parse(raw) as ValuePoint[]) : [];
-  } catch { return []; }
-}
-function saveHistory(h: ValuePoint[]) {
-  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(h)); } catch {}
-}
-
 function fmt(n: number | null, opts: Intl.NumberFormatOptions = {}) {
   if (n == null || !Number.isFinite(n)) return "—";
   return n.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2, ...opts });
 }
 
-export function PortfolioCard() {
+function fmtTime(ms: number | null | undefined) {
+  if (!ms) return null;
+  const d = new Date(ms);
+  return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+}
+
+export function PortfolioCard({ userId }: { userId: string }) {
+  const supabase = useMemo(() => createClient(), []);
+
   const [holdings, setHoldings] = useState<Holding[]>([]);
-  const [history, setHistory] = useState<ValuePoint[]>([]);
-  const [hydrated, setHydrated] = useState(false);
+  const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const [adding, setAdding] = useState(false);
   const [sym, setSym] = useState("");
   const [shares, setShares] = useState("");
   const [cost, setCost] = useState("");
 
+  const loadAll = useCallback(async () => {
+    const [hRes, sRes] = await Promise.all([
+      supabase.from("portfolio_holdings").select("symbol, shares, cost_basis").order("symbol"),
+      supabase
+        .from("portfolio_snapshots")
+        .select("date, value")
+        .order("date", { ascending: true })
+        .limit(120),
+    ]);
+    setHoldings((hRes.data ?? []) as Holding[]);
+    setSnapshots(((sRes.data ?? []) as { date: string; value: number }[]).map((s) => ({
+      date: s.date,
+      value: Number(s.value),
+    })));
+    setLoaded(true);
+  }, [supabase]);
+
   useEffect(() => {
-    setHoldings(loadHoldings());
-    setHistory(loadHistory());
-    setHydrated(true);
-  }, []);
+    loadAll();
+    const ch = supabase
+      .channel("portfolio_realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "portfolio_holdings", filter: `user_id=eq.${userId}` },
+        () => loadAll(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "portfolio_snapshots", filter: `user_id=eq.${userId}` },
+        () => loadAll(),
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [supabase, userId, loadAll]);
 
   const symbolsParam = useMemo(() => holdings.map((h) => h.symbol).join(","), [holdings]);
-  const { data, isLoading } = useSWR<{ quotes: Quote[] }>(
-    hydrated && symbolsParam ? `/api/portfolio?symbols=${symbolsParam}` : null,
+  const { data, isLoading } = useSWR<PortfolioResp>(
+    loaded && symbolsParam ? `/api/portfolio?symbols=${symbolsParam}` : null,
     fetcher,
     {
       refreshInterval: 10_000,
@@ -105,7 +124,7 @@ export function PortfolioCard() {
       const prevClose = q?.previousClose ?? null;
       const value = price != null ? price * h.shares : null;
       const dayPL = price != null && prevClose != null ? (price - prevClose) * h.shares : null;
-      const totalPL = price != null && h.costBasis != null ? (price - h.costBasis) * h.shares : null;
+      const totalPL = price != null && h.cost_basis != null ? (price - h.cost_basis) * h.shares : null;
       return { holding: h, quote: q, value, dayPL, totalPL };
     });
   }, [holdings, data]);
@@ -123,34 +142,66 @@ export function PortfolioCard() {
     };
   }, [rows]);
 
-  // Persist a daily snapshot whenever we have a fresh total value and today
-  // doesn't have an entry yet.
-  useEffect(() => {
-    if (!hydrated || totals.value == null) return;
-    const today = todayKey();
-    const last = history[history.length - 1];
-    if (last && last.date === today) return;
-    const next = [...history, { date: today, value: totals.value }].slice(-HISTORY_MAX);
-    setHistory(next);
-    saveHistory(next);
-  }, [hydrated, totals.value, history]);
+  const latestAsOf = useMemo(() => {
+    const times = (data?.quotes ?? [])
+      .map((q) => q.asOf)
+      .filter((t): t is number => typeof t === "number" && t > 0);
+    return times.length ? Math.max(...times) : null;
+  }, [data]);
 
-  function addHolding(e: React.FormEvent) {
+  // Persist a daily snapshot once per day. Server-side store, syncs everywhere.
+  useEffect(() => {
+    if (!loaded || totals.value == null) return;
+    const today = todayKey();
+    const last = snapshots[snapshots.length - 1];
+    if (last && last.date === today) return;
+    (async () => {
+      const { error } = await supabase
+        .from("portfolio_snapshots")
+        .upsert(
+          { user_id: userId, date: today, value: totals.value },
+          { onConflict: "user_id,date" },
+        );
+      if (!error) {
+        setSnapshots((prev) => {
+          const filtered = prev.filter((s) => s.date !== today);
+          return [...filtered, { date: today, value: totals.value as number }];
+        });
+      }
+    })();
+  }, [loaded, totals.value, snapshots, supabase, userId]);
+
+  async function addHolding(e: React.FormEvent) {
     e.preventDefault();
     const symbol = sym.trim().toUpperCase();
     const sh = Number(shares);
     if (!symbol || !Number.isFinite(sh) || sh <= 0) return;
-    const cb = cost ? Number(cost) : undefined;
-    const next = [...holdings.filter((h) => h.symbol !== symbol), { symbol, shares: sh, costBasis: cb }];
-    setHoldings(next);
-    saveHoldings(next);
+    const cb = cost ? Number(cost) : null;
+
+    // Optimistic update
+    setHoldings((prev) => {
+      const without = prev.filter((h) => h.symbol !== symbol);
+      return [...without, { symbol, shares: sh, cost_basis: cb }].sort((a, b) =>
+        a.symbol.localeCompare(b.symbol),
+      );
+    });
     setSym(""); setShares(""); setCost(""); setAdding(false);
+
+    await supabase
+      .from("portfolio_holdings")
+      .upsert(
+        { user_id: userId, symbol, shares: sh, cost_basis: cb },
+        { onConflict: "user_id,symbol" },
+      );
   }
 
-  function remove(symbol: string) {
-    const next = holdings.filter((h) => h.symbol !== symbol);
-    setHoldings(next);
-    saveHoldings(next);
+  async function remove(symbol: string) {
+    setHoldings((prev) => prev.filter((h) => h.symbol !== symbol));
+    await supabase
+      .from("portfolio_holdings")
+      .delete()
+      .eq("user_id", userId)
+      .eq("symbol", symbol);
   }
 
   return (
@@ -158,17 +209,25 @@ export function PortfolioCard() {
       num="05"
       title="Portfolio"
       action={
-        <button
-          onClick={() => setAdding((v) => !v)}
-          className="font-mono text-[10px] uppercase tracking-wider text-muted hover:text-accent inline-flex items-center gap-1"
-        >
-          <Plus className="h-3 w-3" /> add
-        </button>
+        <>
+          {latestAsOf && (
+            <span className="font-mono text-[10px] uppercase tracking-wider text-muted">
+              as of {fmtTime(latestAsOf)}
+            </span>
+          )}
+          <button
+            onClick={() => setAdding((v) => !v)}
+            className="font-mono text-[10px] uppercase tracking-wider text-muted hover:text-accent inline-flex items-center gap-1"
+          >
+            <Plus className="h-3 w-3" /> add
+          </button>
+        </>
       }
     >
-      {hydrated && holdings.length === 0 && !adding && (
+      {loaded && holdings.length === 0 && !adding && (
         <p className="text-muted text-sm italic">
           No holdings yet. Click <span className="font-mono">add</span> to enter your tickers and shares.
+          Synced across all your devices.
         </p>
       )}
 
@@ -222,7 +281,7 @@ export function PortfolioCard() {
         </form>
       )}
 
-      {hydrated && holdings.length > 0 && (
+      {loaded && holdings.length > 0 && (
         <>
           <div className="flex items-baseline gap-6 mb-3">
             <div>
@@ -250,7 +309,7 @@ export function PortfolioCard() {
           </div>
 
           <div className="mb-4 pb-3 border-b rule-soft">
-            <ValueChart data={history} height={110} />
+            <ValueChart data={snapshots} height={110} />
           </div>
 
           <div className="overflow-hidden">
@@ -263,7 +322,7 @@ export function PortfolioCard() {
               <span></span>
             </div>
             <ul className="divide-rule">
-              {isLoading && holdings.length > 0 && (
+              {isLoading && holdings.length > 0 && !data && (
                 <li className="text-muted text-xs italic py-2">Fetching quotes…</li>
               )}
               {rows.map(({ holding, quote, value, dayPL }) => {

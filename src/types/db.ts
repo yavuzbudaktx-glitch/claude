@@ -12,9 +12,10 @@ export const QUADRANTS: {
   { id: "eliminate", number: "IV",  title: "Eliminate",  subtitle: "Neither" },
 ];
 
-export type TaskStatus = "planning" | "in_progress" | "on_hold" | "complete";
+export type TaskStatus = "not_started" | "planning" | "in_progress" | "on_hold" | "complete";
 
 export const TASK_STATUSES: { id: TaskStatus; label: string; fill: number; hold?: boolean }[] = [
+  { id: "not_started", label: "Not Started", fill: 0 },
   { id: "planning",    label: "Planning",    fill: 0.12 },
   { id: "in_progress", label: "In Progress", fill: 0.6 },
   { id: "complete",    label: "Complete",    fill: 1 },

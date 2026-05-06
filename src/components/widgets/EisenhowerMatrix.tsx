@@ -45,7 +45,7 @@ export function EisenhowerMatrix({ userId }: { userId: string }) {
   }: { title: string; due_date: string | null; quadrant: Quadrant }) {
     const { data, error } = await supabase
       .from("tasks")
-      .insert({ title, due_date, quadrant, user_id: userId, status: "planning" })
+      .insert({ title, due_date, quadrant, user_id: userId, status: "not_started" })
       .select()
       .single();
     if (!error && data) setTasks((t) => [data as Task, ...t]);
