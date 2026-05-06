@@ -17,8 +17,8 @@ export type TaskStatus = "planning" | "in_progress" | "on_hold" | "complete";
 export const TASK_STATUSES: { id: TaskStatus; label: string; fill: number; hold?: boolean }[] = [
   { id: "planning",    label: "Planning",    fill: 0.12 },
   { id: "in_progress", label: "In Progress", fill: 0.6 },
-  { id: "on_hold",     label: "On Hold",     fill: 0.4, hold: true },
   { id: "complete",    label: "Complete",    fill: 1 },
+  { id: "on_hold",     label: "On Hold",     fill: 0.4, hold: true },
 ];
 
 export interface Task {

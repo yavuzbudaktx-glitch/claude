@@ -23,7 +23,7 @@ export function Masthead({ name, actions }: { name?: string; actions?: ReactNode
   })();
 
   return (
-    <header className="space-y-2">
+    <header className="space-y-1.5">
       <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted flex items-center gap-3 flex-wrap">
         <span>{now ? format(now, "EEE, MMM d") : ""}</span>
         <span className="opacity-50">·</span>
@@ -37,6 +37,7 @@ export function Masthead({ name, actions }: { name?: string; actions?: ReactNode
         </h1>
         {actions && <div className="flex items-center gap-2 shrink-0">{actions}</div>}
       </div>
+      <hr className="border-t rule mt-3" />
     </header>
   );
 }

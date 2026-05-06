@@ -32,7 +32,7 @@ export function NewsCard() {
       {isLoading && <p className="text-muted text-sm">Loading…</p>}
       {error && <p className="text-accent text-sm">Couldn&rsquo;t load news.</p>}
       {data && (
-        <ul className="space-y-3 max-h-[260px] overflow-y-auto pr-1">
+        <ul className="space-y-3 pr-1">
           {(data[active] ?? []).map((item) => (
             <li key={item.link}>
               <a

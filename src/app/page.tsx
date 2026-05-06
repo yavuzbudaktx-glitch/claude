@@ -8,6 +8,7 @@ import { NewsCard } from "@/components/widgets/NewsCard";
 import { EisenhowerMatrix } from "@/components/widgets/EisenhowerMatrix";
 import { PortfolioCard } from "@/components/widgets/PortfolioCard";
 import { SuperLigCard } from "@/components/widgets/SuperLigCard";
+import { TodayInHistoryCard } from "@/components/widgets/TodayInHistoryCard";
 import { SignOutButton } from "@/components/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -24,8 +25,8 @@ export default async function Page() {
     user.email?.split("@")[0];
 
   return (
-    <main className="max-w-[1480px] mx-auto px-5 md:px-10 pt-3 md:pt-4 pb-6 md:pb-8 space-y-5">
-      <section className="pb-4 border-b rule">
+    <main className="max-w-[1480px] mx-auto px-5 md:px-10 pt-2 md:pt-3 pb-6 md:pb-8 space-y-5">
+      <section>
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-6 items-center">
           <Masthead
             name={name}
@@ -42,7 +43,7 @@ export default async function Page() {
         </div>
       </section>
 
-      <div className="h-6 md:h-10" aria-hidden />
+      <TodayInHistoryCard />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         <CalendarCard />

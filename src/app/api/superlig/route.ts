@@ -30,6 +30,8 @@ interface RawEvent {
   strEvent?: string;
   strHomeTeam?: string;
   strAwayTeam?: string;
+  idHomeTeam?: string;
+  idAwayTeam?: string;
   intHomeScore?: string | null;
   intAwayScore?: string | null;
   dateEvent?: string;
@@ -37,6 +39,7 @@ interface RawEvent {
   strTimestamp?: string;
   strVenue?: string;
   strLeague?: string;
+  strStatus?: string;
 }
 
 export interface Standing {
@@ -67,7 +70,6 @@ export interface Match {
 }
 
 function currentSeasonCandidates(): string[] {
-  // TheSportsDB uses "YYYY-YYYY". Try current and previous seasons in case data is stale.
   const now = new Date();
   const y = now.getFullYear();
   const startsThisYear = now.getMonth() >= 6;
@@ -90,7 +92,21 @@ async function fetchTable(season: string): Promise<RawStanding[] | null> {
   }
 }
 
-async function fetchEvents(kind: "last" | "next"): Promise<RawEvent[]> {
+async function fetchSeasonEvents(season: string): Promise<RawEvent[]> {
+  try {
+    const res = await fetch(
+      `https://www.thesportsdb.com/api/v1/json/${KEY}/eventsseason.php?id=${LEAGUE_ID}&s=${season}`,
+      { next: { revalidate: 1800 } },
+    );
+    if (!res.ok) return [];
+    const json = (await res.json()) as { events?: RawEvent[] | null };
+    return json.events ?? [];
+  } catch {
+    return [];
+  }
+}
+
+async function fetchTeamEvents(kind: "last" | "next"): Promise<RawEvent[]> {
   try {
     const res = await fetch(
       `https://www.thesportsdb.com/api/v1/json/${KEY}/events${kind}.php?id=${BESIKTAS_ID}`,
@@ -104,8 +120,30 @@ async function fetchEvents(kind: "last" | "next"): Promise<RawEvent[]> {
   }
 }
 
+function eventTimestamp(e: RawEvent): number {
+  if (e.strTimestamp) {
+    const ms = Date.parse(e.strTimestamp);
+    if (!Number.isNaN(ms)) return ms;
+  }
+  if (e.dateEvent) {
+    const ms = Date.parse(`${e.dateEvent}T${e.strTime || "00:00:00"}Z`);
+    if (!Number.isNaN(ms)) return ms;
+  }
+  return 0;
+}
+
+const BESIKTAS_NAMES = ["beşiktaş", "besiktas"];
+function isBesiktas(e: RawEvent): boolean {
+  if (e.idHomeTeam === BESIKTAS_ID || e.idAwayTeam === BESIKTAS_ID) return true;
+  const h = (e.strHomeTeam ?? "").toLowerCase();
+  const a = (e.strAwayTeam ?? "").toLowerCase();
+  return BESIKTAS_NAMES.some((n) => h.includes(n) || a.includes(n));
+}
+
 function mapEvent(e: RawEvent): Match {
-  const date = e.strTimestamp || (e.dateEvent ? `${e.dateEvent}T${e.strTime ?? "00:00:00"}` : new Date().toISOString());
+  const date =
+    e.strTimestamp ||
+    (e.dateEvent ? `${e.dateEvent}T${e.strTime ?? "00:00:00"}Z` : new Date().toISOString());
   const hs = e.intHomeScore == null || e.intHomeScore === "" ? null : Number(e.intHomeScore);
   const as = e.intAwayScore == null || e.intAwayScore === "" ? null : Number(e.intAwayScore);
   return {
@@ -120,7 +158,28 @@ function mapEvent(e: RawEvent): Match {
   };
 }
 
+function pickLastNext(events: RawEvent[]): { last: Match | null; next: Match | null } {
+  const now = Date.now();
+  const beskEvents = events
+    .filter(isBesiktas)
+    .map((e) => ({ e, ts: eventTimestamp(e) }))
+    .filter((x) => x.ts > 0)
+    .sort((a, b) => a.ts - b.ts);
+
+  let last: RawEvent | null = null;
+  let next: RawEvent | null = null;
+  for (const { e, ts } of beskEvents) {
+    if (ts <= now) last = e;
+    else if (!next) next = e;
+  }
+  return {
+    last: last ? mapEvent(last) : null,
+    next: next ? mapEvent(next) : null,
+  };
+}
+
 export async function GET() {
+  // Standings
   let table: RawStanding[] | null = null;
   let usedSeason = "";
   for (const s of currentSeasonCandidates()) {
@@ -148,9 +207,27 @@ export async function GET() {
     form: r.strForm ?? null,
   }));
 
-  const [lastEvents, nextEvents] = await Promise.all([fetchEvents("last"), fetchEvents("next")]);
-  const last = lastEvents.length > 0 ? mapEvent(lastEvents[0]) : null;
-  const next = nextEvents.length > 0 ? mapEvent(nextEvents[0]) : null;
+  // Last / Next: try season events for both candidate seasons; fall back to
+  // the eventslast/eventsnext team endpoints if season events are empty.
+  let last: Match | null = null;
+  let next: Match | null = null;
+  for (const s of currentSeasonCandidates()) {
+    const events = await fetchSeasonEvents(s);
+    if (events.length > 0) {
+      const picked = pickLastNext(events);
+      last = last ?? picked.last;
+      next = next ?? picked.next;
+      if (last && next) break;
+    }
+  }
+  if (!last) {
+    const fallback = await fetchTeamEvents("last");
+    if (fallback.length > 0) last = mapEvent(fallback[0]);
+  }
+  if (!next) {
+    const fallback = await fetchTeamEvents("next");
+    if (fallback.length > 0) next = mapEvent(fallback[0]);
+  }
 
   return NextResponse.json({
     season: usedSeason,

@@ -4,6 +4,7 @@ import useSWR from "swr";
 import { useEffect, useMemo, useState } from "react";
 import { Plus, Trash2, TrendingUp, TrendingDown } from "lucide-react";
 import { Card } from "@/components/Card";
+import { Sparkline, ValueChart } from "@/components/Sparkline";
 
 interface Holding {
   symbol: string;
@@ -19,24 +20,47 @@ interface Quote {
   change: number | null;
   changePct: number | null;
   currency: string | null;
+  history: number[];
 }
 
-const STORAGE_KEY = "morning.portfolio.holdings.v1";
+interface ValuePoint {
+  date: string;
+  value: number;
+}
+
+const HOLDINGS_KEY = "morning.portfolio.holdings.v1";
+const HISTORY_KEY = "morning.portfolio.history.v1";
+const HISTORY_MAX = 90;
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<{ quotes: Quote[] }>);
 
-function load(): Holding[] {
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+    d.getDate(),
+  ).padStart(2, "0")}`;
+}
+
+function loadHoldings(): Holding[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    return JSON.parse(raw) as Holding[];
-  } catch {
-    return [];
-  }
+    const raw = localStorage.getItem(HOLDINGS_KEY);
+    return raw ? (JSON.parse(raw) as Holding[]) : [];
+  } catch { return []; }
 }
-function save(h: Holding[]) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(h)); } catch {}
+function saveHoldings(h: Holding[]) {
+  try { localStorage.setItem(HOLDINGS_KEY, JSON.stringify(h)); } catch {}
+}
+
+function loadHistory(): ValuePoint[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    return raw ? (JSON.parse(raw) as ValuePoint[]) : [];
+  } catch { return []; }
+}
+function saveHistory(h: ValuePoint[]) {
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(h)); } catch {}
 }
 
 function fmt(n: number | null, opts: Intl.NumberFormatOptions = {}) {
@@ -46,6 +70,7 @@ function fmt(n: number | null, opts: Intl.NumberFormatOptions = {}) {
 
 export function PortfolioCard() {
   const [holdings, setHoldings] = useState<Holding[]>([]);
+  const [history, setHistory] = useState<ValuePoint[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const [adding, setAdding] = useState(false);
   const [sym, setSym] = useState("");
@@ -53,7 +78,8 @@ export function PortfolioCard() {
   const [cost, setCost] = useState("");
 
   useEffect(() => {
-    setHoldings(load());
+    setHoldings(loadHoldings());
+    setHistory(loadHistory());
     setHydrated(true);
   }, []);
 
@@ -90,6 +116,18 @@ export function PortfolioCard() {
     };
   }, [rows]);
 
+  // Persist a daily snapshot whenever we have a fresh total value and today
+  // doesn't have an entry yet.
+  useEffect(() => {
+    if (!hydrated || totals.value == null) return;
+    const today = todayKey();
+    const last = history[history.length - 1];
+    if (last && last.date === today) return;
+    const next = [...history, { date: today, value: totals.value }].slice(-HISTORY_MAX);
+    setHistory(next);
+    saveHistory(next);
+  }, [hydrated, totals.value, history]);
+
   function addHolding(e: React.FormEvent) {
     e.preventDefault();
     const symbol = sym.trim().toUpperCase();
@@ -98,14 +136,14 @@ export function PortfolioCard() {
     const cb = cost ? Number(cost) : undefined;
     const next = [...holdings.filter((h) => h.symbol !== symbol), { symbol, shares: sh, costBasis: cb }];
     setHoldings(next);
-    save(next);
+    saveHoldings(next);
     setSym(""); setShares(""); setCost(""); setAdding(false);
   }
 
   function remove(symbol: string) {
     const next = holdings.filter((h) => h.symbol !== symbol);
     setHoldings(next);
-    save(next);
+    saveHoldings(next);
   }
 
   return (
@@ -204,9 +242,14 @@ export function PortfolioCard() {
             </div>
           </div>
 
+          <div className="mb-4 pb-3 border-b rule-soft">
+            <ValueChart data={history} height={110} />
+          </div>
+
           <div className="overflow-hidden">
-            <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-x-4 label pb-1 border-b rule-soft">
+            <div className="grid grid-cols-[1fr_72px_auto_auto_auto_auto] gap-x-4 label pb-1 border-b rule-soft items-center">
               <span>Holding</span>
+              <span className="text-right">30d</span>
               <span className="text-right">Price</span>
               <span className="text-right">Day</span>
               <span className="text-right">Value</span>
@@ -222,13 +265,16 @@ export function PortfolioCard() {
                 return (
                   <li
                     key={holding.symbol}
-                    className="group grid grid-cols-[1fr_auto_auto_auto_auto] gap-x-4 items-center py-2 text-sm"
+                    className="group grid grid-cols-[1fr_72px_auto_auto_auto_auto] gap-x-4 items-center py-2 text-sm"
                   >
                     <div className="min-w-0">
                       <div className="font-mono text-[12px] tabular-nums">{holding.symbol}</div>
                       <div className="text-[10px] text-muted truncate">
                         {quote?.name ?? "—"} · {fmt(holding.shares, { minimumFractionDigits: 0 })} sh
                       </div>
+                    </div>
+                    <div className="flex justify-end">
+                      <Sparkline data={quote?.history ?? []} width={72} height={24} />
                     </div>
                     <div className="font-mono text-right tabular-nums text-[12px]">
                       ${fmt(quote?.price ?? null)}
@@ -238,9 +284,7 @@ export function PortfolioCard() {
                         dayPL == null ? "text-muted" : up ? "text-emerald-600 dark:text-emerald-400" : "text-accent"
                       }`}
                     >
-                      {dayPct == null
-                        ? "—"
-                        : `${dayPct >= 0 ? "+" : ""}${dayPct.toFixed(2)}%`}
+                      {dayPct == null ? "—" : `${dayPct >= 0 ? "+" : ""}${dayPct.toFixed(2)}%`}
                     </div>
                     <div className="font-mono text-right tabular-nums text-[12px]">
                       ${fmt(value)}
@@ -258,7 +302,8 @@ export function PortfolioCard() {
             </ul>
           </div>
           <div className="font-mono text-[9px] uppercase tracking-wider text-muted mt-3">
-            Quotes via Yahoo · 15-min delayed · stored locally on this device
+            Manual entry · quotes via Yahoo (15-min delayed) · daily snapshots stored on this device.
+            Robinhood has no public API; SnapTrade OAuth would be the legit path to real-time sync.
           </div>
         </>
       )}

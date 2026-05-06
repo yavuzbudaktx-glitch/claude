@@ -1,16 +1,17 @@
+import { CURATED_VERSE_KEYS, type VerseKey } from "./quran-curated";
+
 export const TOTAL_AYAHS = 6236;
 
-// Deterministic per-day verse (UTC). Same verse for everyone, all day.
+// UTC day-of-year, mod the curated list size. Same verse all day, everyone.
+export function dailyVerseKey(date = new Date()): VerseKey {
+  const start = Date.UTC(date.getUTCFullYear(), 0, 0);
+  const today = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+  const dayOfYear = Math.floor((today - start) / 86400000);
+  return CURATED_VERSE_KEYS[dayOfYear % CURATED_VERSE_KEYS.length];
+}
+
 export function dailyAyahNumber(date = new Date()): number {
-  const seed = Number(
-    `${date.getUTCFullYear()}${String(date.getUTCMonth() + 1).padStart(2, "0")}${String(
-      date.getUTCDate(),
-    ).padStart(2, "0")}`,
-  );
-  let x = seed;
-  x = ((x * 1664525) + 1013904223) >>> 0;
-  x = ((x * 22695477) + 1) >>> 0;
-  return (x % TOTAL_AYAHS) + 1;
+  return dailyVerseKey(date).ayahNumber;
 }
 
 export interface AyahPayload {
@@ -32,8 +33,6 @@ interface RawEditionEntry {
   edition: { identifier: string; name: string; englishName: string };
 }
 
-// Sahih International is the standard modern English translation used in most
-// Muslim apps (DeenBuddy, Muslim Pro, etc). Pickthall/Yusuf Ali as fallbacks.
 const ENGLISH_EDITIONS = [
   { id: "en.sahih",    label: "Sahih International" },
   { id: "en.pickthall",label: "Pickthall"           },

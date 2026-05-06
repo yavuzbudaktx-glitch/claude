@@ -87,7 +87,7 @@ export function CalendarCard() {
         <p className="text-muted text-sm italic">Nothing scheduled. Enjoy the day.</p>
       )}
 
-      <ul className="divide-rule max-h-[260px] overflow-y-auto pr-1">
+      <ul className="divide-rule pr-1">
         {visible.map((e) => (
           <li key={e.id} className="group flex items-start gap-3 py-2.5">
             <div className="font-mono text-[10px] uppercase tracking-wider text-muted pt-1 w-12 shrink-0">

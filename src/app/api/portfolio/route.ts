@@ -12,9 +12,22 @@ interface YahooChartMeta {
   currency?: string;
   exchangeName?: string;
 }
+interface YahooQuoteIndicator {
+  close?: (number | null)[];
+}
+interface YahooAdjCloseIndicator {
+  adjclose?: (number | null)[];
+}
 interface YahooChartResp {
   chart?: {
-    result?: { meta?: YahooChartMeta }[];
+    result?: {
+      meta?: YahooChartMeta;
+      timestamp?: number[];
+      indicators?: {
+        quote?: YahooQuoteIndicator[];
+        adjclose?: YahooAdjCloseIndicator[];
+      };
+    }[];
     error?: { description?: string };
   };
 }
@@ -27,12 +40,13 @@ export interface PortfolioQuote {
   change: number | null;
   changePct: number | null;
   currency: string | null;
+  history: number[];
 }
 
 async function fetchOne(symbol: string): Promise<PortfolioQuote> {
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(
     symbol,
-  )}?interval=1d&range=2d`;
+  )}?interval=1d&range=1mo`;
   try {
     const res = await fetch(url, {
       headers: {
@@ -44,14 +58,22 @@ async function fetchOne(symbol: string): Promise<PortfolioQuote> {
     });
     if (!res.ok) throw new Error(`yahoo ${res.status}`);
     const json = (await res.json()) as YahooChartResp;
-    const meta = json.chart?.result?.[0]?.meta;
+    const result = json.chart?.result?.[0];
+    const meta = result?.meta;
     if (!meta) throw new Error("no meta");
+
+    const adj = result?.indicators?.adjclose?.[0]?.adjclose ?? [];
+    const close = result?.indicators?.quote?.[0]?.close ?? [];
+    const series = (adj.length ? adj : close).filter(
+      (n): n is number => typeof n === "number" && Number.isFinite(n),
+    );
+
     const price = meta.regularMarketPrice ?? null;
     const prev = meta.previousClose ?? meta.chartPreviousClose ?? null;
     const change = price != null && prev != null ? price - prev : null;
-    const changePct = price != null && prev != null && prev !== 0
-      ? ((price - prev) / prev) * 100
-      : null;
+    const changePct =
+      price != null && prev != null && prev !== 0 ? ((price - prev) / prev) * 100 : null;
+
     return {
       symbol: meta.symbol ?? symbol.toUpperCase(),
       name: meta.longName ?? meta.shortName ?? null,
@@ -60,6 +82,7 @@ async function fetchOne(symbol: string): Promise<PortfolioQuote> {
       change,
       changePct,
       currency: meta.currency ?? null,
+      history: series,
     };
   } catch {
     return {
@@ -70,6 +93,7 @@ async function fetchOne(symbol: string): Promise<PortfolioQuote> {
       change: null,
       changePct: null,
       currency: null,
+      history: [],
     };
   }
 }
