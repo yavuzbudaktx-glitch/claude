@@ -5,7 +5,7 @@ const KEY = "3";
 const LEAGUE_ID = "4339";
 const BESIKTAS_ID = "133611";
 
-export const revalidate = 1800; // 30 minutes
+export const revalidate = 900; // 15 minutes
 
 interface RawStanding {
   idStanding?: string;
@@ -39,6 +39,7 @@ interface RawEvent {
   strTimestamp?: string;
   strVenue?: string;
   strLeague?: string;
+  idLeague?: string;
   strStatus?: string;
 }
 
@@ -67,6 +68,7 @@ export interface Match {
   date: string;
   venue: string | null;
   league: string | null;
+  isFinished: boolean;
 }
 
 function currentSeasonCandidates(): string[] {
@@ -75,54 +77,57 @@ function currentSeasonCandidates(): string[] {
   const startsThisYear = now.getMonth() >= 6;
   const a = startsThisYear ? `${y}-${y + 1}` : `${y - 1}-${y}`;
   const b = startsThisYear ? `${y - 1}-${y}` : `${y - 2}-${y - 1}`;
-  return [a, b];
+  const c = startsThisYear ? `${y - 2}-${y - 1}` : `${y - 3}-${y - 2}`;
+  return [a, b, c];
 }
 
-async function fetchTable(season: string): Promise<RawStanding[] | null> {
+const UA =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36";
+
+async function jsonFetch<T>(url: string): Promise<T | null> {
   try {
-    const res = await fetch(
-      `https://www.thesportsdb.com/api/v1/json/${KEY}/lookuptable.php?l=${LEAGUE_ID}&s=${season}`,
-      { next: { revalidate: 1800 } },
-    );
+    const res = await fetch(url, {
+      headers: { "User-Agent": UA, Accept: "application/json" },
+      next: { revalidate: 900 },
+    });
     if (!res.ok) return null;
-    const json = (await res.json()) as { table?: RawStanding[] | null };
-    return json.table ?? null;
+    return (await res.json()) as T;
   } catch {
     return null;
   }
 }
 
-async function fetchSeasonEvents(season: string): Promise<RawEvent[]> {
-  try {
-    const res = await fetch(
-      `https://www.thesportsdb.com/api/v1/json/${KEY}/eventsseason.php?id=${LEAGUE_ID}&s=${season}`,
-      { next: { revalidate: 1800 } },
-    );
-    if (!res.ok) return [];
-    const json = (await res.json()) as { events?: RawEvent[] | null };
-    return json.events ?? [];
-  } catch {
-    return [];
-  }
+async function fetchTable(season: string): Promise<RawStanding[] | null> {
+  const data = await jsonFetch<{ table?: RawStanding[] | null }>(
+    `https://www.thesportsdb.com/api/v1/json/${KEY}/lookuptable.php?l=${LEAGUE_ID}&s=${season}`,
+  );
+  return data?.table ?? null;
 }
 
-async function fetchTeamEvents(kind: "last" | "next"): Promise<RawEvent[]> {
-  try {
-    const res = await fetch(
-      `https://www.thesportsdb.com/api/v1/json/${KEY}/events${kind}.php?id=${BESIKTAS_ID}`,
-      { next: { revalidate: 1800 } },
-    );
-    if (!res.ok) return [];
-    const json = (await res.json()) as { results?: RawEvent[] | null };
-    return json.results ?? [];
-  } catch {
-    return [];
-  }
+async function fetchSeasonEvents(season: string): Promise<RawEvent[]> {
+  const data = await jsonFetch<{ events?: RawEvent[] | null }>(
+    `https://www.thesportsdb.com/api/v1/json/${KEY}/eventsseason.php?id=${LEAGUE_ID}&s=${season}`,
+  );
+  return data?.events ?? [];
+}
+
+async function fetchTeamLast(): Promise<RawEvent[]> {
+  const data = await jsonFetch<{ results?: RawEvent[] | null }>(
+    `https://www.thesportsdb.com/api/v1/json/${KEY}/eventslast.php?id=${BESIKTAS_ID}`,
+  );
+  return data?.results ?? [];
+}
+
+async function fetchTeamNext(): Promise<RawEvent[]> {
+  const data = await jsonFetch<{ events?: RawEvent[] | null }>(
+    `https://www.thesportsdb.com/api/v1/json/${KEY}/eventsnext.php?id=${BESIKTAS_ID}`,
+  );
+  return data?.events ?? [];
 }
 
 function eventTimestamp(e: RawEvent): number {
   if (e.strTimestamp) {
-    const ms = Date.parse(e.strTimestamp);
+    const ms = Date.parse(e.strTimestamp.includes("Z") ? e.strTimestamp : e.strTimestamp + "Z");
     if (!Number.isNaN(ms)) return ms;
   }
   if (e.dateEvent) {
@@ -140,12 +145,22 @@ function isBesiktas(e: RawEvent): boolean {
   return BESIKTAS_NAMES.some((n) => h.includes(n) || a.includes(n));
 }
 
+function hasScore(e: RawEvent): boolean {
+  return (
+    e.intHomeScore != null && e.intHomeScore !== "" &&
+    e.intAwayScore != null && e.intAwayScore !== ""
+  );
+}
+
 function mapEvent(e: RawEvent): Match {
+  const ts = eventTimestamp(e);
   const date =
     e.strTimestamp ||
     (e.dateEvent ? `${e.dateEvent}T${e.strTime ?? "00:00:00"}Z` : new Date().toISOString());
   const hs = e.intHomeScore == null || e.intHomeScore === "" ? null : Number(e.intHomeScore);
   const as = e.intAwayScore == null || e.intAwayScore === "" ? null : Number(e.intAwayScore);
+  const finished =
+    Number.isFinite(hs as number) && Number.isFinite(as as number) && ts > 0 && ts <= Date.now();
   return {
     id: e.idEvent ?? "",
     home: e.strHomeTeam ?? "",
@@ -155,25 +170,50 @@ function mapEvent(e: RawEvent): Match {
     date,
     venue: e.strVenue ?? null,
     league: e.strLeague ?? null,
+    isFinished: !!finished,
   };
 }
 
-function pickLastNext(events: RawEvent[]): { last: Match | null; next: Match | null } {
+function dedupe(events: RawEvent[]): RawEvent[] {
+  const seen = new Set<string>();
+  const out: RawEvent[] = [];
+  for (const e of events) {
+    const k = e.idEvent ?? `${e.dateEvent}|${e.strHomeTeam}|${e.strAwayTeam}`;
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push(e);
+  }
+  return out;
+}
+
+function pickLastAndNext(events: RawEvent[]): { last: Match | null; next: Match | null } {
   const now = Date.now();
-  const beskEvents = events
+  const annotated = events
     .filter(isBesiktas)
     .map((e) => ({ e, ts: eventTimestamp(e) }))
     .filter((x) => x.ts > 0)
     .sort((a, b) => a.ts - b.ts);
 
-  let last: RawEvent | null = null;
-  let next: RawEvent | null = null;
-  for (const { e, ts } of beskEvents) {
-    if (ts <= now) last = e;
-    else if (!next) next = e;
+  // Last: most recent event with a final score; allow past-without-score as a fallback.
+  let lastWithScore: RawEvent | null = null;
+  let lastAny: RawEvent | null = null;
+  for (const { e, ts } of annotated) {
+    if (ts <= now) {
+      lastAny = e;
+      if (hasScore(e)) lastWithScore = e;
+    }
   }
+  // Next: earliest future event.
+  let next: RawEvent | null = null;
+  for (const { e, ts } of annotated) {
+    if (ts > now) {
+      next = e;
+      break;
+    }
+  }
+
   return {
-    last: last ? mapEvent(last) : null,
+    last: (lastWithScore ?? lastAny) ? mapEvent(lastWithScore ?? lastAny!) : null,
     next: next ? mapEvent(next) : null,
   };
 }
@@ -207,27 +247,15 @@ export async function GET() {
     form: r.strForm ?? null,
   }));
 
-  // Last / Next: try season events for both candidate seasons; fall back to
-  // the eventslast/eventsnext team endpoints if season events are empty.
-  let last: Match | null = null;
-  let next: Match | null = null;
-  for (const s of currentSeasonCandidates()) {
-    const events = await fetchSeasonEvents(s);
-    if (events.length > 0) {
-      const picked = pickLastNext(events);
-      last = last ?? picked.last;
-      next = next ?? picked.next;
-      if (last && next) break;
-    }
-  }
-  if (!last) {
-    const fallback = await fetchTeamEvents("last");
-    if (fallback.length > 0) last = mapEvent(fallback[0]);
-  }
-  if (!next) {
-    const fallback = await fetchTeamEvents("next");
-    if (fallback.length > 0) next = mapEvent(fallback[0]);
-  }
+  // Pull from every available source, dedupe, then compute last/next once.
+  // Order: team-specific endpoints first (highest signal), then league-season
+  // for each candidate season.
+  const [teamLast, teamNext] = await Promise.all([fetchTeamLast(), fetchTeamNext()]);
+  const seasonResults = await Promise.all(
+    currentSeasonCandidates().map((s) => fetchSeasonEvents(s)),
+  );
+  const allEvents = dedupe([...teamLast, ...teamNext, ...seasonResults.flat()]);
+  const { last, next } = pickLastAndNext(allEvents);
 
   return NextResponse.json({
     season: usedSeason,

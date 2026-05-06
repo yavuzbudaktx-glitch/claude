@@ -30,6 +30,7 @@ interface Match {
   date: string;
   venue: string | null;
   league: string | null;
+  isFinished?: boolean;
 }
 
 interface Resp {
@@ -48,55 +49,65 @@ function isBesiktas(name: string) {
 }
 
 function MatchLine({ match }: { match: Match }) {
-  const home = match.home;
-  const away = match.away;
-  const finished = match.homeScore != null && match.awayScore != null;
+  const finished = !!match.isFinished;
   let date: Date | null = null;
   try { date = parseISO(match.date); } catch {}
 
   return (
-    <div className="flex items-center gap-2 text-[12px]">
-      <span className={`flex-1 truncate text-right ${isBesiktas(home) ? "font-medium" : ""}`}>
-        {home}
-      </span>
-      <span className="font-mono tabular-nums px-2 py-0.5 border rule rounded">
-        {finished ? `${match.homeScore} – ${match.awayScore}` : "vs"}
-      </span>
-      <span className={`flex-1 truncate ${isBesiktas(away) ? "font-medium" : ""}`}>
-        {away}
-      </span>
-      <span className="font-mono text-[10px] uppercase tracking-wider text-muted shrink-0">
-        {date ? format(date, finished ? "MMM d" : "MMM d · ha") : ""}
-      </span>
+    <div>
+      <div className="flex items-center gap-2 text-[12px]">
+        <span className={`flex-1 truncate text-right ${isBesiktas(match.home) ? "font-medium" : ""}`}>
+          {match.home}
+        </span>
+        <span className="font-mono tabular-nums px-2 py-0.5 border rule rounded">
+          {finished ? `${match.homeScore} – ${match.awayScore}` : "vs"}
+        </span>
+        <span className={`flex-1 truncate ${isBesiktas(match.away) ? "font-medium" : ""}`}>
+          {match.away}
+        </span>
+      </div>
+      <div className="font-mono text-[10px] uppercase tracking-wider text-muted mt-0.5 flex items-center gap-1.5">
+        {date && <span>{format(date, finished ? "MMM d, yyyy" : "EEE MMM d · h:mm a")}</span>}
+        {match.league && (
+          <>
+            <span className="opacity-50">·</span>
+            <span className="truncate">{match.league}</span>
+          </>
+        )}
+      </div>
     </div>
   );
 }
 
 export function SuperLigCard() {
   const { data, error, isLoading } = useSWR<Resp>("/api/superlig", fetcher, {
-    refreshInterval: 1000 * 60 * 30,
+    refreshInterval: 1000 * 60 * 15,
+    keepPreviousData: true,
   });
 
   return (
     <Card num="06" title="Süper Lig">
-      {isLoading && <p className="text-muted text-sm">Loading…</p>}
-      {error && <p className="text-accent text-sm">Couldn&rsquo;t load standings.</p>}
+      {isLoading && !data && <p className="text-muted text-sm">Loading…</p>}
+      {error && !data && <p className="text-accent text-sm">Couldn&rsquo;t load standings.</p>}
 
       {data && (
         <>
           {(data.last || data.next) && (
-            <div className="space-y-1.5 mb-4 pb-3 border-b rule-soft">
+            <div className="space-y-2 mb-4 pb-3 border-b rule-soft">
               {data.last && (
                 <div>
-                  <div className="label mb-0.5">Last</div>
+                  <div className="label mb-0.5">Last match</div>
                   <MatchLine match={data.last} />
                 </div>
               )}
               {data.next && (
                 <div>
-                  <div className="label mb-0.5">Next</div>
+                  <div className="label mb-0.5">Next match</div>
                   <MatchLine match={data.next} />
                 </div>
+              )}
+              {!data.last && !data.next && (
+                <p className="text-muted text-xs italic">No fixtures available.</p>
               )}
             </div>
           )}
@@ -114,7 +125,7 @@ export function SuperLigCard() {
                 <span className="text-right">GD</span>
                 <span className="text-right">Pts</span>
               </div>
-              <ul className="divide-rule max-h-[260px] overflow-y-auto">
+              <ul className="divide-rule max-h-[520px] overflow-y-auto pr-1">
                 {data.standings.map((s) => {
                   const bk = isBesiktas(s.team);
                   return (

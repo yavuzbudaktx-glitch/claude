@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Plus, Trash2, TrendingUp, TrendingDown } from "lucide-react";
 import { Card } from "@/components/Card";
 import { Sparkline, ValueChart } from "@/components/Sparkline";
+import { MoversStrip } from "./MoversStrip";
 
 interface Holding {
   symbol: string;
@@ -87,7 +88,13 @@ export function PortfolioCard() {
   const { data, isLoading } = useSWR<{ quotes: Quote[] }>(
     hydrated && symbolsParam ? `/api/portfolio?symbols=${symbolsParam}` : null,
     fetcher,
-    { refreshInterval: 1000 * 60 },
+    {
+      refreshInterval: 10_000,
+      keepPreviousData: true,
+      errorRetryCount: 4,
+      errorRetryInterval: 5_000,
+      revalidateOnFocus: true,
+    },
   );
 
   const rows = useMemo(() => {
@@ -301,12 +308,10 @@ export function PortfolioCard() {
               })}
             </ul>
           </div>
-          <div className="font-mono text-[9px] uppercase tracking-wider text-muted mt-3">
-            Manual entry · quotes via Yahoo (15-min delayed) · daily snapshots stored on this device.
-            Robinhood has no public API; SnapTrade OAuth would be the legit path to real-time sync.
-          </div>
         </>
       )}
+
+      <MoversStrip />
     </Card>
   );
 }

@@ -26,8 +26,8 @@ export default async function Page() {
 
   return (
     <main className="max-w-[1480px] mx-auto px-5 md:px-10 pt-2 md:pt-3 pb-6 md:pb-8 space-y-5">
-      <section>
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-6 items-center">
+      <section className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-6 lg:min-h-[240px]">
+        <div className="flex flex-col justify-between gap-4">
           <Masthead
             name={name}
             actions={
@@ -37,18 +37,17 @@ export default async function Page() {
               </>
             }
           />
-          <div className="flex items-center justify-center lg:justify-end">
-            <AnalogClock />
-          </div>
+          <TodayInHistoryCard />
+        </div>
+        <div className="flex items-center justify-center lg:justify-end">
+          <AnalogClock />
         </div>
       </section>
 
-      <TodayInHistoryCard />
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         <CalendarCard />
-        <PrayersVerseCard />
         <NewsCard />
+        <PrayersVerseCard />
       </div>
 
       <EisenhowerMatrix userId={user.id} />

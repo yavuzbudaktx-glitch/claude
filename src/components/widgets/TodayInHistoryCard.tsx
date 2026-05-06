@@ -1,14 +1,12 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element */
 import useSWR from "swr";
-import { format } from "date-fns";
-import { useEffect, useState } from "react";
 
 interface TodayResp {
   date?: string;
   year?: number;
   text?: string;
+  kind?: "selected" | "events" | "births" | "deaths";
   thumbnail?: string | null;
   pageTitle?: string | null;
   link?: string | null;
@@ -20,9 +18,28 @@ const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<Toda
 export function TodayInHistoryCard() {
   const { data, isLoading } = useSWR<TodayResp>("/api/today-in-history", fetcher, {
     refreshInterval: 1000 * 60 * 60 * 6,
+    keepPreviousData: true,
   });
-  const [now, setNow] = useState<Date | null>(null);
-  useEffect(() => setNow(new Date()), []);
+
+  const inner = (() => {
+    if (isLoading && !data) return <span className="text-muted text-xs italic">Loading…</span>;
+    if (data?.error || !data?.year) return <span className="text-muted text-xs italic">No record for today.</span>;
+    return (
+      <>
+        <span className="font-serif text-2xl font-light tabular-nums leading-none text-accent shrink-0">
+          {data.year}
+        </span>
+        <span className="font-serif text-[14px] leading-snug min-w-0 line-clamp-2">
+          {data.text}
+        </span>
+      </>
+    );
+  })();
+
+  const labelKind =
+    data?.kind === "births" ? "Born today"
+    : data?.kind === "deaths" ? "Died today"
+    : "On this day";
 
   const Wrapper = (props: { children: React.ReactNode }) =>
     data?.link ? (
@@ -30,55 +47,22 @@ export function TodayInHistoryCard() {
         href={data.link}
         target="_blank"
         rel="noreferrer"
-        className="card-bare flex items-stretch gap-5 group hover:bg-hl/40 transition"
+        className="block group hover:opacity-90 transition"
       >
         {props.children}
       </a>
     ) : (
-      <div className="card-bare flex items-stretch gap-5">{props.children}</div>
+      <div>{props.children}</div>
     );
 
   return (
-    <section className="animate-fadeIn">
+    <div className="animate-fadeIn">
+      <div className="label mb-1.5">{labelKind}</div>
       <Wrapper>
-        <div className="flex items-baseline gap-2 shrink-0 self-center">
-          <span className="label">Today in History</span>
-          {now && (
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-              · {format(now, "MMM d")}
-            </span>
-          )}
-        </div>
-
-        <div className="flex-1 flex items-center gap-5 min-w-0">
-          {isLoading && <p className="text-muted text-sm italic">Loading…</p>}
-          {!isLoading && data?.error && (
-            <p className="text-muted text-sm italic">No record for today.</p>
-          )}
-          {data?.year && data.text && (
-            <>
-              <div className="font-serif text-4xl md:text-5xl font-light tabular-nums leading-none text-accent shrink-0">
-                {data.year}
-              </div>
-              <p className="font-serif text-[14px] md:text-[15px] leading-snug min-w-0 group-hover:underline underline-offset-2 decoration-from-font">
-                {data.text}
-              </p>
-              {data.thumbnail && (
-                <img
-                  src={data.thumbnail}
-                  alt={data.pageTitle ?? ""}
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
-                  className="h-16 w-24 object-cover rounded-md border rule shrink-0 hidden md:block"
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).style.display = "none";
-                  }}
-                />
-              )}
-            </>
-          )}
+        <div className="flex items-baseline gap-3 group-hover:underline group-hover:underline-offset-4 group-hover:decoration-[var(--rule)]">
+          {inner}
         </div>
       </Wrapper>
-    </section>
+    </div>
   );
 }
