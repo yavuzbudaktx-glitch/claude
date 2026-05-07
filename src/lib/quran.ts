@@ -45,7 +45,7 @@ export async function fetchDailyAyah(): Promise<AyahPayload> {
   const editionList = ["quran-uthmani", ...ENGLISH_EDITIONS.map((e) => e.id)].join(",");
   const res = await fetch(
     `https://api.alquran.cloud/v1/ayah/${n}/editions/${editionList}`,
-    { next: { revalidate: 86400 } },
+    { next: { revalidate: 3600 } },
   );
 
   if (!res.ok) throw new Error(`AlQuran ${res.status}`);

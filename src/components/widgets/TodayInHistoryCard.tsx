@@ -15,11 +15,25 @@ interface TodayResp {
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<TodayResp>);
 
+function utcDateKey() {
+  const d = new Date();
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(
+    d.getUTCDate(),
+  ).padStart(2, "0")}`;
+}
+
 export function TodayInHistoryCard() {
-  const { data, isLoading } = useSWR<TodayResp>("/api/today-in-history", fetcher, {
-    refreshInterval: 1000 * 60 * 60 * 6,
-    keepPreviousData: true,
-  });
+  // Embedding the UTC date in the SWR key makes the cache bucket flip
+  // automatically at midnight UTC, even if the user keeps the tab open.
+  const { data, isLoading } = useSWR<TodayResp>(
+    `/api/today-in-history?d=${utcDateKey()}`,
+    fetcher,
+    {
+      refreshInterval: 1000 * 60 * 30,
+      keepPreviousData: true,
+      revalidateOnFocus: true,
+    },
+  );
 
   const inner = (() => {
     if (isLoading && !data) return <span className="text-muted text-xs italic">Loading…</span>;

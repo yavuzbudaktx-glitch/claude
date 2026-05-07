@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { fetchDailyAyah } from "@/lib/quran";
 
-export const revalidate = 86400;
+// Run dynamically so the verse picker sees the current UTC day each request.
+// alquran.cloud responses are cached for an hour via the inner fetch.
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {

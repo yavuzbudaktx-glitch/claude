@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 
-export const revalidate = 86400;
+// Run on every request so the deterministic day-of-year pick lands on the
+// actual current UTC day. Upstream fetches stay cached for an hour to be
+// nice to Wikimedia.
+export const dynamic = "force-dynamic";
 
 interface RawPage {
   type?: string;
@@ -35,7 +38,7 @@ async function fetchFeed(kind: "selected" | "events" | "births" | "deaths", mm: 
       "User-Agent": "morning-dashboard/1.0 (personal use)",
       Accept: "application/json",
     },
-    next: { revalidate: 86400 },
+    next: { revalidate: 3600 },
   });
   if (!res.ok) return [] as RawEvent[];
   const json = (await res.json()) as RawResp;

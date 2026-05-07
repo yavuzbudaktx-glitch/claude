@@ -22,6 +22,7 @@ export function TaskItem({
   const today = due && isToday(due);
 
   const [open, setOpen] = useState(false);
+  const [stage, setStage] = useState<"visible" | "fading" | "gone">("visible");
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,8 +34,30 @@ export function TaskItem({
     return () => document.removeEventListener("mousedown", onClick);
   }, [open]);
 
+  // Once a task is complete, give the user a moment to see the change, then
+  // fade the row out and collapse it. The DB record stays — only the row hides.
+  useEffect(() => {
+    if (!isComplete) {
+      setStage("visible");
+      return;
+    }
+    const fadeAt = setTimeout(() => setStage("fading"), 2500);
+    const goneAt = setTimeout(() => setStage("gone"), 5000);
+    return () => {
+      clearTimeout(fadeAt);
+      clearTimeout(goneAt);
+    };
+  }, [isComplete]);
+
+  if (stage === "gone") return null;
+
   return (
-    <li className="group flex items-start gap-2.5 py-2">
+    <li
+      className={`group flex items-start gap-2.5 py-2 transition-all ease-out overflow-hidden ${
+        stage === "fading" ? "opacity-0 max-h-0 py-0" : "opacity-100 max-h-24"
+      }`}
+      style={{ transitionDuration: "2200ms" }}
+    >
       <div className="relative mt-0.5" ref={ref}>
         <button
           onClick={() => setOpen((v) => !v)}

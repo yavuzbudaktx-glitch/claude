@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 import useSWR from "swr";
-import { format, parseISO } from "date-fns";
+import { differenceInCalendarDays, format, parseISO } from "date-fns";
 import { Card } from "@/components/Card";
 
 interface Standing {
@@ -47,27 +47,63 @@ function isBesiktas(name: string) {
   return BESIKTAS_NAMES.some((n) => name.toLowerCase().includes(n));
 }
 
-function MatchLine({ match }: { match: Match }) {
-  const finished = !!match.isFinished;
+function MatchBox({
+  label,
+  match,
+  variant,
+}: {
+  label: string;
+  match: Match;
+  variant: "last" | "next";
+}) {
   let date: Date | null = null;
   try { date = parseISO(match.date); } catch {}
 
+  const finished = !!match.isFinished;
+  const daysUntil =
+    variant === "next" && date ? differenceInCalendarDays(date, new Date()) : null;
+  const dayLabel =
+    daysUntil == null
+      ? null
+      : daysUntil <= 0
+        ? "Today"
+        : daysUntil === 1
+          ? "Tomorrow"
+          : `In ${daysUntil} days`;
+
   return (
-    <div>
+    <div className="border rule rounded-md p-2.5">
+      <div className="flex items-baseline justify-between gap-2 mb-1.5">
+        <span className="label">{label}</span>
+        {variant === "next" && dayLabel && (
+          <span className="font-mono text-[10px] uppercase tracking-wider text-accent">
+            {dayLabel}
+          </span>
+        )}
+        {variant === "last" && match.league && (
+          <span className="font-mono text-[10px] uppercase tracking-wider text-muted truncate max-w-[60%]">
+            {match.league}
+          </span>
+        )}
+      </div>
       <div className="flex items-center gap-2 text-[12px]">
         <span className={`flex-1 truncate text-right ${isBesiktas(match.home) ? "font-medium" : ""}`}>
           {match.home}
         </span>
-        <span className="font-mono tabular-nums px-2 py-0.5 border rule rounded">
-          {finished ? `${match.homeScore} – ${match.awayScore}` : "vs"}
+        <span className="font-mono tabular-nums px-2 py-0.5 border rule rounded shrink-0">
+          {finished ? `${match.homeScore ?? "-"} – ${match.awayScore ?? "-"}` : "vs"}
         </span>
         <span className={`flex-1 truncate ${isBesiktas(match.away) ? "font-medium" : ""}`}>
           {match.away}
         </span>
       </div>
-      <div className="font-mono text-[10px] uppercase tracking-wider text-muted mt-0.5 flex items-center gap-1.5">
-        {date && <span>{format(date, finished ? "MMM d, yyyy" : "EEE MMM d · h:mm a")}</span>}
-        {match.league && (
+      <div className="font-mono text-[10px] uppercase tracking-wider text-muted mt-1 flex items-center gap-1.5">
+        {date && (
+          <span>
+            {format(date, finished ? "MMM d, yyyy" : "EEE MMM d · h:mm a")}
+          </span>
+        )}
+        {variant === "next" && match.league && (
           <>
             <span className="opacity-50">·</span>
             <span className="truncate">{match.league}</span>
@@ -91,32 +127,27 @@ export function SuperLigCard() {
 
       {data && (
         <>
-          {(data.last || data.next) && (
-            <div className="space-y-2 mb-4 pb-3 border-b rule-soft">
-              {data.last && (
-                <div>
-                  <div className="label mb-0.5">Last match</div>
-                  <MatchLine match={data.last} />
-                </div>
-              )}
-              {data.next && (
-                <div>
-                  <div className="label mb-0.5">Next match</div>
-                  <MatchLine match={data.next} />
-                </div>
-              )}
-              {!data.last && !data.next && (
-                <p className="text-muted text-xs italic">No fixtures available.</p>
-              )}
-            </div>
-          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+            {data.last ? (
+              <MatchBox label="Last match" match={data.last} variant="last" />
+            ) : (
+              <div className="border rule rounded-md p-2.5 text-muted text-xs italic flex items-center justify-center">
+                No recent match.
+              </div>
+            )}
+            {data.next ? (
+              <MatchBox label="Next match" match={data.next} variant="next" />
+            ) : (
+              <div className="border rule rounded-md p-2.5 text-muted text-xs italic flex items-center justify-center">
+                No fixture scheduled.
+              </div>
+            )}
+          </div>
 
           {data.standings.length === 0 ? (
-            <p className="text-muted text-xs italic">
-              Standings unavailable.
-            </p>
+            <p className="text-muted text-xs italic">Standings unavailable.</p>
           ) : (
-            <div className="overflow-hidden">
+            <div>
               <div className="grid grid-cols-[20px_1fr_28px_28px_28px] gap-x-2 label pb-1 border-b rule-soft">
                 <span>#</span>
                 <span>Team</span>
@@ -124,7 +155,7 @@ export function SuperLigCard() {
                 <span className="text-right">GD</span>
                 <span className="text-right">Pts</span>
               </div>
-              <ul className="divide-rule">
+              <ul className="divide-rule max-h-[280px] overflow-y-auto pr-1">
                 {data.standings.map((s) => {
                   const bk = isBesiktas(s.team);
                   return (

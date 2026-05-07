@@ -7,8 +7,21 @@ import type { AyahPayload } from "@/lib/quran";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
+function utcDateKey() {
+  const d = new Date();
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(
+    d.getUTCDate(),
+  ).padStart(2, "0")}`;
+}
+
 export function PrayersVerseCard() {
-  const { data: a, isLoading } = useSWR<AyahPayload>("/api/quran", fetcher);
+  // The UTC date in the SWR key flips the cache bucket at midnight UTC so the
+  // verse rotates without waiting for the refresh interval to land.
+  const { data: a, isLoading } = useSWR<AyahPayload>(
+    `/api/quran?d=${utcDateKey()}`,
+    fetcher,
+    { refreshInterval: 1000 * 60 * 30, revalidateOnFocus: true, keepPreviousData: true },
+  );
 
   return (
     <Card num="01" title="Prayer · Verse">

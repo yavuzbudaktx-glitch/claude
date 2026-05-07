@@ -2,8 +2,13 @@ import { NextResponse } from "next/server";
 
 // ESPN's unofficial public APIs (used by espn.com itself). Stable for years,
 // no auth, returns JSON. Turkish Süper Lig is "tur.1".
+//
+// For Beşiktaş last/next we sweep across every league they could plausibly
+// play in this season (Süper Lig, Turkish Cup, and the three UEFA club
+// competitions plus their qualifiers) so the displayed match actually
+// reflects their real schedule, not just the league fixture list.
 
-export const revalidate = 600; // 10 minutes
+export const revalidate = 600;
 
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36";
@@ -138,18 +143,35 @@ async function fetchStandings(): Promise<Standing[]> {
 function pad(n: number) { return String(n).padStart(2, "0"); }
 function ymd(d: Date) { return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}`; }
 
-async function fetchScoreboard(daysBack: number, daysForward: number): Promise<EspnEvent[]> {
+const LEAGUE_LABELS: Record<string, string> = {
+  "tur.1": "Süper Lig",
+  "tur.cup": "Türkiye Kupası",
+  "uefa.champions": "UCL",
+  "uefa.champions_qual": "UCL Qual.",
+  "uefa.europa": "Europa League",
+  "uefa.europa.qual": "Europa Qual.",
+  "uefa.europa_conf": "Conference",
+  "uefa.europa_conf.qual": "Conference Qual.",
+};
+
+async function fetchScoreboardForLeague(
+  leagueSlug: string,
+  daysBack: number,
+  daysForward: number,
+): Promise<{ event: EspnEvent; league: string }[]> {
   const now = new Date();
   const from = new Date(now.getTime() - daysBack * 86400000);
   const to = new Date(now.getTime() + daysForward * 86400000);
   const range = `${ymd(from)}-${ymd(to)}`;
   const json = await jsonFetch<EspnScoreboardResp>(
-    `https://site.api.espn.com/apis/site/v2/sports/soccer/tur.1/scoreboard?dates=${range}`,
+    `https://site.api.espn.com/apis/site/v2/sports/soccer/${leagueSlug}/scoreboard?dates=${range}`,
   );
-  return json?.events ?? [];
+  const events = json?.events ?? [];
+  const label = LEAGUE_LABELS[leagueSlug] ?? json?.leagues?.[0]?.name ?? leagueSlug;
+  return events.map((event) => ({ event, league: label }));
 }
 
-function eventToMatch(e: EspnEvent): Match | null {
+function eventToMatch(e: EspnEvent, league: string): Match | null {
   const c = e.competitions?.[0];
   if (!c) return null;
   const home = c.competitors?.find((x) => x.homeAway === "home");
@@ -167,17 +189,39 @@ function eventToMatch(e: EspnEvent): Match | null {
     awayScore: Number.isFinite(awayScore as number) ? (awayScore as number) : null,
     date: e.date ?? new Date().toISOString(),
     venue: c.venue?.fullName ?? null,
-    league: "Süper Lig",
+    league,
     isFinished: !!c.status?.type?.completed,
   };
 }
 
+const BESIKTAS_LEAGUES = [
+  "tur.1",
+  "tur.cup",
+  "uefa.champions",
+  "uefa.champions_qual",
+  "uefa.europa",
+  "uefa.europa.qual",
+  "uefa.europa_conf",
+  "uefa.europa_conf.qual",
+];
+
 async function fetchBesiktasMatches(): Promise<{ last: Match | null; next: Match | null }> {
-  const events = await fetchScoreboard(120, 120);
-  const matches = events
-    .map(eventToMatch)
-    .filter((m): m is Match => !!m && (isBesiktas(m.home) || isBesiktas(m.away)))
-    .sort((a, b) => +new Date(a.date) - +new Date(b.date));
+  const buckets = await Promise.all(
+    BESIKTAS_LEAGUES.map((slug) => fetchScoreboardForLeague(slug, 90, 180)),
+  );
+  const seen = new Set<string>();
+  const matches: Match[] = [];
+  for (const bucket of buckets) {
+    for (const { event, league } of bucket) {
+      const m = eventToMatch(event, league);
+      if (!m) continue;
+      if (!isBesiktas(m.home) && !isBesiktas(m.away)) continue;
+      if (m.id && seen.has(m.id)) continue;
+      if (m.id) seen.add(m.id);
+      matches.push(m);
+    }
+  }
+  matches.sort((a, b) => +new Date(a.date) - +new Date(b.date));
 
   const now = Date.now();
   let last: Match | null = null;
@@ -193,7 +237,6 @@ async function fetchBesiktasMatches(): Promise<{ last: Match | null; next: Match
   return { last, next };
 }
 
-// TheSportsDB legacy fallback (kept in case ESPN's response shape ever shifts)
 async function fallbackStandingsFromSportsDb(): Promise<Standing[]> {
   const seasons = (() => {
     const now = new Date();

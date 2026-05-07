@@ -6,7 +6,7 @@ import { PrayersVerseCard } from "@/components/widgets/PrayersVerseCard";
 import { CalendarCard } from "@/components/widgets/CalendarCard";
 import { NewsCard } from "@/components/widgets/NewsCard";
 import { EisenhowerMatrix } from "@/components/widgets/EisenhowerMatrix";
-import { PortfolioCard } from "@/components/widgets/PortfolioCard";
+import { MoversCard } from "@/components/widgets/MoversCard";
 import { SuperLigCard } from "@/components/widgets/SuperLigCard";
 import { TodayInHistoryCard } from "@/components/widgets/TodayInHistoryCard";
 import { SignOutButton } from "@/components/SignOutButton";
@@ -54,7 +54,7 @@ export default async function Page() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <div className="lg:col-span-2">
-          <PortfolioCard userId={user.id} />
+          <MoversCard />
         </div>
         <SuperLigCard />
       </div>
