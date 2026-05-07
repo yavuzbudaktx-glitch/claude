@@ -14,10 +14,16 @@ interface Mover {
   type: "stock" | "crypto";
 }
 
+interface Buckets {
+  gainers: Mover[];
+  losers: Mover[];
+}
+
 interface Resp {
-  stocks: Mover[];
-  crypto: Mover[];
+  stocks: Buckets;
+  crypto: Buckets;
   asOf: number;
+  fmpConfigured: boolean;
 }
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<Resp>);
@@ -30,7 +36,7 @@ function fmtTime(ms: number | null | undefined) {
 function MoverRow({ m }: { m: Mover }) {
   const up = m.changePct >= 0;
   return (
-    <li className="grid grid-cols-[56px_1fr_88px_64px] items-center gap-2 py-1.5 text-sm">
+    <li className="grid grid-cols-[56px_1fr_88px_72px] items-center gap-2 py-1.5 text-sm">
       <span className={`font-mono text-[12px] tabular-nums ${m.type === "crypto" ? "italic" : ""}`}>
         {m.symbol}
       </span>
@@ -51,14 +57,24 @@ function MoverRow({ m }: { m: Mover }) {
   );
 }
 
-function Section({ label, items, empty }: { label: string; items: Mover[]; empty: string }) {
+function Section({
+  label,
+  meta,
+  items,
+  empty,
+}: {
+  label: string;
+  meta?: string;
+  items: Mover[];
+  empty: string;
+}) {
   return (
     <div>
       <div className="flex items-baseline gap-2 mb-1">
         <div className="label">{label}</div>
-        <div className="font-mono text-[10px] uppercase tracking-wider text-muted">
-          1-mo chart · 24h move
-        </div>
+        {meta && (
+          <div className="font-mono text-[10px] uppercase tracking-wider text-muted">{meta}</div>
+        )}
       </div>
       {items.length === 0 ? (
         <p className="text-muted text-xs italic py-2">{empty}</p>
@@ -75,7 +91,7 @@ function Section({ label, items, empty }: { label: string; items: Mover[]; empty
 
 export function MoversCard() {
   const { data, isLoading } = useSWR<Resp>("/api/movers", fetcher, {
-    refreshInterval: 1000 * 60 * 60,
+    refreshInterval: 1000 * 60 * 10,
     keepPreviousData: true,
     revalidateOnFocus: true,
   });
@@ -94,20 +110,44 @@ export function MoversCard() {
     >
       {isLoading && !data && <p className="text-muted text-sm">Loading…</p>}
 
+      {data && data.fmpConfigured === false && (
+        <p className="text-accent text-xs italic mb-3">
+          Stocks unavailable: <span className="font-mono">FMP_API_KEY</span> not set in env.
+        </p>
+      )}
+
       {data && (
         <div className="space-y-4">
-          <Section label="Stocks · Top 5" items={data.stocks} empty="No stock data right now." />
-          <div className="border-t rule-soft -mx-5" />
           <Section
-            label="Crypto · Top 5 · Robinhood"
-            items={data.crypto}
-            empty="No crypto data right now."
+            label="Stocks · Top Gainers"
+            meta="1-mo chart · 24h move"
+            items={data.stocks.gainers}
+            empty="No data."
+          />
+          <Section
+            label="Stocks · Top Losers"
+            items={data.stocks.losers}
+            empty="No data."
+          />
+
+          <div className="border-t rule-soft -mx-5" />
+
+          <Section
+            label="Crypto · Top Gainers · Robinhood"
+            meta="1-mo chart · 24h move"
+            items={data.crypto.gainers}
+            empty="No data."
+          />
+          <Section
+            label="Crypto · Top Losers · Robinhood"
+            items={data.crypto.losers}
+            empty="No data."
           />
         </div>
       )}
 
       <div className="font-mono text-[9px] uppercase tracking-wider text-muted mt-3">
-        Sources · Yahoo Finance · CoinGecko
+        Sources · FMP · CoinGecko · Stooq
       </div>
     </Card>
   );

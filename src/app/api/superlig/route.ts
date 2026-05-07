@@ -2,23 +2,27 @@ import { NextResponse } from "next/server";
 
 // Süper Lig standings: ESPN's public tur.1 endpoint.
 //
-// Beşiktaş last/next match: we try several sources in order and take the
+// Beşiktaş last/next match: we try several sources in parallel and take the
 // first one that yields *both* a last and a next match:
-//   1. ESPN's /teams/{id}/schedule across every league Beşiktaş could be
-//      playing in (Süper Lig, Turkish Cup, the three UEFA cups + qualifiers).
-//      This is the single most reliable source: it's per-team and per-league
-//      so we get exactly Beşiktaş's full schedule without date-range guessing.
+//   1. ESPN's /teams/{id}/schedule per league (the most reliable source —
+//      per-team, per-league, no date-range guessing).
 //   2. SofaScore /team/3050/events/last|next, which covers every competition.
-//   3. ESPN's date-ranged scoreboard sweep as a final fallback.
-// Beşiktaş ESPN team ID = 767, SofaScore team ID = 3050.
+//      Often Cloudflare-blocked from cloud egress IPs but worth a try.
+//   3. TheSportsDB v1 eventslast/eventsnext (free, no auth, cloud-friendly).
+//   4. ESPN's date-ranged scoreboard sweep as a final fallback.
+//
+// Beşiktaş ESPN team id = 1895 (was 767 before — 767 is a different team
+// entirely, which is why the ESPN schedule path returned nothing for so
+// long). SofaScore id = 3050.
 
 export const dynamic = "force-dynamic";
 
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36";
 
-const ESPN_BESIKTAS_ID = 767;
+const ESPN_BESIKTAS_ID = 1895;
 const SOFASCORE_BESIKTAS_ID = 3050;
+const SPORTSDB_BESIKTAS_ID = "133611";
 
 const BESIKTAS_NAMES = ["beşiktaş", "besiktas"];
 function isBesiktas(s: string | undefined | null): boolean {
@@ -314,7 +318,73 @@ async function fetchFromSofaScore(): Promise<{ last: Match | null; next: Match |
   return { last, next };
 }
 
-// ----- Source 3: ESPN scoreboard date-range sweep (last-resort) ------------
+// ----- Source 3: TheSportsDB v1 (free, no auth) -----------------------------
+
+interface SportsDbEvent {
+  idEvent?: string;
+  strHomeTeam?: string;
+  strAwayTeam?: string;
+  intHomeScore?: string | null;
+  intAwayScore?: string | null;
+  dateEvent?: string;
+  strTime?: string;
+  strTimestamp?: string | null;
+  strLeague?: string;
+  strVenue?: string | null;
+  strStatus?: string | null;
+}
+interface SportsDbResp { events?: SportsDbEvent[] | null; results?: SportsDbEvent[] | null }
+
+function sportsDbToMatch(e: SportsDbEvent, treatAsFinished: boolean): Match | null {
+  const home = e.strHomeTeam;
+  const away = e.strAwayTeam;
+  if (!home || !away) return null;
+  const iso = e.strTimestamp
+    ? new Date(`${e.strTimestamp}Z`).toISOString()
+    : e.dateEvent
+      ? new Date(`${e.dateEvent}T${e.strTime ?? "00:00:00"}Z`).toISOString()
+      : new Date().toISOString();
+  const hs = e.intHomeScore != null && e.intHomeScore !== "" ? Number(e.intHomeScore) : null;
+  const as = e.intAwayScore != null && e.intAwayScore !== "" ? Number(e.intAwayScore) : null;
+  return {
+    id: e.idEvent ?? "",
+    home,
+    away,
+    homeScore: Number.isFinite(hs as number) ? (hs as number) : null,
+    awayScore: Number.isFinite(as as number) ? (as as number) : null,
+    date: iso,
+    venue: e.strVenue ?? null,
+    league: e.strLeague ?? null,
+    isFinished: treatAsFinished,
+  };
+}
+
+async function fetchFromSportsDb(): Promise<{ last: Match | null; next: Match | null }> {
+  const [lastResp, nextResp] = await Promise.all([
+    jsonFetch<SportsDbResp>(
+      `https://www.thesportsdb.com/api/v1/json/3/eventslast.php?id=${SPORTSDB_BESIKTAS_ID}`,
+    ),
+    jsonFetch<SportsDbResp>(
+      `https://www.thesportsdb.com/api/v1/json/3/eventsnext.php?id=${SPORTSDB_BESIKTAS_ID}`,
+    ),
+  ]);
+
+  const lastList = (lastResp?.results ?? lastResp?.events ?? [])
+    .map((e) => sportsDbToMatch(e, true))
+    .filter((m): m is Match => !!m)
+    .sort((a, b) => +new Date(a.date) - +new Date(b.date));
+  const nextList = (nextResp?.events ?? [])
+    .map((e) => sportsDbToMatch(e, false))
+    .filter((m): m is Match => !!m)
+    .sort((a, b) => +new Date(a.date) - +new Date(b.date));
+
+  const now = Date.now();
+  const last = [...lastList].reverse().find((m) => +new Date(m.date) <= now) ?? lastList[lastList.length - 1] ?? null;
+  const next = nextList.find((m) => +new Date(m.date) > now) ?? nextList[0] ?? null;
+  return { last, next };
+}
+
+// ----- Source 4: ESPN scoreboard date-range sweep (last-resort) ------------
 
 function pad(n: number) { return String(n).padStart(2, "0"); }
 function ymd(d: Date) { return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}`; }
@@ -362,23 +432,25 @@ async function fetchEspnScoreboardSweep(): Promise<{ last: Match | null; next: M
 async function fetchBesiktasMatches(): Promise<{
   last: Match | null;
   next: Match | null;
-  source: "espn-team" | "sofascore" | "espn-sweep" | "mixed" | "none";
+  source: "espn-team" | "sofascore" | "sportsdb" | "espn-sweep" | "mixed" | "none";
 }> {
-  // Run all three sources in parallel; pick whichever can fill both slots.
-  // If no single source has both, prefer ESPN team-schedule's data and only
-  // fall back to others for the missing half.
-  const [espnTeam, sofa, espnSweep] = await Promise.all([
+  // Run all four sources in parallel; pick whichever single source fills both
+  // slots, in priority order. If no single source has both, stitch from
+  // whichever has data for each slot using the same priority.
+  const [espnTeam, sofa, sportsDb, espnSweep] = await Promise.all([
     fetchFromEspnTeamSchedule(),
     fetchFromSofaScore(),
+    fetchFromSportsDb(),
     fetchEspnScoreboardSweep(),
   ]);
 
   if (espnTeam.last && espnTeam.next) return { ...espnTeam, source: "espn-team" };
   if (sofa.last && sofa.next) return { ...sofa, source: "sofascore" };
+  if (sportsDb.last && sportsDb.next) return { ...sportsDb, source: "sportsdb" };
   if (espnSweep.last && espnSweep.next) return { ...espnSweep, source: "espn-sweep" };
 
-  const last = espnTeam.last ?? sofa.last ?? espnSweep.last;
-  const next = espnTeam.next ?? sofa.next ?? espnSweep.next;
+  const last = espnTeam.last ?? sofa.last ?? sportsDb.last ?? espnSweep.last;
+  const next = espnTeam.next ?? sofa.next ?? sportsDb.next ?? espnSweep.next;
   if (!last && !next) return { last: null, next: null, source: "none" };
   return { last, next, source: "mixed" };
 }

@@ -5,21 +5,9 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/Card";
 import { PrayerChecks } from "./PrayerChecks";
 import type { AyahPayload } from "@/lib/quran";
+import { localDateKey, msUntilLocalMidnight } from "@/lib/local-date";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
-
-function localDateKey() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-    d.getDate(),
-  ).padStart(2, "0")}`;
-}
-
-function msUntilLocalMidnight() {
-  const now = new Date();
-  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 1);
-  return tomorrow.getTime() - now.getTime();
-}
 
 export function PrayersVerseCard() {
   // Cache key is the user's *local* date so the verse rotates at local

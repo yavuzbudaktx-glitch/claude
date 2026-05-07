@@ -2,8 +2,10 @@
 
 /* eslint-disable @next/next/no-img-element */
 import useSWR from "swr";
+import { useEffect, useState } from "react";
 import { differenceInCalendarDays, format, parseISO } from "date-fns";
 import { Card } from "@/components/Card";
+import { localDateKey, msUntilLocalMidnight } from "@/lib/local-date";
 
 interface Standing {
   rank: number;
@@ -115,10 +117,24 @@ function MatchBox({
 }
 
 export function SuperLigCard() {
-  const { data, error, isLoading } = useSWR<Resp>("/api/superlig", fetcher, {
-    refreshInterval: 1000 * 60 * 15,
-    keepPreviousData: true,
-  });
+  // Same local-midnight key trick used by TodayInHistory + verse so the
+  // standings forcibly re-fetch at the user's local 00:00 in addition to the
+  // hourly refresh interval.
+  const [dateKey, setDateKey] = useState(() => localDateKey());
+  useEffect(() => {
+    const t = setTimeout(() => setDateKey(localDateKey()), msUntilLocalMidnight());
+    return () => clearTimeout(t);
+  }, [dateKey]);
+
+  const { data, error, isLoading } = useSWR<Resp>(
+    `/api/superlig?d=${dateKey}`,
+    fetcher,
+    {
+      refreshInterval: 1000 * 60 * 60,
+      keepPreviousData: true,
+      revalidateOnFocus: true,
+    },
+  );
 
   return (
     <Card num="06" title="Süper Lig">
@@ -147,21 +163,21 @@ export function SuperLigCard() {
           {data.standings.length === 0 ? (
             <p className="text-muted text-xs italic">Standings unavailable.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <div className="grid grid-cols-[20px_minmax(160px,1fr)_28px_28px_28px] gap-x-2 label pb-1 border-b rule-soft min-w-[280px]">
+            <div className="overflow-hidden">
+              <div className="grid grid-cols-[20px_1fr_28px_28px_28px] gap-x-2 label pb-1 border-b rule-soft">
                 <span>#</span>
                 <span>Team</span>
                 <span className="text-right">P</span>
                 <span className="text-right">GD</span>
                 <span className="text-right">Pts</span>
               </div>
-              <ul className="divide-rule">
+              <ul className="divide-rule max-h-[280px] overflow-y-auto pr-1">
                 {data.standings.map((s) => {
                   const bk = isBesiktas(s.team);
                   return (
                     <li
                       key={s.teamId || s.team}
-                      className={`grid grid-cols-[20px_minmax(160px,1fr)_28px_28px_28px] gap-x-2 items-center py-1.5 text-[12px] min-w-[280px] ${
+                      className={`grid grid-cols-[20px_1fr_28px_28px_28px] gap-x-2 items-center py-1.5 text-[12px] ${
                         bk ? "bg-hl -mx-2 px-2 rounded" : ""
                       }`}
                     >

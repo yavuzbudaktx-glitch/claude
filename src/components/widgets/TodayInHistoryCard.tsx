@@ -2,6 +2,7 @@
 
 import useSWR from "swr";
 import { useEffect, useState } from "react";
+import { localDateKey, msUntilLocalMidnight } from "@/lib/local-date";
 
 interface TodayResp {
   date?: string;
@@ -16,20 +17,6 @@ interface TodayResp {
 }
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<TodayResp>);
-
-function localDateKey() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-    d.getDate(),
-  ).padStart(2, "0")}`;
-}
-
-// Returns ms until the next local midnight + 1s of jitter.
-function msUntilLocalMidnight() {
-  const now = new Date();
-  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 1);
-  return tomorrow.getTime() - now.getTime();
-}
 
 export function TodayInHistoryCard() {
   // The SWR cache key is the user's *local* date so the content bucket flips
