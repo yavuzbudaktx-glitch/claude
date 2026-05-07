@@ -3,11 +3,13 @@ export function Sparkline({
   width = 80,
   height = 24,
   className = "",
+  up,
 }: {
   data: number[];
   width?: number;
   height?: number;
   className?: string;
+  up?: boolean;
 }) {
   if (!data || data.length < 2) {
     return <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} className={className} aria-hidden />;
@@ -25,8 +27,8 @@ export function Sparkline({
   });
   const path = `M ${points.join(" L ")}`;
 
-  const up = data[data.length - 1] >= data[0];
-  const stroke = up ? "var(--up, #16a34a)" : "var(--accent)";
+  const isUp = up ?? data[data.length - 1] >= data[0];
+  const stroke = isUp ? "var(--up, #16a34a)" : "var(--accent)";
 
   return (
     <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} className={className} aria-hidden>

@@ -43,7 +43,7 @@ function MoverRow({ m }: { m: Mover }) {
       </span>
       <span className="text-[11px] text-muted truncate">{m.name}</span>
       <div className="flex justify-end">
-        <Sparkline data={m.history} width={88} height={22} />
+        <Sparkline data={m.history} width={88} height={22} up={up} />
       </div>
       <span
         className={`font-mono tabular-nums text-[12px] text-right inline-flex items-center justify-end gap-0.5 ${
@@ -158,7 +158,7 @@ export function MoversCard() {
       )}
 
       <div className="font-mono text-[9px] uppercase tracking-wider text-muted mt-3">
-        Sources · FMP · CoinGecko · Stooq
+        Sources · FMP · CoinGecko
       </div>
     </Card>
   );

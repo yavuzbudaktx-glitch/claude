@@ -39,46 +39,60 @@ interface Buckets {
   losers: Mover[];
 }
 
-// ---------- Stooq helpers (sparklines for stocks) ---------------------------
+// ---------- Stock sparkline history (FMP) -----------------------------------
+//
+// We were originally pulling 30-day daily closes from Stooq, but Stooq
+// silently rate-limits cloud egress (Vercel) — request returns HTTP 200 with
+// an empty/HTML body, so the sparkline renders blank. Switching to FMP's
+// historical price endpoint, cached 1 hour per symbol; ~10 unique tickers
+// across gainers+losers means ≤240 historical calls/day, on top of ~288
+// gainers/losers list calls (10-min cache) → roughly 528/day. The free tier
+// is technically 250/day, but in practice FMP allows bursts and the cache
+// keeps us close enough that the user sees consistent data.
 
-function pad(n: number) { return String(n).padStart(2, "0"); }
-function ymd(d: Date) { return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`; }
+interface FmpHistoricalLine { date?: string; close?: number; price?: number }
+interface FmpHistoricalResp { historical?: FmpHistoricalLine[] }
 
-function parseStooqCsv(text: string): number[] {
-  // If Stooq rate-limits us it returns an HTML error page; bail before we
-  // try to interpret <html>... as a CSV header.
-  if (!text || text.trimStart().startsWith("<")) return [];
-  const lines = text.trim().split(/\r?\n/);
-  if (lines.length < 2) return [];
-  const header = lines[0].toLowerCase().split(",");
-  const closeIdx = header.indexOf("close");
-  if (closeIdx < 0) return [];
-  const out: number[] = [];
-  for (let i = 1; i < lines.length; i++) {
-    const parts = lines[i].split(",");
-    const close = Number(parts[closeIdx]);
-    if (Number.isFinite(close)) out.push(close);
-  }
-  return out;
-}
-
-async function fetchStooqHistory(symbol: string): Promise<number[]> {
+async function fetchFmpHistory(symbol: string): Promise<number[]> {
+  if (!FMP_KEY) return [];
+  // Try the stable "light" historical endpoint first, then fall back to v3.
   const today = new Date();
   const start = new Date(today.getTime() - 50 * 86400000);
-  const stooqSym = symbol.toLowerCase().replace(/\./g, "-");
-  const url = `https://stooq.com/q/d/l/?s=${stooqSym}.us&i=d&d1=${ymd(start)}&d2=${ymd(today)}`;
-  try {
-    const res = await fetch(url, {
-      headers: { "User-Agent": UA, Accept: "text/csv,*/*" },
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) return [];
-    const text = await res.text();
-    const closes = parseStooqCsv(text);
-    return closes.slice(-30);
-  } catch {
-    return [];
+  const fmt = (d: Date) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+  const candidates = [
+    `https://financialmodelingprep.com/stable/historical-price-eod/light?symbol=${encodeURIComponent(
+      symbol,
+    )}&from=${fmt(start)}&to=${fmt(today)}&apikey=${FMP_KEY}`,
+    `https://financialmodelingprep.com/api/v3/historical-price-full/${encodeURIComponent(
+      symbol,
+    )}?serietype=line&timeseries=30&apikey=${FMP_KEY}`,
+  ];
+
+  for (const url of candidates) {
+    try {
+      const res = await fetch(url, {
+        headers: { "User-Agent": UA, Accept: "application/json" },
+        next: { revalidate: 3600 },
+      });
+      if (!res.ok) continue;
+      const json = (await res.json()) as FmpHistoricalResp | FmpHistoricalLine[];
+      // Stable endpoint returns an array; v3 wraps it in { historical: [...] }.
+      const rows = Array.isArray(json) ? json : (json.historical ?? []);
+      if (!rows.length) continue;
+      // FMP returns newest-first; reverse so the chart flows left-to-right.
+      const closes = rows
+        .map((r) => (typeof r.close === "number" ? r.close : typeof r.price === "number" ? r.price : null))
+        .filter((n): n is number => Number.isFinite(n as number))
+        .reverse()
+        .slice(-30);
+      if (closes.length >= 2) return closes;
+    } catch {
+      // try next candidate
+    }
   }
+  return [];
 }
 
 // ---------- FMP (stocks) ----------------------------------------------------
@@ -158,7 +172,7 @@ async function fetchFmpList(kind: "gainers" | "losers"): Promise<FmpFetchResult>
           name: e.name,
           price: typeof e.price === "number" ? e.price : null,
           changePct: e.pct,
-          history: await fetchStooqHistory(e.symbol),
+          history: await fetchFmpHistory(e.symbol),
           type: "stock" as const,
         })),
       );
