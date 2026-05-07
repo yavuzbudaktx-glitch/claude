@@ -24,6 +24,7 @@ interface Resp {
   crypto: Buckets;
   asOf: number;
   fmpConfigured: boolean;
+  fmpError?: string | null;
 }
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<Resp>);
@@ -115,6 +116,16 @@ export function MoversCard() {
           Stocks unavailable: <span className="font-mono">FMP_API_KEY</span> not set in env.
         </p>
       )}
+
+      {data &&
+        data.fmpConfigured &&
+        data.fmpError &&
+        data.stocks.gainers.length === 0 &&
+        data.stocks.losers.length === 0 && (
+          <p className="text-accent text-xs italic mb-3">
+            FMP error: <span className="font-mono">{data.fmpError}</span>
+          </p>
+        )}
 
       {data && (
         <div className="space-y-4">

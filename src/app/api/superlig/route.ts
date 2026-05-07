@@ -432,27 +432,61 @@ async function fetchEspnScoreboardSweep(): Promise<{ last: Match | null; next: M
 async function fetchBesiktasMatches(): Promise<{
   last: Match | null;
   next: Match | null;
-  source: "espn-team" | "sofascore" | "sportsdb" | "espn-sweep" | "mixed" | "none";
+  source: string;
 }> {
-  // Run all four sources in parallel; pick whichever single source fills both
-  // slots, in priority order. If no single source has both, stitch from
-  // whichever has data for each slot using the same priority.
-  const [espnTeam, sofa, sportsDb, espnSweep] = await Promise.all([
-    fetchFromEspnTeamSchedule(),
-    fetchFromSofaScore(),
-    fetchFromSportsDb(),
-    fetchEspnScoreboardSweep(),
+  // Run all four sources in parallel and merge: pick the most-recent past
+  // match across sources for `last`, and the soonest future match across
+  // sources for `next`. Source-priority alone causes stale ESPN data to win
+  // even when SofaScore / TheSportsDB have a fresher match.
+  const sources = await Promise.all([
+    fetchFromEspnTeamSchedule().then((r) => ({ name: "espn-team", ...r })),
+    fetchFromSofaScore().then((r) => ({ name: "sofascore", ...r })),
+    fetchFromSportsDb().then((r) => ({ name: "sportsdb", ...r })),
+    fetchEspnScoreboardSweep().then((r) => ({ name: "espn-sweep", ...r })),
   ]);
 
-  if (espnTeam.last && espnTeam.next) return { ...espnTeam, source: "espn-team" };
-  if (sofa.last && sofa.next) return { ...sofa, source: "sofascore" };
-  if (sportsDb.last && sportsDb.next) return { ...sportsDb, source: "sportsdb" };
-  if (espnSweep.last && espnSweep.next) return { ...espnSweep, source: "espn-sweep" };
+  const now = Date.now();
+  let last: Match | null = null;
+  let lastSrc = "";
+  let next: Match | null = null;
+  let nextSrc = "";
 
-  const last = espnTeam.last ?? sofa.last ?? sportsDb.last ?? espnSweep.last;
-  const next = espnTeam.next ?? sofa.next ?? sportsDb.next ?? espnSweep.next;
+  for (const s of sources) {
+    if (s.last) {
+      const t = +new Date(s.last.date);
+      if (t <= now && (!last || t > +new Date(last.date))) {
+        last = s.last;
+        lastSrc = s.name;
+      }
+    }
+    if (s.next) {
+      const t = +new Date(s.next.date);
+      if (t > now && (!next || t < +new Date(next.date))) {
+        next = s.next;
+        nextSrc = s.name;
+      }
+    }
+  }
+
+  // Fallback: if a slot is still empty, accept anything any source returned
+  // (e.g. SofaScore's "last" containing a fixture flagged as not-finished but
+  // already in the past).
+  if (!last) {
+    for (const s of sources) {
+      if (s.last) { last = s.last; lastSrc = s.name; break; }
+    }
+  }
+  if (!next) {
+    for (const s of sources) {
+      if (s.next) { next = s.next; nextSrc = s.name; break; }
+    }
+  }
+
   if (!last && !next) return { last: null, next: null, source: "none" };
-  return { last, next, source: "mixed" };
+  const source = lastSrc && nextSrc && lastSrc !== nextSrc
+    ? `${lastSrc}+${nextSrc}`
+    : lastSrc || nextSrc;
+  return { last, next, source };
 }
 
 async function fallbackStandingsFromSportsDb(): Promise<Standing[]> {

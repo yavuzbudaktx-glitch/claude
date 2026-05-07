@@ -171,14 +171,14 @@ export function SuperLigCard() {
                 <span className="text-right">GD</span>
                 <span className="text-right">Pts</span>
               </div>
-              <ul className="divide-rule max-h-[280px] overflow-y-auto pr-1">
+              <ul className="divide-rule">
                 {data.standings.map((s) => {
                   const bk = isBesiktas(s.team);
                   return (
                     <li
                       key={s.teamId || s.team}
                       className={`grid grid-cols-[20px_1fr_28px_28px_28px] gap-x-2 items-center py-1.5 text-[12px] ${
-                        bk ? "bg-hl -mx-2 px-2 rounded" : ""
+                        bk ? "bg-hl rounded px-1" : ""
                       }`}
                     >
                       <span className={`font-mono tabular-nums text-right ${bk ? "text-accent font-bold" : "text-muted"}`}>

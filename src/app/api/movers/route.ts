@@ -89,52 +89,96 @@ interface FmpMover {
   change?: number;
   price?: number;
   changesPercentage?: number;
+  // The "stable" API uses changePercentage instead of changesPercentage.
+  changePercentage?: number;
 }
 
-async function fetchFmpList(kind: "gainers" | "losers"): Promise<Mover[]> {
-  if (!FMP_KEY) return [];
-  const url = `https://financialmodelingprep.com/api/v3/stock_market/${kind}?apikey=${FMP_KEY}`;
-  let entries: FmpMover[] = [];
-  try {
-    const res = await fetch(url, {
-      headers: { "User-Agent": UA, Accept: "application/json" },
-      next: { revalidate: 600 },
-    });
-    if (!res.ok) return [];
-    const json = (await res.json()) as FmpMover[] | { "Error Message"?: string };
-    if (!Array.isArray(json)) return [];
-    entries = json;
-  } catch {
-    return [];
+interface FmpFetchResult {
+  movers: Mover[];
+  error: string | null;
+}
+
+// FMP migrated their endpoints to a new "/stable/biggest-{gainers,losers}"
+// path; the legacy "/api/v3/stock_market/{gainers,losers}" path now returns
+// a "Premium endpoint" error for newer free-tier keys. Try stable first,
+// fall back to v3 for older accounts.
+async function fetchFmpList(kind: "gainers" | "losers"): Promise<FmpFetchResult> {
+  if (!FMP_KEY) return { movers: [], error: "FMP_API_KEY not set" };
+
+  const candidates = [
+    { tag: "stable", url: `https://financialmodelingprep.com/stable/biggest-${kind}?apikey=${FMP_KEY}` },
+    { tag: "v3", url: `https://financialmodelingprep.com/api/v3/stock_market/${kind}?apikey=${FMP_KEY}` },
+  ];
+
+  let lastError = "no candidate succeeded";
+  for (const { tag, url } of candidates) {
+    try {
+      const res = await fetch(url, {
+        headers: { "User-Agent": UA, Accept: "application/json" },
+        next: { revalidate: 600 },
+      });
+      if (!res.ok) {
+        lastError = `${tag}: HTTP ${res.status}`;
+        continue;
+      }
+      const json = (await res.json()) as
+        | FmpMover[]
+        | { "Error Message"?: string; message?: string; error?: string };
+      if (!Array.isArray(json)) {
+        const msg =
+          (json as { "Error Message"?: string })["Error Message"] ??
+          (json as { message?: string }).message ??
+          (json as { error?: string }).error ??
+          "non-array response";
+        lastError = `${tag}: ${msg}`;
+        continue;
+      }
+      if (json.length === 0) {
+        lastError = `${tag}: empty list`;
+        continue;
+      }
+
+      const valid = json
+        .map((e) => {
+          const pct =
+            typeof e.changesPercentage === "number"
+              ? e.changesPercentage
+              : typeof e.changePercentage === "number"
+                ? e.changePercentage
+                : null;
+          if (typeof e.symbol !== "string" || pct === null) return null;
+          return { symbol: e.symbol, name: e.name ?? e.symbol, price: e.price, pct };
+        })
+        .filter((e): e is { symbol: string; name: string; price: number | undefined; pct: number } => !!e)
+        .slice(0, 5);
+
+      const withHistory = await Promise.all(
+        valid.map(async (e) => ({
+          symbol: e.symbol,
+          name: e.name,
+          price: typeof e.price === "number" ? e.price : null,
+          changePct: e.pct,
+          history: await fetchStooqHistory(e.symbol),
+          type: "stock" as const,
+        })),
+      );
+      return { movers: withHistory, error: null };
+    } catch (err) {
+      lastError = `${tag}: ${err instanceof Error ? err.message : "fetch failed"}`;
+    }
   }
-
-  const valid = entries
-    .filter(
-      (e): e is Required<Pick<FmpMover, "symbol" | "changesPercentage">> & FmpMover =>
-        typeof e.symbol === "string" && typeof e.changesPercentage === "number",
-    )
-    .slice(0, 5);
-
-  // Pull 30-day sparklines in parallel from Stooq.
-  const withHistory = await Promise.all(
-    valid.map(async (e) => ({
-      symbol: e.symbol,
-      name: e.name ?? e.symbol,
-      price: typeof e.price === "number" ? e.price : null,
-      changePct: e.changesPercentage,
-      history: await fetchStooqHistory(e.symbol),
-      type: "stock" as const,
-    })),
-  );
-  return withHistory;
+  return { movers: [], error: lastError };
 }
 
-async function buildStockBuckets(): Promise<Buckets> {
+async function buildStockBuckets(): Promise<{ buckets: Buckets; error: string | null }> {
   const [gainers, losers] = await Promise.all([
     fetchFmpList("gainers"),
     fetchFmpList("losers"),
   ]);
-  return { gainers, losers };
+  return {
+    buckets: { gainers: gainers.movers, losers: losers.movers },
+    error: gainers.error ?? losers.error,
+  };
 }
 
 // ---------- CoinGecko (crypto) ---------------------------------------------
@@ -265,11 +309,12 @@ async function buildCryptoBuckets(): Promise<Buckets> {
 }
 
 export async function GET() {
-  const [stocks, crypto] = await Promise.all([buildStockBuckets(), buildCryptoBuckets()]);
+  const [stockResult, crypto] = await Promise.all([buildStockBuckets(), buildCryptoBuckets()]);
   return NextResponse.json({
-    stocks,
+    stocks: stockResult.buckets,
     crypto,
     asOf: Date.now(),
     fmpConfigured: !!FMP_KEY,
+    fmpError: stockResult.error,
   });
 }
