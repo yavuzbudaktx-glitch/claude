@@ -75,7 +75,7 @@ function Section({ label, items, empty }: { label: string; items: Mover[]; empty
 
 export function MoversCard() {
   const { data, isLoading } = useSWR<Resp>("/api/movers", fetcher, {
-    refreshInterval: 1000 * 60 * 2,
+    refreshInterval: 1000 * 60 * 60,
     keepPreviousData: true,
     revalidateOnFocus: true,
   });

@@ -147,8 +147,8 @@ export function SuperLigCard() {
           {data.standings.length === 0 ? (
             <p className="text-muted text-xs italic">Standings unavailable.</p>
           ) : (
-            <div>
-              <div className="grid grid-cols-[20px_1fr_28px_28px_28px] gap-x-2 label pb-1 border-b rule-soft">
+            <div className="overflow-x-auto">
+              <div className="grid grid-cols-[20px_minmax(160px,1fr)_28px_28px_28px] gap-x-2 label pb-1 border-b rule-soft min-w-[280px]">
                 <span>#</span>
                 <span>Team</span>
                 <span className="text-right">P</span>
@@ -161,7 +161,7 @@ export function SuperLigCard() {
                   return (
                     <li
                       key={s.teamId || s.team}
-                      className={`grid grid-cols-[20px_1fr_28px_28px_28px] gap-x-2 items-center py-1.5 text-[12px] ${
+                      className={`grid grid-cols-[20px_minmax(160px,1fr)_28px_28px_28px] gap-x-2 items-center py-1.5 text-[12px] min-w-[280px] ${
                         bk ? "bg-hl -mx-2 px-2 rounded" : ""
                       }`}
                     >

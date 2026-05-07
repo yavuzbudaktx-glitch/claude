@@ -1,22 +1,23 @@
 import { NextResponse } from "next/server";
 
-// Top movers feed used by MoversCard. Both lists are recomputed on every
-// request (force-dynamic) so the user never sees stale prices, but each
-// upstream HTTP call has a tight inner cache so we don't hammer Yahoo /
-// CoinGecko.
+// Top movers feed used by MoversCard.
 //
-//   Stocks:  scan a hand-curated universe of ~80 high-volume US tickers via
-//            Yahoo Finance v8 chart (which still works without a crumb cookie,
-//            unlike the predefined screener). Compute today's % change from
-//            meta.regularMarketPrice / meta.previousClose, sort by abs %, take
-//            top 5. The same chart response gives us the 30-day daily-close
-//            sparkline for free.
+// Stocks: Yahoo Finance now gates its convenient batch / screener endpoints
+//   behind a crumb cookie that doesn't survive serverless cold-starts, so we
+//   read prices straight from Stooq's free CSV API instead. For each ticker
+//   in a curated 80-name universe we pull a 35-day daily-close window in one
+//   small CSV, compute today's % from the last two closes, sort by absolute
+//   move, and take the top 5. The same 30 closes are reused as the sparkline
+//   data so we don't need a second round of HTTP calls.
 //
-//   Crypto:  CoinGecko /coins/markets (top 250 by market cap), filtered against
-//            an allowlist of Robinhood-tradeable coin IDs, sorted by |24h%|,
-//            top 5 with 30-day market_chart series for sparklines.
+// Crypto: CoinGecko top-by-mcap markets list, filtered against an allowlist
+//   of Robinhood-tradeable coin IDs, sorted by |24h%|, top 5 with their
+//   30-day market_chart series.
+//
+// User explicitly said hourly refresh is acceptable for this card, so the
+// route is cached for an hour at the upstream layer.
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36";
@@ -30,28 +31,10 @@ export interface Mover {
   type: "stock" | "crypto";
 }
 
-interface YahooChartResp {
-  chart?: {
-    result?: {
-      meta?: {
-        regularMarketPrice?: number;
-        previousClose?: number;
-        chartPreviousClose?: number;
-        shortName?: string;
-        longName?: string;
-      };
-      indicators?: {
-        quote?: { close?: (number | null)[] }[];
-        adjclose?: { adjclose?: (number | null)[] }[];
-      };
-    }[];
-  };
-}
-
 // Hand-curated universe: large-cap tech, megacaps, money-center banks,
 // energy, biotech, semis, EVs, and a slice of high-beta / momentum names so
 // the "top movers" list reliably has something interesting on most days.
-const STOCK_UNIVERSE: { symbol: string; name: string }[] = [
+const STOCK_UNIVERSE: { symbol: string; name: string; stooq?: string }[] = [
   { symbol: "AAPL", name: "Apple" },
   { symbol: "MSFT", name: "Microsoft" },
   { symbol: "NVDA", name: "NVIDIA" },
@@ -59,7 +42,6 @@ const STOCK_UNIVERSE: { symbol: string; name: string }[] = [
   { symbol: "AMZN", name: "Amazon" },
   { symbol: "META", name: "Meta Platforms" },
   { symbol: "TSLA", name: "Tesla" },
-  { symbol: "BRK-B", name: "Berkshire Hathaway" },
   { symbol: "AVGO", name: "Broadcom" },
   { symbol: "JPM", name: "JPMorgan Chase" },
   { symbol: "V", name: "Visa" },
@@ -148,42 +130,64 @@ interface StockSnapshot {
   history: number[];
 }
 
+function pad(n: number) { return String(n).padStart(2, "0"); }
+function ymd(d: Date) { return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`; }
+
+// Stooq returns daily candles as a CSV. Columns are typically:
+//   Date,Open,High,Low,Close,Volume
+// Sorted ascending; the most recent close is the last row.
+function parseStooqCsv(text: string): { date: string; close: number }[] {
+  const lines = text.trim().split(/\r?\n/);
+  if (lines.length < 2) return [];
+  const header = lines[0].toLowerCase().split(",");
+  const dateIdx = header.indexOf("date");
+  const closeIdx = header.indexOf("close");
+  if (dateIdx < 0 || closeIdx < 0) return [];
+  const out: { date: string; close: number }[] = [];
+  for (let i = 1; i < lines.length; i++) {
+    const parts = lines[i].split(",");
+    if (parts.length <= Math.max(dateIdx, closeIdx)) continue;
+    const close = Number(parts[closeIdx]);
+    const date = parts[dateIdx];
+    if (!Number.isFinite(close) || !date) continue;
+    out.push({ date, close });
+  }
+  return out;
+}
+
 async function fetchStockSnapshot(
   symbol: string,
   name: string,
 ): Promise<StockSnapshot | null> {
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(
-    symbol,
-  )}?interval=1d&range=1mo`;
+  const today = new Date();
+  const start = new Date(today.getTime() - 50 * 86400000);
+  const stooqSym = symbol.toLowerCase().replace(/\./g, "-");
+  const url = `https://stooq.com/q/d/l/?s=${stooqSym}.us&i=d&d1=${ymd(start)}&d2=${ymd(today)}`;
   try {
     const res = await fetch(url, {
-      headers: { "User-Agent": UA, Accept: "application/json" },
-      next: { revalidate: 60 },
+      headers: { "User-Agent": UA, Accept: "text/csv,*/*" },
+      next: { revalidate: 3600 },
     });
     if (!res.ok) return null;
-    const json = (await res.json()) as YahooChartResp;
-    const result = json.chart?.result?.[0];
-    if (!result?.meta) return null;
-
-    const price = result.meta.regularMarketPrice;
-    const prev = result.meta.previousClose ?? result.meta.chartPreviousClose;
-    if (typeof price !== "number" || typeof prev !== "number" || prev === 0) {
-      return null;
-    }
-    const changePct = ((price - prev) / prev) * 100;
-
-    const adj = result.indicators?.adjclose?.[0]?.adjclose;
-    const close = result.indicators?.quote?.[0]?.close;
-    const series = adj && adj.some((v) => typeof v === "number") ? adj : close;
-    const history = (series ?? []).filter((v): v is number => typeof v === "number");
-
-    return { symbol, name, price, changePct, history };
+    const text = await res.text();
+    if (!text || /^no data/i.test(text)) return null;
+    const rows = parseStooqCsv(text);
+    if (rows.length < 2) return null;
+    const recent = rows.slice(-30);
+    const history = recent.map((r) => r.close);
+    const last = rows[rows.length - 1].close;
+    const prev = rows[rows.length - 2].close;
+    if (prev === 0) return null;
+    const changePct = ((last - prev) / prev) * 100;
+    if (!Number.isFinite(changePct)) return null;
+    return { symbol, name, price: last, changePct, history };
   } catch {
     return null;
   }
 }
 
 async function buildStockMovers(): Promise<Mover[]> {
+  // 80 small CSV requests, parallel. Stooq is generous with concurrency.
   const snapshots = await Promise.all(
     STOCK_UNIVERSE.map(({ symbol, name }) => fetchStockSnapshot(symbol, name)),
   );
@@ -210,7 +214,6 @@ interface CoinGeckoChart {
   prices?: [number, number][];
 }
 
-// CoinGecko IDs of cryptos currently tradeable on Robinhood (US).
 const RH_TRADEABLE_COIN_IDS = new Set<string>([
   "bitcoin",
   "ethereum",
@@ -271,7 +274,7 @@ async function fetchCryptoMarkets(): Promise<CoinGeckoCoin[]> {
   try {
     const res = await fetch(url, {
       headers: { Accept: "application/json" },
-      next: { revalidate: 60 },
+      next: { revalidate: 3600 },
     });
     if (!res.ok) return [];
     return (await res.json()) as CoinGeckoCoin[];
@@ -287,7 +290,7 @@ async function fetchCoinGeckoHistory(id: string): Promise<number[]> {
   try {
     const res = await fetch(url, {
       headers: { Accept: "application/json" },
-      next: { revalidate: 1800 },
+      next: { revalidate: 3600 },
     });
     if (!res.ok) return [];
     const json = (await res.json()) as CoinGeckoChart;

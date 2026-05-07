@@ -1,16 +1,24 @@
 import { NextResponse } from "next/server";
 
-// Süper Lig standings: ESPN's public tur.1 endpoint (used by espn.com itself).
-// Beşiktaş last/next match: SofaScore as primary because it consistently has
-//   the most up-to-date fixtures across every competition Beşiktaş plays in
-//   (Süper Lig + Turkish Cup + UEFA). Falls back to ESPN's per-league
-//   scoreboards if SofaScore returns nothing (e.g. if it's IP-blocked from
-//   our region).
+// Süper Lig standings: ESPN's public tur.1 endpoint.
+//
+// Beşiktaş last/next match: we try several sources in order and take the
+// first one that yields *both* a last and a next match:
+//   1. ESPN's /teams/{id}/schedule across every league Beşiktaş could be
+//      playing in (Süper Lig, Turkish Cup, the three UEFA cups + qualifiers).
+//      This is the single most reliable source: it's per-team and per-league
+//      so we get exactly Beşiktaş's full schedule without date-range guessing.
+//   2. SofaScore /team/3050/events/last|next, which covers every competition.
+//   3. ESPN's date-ranged scoreboard sweep as a final fallback.
+// Beşiktaş ESPN team ID = 767, SofaScore team ID = 3050.
 
 export const dynamic = "force-dynamic";
 
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36";
+
+const ESPN_BESIKTAS_ID = 767;
+const SOFASCORE_BESIKTAS_ID = 3050;
 
 const BESIKTAS_NAMES = ["beşiktaş", "besiktas"];
 function isBesiktas(s: string | undefined | null): boolean {
@@ -57,10 +65,13 @@ interface EspnStandingsResp {
   children?: { name?: string; standings?: { entries?: EspnStandingEntry[] } }[];
 }
 
+interface EspnScoreLike { value?: number; displayValue?: string }
 interface EspnCompetitor {
   homeAway?: "home" | "away";
   team?: { displayName?: string; shortDisplayName?: string; abbreviation?: string };
-  score?: string;
+  // ESPN's score field shape varies by endpoint: scoreboard returns a string,
+  // schedule sometimes returns an object {value,displayValue}.
+  score?: string | number | EspnScoreLike;
 }
 interface EspnCompetition {
   competitors?: EspnCompetitor[];
@@ -73,6 +84,7 @@ interface EspnEvent {
   name?: string;
   shortName?: string;
   competitions?: EspnCompetition[];
+  league?: { name?: string; abbreviation?: string };
 }
 interface EspnScoreboardResp {
   events?: EspnEvent[];
@@ -84,13 +96,29 @@ async function jsonFetch<T>(url: string, headers: Record<string, string> = {}): 
   try {
     const res = await fetch(url, {
       headers: { "User-Agent": UA, Accept: "application/json", ...headers },
-      next: { revalidate: 300 },
+      next: { revalidate: 600 },
     });
     if (!res.ok) return null;
     return (await res.json()) as T;
   } catch {
     return null;
   }
+}
+
+function parseEspnScore(s: EspnCompetitor["score"]): number | null {
+  if (s == null) return null;
+  if (typeof s === "number") return Number.isFinite(s) ? s : null;
+  if (typeof s === "string") {
+    if (s === "") return null;
+    const n = Number(s);
+    return Number.isFinite(n) ? n : null;
+  }
+  if (typeof s.value === "number") return s.value;
+  if (typeof s.displayValue === "string") {
+    const n = Number(s.displayValue);
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
 }
 
 function statBy(stats: EspnStandingStat[] | undefined, name: string): number {
@@ -139,83 +167,6 @@ async function fetchStandings(): Promise<Standing[]> {
     .sort((a, b) => a.rank - b.rank);
 }
 
-// ----- SofaScore -------------------------------------------------------------
-
-interface SofaTournament { name?: string; uniqueTournament?: { name?: string } }
-interface SofaTeam { name?: string; shortName?: string }
-interface SofaScore { current?: number; display?: number }
-interface SofaEvent {
-  id?: number;
-  tournament?: SofaTournament;
-  homeTeam?: SofaTeam;
-  awayTeam?: SofaTeam;
-  homeScore?: SofaScore;
-  awayScore?: SofaScore;
-  startTimestamp?: number;
-  status?: { type?: string; description?: string };
-}
-interface SofaResp { events?: SofaEvent[] }
-
-const SOFASCORE_BESIKTAS_ID = 3050; // sofascore.com/team/football/besiktas/3050
-
-function sofaToMatch(e: SofaEvent): Match | null {
-  const home = e.homeTeam?.name ?? e.homeTeam?.shortName;
-  const away = e.awayTeam?.name ?? e.awayTeam?.shortName;
-  if (!home || !away || !e.startTimestamp) return null;
-  const date = new Date(e.startTimestamp * 1000).toISOString();
-  const finished = e.status?.type === "finished";
-  const hs = e.homeScore?.current ?? e.homeScore?.display ?? null;
-  const as = e.awayScore?.current ?? e.awayScore?.display ?? null;
-  return {
-    id: String(e.id ?? ""),
-    home,
-    away,
-    homeScore: typeof hs === "number" ? hs : null,
-    awayScore: typeof as === "number" ? as : null,
-    date,
-    venue: null,
-    league: e.tournament?.uniqueTournament?.name ?? e.tournament?.name ?? null,
-    isFinished: finished,
-  };
-}
-
-async function fetchSofaLastNext(): Promise<{ last: Match | null; next: Match | null }> {
-  const headers = {
-    Accept: "*/*",
-    "Accept-Language": "en-US,en;q=0.9",
-    Referer: "https://www.sofascore.com/",
-    Origin: "https://www.sofascore.com",
-  };
-  const [lastResp, nextResp] = await Promise.all([
-    jsonFetch<SofaResp>(
-      `https://api.sofascore.com/api/v1/team/${SOFASCORE_BESIKTAS_ID}/events/last/0`,
-      headers,
-    ),
-    jsonFetch<SofaResp>(
-      `https://api.sofascore.com/api/v1/team/${SOFASCORE_BESIKTAS_ID}/events/next/0`,
-      headers,
-    ),
-  ]);
-
-  // SofaScore returns "last" oldest-to-newest; the most recent finished match
-  // is at the end. "next" returns soonest-first.
-  const lastEvents = (lastResp?.events ?? []).map(sofaToMatch).filter((m): m is Match => !!m);
-  const nextEvents = (nextResp?.events ?? []).map(sofaToMatch).filter((m): m is Match => !!m);
-
-  lastEvents.sort((a, b) => +new Date(a.date) - +new Date(b.date));
-  nextEvents.sort((a, b) => +new Date(a.date) - +new Date(b.date));
-
-  const now = Date.now();
-  const last = [...lastEvents].reverse().find((m) => +new Date(m.date) <= now || m.isFinished) ?? null;
-  const next = nextEvents.find((m) => +new Date(m.date) > now && !m.isFinished) ?? null;
-  return { last, next };
-}
-
-// ----- ESPN fallback ---------------------------------------------------------
-
-function pad(n: number) { return String(n).padStart(2, "0"); }
-function ymd(d: Date) { return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}`; }
-
 const LEAGUE_LABELS: Record<string, string> = {
   "tur.1": "Süper Lig",
   "tur.cup": "Türkiye Kupası",
@@ -227,22 +178,7 @@ const LEAGUE_LABELS: Record<string, string> = {
   "uefa.europa_conf.qual": "Conference Qual.",
 };
 
-async function fetchScoreboardForLeague(
-  leagueSlug: string,
-  daysBack: number,
-  daysForward: number,
-): Promise<{ event: EspnEvent; league: string }[]> {
-  const now = new Date();
-  const from = new Date(now.getTime() - daysBack * 86400000);
-  const to = new Date(now.getTime() + daysForward * 86400000);
-  const range = `${ymd(from)}-${ymd(to)}`;
-  const json = await jsonFetch<EspnScoreboardResp>(
-    `https://site.api.espn.com/apis/site/v2/sports/soccer/${leagueSlug}/scoreboard?dates=${range}`,
-  );
-  const events = json?.events ?? [];
-  const label = LEAGUE_LABELS[leagueSlug] ?? json?.leagues?.[0]?.name ?? leagueSlug;
-  return events.map((event) => ({ event, league: label }));
-}
+const BESIKTAS_LEAGUES = Object.keys(LEAGUE_LABELS);
 
 function eventToMatch(e: EspnEvent, league: string): Match | null {
   const c = e.competitions?.[0];
@@ -250,16 +186,12 @@ function eventToMatch(e: EspnEvent, league: string): Match | null {
   const home = c.competitors?.find((x) => x.homeAway === "home");
   const away = c.competitors?.find((x) => x.homeAway === "away");
   if (!home?.team || !away?.team) return null;
-  const homeName = home.team.displayName ?? home.team.shortDisplayName ?? "";
-  const awayName = away.team.displayName ?? away.team.shortDisplayName ?? "";
-  const homeScore = home.score != null && home.score !== "" ? Number(home.score) : null;
-  const awayScore = away.score != null && away.score !== "" ? Number(away.score) : null;
   return {
     id: e.id ?? "",
-    home: homeName,
-    away: awayName,
-    homeScore: Number.isFinite(homeScore as number) ? (homeScore as number) : null,
-    awayScore: Number.isFinite(awayScore as number) ? (awayScore as number) : null,
+    home: home.team.displayName ?? home.team.shortDisplayName ?? "",
+    away: away.team.displayName ?? away.team.shortDisplayName ?? "",
+    homeScore: parseEspnScore(home.score),
+    awayScore: parseEspnScore(away.score),
     date: e.date ?? new Date().toISOString(),
     venue: c.venue?.fullName ?? null,
     league,
@@ -267,27 +199,32 @@ function eventToMatch(e: EspnEvent, league: string): Match | null {
   };
 }
 
-const BESIKTAS_LEAGUES = [
-  "tur.1",
-  "tur.cup",
-  "uefa.champions",
-  "uefa.champions_qual",
-  "uefa.europa",
-  "uefa.europa.qual",
-  "uefa.europa_conf",
-  "uefa.europa_conf.qual",
-];
+// ----- Source 1: ESPN team-schedule per league ------------------------------
 
-async function fetchEspnLastNext(): Promise<{ last: Match | null; next: Match | null }> {
-  const buckets = await Promise.all(
-    BESIKTAS_LEAGUES.map((slug) => fetchScoreboardForLeague(slug, 90, 180)),
+async function fetchEspnTeamSchedule(
+  leagueSlug: string,
+  teamId: number,
+): Promise<Match[]> {
+  const json = await jsonFetch<EspnScoreboardResp>(
+    `https://site.api.espn.com/apis/site/v2/sports/soccer/${leagueSlug}/teams/${teamId}/schedule`,
+  );
+  const events = json?.events ?? [];
+  const label = LEAGUE_LABELS[leagueSlug] ?? json?.leagues?.[0]?.name ?? leagueSlug;
+  return events
+    .map((e) => eventToMatch(e, label))
+    .filter((m): m is Match => !!m);
+}
+
+async function fetchFromEspnTeamSchedule(): Promise<{ last: Match | null; next: Match | null }> {
+  const all = await Promise.all(
+    BESIKTAS_LEAGUES.map((slug) => fetchEspnTeamSchedule(slug, ESPN_BESIKTAS_ID)),
   );
   const seen = new Set<string>();
   const matches: Match[] = [];
-  for (const bucket of buckets) {
-    for (const { event, league } of bucket) {
-      const m = eventToMatch(event, league);
-      if (!m) continue;
+  for (const bucket of all) {
+    for (const m of bucket) {
+      // Schedule endpoint sometimes echoes Beşiktaş against itself in
+      // pre/post-season exhibitions; require the team to actually appear.
       if (!isBesiktas(m.home) && !isBesiktas(m.away)) continue;
       if (m.id && seen.has(m.id)) continue;
       if (m.id) seen.add(m.id);
@@ -310,25 +247,140 @@ async function fetchEspnLastNext(): Promise<{ last: Match | null; next: Match | 
   return { last, next };
 }
 
-// SofaScore primary, ESPN fallback. We accept either source filling either
-// slot — if Sofa gives us a "next" but no "last", we'll fall back to ESPN
-// just for the missing one.
+// ----- Source 2: SofaScore --------------------------------------------------
+
+interface SofaTournament { name?: string; uniqueTournament?: { name?: string } }
+interface SofaTeam { name?: string; shortName?: string }
+interface SofaScore { current?: number; display?: number }
+interface SofaEvent {
+  id?: number;
+  tournament?: SofaTournament;
+  homeTeam?: SofaTeam;
+  awayTeam?: SofaTeam;
+  homeScore?: SofaScore;
+  awayScore?: SofaScore;
+  startTimestamp?: number;
+  status?: { type?: string; description?: string };
+}
+interface SofaResp { events?: SofaEvent[] }
+
+function sofaToMatch(e: SofaEvent): Match | null {
+  const home = e.homeTeam?.name ?? e.homeTeam?.shortName;
+  const away = e.awayTeam?.name ?? e.awayTeam?.shortName;
+  if (!home || !away || !e.startTimestamp) return null;
+  const date = new Date(e.startTimestamp * 1000).toISOString();
+  const finished = e.status?.type === "finished";
+  const hs = e.homeScore?.current ?? e.homeScore?.display ?? null;
+  const as = e.awayScore?.current ?? e.awayScore?.display ?? null;
+  return {
+    id: String(e.id ?? ""),
+    home,
+    away,
+    homeScore: typeof hs === "number" ? hs : null,
+    awayScore: typeof as === "number" ? as : null,
+    date,
+    venue: null,
+    league: e.tournament?.uniqueTournament?.name ?? e.tournament?.name ?? null,
+    isFinished: finished,
+  };
+}
+
+async function fetchFromSofaScore(): Promise<{ last: Match | null; next: Match | null }> {
+  const headers = {
+    Accept: "*/*",
+    "Accept-Language": "en-US,en;q=0.9",
+    Referer: "https://www.sofascore.com/",
+    Origin: "https://www.sofascore.com",
+  };
+  const [lastResp, nextResp] = await Promise.all([
+    jsonFetch<SofaResp>(
+      `https://api.sofascore.com/api/v1/team/${SOFASCORE_BESIKTAS_ID}/events/last/0`,
+      headers,
+    ),
+    jsonFetch<SofaResp>(
+      `https://api.sofascore.com/api/v1/team/${SOFASCORE_BESIKTAS_ID}/events/next/0`,
+      headers,
+    ),
+  ]);
+
+  const lastEvents = (lastResp?.events ?? []).map(sofaToMatch).filter((m): m is Match => !!m);
+  const nextEvents = (nextResp?.events ?? []).map(sofaToMatch).filter((m): m is Match => !!m);
+  lastEvents.sort((a, b) => +new Date(a.date) - +new Date(b.date));
+  nextEvents.sort((a, b) => +new Date(a.date) - +new Date(b.date));
+
+  const now = Date.now();
+  const last = [...lastEvents].reverse().find((m) => +new Date(m.date) <= now || m.isFinished) ?? null;
+  const next = nextEvents.find((m) => +new Date(m.date) > now && !m.isFinished) ?? null;
+  return { last, next };
+}
+
+// ----- Source 3: ESPN scoreboard date-range sweep (last-resort) ------------
+
+function pad(n: number) { return String(n).padStart(2, "0"); }
+function ymd(d: Date) { return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}`; }
+
+async function fetchEspnScoreboardSweep(): Promise<{ last: Match | null; next: Match | null }> {
+  const now = new Date();
+  const from = new Date(now.getTime() - 90 * 86400000);
+  const to = new Date(now.getTime() + 180 * 86400000);
+  const range = `${ymd(from)}-${ymd(to)}`;
+
+  const buckets = await Promise.all(
+    BESIKTAS_LEAGUES.map((slug) =>
+      jsonFetch<EspnScoreboardResp>(
+        `https://site.api.espn.com/apis/site/v2/sports/soccer/${slug}/scoreboard?dates=${range}`,
+      ).then((j) =>
+        (j?.events ?? []).map((e) => eventToMatch(e, LEAGUE_LABELS[slug] ?? slug)),
+      ),
+    ),
+  );
+
+  const seen = new Set<string>();
+  const matches: Match[] = [];
+  for (const bucket of buckets) {
+    for (const m of bucket) {
+      if (!m) continue;
+      if (!isBesiktas(m.home) && !isBesiktas(m.away)) continue;
+      if (m.id && seen.has(m.id)) continue;
+      if (m.id) seen.add(m.id);
+      matches.push(m);
+    }
+  }
+  matches.sort((a, b) => +new Date(a.date) - +new Date(b.date));
+
+  const t0 = Date.now();
+  let last: Match | null = null;
+  let next: Match | null = null;
+  for (const m of matches) {
+    const t = +new Date(m.date);
+    if (t <= t0 || m.isFinished) last = m;
+    else if (!next) next = m;
+  }
+  return { last, next };
+}
+
 async function fetchBesiktasMatches(): Promise<{
   last: Match | null;
   next: Match | null;
-  source: "sofascore" | "espn" | "mixed" | "none";
+  source: "espn-team" | "sofascore" | "espn-sweep" | "mixed" | "none";
 }> {
-  const sofa = await fetchSofaLastNext();
-  if (sofa.last && sofa.next) {
-    return { ...sofa, source: "sofascore" };
-  }
-  const espn = await fetchEspnLastNext();
-  const last = sofa.last ?? espn.last;
-  const next = sofa.next ?? espn.next;
+  // Run all three sources in parallel; pick whichever can fill both slots.
+  // If no single source has both, prefer ESPN team-schedule's data and only
+  // fall back to others for the missing half.
+  const [espnTeam, sofa, espnSweep] = await Promise.all([
+    fetchFromEspnTeamSchedule(),
+    fetchFromSofaScore(),
+    fetchEspnScoreboardSweep(),
+  ]);
+
+  if (espnTeam.last && espnTeam.next) return { ...espnTeam, source: "espn-team" };
+  if (sofa.last && sofa.next) return { ...sofa, source: "sofascore" };
+  if (espnSweep.last && espnSweep.next) return { ...espnSweep, source: "espn-sweep" };
+
+  const last = espnTeam.last ?? sofa.last ?? espnSweep.last;
+  const next = espnTeam.next ?? sofa.next ?? espnSweep.next;
   if (!last && !next) return { last: null, next: null, source: "none" };
-  if (sofa.last && !sofa.next) return { last, next, source: "mixed" };
-  if (!sofa.last && sofa.next) return { last, next, source: "mixed" };
-  return { last, next, source: "espn" };
+  return { last, next, source: "mixed" };
 }
 
 async function fallbackStandingsFromSportsDb(): Promise<Standing[]> {
