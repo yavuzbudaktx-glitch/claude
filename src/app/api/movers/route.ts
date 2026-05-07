@@ -1,16 +1,22 @@
 import { NextResponse } from "next/server";
 
-// Top movers feed used by MoversCard:
-//   - 5 most-moving US stocks (by absolute 24h %), pulled from Yahoo's
-//     day_gainers + day_losers screeners and ranked together so the list
-//     mixes upside and downside.
-//   - 5 most-moving Robinhood-tradeable cryptos (by absolute 24h %), pulled
-//     from CoinGecko's top-100 list and filtered against a hand-maintained
-//     allowlist of RH-supported coin IDs.
-// For every chosen symbol we also return a 30-day daily close series so the
-// card can render a 1-month sparkline next to the % move.
+// Top movers feed used by MoversCard. Both lists are recomputed on every
+// request (force-dynamic) so the user never sees stale prices, but each
+// upstream HTTP call has a tight inner cache so we don't hammer Yahoo /
+// CoinGecko.
+//
+//   Stocks:  scan a hand-curated universe of ~80 high-volume US tickers via
+//            Yahoo Finance v8 chart (which still works without a crumb cookie,
+//            unlike the predefined screener). Compute today's % change from
+//            meta.regularMarketPrice / meta.previousClose, sort by abs %, take
+//            top 5. The same chart response gives us the 30-day daily-close
+//            sparkline for free.
+//
+//   Crypto:  CoinGecko /coins/markets (top 250 by market cap), filtered against
+//            an allowlist of Robinhood-tradeable coin IDs, sorted by |24h%|,
+//            top 5 with 30-day market_chart series for sparklines.
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36";
@@ -24,19 +30,16 @@ export interface Mover {
   type: "stock" | "crypto";
 }
 
-interface YahooQuote {
-  symbol?: string;
-  shortName?: string;
-  longName?: string;
-  regularMarketPrice?: number;
-  regularMarketChangePercent?: number;
-}
-interface YahooScreenerResp {
-  finance?: { result?: { quotes?: YahooQuote[] }[] };
-}
 interface YahooChartResp {
   chart?: {
     result?: {
+      meta?: {
+        regularMarketPrice?: number;
+        previousClose?: number;
+        chartPreviousClose?: number;
+        shortName?: string;
+        longName?: string;
+      };
       indicators?: {
         quote?: { close?: (number | null)[] }[];
         adjclose?: { adjclose?: (number | null)[] }[];
@@ -45,53 +48,155 @@ interface YahooChartResp {
   };
 }
 
-async function fetchYahooScreener(scrId: string, count = 25): Promise<Mover[]> {
-  const url = `https://query1.finance.yahoo.com/v1/finance/screener/predefined/saved?count=${count}&scrIds=${scrId}`;
-  try {
-    const res = await fetch(url, {
-      headers: { "User-Agent": UA, Accept: "application/json" },
-      next: { revalidate: 300 },
-    });
-    if (!res.ok) return [];
-    const json = (await res.json()) as YahooScreenerResp;
-    const quotes = json.finance?.result?.[0]?.quotes ?? [];
-    return quotes
-      .filter(
-        (q): q is Required<Pick<YahooQuote, "symbol" | "regularMarketChangePercent">> & YahooQuote =>
-          typeof q.symbol === "string" && typeof q.regularMarketChangePercent === "number",
-      )
-      .map((q) => ({
-        symbol: q.symbol,
-        name: q.shortName || q.longName || q.symbol,
-        price: q.regularMarketPrice ?? null,
-        changePct: q.regularMarketChangePercent,
-        history: [],
-        type: "stock" as const,
-      }));
-  } catch {
-    return [];
-  }
+// Hand-curated universe: large-cap tech, megacaps, money-center banks,
+// energy, biotech, semis, EVs, and a slice of high-beta / momentum names so
+// the "top movers" list reliably has something interesting on most days.
+const STOCK_UNIVERSE: { symbol: string; name: string }[] = [
+  { symbol: "AAPL", name: "Apple" },
+  { symbol: "MSFT", name: "Microsoft" },
+  { symbol: "NVDA", name: "NVIDIA" },
+  { symbol: "GOOGL", name: "Alphabet" },
+  { symbol: "AMZN", name: "Amazon" },
+  { symbol: "META", name: "Meta Platforms" },
+  { symbol: "TSLA", name: "Tesla" },
+  { symbol: "BRK-B", name: "Berkshire Hathaway" },
+  { symbol: "AVGO", name: "Broadcom" },
+  { symbol: "JPM", name: "JPMorgan Chase" },
+  { symbol: "V", name: "Visa" },
+  { symbol: "MA", name: "Mastercard" },
+  { symbol: "UNH", name: "UnitedHealth" },
+  { symbol: "XOM", name: "ExxonMobil" },
+  { symbol: "CVX", name: "Chevron" },
+  { symbol: "COST", name: "Costco" },
+  { symbol: "WMT", name: "Walmart" },
+  { symbol: "HD", name: "Home Depot" },
+  { symbol: "PG", name: "Procter & Gamble" },
+  { symbol: "JNJ", name: "Johnson & Johnson" },
+  { symbol: "ABBV", name: "AbbVie" },
+  { symbol: "LLY", name: "Eli Lilly" },
+  { symbol: "PFE", name: "Pfizer" },
+  { symbol: "MRK", name: "Merck" },
+  { symbol: "BAC", name: "Bank of America" },
+  { symbol: "WFC", name: "Wells Fargo" },
+  { symbol: "GS", name: "Goldman Sachs" },
+  { symbol: "MS", name: "Morgan Stanley" },
+  { symbol: "C", name: "Citigroup" },
+  { symbol: "DIS", name: "Disney" },
+  { symbol: "NFLX", name: "Netflix" },
+  { symbol: "CMCSA", name: "Comcast" },
+  { symbol: "T", name: "AT&T" },
+  { symbol: "VZ", name: "Verizon" },
+  { symbol: "INTC", name: "Intel" },
+  { symbol: "AMD", name: "AMD" },
+  { symbol: "QCOM", name: "Qualcomm" },
+  { symbol: "MU", name: "Micron" },
+  { symbol: "TXN", name: "Texas Instruments" },
+  { symbol: "ORCL", name: "Oracle" },
+  { symbol: "CRM", name: "Salesforce" },
+  { symbol: "ADBE", name: "Adobe" },
+  { symbol: "PYPL", name: "PayPal" },
+  { symbol: "SQ", name: "Block" },
+  { symbol: "SHOP", name: "Shopify" },
+  { symbol: "UBER", name: "Uber" },
+  { symbol: "LYFT", name: "Lyft" },
+  { symbol: "ABNB", name: "Airbnb" },
+  { symbol: "BA", name: "Boeing" },
+  { symbol: "GE", name: "GE Aerospace" },
+  { symbol: "F", name: "Ford" },
+  { symbol: "GM", name: "General Motors" },
+  { symbol: "RIVN", name: "Rivian" },
+  { symbol: "LCID", name: "Lucid" },
+  { symbol: "NIO", name: "NIO" },
+  { symbol: "BABA", name: "Alibaba" },
+  { symbol: "PDD", name: "PDD Holdings" },
+  { symbol: "JD", name: "JD.com" },
+  { symbol: "TSM", name: "TSMC" },
+  { symbol: "ASML", name: "ASML" },
+  { symbol: "ARM", name: "Arm Holdings" },
+  { symbol: "PLTR", name: "Palantir" },
+  { symbol: "SNOW", name: "Snowflake" },
+  { symbol: "CRWD", name: "CrowdStrike" },
+  { symbol: "ZS", name: "Zscaler" },
+  { symbol: "NET", name: "Cloudflare" },
+  { symbol: "DDOG", name: "Datadog" },
+  { symbol: "MDB", name: "MongoDB" },
+  { symbol: "COIN", name: "Coinbase" },
+  { symbol: "MARA", name: "MARA Holdings" },
+  { symbol: "RIOT", name: "Riot Platforms" },
+  { symbol: "MSTR", name: "MicroStrategy" },
+  { symbol: "GME", name: "GameStop" },
+  { symbol: "AMC", name: "AMC Entertainment" },
+  { symbol: "SOFI", name: "SoFi" },
+  { symbol: "HOOD", name: "Robinhood" },
+  { symbol: "ROKU", name: "Roku" },
+  { symbol: "PINS", name: "Pinterest" },
+  { symbol: "SNAP", name: "Snap" },
+  { symbol: "MRNA", name: "Moderna" },
+  { symbol: "BNTX", name: "BioNTech" },
+  { symbol: "NKE", name: "Nike" },
+  { symbol: "SBUX", name: "Starbucks" },
+  { symbol: "MCD", name: "McDonald's" },
+  { symbol: "KO", name: "Coca-Cola" },
+  { symbol: "PEP", name: "PepsiCo" },
+];
+
+interface StockSnapshot {
+  symbol: string;
+  name: string;
+  price: number;
+  changePct: number;
+  history: number[];
 }
 
-async function fetchYahooHistory(symbol: string): Promise<number[]> {
+async function fetchStockSnapshot(
+  symbol: string,
+  name: string,
+): Promise<StockSnapshot | null> {
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(
     symbol,
   )}?interval=1d&range=1mo`;
   try {
     const res = await fetch(url, {
       headers: { "User-Agent": UA, Accept: "application/json" },
-      next: { revalidate: 1800 },
+      next: { revalidate: 60 },
     });
-    if (!res.ok) return [];
+    if (!res.ok) return null;
     const json = (await res.json()) as YahooChartResp;
     const result = json.chart?.result?.[0];
-    const adj = result?.indicators?.adjclose?.[0]?.adjclose;
-    const close = result?.indicators?.quote?.[0]?.close;
+    if (!result?.meta) return null;
+
+    const price = result.meta.regularMarketPrice;
+    const prev = result.meta.previousClose ?? result.meta.chartPreviousClose;
+    if (typeof price !== "number" || typeof prev !== "number" || prev === 0) {
+      return null;
+    }
+    const changePct = ((price - prev) / prev) * 100;
+
+    const adj = result.indicators?.adjclose?.[0]?.adjclose;
+    const close = result.indicators?.quote?.[0]?.close;
     const series = adj && adj.some((v) => typeof v === "number") ? adj : close;
-    return (series ?? []).filter((v): v is number => typeof v === "number");
+    const history = (series ?? []).filter((v): v is number => typeof v === "number");
+
+    return { symbol, name, price, changePct, history };
   } catch {
-    return [];
+    return null;
   }
+}
+
+async function buildStockMovers(): Promise<Mover[]> {
+  const snapshots = await Promise.all(
+    STOCK_UNIVERSE.map(({ symbol, name }) => fetchStockSnapshot(symbol, name)),
+  );
+  const valid = snapshots.filter((s): s is StockSnapshot => s !== null);
+  valid.sort((a, b) => Math.abs(b.changePct) - Math.abs(a.changePct));
+  return valid.slice(0, 5).map((s) => ({
+    symbol: s.symbol,
+    name: s.name,
+    price: s.price,
+    changePct: s.changePct,
+    history: s.history,
+    type: "stock" as const,
+  }));
 }
 
 interface CoinGeckoCoin {
@@ -106,7 +211,6 @@ interface CoinGeckoChart {
 }
 
 // CoinGecko IDs of cryptos currently tradeable on Robinhood (US).
-// Sourced from Robinhood's published "currencies you can trade" list.
 const RH_TRADEABLE_COIN_IDS = new Set<string>([
   "bitcoin",
   "ethereum",
@@ -163,11 +267,11 @@ const RH_TRADEABLE_COIN_IDS = new Set<string>([
 
 async function fetchCryptoMarkets(): Promise<CoinGeckoCoin[]> {
   const url =
-    "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false&price_change_percentage=24h";
+    "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=false&price_change_percentage=24h";
   try {
     const res = await fetch(url, {
       headers: { Accept: "application/json" },
-      next: { revalidate: 300 },
+      next: { revalidate: 60 },
     });
     if (!res.ok) return [];
     return (await res.json()) as CoinGeckoCoin[];
@@ -191,25 +295,6 @@ async function fetchCoinGeckoHistory(id: string): Promise<number[]> {
   } catch {
     return [];
   }
-}
-
-async function buildStockMovers(): Promise<Mover[]> {
-  const [gainers, losers] = await Promise.all([
-    fetchYahooScreener("day_gainers", 25),
-    fetchYahooScreener("day_losers", 25),
-  ]);
-  const seen = new Set<string>();
-  const pool = [...gainers, ...losers].filter((m) => {
-    if (seen.has(m.symbol)) return false;
-    seen.add(m.symbol);
-    return true;
-  });
-  pool.sort((a, b) => Math.abs(b.changePct) - Math.abs(a.changePct));
-  const top = pool.slice(0, 5);
-  const withHistory = await Promise.all(
-    top.map(async (m) => ({ ...m, history: await fetchYahooHistory(m.symbol) })),
-  );
-  return withHistory;
 }
 
 async function buildCryptoMovers(): Promise<Mover[]> {

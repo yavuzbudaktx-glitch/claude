@@ -1,24 +1,38 @@
 "use client";
 
 import useSWR from "swr";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/Card";
 import { PrayerChecks } from "./PrayerChecks";
 import type { AyahPayload } from "@/lib/quran";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-function utcDateKey() {
+function localDateKey() {
   const d = new Date();
-  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(
-    d.getUTCDate(),
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+    d.getDate(),
   ).padStart(2, "0")}`;
 }
 
+function msUntilLocalMidnight() {
+  const now = new Date();
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 1);
+  return tomorrow.getTime() - now.getTime();
+}
+
 export function PrayersVerseCard() {
-  // The UTC date in the SWR key flips the cache bucket at midnight UTC so the
-  // verse rotates without waiting for the refresh interval to land.
+  // Cache key is the user's *local* date so the verse rotates at local
+  // midnight, not at UTC midnight (which is mid-evening in CST).
+  const [dateKey, setDateKey] = useState(() => localDateKey());
+
+  useEffect(() => {
+    const t = setTimeout(() => setDateKey(localDateKey()), msUntilLocalMidnight());
+    return () => clearTimeout(t);
+  }, [dateKey]);
+
   const { data: a, isLoading } = useSWR<AyahPayload>(
-    `/api/quran?d=${utcDateKey()}`,
+    `/api/quran?d=${dateKey}`,
     fetcher,
     { refreshInterval: 1000 * 60 * 30, revalidateOnFocus: true, keepPreviousData: true },
   );

@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 
 // Run on every request so the deterministic day-of-year pick lands on the
-// actual current UTC day. Upstream fetches stay cached for an hour to be
-// nice to Wikimedia.
+// caller's actual current local day. The client passes its local date as
+// `?d=YYYY-MM-DD`; we drive both the Wikimedia mm/dd lookup and the picker
+// off that, so content rotates at the user's local midnight, not UTC's.
 export const dynamic = "force-dynamic";
 
 interface RawPage {
@@ -12,6 +13,7 @@ interface RawPage {
   content_urls?: { desktop?: { page?: string }; mobile?: { page?: string } };
   thumbnail?: { source?: string };
   description?: string;
+  extract?: string;
 }
 
 interface RawEvent {
@@ -29,6 +31,17 @@ interface RawResp {
 
 function pad(n: number) {
   return String(n).padStart(2, "0");
+}
+
+function parseDateParam(d: string | null): Date {
+  if (d) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d);
+    if (m) {
+      // Anchor the local-day at noon UTC so day-of-year math is unambiguous.
+      return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], 12, 0, 0));
+    }
+  }
+  return new Date();
 }
 
 async function fetchFeed(kind: "selected" | "events" | "births" | "deaths", mm: string, dd: string) {
@@ -51,23 +64,46 @@ async function fetchFeed(kind: "selected" | "events" | "births" | "deaths", mm: 
   );
 }
 
-export async function GET() {
-  const now = new Date();
-  const mm = pad(now.getMonth() + 1);
-  const dd = pad(now.getDate());
+// The "extract" field comes back as a single paragraph from Wikipedia. Trim it
+// to a short, dashboard-friendly first sentence (or two) and strip any trailing
+// pronunciation parens that come right after the subject's name.
+function shortenExtract(extract: string | undefined): string | null {
+  if (!extract) return null;
+  let t = extract.trim();
+  // Strip Wikipedia's "(/pronunciation/; foreign-script meaning)" parenthetical.
+  t = t.replace(/\s*\([^)]*\)/, "");
+  // Take up to two sentences, capped at ~220 chars so the card stays compact.
+  const sentences = t.match(/[^.!?]+[.!?]+/g) ?? [t];
+  let out = "";
+  for (const s of sentences) {
+    if ((out + s).length > 220) break;
+    out += s;
+  }
+  out = (out || t).trim();
+  if (out.length > 240) out = out.slice(0, 237).trimEnd() + "…";
+  return out || null;
+}
+
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const dParam = url.searchParams.get("d");
+  const dateAt = parseDateParam(dParam);
+
+  const mm = pad(dateAt.getUTCMonth() + 1);
+  const dd = pad(dateAt.getUTCDate());
 
   try {
-    // Wikipedia "selected" is the curated set shown on the front page —
-    // the same one Wikipedia editors pick out as the most historically
-    // significant events of the day.
+    // Wikipedia "selected" is the curated set shown on the front page — the
+    // same set Wikipedia editors call out as the most historically significant
+    // events of the day.
     let pool = await fetchFeed("selected", mm, dd);
     let kind: "selected" | "events" | "births" | "deaths" = "selected";
 
-    // Mix in births/deaths every 3rd day so we sometimes get "Einstein's birthday" type entries.
-    const start = Date.UTC(now.getUTCFullYear(), 0, 0);
-    const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    const start = Date.UTC(dateAt.getUTCFullYear(), 0, 0);
+    const today = Date.UTC(dateAt.getUTCFullYear(), dateAt.getUTCMonth(), dateAt.getUTCDate());
     const dayOfYear = Math.floor((today - start) / 86400000);
 
+    // Rotate kinds across days so we sometimes get "Einstein's birthday" entries.
     if (dayOfYear % 3 === 1) {
       const births = await fetchFeed("births", mm, dd);
       if (births.length > 0) { pool = births; kind = "births"; }
@@ -99,6 +135,7 @@ export async function GET() {
       date: `${mm}-${dd}`,
       year: picked.year,
       text: prefix + picked.text,
+      summary: shortenExtract(firstPage?.extract) ?? firstPage?.description ?? null,
       kind,
       thumbnail: firstPage?.thumbnail?.source ?? null,
       pageTitle: firstPage?.normalizedtitle ?? firstPage?.title ?? null,

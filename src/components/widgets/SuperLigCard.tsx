@@ -155,7 +155,7 @@ export function SuperLigCard() {
                 <span className="text-right">GD</span>
                 <span className="text-right">Pts</span>
               </div>
-              <ul className="divide-rule max-h-[280px] overflow-y-auto pr-1">
+              <ul className="divide-rule">
                 {data.standings.map((s) => {
                   const bk = isBesiktas(s.team);
                   return (

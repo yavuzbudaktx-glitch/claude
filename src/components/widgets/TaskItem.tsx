@@ -53,10 +53,12 @@ export function TaskItem({
 
   return (
     <li
-      className={`group flex items-start gap-2.5 py-2 transition-all ease-out overflow-hidden ${
-        stage === "fading" ? "opacity-0 max-h-0 py-0" : "opacity-100 max-h-24"
-      }`}
-      style={{ transitionDuration: "2200ms" }}
+      className="group flex items-start gap-2.5 py-2 transition-opacity ease-out"
+      style={{
+        transitionDuration: "2200ms",
+        opacity: stage === "fading" ? 0 : 1,
+        pointerEvents: stage === "fading" ? "none" : undefined,
+      }}
     >
       <div className="relative mt-0.5" ref={ref}>
         <button

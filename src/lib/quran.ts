@@ -40,8 +40,8 @@ const ENGLISH_EDITIONS = [
   { id: "en.asad",     label: "Muhammad Asad"       },
 ] as const;
 
-export async function fetchDailyAyah(): Promise<AyahPayload> {
-  const n = dailyAyahNumber();
+export async function fetchDailyAyah(date = new Date()): Promise<AyahPayload> {
+  const n = dailyAyahNumber(date);
   const editionList = ["quran-uthmani", ...ENGLISH_EDITIONS.map((e) => e.id)].join(",");
   const res = await fetch(
     `https://api.alquran.cloud/v1/ayah/${n}/editions/${editionList}`,
