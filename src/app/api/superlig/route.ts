@@ -429,20 +429,97 @@ async function fetchEspnScoreboardSweep(): Promise<{ last: Match | null; next: M
   return { last, next };
 }
 
+// ----- Source 5: FotMob (free, cloud-friendly) ------------------------------
+//
+// FotMob exposes a public team-info endpoint that includes a full fixtures
+// list (past + future) without authentication. Beşiktaş is team 10188.
+
+const FOTMOB_BESIKTAS_ID = 10188;
+
+interface FotmobFixture {
+  id?: number | string;
+  home?: { id?: string | number; name?: string };
+  away?: { id?: string | number; name?: string };
+  status?: { utcTime?: string; finished?: boolean; cancelled?: boolean; started?: boolean; scoreStr?: string };
+  tournament?: { name?: string; leagueName?: string };
+  notStarted?: boolean;
+}
+interface FotmobTeamResp {
+  fixtures?: { allFixtures?: { fixtures?: FotmobFixture[] } };
+}
+
+function parseFotmobScore(scoreStr: string | undefined): { home: number | null; away: number | null } {
+  if (!scoreStr) return { home: null, away: null };
+  const m = scoreStr.match(/(\d+)\s*[-–]\s*(\d+)/);
+  if (!m) return { home: null, away: null };
+  return { home: Number(m[1]), away: Number(m[2]) };
+}
+
+function fotmobToMatch(f: FotmobFixture): Match | null {
+  const home = f.home?.name;
+  const away = f.away?.name;
+  const utc = f.status?.utcTime;
+  if (!home || !away || !utc) return null;
+  const finished = !!f.status?.finished;
+  const { home: hs, away: as } = parseFotmobScore(f.status?.scoreStr);
+  return {
+    id: String(f.id ?? ""),
+    home,
+    away,
+    homeScore: hs,
+    awayScore: as,
+    date: new Date(utc).toISOString(),
+    venue: null,
+    league: f.tournament?.name ?? f.tournament?.leagueName ?? null,
+    isFinished: finished,
+  };
+}
+
+async function fetchFromFotmob(): Promise<{ last: Match | null; next: Match | null }> {
+  const json = await jsonFetch<FotmobTeamResp>(
+    `https://www.fotmob.com/api/teams?id=${FOTMOB_BESIKTAS_ID}`,
+    { Accept: "application/json", "Accept-Language": "en-US,en;q=0.9" },
+  );
+  const fixtures = json?.fixtures?.allFixtures?.fixtures ?? [];
+  const matches = fixtures
+    .map(fotmobToMatch)
+    .filter((m): m is Match => !!m)
+    .filter((m) => isBesiktas(m.home) || isBesiktas(m.away))
+    .sort((a, b) => +new Date(a.date) - +new Date(b.date));
+
+  const now = Date.now();
+  let last: Match | null = null;
+  let next: Match | null = null;
+  for (const m of matches) {
+    const t = +new Date(m.date);
+    if (t <= now || m.isFinished) last = m;
+    else if (!next) next = m;
+  }
+  return { last, next };
+}
+
+interface SourceResult {
+  name: string;
+  last: Match | null;
+  next: Match | null;
+}
+
 async function fetchBesiktasMatches(): Promise<{
   last: Match | null;
   next: Match | null;
   source: string;
+  debug: Array<{ source: string; last: string | null; next: string | null }>;
 }> {
-  // Run all four sources in parallel and merge: pick the most-recent past
-  // match across sources for `last`, and the soonest future match across
-  // sources for `next`. Source-priority alone causes stale ESPN data to win
-  // even when SofaScore / TheSportsDB have a fresher match.
-  const sources = await Promise.all([
+  // Run all sources in parallel and merge: pick the most-recent past match
+  // across sources for `last`, and the soonest future match across sources
+  // for `next`. Source-priority alone caused stale ESPN data to win over
+  // fresher SofaScore/SportsDB/FotMob results.
+  const sources: SourceResult[] = await Promise.all([
     fetchFromEspnTeamSchedule().then((r) => ({ name: "espn-team", ...r })),
     fetchFromSofaScore().then((r) => ({ name: "sofascore", ...r })),
     fetchFromSportsDb().then((r) => ({ name: "sportsdb", ...r })),
     fetchEspnScoreboardSweep().then((r) => ({ name: "espn-sweep", ...r })),
+    fetchFromFotmob().then((r) => ({ name: "fotmob", ...r })),
   ]);
 
   const now = Date.now();
@@ -468,9 +545,7 @@ async function fetchBesiktasMatches(): Promise<{
     }
   }
 
-  // Fallback: if a slot is still empty, accept anything any source returned
-  // (e.g. SofaScore's "last" containing a fixture flagged as not-finished but
-  // already in the past).
+  // Fallback: if a slot is still empty, accept anything any source returned.
   if (!last) {
     for (const s of sources) {
       if (s.last) { last = s.last; lastSrc = s.name; break; }
@@ -482,11 +557,19 @@ async function fetchBesiktasMatches(): Promise<{
     }
   }
 
-  if (!last && !next) return { last: null, next: null, source: "none" };
+  const fmtSummary = (m: Match | null) =>
+    m ? `${m.date.slice(0, 10)} ${m.home} vs ${m.away}${m.isFinished ? " ✓" : ""}` : null;
+  const debug = sources.map((s) => ({
+    source: s.name,
+    last: fmtSummary(s.last),
+    next: fmtSummary(s.next),
+  }));
+
+  if (!last && !next) return { last: null, next: null, source: "none", debug };
   const source = lastSrc && nextSrc && lastSrc !== nextSrc
     ? `${lastSrc}+${nextSrc}`
     : lastSrc || nextSrc;
-  return { last, next, source };
+  return { last, next, source, debug };
 }
 
 async function fallbackStandingsFromSportsDb(): Promise<Standing[]> {
@@ -535,6 +618,7 @@ export async function GET() {
   return NextResponse.json({
     source: standings.length > 0 ? "espn" : "thesportsdb",
     matchesSource: matches.source,
+    matchesDebug: matches.debug,
     standings: finalStandings,
     last: matches.last,
     next: matches.next,

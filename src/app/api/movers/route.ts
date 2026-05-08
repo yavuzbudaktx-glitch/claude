@@ -55,26 +55,27 @@ interface FmpHistoricalResp { historical?: FmpHistoricalLine[] }
 
 async function fetchFmpHistory(symbol: string): Promise<number[]> {
   if (!FMP_KEY) return [];
-  // Try the stable "light" historical endpoint first, then fall back to v3.
   const today = new Date();
   const start = new Date(today.getTime() - 50 * 86400000);
   const fmt = (d: Date) =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const sym = encodeURIComponent(symbol);
 
+  // v3 historical-price-full is the longest-standing endpoint and works on
+  // the free tier without serietype= / timeseries= flags (those flags are
+  // sometimes flagged premium for newer keys). Stable "light" path is a
+  // backup that newer keys may prefer.
   const candidates = [
-    `https://financialmodelingprep.com/stable/historical-price-eod/light?symbol=${encodeURIComponent(
-      symbol,
-    )}&from=${fmt(start)}&to=${fmt(today)}&apikey=${FMP_KEY}`,
-    `https://financialmodelingprep.com/api/v3/historical-price-full/${encodeURIComponent(
-      symbol,
-    )}?serietype=line&timeseries=30&apikey=${FMP_KEY}`,
+    `https://financialmodelingprep.com/api/v3/historical-price-full/${sym}?from=${fmt(start)}&to=${fmt(today)}&apikey=${FMP_KEY}`,
+    `https://financialmodelingprep.com/stable/historical-price-eod/light?symbol=${sym}&from=${fmt(start)}&to=${fmt(today)}&apikey=${FMP_KEY}`,
+    `https://financialmodelingprep.com/api/v3/historical-price-full/${sym}?apikey=${FMP_KEY}`,
   ];
 
   for (const url of candidates) {
     try {
       const res = await fetch(url, {
         headers: { "User-Agent": UA, Accept: "application/json" },
-        next: { revalidate: 3600 },
+        next: { revalidate: 21600 }, // 6h — sparklines only need daily resolution
       });
       if (!res.ok) continue;
       const json = (await res.json()) as FmpHistoricalResp | FmpHistoricalLine[];
@@ -96,32 +97,52 @@ async function fetchFmpHistory(symbol: string): Promise<number[]> {
 }
 
 // ---------- FMP (stocks) ----------------------------------------------------
+//
+// We replaced FMP's biggest-gainers/biggest-losers list endpoints with a
+// curated mega-cap watchlist + batch quote, because the "biggest" lists
+// surface obscure penny stocks that move ±50% in a day rather than the
+// blue-chip names the user actually cares about (NVDA, AAPL, TSLA…). One
+// /api/v3/quote/AAPL,MSFT,… call returns all watchlist quotes; we sort by
+// signed % and pick top 5 / bottom 5 from the same response.
 
-interface FmpMover {
+const BIG_STOCK_UNIVERSE = [
+  "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "AMD", "AVGO",
+  "ORCL", "CRM", "ADBE", "NFLX", "INTC", "QCOM", "CSCO", "IBM", "TXN",
+  "MU", "AMAT", "LRCX", "PLTR", "SHOP", "UBER", "DELL", "SMCI", "ARM",
+  "DIS", "CMCSA", "T", "VZ", "TMUS", "SPOT", "ABNB", "BKNG",
+  "JPM", "BAC", "WFC", "C", "GS", "MS", "BLK", "AXP", "V", "MA",
+  "COIN", "SCHW", "PYPL",
+  "UNH", "JNJ", "PFE", "MRK", "ABBV", "LLY", "BMY", "AMGN", "GILD",
+  "MRNA", "CVS", "TMO", "DHR", "ABT",
+  "WMT", "COST", "HD", "NKE", "MCD", "SBUX", "TGT", "KO", "PEP", "PG",
+  "CL", "KHC", "LULU",
+  "BA", "GE", "F", "GM", "CAT", "HON", "LMT", "RTX", "DE", "UPS", "FDX",
+  "XOM", "CVX", "COP",
+  "BRK-B",
+];
+
+interface FmpQuote {
   symbol?: string;
   name?: string;
-  change?: number;
   price?: number;
   changesPercentage?: number;
-  // The "stable" API uses changePercentage instead of changesPercentage.
   changePercentage?: number;
+  change?: number;
 }
 
 interface FmpFetchResult {
-  movers: Mover[];
+  buckets: Buckets;
   error: string | null;
 }
 
-// FMP migrated their endpoints to a new "/stable/biggest-{gainers,losers}"
-// path; the legacy "/api/v3/stock_market/{gainers,losers}" path now returns
-// a "Premium endpoint" error for newer free-tier keys. Try stable first,
-// fall back to v3 for older accounts.
-async function fetchFmpList(kind: "gainers" | "losers"): Promise<FmpFetchResult> {
-  if (!FMP_KEY) return { movers: [], error: "FMP_API_KEY not set" };
+async function fetchBigStockMovers(): Promise<FmpFetchResult> {
+  if (!FMP_KEY)
+    return { buckets: { gainers: [], losers: [] }, error: "FMP_API_KEY not set" };
 
+  const symbols = BIG_STOCK_UNIVERSE.join(",");
   const candidates = [
-    { tag: "stable", url: `https://financialmodelingprep.com/stable/biggest-${kind}?apikey=${FMP_KEY}` },
-    { tag: "v3", url: `https://financialmodelingprep.com/api/v3/stock_market/${kind}?apikey=${FMP_KEY}` },
+    { tag: "v3-quote", url: `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${FMP_KEY}` },
+    { tag: "stable-quote", url: `https://financialmodelingprep.com/stable/quote?symbol=${symbols}&apikey=${FMP_KEY}` },
   ];
 
   let lastError = "no candidate succeeded";
@@ -131,12 +152,9 @@ async function fetchFmpList(kind: "gainers" | "losers"): Promise<FmpFetchResult>
         headers: { "User-Agent": UA, Accept: "application/json" },
         next: { revalidate: 600 },
       });
-      if (!res.ok) {
-        lastError = `${tag}: HTTP ${res.status}`;
-        continue;
-      }
+      if (!res.ok) { lastError = `${tag}: HTTP ${res.status}`; continue; }
       const json = (await res.json()) as
-        | FmpMover[]
+        | FmpQuote[]
         | { "Error Message"?: string; message?: string; error?: string };
       if (!Array.isArray(json)) {
         const msg =
@@ -147,52 +165,54 @@ async function fetchFmpList(kind: "gainers" | "losers"): Promise<FmpFetchResult>
         lastError = `${tag}: ${msg}`;
         continue;
       }
-      if (json.length === 0) {
-        lastError = `${tag}: empty list`;
-        continue;
-      }
+      if (json.length === 0) { lastError = `${tag}: empty list`; continue; }
 
       const valid = json
-        .map((e) => {
+        .map((q) => {
           const pct =
-            typeof e.changesPercentage === "number"
-              ? e.changesPercentage
-              : typeof e.changePercentage === "number"
-                ? e.changePercentage
+            typeof q.changesPercentage === "number"
+              ? q.changesPercentage
+              : typeof q.changePercentage === "number"
+                ? q.changePercentage
                 : null;
-          if (typeof e.symbol !== "string" || pct === null) return null;
-          return { symbol: e.symbol, name: e.name ?? e.symbol, price: e.price, pct };
+          if (typeof q.symbol !== "string" || pct === null) return null;
+          return {
+            symbol: q.symbol,
+            name: q.name ?? q.symbol,
+            price: typeof q.price === "number" ? q.price : null,
+            pct,
+          };
         })
-        .filter((e): e is { symbol: string; name: string; price: number | undefined; pct: number } => !!e)
-        .slice(0, 5);
+        .filter((e): e is { symbol: string; name: string; price: number | null; pct: number } => !!e);
 
-      const withHistory = await Promise.all(
-        valid.map(async (e) => ({
-          symbol: e.symbol,
-          name: e.name,
-          price: typeof e.price === "number" ? e.price : null,
-          changePct: e.pct,
-          history: await fetchFmpHistory(e.symbol),
-          type: "stock" as const,
-        })),
-      );
-      return { movers: withHistory, error: null };
+      // Sort signed-%: highest gainer first, biggest loser last.
+      valid.sort((a, b) => b.pct - a.pct);
+      const gainersRaw = valid.slice(0, 5);
+      const losersRaw = valid.slice(-5).reverse();
+
+      const toMover = async (e: { symbol: string; name: string; price: number | null; pct: number }) => ({
+        symbol: e.symbol,
+        name: e.name,
+        price: e.price,
+        changePct: e.pct,
+        history: await fetchFmpHistory(e.symbol),
+        type: "stock" as const,
+      });
+
+      const [gainers, losers] = await Promise.all([
+        Promise.all(gainersRaw.map(toMover)),
+        Promise.all(losersRaw.map(toMover)),
+      ]);
+      return { buckets: { gainers, losers }, error: null };
     } catch (err) {
       lastError = `${tag}: ${err instanceof Error ? err.message : "fetch failed"}`;
     }
   }
-  return { movers: [], error: lastError };
+  return { buckets: { gainers: [], losers: [] }, error: lastError };
 }
 
 async function buildStockBuckets(): Promise<{ buckets: Buckets; error: string | null }> {
-  const [gainers, losers] = await Promise.all([
-    fetchFmpList("gainers"),
-    fetchFmpList("losers"),
-  ]);
-  return {
-    buckets: { gainers: gainers.movers, losers: losers.movers },
-    error: gainers.error ?? losers.error,
-  };
+  return fetchBigStockMovers();
 }
 
 // ---------- CoinGecko (crypto) ---------------------------------------------
@@ -259,7 +279,9 @@ async function fetchCryptoMarkets(): Promise<CoinGeckoCoin[]> {
   try {
     const res = await fetch(url, {
       headers: { Accept: "application/json" },
-      next: { revalidate: 600 },
+      // 60s cache so prices stay close to live (CoinGecko free tier allows
+      // ~30 req/min — at 60s revalidate that's only ~1 req/min from us).
+      next: { revalidate: 60 },
     });
     if (!res.ok) return [];
     return (await res.json()) as CoinGeckoCoin[];
