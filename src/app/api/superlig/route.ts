@@ -475,6 +475,56 @@ function fotmobToMatch(f: FotmobFixture): Match | null {
   };
 }
 
+// HTML scrape of the FotMob team page. Their public API requires an
+// anti-bot `x-mas` header that we can't reproduce from server-side, but the
+// HTML at /teams/{id}/overview/{slug} embeds the same payload inside a
+// __NEXT_DATA__ <script> tag — no auth needed.
+async function fetchFromFotmobHtml(): Promise<{ last: Match | null; next: Match | null }> {
+  try {
+    const res = await fetch(
+      `https://www.fotmob.com/teams/${FOTMOB_BESIKTAS_ID}/overview/besiktas`,
+      {
+        headers: {
+          "User-Agent": UA,
+          Accept: "text/html,application/xhtml+xml",
+          "Accept-Language": "en-US,en;q=0.9",
+        },
+        next: { revalidate: 600 },
+      },
+    );
+    if (!res.ok) return { last: null, next: null };
+    const html = await res.text();
+    const m = html.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]+?)<\/script>/);
+    if (!m) return { last: null, next: null };
+    let data: unknown;
+    try { data = JSON.parse(m[1]); } catch { return { last: null, next: null }; }
+    type WithFixtures = { props?: { pageProps?: { team?: FotmobTeamResp; fixtures?: FotmobTeamResp["fixtures"] } } };
+    const d = data as WithFixtures;
+    const fixtures =
+      d?.props?.pageProps?.team?.fixtures?.allFixtures?.fixtures ??
+      d?.props?.pageProps?.fixtures?.allFixtures?.fixtures ??
+      [];
+    if (!Array.isArray(fixtures)) return { last: null, next: null };
+    const matches = fixtures
+      .map(fotmobToMatch)
+      .filter((m): m is Match => !!m)
+      .filter((m) => isBesiktas(m.home) || isBesiktas(m.away))
+      .sort((a, b) => +new Date(a.date) - +new Date(b.date));
+
+    const now = Date.now();
+    let last: Match | null = null;
+    let next: Match | null = null;
+    for (const match of matches) {
+      const t = +new Date(match.date);
+      if (t <= now || match.isFinished) last = match;
+      else if (!next) next = match;
+    }
+    return { last, next };
+  } catch {
+    return { last: null, next: null };
+  }
+}
+
 async function fetchFromFotmob(): Promise<{ last: Match | null; next: Match | null }> {
   const json = await jsonFetch<FotmobTeamResp>(
     `https://www.fotmob.com/api/teams?id=${FOTMOB_BESIKTAS_ID}`,
@@ -515,11 +565,12 @@ async function fetchBesiktasMatches(): Promise<{
   // for `next`. Source-priority alone caused stale ESPN data to win over
   // fresher SofaScore/SportsDB/FotMob results.
   const sources: SourceResult[] = await Promise.all([
+    fetchFromFotmobHtml().then((r) => ({ name: "fotmob-html", ...r })),
     fetchFromEspnTeamSchedule().then((r) => ({ name: "espn-team", ...r })),
     fetchFromSofaScore().then((r) => ({ name: "sofascore", ...r })),
     fetchFromSportsDb().then((r) => ({ name: "sportsdb", ...r })),
     fetchEspnScoreboardSweep().then((r) => ({ name: "espn-sweep", ...r })),
-    fetchFromFotmob().then((r) => ({ name: "fotmob", ...r })),
+    fetchFromFotmob().then((r) => ({ name: "fotmob-api", ...r })),
   ]);
 
   const now = Date.now();

@@ -98,27 +98,95 @@ async function fetchFmpHistory(symbol: string): Promise<number[]> {
 
 // ---------- FMP (stocks) ----------------------------------------------------
 //
-// We replaced FMP's biggest-gainers/biggest-losers list endpoints with a
-// curated mega-cap watchlist + batch quote, because the "biggest" lists
-// surface obscure penny stocks that move ±50% in a day rather than the
-// blue-chip names the user actually cares about (NVDA, AAPL, TSLA…). One
-// /api/v3/quote/AAPL,MSFT,… call returns all watchlist quotes; we sort by
-// signed % and pick top 5 / bottom 5 from the same response.
+// Gainers come from FMP's biggest-gainers list (often penny stocks moonshotting
+// — that's what the user wants to see). Losers come from a curated mega-cap
+// watchlist via batch quote, because biggest-losers also returns penny stocks
+// crashing 50%+, which isn't useful — we want NVDA -5% type drops.
 
-const BIG_STOCK_UNIVERSE = [
+interface FmpMover {
+  symbol?: string;
+  name?: string;
+  change?: number;
+  price?: number;
+  changesPercentage?: number;
+  changePercentage?: number;
+}
+
+interface FmpListResult {
+  movers: Mover[];
+  error: string | null;
+}
+
+async function fetchFmpGainersList(): Promise<FmpListResult> {
+  if (!FMP_KEY) return { movers: [], error: "FMP_API_KEY not set" };
+
+  const candidates = [
+    { tag: "stable", url: `https://financialmodelingprep.com/stable/biggest-gainers?apikey=${FMP_KEY}` },
+    { tag: "v3", url: `https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=${FMP_KEY}` },
+  ];
+
+  let lastError = "no candidate succeeded";
+  for (const { tag, url } of candidates) {
+    try {
+      const res = await fetch(url, {
+        headers: { "User-Agent": UA, Accept: "application/json" },
+        next: { revalidate: 600 },
+      });
+      if (!res.ok) { lastError = `${tag}: HTTP ${res.status}`; continue; }
+      const json = (await res.json()) as
+        | FmpMover[]
+        | { "Error Message"?: string; message?: string; error?: string };
+      if (!Array.isArray(json)) {
+        const msg =
+          (json as { "Error Message"?: string })["Error Message"] ??
+          (json as { message?: string }).message ??
+          (json as { error?: string }).error ??
+          "non-array response";
+        lastError = `${tag}: ${msg}`;
+        continue;
+      }
+      if (json.length === 0) { lastError = `${tag}: empty list`; continue; }
+
+      const valid = json
+        .map((e) => {
+          const pct =
+            typeof e.changesPercentage === "number"
+              ? e.changesPercentage
+              : typeof e.changePercentage === "number"
+                ? e.changePercentage
+                : null;
+          if (typeof e.symbol !== "string" || pct === null) return null;
+          return { symbol: e.symbol, name: e.name ?? e.symbol, price: e.price, pct };
+        })
+        .filter((e): e is { symbol: string; name: string; price: number | undefined; pct: number } => !!e)
+        .slice(0, 5);
+
+      const movers = await Promise.all(
+        valid.map(async (e) => ({
+          symbol: e.symbol,
+          name: e.name,
+          price: typeof e.price === "number" ? e.price : null,
+          changePct: e.pct,
+          history: await fetchFmpHistory(e.symbol),
+          type: "stock" as const,
+        })),
+      );
+      return { movers, error: null };
+    } catch (err) {
+      lastError = `${tag}: ${err instanceof Error ? err.message : "fetch failed"}`;
+    }
+  }
+  return { movers: [], error: lastError };
+}
+
+// Curated mega-cap watchlist for the losers side. Limited to ~30 names so the
+// batch /api/v3/quote/ URL stays compact and well within free-tier limits.
+const BIG_NAME_LOSER_UNIVERSE = [
   "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "AMD", "AVGO",
-  "ORCL", "CRM", "ADBE", "NFLX", "INTC", "QCOM", "CSCO", "IBM", "TXN",
-  "MU", "AMAT", "LRCX", "PLTR", "SHOP", "UBER", "DELL", "SMCI", "ARM",
-  "DIS", "CMCSA", "T", "VZ", "TMUS", "SPOT", "ABNB", "BKNG",
-  "JPM", "BAC", "WFC", "C", "GS", "MS", "BLK", "AXP", "V", "MA",
-  "COIN", "SCHW", "PYPL",
-  "UNH", "JNJ", "PFE", "MRK", "ABBV", "LLY", "BMY", "AMGN", "GILD",
-  "MRNA", "CVS", "TMO", "DHR", "ABT",
-  "WMT", "COST", "HD", "NKE", "MCD", "SBUX", "TGT", "KO", "PEP", "PG",
-  "CL", "KHC", "LULU",
-  "BA", "GE", "F", "GM", "CAT", "HON", "LMT", "RTX", "DE", "UPS", "FDX",
-  "XOM", "CVX", "COP",
-  "BRK-B",
+  "ORCL", "NFLX", "INTC", "CSCO", "QCOM", "PLTR", "UBER", "DIS",
+  "JPM", "BAC", "GS", "V", "MA", "COIN",
+  "UNH", "LLY", "PFE", "WMT", "COST", "HD", "NKE", "MCD", "KO",
+  "BA", "XOM", "CVX",
 ];
 
 interface FmpQuote {
@@ -127,19 +195,12 @@ interface FmpQuote {
   price?: number;
   changesPercentage?: number;
   changePercentage?: number;
-  change?: number;
 }
 
-interface FmpFetchResult {
-  buckets: Buckets;
-  error: string | null;
-}
+async function fetchBigNameLosers(): Promise<FmpListResult> {
+  if (!FMP_KEY) return { movers: [], error: "FMP_API_KEY not set" };
 
-async function fetchBigStockMovers(): Promise<FmpFetchResult> {
-  if (!FMP_KEY)
-    return { buckets: { gainers: [], losers: [] }, error: "FMP_API_KEY not set" };
-
-  const symbols = BIG_STOCK_UNIVERSE.join(",");
+  const symbols = BIG_NAME_LOSER_UNIVERSE.join(",");
   const candidates = [
     { tag: "v3-quote", url: `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${FMP_KEY}` },
     { tag: "stable-quote", url: `https://financialmodelingprep.com/stable/quote?symbol=${symbols}&apikey=${FMP_KEY}` },
@@ -185,34 +246,37 @@ async function fetchBigStockMovers(): Promise<FmpFetchResult> {
         })
         .filter((e): e is { symbol: string; name: string; price: number | null; pct: number } => !!e);
 
-      // Sort signed-%: highest gainer first, biggest loser last.
-      valid.sort((a, b) => b.pct - a.pct);
-      const gainersRaw = valid.slice(0, 5);
-      const losersRaw = valid.slice(-5).reverse();
+      // Sort ascending by % so the worst (most negative) come first.
+      valid.sort((a, b) => a.pct - b.pct);
+      const losersRaw = valid.slice(0, 5);
 
-      const toMover = async (e: { symbol: string; name: string; price: number | null; pct: number }) => ({
-        symbol: e.symbol,
-        name: e.name,
-        price: e.price,
-        changePct: e.pct,
-        history: await fetchFmpHistory(e.symbol),
-        type: "stock" as const,
-      });
-
-      const [gainers, losers] = await Promise.all([
-        Promise.all(gainersRaw.map(toMover)),
-        Promise.all(losersRaw.map(toMover)),
-      ]);
-      return { buckets: { gainers, losers }, error: null };
+      const movers = await Promise.all(
+        losersRaw.map(async (e) => ({
+          symbol: e.symbol,
+          name: e.name,
+          price: e.price,
+          changePct: e.pct,
+          history: await fetchFmpHistory(e.symbol),
+          type: "stock" as const,
+        })),
+      );
+      return { movers, error: null };
     } catch (err) {
       lastError = `${tag}: ${err instanceof Error ? err.message : "fetch failed"}`;
     }
   }
-  return { buckets: { gainers: [], losers: [] }, error: lastError };
+  return { movers: [], error: lastError };
 }
 
 async function buildStockBuckets(): Promise<{ buckets: Buckets; error: string | null }> {
-  return fetchBigStockMovers();
+  const [gainers, losers] = await Promise.all([
+    fetchFmpGainersList(),
+    fetchBigNameLosers(),
+  ]);
+  return {
+    buckets: { gainers: gainers.movers, losers: losers.movers },
+    error: gainers.error ?? losers.error,
+  };
 }
 
 // ---------- CoinGecko (crypto) ---------------------------------------------
