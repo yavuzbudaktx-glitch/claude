@@ -34,14 +34,25 @@ function fmtTime(ms: number | null | undefined) {
   return new Date(ms).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
 }
 
+function fmtPrice(p: number | null): string {
+  if (p == null || !Number.isFinite(p)) return "—";
+  if (p >= 1000) return `$${Math.round(p).toLocaleString()}`;
+  if (p >= 1) return `$${p.toFixed(2)}`;
+  if (p >= 0.01) return `$${p.toFixed(4)}`;
+  return `$${p.toFixed(6)}`;
+}
+
 function MoverRow({ m }: { m: Mover }) {
   const up = m.changePct >= 0;
   return (
-    <li className="grid grid-cols-[56px_1fr_88px_72px] items-center gap-2 py-1.5 text-sm">
+    <li className="grid grid-cols-[52px_1fr_64px_88px_64px] items-center gap-2 py-1.5 text-sm">
       <span className={`font-mono text-[12px] tabular-nums ${m.type === "crypto" ? "italic" : ""}`}>
         {m.symbol}
       </span>
       <span className="text-[11px] text-muted truncate">{m.name}</span>
+      <span className="font-mono tabular-nums text-[12px] text-right">
+        {fmtPrice(m.price)}
+      </span>
       <div className="flex justify-end">
         <Sparkline data={m.history} width={88} height={22} up={up} />
       </div>

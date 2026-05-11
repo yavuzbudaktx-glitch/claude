@@ -39,21 +39,62 @@ interface Buckets {
   losers: Mover[];
 }
 
-// ---------- Stock sparkline (synthesized from /api/v3/quote) ----------------
+// ---------- Stock sparkline -------------------------------------------------
 //
-// Every previous attempt to fetch real 30-day daily closes failed in
-// production: Stooq and Yahoo are rate-limited from Vercel's egress IPs,
-// and FMP's historical-price endpoints return Premium errors on the user's
-// free-tier key. So instead of trying to fetch a real time-series, we now
-// synthesize a "trajectory" sparkline from the summary stats that come for
-// free with FMP's single-symbol /api/v3/quote/ endpoint — which is the most
-// fundamental free-tier endpoint and always works:
+// FMP's intraday "historical-chart/{interval}" endpoints ARE available on
+// the free tier (unlike the daily-resolution historical-price-full path,
+// which the user's key returns Premium for). Hourly bars over ~30 days
+// gives us 150+ real data points per ticker — a proper-looking chart.
+// We try a sequence of intervals and pick the first that returns data.
 //
-//   yearLow → priceAvg200 → priceAvg50 → previousClose → price
-//
-// That's not a literal 30-day chart but it conveys exactly the same
-// information visually: "this stock has been trending up/down". Six data
-// points, ordered roughly chronologically.
+// If every intraday candidate fails, fall back to synthesizing a sparkline
+// from /api/v3/quote/{symbol}'s summary stats (yearLow / priceAvg200 /
+// priceAvg50 / previousClose / price) so the row at least conveys
+// trajectory. Worst case (quote also fails) we draw a two-point direction
+// indicator.
+
+interface FmpIntradayBar { date?: string; close?: number; price?: number; open?: number }
+
+async function fetchFmpIntraday(symbol: string): Promise<number[]> {
+  if (!FMP_KEY) return [];
+  const sym = encodeURIComponent(symbol);
+  const candidates = [
+    `https://financialmodelingprep.com/api/v3/historical-chart/1hour/${sym}?apikey=${FMP_KEY}`,
+    `https://financialmodelingprep.com/api/v3/historical-chart/4hour/${sym}?apikey=${FMP_KEY}`,
+    `https://financialmodelingprep.com/api/v3/historical-chart/30min/${sym}?apikey=${FMP_KEY}`,
+    `https://financialmodelingprep.com/api/v3/historical-chart/1day/${sym}?apikey=${FMP_KEY}`,
+    `https://financialmodelingprep.com/stable/historical-chart/1hour?symbol=${sym}&apikey=${FMP_KEY}`,
+  ];
+  for (const url of candidates) {
+    try {
+      const res = await fetch(url, {
+        headers: { "User-Agent": UA, Accept: "application/json" },
+        next: { revalidate: 21600 }, // 6h
+      });
+      if (!res.ok) continue;
+      const json = (await res.json()) as FmpIntradayBar[] | { "Error Message"?: string };
+      if (!Array.isArray(json) || json.length === 0) continue;
+      // FMP intraday endpoints return newest-first; reverse for left-to-right.
+      const closes = json
+        .map((r) => (typeof r.close === "number" ? r.close : typeof r.price === "number" ? r.price : null))
+        .filter((n): n is number => Number.isFinite(n as number))
+        .reverse();
+      if (closes.length < 2) continue;
+      // Downsample to ~40 points so the SVG path stays compact but keeps shape.
+      const step = Math.max(1, Math.ceil(closes.length / 40));
+      const sampled: number[] = [];
+      for (let i = 0; i < closes.length; i += step) sampled.push(closes[i]);
+      // Always include the very last point so the chart ends at "now".
+      if (sampled[sampled.length - 1] !== closes[closes.length - 1]) {
+        sampled.push(closes[closes.length - 1]);
+      }
+      return sampled;
+    } catch {
+      // try next candidate
+    }
+  }
+  return [];
+}
 
 interface FmpQuote {
   symbol?: string;
@@ -79,12 +120,13 @@ async function fetchFmpQuote(symbol: string): Promise<FmpQuote | null> {
     try {
       const res = await fetch(url, {
         headers: { "User-Agent": UA, Accept: "application/json" },
-        next: { revalidate: 21600 }, // 6h
+        next: { revalidate: 21600 },
       });
       if (!res.ok) continue;
-      const json = (await res.json()) as FmpQuote[] | { "Error Message"?: string };
-      if (!Array.isArray(json) || json.length === 0) continue;
-      return json[0];
+      const json = (await res.json()) as FmpQuote[] | FmpQuote | { "Error Message"?: string };
+      if (Array.isArray(json) && json.length > 0) return json[0];
+      // Stable endpoint sometimes returns a single object rather than an array.
+      if (json && typeof json === "object" && "symbol" in json) return json as FmpQuote;
     } catch {
       // next candidate
     }
@@ -93,9 +135,6 @@ async function fetchFmpQuote(symbol: string): Promise<FmpQuote | null> {
 }
 
 function synthesizeSparkline(q: FmpQuote): number[] {
-  // Order the available data points roughly chronologically — start with the
-  // year low (≈1 year ago floor), walk through the longer-then-shorter
-  // moving averages, then yesterday's close, then today's price.
   const points: number[] = [];
   const push = (n: number | undefined) => {
     if (typeof n === "number" && Number.isFinite(n) && n > 0) points.push(n);
@@ -109,14 +148,18 @@ function synthesizeSparkline(q: FmpQuote): number[] {
 }
 
 async function fetchSparkline(symbol: string, fallbackPrice: number | null, fallbackPct: number): Promise<number[]> {
+  // Best case: real intraday history from FMP.
+  const intraday = await fetchFmpIntraday(symbol);
+  if (intraday.length >= 3) return intraday;
+
+  // Mid-case: synthesize a multi-point trajectory from quote summary stats.
   const quote = await fetchFmpQuote(symbol);
   if (quote) {
     const points = synthesizeSparkline(quote);
-    if (points.length >= 2) return points;
+    if (points.length >= 3) return points;
   }
-  // Final fallback: if even the quote endpoint fails, draw a two-point line
-  // using the percent change we already have, so the user at least sees
-  // direction (up/down) instead of a blank box.
+
+  // Last resort: draw a two-point direction line from the percent change.
   if (typeof fallbackPrice === "number" && Number.isFinite(fallbackPct)) {
     const prevClose = fallbackPrice / (1 + fallbackPct / 100);
     return [prevClose, fallbackPrice];

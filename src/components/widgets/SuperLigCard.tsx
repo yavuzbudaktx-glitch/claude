@@ -143,23 +143,6 @@ export function SuperLigCard() {
 
       {data && (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
-            {data.last ? (
-              <MatchBox label="Last match" match={data.last} variant="last" />
-            ) : (
-              <div className="border rule rounded-md p-2.5 text-muted text-xs italic flex items-center justify-center">
-                No recent match.
-              </div>
-            )}
-            {data.next ? (
-              <MatchBox label="Next match" match={data.next} variant="next" />
-            ) : (
-              <div className="border rule rounded-md p-2.5 text-muted text-xs italic flex items-center justify-center">
-                No fixture scheduled.
-              </div>
-            )}
-          </div>
-
           {data.standings.length === 0 ? (
             <p className="text-muted text-xs italic">Standings unavailable.</p>
           ) : (
@@ -207,6 +190,23 @@ export function SuperLigCard() {
               </ul>
             </div>
           )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-4 border-t rule-soft">
+            {data.last ? (
+              <MatchBox label="Last match" match={data.last} variant="last" />
+            ) : (
+              <div className="border rule rounded-md p-3 text-muted text-xs italic flex items-center justify-center">
+                No recent match.
+              </div>
+            )}
+            {data.next ? (
+              <MatchBox label="Next match" match={data.next} variant="next" />
+            ) : (
+              <div className="border rule rounded-md p-3 text-muted text-xs italic flex items-center justify-center">
+                No fixture scheduled.
+              </div>
+            )}
+          </div>
 
           {data.source && (
             <div className="font-mono text-[9px] uppercase tracking-wider text-muted mt-3">
