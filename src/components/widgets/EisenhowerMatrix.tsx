@@ -16,7 +16,9 @@ export function EisenhowerMatrix({ userId }: { userId: string }) {
     const { data } = await supabase
       .from("tasks")
       .select("*")
-      .order("status", { ascending: true })
+      // Completed tasks sink to the bottom; everything else sorts by due
+      // date ascending (nearest deadline first), then most-recently-added.
+      .order("completed", { ascending: true })
       .order("due_date", { ascending: true, nullsFirst: false })
       .order("created_at", { ascending: false });
     setTasks((data as Task[]) ?? []);

@@ -443,6 +443,12 @@ interface FotmobFixture {
   status?: { utcTime?: string; finished?: boolean; cancelled?: boolean; started?: boolean; scoreStr?: string };
   tournament?: { name?: string; leagueName?: string };
   notStarted?: boolean;
+  // Different FotMob payloads stash the kickoff time in different keys, so
+  // we have to look in several places.
+  utcTime?: string;
+  startTime?: string;
+  dateTime?: string;
+  date?: string;
 }
 interface FotmobTeamResp {
   fixtures?: { allFixtures?: { fixtures?: FotmobFixture[] } };
@@ -455,20 +461,33 @@ function parseFotmobScore(scoreStr: string | undefined): { home: number | null; 
   return { home: Number(m[1]), away: Number(m[2]) };
 }
 
+function fotmobFixtureDate(f: FotmobFixture): string | null {
+  const candidates = [f.status?.utcTime, f.utcTime, f.startTime, f.dateTime, f.date];
+  for (const c of candidates) {
+    if (typeof c === "string" && c) {
+      const d = new Date(c);
+      if (!isNaN(d.getTime())) return d.toISOString();
+    }
+  }
+  return null;
+}
+
 function fotmobToMatch(f: FotmobFixture): Match | null {
   const home = f.home?.name;
   const away = f.away?.name;
-  const utc = f.status?.utcTime;
-  if (!home || !away || !utc) return null;
-  const finished = !!f.status?.finished;
+  const date = fotmobFixtureDate(f);
+  if (!home || !away || !date) return null;
+  // Treat as finished if the status flag says so, OR if FotMob populated a
+  // numeric score (some upcoming-fixture payloads omit `status.finished`).
   const { home: hs, away: as } = parseFotmobScore(f.status?.scoreStr);
+  const finished = !!f.status?.finished || (hs !== null && as !== null);
   return {
     id: String(f.id ?? ""),
     home,
     away,
     homeScore: hs,
     awayScore: as,
-    date: new Date(utc).toISOString(),
+    date,
     venue: null,
     league: f.tournament?.name ?? f.tournament?.leagueName ?? null,
     isFinished: finished,
@@ -477,12 +496,15 @@ function fotmobToMatch(f: FotmobFixture): Match | null {
 
 // HTML scrape of the FotMob team page. Their public API requires an
 // anti-bot `x-mas` header that we can't reproduce from server-side, but the
-// HTML at /teams/{id}/overview/{slug} embeds the same payload inside a
-// __NEXT_DATA__ <script> tag — no auth needed.
-async function fetchFromFotmobHtml(): Promise<{ last: Match | null; next: Match | null }> {
+// HTML at /teams/{id}/{tab}/{slug} embeds the same payload inside a
+// __NEXT_DATA__ <script> tag — no auth needed. We pull from both the
+// /overview/ page (recent + next) and the /fixtures/ page (full schedule)
+// so upcoming matches don't get clipped when the overview only shows the
+// most recent result.
+async function fetchFromFotmobHtmlPage(tab: "overview" | "fixtures"): Promise<FotmobFixture[]> {
   try {
     const res = await fetch(
-      `https://www.fotmob.com/teams/${FOTMOB_BESIKTAS_ID}/overview/besiktas`,
+      `https://www.fotmob.com/teams/${FOTMOB_BESIKTAS_ID}/${tab}/besiktas`,
       {
         headers: {
           "User-Agent": UA,
@@ -492,37 +514,62 @@ async function fetchFromFotmobHtml(): Promise<{ last: Match | null; next: Match 
         next: { revalidate: 600 },
       },
     );
-    if (!res.ok) return { last: null, next: null };
+    if (!res.ok) return [];
     const html = await res.text();
     const m = html.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]+?)<\/script>/);
-    if (!m) return { last: null, next: null };
+    if (!m) return [];
     let data: unknown;
-    try { data = JSON.parse(m[1]); } catch { return { last: null, next: null }; }
-    type WithFixtures = { props?: { pageProps?: { team?: FotmobTeamResp; fixtures?: FotmobTeamResp["fixtures"] } } };
+    try { data = JSON.parse(m[1]); } catch { return []; }
+    type WithFixtures = {
+      props?: {
+        pageProps?: {
+          team?: FotmobTeamResp;
+          fixtures?: FotmobTeamResp["fixtures"];
+          initialState?: { team?: FotmobTeamResp };
+        };
+      };
+    };
     const d = data as WithFixtures;
     const fixtures =
       d?.props?.pageProps?.team?.fixtures?.allFixtures?.fixtures ??
       d?.props?.pageProps?.fixtures?.allFixtures?.fixtures ??
+      d?.props?.pageProps?.initialState?.team?.fixtures?.allFixtures?.fixtures ??
       [];
-    if (!Array.isArray(fixtures)) return { last: null, next: null };
-    const matches = fixtures
-      .map(fotmobToMatch)
-      .filter((m): m is Match => !!m)
-      .filter((m) => isBesiktas(m.home) || isBesiktas(m.away))
-      .sort((a, b) => +new Date(a.date) - +new Date(b.date));
-
-    const now = Date.now();
-    let last: Match | null = null;
-    let next: Match | null = null;
-    for (const match of matches) {
-      const t = +new Date(match.date);
-      if (t <= now || match.isFinished) last = match;
-      else if (!next) next = match;
-    }
-    return { last, next };
+    return Array.isArray(fixtures) ? fixtures : [];
   } catch {
-    return { last: null, next: null };
+    return [];
   }
+}
+
+async function fetchFromFotmobHtml(): Promise<{ last: Match | null; next: Match | null }> {
+  const [overview, fixturesTab] = await Promise.all([
+    fetchFromFotmobHtmlPage("overview"),
+    fetchFromFotmobHtmlPage("fixtures"),
+  ]);
+  const seen = new Set<string>();
+  const merged: FotmobFixture[] = [];
+  for (const f of [...overview, ...fixturesTab]) {
+    const key = String(f.id ?? `${f.home?.name}-${f.away?.name}-${fotmobFixtureDate(f)}`);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    merged.push(f);
+  }
+
+  const matches = merged
+    .map(fotmobToMatch)
+    .filter((m): m is Match => !!m)
+    .filter((m) => isBesiktas(m.home) || isBesiktas(m.away))
+    .sort((a, b) => +new Date(a.date) - +new Date(b.date));
+
+  const now = Date.now();
+  let last: Match | null = null;
+  let next: Match | null = null;
+  for (const match of matches) {
+    const t = +new Date(match.date);
+    if (t <= now || match.isFinished) last = match;
+    else if (!next) next = match;
+  }
+  return { last, next };
 }
 
 async function fetchFromFotmob(): Promise<{ last: Match | null; next: Match | null }> {

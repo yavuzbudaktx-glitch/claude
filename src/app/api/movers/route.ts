@@ -53,33 +53,61 @@ interface Buckets {
 interface FmpHistoricalLine { date?: string; close?: number; price?: number }
 interface FmpHistoricalResp { historical?: FmpHistoricalLine[] }
 
+interface YahooChartResp {
+  chart?: {
+    result?: Array<{
+      indicators?: { quote?: Array<{ close?: (number | null)[] }> };
+    }>;
+  };
+}
+
+async function fetchYahooHistory(symbol: string): Promise<number[]> {
+  // Yahoo's v8 chart endpoint sometimes blocks Vercel egress, but it's free
+  // and unauthenticated when it does work — useful as a backup when FMP's
+  // historical endpoint is gated.
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(
+    symbol,
+  )}?interval=1d&range=2mo`;
+  try {
+    const res = await fetch(url, {
+      headers: { "User-Agent": UA, Accept: "application/json" },
+      next: { revalidate: 21600 },
+    });
+    if (!res.ok) return [];
+    const json = (await res.json()) as YahooChartResp;
+    const closes = json.chart?.result?.[0]?.indicators?.quote?.[0]?.close ?? [];
+    return closes.filter((n): n is number => typeof n === "number" && Number.isFinite(n)).slice(-30);
+  } catch {
+    return [];
+  }
+}
+
 async function fetchFmpHistory(symbol: string): Promise<number[]> {
-  if (!FMP_KEY) return [];
   const today = new Date();
   const start = new Date(today.getTime() - 50 * 86400000);
   const fmt = (d: Date) =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   const sym = encodeURIComponent(symbol);
 
-  // v3 historical-price-full is the longest-standing endpoint and works on
-  // the free tier without serietype= / timeseries= flags (those flags are
-  // sometimes flagged premium for newer keys). Stable "light" path is a
-  // backup that newer keys may prefer.
-  const candidates = [
-    `https://financialmodelingprep.com/api/v3/historical-price-full/${sym}?from=${fmt(start)}&to=${fmt(today)}&apikey=${FMP_KEY}`,
-    `https://financialmodelingprep.com/stable/historical-price-eod/light?symbol=${sym}&from=${fmt(start)}&to=${fmt(today)}&apikey=${FMP_KEY}`,
-    `https://financialmodelingprep.com/api/v3/historical-price-full/${sym}?apikey=${FMP_KEY}`,
-  ];
+  // Try a sequence of FMP historical endpoints (free-tier behavior varies by
+  // key vintage), then fall back to Yahoo Finance if FMP returns nothing.
+  const fmpCandidates = FMP_KEY
+    ? [
+        `https://financialmodelingprep.com/stable/historical-price-eod/light?symbol=${sym}&apikey=${FMP_KEY}`,
+        `https://financialmodelingprep.com/api/v3/historical-price-full/${sym}?from=${fmt(start)}&to=${fmt(today)}&apikey=${FMP_KEY}`,
+        `https://financialmodelingprep.com/api/v3/historical-price-full/${sym}?apikey=${FMP_KEY}`,
+        `https://financialmodelingprep.com/api/v3/historical-chart/1day/${sym}?apikey=${FMP_KEY}`,
+      ]
+    : [];
 
-  for (const url of candidates) {
+  for (const url of fmpCandidates) {
     try {
       const res = await fetch(url, {
         headers: { "User-Agent": UA, Accept: "application/json" },
-        next: { revalidate: 21600 }, // 6h — sparklines only need daily resolution
+        next: { revalidate: 21600 },
       });
       if (!res.ok) continue;
       const json = (await res.json()) as FmpHistoricalResp | FmpHistoricalLine[];
-      // Stable endpoint returns an array; v3 wraps it in { historical: [...] }.
       const rows = Array.isArray(json) ? json : (json.historical ?? []);
       if (!rows.length) continue;
       // FMP returns newest-first; reverse so the chart flows left-to-right.
@@ -93,7 +121,10 @@ async function fetchFmpHistory(symbol: string): Promise<number[]> {
       // try next candidate
     }
   }
-  return [];
+
+  // FMP gave us nothing — try Yahoo as a last resort.
+  const yahoo = await fetchYahooHistory(symbol);
+  return yahoo.length >= 2 ? yahoo : [];
 }
 
 // ---------- FMP (stocks) ----------------------------------------------------
@@ -179,31 +210,20 @@ async function fetchFmpGainersList(): Promise<FmpListResult> {
   return { movers: [], error: lastError };
 }
 
-// Curated mega-cap watchlist for the losers side. Limited to ~30 names so the
-// batch /api/v3/quote/ URL stays compact and well within free-tier limits.
-const BIG_NAME_LOSER_UNIVERSE = [
-  "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "AMD", "AVGO",
-  "ORCL", "NFLX", "INTC", "CSCO", "QCOM", "PLTR", "UBER", "DIS",
-  "JPM", "BAC", "GS", "V", "MA", "COIN",
-  "UNH", "LLY", "PFE", "WMT", "COST", "HD", "NKE", "MCD", "KO",
-  "BA", "XOM", "CVX",
-];
+// For losers we use the same /stable/biggest-losers endpoint that we know
+// works on this free-tier key (the batch /quote/ endpoint silently failed),
+// then apply a price filter to skip penny stocks: real companies tend to
+// trade above $15. We over-fetch from FMP (request 50 entries, slice 5
+// after filtering) so big-name losers actually surface even on days when
+// the top of the list is penny-stock noise.
+const LOSER_MIN_PRICE = 15;
 
-interface FmpQuote {
-  symbol?: string;
-  name?: string;
-  price?: number;
-  changesPercentage?: number;
-  changePercentage?: number;
-}
-
-async function fetchBigNameLosers(): Promise<FmpListResult> {
+async function fetchFmpLosersList(): Promise<FmpListResult> {
   if (!FMP_KEY) return { movers: [], error: "FMP_API_KEY not set" };
 
-  const symbols = BIG_NAME_LOSER_UNIVERSE.join(",");
   const candidates = [
-    { tag: "v3-quote", url: `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${FMP_KEY}` },
-    { tag: "stable-quote", url: `https://financialmodelingprep.com/stable/quote?symbol=${symbols}&apikey=${FMP_KEY}` },
+    { tag: "stable", url: `https://financialmodelingprep.com/stable/biggest-losers?apikey=${FMP_KEY}` },
+    { tag: "v3", url: `https://financialmodelingprep.com/api/v3/stock_market/losers?apikey=${FMP_KEY}` },
   ];
 
   let lastError = "no candidate succeeded";
@@ -215,7 +235,7 @@ async function fetchBigNameLosers(): Promise<FmpListResult> {
       });
       if (!res.ok) { lastError = `${tag}: HTTP ${res.status}`; continue; }
       const json = (await res.json()) as
-        | FmpQuote[]
+        | FmpMover[]
         | { "Error Message"?: string; message?: string; error?: string };
       if (!Array.isArray(json)) {
         const msg =
@@ -229,32 +249,27 @@ async function fetchBigNameLosers(): Promise<FmpListResult> {
       if (json.length === 0) { lastError = `${tag}: empty list`; continue; }
 
       const valid = json
-        .map((q) => {
+        .map((e) => {
           const pct =
-            typeof q.changesPercentage === "number"
-              ? q.changesPercentage
-              : typeof q.changePercentage === "number"
-                ? q.changePercentage
+            typeof e.changesPercentage === "number"
+              ? e.changesPercentage
+              : typeof e.changePercentage === "number"
+                ? e.changePercentage
                 : null;
-          if (typeof q.symbol !== "string" || pct === null) return null;
-          return {
-            symbol: q.symbol,
-            name: q.name ?? q.symbol,
-            price: typeof q.price === "number" ? q.price : null,
-            pct,
-          };
+          if (typeof e.symbol !== "string" || pct === null) return null;
+          return { symbol: e.symbol, name: e.name ?? e.symbol, price: e.price, pct };
         })
-        .filter((e): e is { symbol: string; name: string; price: number | null; pct: number } => !!e);
-
-      // Sort ascending by % so the worst (most negative) come first.
-      valid.sort((a, b) => a.pct - b.pct);
-      const losersRaw = valid.slice(0, 5);
+        .filter((e): e is { symbol: string; name: string; price: number | undefined; pct: number } => !!e)
+        // Skip penny stocks — keep names trading above the price threshold.
+        // If `price` is missing entirely we err on the side of inclusion.
+        .filter((e) => typeof e.price !== "number" || e.price >= LOSER_MIN_PRICE)
+        .slice(0, 5);
 
       const movers = await Promise.all(
-        losersRaw.map(async (e) => ({
+        valid.map(async (e) => ({
           symbol: e.symbol,
           name: e.name,
-          price: e.price,
+          price: typeof e.price === "number" ? e.price : null,
           changePct: e.pct,
           history: await fetchFmpHistory(e.symbol),
           type: "stock" as const,
@@ -271,7 +286,7 @@ async function fetchBigNameLosers(): Promise<FmpListResult> {
 async function buildStockBuckets(): Promise<{ buckets: Buckets; error: string | null }> {
   const [gainers, losers] = await Promise.all([
     fetchFmpGainersList(),
-    fetchBigNameLosers(),
+    fetchFmpLosersList(),
   ]);
   return {
     buckets: { gainers: gainers.movers, losers: losers.movers },

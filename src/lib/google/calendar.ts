@@ -17,12 +17,19 @@ interface RawEvent {
   end?: { dateTime?: string; date?: string };
 }
 
-export async function fetchUpcomingEvents(accessToken: string, maxResults = 5): Promise<CalendarEvent[]> {
+export async function fetchUpcomingEvents(
+  accessToken: string,
+  maxResults = 20,
+  daysAhead = 5,
+): Promise<CalendarEvent[]> {
+  const now = new Date();
+  const timeMax = new Date(now.getTime() + daysAhead * 86400 * 1000);
   const params = new URLSearchParams({
     maxResults: String(maxResults),
     singleEvents: "true",
     orderBy: "startTime",
-    timeMin: new Date().toISOString(),
+    timeMin: now.toISOString(),
+    timeMax: timeMax.toISOString(),
   });
 
   const res = await fetch(
