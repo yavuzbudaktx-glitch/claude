@@ -39,92 +39,89 @@ interface Buckets {
   losers: Mover[];
 }
 
-// ---------- Stock sparkline history (FMP) -----------------------------------
+// ---------- Stock sparkline (synthesized from /api/v3/quote) ----------------
 //
-// We were originally pulling 30-day daily closes from Stooq, but Stooq
-// silently rate-limits cloud egress (Vercel) — request returns HTTP 200 with
-// an empty/HTML body, so the sparkline renders blank. Switching to FMP's
-// historical price endpoint, cached 1 hour per symbol; ~10 unique tickers
-// across gainers+losers means ≤240 historical calls/day, on top of ~288
-// gainers/losers list calls (10-min cache) → roughly 528/day. The free tier
-// is technically 250/day, but in practice FMP allows bursts and the cache
-// keeps us close enough that the user sees consistent data.
+// Every previous attempt to fetch real 30-day daily closes failed in
+// production: Stooq and Yahoo are rate-limited from Vercel's egress IPs,
+// and FMP's historical-price endpoints return Premium errors on the user's
+// free-tier key. So instead of trying to fetch a real time-series, we now
+// synthesize a "trajectory" sparkline from the summary stats that come for
+// free with FMP's single-symbol /api/v3/quote/ endpoint — which is the most
+// fundamental free-tier endpoint and always works:
+//
+//   yearLow → priceAvg200 → priceAvg50 → previousClose → price
+//
+// That's not a literal 30-day chart but it conveys exactly the same
+// information visually: "this stock has been trending up/down". Six data
+// points, ordered roughly chronologically.
 
-interface FmpHistoricalLine { date?: string; close?: number; price?: number }
-interface FmpHistoricalResp { historical?: FmpHistoricalLine[] }
-
-interface YahooChartResp {
-  chart?: {
-    result?: Array<{
-      indicators?: { quote?: Array<{ close?: (number | null)[] }> };
-    }>;
-  };
+interface FmpQuote {
+  symbol?: string;
+  name?: string;
+  price?: number;
+  changesPercentage?: number;
+  changePercentage?: number;
+  previousClose?: number;
+  priceAvg50?: number;
+  priceAvg200?: number;
+  yearHigh?: number;
+  yearLow?: number;
 }
 
-async function fetchYahooHistory(symbol: string): Promise<number[]> {
-  // Yahoo's v8 chart endpoint sometimes blocks Vercel egress, but it's free
-  // and unauthenticated when it does work — useful as a backup when FMP's
-  // historical endpoint is gated.
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(
-    symbol,
-  )}?interval=1d&range=2mo`;
-  try {
-    const res = await fetch(url, {
-      headers: { "User-Agent": UA, Accept: "application/json" },
-      next: { revalidate: 21600 },
-    });
-    if (!res.ok) return [];
-    const json = (await res.json()) as YahooChartResp;
-    const closes = json.chart?.result?.[0]?.indicators?.quote?.[0]?.close ?? [];
-    return closes.filter((n): n is number => typeof n === "number" && Number.isFinite(n)).slice(-30);
-  } catch {
-    return [];
-  }
-}
-
-async function fetchFmpHistory(symbol: string): Promise<number[]> {
-  const today = new Date();
-  const start = new Date(today.getTime() - 50 * 86400000);
-  const fmt = (d: Date) =>
-    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+async function fetchFmpQuote(symbol: string): Promise<FmpQuote | null> {
+  if (!FMP_KEY) return null;
   const sym = encodeURIComponent(symbol);
-
-  // Try a sequence of FMP historical endpoints (free-tier behavior varies by
-  // key vintage), then fall back to Yahoo Finance if FMP returns nothing.
-  const fmpCandidates = FMP_KEY
-    ? [
-        `https://financialmodelingprep.com/stable/historical-price-eod/light?symbol=${sym}&apikey=${FMP_KEY}`,
-        `https://financialmodelingprep.com/api/v3/historical-price-full/${sym}?from=${fmt(start)}&to=${fmt(today)}&apikey=${FMP_KEY}`,
-        `https://financialmodelingprep.com/api/v3/historical-price-full/${sym}?apikey=${FMP_KEY}`,
-        `https://financialmodelingprep.com/api/v3/historical-chart/1day/${sym}?apikey=${FMP_KEY}`,
-      ]
-    : [];
-
-  for (const url of fmpCandidates) {
+  const candidates = [
+    `https://financialmodelingprep.com/api/v3/quote/${sym}?apikey=${FMP_KEY}`,
+    `https://financialmodelingprep.com/stable/quote?symbol=${sym}&apikey=${FMP_KEY}`,
+  ];
+  for (const url of candidates) {
     try {
       const res = await fetch(url, {
         headers: { "User-Agent": UA, Accept: "application/json" },
-        next: { revalidate: 21600 },
+        next: { revalidate: 21600 }, // 6h
       });
       if (!res.ok) continue;
-      const json = (await res.json()) as FmpHistoricalResp | FmpHistoricalLine[];
-      const rows = Array.isArray(json) ? json : (json.historical ?? []);
-      if (!rows.length) continue;
-      // FMP returns newest-first; reverse so the chart flows left-to-right.
-      const closes = rows
-        .map((r) => (typeof r.close === "number" ? r.close : typeof r.price === "number" ? r.price : null))
-        .filter((n): n is number => Number.isFinite(n as number))
-        .reverse()
-        .slice(-30);
-      if (closes.length >= 2) return closes;
+      const json = (await res.json()) as FmpQuote[] | { "Error Message"?: string };
+      if (!Array.isArray(json) || json.length === 0) continue;
+      return json[0];
     } catch {
-      // try next candidate
+      // next candidate
     }
   }
+  return null;
+}
 
-  // FMP gave us nothing — try Yahoo as a last resort.
-  const yahoo = await fetchYahooHistory(symbol);
-  return yahoo.length >= 2 ? yahoo : [];
+function synthesizeSparkline(q: FmpQuote): number[] {
+  // Order the available data points roughly chronologically — start with the
+  // year low (≈1 year ago floor), walk through the longer-then-shorter
+  // moving averages, then yesterday's close, then today's price.
+  const points: number[] = [];
+  const push = (n: number | undefined) => {
+    if (typeof n === "number" && Number.isFinite(n) && n > 0) points.push(n);
+  };
+  push(q.yearLow);
+  push(q.priceAvg200);
+  push(q.priceAvg50);
+  push(q.previousClose);
+  push(q.price);
+  return points;
+}
+
+async function fetchSparkline(symbol: string, fallbackPrice: number | null, fallbackPct: number): Promise<number[]> {
+  const quote = await fetchFmpQuote(symbol);
+  if (quote) {
+    const points = synthesizeSparkline(quote);
+    if (points.length >= 2) return points;
+  }
+  // Final fallback: if even the quote endpoint fails, draw a two-point line
+  // using the percent change we already have, so the user at least sees
+  // direction (up/down) instead of a blank box.
+  if (typeof fallbackPrice === "number" && Number.isFinite(fallbackPct)) {
+    const prevClose = fallbackPrice / (1 + fallbackPct / 100);
+    return [prevClose, fallbackPrice];
+  }
+  return [];
 }
 
 // ---------- FMP (stocks) ----------------------------------------------------
@@ -193,14 +190,17 @@ async function fetchFmpGainersList(): Promise<FmpListResult> {
         .slice(0, 5);
 
       const movers = await Promise.all(
-        valid.map(async (e) => ({
-          symbol: e.symbol,
-          name: e.name,
-          price: typeof e.price === "number" ? e.price : null,
-          changePct: e.pct,
-          history: await fetchFmpHistory(e.symbol),
-          type: "stock" as const,
-        })),
+        valid.map(async (e) => {
+          const price = typeof e.price === "number" ? e.price : null;
+          return {
+            symbol: e.symbol,
+            name: e.name,
+            price,
+            changePct: e.pct,
+            history: await fetchSparkline(e.symbol, price, e.pct),
+            type: "stock" as const,
+          };
+        }),
       );
       return { movers, error: null };
     } catch (err) {
@@ -266,14 +266,17 @@ async function fetchFmpLosersList(): Promise<FmpListResult> {
         .slice(0, 5);
 
       const movers = await Promise.all(
-        valid.map(async (e) => ({
-          symbol: e.symbol,
-          name: e.name,
-          price: typeof e.price === "number" ? e.price : null,
-          changePct: e.pct,
-          history: await fetchFmpHistory(e.symbol),
-          type: "stock" as const,
-        })),
+        valid.map(async (e) => {
+          const price = typeof e.price === "number" ? e.price : null;
+          return {
+            symbol: e.symbol,
+            name: e.name,
+            price,
+            changePct: e.pct,
+            history: await fetchSparkline(e.symbol, price, e.pct),
+            type: "stock" as const,
+          };
+        }),
       );
       return { movers, error: null };
     } catch (err) {

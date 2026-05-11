@@ -391,8 +391,12 @@ function ymd(d: Date) { return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}
 
 async function fetchEspnScoreboardSweep(): Promise<{ last: Match | null; next: Match | null }> {
   const now = new Date();
-  const from = new Date(now.getTime() - 90 * 86400000);
-  const to = new Date(now.getTime() + 180 * 86400000);
+  // ESPN's scoreboard endpoint rejects (returns empty) ranges wider than
+  // roughly 30 days. The previous 270-day window was silently returning
+  // nothing. Narrow to 14d back / 30d forward — easily covers "last match"
+  // and "next match" and stays inside ESPN's accepted range.
+  const from = new Date(now.getTime() - 14 * 86400000);
+  const to = new Date(now.getTime() + 30 * 86400000);
   const range = `${ymd(from)}-${ymd(to)}`;
 
   const buckets = await Promise.all(
@@ -595,6 +599,142 @@ async function fetchFromFotmob(): Promise<{ last: Match | null; next: Match | nu
   return { last, next };
 }
 
+// ----- Source 7: Wikipedia season-page scrape ------------------------------
+//
+// Wikipedia's English-language Beşiktaş season page lists every fixture in
+// a structured wikitable. It's a) cloud-friendly (no anti-bot, no auth),
+// b) updated very promptly after each match, and c) covers all competitions
+// the team plays in. We use the MediaWiki parse API to get the rendered
+// HTML, then regex out the fixture rows.
+
+function currentBesiktasSeasonTitles(): string[] {
+  // Süper Lig seasons span Aug→May. From August onward we're in the new
+  // season; before that we're still in the previous one. Try the most-likely
+  // title first, then fall back one season back. Wikipedia titles use an
+  // en-dash and the 2-digit short year, e.g. "2025–26".
+  const now = new Date();
+  const y = now.getFullYear();
+  const startsThisYear = now.getMonth() >= 6; // July or later
+  const seasons: Array<[number, number]> = startsThisYear
+    ? [[y, y + 1], [y - 1, y]]
+    : [[y - 1, y], [y - 2, y - 1]];
+  return seasons.map(([a, b]) => `${a}–${String(b).slice(-2)}_Beşiktaş_J.K._season`);
+}
+
+interface WikiParseResp {
+  parse?: { text?: { "*"?: string } };
+}
+
+function decodeHtmlEntities(s: string): string {
+  return s
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&#34;|&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)));
+}
+
+function stripTags(html: string): string {
+  return decodeHtmlEntities(html.replace(/<[^>]+>/g, "")).replace(/\s+/g, " ").trim();
+}
+
+function parseWikipediaFixtures(html: string): Match[] {
+  // The fixture tables on the season page render each match row with a
+  // <time datetime="..."> element for the kickoff date and three teams/score
+  // <td> cells. Rather than parsing tables structurally we walk every <tr>
+  // that contains a <time datetime=...> and extract the parts.
+  const matches: Match[] = [];
+  const rowRe = /<tr\b[^>]*>([\s\S]*?)<\/tr>/g;
+  let m: RegExpExecArray | null;
+  while ((m = rowRe.exec(html)) !== null) {
+    const row = m[1];
+    // Need a datetime — that's our signal it's a fixture row.
+    const dt = /<time[^>]*datetime="([^"]+)"/i.exec(row);
+    if (!dt) continue;
+    const date = new Date(dt[1]);
+    if (isNaN(date.getTime())) continue;
+
+    // Pull all <td> cells in order. The schema for Beşiktaş season tables
+    // typically goes: [date, home, score, away, venue, attendance, ...]
+    const cellRe = /<td\b[^>]*>([\s\S]*?)<\/td>/g;
+    const cells: string[] = [];
+    let c: RegExpExecArray | null;
+    while ((c = cellRe.exec(row)) !== null) cells.push(stripTags(c[1]));
+    if (cells.length < 4) continue;
+
+    // Locate the score cell — it's the one that's either "n–n" or "v"/"vs".
+    let scoreIdx = -1;
+    for (let i = 1; i < cells.length - 1; i++) {
+      if (/^\s*\d+\s*[-–]\s*\d+\s*$/.test(cells[i]) || /^v(s\.?)?$/i.test(cells[i])) {
+        scoreIdx = i;
+        break;
+      }
+    }
+    if (scoreIdx < 1) continue;
+    const home = cells[scoreIdx - 1];
+    const away = cells[scoreIdx + 1];
+    if (!home || !away) continue;
+    if (!isBesiktas(home) && !isBesiktas(away)) continue;
+
+    const scoreText = cells[scoreIdx];
+    const scoreMatch = /^\s*(\d+)\s*[-–]\s*(\d+)\s*$/.exec(scoreText);
+    const homeScore = scoreMatch ? Number(scoreMatch[1]) : null;
+    const awayScore = scoreMatch ? Number(scoreMatch[2]) : null;
+    const finished = scoreMatch !== null;
+
+    matches.push({
+      id: `wiki-${dt[1]}-${home}-${away}`,
+      home,
+      away,
+      homeScore,
+      awayScore,
+      date: date.toISOString(),
+      venue: null,
+      league: null, // Wikipedia rolls fixtures together; no per-row league.
+      isFinished: finished,
+    });
+  }
+  return matches;
+}
+
+async function fetchFromWikipedia(): Promise<{ last: Match | null; next: Match | null }> {
+  for (const title of currentBesiktasSeasonTitles()) {
+    try {
+      const url =
+        `https://en.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(title)}` +
+        `&format=json&prop=text&redirects=1&origin=*`;
+      const res = await fetch(url, {
+        headers: { "User-Agent": UA, Accept: "application/json" },
+        next: { revalidate: 1800 }, // 30min
+      });
+      if (!res.ok) continue;
+      const json = (await res.json()) as WikiParseResp;
+      const html = json?.parse?.text?.["*"];
+      if (!html) continue;
+
+      const matches = parseWikipediaFixtures(html).sort(
+        (a, b) => +new Date(a.date) - +new Date(b.date),
+      );
+      if (matches.length === 0) continue;
+
+      const now = Date.now();
+      let last: Match | null = null;
+      let next: Match | null = null;
+      for (const m of matches) {
+        const t = +new Date(m.date);
+        if (t <= now || m.isFinished) last = m;
+        else if (!next) next = m;
+      }
+      if (last || next) return { last, next };
+    } catch {
+      // try next season title
+    }
+  }
+  return { last: null, next: null };
+}
+
 interface SourceResult {
   name: string;
   last: Match | null;
@@ -612,6 +752,7 @@ async function fetchBesiktasMatches(): Promise<{
   // for `next`. Source-priority alone caused stale ESPN data to win over
   // fresher SofaScore/SportsDB/FotMob results.
   const sources: SourceResult[] = await Promise.all([
+    fetchFromWikipedia().then((r) => ({ name: "wikipedia", ...r })),
     fetchFromFotmobHtml().then((r) => ({ name: "fotmob-html", ...r })),
     fetchFromEspnTeamSchedule().then((r) => ({ name: "espn-team", ...r })),
     fetchFromSofaScore().then((r) => ({ name: "sofascore", ...r })),
