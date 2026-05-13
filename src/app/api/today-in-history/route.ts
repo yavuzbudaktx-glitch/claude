@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
+import { fetchBritannicaFeaturedEvent } from "@/lib/britannica";
 
-// Run on every request so the deterministic day-of-year pick lands on the
-// caller's actual current local day. The client passes its local date as
-// `?d=YYYY-MM-DD`; we drive both the Wikimedia mm/dd lookup and the picker
-// off that, so content rotates at the user's local midnight, not UTC's.
+// Primary source for the daily fact is Britannica's "Featured Event" on
+// britannica.com/on-this-day — it's hand-picked daily by editors and skews
+// to the genuinely interesting (vs. Wikipedia's "selected", which can be
+// uneven). We scrape Britannica's HTML once per day, then fall back to
+// Wikipedia if the scrape comes back empty so the card never goes blank.
 export const dynamic = "force-dynamic";
 
 interface RawPage {
@@ -92,10 +94,30 @@ export async function GET(req: Request) {
   const mm = pad(dateAt.getUTCMonth() + 1);
   const dd = pad(dateAt.getUTCDate());
 
+  // Primary: Britannica's hand-picked Featured Event.
+  try {
+    const britannica = await fetchBritannicaFeaturedEvent();
+    if (britannica && britannica.title) {
+      return NextResponse.json({
+        date: `${mm}-${dd}`,
+        year: britannica.year ?? null,
+        text: britannica.title,
+        summary: britannica.summary,
+        kind: "featured",
+        thumbnail: britannica.thumbnail,
+        pageTitle: britannica.title,
+        link: britannica.link,
+      });
+    }
+  } catch {
+    // Fall through to Wikipedia.
+  }
+
   try {
     // Wikipedia "selected" is the curated set shown on the front page — the
     // same set Wikipedia editors call out as the most historically significant
-    // events of the day.
+    // events of the day. Used here as a backstop when Britannica scraping
+    // returns nothing.
     let pool = await fetchFeed("selected", mm, dd);
     let kind: "selected" | "events" | "births" | "deaths" = "selected";
 

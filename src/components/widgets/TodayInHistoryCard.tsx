@@ -6,10 +6,10 @@ import { localDateKey, msUntilLocalMidnight } from "@/lib/local-date";
 
 interface TodayResp {
   date?: string;
-  year?: number;
+  year?: number | null;
   text?: string;
   summary?: string | null;
-  kind?: "selected" | "events" | "births" | "deaths";
+  kind?: "featured" | "selected" | "events" | "births" | "deaths";
   thumbnail?: string | null;
   pageTitle?: string | null;
   link?: string | null;
@@ -43,6 +43,7 @@ export function TodayInHistoryCard() {
   const labelKind =
     data?.kind === "births" ? "Born today"
     : data?.kind === "deaths" ? "Died today"
+    : data?.kind === "featured" ? "Featured event"
     : "On this day";
 
   const Wrapper = (props: { children: React.ReactNode }) =>
@@ -67,7 +68,7 @@ export function TodayInHistoryCard() {
       </div>
     );
   }
-  if (data?.error || !data?.year) {
+  if (data?.error || !data?.text) {
     return (
       <div className="animate-fadeIn">
         <div className="label mb-1.5">{labelKind}</div>
@@ -81,9 +82,11 @@ export function TodayInHistoryCard() {
       <div className="label mb-1.5">{labelKind}</div>
       <Wrapper>
         <div className="flex items-baseline gap-3 group-hover:underline group-hover:underline-offset-4 group-hover:decoration-[var(--rule)]">
-          <span className="font-serif text-2xl font-light tabular-nums leading-none text-accent shrink-0">
-            {data.year}
-          </span>
+          {data.year != null && (
+            <span className="font-serif text-2xl font-light tabular-nums leading-none text-accent shrink-0">
+              {data.year}
+            </span>
+          )}
           <span className="font-serif text-[14px] leading-snug min-w-0 line-clamp-2">
             {data.text}
           </span>

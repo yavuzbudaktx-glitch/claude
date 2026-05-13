@@ -2,15 +2,67 @@
 
 /* eslint-disable @next/next/no-img-element */
 import useSWR from "swr";
+import { useState } from "react";
 import { differenceInCalendarDays, format, parseISO } from "date-fns";
 import { Card } from "@/components/Card";
 import type { UfcEvent, UfcFighter, UfcPayload } from "@/app/api/ufc/route";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<UfcPayload>);
 
-// ESPN's CDN-hosted UFC logo. Public, no auth required.
-const UFC_LOGO =
-  "https://a.espncdn.com/combiner/i?img=/redesign/assets/img/logos/leaguelogos/ufc-260.png&w=260";
+// UFC logo with several fallbacks — the ESPN combiner URL we used before
+// returns a 404 from some regions; Wikimedia Commons hosts the canonical
+// SVG and is rock-solid from anywhere.
+const UFC_LOGO_URLS = [
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/UFC_Logo.svg/640px-UFC_Logo.svg.png",
+  "https://a.espncdn.com/i/teamlogos/leagues/500/ufc.png",
+  "https://a.espncdn.com/i/teamlogos/leagues/500-dark/ufc.png",
+];
+
+function FallbackImg({
+  urls,
+  alt,
+  className,
+}: {
+  urls: string[];
+  alt: string;
+  className?: string;
+}) {
+  const [idx, setIdx] = useState(0);
+  const [hidden, setHidden] = useState(false);
+  if (hidden || urls.length === 0) return null;
+  return (
+    <img
+      src={urls[idx]}
+      alt={alt}
+      className={className}
+      referrerPolicy="no-referrer"
+      onError={() => {
+        if (idx + 1 < urls.length) setIdx(idx + 1);
+        else setHidden(true);
+      }}
+    />
+  );
+}
+
+// Build a list of candidate headshot URLs from whatever we know about the
+// fighter. Tries the URL the API returned first, then a couple of standard
+// ESPN CDN patterns, then a generic silhouette.
+function headshotCandidates(f: UfcFighter): string[] {
+  const urls: string[] = [];
+  if (f.headshot) {
+    urls.push(f.headshot);
+    // Some ESPN headshot URLs are missing the .png extension or hash key
+    // that triggers caching; try the bare file too.
+    if (f.headshot.includes("&w=")) {
+      urls.push(f.headshot.replace(/&w=\d+/, ""));
+    }
+    const idMatch = f.headshot.match(/(\d+)\.png/);
+    if (idMatch) {
+      urls.push(`https://a.espncdn.com/i/headshots/mma/players/full/${idMatch[1]}.png`);
+    }
+  }
+  return urls;
+}
 
 function FighterCell({ f, highlight }: { f: UfcFighter | null; highlight: boolean }) {
   if (!f) {
@@ -21,23 +73,20 @@ function FighterCell({ f, highlight }: { f: UfcFighter | null; highlight: boolea
       </div>
     );
   }
+  const candidates = headshotCandidates(f);
   return (
     <div className="flex flex-col items-center text-center min-w-0 flex-1">
       <div
-        className={`relative h-16 w-16 rounded-full overflow-hidden border ${
+        className={`relative h-16 w-16 rounded-full overflow-hidden border bg-hl ${
           highlight ? "border-[var(--accent)]" : "rule-soft"
         }`}
       >
-        {f.headshot ? (
-          <img
-            src={f.headshot}
+        {candidates.length > 0 && (
+          <FallbackImg
+            urls={candidates}
             alt={f.name}
             className="h-full w-full object-cover"
-            referrerPolicy="no-referrer"
-            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
           />
-        ) : (
-          <div className="h-full w-full bg-hl" />
         )}
       </div>
       <div
@@ -142,12 +191,10 @@ export function UfcCard() {
       num="07"
       title="UFC"
       action={
-        <img
-          src={UFC_LOGO}
+        <FallbackImg
+          urls={UFC_LOGO_URLS}
           alt="UFC"
           className="h-5 w-auto opacity-80"
-          referrerPolicy="no-referrer"
-          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
         />
       }
     >

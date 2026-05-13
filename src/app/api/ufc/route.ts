@@ -114,9 +114,16 @@ function parseEvent(e: EspnMmaEvent): UfcEvent | null {
   };
   const fighter = (c: EspnMmaCompetitor | undefined): UfcFighter | null => {
     if (!c?.athlete) return null;
+    // ESPN omits the headshot field on the scoreboard payload more often
+    // than not. Construct the canonical CDN URL from the athlete id so the
+    // fighter portrait still resolves.
+    const headshotFromHref = c.athlete.headshot?.href ?? null;
+    const headshotFromId = c.athlete.id
+      ? `https://a.espncdn.com/i/headshots/mma/players/full/${c.athlete.id}.png`
+      : null;
     return {
       name: c.athlete.fullName ?? c.athlete.displayName ?? "",
-      headshot: c.athlete.headshot?.href ?? null,
+      headshot: headshotFromHref ?? headshotFromId,
       record: recordSummary(c),
       winner: !!c.winner,
     };
