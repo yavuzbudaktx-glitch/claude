@@ -2,7 +2,7 @@
 // HTML parsing to `britannica-extract` so the client can reuse the same
 // parser on its own CORS-proxied scrape.
 
-import { extractFeaturedEvent, type BritannicaTopic } from "./britannica-extract";
+import { extractFeaturedEvent, isPlausibleFeaturedEvent, type BritannicaTopic } from "./britannica-extract";
 
 export type { BritannicaTopic };
 
@@ -22,7 +22,11 @@ async function fetchHtml(url: string): Promise<string | null> {
         Accept: "text/html,application/xhtml+xml,application/xml;q=0.9",
         "Accept-Language": "en-US,en;q=0.9",
       },
-      next: { revalidate: 3600 }, // refresh once an hour
+      // No revalidate cache — we don't want a single blocked response to
+      // be served for an hour. SWR + the route's force-dynamic means each
+      // unique request hits this fresh, then the client caches the parsed
+      // payload itself.
+      cache: "no-store",
     });
     if (!res.ok) return null;
     return await res.text();
@@ -43,7 +47,7 @@ export async function fetchBritannicaFeaturedEvent(date = new Date()): Promise<B
     const html = await fetchHtml(url);
     if (!html) continue;
     const topic = extractFeaturedEvent(html);
-    if (topic) return topic;
+    if (topic && isPlausibleFeaturedEvent(topic)) return topic;
   }
   return null;
 }

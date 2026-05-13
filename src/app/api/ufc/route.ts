@@ -52,6 +52,12 @@ export interface UfcFighter {
   /** Alternate URL the card tries when `headshot` 404s in the browser. */
   headshotFallback: string | null;
   record: string | null;
+  /** Country / nationality, e.g. "Brazil". */
+  country: string | null;
+  /** Fighting style / division summary, e.g. "Light Heavyweight". */
+  division: string | null;
+  /** Status — "Champion", "Active", etc. */
+  status: string | null;
   winner: boolean;
 }
 export interface UfcEvent {
@@ -126,8 +132,11 @@ function parseEvent(e: EspnMmaEvent): UfcEvent | null {
     return {
       name: c.athlete.fullName ?? c.athlete.displayName ?? "",
       headshot: headshotFromHref ?? headshotFromId,
-      headshotFallback: null, // Wikipedia thumbnail filled in by enrichEvent.
+      headshotFallback: null, // filled in by enrichEvent (UFC.com / Wikipedia).
       record: recordSummary(c),
+      country: null,
+      division: null,
+      status: null,
       winner: !!c.winner,
     };
   };
@@ -173,6 +182,111 @@ async function fetchAthleteRecord(athleteId: string): Promise<{ record: string |
   return { record: rec ?? null, headshot: a.headshot?.href ?? null };
 }
 
+// ---------- UFC.com athlete page scraper ------------------------------------
+//
+// UFC.com hosts every fighter at /athlete/{slug} with their pose photo on
+// the UFC's own Cloudfront CDN plus structured stats (record, country,
+// division, status). Scraping it gives us a much higher hit rate than ESPN
+// for newer fighters.
+
+function decodeEntities(s: string): string {
+  return s
+    .replace(/&amp;/g, "&")
+    .replace(/&#039;|&apos;/g, "'")
+    .replace(/&quot;|&#34;/g, '"')
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)));
+}
+
+function stripHtml(s: string): string {
+  return decodeEntities(s.replace(/<[^>]+>/g, "")).replace(/\s+/g, " ").trim();
+}
+
+function ufcAthleteSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "") // strip diacritics
+    .replace(/['']/g, "")
+    .replace(/[^a-z0-9\s-]/g, " ")
+    .trim()
+    .replace(/\s+/g, "-");
+}
+
+export interface UfcAthletePage {
+  photo: string | null;
+  record: string | null;
+  country: string | null;
+  division: string | null;
+  status: string | null;
+}
+
+async function fetchUfcAthletePage(name: string): Promise<UfcAthletePage | null> {
+  if (!name) return null;
+  const slug = ufcAthleteSlug(name);
+  if (!slug) return null;
+  const url = `https://www.ufc.com/athlete/${slug}`;
+  let html: string;
+  try {
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent": UA,
+        Accept: "text/html,application/xhtml+xml",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+      next: { revalidate: 86400 },
+    });
+    if (!res.ok) return null;
+    html = await res.text();
+  } catch {
+    return null;
+  }
+
+  // Hero photo lives on UFC's Cloudfront CDN; first occurrence on the page
+  // is the athlete's pose image.
+  let photo: string | null = null;
+  const photoMatch = html.match(
+    /https?:\/\/dmxg5wxfqgb4u\.cloudfront\.net\/[^"'\s)]+\.(?:png|jpg|jpeg|webp)/i,
+  );
+  if (photoMatch) photo = photoMatch[0];
+
+  // Record: UFC.com shows "20-4-0 (W-L-D)" in a stat block. Match the
+  // common patterns flexibly.
+  let record: string | null = null;
+  const recordMatch =
+    html.match(/(\d{1,3})-(\d{1,3})-(\d{1,3})\s*\([^)]*W-L[^)]*\)/i) ??
+    html.match(/Record[\s\S]{0,200}?(\d{1,3}-\d{1,3}-\d{1,3})/i);
+  if (recordMatch) {
+    record = recordMatch[3] ? `${recordMatch[1]}-${recordMatch[2]}-${recordMatch[3]}` : recordMatch[1];
+  }
+
+  // Country: usually in a "hero-profile__division-body" or under a flag.
+  let country: string | null = null;
+  const countryMatch =
+    html.match(/Country<\/[a-z]+>\s*<[^>]+>\s*([^<]+?)\s*</i) ??
+    html.match(/Place of Birth[\s\S]{0,400}?<[^>]+>\s*([^,<\n]+,\s*[^<\n]+)\s*</i);
+  if (countryMatch) country = stripHtml(countryMatch[1]);
+
+  // Division/weight class: shown as "Light Heavyweight Division" etc.
+  let division: string | null = null;
+  const divisionMatch =
+    html.match(/hero-profile__division-title[^>]*>\s*([^<]+?)\s*</i) ??
+    html.match(/Division<\/[a-z]+>\s*<[^>]+>\s*([^<]+?)\s*</i);
+  if (divisionMatch) division = stripHtml(divisionMatch[1]).replace(/\s*Division$/i, "");
+
+  // Status: "Active", "Champion", etc.
+  let status: string | null = null;
+  const statusMatch =
+    html.match(/Status<\/[a-z]+>\s*<[^>]+>\s*([^<]+?)\s*</i) ??
+    html.match(/hero-profile__tag[^>]*>\s*([^<]+?)\s*</i);
+  if (statusMatch) status = stripHtml(statusMatch[1]);
+
+  if (!photo && !record && !country && !division && !status) return null;
+  return { photo, record, country, division, status };
+}
+
 async function fetchWikipediaThumbnail(name: string): Promise<string | null> {
   // Wikipedia's REST summary endpoint returns a `thumbnail.source` for any
   // page that has an infobox image — virtually every notable UFC fighter
@@ -200,30 +314,36 @@ async function fetchWikipediaThumbnail(name: string): Promise<string | null> {
 
 async function enrichFighter(f: UfcFighter | null, athleteId: string | undefined): Promise<UfcFighter | null> {
   if (!f) return null;
-  // Always grab a Wikipedia thumbnail in parallel — it serves as the
-  // headshotFallback the client uses when ESPN's CDN returns a 404.
-  const wikiPromise = fetchWikipediaThumbnail(f.name);
-  if (f.record && f.headshot) {
-    const wiki = await wikiPromise;
-    return { ...f, headshotFallback: wiki };
-  }
-  if (!athleteId) {
-    const wiki = await wikiPromise;
-    return {
-      ...f,
-      headshot: f.headshot ?? wiki,
-      headshotFallback: f.headshot ? wiki : null,
-    };
-  }
-  const [{ record, headshot }, wiki] = await Promise.all([
-    fetchAthleteRecord(athleteId),
-    wikiPromise,
+  // Fetch UFC.com athlete page, Wikipedia thumbnail, and (if needed) the
+  // ESPN athlete-detail record in parallel.
+  const [ufc, wiki, espn] = await Promise.all([
+    fetchUfcAthletePage(f.name),
+    fetchWikipediaThumbnail(f.name),
+    athleteId ? fetchAthleteRecord(athleteId) : Promise.resolve({ record: null, headshot: null }),
   ]);
+
+  // UFC.com's pose photo wins when present; fall back to ESPN's URL, then
+  // Wikipedia thumbnail. headshotFallback gets whichever non-primary
+  // candidate is left so the client has at least one backup.
+  const ufcPhoto = ufc?.photo ?? null;
+  const primary = ufcPhoto ?? f.headshot ?? espn.headshot ?? wiki ?? null;
+  const fallback =
+    primary === ufcPhoto
+      ? f.headshot ?? espn.headshot ?? wiki ?? null
+      : primary === f.headshot
+        ? espn.headshot ?? wiki ?? null
+        : primary === espn.headshot
+          ? wiki ?? null
+          : null;
+
   return {
     ...f,
-    record: f.record ?? record,
-    headshot: f.headshot ?? headshot ?? wiki,
-    headshotFallback: wiki,
+    record: ufc?.record ?? f.record ?? espn.record ?? null,
+    country: ufc?.country ?? f.country ?? null,
+    division: ufc?.division ?? f.division ?? null,
+    status: ufc?.status ?? f.status ?? null,
+    headshot: primary,
+    headshotFallback: fallback,
   };
 }
 

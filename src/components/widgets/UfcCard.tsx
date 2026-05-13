@@ -136,7 +136,7 @@ function FighterCell({ f, highlight }: { f: UfcFighter | null; highlight: boolea
         )}
       </div>
       <div
-        className={`text-[12px] font-medium leading-snug mt-2 max-w-[110px] truncate ${
+        className={`text-[12px] font-medium leading-snug mt-2 max-w-[120px] truncate ${
           highlight ? "text-accent" : ""
         }`}
         title={f.name}
@@ -146,6 +146,16 @@ function FighterCell({ f, highlight }: { f: UfcFighter | null; highlight: boolea
       {f.record && (
         <div className="font-mono text-[10px] tracking-wider text-muted mt-0.5">
           {f.record}
+        </div>
+      )}
+      {(f.division || f.country) && (
+        <div className="font-mono text-[9px] tracking-wider text-muted mt-0.5 max-w-[120px] truncate">
+          {[f.division, f.country].filter(Boolean).join(" · ")}
+        </div>
+      )}
+      {f.status && f.status.toLowerCase() !== "active" && (
+        <div className="font-mono text-[9px] tracking-wider text-accent mt-0.5 uppercase">
+          {f.status}
         </div>
       )}
     </div>

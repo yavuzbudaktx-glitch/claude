@@ -143,11 +143,68 @@ function tryFirstEventLink(html: string): BritannicaTopic | null {
   return extractFromChunk(chunk);
 }
 
+function tryFirstTopicLink(html: string): BritannicaTopic | null {
+  // Fall-back: many "Featured Event" cards link to /topic/ or /biography/
+  // pages rather than /event/. Scan for the first one of those.
+  const linkRe = /<a[^>]+href=["']\/(?:topic|biography|place|story|art|science|technology|sports|animal)\/[^"']+["'][^>]*>/i;
+  const idx = html.search(linkRe);
+  if (idx < 0) return null;
+  const articleIdx = html.lastIndexOf("<article", idx);
+  const start = articleIdx >= 0 ? articleIdx : Math.max(0, idx - 500);
+  const chunk = html.slice(start, idx + 8000);
+  return extractFromChunk(chunk);
+}
+
+function tryOgMeta(html: string): BritannicaTopic | null {
+  // When the page deep-links to a specific day, og:title/description often
+  // describe the featured event rather than the generic landing.
+  const og = (prop: string) =>
+    html.match(new RegExp(`<meta[^>]+property=["']${prop}["'][^>]+content=["']([^"']+)["']`, "i"))?.[1] ??
+    html.match(new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+property=["']${prop}["']`, "i"))?.[1] ??
+    null;
+  const title = og("og:title");
+  const description = og("og:description");
+  const image = og("og:image");
+  const url = og("og:url");
+  if (!title || !description) return null;
+  // Skip generic landing-page OG (no year, no specific topic). The signal:
+  // description starting with "Discover", "Explore", or containing "every day".
+  if (/^(discover|explore|read|browse)\b|every\s+day|on this day events/i.test(description)) return null;
+  let year: number | null = null;
+  const yearMatch = description.match(/\b(1[0-9]{3}|20[0-9]{2}|21[0-9]{2})\b/);
+  if (yearMatch) year = parseInt(yearMatch[1], 10);
+  return {
+    year,
+    title: decodeEntities(title),
+    summary: clampSummary(decodeEntities(description)),
+    thumbnail: image ?? null,
+    link: url ?? null,
+  };
+}
+
+// Reject obviously-wrong scrapes (matched a sidebar / newsletter widget /
+// "featured topics" sub-section). Real featured events have a substantial
+// description and either a year or an article link.
+export function isPlausibleFeaturedEvent(t: BritannicaTopic): boolean {
+  if (!t.title || t.title.length < 4) return false;
+  if (!t.summary || t.summary.length < 50) return false;
+  // Common false-positive titles when the parser latches onto the wrong card.
+  if (/subscribe|newsletter|britannica premium|sign\s*up|sign\s*in|advertise|cookie|sign in|search/i.test(t.title)) return false;
+  if (!t.year && !t.link) return false;
+  return true;
+}
+
 export function extractFeaturedEvent(html: string): BritannicaTopic | null {
-  return (
-    tryJsonLd(html) ??
-    tryFeaturedMarker(html) ??
-    tryFeaturedClass(html) ??
-    tryFirstEventLink(html)
-  );
+  const candidates = [
+    tryJsonLd(html),
+    tryFeaturedMarker(html),
+    tryFeaturedClass(html),
+    tryOgMeta(html),
+    tryFirstEventLink(html),
+    tryFirstTopicLink(html),
+  ];
+  for (const c of candidates) {
+    if (c && isPlausibleFeaturedEvent(c)) return c;
+  }
+  return null;
 }

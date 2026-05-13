@@ -3,7 +3,7 @@
 import useSWR from "swr";
 import { useEffect, useState } from "react";
 import { localDateKey, msUntilLocalMidnight } from "@/lib/local-date";
-import { extractFeaturedEvent, type BritannicaTopic } from "@/lib/britannica-extract";
+import { extractFeaturedEvent, isPlausibleFeaturedEvent, type BritannicaTopic } from "@/lib/britannica-extract";
 
 interface TodayResp {
   date?: string;
@@ -25,22 +25,33 @@ const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<Toda
 // residential IP, isn't blocked — so we scrape Britannica directly from
 // the client via a public CORS proxy and override the displayed content
 // when the server response wasn't already Britannica.
-async function clientScrapeBritannica(): Promise<BritannicaTopic | null> {
-  const target = "https://www.britannica.com/on-this-day";
-  const proxies = [
+async function clientScrapeBritannica(date: Date): Promise<BritannicaTopic | null> {
+  const MONTHS = [
+    "january", "february", "march", "april", "may", "june",
+    "july", "august", "september", "october", "november", "december",
+  ];
+  const targets = [
+    `https://www.britannica.com/on-this-day/${MONTHS[date.getMonth()]}-${date.getDate()}`,
+    "https://www.britannica.com/on-this-day",
+  ];
+  const proxify = (target: string): string[] => [
     `https://corsproxy.io/?${encodeURIComponent(target)}`,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,
     `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(target)}`,
+    `https://proxy.cors.sh/${target}`,
+    `https://thingproxy.freeboard.io/fetch/${target}`,
   ];
-  for (const url of proxies) {
-    try {
-      const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) continue;
-      const html = await res.text();
-      const topic = extractFeaturedEvent(html);
-      if (topic) return topic;
-    } catch {
-      // try next proxy
+  for (const target of targets) {
+    for (const url of proxify(target)) {
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) continue;
+        const html = await res.text();
+        const topic = extractFeaturedEvent(html);
+        if (topic && isPlausibleFeaturedEvent(topic)) return topic;
+      } catch {
+        // try next proxy / target
+      }
     }
   }
   return null;
@@ -74,16 +85,24 @@ export function TodayInHistoryCard() {
     if (!data) return;
     if (data.source === "britannica") return;
     const cacheKey = `britannica-tih.${dateKey}`;
+    // Use a cached value only if it actually looks like a featured event.
+    // We've had stale localStorage entries from earlier deploys that
+    // matched the wrong section of the page and stuck around all day.
     try {
       const cached = localStorage.getItem(cacheKey);
       if (cached) {
-        setClientFeatured(JSON.parse(cached) as BritannicaTopic);
-        return;
+        const parsed = JSON.parse(cached) as BritannicaTopic;
+        if (isPlausibleFeaturedEvent(parsed)) {
+          setClientFeatured(parsed);
+          return;
+        }
+        localStorage.removeItem(cacheKey);
       }
     } catch {}
     let cancelled = false;
     (async () => {
-      const topic = await clientScrapeBritannica();
+      const now = new Date();
+      const topic = await clientScrapeBritannica(now);
       if (cancelled || !topic) return;
       setClientFeatured(topic);
       try { localStorage.setItem(cacheKey, JSON.stringify(topic)); } catch {}
