@@ -574,15 +574,18 @@ async function buildCryptoBuckets(): Promise<Buckets> {
       typeof c.price_change_percentage_24h === "number",
   );
 
-  // Sort by signed % so the top of the list is the biggest gainer and the
-  // bottom is the biggest loser.
-  const sorted = [...tradeable].sort(
-    (a, b) =>
-      (b.price_change_percentage_24h ?? 0) - (a.price_change_percentage_24h ?? 0),
-  );
+  // Bucket by sign of the 24h move BEFORE picking top-5, so a positive
+  // bucket never spills negative entries (and vice-versa) on days when
+  // fewer than 5 coins moved in a given direction.
+  const positives = tradeable
+    .filter((c) => (c.price_change_percentage_24h ?? 0) > 0)
+    .sort((a, b) => (b.price_change_percentage_24h ?? 0) - (a.price_change_percentage_24h ?? 0));
+  const negatives = tradeable
+    .filter((c) => (c.price_change_percentage_24h ?? 0) < 0)
+    .sort((a, b) => (a.price_change_percentage_24h ?? 0) - (b.price_change_percentage_24h ?? 0));
 
-  const gainersRaw = sorted.slice(0, 5);
-  const losersRaw = sorted.slice(-5).reverse();
+  const gainersRaw = positives.slice(0, 5);
+  const losersRaw = negatives.slice(0, 5);
 
   const toMover = async (c: CoinGeckoCoin & { id: string; symbol: string; name: string }) => ({
     symbol: c.symbol.toUpperCase(),

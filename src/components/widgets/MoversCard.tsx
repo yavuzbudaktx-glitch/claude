@@ -46,14 +46,20 @@ async function fetchYahooViaProxies(symbol: string): Promise<number[]> {
   const yahoo = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(
     symbol,
   )}?range=1mo&interval=1d`;
+  const yahoo2 = `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(
+    symbol,
+  )}?range=1mo&interval=1d`;
   const candidates = [
     `https://corsproxy.io/?${encodeURIComponent(yahoo)}`,
+    `https://corsproxy.io/?${encodeURIComponent(yahoo2)}`,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(yahoo)}`,
     `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(yahoo)}`,
+    `https://proxy.cors.sh/${yahoo}`,
+    `https://thingproxy.freeboard.io/fetch/${yahoo}`,
   ];
   for (const url of candidates) {
     try {
-      const res = await fetch(url);
+      const res = await fetch(url, { cache: "no-store" });
       if (!res.ok) continue;
       const json = (await res.json()) as YahooChartResp;
       const closes = json.chart?.result?.[0]?.indicators?.quote?.[0]?.close ?? [];
@@ -78,16 +84,27 @@ function useClientSparkline(symbol: string, type: "stock" | "crypto", initial: n
 
   useEffect(() => {
     if (type !== "stock") return;
-    if (data.length >= 10) return; // already have a real chart; don't refetch
+    if (data.length >= 10) return;
     let cancelled = false;
-    (async () => {
-      const fetched = await fetchYahooViaProxies(symbol);
-      if (cancelled) return;
-      if (fetched.length >= 3) {
-        setData(fetched);
-        writeSparklineCache(symbol, fetched);
+    let attempt = 0;
+
+    const run = async () => {
+      while (!cancelled && attempt < 3) {
+        const fetched = await fetchYahooViaProxies(symbol);
+        if (cancelled) return;
+        if (fetched.length >= 3) {
+          setData(fetched);
+          writeSparklineCache(symbol, fetched);
+          return;
+        }
+        attempt += 1;
+        // Brief back-off between attempts so a transient proxy outage
+        // doesn't waste all three retries in the same instant.
+        await new Promise((r) => setTimeout(r, 800 * attempt));
       }
-    })();
+    };
+
+    run();
     return () => { cancelled = true; };
   }, [symbol, type, data.length]);
 
@@ -196,6 +213,11 @@ export function MoversCard() {
     refreshInterval: 1000 * 60 * 10,
     keepPreviousData: true,
     revalidateOnFocus: true,
+    // FMP rate-limits occasionally — retry a few times with back-off so a
+    // transient 429/5xx doesn't leave the card empty until the next refresh.
+    errorRetryCount: 4,
+    errorRetryInterval: 3000,
+    shouldRetryOnError: true,
   });
 
   return (

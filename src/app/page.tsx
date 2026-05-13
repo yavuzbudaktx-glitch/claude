@@ -9,6 +9,7 @@ import { EisenhowerMatrix } from "@/components/widgets/EisenhowerMatrix";
 import { MoversCard } from "@/components/widgets/MoversCard";
 import { SuperLigCard } from "@/components/widgets/SuperLigCard";
 import { TodayInHistoryCard } from "@/components/widgets/TodayInHistoryCard";
+import { UfcCard } from "@/components/widgets/UfcCard";
 import { SignOutButton } from "@/components/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -58,6 +59,8 @@ export default async function Page() {
         </div>
         <SuperLigCard />
       </div>
+
+      <UfcCard />
     </main>
   );
 }
