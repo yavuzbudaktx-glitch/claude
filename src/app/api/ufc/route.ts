@@ -49,6 +49,8 @@ interface EspnMmaScoreboardResp { events?: EspnMmaEvent[] }
 export interface UfcFighter {
   name: string;
   headshot: string | null;
+  /** Alternate URL the card tries when `headshot` 404s in the browser. */
+  headshotFallback: string | null;
   record: string | null;
   winner: boolean;
 }
@@ -124,6 +126,7 @@ function parseEvent(e: EspnMmaEvent): UfcEvent | null {
     return {
       name: c.athlete.fullName ?? c.athlete.displayName ?? "",
       headshot: headshotFromHref ?? headshotFromId,
+      headshotFallback: null, // Wikipedia thumbnail filled in by enrichEvent.
       record: recordSummary(c),
       winner: !!c.winner,
     };
@@ -170,15 +173,57 @@ async function fetchAthleteRecord(athleteId: string): Promise<{ record: string |
   return { record: rec ?? null, headshot: a.headshot?.href ?? null };
 }
 
+async function fetchWikipediaThumbnail(name: string): Promise<string | null> {
+  // Wikipedia's REST summary endpoint returns a `thumbnail.source` for any
+  // page that has an infobox image — virtually every notable UFC fighter
+  // has one. We use this as a fallback when ESPN's headshot 404s in the
+  // browser, since ESPN omits portraits for less-famous fighters.
+  if (!name) return null;
+  try {
+    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(
+      name.replace(/\s+/g, "_"),
+    )}`;
+    const res = await fetch(url, {
+      headers: { "User-Agent": UA, Accept: "application/json" },
+      next: { revalidate: 86400 },
+    });
+    if (!res.ok) return null;
+    const json = (await res.json()) as {
+      thumbnail?: { source?: string };
+      originalimage?: { source?: string };
+    };
+    return json.thumbnail?.source ?? json.originalimage?.source ?? null;
+  } catch {
+    return null;
+  }
+}
+
 async function enrichFighter(f: UfcFighter | null, athleteId: string | undefined): Promise<UfcFighter | null> {
   if (!f) return null;
-  if (f.record && f.headshot) return f; // already complete
-  if (!athleteId) return f;
-  const { record, headshot } = await fetchAthleteRecord(athleteId);
+  // Always grab a Wikipedia thumbnail in parallel — it serves as the
+  // headshotFallback the client uses when ESPN's CDN returns a 404.
+  const wikiPromise = fetchWikipediaThumbnail(f.name);
+  if (f.record && f.headshot) {
+    const wiki = await wikiPromise;
+    return { ...f, headshotFallback: wiki };
+  }
+  if (!athleteId) {
+    const wiki = await wikiPromise;
+    return {
+      ...f,
+      headshot: f.headshot ?? wiki,
+      headshotFallback: f.headshot ? wiki : null,
+    };
+  }
+  const [{ record, headshot }, wiki] = await Promise.all([
+    fetchAthleteRecord(athleteId),
+    wikiPromise,
+  ]);
   return {
     ...f,
     record: f.record ?? record,
-    headshot: f.headshot ?? headshot,
+    headshot: f.headshot ?? headshot ?? wiki,
+    headshotFallback: wiki,
   };
 }
 

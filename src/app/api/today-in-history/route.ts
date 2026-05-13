@@ -96,7 +96,7 @@ export async function GET(req: Request) {
 
   // Primary: Britannica's hand-picked Featured Event.
   try {
-    const britannica = await fetchBritannicaFeaturedEvent();
+    const britannica = await fetchBritannicaFeaturedEvent(dateAt);
     if (britannica && britannica.title) {
       return NextResponse.json({
         date: `${mm}-${dd}`,
@@ -104,6 +104,7 @@ export async function GET(req: Request) {
         text: britannica.title,
         summary: britannica.summary,
         kind: "featured",
+        source: "britannica",
         thumbnail: britannica.thumbnail,
         pageTitle: britannica.title,
         link: britannica.link,
@@ -159,6 +160,7 @@ export async function GET(req: Request) {
       text: prefix + picked.text,
       summary: shortenExtract(firstPage?.extract) ?? firstPage?.description ?? null,
       kind,
+      source: "wikipedia",
       thumbnail: firstPage?.thumbnail?.source ?? null,
       pageTitle: firstPage?.normalizedtitle ?? firstPage?.title ?? null,
       link,

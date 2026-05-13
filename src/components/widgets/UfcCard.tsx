@@ -9,14 +9,58 @@ import type { UfcEvent, UfcFighter, UfcPayload } from "@/app/api/ufc/route";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<UfcPayload>);
 
-// UFC logo with several fallbacks — the ESPN combiner URL we used before
-// returns a 404 from some regions; Wikimedia Commons hosts the canonical
-// SVG and is rock-solid from anywhere.
+// UFC logo with several fallbacks. The Commons URL we tried before doesn't
+// exist (the UFC logo is fair-use on English Wikipedia, not on Commons),
+// hence the /wikipedia/en/ path. ESPN's league-logo CDN is the reliable
+// backup, and we keep a stylized inline SVG as the final fallback so the
+// header is never empty.
 const UFC_LOGO_URLS = [
-  "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/UFC_Logo.svg/640px-UFC_Logo.svg.png",
   "https://a.espncdn.com/i/teamlogos/leagues/500/ufc.png",
+  "https://upload.wikimedia.org/wikipedia/en/thumb/9/92/UFC_Logo.svg/240px-UFC_Logo.svg.png",
   "https://a.espncdn.com/i/teamlogos/leagues/500-dark/ufc.png",
 ];
+
+function UfcLogo() {
+  const [idx, setIdx] = useState(0);
+  const [allFailed, setAllFailed] = useState(false);
+  if (allFailed) {
+    // Inline-SVG fallback — italic-bold "UFC" so the header still reads
+    // as a UFC logo even when every external CDN is unreachable.
+    return (
+      <svg
+        viewBox="0 0 60 20"
+        className="h-5 w-auto opacity-80"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label="UFC"
+      >
+        <text
+          x="0"
+          y="17"
+          fontFamily="Impact, 'Arial Black', sans-serif"
+          fontSize="20"
+          fontWeight="900"
+          fontStyle="italic"
+          fill="currentColor"
+          letterSpacing="-1"
+        >
+          UFC
+        </text>
+      </svg>
+    );
+  }
+  return (
+    <img
+      src={UFC_LOGO_URLS[idx]}
+      alt="UFC"
+      className="h-5 w-auto opacity-80"
+      referrerPolicy="no-referrer"
+      onError={() => {
+        if (idx + 1 < UFC_LOGO_URLS.length) setIdx(idx + 1);
+        else setAllFailed(true);
+      }}
+    />
+  );
+}
 
 function FallbackImg({
   urls,
@@ -46,21 +90,23 @@ function FallbackImg({
 
 // Build a list of candidate headshot URLs from whatever we know about the
 // fighter. Tries the URL the API returned first, then a couple of standard
-// ESPN CDN patterns, then a generic silhouette.
+// ESPN CDN patterns, then the Wikipedia infobox image, then nothing.
 function headshotCandidates(f: UfcFighter): string[] {
   const urls: string[] = [];
   if (f.headshot) {
     urls.push(f.headshot);
-    // Some ESPN headshot URLs are missing the .png extension or hash key
-    // that triggers caching; try the bare file too.
+    // Some ESPN headshot URLs include a sizing query string that 404s for
+    // certain fighters; try the bare file too.
     if (f.headshot.includes("&w=")) {
       urls.push(f.headshot.replace(/&w=\d+/, ""));
     }
     const idMatch = f.headshot.match(/(\d+)\.png/);
     if (idMatch) {
       urls.push(`https://a.espncdn.com/i/headshots/mma/players/full/${idMatch[1]}.png`);
+      urls.push(`https://a.espncdn.com/combiner/i?img=/i/headshots/mma/players/full/${idMatch[1]}.png&w=120&h=120`);
     }
   }
+  if (f.headshotFallback) urls.push(f.headshotFallback);
   return urls;
 }
 
@@ -190,13 +236,7 @@ export function UfcCard() {
     <Card
       num="07"
       title="UFC"
-      action={
-        <FallbackImg
-          urls={UFC_LOGO_URLS}
-          alt="UFC"
-          className="h-5 w-auto opacity-80"
-        />
-      }
+      action={<UfcLogo />}
     >
       {isLoading && !data && <p className="text-muted text-sm">Loading…</p>}
       {error && !data && <p className="text-accent text-sm">Couldn&rsquo;t load UFC schedule.</p>}

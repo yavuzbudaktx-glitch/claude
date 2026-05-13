@@ -1,0 +1,153 @@
+// Pure HTML parser for Britannica's on-this-day Featured Event. Lives
+// separate from the fetcher so the client can call it on a CORS-proxied
+// response without dragging in Next.js's server-only `revalidate` option.
+
+export interface BritannicaTopic {
+  year: number | null;
+  title: string;
+  summary: string;
+  thumbnail: string | null;
+  link: string | null;
+}
+
+function decodeEntities(s: string): string {
+  return s
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;|&#34;/g, '"')
+    .replace(/&apos;|&#39;/g, "'")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, n) => String.fromCharCode(parseInt(n, 16)));
+}
+
+function stripTags(s: string): string {
+  return decodeEntities(s.replace(/<[^>]+>/g, "")).replace(/\s+/g, " ").trim();
+}
+
+function absolutize(url: string | null): string | null {
+  if (!url) return null;
+  if (url.startsWith("http")) return url;
+  if (url.startsWith("//")) return `https:${url}`;
+  if (url.startsWith("/")) return `https://www.britannica.com${url}`;
+  return url;
+}
+
+function clampSummary(text: string): string {
+  if (text.length > 280) return text.slice(0, 277).trimEnd() + "…";
+  return text;
+}
+
+function extractFromChunk(chunk: string): BritannicaTopic | null {
+  const linkMatch = chunk.match(
+    /<a[^>]+href=["'](\/(?:event|topic|biography|place|story|art|science|technology|sports|animal)\/[^"'#]+)["']/i,
+  );
+  const link = absolutize(linkMatch ? linkMatch[1] : null);
+
+  let title = "";
+  if (linkMatch) {
+    const idx = chunk.indexOf(linkMatch[0]);
+    const after = chunk.slice(idx);
+    const labelMatch = after.match(/<a[^>]*>([\s\S]*?)<\/a>/);
+    if (labelMatch) title = stripTags(labelMatch[1]);
+  }
+  if (!title) {
+    const hMatch = chunk.match(/<h[1-4][^>]*>([\s\S]*?)<\/h[1-4]>/i);
+    if (hMatch) title = stripTags(hMatch[1]);
+  }
+
+  let year: number | null = null;
+  const yearMatch = chunk.match(/\b(1[0-9]{3}|20[0-9]{2}|21[0-9]{2})\b/);
+  if (yearMatch) year = parseInt(yearMatch[1], 10);
+
+  let summary = "";
+  const pRe = /<p[^>]*>([\s\S]*?)<\/p>/gi;
+  let m: RegExpExecArray | null;
+  while ((m = pRe.exec(chunk)) !== null) {
+    const txt = stripTags(m[1]);
+    if (txt.length >= 40) { summary = txt; break; }
+  }
+  if (!summary) {
+    const pMatch = chunk.match(/<p[^>]*>([\s\S]*?)<\/p>/i);
+    if (pMatch) summary = stripTags(pMatch[1]);
+  }
+
+  let thumbnail: string | null = null;
+  const imgMatch = chunk.match(/<img[^>]+(?:src|data-src)=["']([^"']+)["']/i);
+  if (imgMatch) thumbnail = absolutize(imgMatch[1]);
+
+  if (!title || !summary) return null;
+  return { year, title, summary: clampSummary(summary), thumbnail, link };
+}
+
+function tryJsonLd(html: string): BritannicaTopic | null {
+  const re = /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(html)) !== null) {
+    try {
+      const json = JSON.parse(m[1]);
+      const candidates = Array.isArray(json) ? json : [json];
+      for (const node of candidates) {
+        const type = String(node?.["@type"] ?? "").toLowerCase();
+        if (!type.includes("article") && !type.includes("event") && !type.includes("creativework")) continue;
+        const headline = node.headline ?? node.name;
+        const description = node.description ?? node.about;
+        if (!headline || !description) continue;
+        const image =
+          typeof node.image === "string" ? node.image :
+          Array.isArray(node.image) ? node.image[0] :
+          (node.image?.url ?? null);
+        let year: number | null = null;
+        if (typeof node.datePublished === "string") {
+          const y = node.datePublished.match(/^(\d{4})/);
+          if (y) year = parseInt(y[1], 10);
+        }
+        return {
+          year,
+          title: String(headline),
+          summary: clampSummary(String(description)),
+          thumbnail: image ?? null,
+          link: typeof node.url === "string" ? node.url : null,
+        };
+      }
+    } catch {
+      // ignore non-JSON blocks
+    }
+  }
+  return null;
+}
+
+function tryFeaturedMarker(html: string): BritannicaTopic | null {
+  const idx = html.search(/Featured\s+Event/i);
+  if (idx < 0) return null;
+  const chunk = html.slice(Math.max(0, idx - 400), idx + 9000);
+  return extractFromChunk(chunk);
+}
+
+function tryFeaturedClass(html: string): BritannicaTopic | null {
+  const cls = html.search(/class="[^"]*\bfeatur[a-z]*\b[^"]*"/i);
+  if (cls < 0) return null;
+  const start = Math.max(0, html.lastIndexOf("<", cls) - 50);
+  const chunk = html.slice(start, start + 9000);
+  return extractFromChunk(chunk);
+}
+
+function tryFirstEventLink(html: string): BritannicaTopic | null {
+  const linkRe = /<a[^>]+href=["']\/event\/[^"']+["'][^>]*>/i;
+  const idx = html.search(linkRe);
+  if (idx < 0) return null;
+  const articleIdx = html.lastIndexOf("<article", idx);
+  const start = articleIdx >= 0 ? articleIdx : Math.max(0, idx - 500);
+  const chunk = html.slice(start, idx + 8000);
+  return extractFromChunk(chunk);
+}
+
+export function extractFeaturedEvent(html: string): BritannicaTopic | null {
+  return (
+    tryJsonLd(html) ??
+    tryFeaturedMarker(html) ??
+    tryFeaturedClass(html) ??
+    tryFirstEventLink(html)
+  );
+}
