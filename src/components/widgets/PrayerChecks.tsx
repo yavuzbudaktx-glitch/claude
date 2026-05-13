@@ -63,14 +63,14 @@ export function PrayerChecks() {
           {hydrated ? `${completedCount} / 5` : ""}
         </div>
       </div>
-      <ul className="space-y-1.5">
+      <ul className="flex flex-wrap gap-x-4 gap-y-2">
         {PRAYERS.map((p) => {
           const checked = done[p.id];
           return (
             <li key={p.id}>
               <button
                 onClick={() => toggle(p.id)}
-                className="group w-full flex items-center gap-2.5 py-1 text-left"
+                className="group inline-flex items-center gap-2 py-1 text-left"
               >
                 <span
                   className={`relative h-4 w-4 rounded-full border transition flex items-center justify-center shrink-0 ${
