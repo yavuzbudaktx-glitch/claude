@@ -143,6 +143,16 @@ export function SuperLigCard() {
 
       {data && (
         <>
+          <div className="mb-4">
+            {data.last ? (
+              <MatchBox label="Last match" match={data.last} variant="last" />
+            ) : (
+              <div className="border rule rounded-md p-3 text-muted text-xs italic flex items-center justify-center">
+                No recent match.
+              </div>
+            )}
+          </div>
+
           {data.standings.length === 0 ? (
             <p className="text-muted text-xs italic">Standings unavailable.</p>
           ) : (
@@ -191,14 +201,7 @@ export function SuperLigCard() {
             </div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-4 border-t rule-soft">
-            {data.last ? (
-              <MatchBox label="Last match" match={data.last} variant="last" />
-            ) : (
-              <div className="border rule rounded-md p-3 text-muted text-xs italic flex items-center justify-center">
-                No recent match.
-              </div>
-            )}
+          <div className="mt-4">
             {data.next ? (
               <MatchBox label="Next match" match={data.next} variant="next" />
             ) : (

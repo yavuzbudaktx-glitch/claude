@@ -41,17 +41,138 @@ interface Buckets {
 
 // ---------- Stock sparkline -------------------------------------------------
 //
-// FMP's intraday "historical-chart/{interval}" endpoints ARE available on
-// the free tier (unlike the daily-resolution historical-price-full path,
-// which the user's key returns Premium for). Hourly bars over ~30 days
-// gives us 150+ real data points per ticker — a proper-looking chart.
-// We try a sequence of intervals and pick the first that returns data.
-//
-// If every intraday candidate fails, fall back to synthesizing a sparkline
-// from /api/v3/quote/{symbol}'s summary stats (yearLow / priceAvg200 /
-// priceAvg50 / previousClose / price) so the row at least conveys
-// trajectory. Worst case (quote also fails) we draw a two-point direction
-// indicator.
+// We try several "real" 30-day daily-close sources in a row before falling
+// back to FMP-synthesized data:
+//   1. Yahoo query2 subdomain (separate IP allowlist from query1)
+//   2. NASDAQ's public charting endpoint
+//   3. Stooq's Polish mirror (different infra from stooq.com)
+//   4. FMP intraday historical-chart (1hour / 4hour / 1day)
+//   5. FMP /api/v3/quote synthesis (yearLow → priceAvg200 → priceAvg50
+//      → previousClose → price)
+//   6. 2-point direction line from changesPercentage
+// Pair this with the smoothed Catmull-Rom path in the Sparkline component
+// and even the synthesized fallback renders as a curve, not a flat line.
+
+interface YahooChartResp {
+  chart?: {
+    result?: Array<{
+      indicators?: { quote?: Array<{ close?: (number | null)[] }> };
+      timestamp?: number[];
+    }>;
+  };
+}
+
+async function fetchYahooHistory(symbol: string): Promise<number[]> {
+  // Browser-like UA + Accept improves the odds of getting through Yahoo's
+  // anti-scraping. query2 is a different subdomain than query1 — separate
+  // rate-limit pool, often unblocked when query1 is throttled.
+  const browserHeaders = {
+    "User-Agent":
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+    Accept: "application/json, text/plain, */*",
+    "Accept-Language": "en-US,en;q=0.9",
+    Origin: "https://finance.yahoo.com",
+    Referer: "https://finance.yahoo.com/",
+  };
+  const urls = [
+    `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1mo&interval=1d`,
+    `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1mo&interval=1d`,
+  ];
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, { headers: browserHeaders, next: { revalidate: 21600 } });
+      if (!res.ok) continue;
+      const json = (await res.json()) as YahooChartResp;
+      const closes = json.chart?.result?.[0]?.indicators?.quote?.[0]?.close ?? [];
+      const cleaned = closes
+        .filter((n): n is number => typeof n === "number" && Number.isFinite(n))
+        .slice(-30);
+      if (cleaned.length >= 3) return cleaned;
+    } catch {
+      // try next
+    }
+  }
+  return [];
+}
+
+interface NasdaqHistoricalResp {
+  data?: { tradesTable?: { rows?: Array<{ date?: string; close?: string }> } };
+}
+
+async function fetchNasdaqHistory(symbol: string): Promise<number[]> {
+  // NASDAQ's undocumented public chart endpoint powers nasdaq.com's own
+  // charts. It accepts a date range and asset class; returns a clean JSON
+  // table of daily closes. Cloud-friendly.
+  const today = new Date();
+  const start = new Date(today.getTime() - 45 * 86400000);
+  const fmt = (d: Date) => `${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}/${d.getFullYear()}`;
+  const url =
+    `https://api.nasdaq.com/api/quote/${encodeURIComponent(symbol)}/historical` +
+    `?assetclass=stocks&fromdate=${encodeURIComponent(fmt(start))}` +
+    `&todate=${encodeURIComponent(fmt(today))}&limit=40&time=1`;
+  try {
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent": UA,
+        Accept: "application/json",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+      next: { revalidate: 21600 },
+    });
+    if (!res.ok) return [];
+    const json = (await res.json()) as NasdaqHistoricalResp;
+    const rows = json.data?.tradesTable?.rows ?? [];
+    // NASDAQ returns prices as "$190.50" strings, newest-first. Strip $ and reverse.
+    const closes = rows
+      .map((r) => (typeof r.close === "string" ? Number(r.close.replace(/[$,]/g, "")) : null))
+      .filter((n): n is number => Number.isFinite(n as number))
+      .reverse()
+      .slice(-30);
+    return closes.length >= 3 ? closes : [];
+  } catch {
+    return [];
+  }
+}
+
+async function fetchStooqHistory(symbol: string): Promise<number[]> {
+  // Polish mirror of stooq.com — separate IP allowlist, often unblocked
+  // when stooq.com itself rate-limits. Returns CSV with daily closes.
+  const today = new Date();
+  const start = new Date(today.getTime() - 50 * 86400000);
+  const ymd = (d: Date) =>
+    `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
+  const stooqSym = symbol.toLowerCase().replace(/\./g, "-");
+  const urls = [
+    `https://stooq.pl/q/d/l/?s=${stooqSym}.us&i=d&d1=${ymd(start)}&d2=${ymd(today)}`,
+    `https://stooq.com/q/d/l/?s=${stooqSym}.us&i=d&d1=${ymd(start)}&d2=${ymd(today)}`,
+  ];
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, {
+        headers: { "User-Agent": UA, Accept: "text/csv,*/*" },
+        next: { revalidate: 21600 },
+      });
+      if (!res.ok) continue;
+      const text = await res.text();
+      if (!text || text.trimStart().startsWith("<")) continue;
+      const lines = text.trim().split(/\r?\n/);
+      if (lines.length < 3) continue;
+      const header = lines[0].toLowerCase().split(",");
+      const closeIdx = header.indexOf("close");
+      if (closeIdx < 0) continue;
+      const closes: number[] = [];
+      for (let i = 1; i < lines.length; i++) {
+        const parts = lines[i].split(",");
+        const c = Number(parts[closeIdx]);
+        if (Number.isFinite(c)) closes.push(c);
+      }
+      if (closes.length >= 3) return closes.slice(-30);
+    } catch {
+      // try next mirror
+    }
+  }
+  return [];
+}
 
 interface FmpIntradayBar { date?: string; close?: number; price?: number; open?: number }
 
@@ -148,18 +269,28 @@ function synthesizeSparkline(q: FmpQuote): number[] {
 }
 
 async function fetchSparkline(symbol: string, fallbackPrice: number | null, fallbackPct: number): Promise<number[]> {
-  // Best case: real intraday history from FMP.
+  // Try real 30-day daily-close sources first, in order of historical
+  // reliability from Vercel egress.
+  const yahoo = await fetchYahooHistory(symbol);
+  if (yahoo.length >= 3) return yahoo;
+
+  const nasdaq = await fetchNasdaqHistory(symbol);
+  if (nasdaq.length >= 3) return nasdaq;
+
+  const stooq = await fetchStooqHistory(symbol);
+  if (stooq.length >= 3) return stooq;
+
+  // Real-data sources all failed (rate-limited or unavailable). Fall back
+  // to FMP intraday, then synthesized quote stats, then the 2-point line.
   const intraday = await fetchFmpIntraday(symbol);
   if (intraday.length >= 3) return intraday;
 
-  // Mid-case: synthesize a multi-point trajectory from quote summary stats.
   const quote = await fetchFmpQuote(symbol);
   if (quote) {
     const points = synthesizeSparkline(quote);
     if (points.length >= 3) return points;
   }
 
-  // Last resort: draw a two-point direction line from the percent change.
   if (typeof fallbackPrice === "number" && Number.isFinite(fallbackPct)) {
     const prevClose = fallbackPrice / (1 + fallbackPct / 100);
     return [prevClose, fallbackPrice];

@@ -2,7 +2,7 @@
 
 import { Trash2, ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { format, isPast, isToday, parseISO } from "date-fns";
+import { differenceInCalendarDays, format, isPast, isToday, parseISO } from "date-fns";
 import type { Task, TaskStatus } from "@/types/db";
 import { TASK_STATUSES } from "@/types/db";
 import { StatusIcon } from "@/components/StatusIcon";
@@ -20,6 +20,12 @@ export function TaskItem({
   const isComplete = task.status === "complete";
   const overdue = due && !isComplete && isPast(due) && !isToday(due);
   const today = due && isToday(due);
+  // "Soon" means due within the next 3 calendar days (not today, not past).
+  // We highlight these in accent red the same way overdue/today are, so the
+  // user can see urgency at a glance even before something's actually due.
+  const dueSoon = !!due && !isComplete && !overdue && !today &&
+    differenceInCalendarDays(due, new Date()) < 3;
+  const urgent = overdue || today || dueSoon;
 
   const [open, setOpen] = useState(false);
   const [stage, setStage] = useState<"visible" | "fading" | "gone">("visible");
@@ -97,7 +103,7 @@ export function TaskItem({
         {due && (
           <div
             className={`font-mono text-[10px] uppercase tracking-wider mt-0.5 ${
-              overdue || today ? "text-accent" : "text-muted"
+              urgent ? "text-accent" : "text-muted"
             }`}
           >
             {overdue ? "overdue · " : today ? "today · " : ""}
