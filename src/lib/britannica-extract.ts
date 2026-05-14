@@ -39,6 +39,20 @@ function clampSummary(text: string): string {
   return text;
 }
 
+// A real Britannica featured-event title is multi-word and at least a
+// dozen characters. Anything shorter or generic ("Read", "More", "Home")
+// is link-cruft from the wrong card chunk and should be rejected so the
+// caller falls through to the next extraction strategy.
+function isMeaningfulTitle(s: string): boolean {
+  const t = s.trim();
+  if (t.length < 12) return false;
+  if (t.split(/\s+/).length < 2) return false;
+  if (/^(read|more|browse|see|view|home|details|next|previous|subscribe|sign\s*in)\b/i.test(t)) {
+    return false;
+  }
+  return true;
+}
+
 function extractFromChunk(chunk: string): BritannicaTopic | null {
   const linkMatch = chunk.match(
     /<a[^>]+href=["'](\/(?:event|topic|biography|place|story|art|science|technology|sports|animal)\/[^"'#]+)["']/i,
@@ -50,11 +64,20 @@ function extractFromChunk(chunk: string): BritannicaTopic | null {
     const idx = chunk.indexOf(linkMatch[0]);
     const after = chunk.slice(idx);
     const labelMatch = after.match(/<a[^>]*>([\s\S]*?)<\/a>/);
-    if (labelMatch) title = stripTags(labelMatch[1]);
+    if (labelMatch) {
+      const candidate = stripTags(labelMatch[1]);
+      if (isMeaningfulTitle(candidate)) title = candidate;
+    }
   }
   if (!title) {
-    const hMatch = chunk.match(/<h[1-4][^>]*>([\s\S]*?)<\/h[1-4]>/i);
-    if (hMatch) title = stripTags(hMatch[1]);
+    // Walk every heading inside the chunk — first one that looks like a
+    // real headline wins.
+    const hRe = /<h[1-4][^>]*>([\s\S]*?)<\/h[1-4]>/gi;
+    let hm: RegExpExecArray | null;
+    while ((hm = hRe.exec(chunk)) !== null) {
+      const candidate = stripTags(hm[1]);
+      if (isMeaningfulTitle(candidate)) { title = candidate; break; }
+    }
   }
 
   let year: number | null = null;
@@ -186,7 +209,7 @@ function tryOgMeta(html: string): BritannicaTopic | null {
 // "featured topics" sub-section). Real featured events have a substantial
 // description and either a year or an article link.
 export function isPlausibleFeaturedEvent(t: BritannicaTopic): boolean {
-  if (!t.title || t.title.length < 4) return false;
+  if (!t.title || !isMeaningfulTitle(t.title)) return false;
   if (!t.summary || t.summary.length < 50) return false;
   // Common false-positive titles when the parser latches onto the wrong card.
   if (/subscribe|newsletter|britannica premium|sign\s*up|sign\s*in|advertise|cookie|sign in|search/i.test(t.title)) return false;

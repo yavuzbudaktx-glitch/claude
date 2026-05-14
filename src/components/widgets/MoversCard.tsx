@@ -139,14 +139,18 @@ interface Resp {
 const MOVERS_CACHE_KEY = "morning.movers.v1";
 const MOVERS_CACHE_TTL = 1000 * 60 * 60 * 24; // 24h
 
-function isComplete(r: Resp | undefined | null): r is Resp {
+// Loose "is there anything here?" gate. We only want to retry when the
+// response is totally empty — otherwise even a 4-gainer / 2-loser day
+// renders normally instead of looping the SWR retries to exhaustion and
+// leaving the card blank.
+function hasAnyRows(r: Resp | undefined | null): r is Resp {
   if (!r) return false;
-  return (
-    Array.isArray(r.stocks?.gainers) && r.stocks.gainers.length >= 5 &&
-    Array.isArray(r.stocks?.losers) && r.stocks.losers.length >= 3 &&
-    Array.isArray(r.crypto?.gainers) && r.crypto.gainers.length >= 3 &&
-    Array.isArray(r.crypto?.losers) && r.crypto.losers.length >= 3
-  );
+  const total =
+    (r.stocks?.gainers?.length ?? 0) +
+    (r.stocks?.losers?.length ?? 0) +
+    (r.crypto?.gainers?.length ?? 0) +
+    (r.crypto?.losers?.length ?? 0);
+  return total > 0;
 }
 
 function readMoversCache(): Resp | undefined {
@@ -169,16 +173,17 @@ function writeMoversCache(data: Resp) {
   } catch {}
 }
 
-// Fetcher that throws when the response is incomplete, so SWR retries.
-// Keep-previous-data + the localStorage fallbackData ensure the user
-// still sees the last good rows while the retries run.
+// Fetcher that throws only when the response is *completely empty* so SWR
+// retries on a real outage. Partial responses pass through unchanged. We
+// still persist to localStorage when the response is good enough (>=3
+// gainers), so a one-row outage can't replace yesterday's full snapshot.
 const fetcher = async (url: string): Promise<Resp> => {
   const res = await fetch(url);
   const data = (await res.json()) as Resp;
-  if (!isComplete(data)) {
-    throw new Error("incomplete movers response — retrying");
+  if (!hasAnyRows(data)) {
+    throw new Error("movers response is empty — retrying");
   }
-  writeMoversCache(data);
+  if ((data.stocks?.gainers?.length ?? 0) >= 3) writeMoversCache(data);
   return data;
 };
 

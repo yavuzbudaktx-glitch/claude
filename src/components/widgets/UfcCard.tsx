@@ -7,17 +7,19 @@ import { differenceInCalendarDays, format, parseISO } from "date-fns";
 import { Card } from "@/components/Card";
 import type { UfcEvent, UfcFighter, UfcPayload } from "@/app/api/ufc/route";
 
-// Mirror of the slug helper in /api/ufc/route.ts. Kept inline so the
-// client doesn't have to import a server module.
-function ufcSlug(name: string): string {
-  return name
+// Mirror of the slug-candidate helper in /api/ufc/route.ts. Kept inline
+// so the client doesn't have to import a server module.
+function ufcSlugCandidates(name: string): string[] {
+  const base = name
     .toLowerCase()
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
-    .replace(/['']/g, "")
+    .replace(/['‘’]/g, "")
     .replace(/[^a-z0-9\s-]/g, " ")
     .trim()
     .replace(/\s+/g, "-");
+  if (!base) return [];
+  return [base, `${base}-1`, `${base}-2`];
 }
 
 const UFC_PHOTO_CACHE_KEY = "morning.ufc-photo.v1";
@@ -45,25 +47,30 @@ function writePhotoCache(name: string, url: string) {
 }
 
 async function scrapeUfcPhotoFromBrowser(name: string): Promise<string | null> {
-  const target = `https://www.ufc.com/athlete/${ufcSlug(name)}`;
-  const proxies = [
+  // Walk every slug candidate × every proxy; return on the first
+  // Cloudfront URL we find. Disambiguated names (alex-pereira-1) get
+  // resolved here without needing a search endpoint.
+  const proxify = (target: string): string[] => [
     `https://corsproxy.io/?${encodeURIComponent(target)}`,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,
     `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(target)}`,
     `https://proxy.cors.sh/${target}`,
     `https://thingproxy.freeboard.io/fetch/${target}`,
   ];
-  for (const url of proxies) {
-    try {
-      const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) continue;
-      const html = await res.text();
-      const m = html.match(
-        /https?:\/\/dmxg5wxfqgb4u\.cloudfront\.net\/[^"'\s)]+\.(?:png|jpg|jpeg|webp)/i,
-      );
-      if (m) return m[0];
-    } catch {
-      // try next proxy
+  for (const slug of ufcSlugCandidates(name)) {
+    const target = `https://www.ufc.com/athlete/${slug}`;
+    for (const url of proxify(target)) {
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) continue;
+        const html = await res.text();
+        const m = html.match(
+          /https?:\/\/dmxg5wxfqgb4u\.cloudfront\.net\/[^"'\s)]+\.(?:png|jpg|jpeg|webp)/i,
+        );
+        if (m) return m[0];
+      } catch {
+        // try next proxy
+      }
     }
   }
   return null;

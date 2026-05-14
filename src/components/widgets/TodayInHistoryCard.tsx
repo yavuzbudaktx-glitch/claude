@@ -134,6 +134,18 @@ export function TodayInHistoryCard() {
 
   const sourceLabel = displayed.source === "britannica" ? "Britannica" : displayed.source === "wikipedia" ? "Wikipedia" : null;
 
+  // Require something that actually looks like a real headline. The previous
+  // !displayed.text guard accepted one-word link labels ("Read", "More"),
+  // which the Britannica scraper occasionally grabs from the wrong card
+  // chunk — leaving the user with a thumbnail and a useless caption.
+  const isMeaningfulText = (s: string | null | undefined): boolean => {
+    if (!s) return false;
+    const trimmed = s.trim();
+    if (trimmed.length < 10) return false;
+    if (/^(read|more|browse|see|view|details|home|next|previous)\b/i.test(trimmed)) return false;
+    return true;
+  };
+
   if (isLoading && !data) {
     return (
       <div className="animate-fadeIn">
@@ -142,7 +154,7 @@ export function TodayInHistoryCard() {
       </div>
     );
   }
-  if (displayed.error || !displayed.text) {
+  if (displayed.error || !isMeaningfulText(displayed.text)) {
     return (
       <div className="animate-fadeIn">
         <div className="label mb-1.5">{labelKind}</div>
@@ -161,9 +173,8 @@ export function TodayInHistoryCard() {
           </div>
         )}
       </div>
-      {/* Render the body inline (no full-card link wrapper) so the user
-          reads the Britannica content without needing to click out. The
-          title alone deep-links to the article when available. */}
+      {/* Render the body inline. Thumbnail lives inside the same guard as
+          the text so we never end up with an image and no caption. */}
       <div className="flex gap-3">
         {displayed.thumbnail && (
           <img
@@ -186,18 +197,18 @@ export function TodayInHistoryCard() {
                 href={displayed.link}
                 target="_blank"
                 rel="noreferrer"
-                className="font-serif text-[14px] leading-snug min-w-0 line-clamp-2 hover:underline underline-offset-4 decoration-[var(--rule)]"
+                className="font-serif text-[14px] leading-snug min-w-0 hover:underline underline-offset-4 decoration-[var(--rule)]"
               >
                 {displayed.text}
               </a>
             ) : (
-              <span className="font-serif text-[14px] leading-snug min-w-0 line-clamp-2">
+              <span className="font-serif text-[14px] leading-snug min-w-0">
                 {displayed.text}
               </span>
             )}
           </div>
           {displayed.summary && (
-            <p className="font-serif text-[12.5px] leading-snug text-muted mt-1.5 line-clamp-3">
+            <p className="font-serif text-[12.5px] leading-snug text-muted mt-1.5">
               {displayed.summary}
             </p>
           )}

@@ -204,15 +204,23 @@ function stripHtml(s: string): string {
   return decodeEntities(s.replace(/<[^>]+>/g, "")).replace(/\s+/g, " ").trim();
 }
 
-function ufcAthleteSlug(name: string): string {
-  return name
+// Build the list of slug candidates we should try on UFC.com for a given
+// fighter name. UFC.com often disambiguates with a -1 / -2 suffix on
+// common names (alex-pereira-1, magomed-ankalaev-1 ...). Walking these
+// in order catches the disambiguated pages without needing a full search
+// API. The ̀-ͯ range is the Unicode "combining marks" block —
+// using the explicit escape works across all source-file encodings.
+function ufcAthleteSlugCandidates(name: string): string[] {
+  const base = name
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "") // strip diacritics
-    .replace(/['']/g, "")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/['‘’]/g, "")
     .replace(/[^a-z0-9\s-]/g, " ")
     .trim()
     .replace(/\s+/g, "-");
+  if (!base) return [];
+  return [base, `${base}-1`, `${base}-2`];
 }
 
 export interface UfcAthletePage {
@@ -223,27 +231,7 @@ export interface UfcAthletePage {
   status: string | null;
 }
 
-async function fetchUfcAthletePage(name: string): Promise<UfcAthletePage | null> {
-  if (!name) return null;
-  const slug = ufcAthleteSlug(name);
-  if (!slug) return null;
-  const url = `https://www.ufc.com/athlete/${slug}`;
-  let html: string;
-  try {
-    const res = await fetch(url, {
-      headers: {
-        "User-Agent": UA,
-        Accept: "text/html,application/xhtml+xml",
-        "Accept-Language": "en-US,en;q=0.9",
-      },
-      next: { revalidate: 86400 },
-    });
-    if (!res.ok) return null;
-    html = await res.text();
-  } catch {
-    return null;
-  }
-
+function parseUfcAthleteHtml(html: string): UfcAthletePage | null {
   // Hero photo lives on UFC's Cloudfront CDN; first occurrence on the page
   // is the athlete's pose image.
   let photo: string | null = null;
@@ -252,8 +240,7 @@ async function fetchUfcAthletePage(name: string): Promise<UfcAthletePage | null>
   );
   if (photoMatch) photo = photoMatch[0];
 
-  // Record: UFC.com shows "20-4-0 (W-L-D)" in a stat block. Match the
-  // common patterns flexibly.
+  // Record: UFC.com shows "20-4-0 (W-L-D)" in a stat block.
   let record: string | null = null;
   const recordMatch =
     html.match(/(\d{1,3})-(\d{1,3})-(\d{1,3})\s*\([^)]*W-L[^)]*\)/i) ??
@@ -285,6 +272,37 @@ async function fetchUfcAthletePage(name: string): Promise<UfcAthletePage | null>
 
   if (!photo && !record && !country && !division && !status) return null;
   return { photo, record, country, division, status };
+}
+
+async function fetchUfcAthletePage(name: string): Promise<UfcAthletePage | null> {
+  if (!name) return null;
+  // Walk each candidate slug; first page that yields a Cloudfront photo
+  // wins. If nothing has a photo but one page had record/stats, fall back
+  // to that so we at least populate the textual stats.
+  let textOnlyFallback: UfcAthletePage | null = null;
+  for (const slug of ufcAthleteSlugCandidates(name)) {
+    const url = `https://www.ufc.com/athlete/${slug}`;
+    let html: string;
+    try {
+      const res = await fetch(url, {
+        headers: {
+          "User-Agent": UA,
+          Accept: "text/html,application/xhtml+xml",
+          "Accept-Language": "en-US,en;q=0.9",
+        },
+        next: { revalidate: 86400 },
+      });
+      if (!res.ok) continue;
+      html = await res.text();
+    } catch {
+      continue;
+    }
+    const parsed = parseUfcAthleteHtml(html);
+    if (!parsed) continue;
+    if (parsed.photo) return parsed;
+    if (!textOnlyFallback) textOnlyFallback = parsed;
+  }
+  return textOnlyFallback;
 }
 
 async function fetchWikipediaThumbnail(name: string): Promise<string | null> {
