@@ -132,19 +132,7 @@ export function TodayInHistoryCard() {
     : displayed.kind === "featured" ? "Featured event"
     : "On this day";
 
-  const Wrapper = (props: { children: React.ReactNode }) =>
-    displayed.link ? (
-      <a
-        href={displayed.link}
-        target="_blank"
-        rel="noreferrer"
-        className="block group hover:opacity-90 transition"
-      >
-        {props.children}
-      </a>
-    ) : (
-      <div>{props.children}</div>
-    );
+  const sourceLabel = displayed.source === "britannica" ? "Britannica" : displayed.source === "wikipedia" ? "Wikipedia" : null;
 
   if (isLoading && !data) {
     return (
@@ -165,24 +153,56 @@ export function TodayInHistoryCard() {
 
   return (
     <div className="animate-fadeIn">
-      <div className="label mb-1.5">{labelKind}</div>
-      <Wrapper>
-        <div className="flex items-baseline gap-3 group-hover:underline group-hover:underline-offset-4 group-hover:decoration-[var(--rule)]">
-          {displayed.year != null && (
-            <span className="font-serif text-2xl font-light tabular-nums leading-none text-accent shrink-0">
-              {displayed.year}
-            </span>
-          )}
-          <span className="font-serif text-[14px] leading-snug min-w-0 line-clamp-2">
-            {displayed.text}
-          </span>
-        </div>
-        {displayed.summary && (
-          <p className="font-serif text-[12.5px] leading-snug text-muted mt-1.5 line-clamp-2">
-            {displayed.summary}
-          </p>
+      <div className="flex items-baseline justify-between mb-1.5">
+        <div className="label">{labelKind}</div>
+        {sourceLabel && (
+          <div className="font-mono text-[9px] uppercase tracking-wider text-muted">
+            via {sourceLabel}
+          </div>
         )}
-      </Wrapper>
+      </div>
+      {/* Render the body inline (no full-card link wrapper) so the user
+          reads the Britannica content without needing to click out. The
+          title alone deep-links to the article when available. */}
+      <div className="flex gap-3">
+        {displayed.thumbnail && (
+          <img
+            src={displayed.thumbnail}
+            alt=""
+            className="h-16 w-16 object-cover rounded shrink-0 border rule-soft"
+            referrerPolicy="no-referrer"
+            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+          />
+        )}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-baseline gap-3">
+            {displayed.year != null && (
+              <span className="font-serif text-2xl font-light tabular-nums leading-none text-accent shrink-0">
+                {displayed.year}
+              </span>
+            )}
+            {displayed.link ? (
+              <a
+                href={displayed.link}
+                target="_blank"
+                rel="noreferrer"
+                className="font-serif text-[14px] leading-snug min-w-0 line-clamp-2 hover:underline underline-offset-4 decoration-[var(--rule)]"
+              >
+                {displayed.text}
+              </a>
+            ) : (
+              <span className="font-serif text-[14px] leading-snug min-w-0 line-clamp-2">
+                {displayed.text}
+              </span>
+            )}
+          </div>
+          {displayed.summary && (
+            <p className="font-serif text-[12.5px] leading-snug text-muted mt-1.5 line-clamp-3">
+              {displayed.summary}
+            </p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

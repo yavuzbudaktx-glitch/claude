@@ -133,7 +133,54 @@ interface Resp {
   fmpError?: string | null;
 }
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<Resp>);
+// Stale-good cache: every time we get a complete response, save it to
+// localStorage so a transient FMP / CoinGecko outage doesn't blank the
+// card. SWR's fallbackData reads this on mount.
+const MOVERS_CACHE_KEY = "morning.movers.v1";
+const MOVERS_CACHE_TTL = 1000 * 60 * 60 * 24; // 24h
+
+function isComplete(r: Resp | undefined | null): r is Resp {
+  if (!r) return false;
+  return (
+    Array.isArray(r.stocks?.gainers) && r.stocks.gainers.length >= 5 &&
+    Array.isArray(r.stocks?.losers) && r.stocks.losers.length >= 3 &&
+    Array.isArray(r.crypto?.gainers) && r.crypto.gainers.length >= 3 &&
+    Array.isArray(r.crypto?.losers) && r.crypto.losers.length >= 3
+  );
+}
+
+function readMoversCache(): Resp | undefined {
+  if (typeof window === "undefined") return undefined;
+  try {
+    const raw = localStorage.getItem(MOVERS_CACHE_KEY);
+    if (!raw) return undefined;
+    const entry = JSON.parse(raw) as { ts: number; data: Resp };
+    if (Date.now() - entry.ts > MOVERS_CACHE_TTL) return undefined;
+    return entry.data;
+  } catch {
+    return undefined;
+  }
+}
+
+function writeMoversCache(data: Resp) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(MOVERS_CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
+  } catch {}
+}
+
+// Fetcher that throws when the response is incomplete, so SWR retries.
+// Keep-previous-data + the localStorage fallbackData ensure the user
+// still sees the last good rows while the retries run.
+const fetcher = async (url: string): Promise<Resp> => {
+  const res = await fetch(url);
+  const data = (await res.json()) as Resp;
+  if (!isComplete(data)) {
+    throw new Error("incomplete movers response — retrying");
+  }
+  writeMoversCache(data);
+  return data;
+};
 
 function fmtTime(ms: number | null | undefined) {
   if (!ms) return null;
@@ -213,10 +260,13 @@ export function MoversCard() {
     refreshInterval: 1000 * 60 * 10,
     keepPreviousData: true,
     revalidateOnFocus: true,
-    // FMP rate-limits occasionally — retry a few times with back-off so a
-    // transient 429/5xx doesn't leave the card empty until the next refresh.
-    errorRetryCount: 4,
-    errorRetryInterval: 3000,
+    // Hydrate immediately from the last good response so the card never
+    // shows up empty after a cold mount even if FMP is briefly down.
+    fallbackData: readMoversCache(),
+    // Retry on the validation-error throw — gives FMP up to 24s (4 × 6s)
+    // to recover before SWR gives up and we keep showing stale-good data.
+    errorRetryCount: 5,
+    errorRetryInterval: 4000,
     shouldRetryOnError: true,
   });
 

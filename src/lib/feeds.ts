@@ -29,7 +29,6 @@ export const FEEDS: FeedSource[] = [
   // Türkiye
   { name: "BBC Türkçe",       url: "https://feeds.bbci.co.uk/turkce/rss.xml",                      category: "turkey" },
   { name: "Hürriyet",         url: "https://www.hurriyet.com.tr/rss/anasayfa",                     category: "turkey" },
-  { name: "NTV",              url: "https://www.ntv.com.tr/son-dakika.rss",                        category: "turkey" },
   { name: "Anadolu Ajansı",   url: "https://www.aa.com.tr/tr/rss/default?cat=guncel",              category: "turkey" },
   { name: "T24",              url: "https://t24.com.tr/rss",                                       category: "turkey" },
 

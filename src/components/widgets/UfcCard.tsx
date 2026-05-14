@@ -2,10 +2,91 @@
 
 /* eslint-disable @next/next/no-img-element */
 import useSWR from "swr";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { differenceInCalendarDays, format, parseISO } from "date-fns";
 import { Card } from "@/components/Card";
 import type { UfcEvent, UfcFighter, UfcPayload } from "@/app/api/ufc/route";
+
+// Mirror of the slug helper in /api/ufc/route.ts. Kept inline so the
+// client doesn't have to import a server module.
+function ufcSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/['']/g, "")
+    .replace(/[^a-z0-9\s-]/g, " ")
+    .trim()
+    .replace(/\s+/g, "-");
+}
+
+const UFC_PHOTO_CACHE_KEY = "morning.ufc-photo.v1";
+
+function readPhotoCache(name: string): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(`${UFC_PHOTO_CACHE_KEY}.${name}`);
+    if (!raw) return null;
+    const entry = JSON.parse(raw) as { ts: number; url: string };
+    if (Date.now() - entry.ts > 1000 * 60 * 60 * 24 * 7) return null; // 7d
+    return entry.url;
+  } catch {
+    return null;
+  }
+}
+function writePhotoCache(name: string, url: string) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(
+      `${UFC_PHOTO_CACHE_KEY}.${name}`,
+      JSON.stringify({ ts: Date.now(), url }),
+    );
+  } catch {}
+}
+
+async function scrapeUfcPhotoFromBrowser(name: string): Promise<string | null> {
+  const target = `https://www.ufc.com/athlete/${ufcSlug(name)}`;
+  const proxies = [
+    `https://corsproxy.io/?${encodeURIComponent(target)}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(target)}`,
+    `https://proxy.cors.sh/${target}`,
+    `https://thingproxy.freeboard.io/fetch/${target}`,
+  ];
+  for (const url of proxies) {
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) continue;
+      const html = await res.text();
+      const m = html.match(
+        /https?:\/\/dmxg5wxfqgb4u\.cloudfront\.net\/[^"'\s)]+\.(?:png|jpg|jpeg|webp)/i,
+      );
+      if (m) return m[0];
+    } catch {
+      // try next proxy
+    }
+  }
+  return null;
+}
+
+function useClientUfcPhoto(name: string, serverPrimary: string | null): string | null {
+  const [photo, setPhoto] = useState<string | null>(() => readPhotoCache(name));
+  useEffect(() => {
+    if (!name) return;
+    // If we already have a UFC.com Cloudfront URL from the server, trust it.
+    if (serverPrimary && serverPrimary.includes("dmxg5wxfqgb4u.cloudfront.net")) return;
+    if (photo) return;
+    let cancelled = false;
+    (async () => {
+      const found = await scrapeUfcPhotoFromBrowser(name);
+      if (cancelled || !found) return;
+      setPhoto(found);
+      writePhotoCache(name, found);
+    })();
+    return () => { cancelled = true; };
+  }, [name, serverPrimary, photo]);
+  return photo;
+}
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<UfcPayload>);
 
@@ -89,14 +170,14 @@ function FallbackImg({
 }
 
 // Build a list of candidate headshot URLs from whatever we know about the
-// fighter. Tries the URL the API returned first, then a couple of standard
-// ESPN CDN patterns, then the Wikipedia infobox image, then nothing.
-function headshotCandidates(f: UfcFighter): string[] {
+// fighter. Tries the client-scraped UFC.com photo first (best quality),
+// then the URLs the API returned, then ESPN CDN patterns, then a
+// Wikipedia infobox image.
+function headshotCandidates(f: UfcFighter, clientPhoto: string | null): string[] {
   const urls: string[] = [];
-  if (f.headshot) {
+  if (clientPhoto) urls.push(clientPhoto);
+  if (f.headshot && f.headshot !== clientPhoto) {
     urls.push(f.headshot);
-    // Some ESPN headshot URLs include a sizing query string that 404s for
-    // certain fighters; try the bare file too.
     if (f.headshot.includes("&w=")) {
       urls.push(f.headshot.replace(/&w=\d+/, ""));
     }
@@ -106,11 +187,13 @@ function headshotCandidates(f: UfcFighter): string[] {
       urls.push(`https://a.espncdn.com/combiner/i?img=/i/headshots/mma/players/full/${idMatch[1]}.png&w=120&h=120`);
     }
   }
-  if (f.headshotFallback) urls.push(f.headshotFallback);
+  if (f.headshotFallback && !urls.includes(f.headshotFallback)) urls.push(f.headshotFallback);
   return urls;
 }
 
 function FighterCell({ f, highlight }: { f: UfcFighter | null; highlight: boolean }) {
+  // Hook must run unconditionally; pass empty name when f is null so it no-ops.
+  const clientPhoto = useClientUfcPhoto(f?.name ?? "", f?.headshot ?? null);
   if (!f) {
     return (
       <div className="flex flex-col items-center text-center min-w-0 flex-1">
@@ -119,7 +202,7 @@ function FighterCell({ f, highlight }: { f: UfcFighter | null; highlight: boolea
       </div>
     );
   }
-  const candidates = headshotCandidates(f);
+  const candidates = headshotCandidates(f, clientPhoto);
   return (
     <div className="flex flex-col items-center text-center min-w-0 flex-1">
       <div
