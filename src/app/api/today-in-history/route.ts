@@ -93,6 +93,7 @@ export async function GET(req: Request) {
 
   const mm = pad(dateAt.getUTCMonth() + 1);
   const dd = pad(dateAt.getUTCDate());
+  const yyyy = dateAt.getUTCFullYear();
 
   // Primary: Britannica's hand-picked Featured Event.
   try {
@@ -114,11 +115,80 @@ export async function GET(req: Request) {
     // Fall through to Wikipedia.
   }
 
+  // Secondary: Wikipedia's curated daily "feed/featured" API. The
+  // `onthisday` array on this endpoint is editor-curated (same content as
+  // the front page), and the first entry's primary page gives us a clean
+  // title + extract + thumbnail without any scraping. This is far more
+  // reliable than the older "onthisday/selected" feed because:
+  //   (a) it ships with a rich `extract` field per page, and
+  //   (b) the editors put the day's MOST notable event first.
   try {
-    // Wikipedia "selected" is the curated set shown on the front page — the
-    // same set Wikipedia editors call out as the most historically significant
-    // events of the day. Used here as a backstop when Britannica scraping
-    // returns nothing.
+    interface FeedFeaturedPage {
+      type?: string;
+      title?: string;
+      normalizedtitle?: string;
+      extract?: string;
+      description?: string;
+      content_urls?: { desktop?: { page?: string }; mobile?: { page?: string } };
+      thumbnail?: { source?: string };
+    }
+    interface FeedFeaturedEvent { text?: string; year?: number; pages?: FeedFeaturedPage[] }
+    interface FeedFeaturedResp {
+      tfa?: FeedFeaturedPage;
+      onthisday?: FeedFeaturedEvent[];
+    }
+    const res = await fetch(
+      `https://en.wikipedia.org/api/rest_v1/feed/featured/${yyyy}/${mm}/${dd}`,
+      {
+        headers: {
+          "User-Agent": "morning-dashboard/1.0 (personal use)",
+          Accept: "application/json",
+        },
+        next: { revalidate: 3600 },
+      },
+    );
+    if (res.ok) {
+      const json = (await res.json()) as FeedFeaturedResp;
+      const event = json.onthisday?.find((e) => e.text && e.pages && e.pages.length > 0);
+      const page =
+        event?.pages?.find((p) => p.extract && p.thumbnail?.source) ??
+        event?.pages?.find((p) => p.extract) ??
+        event?.pages?.[0];
+      if (event?.year && page?.extract) {
+        return NextResponse.json({
+          date: `${mm}-${dd}`,
+          year: event.year,
+          text: event.text ?? page.normalizedtitle ?? page.title ?? "",
+          summary: shortenExtract(page.extract) ?? page.description ?? null,
+          kind: "featured",
+          source: "wikipedia-featured",
+          thumbnail: page.thumbnail?.source ?? null,
+          pageTitle: page.normalizedtitle ?? page.title ?? null,
+          link: page.content_urls?.desktop?.page ?? page.content_urls?.mobile?.page ?? null,
+        });
+      }
+      // No onthisday entries? Use today's featured article instead.
+      const tfa = json.tfa;
+      if (tfa?.extract && (tfa.normalizedtitle || tfa.title)) {
+        return NextResponse.json({
+          date: `${mm}-${dd}`,
+          year: null,
+          text: tfa.normalizedtitle ?? tfa.title ?? "",
+          summary: shortenExtract(tfa.extract) ?? tfa.description ?? null,
+          kind: "featured",
+          source: "wikipedia-featured",
+          thumbnail: tfa.thumbnail?.source ?? null,
+          pageTitle: tfa.normalizedtitle ?? tfa.title ?? null,
+          link: tfa.content_urls?.desktop?.page ?? tfa.content_urls?.mobile?.page ?? null,
+        });
+      }
+    }
+  } catch {
+    // Final fallback below.
+  }
+
+  try {
+    // Last-resort: the older Wikimedia "onthisday/selected" feed.
     let pool = await fetchFeed("selected", mm, dd);
     let kind: "selected" | "events" | "births" | "deaths" = "selected";
 

@@ -11,7 +11,7 @@ interface TodayResp {
   text?: string;
   summary?: string | null;
   kind?: "featured" | "selected" | "events" | "births" | "deaths";
-  source?: "britannica" | "wikipedia";
+  source?: "britannica" | "wikipedia" | "wikipedia-featured";
   thumbnail?: string | null;
   pageTitle?: string | null;
   link?: string | null;
@@ -83,8 +83,10 @@ export function TodayInHistoryCard() {
   const [clientFeatured, setClientFeatured] = useState<BritannicaTopic | null>(null);
   useEffect(() => {
     if (!data) return;
-    if (data.source === "britannica") return;
-    const cacheKey = `britannica-tih.${dateKey}`;
+    if (data.source === "britannica" || data.source === "wikipedia-featured") return;
+    // v3 cache key forces eviction of any bad localStorage entries from
+    // previous broken parser builds.
+    const cacheKey = `britannica-tih.v3.${dateKey}`;
     // Use a cached value only if it actually looks like a featured event.
     // We've had stale localStorage entries from earlier deploys that
     // matched the wrong section of the page and stuck around all day.

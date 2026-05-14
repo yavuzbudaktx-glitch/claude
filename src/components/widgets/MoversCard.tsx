@@ -173,28 +173,17 @@ function writeMoversCache(data: Resp) {
   } catch {}
 }
 
-const EMPTY_RESP: Resp = {
-  stocks: { gainers: [], losers: [] },
-  crypto: { gainers: [], losers: [] },
-  asOf: 0,
-  fmpConfigured: false,
-  fmpError: null,
-};
-
-// Fetcher never throws — any network or parse failure surfaces as an
-// empty Resp so SWR doesn't loop on retries (which was leaving the
-// card stuck on "Loading…" indefinitely). The UI renders a clear error
-// state when no rows arrived.
+// Fetcher throws on any empty/error response so SWR's keepPreviousData
+// preserves the last good rows. We DON'T retry — the next regular
+// refresh interval handles recovery — so the previous "infinite retry
+// while data is empty" failure mode can't recur.
 const fetcher = async (url: string): Promise<Resp> => {
-  try {
-    const res = await fetch(url);
-    if (!res.ok) return { ...EMPTY_RESP, fmpError: `HTTP ${res.status}` };
-    const data = (await res.json()) as Resp;
-    if ((data.stocks?.gainers?.length ?? 0) >= 3) writeMoversCache(data);
-    return data;
-  } catch (e) {
-    return { ...EMPTY_RESP, fmpError: e instanceof Error ? e.message : "fetch_failed" };
-  }
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`http_${res.status}`);
+  const data = (await res.json()) as Resp;
+  if (!hasAnyRows(data)) throw new Error("empty_response");
+  if ((data.stocks?.gainers?.length ?? 0) >= 3) writeMoversCache(data);
+  return data;
 };
 
 function fmtTime(ms: number | null | undefined) {
@@ -271,21 +260,21 @@ function Section({
 }
 
 export function MoversCard() {
-  const { data, isLoading } = useSWR<Resp>("/api/movers", fetcher, {
+  const { data, isLoading, error } = useSWR<Resp>("/api/movers", fetcher, {
     refreshInterval: 1000 * 60 * 10,
     keepPreviousData: true,
     revalidateOnFocus: true,
     // Hydrate immediately from the last good response so the card never
     // shows up empty after a cold mount even if FMP is briefly down.
     fallbackData: readMoversCache(),
-    // The fetcher above never throws, so SWR never has anything to retry.
+    // No retries — fetcher throws on empty, SWR will keepPreviousData,
+    // and the next refreshInterval tick (10min) tries again.
     shouldRetryOnError: false,
   });
-  // hasAnyRows is what tells us if the latest response was usable; when
-  // it's not but we have a cached snapshot from a previous good fetch,
-  // prefer that over showing the empty card.
-  const cached = data && !hasAnyRows(data) ? readMoversCache() : undefined;
-  const view = hasAnyRows(data) ? data : cached;
+  // SWR's keepPreviousData keeps `data` populated through transient
+  // failures. If we're still empty (cold start with no cache), surface
+  // the cached snapshot directly as one more belt.
+  const view: Resp | undefined = hasAnyRows(data) ? data : readMoversCache() ?? data;
 
   return (
     <Card
@@ -307,10 +296,9 @@ export function MoversCard() {
         </p>
       )}
 
-      {!isLoading && !view && data && (
+      {!isLoading && !view && error && (
         <p className="text-accent text-xs italic mb-3">
-          Movers temporarily unavailable
-          {data.fmpError ? ` — ${data.fmpError}` : "."}
+          Movers temporarily unavailable — refreshing.
         </p>
       )}
 

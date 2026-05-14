@@ -46,10 +46,37 @@ function writePhotoCache(name: string, url: string) {
   } catch {}
 }
 
+function pageMatchesFighter(html: string, fighterName: string): boolean {
+  // Match the same name-verification logic as the server route — we only
+  // trust a page's photo if every meaningful (≥3 char) token of the
+  // fighter's name appears in its <title>/og:title/<h1>. Stops slug
+  // collisions from putting the wrong fighter's portrait in this row.
+  const tokens = fighterName
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .split(/\s+/)
+    .filter((t) => t.length >= 3);
+  if (tokens.length === 0) return false;
+  const stripTags = (s: string) => s.replace(/<[^>]+>/g, "").trim();
+  const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+  const h1Match = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
+  const ogTitleMatch = html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i);
+  const haystack = [
+    titleMatch?.[1] ?? "",
+    h1Match ? stripTags(h1Match[1]) : "",
+    ogTitleMatch?.[1] ?? "",
+  ]
+    .join(" ")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "");
+  return tokens.every((t) => haystack.includes(t));
+}
+
 async function scrapeUfcPhotoFromBrowser(name: string): Promise<string | null> {
   // Walk every slug candidate × every proxy; return on the first
-  // Cloudfront URL we find. Disambiguated names (alex-pereira-1) get
-  // resolved here without needing a search endpoint.
+  // Cloudfront URL we find on a page that actually matches this fighter.
   const proxify = (target: string): string[] => [
     `https://corsproxy.io/?${encodeURIComponent(target)}`,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,
@@ -64,6 +91,7 @@ async function scrapeUfcPhotoFromBrowser(name: string): Promise<string | null> {
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) continue;
         const html = await res.text();
+        if (!pageMatchesFighter(html, name)) continue;
         const m = html.match(
           /https?:\/\/dmxg5wxfqgb4u\.cloudfront\.net\/[^"'\s)]+\.(?:png|jpg|jpeg|webp)/i,
         );

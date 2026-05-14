@@ -297,12 +297,44 @@ async function fetchUfcAthletePage(name: string): Promise<UfcAthletePage | null>
     } catch {
       continue;
     }
+    // Verify the page is actually for *this* fighter before trusting its
+    // photo URL. UFC.com's slug routing sometimes silently redirects to a
+    // different fighter or a generic landing, which is why the user kept
+    // seeing the wrong person's pose photo.
+    if (!pageMatchesFighter(html, name)) continue;
     const parsed = parseUfcAthleteHtml(html);
     if (!parsed) continue;
     if (parsed.photo) return parsed;
     if (!textOnlyFallback) textOnlyFallback = parsed;
   }
   return textOnlyFallback;
+}
+
+function pageMatchesFighter(html: string, fighterName: string): boolean {
+  const tokens = fighterName
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .split(/\s+/)
+    .filter((t) => t.length >= 3);
+  if (tokens.length === 0) return false;
+  // Check the <title>, <h1>, and og:title against the fighter's name tokens.
+  // We require ALL meaningful name tokens (≥3 chars) to appear so a slug
+  // collision with a different fighter who shares a first or last name
+  // doesn't pass.
+  const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+  const h1Match = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
+  const ogTitleMatch = html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i);
+  const haystack = [
+    titleMatch?.[1] ?? "",
+    h1Match ? stripHtml(h1Match[1]) : "",
+    ogTitleMatch?.[1] ?? "",
+  ]
+    .join(" ")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "");
+  return tokens.every((t) => haystack.includes(t));
 }
 
 async function fetchWikipediaThumbnail(name: string): Promise<string | null> {
