@@ -135,9 +135,10 @@ interface Resp {
 
 // Stale-good cache: every time we get a complete response, save it to
 // localStorage so a transient FMP / CoinGecko outage doesn't blank the
-// card. SWR's fallbackData reads this on mount.
-const MOVERS_CACHE_KEY = "morning.movers.v1";
-const MOVERS_CACHE_TTL = 1000 * 60 * 60 * 24; // 24h
+// card. SWR's fallbackData reads this on mount. The cache never
+// expires — even days-old prices are infinitely better than an empty
+// card, and a successful fetch always overwrites it anyway.
+const MOVERS_CACHE_KEY = "morning.movers.v2";
 
 // Loose "is there anything here?" gate. We only want to retry when the
 // response is totally empty — otherwise even a 4-gainer / 2-loser day
@@ -159,7 +160,6 @@ function readMoversCache(): Resp | undefined {
     const raw = localStorage.getItem(MOVERS_CACHE_KEY);
     if (!raw) return undefined;
     const entry = JSON.parse(raw) as { ts: number; data: Resp };
-    if (Date.now() - entry.ts > MOVERS_CACHE_TTL) return undefined;
     return entry.data;
   } catch {
     return undefined;

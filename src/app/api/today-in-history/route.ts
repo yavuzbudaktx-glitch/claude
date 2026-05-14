@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
-import { fetchBritannicaFeaturedEvent } from "@/lib/britannica";
 
-// Primary source for the daily fact is Britannica's "Featured Event" on
-// britannica.com/on-this-day — it's hand-picked daily by editors and skews
-// to the genuinely interesting (vs. Wikipedia's "selected", which can be
-// uneven). We scrape Britannica's HTML once per day, then fall back to
-// Wikipedia if the scrape comes back empty so the card never goes blank.
+// Daily "on this day" fact. We pull from Wikipedia's editor-curated
+// /feed/featured/YYYY/MM/DD JSON endpoint — clean structured data, no
+// scraping. The first page on the first onthisday entry gives us a
+// notable historical event with title, extract, thumbnail, and link.
+// Britannica scraping was previously the primary but never worked
+// reliably from Vercel; the older "onthisday/selected" feed is kept
+// only as a final fallback.
 export const dynamic = "force-dynamic";
 
 interface RawPage {
@@ -95,33 +96,7 @@ export async function GET(req: Request) {
   const dd = pad(dateAt.getUTCDate());
   const yyyy = dateAt.getUTCFullYear();
 
-  // Primary: Britannica's hand-picked Featured Event.
-  try {
-    const britannica = await fetchBritannicaFeaturedEvent(dateAt);
-    if (britannica && britannica.title) {
-      return NextResponse.json({
-        date: `${mm}-${dd}`,
-        year: britannica.year ?? null,
-        text: britannica.title,
-        summary: britannica.summary,
-        kind: "featured",
-        source: "britannica",
-        thumbnail: britannica.thumbnail,
-        pageTitle: britannica.title,
-        link: britannica.link,
-      });
-    }
-  } catch {
-    // Fall through to Wikipedia.
-  }
-
-  // Secondary: Wikipedia's curated daily "feed/featured" API. The
-  // `onthisday` array on this endpoint is editor-curated (same content as
-  // the front page), and the first entry's primary page gives us a clean
-  // title + extract + thumbnail without any scraping. This is far more
-  // reliable than the older "onthisday/selected" feed because:
-  //   (a) it ships with a rich `extract` field per page, and
-  //   (b) the editors put the day's MOST notable event first.
+  // Primary: Wikipedia's editor-curated daily feed.
   try {
     interface FeedFeaturedPage {
       type?: string;

@@ -22,7 +22,10 @@ function ufcSlugCandidates(name: string): string[] {
   return [base, `${base}-1`, `${base}-2`];
 }
 
-const UFC_PHOTO_CACHE_KEY = "morning.ufc-photo.v1";
+// Bumped to v2 so any wrong-fighter URLs cached from previous builds
+// get evicted automatically. Also shortened the TTL — a week was too
+// long to live with a bad guess.
+const UFC_PHOTO_CACHE_KEY = "morning.ufc-photo.v2";
 
 function readPhotoCache(name: string): string | null {
   if (typeof window === "undefined") return null;
@@ -30,7 +33,7 @@ function readPhotoCache(name: string): string | null {
     const raw = localStorage.getItem(`${UFC_PHOTO_CACHE_KEY}.${name}`);
     if (!raw) return null;
     const entry = JSON.parse(raw) as { ts: number; url: string };
-    if (Date.now() - entry.ts > 1000 * 60 * 60 * 24 * 7) return null; // 7d
+    if (Date.now() - entry.ts > 1000 * 60 * 60 * 24) return null; // 1d
     return entry.url;
   } catch {
     return null;
@@ -74,9 +77,35 @@ function pageMatchesFighter(html: string, fighterName: string): boolean {
   return tokens.every((t) => haystack.includes(t));
 }
 
+function findClientUfcPhoto(html: string, name: string): string | null {
+  const all = [
+    ...html.matchAll(
+      /https?:\/\/dmxg5wxfqgb4u\.cloudfront\.net\/[^"'\s)]+\.(?:png|jpg|jpeg|webp)/gi,
+    ),
+  ].map((m) => m[0]);
+  if (all.length === 0) return null;
+  const normalize = (s: string) =>
+    s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  const tokens = normalize(name).split(/\s+/).filter((t) => t.length >= 4);
+  if (tokens.length === 0) return all[0];
+  for (const url of all) {
+    const filename = normalize(url.split("/").pop() ?? "");
+    if (tokens.every((t) => filename.includes(t))) return url;
+  }
+  const last = tokens[tokens.length - 1];
+  for (const url of all) {
+    const filename = normalize(url.split("/").pop() ?? "");
+    if (filename.includes(last)) return url;
+  }
+  return all[0];
+}
+
 async function scrapeUfcPhotoFromBrowser(name: string): Promise<string | null> {
-  // Walk every slug candidate × every proxy; return on the first
-  // Cloudfront URL we find on a page that actually matches this fighter.
+  // Walk every slug candidate × every proxy; for each page that matches
+  // this fighter, prefer a Cloudfront URL whose filename contains the
+  // fighter's surname (UFC's CDN names files like
+  // "/2024-01/PEREIRA_ALEX_03-09.png"). Falls back to the page's first
+  // Cloudfront URL if no filename mention is found.
   const proxify = (target: string): string[] => [
     `https://corsproxy.io/?${encodeURIComponent(target)}`,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,
@@ -92,10 +121,8 @@ async function scrapeUfcPhotoFromBrowser(name: string): Promise<string | null> {
         if (!res.ok) continue;
         const html = await res.text();
         if (!pageMatchesFighter(html, name)) continue;
-        const m = html.match(
-          /https?:\/\/dmxg5wxfqgb4u\.cloudfront\.net\/[^"'\s)]+\.(?:png|jpg|jpeg|webp)/i,
-        );
-        if (m) return m[0];
+        const photo = findClientUfcPhoto(html, name);
+        if (photo) return photo;
       } catch {
         // try next proxy
       }

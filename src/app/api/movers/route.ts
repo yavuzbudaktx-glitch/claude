@@ -332,7 +332,7 @@ async function fetchFmpGainersList(): Promise<FmpListResult> {
     try {
       const res = await fetch(url, {
         headers: { "User-Agent": UA, Accept: "application/json" },
-        next: { revalidate: 600 },
+        next: { revalidate: 3600 },
       });
       if (!res.ok) { lastError = `${tag}: HTTP ${res.status}`; continue; }
       const json = (await res.json()) as
@@ -405,7 +405,7 @@ async function fetchFmpLosersList(): Promise<FmpListResult> {
     try {
       const res = await fetch(url, {
         headers: { "User-Agent": UA, Accept: "application/json" },
-        next: { revalidate: 600 },
+        next: { revalidate: 3600 },
       });
       if (!res.ok) { lastError = `${tag}: HTTP ${res.status}`; continue; }
       const json = (await res.json()) as

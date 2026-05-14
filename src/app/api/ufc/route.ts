@@ -231,14 +231,41 @@ export interface UfcAthletePage {
   status: string | null;
 }
 
-function parseUfcAthleteHtml(html: string): UfcAthletePage | null {
-  // Hero photo lives on UFC's Cloudfront CDN; first occurrence on the page
-  // is the athlete's pose image.
-  let photo: string | null = null;
-  const photoMatch = html.match(
-    /https?:\/\/dmxg5wxfqgb4u\.cloudfront\.net\/[^"'\s)]+\.(?:png|jpg|jpeg|webp)/i,
-  );
-  if (photoMatch) photo = photoMatch[0];
+function findUfcPhoto(html: string, fighterName: string): string | null {
+  // UFC's CDN filenames typically embed the fighter's surname, e.g.
+  // ".../2024-01/PEREIRA_ALEX_03-09.png". Pull every Cloudfront URL on
+  // the page and prefer the one whose filename includes this fighter's
+  // last name — otherwise we silently pick up an opponent's portrait or
+  // the page's hero card image.
+  const all = [
+    ...html.matchAll(
+      /https?:\/\/dmxg5wxfqgb4u\.cloudfront\.net\/[^"'\s)]+\.(?:png|jpg|jpeg|webp)/gi,
+    ),
+  ].map((m) => m[0]);
+  if (all.length === 0) return null;
+
+  const normalize = (s: string) =>
+    s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  const tokens = normalize(fighterName).split(/\s+/).filter((t) => t.length >= 4);
+  if (tokens.length === 0) return all[0];
+
+  // First pass: filename contains every meaningful name token.
+  for (const url of all) {
+    const filename = normalize(url.split("/").pop() ?? "");
+    if (tokens.every((t) => filename.includes(t))) return url;
+  }
+  // Second pass: filename contains at least the LAST name.
+  const last = tokens[tokens.length - 1];
+  for (const url of all) {
+    const filename = normalize(url.split("/").pop() ?? "");
+    if (filename.includes(last)) return url;
+  }
+  // No name match — fall back to the first URL (likely the hero card).
+  return all[0];
+}
+
+function parseUfcAthleteHtml(html: string, fighterName: string): UfcAthletePage | null {
+  const photo = findUfcPhoto(html, fighterName);
 
   // Record: UFC.com shows "20-4-0 (W-L-D)" in a stat block.
   let record: string | null = null;
@@ -302,7 +329,7 @@ async function fetchUfcAthletePage(name: string): Promise<UfcAthletePage | null>
     // different fighter or a generic landing, which is why the user kept
     // seeing the wrong person's pose photo.
     if (!pageMatchesFighter(html, name)) continue;
-    const parsed = parseUfcAthleteHtml(html);
+    const parsed = parseUfcAthleteHtml(html, name);
     if (!parsed) continue;
     if (parsed.photo) return parsed;
     if (!textOnlyFallback) textOnlyFallback = parsed;
