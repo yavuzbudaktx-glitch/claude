@@ -340,18 +340,21 @@ async function enrichFighter(f: UfcFighter | null, athleteId: string | undefined
     athleteId ? fetchAthleteRecord(athleteId) : Promise.resolve({ record: null, headshot: null }),
   ]);
 
-  // UFC.com's pose photo wins when present; fall back to ESPN's URL, then
-  // Wikipedia thumbnail. headshotFallback gets whichever non-primary
-  // candidate is left so the client has at least one backup.
+  // Photo priority: UFC.com pose shot when we actually got one >
+  // Wikipedia infobox image (reliable from Vercel egress) > ESPN's
+  // constructed CDN URL (404s for less famous fighters) >
+  // ESPN athlete-detail headshot. The order changed: Wikipedia used to
+  // be last but is in fact the most reliable cloud-friendly fallback
+  // when UFC.com isn't reachable, so it now precedes the ESPN URLs.
   const ufcPhoto = ufc?.photo ?? null;
-  const primary = ufcPhoto ?? f.headshot ?? espn.headshot ?? wiki ?? null;
+  const primary = ufcPhoto ?? wiki ?? f.headshot ?? espn.headshot ?? null;
   const fallback =
     primary === ufcPhoto
-      ? f.headshot ?? espn.headshot ?? wiki ?? null
-      : primary === f.headshot
-        ? espn.headshot ?? wiki ?? null
-        : primary === espn.headshot
-          ? wiki ?? null
+      ? wiki ?? f.headshot ?? espn.headshot ?? null
+      : primary === wiki
+        ? f.headshot ?? espn.headshot ?? null
+        : primary === f.headshot
+          ? espn.headshot ?? wiki ?? null
           : null;
 
   return {

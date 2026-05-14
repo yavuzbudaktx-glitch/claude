@@ -173,47 +173,35 @@ export function TodayInHistoryCard() {
           </div>
         )}
       </div>
-      {/* Render the body inline. Thumbnail lives inside the same guard as
-          the text so we never end up with an image and no caption. */}
-      <div className="flex gap-3">
-        {displayed.thumbnail && (
-          <img
-            src={displayed.thumbnail}
-            alt=""
-            className="h-16 w-16 object-cover rounded shrink-0 border rule-soft"
-            referrerPolicy="no-referrer"
-            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
-          />
+      {/* Text-only render. We dropped the thumbnail because Britannica's
+          card images regularly loaded ahead of a missing/invalid title,
+          producing the "I see a picture but no text" failure mode. */}
+      <div className="flex items-baseline gap-3">
+        {displayed.year != null && (
+          <span className="font-serif text-2xl font-light tabular-nums leading-none text-accent shrink-0">
+            {displayed.year}
+          </span>
         )}
-        <div className="min-w-0 flex-1">
-          <div className="flex items-baseline gap-3">
-            {displayed.year != null && (
-              <span className="font-serif text-2xl font-light tabular-nums leading-none text-accent shrink-0">
-                {displayed.year}
-              </span>
-            )}
-            {displayed.link ? (
-              <a
-                href={displayed.link}
-                target="_blank"
-                rel="noreferrer"
-                className="font-serif text-[14px] leading-snug min-w-0 hover:underline underline-offset-4 decoration-[var(--rule)]"
-              >
-                {displayed.text}
-              </a>
-            ) : (
-              <span className="font-serif text-[14px] leading-snug min-w-0">
-                {displayed.text}
-              </span>
-            )}
-          </div>
-          {displayed.summary && (
-            <p className="font-serif text-[12.5px] leading-snug text-muted mt-1.5">
-              {displayed.summary}
-            </p>
-          )}
-        </div>
+        {displayed.link ? (
+          <a
+            href={displayed.link}
+            target="_blank"
+            rel="noreferrer"
+            className="font-serif text-[14px] leading-snug min-w-0 hover:underline underline-offset-4 decoration-[var(--rule)]"
+          >
+            {displayed.text}
+          </a>
+        ) : (
+          <span className="font-serif text-[14px] leading-snug min-w-0">
+            {displayed.text}
+          </span>
+        )}
       </div>
+      {displayed.summary && (
+        <p className="font-serif text-[12.5px] leading-snug text-muted mt-1.5">
+          {displayed.summary}
+        </p>
+      )}
     </div>
   );
 }

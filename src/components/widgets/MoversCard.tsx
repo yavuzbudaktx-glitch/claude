@@ -173,18 +173,28 @@ function writeMoversCache(data: Resp) {
   } catch {}
 }
 
-// Fetcher that throws only when the response is *completely empty* so SWR
-// retries on a real outage. Partial responses pass through unchanged. We
-// still persist to localStorage when the response is good enough (>=3
-// gainers), so a one-row outage can't replace yesterday's full snapshot.
+const EMPTY_RESP: Resp = {
+  stocks: { gainers: [], losers: [] },
+  crypto: { gainers: [], losers: [] },
+  asOf: 0,
+  fmpConfigured: false,
+  fmpError: null,
+};
+
+// Fetcher never throws — any network or parse failure surfaces as an
+// empty Resp so SWR doesn't loop on retries (which was leaving the
+// card stuck on "Loading…" indefinitely). The UI renders a clear error
+// state when no rows arrived.
 const fetcher = async (url: string): Promise<Resp> => {
-  const res = await fetch(url);
-  const data = (await res.json()) as Resp;
-  if (!hasAnyRows(data)) {
-    throw new Error("movers response is empty — retrying");
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return { ...EMPTY_RESP, fmpError: `HTTP ${res.status}` };
+    const data = (await res.json()) as Resp;
+    if ((data.stocks?.gainers?.length ?? 0) >= 3) writeMoversCache(data);
+    return data;
+  } catch (e) {
+    return { ...EMPTY_RESP, fmpError: e instanceof Error ? e.message : "fetch_failed" };
   }
-  if ((data.stocks?.gainers?.length ?? 0) >= 3) writeMoversCache(data);
-  return data;
 };
 
 function fmtTime(ms: number | null | undefined) {
@@ -268,12 +278,14 @@ export function MoversCard() {
     // Hydrate immediately from the last good response so the card never
     // shows up empty after a cold mount even if FMP is briefly down.
     fallbackData: readMoversCache(),
-    // Retry on the validation-error throw — gives FMP up to 24s (4 × 6s)
-    // to recover before SWR gives up and we keep showing stale-good data.
-    errorRetryCount: 5,
-    errorRetryInterval: 4000,
-    shouldRetryOnError: true,
+    // The fetcher above never throws, so SWR never has anything to retry.
+    shouldRetryOnError: false,
   });
+  // hasAnyRows is what tells us if the latest response was usable; when
+  // it's not but we have a cached snapshot from a previous good fetch,
+  // prefer that over showing the empty card.
+  const cached = data && !hasAnyRows(data) ? readMoversCache() : undefined;
+  const view = hasAnyRows(data) ? data : cached;
 
   return (
     <Card
@@ -287,36 +299,33 @@ export function MoversCard() {
         ) : null
       }
     >
-      {isLoading && !data && <p className="text-muted text-sm">Loading…</p>}
+      {isLoading && !view && <p className="text-muted text-sm">Loading…</p>}
 
-      {data && data.fmpConfigured === false && (
+      {view && view.fmpConfigured === false && (
         <p className="text-accent text-xs italic mb-3">
           Stocks unavailable: <span className="font-mono">FMP_API_KEY</span> not set in env.
         </p>
       )}
 
-      {data &&
-        data.fmpConfigured &&
-        data.fmpError &&
-        data.stocks.gainers.length === 0 &&
-        data.stocks.losers.length === 0 && (
-          <p className="text-accent text-xs italic mb-3">
-            FMP error: <span className="font-mono">{data.fmpError}</span>
-          </p>
-        )}
+      {!isLoading && !view && data && (
+        <p className="text-accent text-xs italic mb-3">
+          Movers temporarily unavailable
+          {data.fmpError ? ` — ${data.fmpError}` : "."}
+        </p>
+      )}
 
-      {data && (
+      {view && (
         <div className="space-y-4">
           <Section
             label="Stocks · Top Gainers"
             meta="1-mo chart · 24h move"
-            items={data.stocks.gainers}
-            empty="No data."
+            items={view.stocks.gainers}
+            empty="No data right now — will refresh."
           />
           <Section
             label="Stocks · Top Losers"
-            items={data.stocks.losers}
-            empty="No data."
+            items={view.stocks.losers}
+            empty="No data right now — will refresh."
           />
 
           <div className="border-t rule-soft -mx-5" />
@@ -324,13 +333,13 @@ export function MoversCard() {
           <Section
             label="Crypto · Top Gainers · Robinhood"
             meta="1-mo chart · 24h move"
-            items={data.crypto.gainers}
-            empty="No data."
+            items={view.crypto.gainers}
+            empty="No data right now — will refresh."
           />
           <Section
             label="Crypto · Top Losers · Robinhood"
-            items={data.crypto.losers}
-            empty="No data."
+            items={view.crypto.losers}
+            empty="No data right now — will refresh."
           />
         </div>
       )}
