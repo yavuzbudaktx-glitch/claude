@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Save the UFC athletes listing HTML and report key selectors found."""
-import sys
+"""Save the UFC athletes listing HTML and report what's in it."""
+import re
 import requests
 from bs4 import BeautifulSoup
 
@@ -18,22 +18,31 @@ r = requests.get(URL, params={"gender": "Men", "page": 0}, headers=HEADERS, time
 print(f"status={r.status_code} bytes={len(r.text)}")
 with open("ufc_page0.html", "w", encoding="utf-8") as f:
     f.write(r.text)
-print("Saved ufc_page0.html")
 
 soup = BeautifulSoup(r.text, "html.parser")
-for sel in [
-    "div.c-listing-athlete",
-    "div.c-listing-athlete-flipcard",
-    "li.l-flex__item",
-    "div.view-content .views-row",
-    "a[href*='/athlete/']",
-    "img",
-]:
-    n = len(soup.select(sel))
-    print(f"  {sel!r:50s} -> {n}")
+title = soup.find("title")
+print("title:", title.get_text(strip=True) if title else "(none)")
 
-a = soup.select_one("a[href*='/athlete/']")
-if a:
-    print("first athlete link:", a.get("href"))
-    parent = a.find_parent()
-    print("parent tag:", parent.name, "classes:", parent.get("class"))
+text = soup.get_text(" ", strip=True)
+print("body text length:", len(text))
+print("first 500 chars of body text:")
+print(text[:500])
+print("---")
+
+print("counts:")
+for tag in ("script", "img", "a", "div", "iframe", "noscript"):
+    print(f"  <{tag}>: {len(soup.find_all(tag))}")
+
+print("\nlinks containing 'athlete':")
+hits = [a.get("href") for a in soup.find_all("a") if a.get("href") and "athlete" in a.get("href").lower()]
+print(f"  {len(hits)} links")
+for h in hits[:5]:
+    print("  ", h)
+
+print("\nany 'cloudflare', 'captcha', 'akamai', 'access denied' strings?")
+for kw in ("cloudflare", "captcha", "akamai", "access denied", "blocked", "challenge"):
+    if kw in r.text.lower():
+        print(f"  FOUND: {kw}")
+
+print("\nfirst 800 chars of raw HTML:")
+print(r.text[:800])
