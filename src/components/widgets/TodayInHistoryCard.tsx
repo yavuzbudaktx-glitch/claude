@@ -49,75 +49,98 @@ function isGoodFeatured(f: BritannicaFeatured | null): f is BritannicaFeatured {
   return true;
 }
 
-function parseBritannicaHtml(html: string): BritannicaFeatured | null {
-  // Strategy A: the page exposes a JSON blob with the day's events.
-  // Britannica embeds something like {"todaysEvents":[{...},{...}]} in
-  // a <script> tag. The first events with a long description is what
-  // we want.
-  const scriptRe = /<script[^>]*>([^<]*"events?"[^<]*)<\/script>/gi;
-  let sm: RegExpExecArray | null;
-  while ((sm = scriptRe.exec(html)) !== null) {
+function parseBritannicaHtml(html: string, sourceUrl: string): BritannicaFeatured | null {
+  // Strategy 1: JSON-LD structured data is the cleanest possible source —
+  // if present we get a typed Article with headline + description.
+  const ldRe = /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  let lm: RegExpExecArray | null;
+  while ((lm = ldRe.exec(html)) !== null) {
     try {
-      // Look inside the script for an event-shaped object with year + description.
-      const eventMatch = sm[1].match(
-        /\{[^{}]*"year"\s*:\s*(\d{3,4})[^{}]*"(?:title|name)"\s*:\s*"([^"]{12,})"[^{}]*"(?:description|summary|extract)"\s*:\s*"([^"]{60,})"[^{}]*\}/,
-      );
-      if (eventMatch) {
+      const raw = JSON.parse(lm[1]);
+      const nodes = Array.isArray(raw) ? raw : [raw];
+      for (const n of nodes) {
+        const type = String(n?.["@type"] ?? "").toLowerCase();
+        const headline = typeof n?.headline === "string" ? n.headline : typeof n?.name === "string" ? n.name : null;
+        const description = typeof n?.description === "string" ? n.description : null;
+        if (!headline || !description || description.length < 60) continue;
+        if (!type.includes("article") && !type.includes("event") && !type.includes("creativework")) continue;
+        if (/^(on this day|britannica)/i.test(headline)) continue;
+        const yearM = description.match(/\b(1[0-9]{3}|20[0-9]{2}|21[0-9]{2})\b/);
         return {
-          year: parseInt(eventMatch[1], 10),
-          title: decodeEntities(eventMatch[2]),
-          summary: decodeEntities(eventMatch[3]),
-          link: null,
+          year: yearM ? parseInt(yearM[1], 10) : null,
+          title: decodeEntities(headline),
+          summary: decodeEntities(description),
+          link: typeof n.url === "string" ? n.url : sourceUrl,
         };
       }
     } catch {}
   }
 
-  // Strategy B: og:title + og:description on a day-specific URL
-  // describe the featured event itself.
+  // Strategy 2: walk every <article> block and pick the highest-scoring
+  // one. A real "Featured Event" card has a meaningful title, a long
+  // paragraph, and (usually) a year and an article link. Score them and
+  // take the winner.
+  const articleRe = /<article[\s\S]*?<\/article>/g;
+  let bestScore = 0;
+  let best: BritannicaFeatured | null = null;
+  let am: RegExpExecArray | null;
+  while ((am = articleRe.exec(html)) !== null) {
+    const block = am[0];
+    // Title from h1/h2/h3
+    let title = "";
+    const hRe = /<h[1-3][^>]*>([\s\S]*?)<\/h[1-3]>/gi;
+    let hm: RegExpExecArray | null;
+    while ((hm = hRe.exec(block)) !== null) {
+      const t = strip(hm[1]);
+      if (t.length >= 12 && t.split(/\s+/).length >= 2 && !/^(featured event|on this day|today in history)$/i.test(t)) {
+        title = t;
+        break;
+      }
+    }
+    if (!title) continue;
+
+    // Summary = longest <p> in the block
+    let summary = "";
+    const pRe = /<p[^>]*>([\s\S]*?)<\/p>/gi;
+    let pm: RegExpExecArray | null;
+    while ((pm = pRe.exec(block)) !== null) {
+      const txt = strip(pm[1]);
+      if (txt.length > summary.length) summary = txt;
+    }
+    if (summary.length < 60) continue;
+
+    const yearM = block.match(/\b(1[0-9]{3}|20[0-9]{2}|21[0-9]{2})\b/);
+    const linkM = block.match(/<a[^>]+href=["'](\/(?:event|topic|biography|place|story|art|science|technology|sports|animal)\/[^"'#]+)["']/i);
+
+    // Score: longer summary + has year + has article link wins.
+    const score = Math.min(summary.length, 500) + (yearM ? 200 : 0) + (linkM ? 100 : 0);
+    if (score > bestScore) {
+      bestScore = score;
+      best = {
+        year: yearM ? parseInt(yearM[1], 10) : null,
+        title,
+        summary: summary.slice(0, 320),
+        link: linkM ? `https://www.britannica.com${linkM[1]}` : sourceUrl,
+      };
+    }
+  }
+  if (best) return best;
+
+  // Strategy 3: og: meta tags from the day-specific page, when they
+  // describe a specific event rather than the generic landing.
   const og = (prop: string) =>
     html.match(new RegExp(`<meta[^>]+property=["']${prop}["'][^>]+content=["']([^"']+)["']`, "i"))?.[1] ??
     html.match(new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+property=["']${prop}["']`, "i"))?.[1] ?? null;
   const ogTitle = og("og:title");
   const ogDesc = og("og:description");
   const ogUrl = og("og:url");
-  if (ogTitle && ogDesc && !/On This Day|Britannica/i.test(ogTitle)) {
+  if (ogTitle && ogDesc && ogDesc.length >= 60 && !/^(on this day|britannica)/i.test(ogTitle.trim())) {
     const yearM = ogDesc.match(/\b(1[0-9]{3}|20[0-9]{2}|21[0-9]{2})\b/);
     return {
       year: yearM ? parseInt(yearM[1], 10) : null,
       title: decodeEntities(ogTitle),
       summary: decodeEntities(ogDesc),
-      link: ogUrl,
-    };
-  }
-
-  // Strategy C: text marker "Featured Event" followed by a card. Walk
-  // forward to find an /event/, /topic/, or /biography/ link, capture
-  // its text as the title and the following <p> as the summary.
-  const markerIdx = html.search(/Featured\s+Event/i);
-  if (markerIdx >= 0) {
-    const chunk = html.slice(markerIdx, markerIdx + 12000);
-    const linkRe = /<a[^>]+href=["'](\/(?:event|topic|biography|place|story|art|science|technology|sports)\/[^"'#]+)["'][^>]*>([\s\S]*?)<\/a>/i;
-    const linkM = chunk.match(linkRe);
-    const title = linkM ? strip(linkM[2]) : "";
-    // Find a long <p> after the link.
-    let summary = "";
-    if (linkM) {
-      const after = chunk.slice(chunk.indexOf(linkM[0]) + linkM[0].length);
-      const pRe = /<p[^>]*>([\s\S]*?)<\/p>/gi;
-      let pm: RegExpExecArray | null;
-      while ((pm = pRe.exec(after)) !== null) {
-        const txt = strip(pm[1]);
-        if (txt.length >= 60) { summary = txt; break; }
-      }
-    }
-    const yearM = chunk.match(/\b(1[0-9]{3}|20[0-9]{2}|21[0-9]{2})\b/);
-    const link = linkM ? `https://www.britannica.com${linkM[1]}` : null;
-    return {
-      year: yearM ? parseInt(yearM[1], 10) : null,
-      title,
-      summary,
-      link,
+      link: ogUrl ?? sourceUrl,
     };
   }
 
@@ -145,7 +168,7 @@ async function fetchBritannicaFromBrowser(date: Date): Promise<BritannicaFeature
         if (!res.ok) continue;
         const html = await res.text();
         if (html.length < 5000) continue; // proxy gave us an error stub
-        const parsed = parseBritannicaHtml(html);
+        const parsed = parseBritannicaHtml(html, target);
         if (isGoodFeatured(parsed)) return parsed;
       } catch {
         // try next

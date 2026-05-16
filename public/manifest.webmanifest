@@ -1,7 +1,7 @@
 {
-  "name": "Morning Dashboard",
-  "short_name": "Morning",
-  "description": "Date, weather, verse, tasks, calendar and headlines.",
+  "name": "Perdash",
+  "short_name": "Perdash",
+  "description": "Your personal daily edition: time, weather, hadith, calendar, headlines and tasks.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
