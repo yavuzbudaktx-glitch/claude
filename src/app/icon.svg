@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -50 100 100">
+  <rect x="-50" y="-50" width="100" height="100" fill="#0b1020"/>
+  <circle cx="0" cy="0" r="42" fill="none" stroke="#f3e9d2" stroke-width="3"/>
+  <g stroke="#f3e9d2" stroke-linecap="round">
+    <line x1="0"   y1="-38" x2="0"   y2="-30" stroke-width="3"/>
+    <line x1="33"  y1="0"   x2="38"  y2="0"   stroke-width="3"/>
+    <line x1="0"   y1="38"  x2="0"   y2="30"  stroke-width="3"/>
+    <line x1="-33" y1="0"   x2="-38" y2="0"   stroke-width="3"/>
+    <line x1="19"  y1="-33" x2="22"  y2="-38" stroke-width="1.5"/>
+    <line x1="33"  y1="-19" x2="38"  y2="-22" stroke-width="1.5"/>
+    <line x1="33"  y1="19"  x2="38"  y2="22"  stroke-width="1.5"/>
+    <line x1="19"  y1="33"  x2="22"  y2="38"  stroke-width="1.5"/>
+    <line x1="-19" y1="33"  x2="-22" y2="38"  stroke-width="1.5"/>
+    <line x1="-33" y1="19"  x2="-38" y2="22"  stroke-width="1.5"/>
+    <line x1="-33" y1="-19" x2="-38" y2="-22" stroke-width="1.5"/>
+    <line x1="-19" y1="-33" x2="-22" y2="-38" stroke-width="1.5"/>
+  </g>
+  <line x1="0" y1="0" x2="-21" y2="-7" stroke="#f3e9d2" stroke-width="5" stroke-linecap="round"/>
+  <line x1="0" y1="0" x2="30" y2="-11" stroke="#f3e9d2" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="0" cy="0" r="4" fill="#8a1f17"/>
+</svg>

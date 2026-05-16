@@ -3,7 +3,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { format } from "date-fns";
 import { WeatherSummary } from "./WeatherSummary";
-import { PerdashLogo } from "@/components/PerdashLogo";
 
 export function Masthead({ name, actions }: { name?: string; actions?: ReactNode }) {
   const [now, setNow] = useState<Date | null>(null);
@@ -25,13 +24,10 @@ export function Masthead({ name, actions }: { name?: string; actions?: ReactNode
 
   return (
     <header className="space-y-1.5">
-      <div className="flex items-center justify-between gap-3 mb-1">
-        <PerdashLogo size={22} />
-        <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted flex items-center gap-3 flex-wrap">
-          <span>{now ? format(now, "EEE, MMM d") : ""}</span>
-          <span className="opacity-50">·</span>
-          <WeatherSummary />
-        </div>
+      <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted flex items-center gap-3 flex-wrap">
+        <span>{now ? format(now, "EEE, MMM d") : ""}</span>
+        <span className="opacity-50">·</span>
+        <WeatherSummary />
       </div>
       <div className="flex items-baseline justify-between gap-4 flex-wrap">
         <h1 className="font-serif text-5xl md:text-6xl font-light tracking-[-0.02em] leading-[1] m-0">
