@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { findFighterDrivePhoto } from "@/lib/ufc-photos";
+import { findLocalFighterPhoto } from "@/lib/local-fighter-photos";
 
 // UFC schedule + last/next numbered-event fetcher.
 //
@@ -392,31 +393,36 @@ async function fetchWikipediaThumbnail(name: string): Promise<string | null> {
 
 async function enrichFighter(f: UfcFighter | null, athleteId: string | undefined): Promise<UfcFighter | null> {
   if (!f) return null;
-  // Hit every photo / record source in parallel. The Drive folder the
-  // user uploaded is the most-authoritative photo source (their own
-  // curated portraits) so it leads the priority chain whenever it
-  // returns a match.
+  // Local photos in /public/fighters/ are the top-priority source — the
+  // user dropped their curated set there, so when we find a match we
+  // serve it directly and skip every external fetch path.
+  const localPhoto = findLocalFighterPhoto(f.name);
+
+  // Otherwise hit external sources in parallel for the rest of the data.
   const [drivePhoto, ufc, wiki, espn] = await Promise.all([
-    findFighterDrivePhoto(f.name),
+    localPhoto ? Promise.resolve(null) : findFighterDrivePhoto(f.name),
     fetchUfcAthletePage(f.name),
     fetchWikipediaThumbnail(f.name),
     athleteId ? fetchAthleteRecord(athleteId) : Promise.resolve({ record: null, headshot: null }),
   ]);
 
-  // Photo priority: user's Drive folder > UFC.com pose shot >
-  // Wikipedia infobox > ESPN constructed URL > ESPN detail headshot.
+  // Photo priority: local /public/fighters > user's Drive folder >
+  // UFC.com pose shot > Wikipedia infobox > ESPN constructed URL >
+  // ESPN detail headshot.
   const ufcPhoto = ufc?.photo ?? null;
-  const primary = drivePhoto ?? ufcPhoto ?? wiki ?? f.headshot ?? espn.headshot ?? null;
+  const primary = localPhoto ?? drivePhoto ?? ufcPhoto ?? wiki ?? f.headshot ?? espn.headshot ?? null;
   const fallback =
-    primary === drivePhoto
-      ? ufcPhoto ?? wiki ?? f.headshot ?? espn.headshot ?? null
-      : primary === ufcPhoto
-        ? wiki ?? f.headshot ?? espn.headshot ?? null
-        : primary === wiki
-          ? f.headshot ?? espn.headshot ?? null
-          : primary === f.headshot
-            ? espn.headshot ?? wiki ?? null
-            : null;
+    primary === localPhoto
+      ? drivePhoto ?? ufcPhoto ?? wiki ?? f.headshot ?? espn.headshot ?? null
+      : primary === drivePhoto
+        ? ufcPhoto ?? wiki ?? f.headshot ?? espn.headshot ?? null
+        : primary === ufcPhoto
+          ? wiki ?? f.headshot ?? espn.headshot ?? null
+          : primary === wiki
+            ? f.headshot ?? espn.headshot ?? null
+            : primary === f.headshot
+              ? espn.headshot ?? wiki ?? null
+              : null;
 
   return {
     ...f,
