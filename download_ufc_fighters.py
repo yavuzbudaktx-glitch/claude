@@ -61,7 +61,37 @@ def collect_fighters(headless: bool, max_clicks: int, wait_ms: int) -> list[tupl
             except Exception:
                 pass
 
-        page.wait_for_selector("a[href*='/athlete/']", timeout=30000)
+        # Wait for the listing to actually render
+        try:
+            page.wait_for_load_state("networkidle", timeout=30000)
+        except Exception:
+            pass
+        try:
+            page.wait_for_selector("a[href*='/athlete/']", timeout=20000)
+        except Exception:
+            # Dump diagnostics
+            html = page.content()
+            Path("ufc_rendered.html").write_text(html, encoding="utf-8")
+            page.screenshot(path="ufc_rendered.png", full_page=True)
+            print("Saved ufc_rendered.html and ufc_rendered.png for debugging.")
+            anchors = page.evaluate(
+                "() => Array.from(document.querySelectorAll('a')).slice(0, 40).map(a => a.getAttribute('href'))"
+            )
+            print(f"first {len(anchors)} hrefs:")
+            for h in anchors:
+                print("  ", h)
+            sample_classes = page.evaluate(
+                """() => {
+                  const out = new Set();
+                  document.querySelectorAll('main *[class]').forEach(el => {
+                    el.className && String(el.className).split(/\\s+/).forEach(c => c && out.add(c));
+                  });
+                  return Array.from(out).slice(0, 80);
+                }"""
+            )
+            print("sample classes in <main>:", sample_classes)
+            browser.close()
+            return []
 
         clicks = 0
         while clicks < max_clicks:
