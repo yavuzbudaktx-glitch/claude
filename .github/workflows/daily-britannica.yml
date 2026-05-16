@@ -1,0 +1,43 @@
+name: Daily Britannica scrape
+
+# Pulls britannica.com/on-this-day's Featured Event once a day and
+# commits the result to public/data/featured-event.json. We do this on
+# GitHub Actions because Britannica blocks Vercel's egress IPs (every
+# server-side fetch from the deployed app returns 403); Actions runners
+# sit on a different IP range and reach the site cleanly.
+
+on:
+  schedule:
+    # 06:15 UTC ≈ 01:15 ET, right after Britannica's daily rollover.
+    - cron: "15 6 * * *"
+  workflow_dispatch: {} # allow manual runs from the Actions tab
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run scraper
+        run: node scripts/scrape-britannica.mjs
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [[ -n "$(git status --porcelain public/data/featured-event.json)" ]]; then
+            git add public/data/featured-event.json
+            git commit -m "data: daily Britannica Featured Event"
+            git push
+          else
+            echo "No change to commit."
+          fi

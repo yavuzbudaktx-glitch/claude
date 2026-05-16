@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
+import fs from "node:fs/promises";
+import path from "node:path";
 import dailyEvents from "@/data/daily-events.json";
 
-// Daily "on this day" fact. Britannica's own site blocks every cloud
-// IP (including Vercel and every public CORS proxy we tried with a
-// 403), so instead of live-scraping we use a hand-curated dataset of
-// ~80 globally significant dates keyed by MM-DD. For days not in the
-// dataset we fall back to Wikipedia's editor-curated /feed/featured
-// endpoint, then the older onthisday/selected feed.
+// Daily "on this day" fact, in priority order:
+//   1. Britannica's actual Featured Event for today, scraped daily by a
+//      GitHub Action and committed to public/data/featured-event.json.
+//   2. A hand-curated MM-DD dataset of ~80 globally significant dates.
+//   3. Wikipedia's editor-picked feed/featured/onthisday[0].
+//   4. The older onthisday/selected feed as a final fallback.
 export const dynamic = "force-dynamic";
 
 interface CuratedEvent {
@@ -16,6 +18,26 @@ interface CuratedEvent {
   link?: string;
 }
 const CURATED: Record<string, CuratedEvent> = dailyEvents as Record<string, CuratedEvent>;
+
+interface BritannicaFile {
+  date: string;
+  year: number | null;
+  title: string;
+  summary: string;
+  link?: string | null;
+  generatedAt?: string;
+  sourceUrl?: string;
+}
+
+async function readBritannicaFile(): Promise<BritannicaFile | null> {
+  try {
+    const filePath = path.join(process.cwd(), "public", "data", "featured-event.json");
+    const raw = await fs.readFile(filePath, "utf8");
+    return JSON.parse(raw) as BritannicaFile;
+  } catch {
+    return null;
+  }
+}
 
 interface RawPage {
   type?: string;
@@ -104,8 +126,27 @@ export async function GET(req: Request) {
   const dd = pad(dateAt.getUTCDate());
   const yyyy = dateAt.getUTCFullYear();
 
-  // Primary: hand-curated MM-DD dataset of ~80 globally notable
-  // historical events. Always wins when there's an entry for today.
+  // Primary: the actual Britannica Featured Event for today, scraped
+  // by a daily GitHub Action and committed to the repo. Only honoured
+  // when its `date` matches the date we're serving — stale entries
+  // (e.g. if the workflow hasn't run yet on a new day) fall through.
+  const britannica = await readBritannicaFile();
+  if (britannica && britannica.date === `${mm}-${dd}` && britannica.title && britannica.summary) {
+    return NextResponse.json({
+      date: `${mm}-${dd}`,
+      year: britannica.year ?? null,
+      text: britannica.title,
+      summary: britannica.summary,
+      kind: "featured",
+      source: "britannica",
+      thumbnail: null,
+      pageTitle: britannica.title,
+      link: britannica.link ?? britannica.sourceUrl ?? null,
+    });
+  }
+
+  // Secondary: hand-curated MM-DD dataset of ~80 globally notable
+  // historical events.
   const curated = CURATED[`${mm}-${dd}`];
   if (curated) {
     return NextResponse.json({
