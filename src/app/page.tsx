@@ -53,11 +53,13 @@ export default async function Page() {
 
       <EisenhowerMatrix userId={user.id} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch">
+        <div className="lg:col-span-2 [&>*]:h-full">
           <MoversCard />
         </div>
-        <SuperLigCard />
+        <div className="[&>*]:h-full">
+          <SuperLigCard />
+        </div>
       </div>
 
       <UfcCard />

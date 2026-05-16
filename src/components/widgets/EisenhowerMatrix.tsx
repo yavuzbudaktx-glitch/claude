@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { QUADRANTS, type Task, type Quadrant, type TaskStatus } from "@/types/db";
 import { Card } from "@/components/Card";
@@ -11,14 +11,16 @@ export function EisenhowerMatrix({ userId }: { userId: string }) {
   const supabase = createClient();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
+  // Track tasks completed during THIS session — only those get the fade
+  // animation. Tasks that were already complete in the database when the
+  // page loaded should never render (no flash on reload).
+  const recentlyCompleted = useRef<Set<string>>(new Set());
+  const [, forceRerender] = useState(0);
 
   const load = useCallback(async () => {
     const { data } = await supabase
       .from("tasks")
       .select("*")
-      // Completed tasks sink to the bottom; everything else sorts by due
-      // date ascending (nearest deadline first), then most-recently-added.
-      .order("completed", { ascending: true })
       .order("due_date", { ascending: true, nullsFirst: false })
       .order("created_at", { ascending: false });
     setTasks((data as Task[]) ?? []);
@@ -55,6 +57,14 @@ export function EisenhowerMatrix({ userId }: { userId: string }) {
 
   async function changeStatus(task: Task, status: TaskStatus) {
     const completed = status === "complete";
+    if (completed) {
+      // Mark as recently-completed so TaskItem still plays its fade-out
+      // animation in-session; the next page load will skip it entirely.
+      recentlyCompleted.current.add(task.id);
+      forceRerender((n) => n + 1);
+    } else {
+      recentlyCompleted.current.delete(task.id);
+    }
     setTasks((ts) => ts.map((t) => (t.id === task.id ? { ...t, status, completed } : t)));
     await supabase.from("tasks").update({ status, completed }).eq("id", task.id);
   }
@@ -64,6 +74,13 @@ export function EisenhowerMatrix({ userId }: { userId: string }) {
     await supabase.from("tasks").delete().eq("id", task.id);
   }
 
+  // Pre-load filter: drop tasks that were ALREADY complete in the DB when
+  // we fetched. Tasks completed in this session stay until their fade
+  // animation finishes.
+  const visibleTasks = tasks.filter(
+    (t) => t.status !== "complete" || recentlyCompleted.current.has(t.id),
+  );
+
   return (
     <Card num="04" title="Eisenhower · Tasks">
       {loading ? (
@@ -71,7 +88,7 @@ export function EisenhowerMatrix({ userId }: { userId: string }) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 -mx-1">
           {QUADRANTS.map((q, i) => {
-            const items = tasks.filter((t) => t.quadrant === q.id);
+            const items = visibleTasks.filter((t) => t.quadrant === q.id);
             const open = items.filter((x) => x.status !== "complete").length;
             const isLast = i === QUADRANTS.length - 1;
             return (

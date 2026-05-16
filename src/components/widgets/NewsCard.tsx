@@ -10,8 +10,9 @@ import { CATEGORY_LABELS, CATEGORY_ORDER, type NewsCategory, type NewsItem } fro
 type Resp = Record<NewsCategory, NewsItem[]>;
 const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<Resp>);
 
-// Stable colour per source, derived from name. Only used when the feed
-// item has no thumbnail of its own.
+// Stable colour per source, derived from name. Used as the *final*
+// fallback when neither the article thumbnail nor the publisher's
+// logo is available.
 const PLACEHOLDER_PALETTE = [
   "#8a1f17", "#1a5e8a", "#5a8a1a", "#8a5a1a",
   "#5a1a8a", "#1a8a5a", "#8a1a5a", "#1a1a8a",
@@ -26,6 +27,58 @@ function sourceInitials(source: string) {
   const parts = trimmed.split(/\s+/);
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return (parts[0][0] + (parts[1][0] ?? "")).toUpperCase();
+}
+
+// Derive the publisher's logo from the article's URL. We try Clearbit's
+// public Logo API first (clean square logos for nearly every news
+// publisher) and fall back to Google's S2 favicon service, which exists
+// for literally every domain.
+function publisherDomain(link: string): string | null {
+  try {
+    return new URL(link).hostname.replace(/^www\./, "");
+  } catch {
+    return null;
+  }
+}
+function publisherLogoUrls(link: string): string[] {
+  const domain = publisherDomain(link);
+  if (!domain) return [];
+  return [
+    `https://logo.clearbit.com/${domain}?size=128`,
+    `https://www.google.com/s2/favicons?sz=128&domain=${domain}`,
+  ];
+}
+
+function NewsThumb({ item }: { item: NewsItem }) {
+  // Three-tier image strategy. We don't conditionally render based on
+  // `item.image` alone — we let the browser try the article image, then
+  // walk down a fallback chain via onError so a 404'd thumbnail still
+  // resolves to a publisher logo before settling on initials.
+  const candidates = [
+    ...(item.image ? [item.image] : []),
+    ...publisherLogoUrls(item.link),
+  ];
+  const [idx, setIdx] = useState(0);
+  if (idx >= candidates.length) {
+    return (
+      <div
+        className="h-full w-full flex items-center justify-center font-serif text-base text-white tracking-wide select-none"
+        style={{ background: `linear-gradient(135deg, ${placeholderColor(item.source)}, ${placeholderColor(item.source)}dd)` }}
+      >
+        {sourceInitials(item.source)}
+      </div>
+    );
+  }
+  return (
+    <img
+      src={candidates[idx]}
+      alt=""
+      loading="lazy"
+      referrerPolicy="no-referrer"
+      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+      onError={() => setIdx((n) => n + 1)}
+    />
+  );
 }
 
 function PubDate({ iso }: { iso: string }) {
@@ -77,25 +130,7 @@ export function NewsCard() {
                 className="group flex gap-3 items-start"
               >
                 <div className="shrink-0 w-16 h-16 rounded-md overflow-hidden border rule-soft">
-                  {item.image ? (
-                    <img
-                      src={item.image}
-                      alt=""
-                      loading="lazy"
-                      referrerPolicy="no-referrer"
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).style.display = "none";
-                      }}
-                    />
-                  ) : (
-                    <div
-                      className="h-full w-full flex items-center justify-center font-serif text-base text-white tracking-wide select-none"
-                      style={{ background: `linear-gradient(135deg, ${placeholderColor(item.source)}, ${placeholderColor(item.source)}dd)` }}
-                    >
-                      {sourceInitials(item.source)}
-                    </div>
-                  )}
+                  <NewsThumb item={item} />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="text-[13px] leading-snug font-medium group-hover:underline underline-offset-2 line-clamp-3">

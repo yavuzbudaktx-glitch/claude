@@ -103,9 +103,7 @@ function findClientUfcPhoto(html: string, name: string): string | null {
 async function scrapeUfcPhotoFromBrowser(name: string): Promise<string | null> {
   // Walk every slug candidate × every proxy; for each page that matches
   // this fighter, prefer a Cloudfront URL whose filename contains the
-  // fighter's surname (UFC's CDN names files like
-  // "/2024-01/PEREIRA_ALEX_03-09.png"). Falls back to the page's first
-  // Cloudfront URL if no filename mention is found.
+  // fighter's surname.
   const proxify = (target: string): string[] => [
     `https://corsproxy.io/?${encodeURIComponent(target)}`,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,
@@ -131,16 +129,64 @@ async function scrapeUfcPhotoFromBrowser(name: string): Promise<string | null> {
   return null;
 }
 
+// Image-search-based fallback. Mirrors what the user described ("search
+// google for 'Illia Topuria PNG'") using sources that don't require an
+// API key: Wikipedia article search returns the fighter's article, whose
+// infobox image is reliably the right person. The query qualifier
+// "UFC" narrows ambiguous names (multiple Alex Pereiras, etc).
+interface WikiSearchResp { query?: { search?: Array<{ title?: string }> } }
+interface WikiSummaryResp {
+  thumbnail?: { source?: string };
+  originalimage?: { source?: string };
+  type?: string;
+}
+async function searchFighterPhoto(name: string): Promise<string | null> {
+  if (!name) return null;
+  const queries = [`${name} UFC fighter`, `${name} MMA`, name];
+  for (const q of queries) {
+    try {
+      const searchUrl =
+        `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(q)}` +
+        `&srlimit=3&format=json&origin=*`;
+      const searchRes = await fetch(searchUrl);
+      if (!searchRes.ok) continue;
+      const searchJson = (await searchRes.json()) as WikiSearchResp;
+      const hits = searchJson.query?.search ?? [];
+      for (const hit of hits) {
+        if (!hit.title) continue;
+        const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(hit.title.replace(/\s+/g, "_"))}`;
+        try {
+          const sumRes = await fetch(summaryUrl);
+          if (!sumRes.ok) continue;
+          const sumJson = (await sumRes.json()) as WikiSummaryResp;
+          // Skip disambiguation pages — those have no real photo.
+          if (sumJson.type === "disambiguation") continue;
+          const img = sumJson.originalimage?.source ?? sumJson.thumbnail?.source;
+          if (img) return img;
+        } catch {
+          // try next hit
+        }
+      }
+    } catch {
+      // try next query
+    }
+  }
+  return null;
+}
+
 function useClientUfcPhoto(name: string, serverPrimary: string | null): string | null {
   const [photo, setPhoto] = useState<string | null>(() => readPhotoCache(name));
   useEffect(() => {
     if (!name) return;
-    // If we already have a UFC.com Cloudfront URL from the server, trust it.
     if (serverPrimary && serverPrimary.includes("dmxg5wxfqgb4u.cloudfront.net")) return;
     if (photo) return;
     let cancelled = false;
     (async () => {
-      const found = await scrapeUfcPhotoFromBrowser(name);
+      // First try UFC.com via CORS proxy; if that fails, fall back to the
+      // image-search-style lookup (Wikipedia article infobox) — exactly
+      // what the user described as "search google for {fighter} PNG".
+      let found = await scrapeUfcPhotoFromBrowser(name);
+      if (!found) found = await searchFighterPhoto(name);
       if (cancelled || !found) return;
       setPhoto(found);
       writePhotoCache(name, found);
