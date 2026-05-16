@@ -28,6 +28,13 @@ jobs:
           node-version: "20"
 
       - name: Run scraper
+        env:
+          # Optional — when set, the script tries ScrapingBee first
+          # (residential IPs, bypasses Britannica's anti-bot). Free tier
+          # gives 1000 calls/month, plenty for one daily scrape. Without
+          # the secret the script falls through to free options that
+          # may also be blocked.
+          SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
         run: node scripts/scrape-britannica.mjs
 
       - name: Commit & push if changed

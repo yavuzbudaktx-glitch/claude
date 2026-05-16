@@ -173,9 +173,77 @@ function extractFeaturedEvent(html) {
   return null;
 }
 
-// ---------- Fetcher --------------------------------------------------------
+// ---------- Markdown parser (for Jina Reader output) -----------------------
 
-async function fetchHtml(url) {
+function parseMarkdown(md) {
+  // Jina Reader returns the page as markdown. The Featured Event section
+  // typically renders as:
+  //   ## Featured Event
+  //   [Image](...)
+  //   1944
+  //   ### The real story of Saving Private Ryan
+  //   On this day in 1944, Technical Sgt. Edward Niland parachuted out…
+  // We anchor on "Featured Event" then walk forward.
+  const idx = md.search(/(?:^|\n)#{1,4}\s+Featured\s+Event/i);
+  if (idx < 0) return null;
+  const chunk = md.slice(idx, idx + 6000);
+
+  // Year — first 4-digit number after the header
+  const yearM = chunk.match(/\b(1[0-9]{3}|20[0-9]{2}|21[0-9]{2})\b/);
+  const year = yearM ? parseInt(yearM[1], 10) : null;
+
+  // Title — first heading (### or ####) AFTER the "Featured Event" header,
+  // or the first markdown link text that follows the year.
+  let title = "";
+  const headingM = chunk.match(/\n#{2,4}\s+([^\n#]+?)\n/);
+  if (headingM) title = headingM[1].trim();
+  if (!title) {
+    // Try a bold/link line: "**[Title](url)**" or "[Title](url)"
+    const linkM = chunk.match(/\n\s*(?:\*\*)?\[([^\]]+?)\]\(/);
+    if (linkM) title = linkM[1].trim();
+  }
+  title = title.replace(/^\*+|\*+$/g, "").trim();
+  if (title.length < 12 || title.split(/\s+/).length < 2) return null;
+  if (/^(featured event|on this day|today in history|britannica)/i.test(title)) return null;
+
+  // Summary — first paragraph after the title that's long enough.
+  // Strip markdown link syntax [text](url) → text for readability.
+  const afterTitle = title ? chunk.slice(chunk.indexOf(title) + title.length) : chunk;
+  let summary = "";
+  const paraRe = /\n\n([^\n][\s\S]{40,}?)\n\n/g;
+  let pm;
+  while ((pm = paraRe.exec(afterTitle)) !== null) {
+    const cleaned = pm[1]
+      .replace(/\[([^\]]+?)\]\([^)]+?\)/g, "$1")
+      .replace(/!\[[^\]]*?\]\([^)]+?\)/g, "")
+      .replace(/\*\*?([^*]+)\*\*?/g, "$1")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (cleaned.length >= 60 && !/^[#>*\-=]/.test(cleaned)) { summary = cleaned; break; }
+  }
+  if (!summary || summary.length < 50) return null;
+  if (summary.length > 320) summary = summary.slice(0, 317).trimEnd() + "…";
+
+  return { year, title, summary, link: null };
+}
+
+// ---------- Fetchers -------------------------------------------------------
+
+async function fetchViaScrapingBee(url) {
+  // ScrapingBee's free tier: 1000 calls/month, residential IPs, designed
+  // exactly for anti-bot bypass. Requires SCRAPINGBEE_API_KEY env var
+  // (set as a repo secret); workflow exports it before running this.
+  const key = process.env.SCRAPINGBEE_API_KEY;
+  if (!key) throw new Error("SCRAPINGBEE_API_KEY not set");
+  const proxied = `https://app.scrapingbee.com/api/v1/?api_key=${encodeURIComponent(
+    key,
+  )}&url=${encodeURIComponent(url)}&render_js=false&premium_proxy=true`;
+  const res = await fetch(proxied);
+  if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${url} via ScrapingBee`);
+  return { kind: "html", body: await res.text() };
+}
+
+async function fetchDirect(url) {
   const res = await fetch(url, {
     headers: {
       "User-Agent": UA,
@@ -183,8 +251,56 @@ async function fetchHtml(url) {
       "Accept-Language": "en-US,en;q=0.9",
     },
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${url}`);
-  return await res.text();
+  if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${url} directly`);
+  return { kind: "html", body: await res.text() };
+}
+
+async function fetchAsGooglebot(url) {
+  // Some sites whitelist legitimate search-engine crawlers. Worth trying
+  // before we resort to CORS proxies.
+  const res = await fetch(url, {
+    headers: {
+      "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+      Accept: "text/html,application/xhtml+xml",
+    },
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${url} as Googlebot`);
+  return { kind: "html", body: await res.text() };
+}
+
+async function fetchViaJinaReader(url) {
+  // Jina's r.jina.ai service fetches pages with its own residential IP
+  // pool and returns clean markdown. Free, no key, designed to bypass
+  // exactly the anti-bot blocks Britannica throws at GitHub IPs.
+  const proxied = `https://r.jina.ai/${url}`;
+  const res = await fetch(proxied, {
+    headers: {
+      "User-Agent": UA,
+      Accept: "text/plain, text/markdown",
+      "X-Return-Format": "markdown",
+    },
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${url} via Jina Reader`);
+  return { kind: "markdown", body: await res.text() };
+}
+
+async function fetchViaCorsProxy(url) {
+  // corsproxy.io / allorigins fetch on our behalf from yet another IP
+  // pool. Tried last because they're rate-limited.
+  const proxies = [
+    `https://corsproxy.io/?${encodeURIComponent(url)}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+  ];
+  for (const proxy of proxies) {
+    try {
+      const res = await fetch(proxy, {
+        headers: { "User-Agent": UA, Accept: "text/html" },
+      });
+      if (res.ok) return { kind: "html", body: await res.text() };
+    } catch { /* try next */ }
+  }
+  throw new Error(`All CORS proxies failed for ${url}`);
 }
 
 async function main() {
@@ -199,27 +315,46 @@ async function main() {
     "https://www.britannica.com/on-this-day",
   ];
 
+  // Order matters: ScrapingBee (when key is set) has residential IPs and
+  // is purpose-built for anti-bot bypass — it'll work where everything
+  // else fails. Then we try cheap options in order of decreasing
+  // friendliness to GitHub's IPs.
+  const fetchers = [
+    { name: "ScrapingBee", fn: fetchViaScrapingBee },
+    { name: "Jina Reader", fn: fetchViaJinaReader },
+    { name: "Googlebot UA", fn: fetchAsGooglebot },
+    { name: "direct",      fn: fetchDirect },
+    { name: "CORS proxy",  fn: fetchViaCorsProxy },
+  ];
+
   let topic = null;
   let usedUrl = null;
-  for (const url of candidates) {
-    try {
-      console.log(`Fetching ${url}…`);
-      const html = await fetchHtml(url);
-      const parsed = extractFeaturedEvent(html);
-      if (parsed) {
-        topic = parsed;
-        usedUrl = url;
-        break;
-      } else {
-        console.log(`  → parser returned no plausible event`);
+  outer: for (const url of candidates) {
+    for (const { name, fn } of fetchers) {
+      try {
+        console.log(`Fetching ${url} via ${name}…`);
+        const { kind, body } = await fn(url);
+        if (!body || body.length < 1500) {
+          console.log(`  → response too short (${body?.length ?? 0} chars)`);
+          continue;
+        }
+        const parsed = kind === "markdown" ? parseMarkdown(body) : extractFeaturedEvent(body);
+        if (parsed) {
+          topic = parsed;
+          usedUrl = url;
+          console.log(`  ✓ parsed via ${name}`);
+          break outer;
+        } else {
+          console.log(`  → parser returned no plausible event from ${name} response`);
+        }
+      } catch (e) {
+        console.log(`  → ${e.message}`);
       }
-    } catch (e) {
-      console.log(`  → ${e.message}`);
     }
   }
 
   if (!topic) {
-    console.error("Could not extract a plausible Featured Event from any URL.");
+    console.error("Could not extract a plausible Featured Event from any URL × any fetcher.");
     process.exit(1);
   }
 
