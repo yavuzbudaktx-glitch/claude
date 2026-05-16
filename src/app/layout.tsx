@@ -2,10 +2,10 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Perdash",
-  description: "Perdash — your personal daily edition: time, weather, hadith, calendar, headlines and tasks.",
+  title: "Morning",
+  description: "Your personal daily edition: time, weather, hadith, calendar, headlines and tasks.",
   manifest: "/manifest.webmanifest",
-  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Perdash" },
+  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Morning" },
   icons: {
     icon: [
       { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },

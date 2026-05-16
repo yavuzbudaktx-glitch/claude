@@ -1,6 +1,6 @@
 {
-  "name": "Perdash",
-  "short_name": "Perdash",
+  "name": "Morning",
+  "short_name": "Morning",
   "description": "Your personal daily edition: time, weather, hadith, calendar, headlines and tasks.",
   "start_url": "/",
   "display": "standalone",

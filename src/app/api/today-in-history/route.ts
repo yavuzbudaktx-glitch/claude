@@ -1,13 +1,21 @@
 import { NextResponse } from "next/server";
+import dailyEvents from "@/data/daily-events.json";
 
-// Daily "on this day" fact. We pull from Wikipedia's editor-curated
-// /feed/featured/YYYY/MM/DD JSON endpoint — clean structured data, no
-// scraping. The first page on the first onthisday entry gives us a
-// notable historical event with title, extract, thumbnail, and link.
-// Britannica scraping was previously the primary but never worked
-// reliably from Vercel; the older "onthisday/selected" feed is kept
-// only as a final fallback.
+// Daily "on this day" fact. Britannica's own site blocks every cloud
+// IP (including Vercel and every public CORS proxy we tried with a
+// 403), so instead of live-scraping we use a hand-curated dataset of
+// ~80 globally significant dates keyed by MM-DD. For days not in the
+// dataset we fall back to Wikipedia's editor-curated /feed/featured
+// endpoint, then the older onthisday/selected feed.
 export const dynamic = "force-dynamic";
+
+interface CuratedEvent {
+  year: number;
+  title: string;
+  summary: string;
+  link?: string;
+}
+const CURATED: Record<string, CuratedEvent> = dailyEvents as Record<string, CuratedEvent>;
 
 interface RawPage {
   type?: string;
@@ -96,7 +104,24 @@ export async function GET(req: Request) {
   const dd = pad(dateAt.getUTCDate());
   const yyyy = dateAt.getUTCFullYear();
 
-  // Primary: Wikipedia's editor-curated daily feed.
+  // Primary: hand-curated MM-DD dataset of ~80 globally notable
+  // historical events. Always wins when there's an entry for today.
+  const curated = CURATED[`${mm}-${dd}`];
+  if (curated) {
+    return NextResponse.json({
+      date: `${mm}-${dd}`,
+      year: curated.year,
+      text: curated.title,
+      summary: curated.summary,
+      kind: "featured",
+      source: "curated",
+      thumbnail: null,
+      pageTitle: curated.title,
+      link: curated.link ?? null,
+    });
+  }
+
+  // Secondary: Wikipedia's editor-curated daily feed.
   try {
     interface FeedFeaturedPage {
       type?: string;
