@@ -178,7 +178,16 @@ function useClientUfcPhoto(name: string, serverPrimary: string | null): string |
   const [photo, setPhoto] = useState<string | null>(() => readPhotoCache(name));
   useEffect(() => {
     if (!name) return;
-    if (serverPrimary && serverPrimary.includes("dmxg5wxfqgb4u.cloudfront.net")) return;
+    // Trust the server's primary URL when it's already a known-good
+    // source — a /fighters/* file from the repo, or a UFC Cloudfront
+    // URL. No reason to scrape and risk overwriting it with something
+    // worse.
+    if (
+      serverPrimary &&
+      (serverPrimary.startsWith("/fighters/") || serverPrimary.includes("dmxg5wxfqgb4u.cloudfront.net"))
+    ) {
+      return;
+    }
     if (photo) return;
     let cancelled = false;
     (async () => {
@@ -277,22 +286,30 @@ function FallbackImg({
   );
 }
 
-// Build a list of candidate headshot URLs from whatever we know about the
-// fighter. Tries the client-scraped UFC.com photo first (best quality),
-// then the URLs the API returned, then ESPN CDN patterns, then a
-// Wikipedia infobox image.
+// Build the ordered list of candidate URLs the FallbackImg cycles through.
+// A local /fighters/* file from the repo wins outright when we have one —
+// it's the user's own curated portrait, on the same origin, and always
+// loads. Otherwise we try the client-scraped UFC photo, then anything the
+// server returned (UFC.com / Wikipedia / ESPN URLs), then ESPN CDN
+// variants extracted from the headshot id.
 function headshotCandidates(f: UfcFighter, clientPhoto: string | null): string[] {
   const urls: string[] = [];
-  if (clientPhoto) urls.push(clientPhoto);
-  if (f.headshot && f.headshot !== clientPhoto) {
-    urls.push(f.headshot);
-    if (f.headshot.includes("&w=")) {
-      urls.push(f.headshot.replace(/&w=\d+/, ""));
-    }
-    const idMatch = f.headshot.match(/(\d+)\.png/);
-    if (idMatch) {
-      urls.push(`https://a.espncdn.com/i/headshots/mma/players/full/${idMatch[1]}.png`);
-      urls.push(`https://a.espncdn.com/combiner/i?img=/i/headshots/mma/players/full/${idMatch[1]}.png&w=120&h=120`);
+  const isLocal = (u: string | null) => !!u && u.startsWith("/fighters/");
+
+  if (isLocal(f.headshot)) {
+    urls.push(f.headshot!);
+  } else {
+    if (clientPhoto) urls.push(clientPhoto);
+    if (f.headshot && f.headshot !== clientPhoto) {
+      urls.push(f.headshot);
+      if (f.headshot.includes("&w=")) {
+        urls.push(f.headshot.replace(/&w=\d+/, ""));
+      }
+      const idMatch = f.headshot.match(/(\d+)\.png/);
+      if (idMatch) {
+        urls.push(`https://a.espncdn.com/i/headshots/mma/players/full/${idMatch[1]}.png`);
+        urls.push(`https://a.espncdn.com/combiner/i?img=/i/headshots/mma/players/full/${idMatch[1]}.png&w=120&h=120`);
+      }
     }
   }
   if (f.headshotFallback && !urls.includes(f.headshotFallback)) urls.push(f.headshotFallback);
