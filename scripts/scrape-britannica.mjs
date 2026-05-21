@@ -343,10 +343,6 @@ async function main() {
     "https://www.britannica.com/on-this-day",
   ];
 
-  // Order matters: ScrapingBee (when key is set) has residential IPs and
-  // is purpose-built for anti-bot bypass — it'll work where everything
-  // else fails. Then we try cheap options in order of decreasing
-  // friendliness to GitHub's IPs.
   const fetchers = [
     { name: "ScrapingBee",     fn: fetchViaScrapingBee },
     { name: "Jina Reader",     fn: fetchViaJinaReader },
@@ -358,6 +354,14 @@ async function main() {
 
   let topic = null;
   let usedUrl = null;
+  let usedFetcher = null;
+  // Stash the first body we successfully retrieved but couldn't parse —
+  // we dump it to public/data/debug-britannica-raw.txt so we can see
+  // what Britannica (or the proxy) is actually returning and iterate
+  // on the parser.
+  let firstNonEmptyBody = null;
+  let firstNonEmptyMeta = null;
+
   outer: for (const url of candidates) {
     for (const { name, fn } of fetchers) {
       try {
@@ -367,14 +371,19 @@ async function main() {
           console.log(`  → response too short (${body?.length ?? 0} chars)`);
           continue;
         }
+        if (!firstNonEmptyBody) {
+          firstNonEmptyBody = body;
+          firstNonEmptyMeta = { url, fetcher: name, kind, bodyLength: body.length };
+        }
         const parsed = kind === "markdown" ? parseMarkdown(body) : extractFeaturedEvent(body);
         if (parsed) {
           topic = parsed;
           usedUrl = url;
+          usedFetcher = name;
           console.log(`  ✓ parsed via ${name}`);
           break outer;
         } else {
-          console.log(`  → parser returned no plausible event from ${name} response`);
+          console.log(`  → parser returned no plausible event from ${name} response (${body.length} chars)`);
         }
       } catch (e) {
         console.log(`  → ${e.message}`);
@@ -382,8 +391,29 @@ async function main() {
     }
   }
 
+  // Always dump the first non-empty body we got, so the next iteration
+  // of the parser has something concrete to work against. Trimmed to
+  // ~80KB so we don't blow up the repo with a giant HTML file.
+  if (firstNonEmptyBody) {
+    const debugPath = path.resolve(__dirname, "../public/data/debug-britannica-raw.txt");
+    await fs.mkdir(path.dirname(debugPath), { recursive: true });
+    const head = `# Britannica scrape debug dump
+# generated: ${new Date().toISOString()}
+# url:       ${firstNonEmptyMeta.url}
+# fetcher:   ${firstNonEmptyMeta.fetcher}
+# kind:      ${firstNonEmptyMeta.kind}
+# length:    ${firstNonEmptyMeta.bodyLength}
+# parsed:    ${topic ? "YES (" + usedFetcher + ")" : "NO"}
+# -----------------------------------------------------------------
+`;
+    const trimmed = firstNonEmptyBody.slice(0, 80_000);
+    await fs.writeFile(debugPath, head + trimmed, "utf8");
+    console.log(`\nDebug dump → ${debugPath} (${trimmed.length} chars)`);
+  }
+
   if (!topic) {
     console.error("Could not extract a plausible Featured Event from any URL × any fetcher.");
+    console.error("Inspect public/data/debug-britannica-raw.txt to see what the proxy is returning.");
     process.exit(1);
   }
 
