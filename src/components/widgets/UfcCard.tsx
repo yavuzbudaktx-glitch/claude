@@ -356,9 +356,9 @@ function FighterCell({ f, highlight }: { f: UfcFighter | null; highlight: boolea
           {f.record}
         </div>
       )}
-      {(f.division || f.country) && (
+      {f.division && (
         <div className="font-mono text-[9px] tracking-wider text-muted mt-0.5 max-w-[120px] truncate">
-          {[f.division, f.country].filter(Boolean).join(" · ")}
+          {f.division}
         </div>
       )}
       {f.status && f.status.toLowerCase() !== "active" && (

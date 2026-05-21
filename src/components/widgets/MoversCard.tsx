@@ -18,7 +18,34 @@ const WATCHLIST_KEY = "morning.watchlist.v1";
 const DEFAULT_WATCHLIST = ["NVDA", "AAPL", "TSLA", "AMZN", "GOOGL"];
 
 const QUOTE_CACHE_KEY = "morning.quote.v1";
-const QUOTE_CACHE_TTL = 1000 * 60 * 5; // 5min
+const QUOTE_FRESH_MS = 1000 * 60 * 5;       // <5min old → no refetch
+const QUOTE_STALE_MAX_MS = 1000 * 60 * 60 * 12; // up to 12h old still rendered
+
+// Cap concurrent CORS-proxy fetches so a watchlist with many tickers
+// doesn't trip per-IP rate limits on corsproxy.io / allorigins / etc.
+// Three slots is enough for fast aggregate load without saturating any
+// single proxy.
+const MAX_CONCURRENT_QUOTES = 3;
+let inFlight = 0;
+const queue: Array<() => void> = [];
+async function withSlot<T>(fn: () => Promise<T>): Promise<T> {
+  if (inFlight >= MAX_CONCURRENT_QUOTES) {
+    await new Promise<void>((r) => queue.push(r));
+  }
+  inFlight++;
+  try {
+    return await fn();
+  } finally {
+    inFlight--;
+    const next = queue.shift();
+    if (next) next();
+  }
+}
+
+// In-flight dedupe: if the same symbol is requested twice before the
+// first fetch resolves, both calls await the same Promise instead of
+// queueing two separate CORS-proxy round-trips.
+const inFlightBySymbol = new Map<string, Promise<Quote | null>>();
 
 interface YahooMeta {
   symbol?: string;
@@ -46,14 +73,16 @@ interface Quote {
   closes: number[];
 }
 
-function readQuoteCache(symbol: string): Quote | null {
+interface CachedQuote { data: Quote; ts: number; fresh: boolean }
+function readQuoteCache(symbol: string): CachedQuote | null {
   if (typeof window === "undefined") return null;
   try {
     const raw = localStorage.getItem(`${QUOTE_CACHE_KEY}.${symbol}`);
     if (!raw) return null;
     const entry = JSON.parse(raw) as { ts: number; data: Quote };
-    if (Date.now() - entry.ts > QUOTE_CACHE_TTL) return null;
-    return entry.data;
+    const age = Date.now() - entry.ts;
+    if (age > QUOTE_STALE_MAX_MS) return null;
+    return { data: entry.data, ts: entry.ts, fresh: age < QUOTE_FRESH_MS };
   } catch {
     return null;
   }
@@ -68,7 +97,7 @@ function writeQuoteCache(symbol: string, data: Quote) {
   } catch {}
 }
 
-async function fetchYahooQuote(symbol: string): Promise<Quote | null> {
+async function fetchYahooQuoteRaw(symbol: string): Promise<Quote | null> {
   const yahoo = (host: string) =>
     `https://${host}/v8/finance/chart/${encodeURIComponent(symbol)}?range=5d&interval=1d`;
   const candidates = [
@@ -108,25 +137,66 @@ async function fetchYahooQuote(symbol: string): Promise<Quote | null> {
   return null;
 }
 
+// Shared accessor: same-symbol calls dedupe to one in-flight Promise,
+// and the work itself only runs when a concurrency slot is free.
+function fetchYahooQuote(symbol: string): Promise<Quote | null> {
+  const existing = inFlightBySymbol.get(symbol);
+  if (existing) return existing;
+  const p = withSlot(() => fetchYahooQuoteRaw(symbol)).finally(() => {
+    inFlightBySymbol.delete(symbol);
+  });
+  inFlightBySymbol.set(symbol, p);
+  return p;
+}
+
 function useTickerData(symbol: string): { quote: Quote | null; loading: boolean } {
-  const [quote, setQuote] = useState<Quote | null>(() => readQuoteCache(symbol));
-  const [loading, setLoading] = useState(!quote);
+  // Stale-while-revalidate: show cached data immediately (even when
+  // older than 5min) so the row never goes blank, then refresh in the
+  // background. Concurrency limiter in fetchYahooQuote ensures large
+  // watchlists don't hammer the CORS proxies all at once.
+  const initial = typeof window !== "undefined" ? readQuoteCache(symbol) : null;
+  const [quote, setQuote] = useState<Quote | null>(initial?.data ?? null);
+  const [loading, setLoading] = useState(!initial);
 
   useEffect(() => {
-    if (quote && quote.symbol === symbol) return;
     let cancelled = false;
-    setLoading(true);
-    (async () => {
+    const cached = readQuoteCache(symbol);
+    // Cached + fresh → trust it, no fetch.
+    if (cached && cached.fresh && cached.data.symbol === symbol) {
+      setQuote(cached.data);
+      setLoading(false);
+      return;
+    }
+    // Cached + stale → show stale data immediately, refresh below.
+    if (cached) {
+      setQuote(cached.data);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+
+    const run = async (attempt: number) => {
       const fetched = await fetchYahooQuote(symbol);
       if (cancelled) return;
       if (fetched) {
         setQuote(fetched);
         writeQuoteCache(symbol, fetched);
+        setLoading(false);
+        return;
       }
-      setLoading(false);
-    })();
+      // No proxy returned data this round. If we still have nothing
+      // (no cached data even), retry a couple of times with backoff
+      // — usually it's one proxy briefly throttling.
+      if (attempt < 2) {
+        setTimeout(() => { if (!cancelled) run(attempt + 1); }, 1200 * (attempt + 1));
+      } else {
+        setLoading(false);
+      }
+    };
+    run(0);
+
     return () => { cancelled = true; };
-  }, [symbol, quote]);
+  }, [symbol]);
 
   return { quote, loading };
 }
