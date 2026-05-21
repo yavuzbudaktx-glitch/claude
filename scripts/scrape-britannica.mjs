@@ -284,6 +284,34 @@ async function fetchViaJinaReader(url) {
   return { kind: "markdown", body: await res.text() };
 }
 
+async function fetchViaWaybackMachine(url) {
+  // Internet Archive hosts cached copies of Britannica's on-this-day
+  // page from its own infrastructure. archive.org IPs are typically
+  // unblocked. We query the availability API for the most recent
+  // snapshot, then fetch it. Snapshots can be slightly out of date but
+  // for an "on this day" page that doesn't actually change content
+  // mid-day, a snapshot from earlier today (or even yesterday with the
+  // same MM-DD) is fine.
+  const availability = `https://archive.org/wayback/available?url=${encodeURIComponent(url)}&timestamp=${new Date().toISOString().slice(0, 10).replace(/-/g, "")}`;
+  const availRes = await fetch(availability, {
+    headers: { "User-Agent": UA, Accept: "application/json" },
+  });
+  if (!availRes.ok) throw new Error(`HTTP ${availRes.status} querying Wayback availability`);
+  const availJson = await availRes.json();
+  const snap = availJson?.archived_snapshots?.closest;
+  if (!snap?.available || !snap?.url) throw new Error("No Wayback snapshot available");
+
+  // The id_ flag asks Wayback for the raw archived response (no IA
+  // toolbar / wrapper), so the HTML matches what Britannica originally
+  // served.
+  const snapshotUrl = String(snap.url).replace(/\/web\/(\d+)\//, "/web/$1id_/");
+  const res = await fetch(snapshotUrl, {
+    headers: { "User-Agent": UA, Accept: "text/html" },
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status} fetching Wayback snapshot`);
+  return { kind: "html", body: await res.text() };
+}
+
 async function fetchViaCorsProxy(url) {
   // corsproxy.io / allorigins fetch on our behalf from yet another IP
   // pool. Tried last because they're rate-limited.
@@ -320,11 +348,12 @@ async function main() {
   // else fails. Then we try cheap options in order of decreasing
   // friendliness to GitHub's IPs.
   const fetchers = [
-    { name: "ScrapingBee", fn: fetchViaScrapingBee },
-    { name: "Jina Reader", fn: fetchViaJinaReader },
-    { name: "Googlebot UA", fn: fetchAsGooglebot },
-    { name: "direct",      fn: fetchDirect },
-    { name: "CORS proxy",  fn: fetchViaCorsProxy },
+    { name: "ScrapingBee",     fn: fetchViaScrapingBee },
+    { name: "Jina Reader",     fn: fetchViaJinaReader },
+    { name: "Wayback Machine", fn: fetchViaWaybackMachine },
+    { name: "Googlebot UA",    fn: fetchAsGooglebot },
+    { name: "direct",          fn: fetchDirect },
+    { name: "CORS proxy",      fn: fetchViaCorsProxy },
   ];
 
   let topic = null;

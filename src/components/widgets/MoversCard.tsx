@@ -1,16 +1,17 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element */
-import useSWR from "swr";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { ArrowUp, ArrowDown, X, Plus } from "lucide-react";
 import { Card } from "@/components/Card";
 import { Sparkline } from "@/components/Sparkline";
+import { createClient } from "@/lib/supabase/client";
 
 // =============================================================================
-//   Watchlist: user-picked stock tickers, fetched entirely client-side from
-//   Yahoo Finance via the public CORS-proxy chain (the user's residential IP
-//   isn't on Yahoo's anti-bot blocklist the way Vercel's egress is).
+//   Watchlist — user-picked stock tickers, fetched client-side from Yahoo
+//   Finance via public CORS proxies and synced across devices via Supabase
+//   when the user is signed in. localStorage is a cache for cold-start +
+//   offline reads.
 // =============================================================================
 
 const WATCHLIST_KEY = "morning.watchlist.v1";
@@ -68,9 +69,6 @@ function writeQuoteCache(symbol: string, data: Quote) {
 }
 
 async function fetchYahooQuote(symbol: string): Promise<Quote | null> {
-  // 5d/1d gives us roughly a week of daily closes plus today's live
-  // price in meta. interval=1d is the cleanest data shape; 5d is the
-  // tightest range Yahoo supports for daily bars.
   const yahoo = (host: string) =>
     `https://${host}/v8/finance/chart/${encodeURIComponent(symbol)}?range=5d&interval=1d`;
   const candidates = [
@@ -115,7 +113,7 @@ function useTickerData(symbol: string): { quote: Quote | null; loading: boolean 
   const [loading, setLoading] = useState(!quote);
 
   useEffect(() => {
-    if (quote && quote.symbol === symbol) return; // already have fresh data
+    if (quote && quote.symbol === symbol) return;
     let cancelled = false;
     setLoading(true);
     (async () => {
@@ -187,37 +185,110 @@ function WatchlistRow({ symbol, onRemove }: { symbol: string; onRemove: (s: stri
   );
 }
 
-function Watchlist() {
+interface WatchlistRow { symbol: string; position: number }
+
+function readLocalWatchlist(): string[] | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(WATCHLIST_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as string[];
+    return Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+function writeLocalWatchlist(list: string[]) {
+  if (typeof window === "undefined") return;
+  try { localStorage.setItem(WATCHLIST_KEY, JSON.stringify(list)); } catch {}
+}
+
+function MarketsBody() {
+  const supabase = useMemo(() => createClient(), []);
   const [tickers, setTickers] = useState<string[]>([]);
   const [adding, setAdding] = useState("");
+  const [userId, setUserId] = useState<string | null>(null);
   const hydrated = useRef(false);
 
+  // On mount: figure out auth state, then load tickers from the right source.
+  // - Signed-in: Supabase is source of truth. If empty, seed from
+  //   localStorage (carry-over from before sign-in) or defaults.
+  // - Signed-out: localStorage only.
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(WATCHLIST_KEY);
-      const parsed = raw ? (JSON.parse(raw) as string[]) : null;
-      setTickers(parsed && parsed.length > 0 ? parsed : DEFAULT_WATCHLIST);
-    } catch {
-      setTickers(DEFAULT_WATCHLIST);
-    }
-    hydrated.current = true;
-  }, []);
+    let cancelled = false;
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (cancelled) return;
+      const uid = session?.user?.id ?? null;
+      setUserId(uid);
 
+      if (uid) {
+        const { data, error } = await supabase
+          .from("watchlist")
+          .select("symbol, position, created_at")
+          .eq("user_id", uid)
+          .order("position", { ascending: true })
+          .order("created_at", { ascending: true });
+        if (cancelled) return;
+        const fromDb = !error && data ? data.map((r) => (r as { symbol: string }).symbol) : [];
+        if (fromDb.length > 0) {
+          setTickers(fromDb);
+        } else {
+          // First time signed in on this account — seed from the local
+          // list (if any) so the user doesn't lose tickers they added
+          // pre-auth, otherwise from defaults.
+          const seed = readLocalWatchlist() ?? DEFAULT_WATCHLIST;
+          setTickers(seed);
+          await supabase
+            .from("watchlist")
+            .insert(seed.map((symbol, i) => ({ user_id: uid, symbol, position: i })));
+        }
+      } else {
+        const local = readLocalWatchlist();
+        setTickers(local && local.length > 0 ? local : DEFAULT_WATCHLIST);
+      }
+      hydrated.current = true;
+    })();
+    return () => { cancelled = true; };
+  }, [supabase]);
+
+  // Mirror to localStorage so a fresh page-load before Supabase
+  // round-trips still shows the right list.
   useEffect(() => {
     if (!hydrated.current) return;
-    try { localStorage.setItem(WATCHLIST_KEY, JSON.stringify(tickers)); } catch {}
+    writeLocalWatchlist(tickers);
   }, [tickers]);
 
-  function add(raw: string) {
-    const sym = raw.trim().toUpperCase().replace(/[^A-Z0-9.\-]/g, "");
-    if (!sym || sym.length > 6) return;
-    if (tickers.includes(sym)) return;
-    setTickers((t) => [...t, sym]);
-    setAdding("");
-  }
-  function remove(sym: string) {
-    setTickers((t) => t.filter((s) => s !== sym));
-  }
+  const add = useCallback(
+    async (raw: string) => {
+      const sym = raw.trim().toUpperCase().replace(/[^A-Z0-9.\-]/g, "");
+      if (!sym || sym.length > 6) return;
+      if (tickers.includes(sym)) return;
+      const next = [...tickers, sym];
+      setTickers(next);
+      setAdding("");
+      if (userId) {
+        await supabase
+          .from("watchlist")
+          .upsert({ user_id: userId, symbol: sym, position: next.length - 1 });
+      }
+    },
+    [tickers, userId, supabase],
+  );
+
+  const remove = useCallback(
+    async (sym: string) => {
+      setTickers((t) => t.filter((s) => s !== sym));
+      if (userId) {
+        await supabase
+          .from("watchlist")
+          .delete()
+          .eq("user_id", userId)
+          .eq("symbol", sym);
+      }
+    },
+    [userId, supabase],
+  );
 
   return (
     <div>
@@ -258,131 +329,21 @@ function Watchlist() {
           ))}
         </ul>
       )}
-    </div>
-  );
-}
-
-// =============================================================================
-//   Crypto half — same as before. Server-side route returns top movers from
-//   CoinGecko (no Yahoo / FMP dependency); display unchanged.
-// =============================================================================
-
-interface Mover {
-  symbol: string;
-  name: string;
-  price: number | null;
-  changePct: number;
-  history: number[];
-  type: "stock" | "crypto";
-}
-interface Buckets { gainers: Mover[]; losers: Mover[] }
-interface Resp {
-  crypto: Buckets;
-  asOf: number;
-  fmpConfigured?: boolean;
-  fmpError?: string | null;
-}
-
-const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<Resp>);
-
-function fmtTime(ms: number | null | undefined) {
-  if (!ms) return null;
-  return new Date(ms).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
-}
-
-function CryptoRow({ m }: { m: Mover }) {
-  const up = m.changePct >= 0;
-  return (
-    <li className="grid grid-cols-[52px_1fr_64px_88px_64px] items-center gap-2 py-1.5 text-sm">
-      <span className="font-mono text-[12px] tabular-nums italic">{m.symbol}</span>
-      <span className="text-[11px] text-muted truncate">{m.name}</span>
-      <span className="font-mono tabular-nums text-[12px] text-right">
-        {fmtPrice(m.price)}
-      </span>
-      <div className="flex justify-end">
-        <Sparkline data={m.history} width={88} height={22} up={up} />
-      </div>
-      <span
-        className={`font-mono tabular-nums text-[12px] text-right inline-flex items-center justify-end gap-0.5 ${
-          up ? "text-emerald-600 dark:text-emerald-400" : "text-accent"
-        }`}
-      >
-        {up ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
-        {up ? "+" : ""}
-        {m.changePct.toFixed(2)}%
-      </span>
-    </li>
-  );
-}
-
-function CryptoSection({ label, items, meta }: { label: string; items: Mover[]; meta?: string }) {
-  return (
-    <div>
-      <div className="flex items-baseline gap-2 mb-1">
-        <div className="label">{label}</div>
-        {meta && (
-          <div className="font-mono text-[10px] uppercase tracking-wider text-muted">{meta}</div>
-        )}
-      </div>
-      {items.length === 0 ? (
-        <p className="text-muted text-xs italic py-2">No data right now — will refresh.</p>
-      ) : (
-        <ul className="divide-rule">
-          {items.map((m) => (
-            <CryptoRow key={`${m.type}:${m.symbol}`} m={m} />
-          ))}
-        </ul>
+      {userId === null && (
+        <div className="font-mono text-[9px] uppercase tracking-wider text-muted mt-3">
+          Sign in to sync this watchlist across devices.
+        </div>
       )}
     </div>
   );
 }
 
 export function MoversCard() {
-  const { data } = useSWR<Resp>("/api/movers", fetcher, {
-    refreshInterval: 1000 * 60 * 10,
-    keepPreviousData: true,
-    revalidateOnFocus: true,
-    shouldRetryOnError: false,
-  });
-
-  const cryptoView = useMemo(
-    () => ({
-      gainers: data?.crypto?.gainers ?? [],
-      losers: data?.crypto?.losers ?? [],
-    }),
-    [data],
-  );
-
   return (
-    <Card
-      num="05"
-      title="Markets"
-      action={
-        data?.asOf ? (
-          <span className="font-mono text-[10px] uppercase tracking-wider text-muted">
-            as of {fmtTime(data.asOf)}
-          </span>
-        ) : null
-      }
-    >
-      <div className="space-y-4">
-        <Watchlist />
-
-        <div className="border-t rule-soft -mx-5" />
-
-        <CryptoSection
-          label="Crypto · Top Gainers · Robinhood"
-          meta="1-mo chart · 24h move"
-          items={cryptoView.gainers}
-        />
-        <CryptoSection
-          label="Crypto · Top Losers · Robinhood"
-          items={cryptoView.losers}
-        />
-      </div>
-
+    <Card num="05" title="Watchlist">
+      <MarketsBody />
       <div className="font-mono text-[9px] uppercase tracking-wider text-muted mt-3">
-        Sources · Yahoo Finance · CoinGecko
+        Source · Yahoo Finance
       </div>
     </Card>
   );
