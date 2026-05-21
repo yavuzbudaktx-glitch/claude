@@ -42,7 +42,7 @@ function indexFolder(fresh: boolean): IndexedPhoto[] {
 export interface PhotoMatchDebug {
   name: string;
   tokens: string[];
-  strategy: "exact-token-set" | "joined-contains-all" | "joined-substring" | "last-name-only" | "no-match";
+  strategy: "exact-token-set" | "all-tokens-present" | "last-name-only" | "no-match";
   matchedFile: string | null;
 }
 
@@ -55,14 +55,14 @@ export function findLocalFighterPhotoWithDebug(name: string, fresh = false): { u
     return { url: null, debug: { name, tokens: [], strategy: "no-match", matchedFile: null } };
   }
   const targetSet = new Set(target);
-  const targetJoined = target.join("");
   const last = target[target.length - 1];
   const index = indexFolder(fresh);
   if (index.length === 0) {
     return { url: null, debug: { name, tokens: target, strategy: "no-match", matchedFile: null } };
   }
 
-  // 1. Exact-token match (any order).
+  // 1. Exact-token match (any order, same count). This is the cleanest
+  //    case: "Magomed Ankalaev" → "magomed-ankalaev.png".
   for (const photo of index) {
     if (photo.tokens.length !== target.length) continue;
     if (photo.tokens.every((t) => targetSet.has(t))) {
@@ -70,26 +70,26 @@ export function findLocalFighterPhotoWithDebug(name: string, fresh = false): { u
     }
   }
 
-  // 2. Joined filename contains every name token.
+  // 2. Every target token appears AS A STANDALONE TOKEN in the photo's
+  //    tokens (photo has extras). This catches "Magomed Ankalaev" →
+  //    "magomed-ankalaev-pose.png". Token-level matching avoids the old
+  //    substring bug where "Jon Jones" would silently take
+  //    "antonio-jones.png" because "jon" is a substring of "antonio".
   for (const photo of index) {
-    const joined = photo.tokens.join("");
-    if (target.every((t) => joined.includes(t))) {
-      return { url: urlFor(photo.fileName), debug: { name, tokens: target, strategy: "joined-contains-all", matchedFile: photo.fileName } };
+    if (target.every((t) => photo.tokens.includes(t))) {
+      return { url: urlFor(photo.fileName), debug: { name, tokens: target, strategy: "all-tokens-present", matchedFile: photo.fileName } };
     }
   }
 
-  // 3. Joined fighter name appears anywhere in the joined filename.
-  for (const photo of index) {
-    if (photo.tokens.join("").includes(targetJoined)) {
-      return { url: urlFor(photo.fileName), debug: { name, tokens: target, strategy: "joined-substring", matchedFile: photo.fileName } };
-    }
-  }
-
-  // 4. Last-name-only fallback. "Magomed Ankalaev" → "ankalaev.png",
-  // "ankalaev_pose.jpg", etc. Helps when the upload omitted given names.
+  // 3. Last-name-only fallback. Accept "Ankalaev.png" for
+  //    "Magomed Ankalaev" — but ONLY when the file is a single token
+  //    that exactly equals the fighter's last name. We don't accept
+  //    arbitrary files that just happen to contain the last name,
+  //    because that's how you end up with "antonio-jones" served for
+  //    "Jon Jones".
   if (last && last.length >= 4) {
     for (const photo of index) {
-      if (photo.tokens.includes(last)) {
+      if (photo.tokens.length === 1 && photo.tokens[0] === last) {
         return { url: urlFor(photo.fileName), debug: { name, tokens: target, strategy: "last-name-only", matchedFile: photo.fileName } };
       }
     }
