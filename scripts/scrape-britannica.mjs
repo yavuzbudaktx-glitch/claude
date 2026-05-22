@@ -351,25 +351,66 @@ async function fetchViaJinaReader(url) {
 
 async function fetchViaWaybackMachine(url) {
   // Internet Archive hosts cached copies of Britannica's on-this-day
-  // page from its own infrastructure. archive.org IPs are typically
-  // unblocked. We query the availability API for the most recent
-  // snapshot, then fetch it. Snapshots can be slightly out of date but
-  // for an "on this day" page that doesn't actually change content
-  // mid-day, a snapshot from earlier today (or even yesterday with the
-  // same MM-DD) is fine.
+  // page. archive.org IPs are typically unblocked. We query the
+  // availability API for the closest snapshot, then ensure it's
+  // recent enough — Britannica re-curates the "Featured Event" for
+  // a given date year-over-year, so a snapshot from 2024 will show
+  // a different event than 2026's. If the closest snapshot is older
+  // than 30 days we trigger a fresh capture and re-query.
+
   const availability = `https://archive.org/wayback/available?url=${encodeURIComponent(url)}&timestamp=${new Date().toISOString().slice(0, 10).replace(/-/g, "")}`;
-  const availRes = await fetch(availability, {
+  let availRes = await fetch(availability, {
     headers: { "User-Agent": UA, Accept: "application/json" },
   });
   if (!availRes.ok) throw new Error(`HTTP ${availRes.status} querying Wayback availability`);
-  const availJson = await availRes.json();
-  const snap = availJson?.archived_snapshots?.closest;
+  let availJson = await availRes.json();
+  let snap = availJson?.archived_snapshots?.closest;
   if (!snap?.available || !snap?.url) throw new Error("No Wayback snapshot available");
 
-  // The id_ flag asks Wayback for the raw archived response (no IA
-  // toolbar / wrapper), so the HTML matches what Britannica originally
-  // served.
+  // Wayback timestamp is YYYYMMDDhhmmss. Reject anything more than
+  // 30 days old.
+  const isFresh = (ts) => {
+    if (!ts || ts.length < 8) return false;
+    const y = parseInt(ts.slice(0, 4), 10);
+    const m = parseInt(ts.slice(4, 6), 10) - 1;
+    const d = parseInt(ts.slice(6, 8), 10);
+    const snapDate = new Date(Date.UTC(y, m, d));
+    return Date.now() - snapDate.getTime() < 30 * 24 * 3600 * 1000;
+  };
+
+  if (!isFresh(snap.timestamp)) {
+    console.log(`  ↳ snapshot is from ${snap.timestamp.slice(0, 8)} — triggering fresh capture…`);
+    try {
+      // Save Page Now — fire-and-forget, then poll availability for
+      // up to ~45s waiting for the new capture to land.
+      await fetch(`https://web.archive.org/save/${url}`, {
+        method: "GET",
+        headers: { "User-Agent": UA },
+      });
+    } catch { /* SPN often times out but the capture proceeds */ }
+
+    for (let i = 0; i < 9; i++) {
+      await new Promise((r) => setTimeout(r, 5000));
+      availRes = await fetch(availability, {
+        headers: { "User-Agent": UA, Accept: "application/json" },
+      });
+      if (!availRes.ok) continue;
+      availJson = await availRes.json();
+      const newSnap = availJson?.archived_snapshots?.closest;
+      if (newSnap?.timestamp && isFresh(newSnap.timestamp)) {
+        snap = newSnap;
+        console.log(`  ↳ fresh snapshot captured at ${snap.timestamp}`);
+        break;
+      }
+    }
+    if (!isFresh(snap.timestamp)) {
+      throw new Error(`Wayback snapshot stale (${snap.timestamp}) and Save Page Now didn't land in time`);
+    }
+  }
+
+  // id_ flag asks for the raw archived response (no IA toolbar).
   const snapshotUrl = String(snap.url).replace(/\/web\/(\d+)\//, "/web/$1id_/");
+  console.log(`  ↳ using snapshot ${snap.timestamp}`);
   const res = await fetch(snapshotUrl, {
     headers: { "User-Agent": UA, Accept: "text/html" },
   });
