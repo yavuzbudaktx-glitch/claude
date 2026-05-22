@@ -8,11 +8,11 @@ name: Daily Britannica scrape
 
 on:
   schedule:
-    # 05:05 UTC ≈ 12:05 AM Central (during DST). Britannica rolls
-    # their "/on-this-day/{month}-{day}" page over at the start of
-    # each new day so picking up right after midnight Central catches
-    # the fresh Featured Event.
-    - cron: "5 5 * * *"
+    # 05:00 UTC = midnight Central during DST (March–November).
+    # Drifts to 11:00 PM Central in standard time months — close
+    # enough that the morning view always has the freshly-rolled
+    # Featured Event.
+    - cron: "0 5 * * *"
   workflow_dispatch: {} # allow manual runs from the Actions tab
 
 jobs:
