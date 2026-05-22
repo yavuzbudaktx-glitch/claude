@@ -1,10 +1,10 @@
 # Britannica scrape debug dump
-# generated: 2026-05-22T05:42:07.732Z
+# generated: 2026-05-22T15:36:24.348Z
 # url:       https://www.britannica.com/on-this-day/may-22
-# fetcher:   CORS proxy
+# fetcher:   Wayback Machine
 # kind:      html
-# length:    73571
-# parsed:    YES (CORS proxy)
+# length:    73558
+# parsed:    YES (Wayback Machine)
 # -----------------------------------------------------------------
 
 
@@ -73,7 +73,7 @@
 
 <!doctype html>
 
-<html lang="en" class="dayinhistory-desktop ui-unknown0 ui-unknown">
+<html lang="en" class="dayinhistory-desktop ui-chrome148 ui-chrome">
 
 <head prefix="og: https://ogp.me/ns# fb: https://ogp.me/ns/fb#">
 
@@ -128,7 +128,7 @@
 
 
 <script   class="analytics-metadata" type="application/json">
-{"adLeg":"D","leg":"D","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+{"adLeg":"D","leg":"C","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
 </script>
 
 
@@ -165,7 +165,7 @@
     window.geoCountry = 'US';
     window.isGdprCountry = false;
     window.isCcpaCountry = true;
-    window.geoRegion = 'FL';
+    window.geoRegion = 'CA';
 
 </script>
 
@@ -282,13 +282,13 @@
 			"userInfo": { "type": "ANONYMOUS"
 										,"currency": "USD"
 										,"country": "US"
-										,"state": "FL"
-										,"timezone": "America/New_York"
-										,"bcomId": "3472997273657925197"
+										,"state": "CA"
+										,"timezone": "America/Los_Angeles"
+										,"bcomId": "-686307751968734967"
 										,"adProvider": "ay"
 										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":true,"showConsent":true}
 										,"hasAds": true
-										,"testVersion": "D"
+										,"testVersion": "C"
 										,"adsTestVersion": "D"
 										,"consumerId": ""
 										,"instId": ""
@@ -312,7 +312,7 @@
 
 			"autocompleteToSearchPage": false,"pagesInfo": [{"url":"May-22","title":"On This Day - What Happened on May 22"},{"url":"May-23","title":"On This Day - What Happened on May 23"},{"url":"May-24","title":"On This Day - What Happened on May 24"},{"url":"May-25","title":"On This Day - What Happened on May 25"},{"url":"May-26","title":"On This Day - What Happened on May 26"},{"url":"May-27","title":"On This Day - What Happened on May 27"},{"url":"May-28","title":"On This Day - What Happened on May 28"},{"url":"May-29","title":"On This Day - What Happened on May 29"},{"url":"May-30","title":"On This Day - What Happened on May 30"},{"url":"May-31","title":"On This Day - What Happened on May 31"}]
 		},
-        "GA": {"adLeg":"D","leg":"D","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+        "GA": {"adLeg":"D","leg":"C","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
     };
 
 	</script>
@@ -416,7 +416,7 @@ Mendel.openGraph = {
 
 </head>
 
-<body data-leg="D" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-d ">
+<body data-leg="C" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-c ">
 
 
 
@@ -674,8 +674,8 @@ Mendel.openGraph = {
         </div>
     </div>
 
-    <div class="d-none hamburger-menu-subscription-link"><DIV class="marketing-HAMBURGER_MENU_CTA marketing-content" data-marketing-id="HAMBURGER_MENU_CTA"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=bdpremium" class="subscribe-link btn btn-sm btn-blue py-5" target="_blank">
-  SUBSCRIBE TO PREMIUM
+    <div class="d-none hamburger-menu-subscription-link"><DIV class="marketing-HAMBURGER_MENU_CTA marketing-content" data-marketing-id="HAMBURGER_MENU_CTA"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=blue" class="subscribe-link btn btn-sm btn-blue py-5" target="_blank">
+  SUBSCRIBE
 </a></DIV></div>
     <div id="global-nav-react">
         <div class="d-none">
