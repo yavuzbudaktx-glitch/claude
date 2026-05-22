@@ -160,8 +160,73 @@ function tryFirstEventLink(html) {
   return extractFromChunk(html.slice(start, start + 10000));
 }
 
+function tryBritannicaFeaturedCard(html) {
+  // The actual Britannica markup uses a specific card class wrapper.
+  // Verified by inspecting public/data/debug-britannica-raw.txt:
+  //   <div class="otd-featured-event …">
+  //     <h2 class="mb-30">Featured Event</h2>
+  //     <div class="featured-event-card card">
+  //       <div class="card-media …">
+  //         <div class="date-label …">YEAR</div>   <!-- can be 3 or 4 digits -->
+  //         <img src="…" alt="…" />
+  //       </div>
+  //       <div class="card-body">
+  //         <div class="title …">{TITLE}</div>
+  //         <div class="description …">{DESCRIPTION (with inline <a> links)}</div>
+  //       </div>
+  //     </div>
+  //   </div>
+  const sectionM = html.match(/<div[^>]+class="[^"]*otd-featured-event[^"]*"[^>]*>([\s\S]*?)<\/h2>([\s\S]*?)(?=<div[^>]+class="[^"]*otd-feature-biography|<\/section|<footer)/i);
+  const card = sectionM ? sectionM[2] : (() => {
+    // Fall back to a looser locator if the wrapper class moves.
+    const altM = html.match(/<div[^>]+class="[^"]*featured-event-card[^"]*"[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/i);
+    return altM ? altM[0] : null;
+  })();
+  if (!card) return null;
+
+  // Year from date-label div — accept 1-4 digits (Britannica uses
+  // raw historical years including "337" or "44" BCE-ish notation).
+  let year = null;
+  const yearM = card.match(/<div[^>]+class="[^"]*date-label[^"]*"[^>]*>\s*(\d{1,4})\s*<\/div>/i);
+  if (yearM) year = parseInt(yearM[1], 10);
+
+  // Title: <div class="title …">
+  let title = "";
+  const titleM = card.match(/<div[^>]+class="[^"]*\btitle\b[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
+  if (titleM) title = stripTags(titleM[1]);
+
+  // Description: <div class="description …"> with embedded links we
+  // strip out. Trim the optional "Test your knowledge of…" call-to-
+  // action that follows the actual summary inside the same div.
+  let summary = "";
+  let descRaw = "";
+  const descM = card.match(/<div[^>]+class="[^"]*\bdescription\b[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
+  if (descM) {
+    descRaw = descM[1];
+    summary = stripTags(descRaw)
+      .replace(/\s*Test your knowledge[\s\S]*$/i, "")
+      .replace(/\s*Learn more[\s\S]*$/i, "")
+      .trim();
+  }
+
+  // First Britannica article link inside the description = the canonical
+  // page for this event/topic. The href can be absolute
+  // (https://www.britannica.com/biography/…) or relative — handle both.
+  let link = null;
+  const linkM = (descRaw || card).match(
+    /<a[^>]+href="(?:https?:\/\/www\.britannica\.com)?(\/(?:event|biography|topic|place|story|art|science|technology|sports|animal)\/[^"]+)"/i,
+  );
+  if (linkM) link = `https://www.britannica.com${linkM[1]}`;
+
+  if (!title || !summary || summary.length < 30) return null;
+  return { year, title, summary: clampSummary(summary), link };
+}
+
 function extractFeaturedEvent(html) {
+  // Britannica-card pass goes first — it's a high-precision match
+  // against the exact markup, so when it works it's the truth.
   const candidates = [
+    tryBritannicaFeaturedCard(html),
     tryJsonLd(html),
     tryFeaturedMarker(html),
     tryFeaturedClass(html),
