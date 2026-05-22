@@ -85,23 +85,24 @@ export function TodayInHistoryCard() {
           </div>
         )}
       </div>
-      {/* Text-only render. We dropped the thumbnail because Britannica's
-          card images regularly loaded ahead of a missing/invalid title,
-          producing the "I see a picture but no text" failure mode. */}
-      <div className="flex items-baseline gap-3">
+      {/* Editorial spread — big year as drop-cap-style ornament,
+          headline in display serif, body paragraph below. */}
+      <div className="flex items-baseline gap-4">
         {displayed.year != null && (
-          <span className="font-serif text-2xl font-light tabular-nums leading-none text-accent shrink-0">
+          <span
+            className="font-display tabular-nums leading-none text-accent shrink-0 text-[2.4rem] md:text-[2.7rem]"
+            style={{ fontVariationSettings: '"opsz" 144', fontWeight: 400 }}
+          >
             {displayed.year}
           </span>
         )}
         {displayed.source === "britannica" ? (
-          // When the entry was scraped from Britannica, always point
-          // the user at the landing page (not the deep event article).
           <a
             href="https://www.britannica.com/on-this-day"
             target="_blank"
             rel="noreferrer"
-            className="font-serif text-[14px] leading-snug min-w-0 hover:underline underline-offset-4 decoration-[var(--rule)]"
+            className="font-display text-[17px] md:text-[19px] font-medium leading-[1.15] min-w-0 hover:text-accent transition"
+            style={{ fontVariationSettings: '"opsz" 144' }}
           >
             {displayed.text}
           </a>
@@ -110,18 +111,23 @@ export function TodayInHistoryCard() {
             href={displayed.link}
             target="_blank"
             rel="noreferrer"
-            className="font-serif text-[14px] leading-snug min-w-0 hover:underline underline-offset-4 decoration-[var(--rule)]"
+            className="font-display text-[17px] md:text-[19px] font-medium leading-[1.15] min-w-0 hover:text-accent transition"
+            style={{ fontVariationSettings: '"opsz" 144' }}
           >
             {displayed.text}
           </a>
         ) : (
-          <span className="font-serif text-[14px] leading-snug min-w-0">
+          <span
+            className="font-display text-[17px] md:text-[19px] font-medium leading-[1.15] min-w-0"
+            style={{ fontVariationSettings: '"opsz" 144' }}
+          >
             {displayed.text}
           </span>
         )}
       </div>
       {displayed.summary && (
-        <p className="font-serif text-[12.5px] leading-snug text-muted mt-1.5">
+        <p className="font-serif text-[13.5px] leading-[1.55] text-ink-soft mt-3 max-w-prose"
+           style={{ fontFeatureSettings: '"onum"' }}>
           {displayed.summary}
         </p>
       )}

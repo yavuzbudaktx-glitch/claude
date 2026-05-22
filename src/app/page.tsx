@@ -63,6 +63,14 @@ export default async function Page() {
       </div>
 
       <UfcCard />
+
+      <footer className="pt-6 pb-2 flex items-center gap-3 text-muted">
+        <div className="flex-1 h-px bg-[var(--rule-soft)]" />
+        <span className="font-mono text-[10px] tracking-[0.32em] uppercase">
+          ✦ End of edition ✦
+        </span>
+        <div className="flex-1 h-px bg-[var(--rule-soft)]" />
+      </footer>
     </main>
   );
 }
