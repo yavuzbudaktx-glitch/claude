@@ -199,16 +199,22 @@ function tryBritannicaFeaturedCard(html) {
   if (titleM) title = stripTags(titleM[1]);
 
   // Description: <div class="description …"> with embedded links we
-  // strip out. Trim the optional "Test your knowledge of…" call-to-
-  // action that follows the actual summary inside the same div.
+  // strip out. Britannica often appends a tag-along call-to-action
+  // link inside the same description div (class="otd-he-link") —
+  // strip those entire <a> tags BEFORE flattening so their text
+  // doesn't end up in the summary. Then do a text-level safety
+  // pass for any other trailing "Read … >>" / "Test your knowledge"
+  // style outros.
   let summary = "";
   let descRaw = "";
   const descM = card.match(/<div[^>]+class="[^"]*\bdescription\b[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
   if (descM) {
-    descRaw = descM[1];
+    descRaw = descM[1].replace(/<a[^>]+class="[^"]*\botd-he-link\b[^"]*"[\s\S]*?<\/a>/gi, "");
     summary = stripTags(descRaw)
+      .replace(/\s*Read\s+(?:today'?s\s+edition\s+of\s+)?Today in History[\s\S]*$/i, "")
       .replace(/\s*Test your knowledge[\s\S]*$/i, "")
       .replace(/\s*Learn more[\s\S]*$/i, "")
+      .replace(/\s*[›>»]+\s*[›>»]*\s*$/, "")
       .trim();
   }
 
