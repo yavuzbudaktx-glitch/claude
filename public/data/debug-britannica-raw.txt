@@ -1,10 +1,10 @@
 # Britannica scrape debug dump
-# generated: 2026-05-22T05:07:05.509Z
+# generated: 2026-05-22T05:18:10.343Z
 # url:       https://www.britannica.com/on-this-day/may-22
 # fetcher:   Wayback Machine
 # kind:      html
 # length:    70528
-# parsed:    NO
+# parsed:    YES (Wayback Machine)
 # -----------------------------------------------------------------
 
 
