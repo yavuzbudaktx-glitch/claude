@@ -1,10 +1,10 @@
 # Britannica scrape debug dump
-# generated: 2026-05-22T05:18:10.343Z
+# generated: 2026-05-22T05:42:07.732Z
 # url:       https://www.britannica.com/on-this-day/may-22
-# fetcher:   Wayback Machine
+# fetcher:   CORS proxy
 # kind:      html
-# length:    70528
-# parsed:    YES (Wayback Machine)
+# length:    73571
+# parsed:    YES (CORS proxy)
 # -----------------------------------------------------------------
 
 
@@ -83,8 +83,8 @@
 
     
 
-    <link rel="dns-prefetch" href="https://cdn.britannica.com/mendel-resources/3-173">
-    <link rel="preconnect" href="https://cdn.britannica.com/mendel-resources/3-173">
+    <link rel="dns-prefetch" href="https://cdn.britannica.com/mendel-resources/3-184">
+    <link rel="preconnect" href="https://cdn.britannica.com/mendel-resources/3-184">
 
     
 
@@ -96,10 +96,17 @@
 
     
 
-    <meta name="description" content="On This Day In History - May 22: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences." />
+    <meta name="description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences." />
     <meta name="keywords" content="today in history, anniversary, daily events, today’s historical events, today’s birthdays, born today, on this date, this day in history" />
-    <link rel="canonical" href="https://www.britannica.com/on-this-day/May-22" />
+    <link rel="canonical" href="https://www.britannica.com/on-this-day/may-22" />
 
+    
+
+    
+        
+        
+            <meta name="robots" content="max-image-preview:large" />
+        
     
 
     
@@ -108,9 +115,7 @@
 
     
 
-    
-
-    <title>On This Day - What Happened on May 22 | Britannica</title>
+    <title>On This Day - What Happened Today In History | Britannica</title>
 
     
 
@@ -123,12 +128,12 @@
 
 
 <script   class="analytics-metadata" type="application/json">
-{"adLeg":"D","leg":"B","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasNews":false,"hasSimplifyButton":false}
+{"adLeg":"D","leg":"D","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
 </script>
 
 
     <script type="text/javascript">
-    EBStat={accountId:-1,hostnameOverride:'webstats.eb.com',domain:'www.britannica.com', json:''};
+    window.EBStat={accountId:-1,hostnameOverride:'webstats.eb.com',domain:'www.britannica.com', json:''};
     </script>
 
 
@@ -157,10 +162,10 @@
         'analytics_storage': 'granted',
     });
 
-    window.geoCountry = 'CA';
+    window.geoCountry = 'US';
     window.isGdprCountry = false;
-    window.isCcpaCountry = false;
-    window.geoRegion = 'XX';
+    window.isCcpaCountry = true;
+    window.geoRegion = 'FL';
 
 </script>
 
@@ -259,7 +264,7 @@
 
     window.$UI = {};
 
-    window.Constants = {"LICENSE_URL":"/bps/license","AJAX_PREFIX_URL":"/ajax","QUIZ_URL":"/quiz","ARTICLE_TYPE_MONEY_JOURNEY":171,"MONEY_JOURNEY_PREFIX_URL":"/journey","MEDIA_OVERLAY_URL":"/media-overlay","CHATBOT_PAGE_URL":"/chatbot","LISTS_AND_STORIES_BROWSE_URL":"/lists-and-stories","PROCON_QUIZ_BROWSE_URL":"/procon-quiz/browse","TOPIC_FACTS_DATA_URL":"/facts","NEWSLETTER_PAGE_URL":"/newsletters","EXPLORE_URL":"/explore","QUIZ_BROWSE_IMAGE_QUIZZES":"images","MEDIA_URL":"/media","TOPIC_MEDIA_PATH":"/images-videos","TOPIC_TOP_QUESTION_URL":"/question","PORTAL_FINANCE_URL_PREFIX":"/money","PODCASTS_URL":"/podcasts","STAND_ALONE_VIDEO_URL":"/video","ONE_GOOD_FACT_URL":"/one-good-fact","MORE_ON_THIS_DAY_URL":"/more-on-this-day","ERROR_404_URL":"/error404","PROCON_CITED_IN_THE_NEWS_URL":"/procon/ProCon-in-the-News","TOPIC_QUOTES_URL":"/quotes","SEARCH_PAGE_URL":"/search","PROCON_URL":"/procon","TOPIC_CONTENT_AJAX_URL":"/topic-content/topic","ERROR_URL":"/error","TOPIC_PAGE_CONTENT_AJAX_URL":"/topic-content/page","TOPIC_COLLECTION_URL":"/summary","LOGINBOX_URL":"/auth/loginbox","MWU_LOGIN_URL":"https://cam.merriam-webster.com/login?redirect=https%3A%2F%2Funabridged.merriam-webster.com","PROCON_DEBATE_TOPICS_URL":"/procon/Debate-Topics","ONE_GOOD_FACT_BROWSE_URL":"/one-good-fact/all-good-facts","INFINITE_SCROLL_PREFIX_URL":"/scroll","TOPIC_TOP_QUESTION_BROWSE_URL":"/questions","QUIZ_BROWSE_URL":"/quiz/browse","domain":"britannica.com","BIO_BROWSE_URL":"/browse/biographies","CATEGORY_BROWSE_URL":"/browse","TIGHTROPE_QUIZ_URL":"/quiz/tightrope","ALPHA_BROWSE_URL":"/sitemap","DICTIONARY_URL":"/dictionary","COBRAND_IMAGE_URL":"/image/cobrand","PROCON_IN_THE_NEWS_URL":"/procon/pro-and-con-issues-in-the-news","PROCON_BROWSE_URL":"/procon","QUIZ_BROWSE_VOCAB_QUIZZES":"vocabulary-quizzes","SUBMISSION_URL":"/submission","EB_LOG_OUT":"/auth2/logout","NEWSLETTER_SUBSCRIPTION_URL":"/newsletter-subscription","MAINTENANCE_ERROR_URL":"https://maintenance.eb.com","PROFILE_EB_EDITOR_URL":"/editor","TOPIC_AJAX_URL":"/ajax/topic","AI_ABOUT_PAGE_URL":"/about-britannica-ai","TOPIC_SUMMARY_BROWSE_URL":"/summaries","TOPIC_ADDITIONAL_INFO_PATH":"/additional-info","VIDEO_CHANNEL_URL":"/videos","GALLERY_BROWSE_URL":"/gallery/browse","SUDOKU_GAME_URL":"/games/sudoku","PROCON_ABOUT_URL":"/procon/About-ProCon","ARTICLE_PRINT_URL":"/print/article","FIRST_EDITION_URL":"/subscriber/firstedition","WW1_PORTAL_URL":"/discover/World-War-I","MENDEL_COOKIE":"__mendel","PROCON_QUIZ_URL":"/procon-quiz","SHOW_ALL_CONTRIBUTORS":"/additional-info#contributors","PROFILE_EXPERT_URL":"/contributor","ASSEMBLY_IMAGE_URL":"/image/assembly","DAY_IN_HISTORY_URL":"/on-this-day","PORTAL_FINANCE_BROWSE_URL_PREFIX":"/money/browse","ERROR_400_URL":"/error400","CALCULATORS_BROWSE_URL":"/calculators","EB_LOGIN_URL":"/auth/eb-login","NEW_ARTICLES_URL":"/new-articles"};
+    window.Constants = {"LICENSE_URL":"/bps/license","AJAX_PREFIX_URL":"/ajax","QUIZ_URL":"/quiz","ARTICLE_TYPE_MONEY_JOURNEY":171,"MONEY_JOURNEY_PREFIX_URL":"/journey","MEDIA_OVERLAY_URL":"/media-overlay","CHATBOT_PAGE_URL":"/chatbot","LISTS_AND_STORIES_BROWSE_URL":"/lists-and-stories","PROCON_QUIZ_BROWSE_URL":"/procon-quiz/browse","TOPIC_FACTS_DATA_URL":"/facts","NEWSLETTER_PAGE_URL":"/newsletters","EXPLORE_URL":"/explore","QUIZ_BROWSE_IMAGE_QUIZZES":"images","MEDIA_URL":"/media","TOPIC_MEDIA_PATH":"/images-videos","TOPIC_TOP_QUESTION_URL":"/question","PORTAL_FINANCE_URL_PREFIX":"/money","PODCASTS_URL":"/podcasts","STAND_ALONE_VIDEO_URL":"/video","ONE_GOOD_FACT_URL":"/one-good-fact","MORE_ON_THIS_DAY_URL":"/more-on-this-day","ERROR_404_URL":"/error404","PROCON_CITED_IN_THE_NEWS_URL":"/procon/ProCon-in-the-News","TOPIC_QUOTES_URL":"/quotes","SEARCH_PAGE_URL":"/search","PROCON_URL":"/procon","TOPIC_CONTENT_AJAX_URL":"/topic-content/topic","ERROR_URL":"/error","TOPIC_PAGE_CONTENT_AJAX_URL":"/topic-content/page","TOPIC_COLLECTION_URL":"/summary","LOGINBOX_URL":"/auth/loginbox","MWU_LOGIN_URL":"https://cam.merriam-webster.com/login?redirect=https%3A%2F%2Funabridged.merriam-webster.com","PROCON_DEBATE_TOPICS_URL":"/procon/Debate-Topics","ONE_GOOD_FACT_BROWSE_URL":"/one-good-fact/all-good-facts","INFINITE_SCROLL_PREFIX_URL":"/scroll","TOPIC_TOP_QUESTION_BROWSE_URL":"/questions","QUIZ_BROWSE_URL":"/quiz/browse","domain":"britannica.com","BIO_BROWSE_URL":"/browse/biographies","CATEGORY_BROWSE_URL":"/browse","TIGHTROPE_QUIZ_URL":"/quiz/tightrope","ALPHA_BROWSE_URL":"/sitemap","DICTIONARY_URL":"/dictionary","COBRAND_IMAGE_URL":"/image/cobrand","PROCON_IN_THE_NEWS_URL":"/procon/pro-and-con-issues-in-the-news","PROCON_BROWSE_URL":"/procon","QUIZ_BROWSE_VOCAB_QUIZZES":"vocabulary-quizzes","SUBMISSION_URL":"/submission","EB_LOG_OUT":"/auth2/logout","NEWSLETTER_SUBSCRIPTION_URL":"/newsletter-subscription","MAINTENANCE_ERROR_URL":"https://maintenance.eb.com","PROFILE_EB_EDITOR_URL":"/editor","TOPIC_AJAX_URL":"/ajax/topic","AI_ABOUT_PAGE_URL":"/about-britannica-ai","TOPIC_SUMMARY_BROWSE_URL":"/summaries","TOPIC_ADDITIONAL_INFO_PATH":"/additional-info","VIDEO_CHANNEL_URL":"/videos","GALLERY_BROWSE_URL":"/gallery/browse","SUDOKU_GAME_URL":"/games/sudoku","PROCON_ABOUT_URL":"/procon/About-ProCon","ARTICLE_PRINT_URL":"/print/article","FIRST_EDITION_URL":"/subscriber/firstedition","WW1_PORTAL_URL":"/discover/World-War-I","TOPIC_REDIRECT_URL":"/redirect","MENDEL_COOKIE":"__mendel","PROCON_QUIZ_URL":"/procon-quiz","SHOW_ALL_CONTRIBUTORS":"/additional-info#contributors","PROFILE_EXPERT_URL":"/contributor","ASSEMBLY_IMAGE_URL":"/image/assembly","DAY_IN_HISTORY_URL":"/on-this-day","PORTAL_FINANCE_BROWSE_URL_PREFIX":"/money/browse","ERROR_400_URL":"/error400","CALCULATORS_BROWSE_URL":"/calculators","EB_LOGIN_URL":"/auth/eb-login","NEW_ARTICLES_URL":"/new-articles"};
     window.CDN = "https://cdn.britannica.com";
 	window.CAM_SETTINGS_URL = "https://cam.britannica.com/settings";
     window.CAM_LOGIN_URL = "https://cam.britannica.com/login";
@@ -270,27 +275,26 @@
             "videoPlayerId" : "UyMCoK2v",
       		"domain": "britannica.com",
 			"page": "DayInHistory",
-			"sharedUrl": "https://www.britannica.com/on-this-day/May-22",
+			"sharedUrl": "https://www.britannica.com/on-this-day/may-22",
 			"amuselabsUrl": "https://cdn3.amuselabs.com",
-	    	"resourcesPrefixUrl": "https://cdn.britannica.com/mendel-resources/3-173/[url]?v=3.173.4",
-			"date": 20260209,
+	    	"resourcesPrefixUrl": "https://cdn.britannica.com/mendel-resources/3-184/[url]?v=3.184.5",
+			"date": 20260522,
 			"userInfo": { "type": "ANONYMOUS"
 										,"currency": "USD"
-										,"country": "CA"
-										,"state": "XX"
-										,"timezone": "America/Toronto"
-										,"bcomId": "6988361731757049328"
+										,"country": "US"
+										,"state": "FL"
+										,"timezone": "America/New_York"
+										,"bcomId": "3472997273657925197"
 										,"adProvider": "ay"
-										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":false,"showConsent":false}
+										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":true,"showConsent":true}
 										,"hasAds": true
-										,"testVersion": "B"
+										,"testVersion": "D"
 										,"adsTestVersion": "D"
 										,"consumerId": ""
 										,"instId": ""
-										,"consumerUserName": ""
 										,"instUserName": ""
-										,"cognito": null
 										,"isMwuSubscriber": false
+										,"brazeExternalId": ""
 			},
 			"tvs":{ "r":[25,25,25,25], "a": [3,3,3,91]},
 			"isLoggedInAsUser": false,
@@ -303,12 +307,12 @@
 	        "fetchOffset": 800,
 			
 			"mendelCookieName": "__mendel",
-			"mendelCookie": {"currentDate":20260209,"lti":0,"surveyShown":false,"ts":0},
+			"mendelCookie": {"currentDate":20260522,"lti":0,"surveyShown":false,"ts":0},
 			
 
 			"autocompleteToSearchPage": false,"pagesInfo": [{"url":"May-22","title":"On This Day - What Happened on May 22"},{"url":"May-23","title":"On This Day - What Happened on May 23"},{"url":"May-24","title":"On This Day - What Happened on May 24"},{"url":"May-25","title":"On This Day - What Happened on May 25"},{"url":"May-26","title":"On This Day - What Happened on May 26"},{"url":"May-27","title":"On This Day - What Happened on May 27"},{"url":"May-28","title":"On This Day - What Happened on May 28"},{"url":"May-29","title":"On This Day - What Happened on May 29"},{"url":"May-30","title":"On This Day - What Happened on May 30"},{"url":"May-31","title":"On This Day - What Happened on May 31"}]
 		},
-        "GA": {"adLeg":"D","leg":"B","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasNews":false,"hasSimplifyButton":false}
+        "GA": {"adLeg":"D","leg":"D","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
     };
 
 	</script>
@@ -321,23 +325,23 @@
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:site" content="@britannica" />
-<meta name="twitter:image" content="/88/193288-050-BD8199C0/head-Marble-statue-piece-Constantine-I-300-ce.jpg" />
-<meta name="twitter:description" content="On This Day In History - May 22: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
+<meta name="twitter:image" content="https://cdn.britannica.com/00/288400-050-CD800EF5/today-in-history-aaron-burr-treason-trial.jpg" />
+<meta name="twitter:description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
 
 <meta property="og:type"  content="WEBSITE"/>
-<meta property="og:title" content="On This Day - What Happened on May 22 | Britannica"/>
-<meta property="og:description" content="On This Day In History - May 22: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
+<meta property="og:title" content="On This Day - What Happened Today In History | Britannica"/>
+<meta property="og:description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
 <meta property="og:site_name" content="Encyclopedia Britannica" />
-<meta property="og:url" content="https://www.britannica.com/on-this-day/May-22"/>
-<meta property="og:image" content="com.britannica.mendel.util.entities.Image@218fdb31" />
+<meta property="og:url" content="https://www.britannica.com/on-this-day/may-22"/>
+<meta property="og:image" content="https://cdn.britannica.com/00/288400-050-CD800EF5/today-in-history-aaron-burr-treason-trial.jpg" />
 
 <script type="text/javascript" data-type="init opengraph">
 Mendel.openGraph = {
     "type": "WEBSITE",
-    "title": "On This Day - What Happened on May 22",
-    "description": "On This Day In History - May 22: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences.",
-    "imageUrl": "/88/193288-050-BD8199C0/head-Marble-statue-piece-Constantine-I-300-ce.jpg",
-    "pageUrl": "https://www.britannica.com/on-this-day/May-22"
+    "title": "On This Day - What Happened Today In History",
+    "description": "On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences.",
+    "imageUrl": "https://cdn.britannica.com/00/288400-050-CD800EF5/today-in-history-aaron-burr-treason-trial.jpg",
+    "pageUrl": "https://www.britannica.com/on-this-day/may-22"
 }
 </script>
 
@@ -351,14 +355,14 @@ Mendel.openGraph = {
 
     
 
-    <link href="https://cdn.britannica.com/mendel-resources/3-173/dist/_tailwind.css?v=3.173.4" rel="stylesheet" />
-    <link href="https://cdn.britannica.com/mendel-resources/3-173/dist/vendor-bundle.css?v=3.173.4" rel="stylesheet" />
-    <link href="https://cdn.britannica.com/mendel-resources/3-173/dist/mendel-css.css?v=3.173.4" rel="stylesheet" />
+    <link href="https://cdn.britannica.com/mendel-resources/3-184/dist/_tailwind.css?v=3.184.5" rel="stylesheet" />
+    <link href="https://cdn.britannica.com/mendel-resources/3-184/dist/vendor-bundle.css?v=3.184.5" rel="stylesheet" />
+    <link href="https://cdn.britannica.com/mendel-resources/3-184/dist/mendel-css.css?v=3.184.5" rel="stylesheet" />
     
-    <link href="https://cdn.britannica.com/mendel-resources/3-173/dist/day-in-history-page.css?v=3.173.4" rel="stylesheet" />
+    <link href="https://cdn.britannica.com/mendel-resources/3-184/dist/day-in-history-page.css?v=3.184.5" rel="stylesheet" />
 
     <script type="text/javascript">
-        if (self !== top) { top.location = self.location; }
+        if ((!window.name || (window.name.indexOf('_vis_editor') === -1)) && self !== top) { top.location = self.location; }
     </script>
 
     
@@ -412,7 +416,7 @@ Mendel.openGraph = {
 
 </head>
 
-<body data-leg="B" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-b ">
+<body data-leg="D" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-d ">
 
 
 
@@ -458,14 +462,15 @@ Mendel.openGraph = {
 
 
 <script  id="json-hamburger-menu"  type="application/json">
-{"britannicaMenu1":[{"title":"Home","url":"/"},{"title":"History & Society","url":"/History-Society"},{"title":"Science & Tech","url":"/Science-Tech"},{"title":"Biographies","url":"/Biographies"},{"title":"Animals & Nature","url":"/Animals-Nature"},{"title":"Geography & Travel","url":"/Geography-Travel"},{"title":"Arts & Culture","url":"/Arts-Culture"},{"title":"ProCon","url":"/procon"},{"title":"Money","url":"/money"}],"britannicaMenu2":[{"title":"Games & Quizzes","url":"/quiz/browse"},{"title":"Videos","url":"/videos"},{"title":"On This Day","url":"/on-this-day"},{"title":"One Good Fact","url":"/one-good-fact"},{"title":"Dictionary","url":"/dictionary"},{"title":"New Articles","url":"/new-articles"}],"browseByCategory":[{"title":{"id":5,"title":"History & Society","url":"/History-Society"},"links":[{"title":"Lifestyles & Social Issues","url":"/browse/Lifestyles-Social-Issues"},{"title":"Philosophy & Religion","url":"/browse/Philosophy-Religion"},{"title":"Politics, Law & Government","url":"/browse/Politics-Law-Government"},{"title":"World History","url":"/browse/World-History"}]},{"title":{"id":6,"title":"Science & Tech","url":"/Science-Tech"},"links":[{"title":"Health & Medicine","url":"/browse/Health-Medicine"},{"title":"Science","url":"/browse/Science"},{"title":"Technology","url":"/browse/Technology"}]},{"title":{"id":3,"title":"Biographies","url":"/Biographies"},"links":[{"title":"Browse Biographies","url":"/browse/biographies"}]},{"title":{"id":1,"title":"Animals & Nature","url":"/Animals-Nature"},"links":[{"title":"Birds, Reptiles & Other Vertebrates","url":"/browse/Birds-Reptiles-Vertebrates"},{"title":"Environment","url":"/browse/Environment"},{"title":"Fossils & Geologic Time","url":"/browse/Fossil-Geologic-Time"},{"title":"Insects & Other Invertebrates","url":"/browse/Bugs-Mollusks-Invertebrates"},{"title":"Mammals","url":"/browse/Mammals"},{"title":"Plants","url":"/browse/Plants"}]},{"title":{"id":4,"title":"Geography & Travel","url":"/Geography-Travel"},"links":[{"title":"Geography & Travel","url":"/browse/Geography-Travel"}]},{"title":{"id":2,"title":"Arts & Culture","url":"/Arts-Culture"},"links":[{"title":"Entertainment & Pop Culture","url":"/browse/Entertainment-Pop-Culture"},{"title":"Literature","url":"/browse/Literature"},{"title":"Sports & Recreation","url":"/browse/Sports-Recreation"},{"title":"Visual Arts","url":"/browse/Visual-Arts"}]}],"browseByFeature":[{"title":"Image Galleries","url":"/gallery/browse"},{"title":"Podcasts","url":"/podcasts"},{"title":"Summaries","url":"/summary"},{"title":"Top Questions","url":"/question"},{"title":"Lists and Stories","url":"/lists-and-stories"}],"moreFromBritannica":[{"newTab":true,"title":"Britannica Kids","url":"https://kids.britannica.com/"}],"menuType":"DEFAULT"}
+{"britannicaMenu1":[{"title":"Home","url":"/"},{"title":"History & Society","url":"/History-Society"},{"title":"Science & Tech","url":"/Science-Tech"},{"title":"Biographies","url":"/Biographies"},{"title":"Animals & Nature","url":"/Animals-Nature"},{"title":"Geography & Travel","url":"/Geography-Travel"},{"title":"Arts & Culture","url":"/Arts-Culture"},{"title":"ProCon","url":"/procon"},{"title":"Money","url":"/money"}],"britannicaMenu2":[{"title":"Games & Quizzes","url":"/quiz/browse"},{"title":"Videos","url":"/videos"},{"title":"On This Day","url":"/on-this-day"},{"title":"One Good Fact","url":"/one-good-fact"},{"title":"Dictionary","url":"/dictionary"},{"title":"New Articles","url":"/new-articles"}],"browseByCategory":[{"title":{"id":5,"title":"History & Society","url":"/History-Society"},"links":[{"title":"History","url":"/browse/World-History"},{"title":"Philosophy & Religion","url":"/browse/Philosophy-Religion"},{"title":"Politics, Law & Government","url":"/browse/Politics-Law-Government"},{"title":"Society & Social Issues","url":"/browse/Lifestyles-Social-Issues"}]},{"title":{"id":6,"title":"Science & Tech","url":"/Science-Tech"},"links":[{"title":"Health & Medicine","url":"/browse/Health-Medicine"},{"title":"Science","url":"/browse/Science"},{"title":"Technology","url":"/browse/Technology"}]},{"title":{"id":3,"title":"Biographies","url":"/Biographies"},"links":[{"title":"Browse Biographies","url":"/browse/biographies"}]},{"title":{"id":1,"title":"Animals & Nature","url":"/Animals-Nature"},"links":[{"title":"Birds, Reptiles & Other Vertebrates","url":"/browse/Birds-Reptiles-Vertebrates"},{"title":"Environment","url":"/browse/Environment"},{"title":"Fossils & Geologic Time","url":"/browse/Fossil-Geologic-Time"},{"title":"Insects & Other Invertebrates","url":"/browse/Bugs-Mollusks-Invertebrates"},{"title":"Mammals","url":"/browse/Mammals"},{"title":"Plants","url":"/browse/Plants"}]},{"title":{"id":4,"title":"Geography & Travel","url":"/Geography-Travel"},"links":[{"title":"Geography & Travel","url":"/browse/Geography-Travel"}]},{"title":{"id":2,"title":"Arts & Culture","url":"/Arts-Culture"},"links":[{"title":"Entertainment & Pop Culture","url":"/browse/Entertainment-Pop-Culture"},{"title":"Literature","url":"/browse/Literature"},{"title":"Sports & Recreation","url":"/browse/Sports-Recreation"},{"title":"Visual Arts","url":"/browse/Visual-Arts"}]}],"browseByFeature":[{"title":"Image Galleries","url":"/gallery/browse"},{"title":"Podcasts","url":"/podcasts"},{"title":"Summaries","url":"/summary"},{"title":"Top Questions","url":"/question"},{"title":"Lists and Stories","url":"/lists-and-stories"}],"moreFromBritannica":[{"newTab":true,"title":"Britannica Kids","url":"https://kids.britannica.com/"}],"menuType":"DEFAULT"}
 </script>
 
 <header id="header" class="bg-navy-dark">
     <div class="global-nav-top-bar">
         <div class="grid gx-0 h-100 justify-content-between align-items-center container-lg mx-auto p-0 position-relative">
             <div class="d-flex align-items-center">
-                <button class="d-flex align-items-center justify-self-start js-toggle js-toggle-hamburger btn btn-link link-white btn-sm rounded-0 p-10" aria-label="Explore">
+                <button class="d-flex align-items-center justify-self-start js-toggle js-toggle-hamburger btn btn-link link-white btn-sm rounded-0 p-10"
+                        aria-label="Explore">
                     <div class="hamburger-tooltip">
                         <em class="material-icons d-inline-block font-24" id="nav-toggle" data-icon="menu"></em>
                     </div>
@@ -517,7 +522,40 @@ Mendel.openGraph = {
 </a>
                     <div class="global-nav-top-search-bar global-nav-top-search-container global-nav-search-container"
                      id="global-nav-top-search-bar">
-                    <form method="get" action="/search" id="global-nav-search" class="md-search-form m-0 global-nav-search-bar-small">
+                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<form method="get" action="/search" id="global-nav-search" class="md-search-form m-0 global-nav-search-bar-small">
     <div class="search-box position-relative col-100">
         <label class="sr-only" for="global-nav-search-query">Search Britannica</label>
         <input name="query" id="global-nav-search-query" placeholder="Search Britannica..." class="form-control form-control-lg rounded-lg font-16 search-query pl-20 pr-70 shadow-sm"  maxlength="200" autocomplete="off"  aria-label="Search Britannica" />
@@ -528,9 +566,8 @@ Mendel.openGraph = {
             <span class="sr-only">Click here to search</span>
             <em class="material-icons search-icon" data-icon="search"></em>
         </button>
-        </div>
-</form>
-</div>
+    </div>
+</form></div>
             </div>
 
             <a href="/" aria-label="Home" class="d-flex align-items-center justify-content-center">
@@ -571,7 +608,40 @@ Mendel.openGraph = {
 
 <img loading="lazy" src="https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png" alt="Encyclopedia Britannica" class="global-nav-center global-nav-logo non-homepage-logo"  />
 </a>
-                    <form method="get" action="/search" id="global-nav-search" class="md-search-form m-0 global-nav-search-bar-small global-nav-center search global-nav-center-search-container">
+                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<form method="get" action="/search" id="global-nav-search" class="md-search-form m-0 global-nav-search-bar-small global-nav-center search global-nav-center-search-container">
     <div class="search-box position-relative col-100">
         <label class="sr-only" for="global-nav-search-query">Search Britannica</label>
         <input name="query" id="global-nav-search-query" placeholder="Search Britannica..." class="form-control form-control-lg rounded-lg font-16 search-query pl-20 pr-70 shadow-sm"  maxlength="200" autocomplete="off"  aria-label="Search Britannica" />
@@ -582,9 +652,8 @@ Mendel.openGraph = {
             <span class="sr-only">Click here to search</span>
             <em class="material-icons search-icon" data-icon="search"></em>
         </button>
-        </div>
-</form>
-<div class="col-35 col-sm-auto text-right order-3 mr-lg-15 align-items-center d-flex justify-content-end">
+    </div>
+</form><div class="col-35 col-sm-auto text-right order-3 mr-lg-15 align-items-center d-flex justify-content-end">
                 <div class="d-none d-md-inline-block">
                             <SPAN class="marketing-HEADER_SUBSCRIPTION_DESKTOP2 marketing-content" data-marketing-id="HEADER_SUBSCRIPTION_DESKTOP2"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=global-nav&utm_campaign=blue-evergreen" class="subscribe-link btn btn-sm btn-blue py-5 mr-10" target="_blank" rel="noopener">
    SUBSCRIBE
@@ -595,7 +664,8 @@ Mendel.openGraph = {
 </a></SPAN></div>
                         <button class="js-toggle-user-dropdown js-toggle btn btn-sm btn-link link-white rounded-0 px-md-15 pl-5 pr-5">
                             <span class="d-none d-md-inline-block mr-5">Login</span>
-                            <em class="material-icons d-inline-block d-md-none font-16 font-sm-20" data-icon="account_circle"></em>
+                            <em class="material-icons d-inline-block d-md-none font-16 font-sm-20"
+                                data-icon="account_circle"></em>
                             <div class="d-none dropdown-menu-subscription-link">https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=nav-login-box&utm_campaign=evergreen</div>
                             <em aria-label="" class="material-icons inactive-icon d-inline-block font-18" data-icon="keyboard_arrow_down"></em>
 	<em aria-label="" class="material-icons active-icon d-inline-block font-18" data-icon="keyboard_arrow_up"></em>
@@ -604,12 +674,12 @@ Mendel.openGraph = {
         </div>
     </div>
 
-    <div class="d-none hamburger-menu-subscription-link"><DIV class="marketing-HAMBURGER_MENU_CTA marketing-content" data-marketing-id="HAMBURGER_MENU_CTA"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=blue" class="subscribe-link btn btn-sm btn-blue py-5" target="_blank">
-  SUBSCRIBE
+    <div class="d-none hamburger-menu-subscription-link"><DIV class="marketing-HAMBURGER_MENU_CTA marketing-content" data-marketing-id="HAMBURGER_MENU_CTA"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=bdpremium" class="subscribe-link btn btn-sm btn-blue py-5" target="_blank">
+  SUBSCRIBE TO PREMIUM
 </a></DIV></div>
     <div id="global-nav-react">
         <div class="d-none">
-             <ul>
+            <ul>
     <li><a href="/">Home</a></li>
     <li><a href="/History-Society">History & Society</a></li>
     <li><a href="/Science-Tech">Science & Tech</a></li>
@@ -633,10 +703,10 @@ Mendel.openGraph = {
 
 <a href="/History-Society">History & Society</a>
     <ul>
-        <li><a href="/browse/Lifestyles-Social-Issues">Lifestyles & Social Issues</a></li>
+        <li><a href="/browse/World-History">History</a></li>
         <li><a href="/browse/Philosophy-Religion">Philosophy & Religion</a></li>
         <li><a href="/browse/Politics-Law-Government">Politics, Law & Government</a></li>
-        <li><a href="/browse/World-History">World History</a></li>
+        <li><a href="/browse/Lifestyles-Social-Issues">Society & Social Issues</a></li>
         </ul>
 <a href="/Science-Tech">Science & Tech</a>
     <ul>
@@ -843,7 +913,7 @@ Ask the Chatbot</a>
 {
         "calendarInfo": {"day":22,"month":5,"monthName":"May","nbDays":31,"nextMonth":6,"nextMonthName":"June","previousMonth":4,"previousMonthName":"April"},
         "url": "/on-this-day/May/22",
-	    "title": "On This Day - What Happened on May 22"
+	    "title": "On This Day - What Happened Today In History"
     }
 </script>
 
@@ -852,7 +922,7 @@ Ask the Chatbot</a>
             <div class="qa-tih-top-newsletter tw:max-lg:w-full tw:flex tw:flex-row tw:justify-between tw:mx-auto tw:w-275">
                 <div class="tw:max-md:w-full tw:max-md:max-w-full tw:max-[930px]:max-w-100 tw:max-md:items-center tw:max-md:text-center tw:max-w-131 tw:max-md:mt-6 tw:mt-11 tw:pb-6 tw:flex tw:flex-col">
                 <span class="tw:text-[var(--black-tih)] font-14 font-lora tw:text-[var(--gray-700-tih)]">A Britannica Newsletter</span>
-                    <img class="tw:max-md:pb-4 tw:max-md:pt-3 tw:pb-8 tw:pt-4 tw:max-md:w-53" src="https://cdn.britannica.com/mendel-resources/3-173/images/shared/tih-logo.png?v=3.173.4" alt="Today In History Logo" width="277px" height="35px"/>    
+                    <img class="tw:max-md:pb-4 tw:max-md:pt-3 tw:pb-8 tw:pt-4 tw:max-md:w-53" src="https://cdn.britannica.com/mendel-resources/3-184/images/shared/tih-logo.png?v=3.184.5" alt="Today In History Logo" width="277px" height="35px"/>    
 
                     <div class="font-lora font-14 tw:text-[var(--black-tih)]">
                     Discover the fascinating events that shaped the world, straight from our editors.
@@ -860,9 +930,9 @@ Ask the Chatbot</a>
                     <div class="newsletter-form-container tw:py-5 tw:max-md:py-4 tw:max-md:w-full">
                         <form action="/newsletter-subscription/EB_ON_THIS_DAY" method="post" class="tw:flex tw:flex-row tw:gap-2 tw:max-md:w-full">
                             <input class="tw:max-md:w-full tw:bg-white tw:h-11 tw:w-75 tw:text-[var(--gray-600-tih)] tw:py-2 tw:px-4 tw:border tw:border-[var(--gray-100-tih)] tw:text-sm! font-lora tw:rounded-full" type="email" name="email" placeholder="Enter your email" required/>
-                            <input type="hidden" name="source" value="mendel"/>
-                            <input type="hidden" name="campaign" value="todayinhistory"/>
-                            <input type="hidden" name="medium" value="header"/>
+                            <input type="hidden" name="source" value="tih-lp-header"/>
+                            <input type="hidden" name="campaign" value="britannica"/>
+                            <input type="hidden" name="medium" value="internal"/>
                             <button type="submit" class="tih-signup-button tw:rounded-full tw:text-white tw:text-uppercase font-oswald tw:tracking-[0.96px] tw:py-2 tw:px-6 tw:bg-[var(--orange-tih)]">
                                 <span class="tw:max-[930px]:block tw:hidden">
                                     SIGN&nbsp;UP
@@ -880,7 +950,7 @@ Ask the Chatbot</a>
                     </span>
                 </div>
                 <div class="tw:max-md:hidden tw:self-end">
-                    <img src="https://cdn.britannica.com/mendel-resources/3-173/images/shared/tih-phone.png?v=3.173.4&w=800" alt="Today In History Image" width="402" height="296"/>
+                    <img src="https://cdn.britannica.com/mendel-resources/3-184/images/shared/tih-phone.png?v=3.184.5&w=800" alt="Today In History Image" width="402" height="296"/>
                 </div>
             </div>
         </div>
@@ -978,7 +1048,7 @@ Ask the Chatbot</a>
 <div class="grid gx-0 gy-20 align-items-center position-relative">
             <div class="col-100 col-sm d-flex align-items-center tw:gap-2">
                 <h1 class="font-oswald mb-0">TODAY IN HISTORY </h1>
-                <img src="https://cdn.britannica.com/mendel-resources/3-173/images/shared/tih-star.svg?v=3.173.4" alt="Today In History Star" width="24" height="24"/>
+                <img src="https://cdn.britannica.com/mendel-resources/3-184/images/shared/tih-star.svg?v=3.184.5" alt="Today In History Star" width="24" height="24"/>
                 <span class="font-oswald text-uppercase cursor-pointer tih-transparent" data-popover=".md-history-calendar-popover">May&nbsp;22</span>
             </div>
             <div class="col-100 col-sm-auto text-center">
@@ -1005,7 +1075,7 @@ Ask the Chatbot</a>
                     <div class="featured-event-card card">
                         <div class="card-media position-relative">
                             <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">
-                                337</div>
+                                1807</div>
                             
 
 
@@ -1046,13 +1116,13 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/88/193288-050-BD8199C0/head-Marble-statue-piece-Constantine-I-300-ce.jpg?w=725&h=408&c=crop" alt="Constantine I" class="w-100"   />
+        <img loading="lazy" src="https://cdn.britannica.com/00/288400-050-CD800EF5/today-in-history-aaron-burr-treason-trial.jpg?w=725&h=408&c=crop" alt="May 22, 1807: The duel with Hamilton wasn't the end of Burr's story" class="w-100"   />
     
 </div>
                         <div class="card-body">
-                            <div class="title font-18 font-weight-bold mb-10">Roman Emperor Constantine I baptized</div>
-                            <div class="description font-serif">On this day in 337, <a href="https://www.britannica.com/biography/Constantine-I-Roman-emperor" class="md-crosslink " data-show-preview="true">Constantine the Great</a>, who had practiced <a href="https://www.britannica.com/topic/Christianity" class="md-crosslink " data-show-preview="true">Christianity</a> since his youth and sparked its growth into a world religion, became on his deathbed the first Roman emperor to be baptized in the Christian church. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/quiz/history-of-christianity-quiz">Test your knowledge of the history of Christianity</a></div>
-                            <div class="credit mt-10">© Photos.com/Getty Images</div></div>
+                            <div class="title font-18 font-weight-bold mb-10"><a href="https://www.britannica.com/today-in-history/May-22-Aaron-Burrs-Treason-Trial-Begins" class="md-crosslink " data-show-preview="true">Aaron Burr's treason trial begins</a></div>
+                            <div class="description font-serif">On this day in 1807, <a href="https://www.britannica.com/biography/Aaron-Burr" class="md-crosslink " data-show-preview="true">Aaron Burr</a> went on trial for treason. A political outcast since his fatal duel with <a href="https://www.britannica.com/biography/Alexander-Hamilton-United-States-statesman" class="md-crosslink " data-show-preview="true">Alexander Hamilton</a>, Burr was accused of levying war against the United States and preparing military forces to seize Mexico, then a territory of Spain. He was ultimately acquitted. For his next act, Burr fled to Europe, where he tried to convince <a href="https://www.britannica.com/biography/Napoleon-I" class="md-crosslink " data-show-preview="true">Napoleon</a> to conquer Spanish <a href="https://www.britannica.com/place/Florida" class="md-crosslink " data-show-preview="true">Florida</a>. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/today-in-history/May-22-Aaron-Burrs-Treason-Trial-Begins">Read today's edition of Today in History &gt; &gt;</a></div>
+                            <div class="credit mt-10">© Bettmann/Getty Images; Photo Illustration Encyclopædia Britannica, Inc.</div></div>
                     </div>
                 </div>
                 <div class="otd-feature-biography col border-left">
@@ -1110,7 +1180,7 @@ Ask the Chatbot</a>
 </a>
                         </div>
                         <div class="card-footer font-16">
-                            <dl data-label="born"><dt class="label">born</dt><dd>May 22, 1859<br><a href="https://www.britannica.com/place/Edinburgh-Scotland">Edinburgh</a><span>, </span><a href="https://www.britannica.com/place/Scotland">Scotland</a><br></dd></dl><dl data-label="died"><dt class="label">died</dt><dd>July 7, 1930 (aged 71)<br><a href="https://www.britannica.com/place/Crowborough">Crowborough</a><span>, </span><a href="https://www.britannica.com/place/England">England</a><br></dd></dl><div class="credit mt-10">© Photos.com/Thinkstock</div>
+                            <dl data-label="born"><dt class="label">born</dt><dd>May 22, 1859<br><a href="https://www.britannica.com/place/Edinburgh-Scotland">Edinburgh</a><span>, </span><a href="https://www.britannica.com/place/Scotland">Scotland</a><br>(Birthday tomorrow)<br></dd></dl><dl data-label="died"><dt class="label">died</dt><dd>July 7, 1930 (aged 71)<br><a href="https://www.britannica.com/place/Crowborough">Crowborough</a><span>, </span><a href="https://www.britannica.com/place/England">England</a><br></dd></dl><div class="credit mt-10">© Photos.com/Thinkstock</div>
                         </div>
                     </div>
                 </div>
@@ -1231,7 +1301,7 @@ Ask the Chatbot</a>
     
 </div>
                             <div class="card-body font-serif">
-                                One of the deadliest <a href="https://www.britannica.com/science/tornado" class="md-crosslink " data-show-preview="true">tornadoes</a> in U.S. history struck <a href="https://www.britannica.com/place/Joplin" class="md-crosslink " data-show-preview="true">Joplin</a>, Missouri, causing massive damage and killing some 160 people. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/quiz/natural-disasters-fact-or-fiction">Take our natural disasters quiz</a><div class="credit mt-10">Joe Raedle/Getty Images</div>
+                                One of the deadliest <a href="https://www.britannica.com/science/tornado" class="md-crosslink " data-show-preview="true">tornadoes</a> in U.S. history struck <a href="https://www.britannica.com/place/Joplin" class="md-crosslink " data-show-preview="true">Joplin</a>, Missouri, causing massive damage and killing some 160 people. <div class="credit mt-10">Joe Raedle/Getty Images</div>
                                 </div>
                         </div>
                     <div class="md-history-event card d-flex mb-20 flex-column flex-sm-row">
@@ -1684,22 +1754,72 @@ Ask the Chatbot</a>
                                 German dramatic composer <a href="https://www.britannica.com/biography/Richard-Wagner-German-composer" class="md-crosslink " data-show-preview="true">Richard Wagner</a>, whose operas and music had a revolutionary influence on the course of <a href="https://www.britannica.com/art/Western-music" class="md-crosslink " data-show-preview="true">Western music</a>, was born in Leipzig. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/quiz/music-composers-fact-or-fiction">Sort fact from fiction in our music composers quiz</a><div class="credit mt-10">Encyclopædia Britannica, Inc.</div>
                                 </div>
                         </div>
+                    <div class="md-history-event card d-flex mb-20 flex-column flex-sm-row">
+                            <div class="card-media col-sm-25 position-relative">
+                                <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">337</div>
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/88/193288-004-693B6C22/head-Marble-statue-piece-Constantine-I-300-ce.jpg?w=400&h=200&c=crop" alt="Constantine I" class="fit-cover h-100 w-100"   />
+    
+</div>
+                            <div class="card-body font-serif">
+                                <a href="https://www.britannica.com/biography/Constantine-I-Roman-emperor" class="md-crosslink " data-show-preview="true">Constantine the Great</a>, who had practiced <a href="https://www.britannica.com/topic/Christianity" class="md-crosslink " data-show-preview="true">Christianity</a> since his youth and sparked its growth into a world religion, became on his deathbed the first Roman emperor to be baptized in the Christian church. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/quiz/history-of-christianity-quiz">Test your knowledge of the history of Christianity</a><div class="credit mt-10">© Photos.com/Getty Images</div>
+                                </div>
+                        </div>
                     </div>
                 <aside class="tw:w-74 tw:px-0! tw:ml-6">
                         <div class="qa-tih-right-newsletter tw:w-full tw:flex tw:flex-col tw:items-center">
   <div class="tw:bg-[var(--tan-light-tih)] tw:pt-4 tw:pb-6 tw:flex tw:flex-col tw:items-center tw:rounded-sm tw:w-full">
       <div class="font-oswald tw:text-[var(--gray-600-tih)] tw:tracking-[1px] tw:text-center tw:mb-2 tw:font-semibold">SIGN UP FOR</div>
-      <img class="tw:mb-4" src="https://cdn.britannica.com/mendel-resources/3-173/images/shared/tih-logo.png?v=3.173.4" alt="Today In History Logo" width="156"/>
-      <img src="https://cdn.britannica.com/mendel-resources/3-173/images/shared/tih-subscribe-side.png?v=3.173.4&w=800" alt="Today In History" width="100%"/>
+      <img class="tw:mb-4" src="https://cdn.britannica.com/mendel-resources/3-184/images/shared/tih-logo.png?v=3.184.5" alt="Today In History Logo" width="156"/>
+      <img src="https://cdn.britannica.com/mendel-resources/3-184/images/shared/tih-subscribe-side.png?v=3.184.5&w=800" alt="Today In History" width="100%"/>
       <div class="tw:flex tw:flex-col tw:items-center tw:px-6">
           <div class="tw:mt-4 font-lora tw:text-[28px] tw:text-center tw:font-medium">History's Biggest Headlines</div>
           <div class="font-lora tw:my-4 tw:text-sm tw:text-center">Discover the fascinating events that shaped the world, straight from our editors.</div>
           <div class="newsletter-form-container tw:w-full">
               <form action="/newsletter-subscription/EB_ON_THIS_DAY" method="post" class="tw:flex tw:flex-col tw:items-center tw:w-full">
                   <input class="tw:bg-white tw:h-10.5 tw:w-full tw:text-[var(--gray-600-tih)] tw:border tw:border-[var(--gray-100-tih)] tw:text-sm! font-lora tw:px-4 tw:rounded-full" type="email" name="email" placeholder="Enter your email" required/>
-                      <input type="hidden" name="source" value="mendel"/>
-                      <input type="hidden" name="campaign" value="todayinhistory"/>
-                      <input type="hidden" name="medium" value="sidebar"/>
+                      <input type="hidden" name="source" value="tih-lp-sidebar"/>
+                      <input type="hidden" name="campaign" value="britannica"/>
+                      <input type="hidden" name="medium" value="internal"/>
                       <button type="submit" class="tw:h-10.5 tih-signup-button tw:rounded-full tw:text-white tw:text-uppercase font-oswald tw:tracking-[0.96px] tw:py-2 tw:px-6 tw:bg-[var(--orange-tih)] tw:mt-4! tw:w-full">
                           <span class="tw:font-semibold">SIGN UP</span>
                       </button>
@@ -1786,7 +1906,7 @@ Ask the Chatbot</a>
 
 
 
-<script src="https://cdn.britannica.com/mendel-resources/3-173/js/libs/jquery-3.5.0.min.js?v=3.173.4"></script>
+<script src="https://cdn.britannica.com/mendel-resources/3-184/js/libs/jquery-3.5.0.min.js?v=3.184.5"></script>
 
 
 
@@ -1800,7 +1920,7 @@ Ask the Chatbot</a>
                 $.ajax({
                   dataType: 'script',
                   cache: true,
-                  url: 'https://cdn.britannica.com/mendel-resources/3-173/dist/day-in-history-page.js?v=3.173.4'
+                  url: 'https://cdn.britannica.com/mendel-resources/3-184/dist/day-in-history-page.js?v=3.184.5'
                 });
               })();
             </script>
@@ -1808,6 +1928,8 @@ Ask the Chatbot</a>
 
 
 
+
+    <script src="https://cdn.britannica.com/mendel-resources/3-184/js/ccpa.js?v=3.184.5" defer="defer"></script>
 
 
 
@@ -1819,5 +1941,6 @@ Ask the Chatbot</a>
 
 
 <div id="bc-fixed-dialogue"></div>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"5cc7d7124de641b181da990fc8c9a0b6","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
