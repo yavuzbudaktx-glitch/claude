@@ -14,6 +14,19 @@ interface CalResp {
 }
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<CalResp>);
+
+// Google all-day events come back as "YYYY-MM-DD" strings. Passing
+// those to `new Date()` parses them as midnight UTC, which becomes the
+// PREVIOUS day in any timezone west of UTC — that's why "May 23" was
+// showing up as "May 22". Parse the components ourselves and construct
+// a Date at local midnight instead.
+function eventStartDate(e: CalendarEvent): Date {
+  if (e.allDay) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(e.start);
+    if (m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  }
+  return new Date(e.start);
+}
 const HIDDEN_KEY = "morning.hiddenEvents.v1";
 
 function loadHidden(): Set<string> {
@@ -91,9 +104,9 @@ export function CalendarCard() {
         {visible.map((e) => (
           <li key={e.id} className="group flex items-start gap-3 py-2.5">
             <div className="font-mono text-[10px] uppercase tracking-wider text-muted pt-1 w-12 shrink-0">
-              {e.allDay ? format(new Date(e.start), "MMM d") : format(new Date(e.start), "MMM d")}
+              {format(eventStartDate(e), "MMM d")}
               <div className="text-[10px] mt-0.5 text-accent">
-                {e.allDay ? "all day" : format(new Date(e.start), "h:mma").toLowerCase()}
+                {e.allDay ? "all day" : format(eventStartDate(e), "h:mma").toLowerCase()}
               </div>
             </div>
             <div className="min-w-0 flex-1">
@@ -128,7 +141,7 @@ export function CalendarCard() {
             {hiddenList.map((e) => (
               <li key={e.id} className="group flex items-start gap-3 py-2 opacity-60">
                 <div className="font-mono text-[10px] uppercase tracking-wider text-muted pt-1 w-12 shrink-0">
-                  {format(new Date(e.start), "MMM d")}
+                  {format(eventStartDate(e), "MMM d")}
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="text-sm leading-snug line-through truncate">{e.summary}</div>

@@ -48,7 +48,10 @@ function absolutize(url) {
   return url;
 }
 function clampSummary(t) {
-  return t.length > 320 ? t.slice(0, 317).trimEnd() + "…" : t;
+  // No truncation — the card lays the full paragraph out below the
+  // title, and Britannica's descriptions are already a sensible
+  // length. Clamping was cutting them mid-thought.
+  return t.trim();
 }
 function isMeaningfulTitle(s) {
   const t = s.trim();

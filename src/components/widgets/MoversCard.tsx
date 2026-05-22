@@ -99,7 +99,7 @@ function writeQuoteCache(symbol: string, data: Quote) {
 
 async function fetchYahooQuoteRaw(symbol: string): Promise<Quote | null> {
   const yahoo = (host: string) =>
-    `https://${host}/v8/finance/chart/${encodeURIComponent(symbol)}?range=5d&interval=1d`;
+    `https://${host}/v8/finance/chart/${encodeURIComponent(symbol)}?range=1mo&interval=1d`;
   const candidates = [
     `https://corsproxy.io/?${encodeURIComponent(yahoo("query1.finance.yahoo.com"))}`,
     `https://corsproxy.io/?${encodeURIComponent(yahoo("query2.finance.yahoo.com"))}`,
@@ -365,7 +365,7 @@ function MarketsBody() {
       <div className="flex items-baseline gap-2 mb-1">
         <div className="label">Watchlist</div>
         <div className="font-mono text-[10px] uppercase tracking-wider text-muted">
-          5-day chart · today&rsquo;s move
+          30-day chart · today&rsquo;s move
         </div>
         <form
           className="ml-auto flex items-center gap-1"
