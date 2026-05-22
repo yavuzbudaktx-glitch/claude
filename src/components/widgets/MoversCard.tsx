@@ -115,20 +115,32 @@ async function fetchYahooQuoteRaw(symbol: string): Promise<Quote | null> {
       const result = json.chart?.result?.[0];
       const meta = result?.meta;
       const price = meta?.regularMarketPrice;
-      const prevClose = meta?.chartPreviousClose ?? meta?.previousClose;
-      if (typeof price !== "number" || typeof prevClose !== "number") continue;
+      if (typeof price !== "number") continue;
+
       const closesRaw = result?.indicators?.quote?.[0]?.close ?? [];
       const closes = closesRaw.filter(
         (n): n is number => typeof n === "number" && Number.isFinite(n),
       );
+
+      // Yahoo's meta.chartPreviousClose for range=1mo is the close from
+      // ~30 days ago, NOT yesterday's — using that would render the
+      // monthly return, not today's move (and flip a lot of greens to
+      // reds). Today's move is current price vs the most recent prior
+      // close in the daily series.
+      const priorClose =
+        closes.length >= 2 ? closes[closes.length - 2] :
+        typeof meta?.chartPreviousClose === "number" ? meta.chartPreviousClose :
+        typeof meta?.previousClose === "number" ? meta.previousClose :
+        price;
+
       const sym = meta?.symbol?.toUpperCase() ?? symbol.toUpperCase();
       return {
         symbol: sym,
         name: meta?.shortName ?? meta?.longName ?? sym,
         price,
-        prevClose,
-        changePct: ((price - prevClose) / prevClose) * 100,
-        closes: closes.length > 0 ? closes : [prevClose, price],
+        prevClose: priorClose,
+        changePct: priorClose ? ((price - priorClose) / priorClose) * 100 : 0,
+        closes: closes.length > 0 ? closes : [priorClose, price],
       };
     } catch {
       // try next proxy
@@ -209,48 +221,59 @@ function fmtPrice(p: number | null): string {
   return `$${p.toFixed(6)}`;
 }
 
-function WatchlistRow({ symbol, onRemove }: { symbol: string; onRemove: (s: string) => void }) {
+function WatchlistTile({ symbol, onRemove }: { symbol: string; onRemove: (s: string) => void }) {
   const { quote, loading } = useTickerData(symbol);
   const up = quote ? quote.changePct >= 0 : true;
+  const changeClass = quote
+    ? up
+      ? "text-emerald-600 dark:text-emerald-400"
+      : "text-accent"
+    : "text-muted";
 
   return (
-    <li className="group grid grid-cols-[60px_1fr_72px_88px_72px_18px] items-center gap-2 py-1.5 text-sm">
-      <span className="font-mono text-[12px] tabular-nums">{symbol}</span>
-      <span className="text-[11px] text-muted truncate">
-        {quote?.name ?? (loading ? "Loading…" : symbol)}
-      </span>
-      <span className="font-mono tabular-nums text-[12px] text-right">
-        {fmtPrice(quote?.price ?? null)}
-      </span>
-      <div className="flex justify-end">
-        <Sparkline data={quote?.closes ?? []} width={88} height={22} up={up} />
-      </div>
-      <span
-        className={`font-mono tabular-nums text-[12px] text-right inline-flex items-center justify-end gap-0.5 ${
-          quote
-            ? up
-              ? "text-emerald-600 dark:text-emerald-400"
-              : "text-accent"
-            : "text-muted"
-        }`}
-      >
-        {quote ? (
-          <>
-            {up ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
-            {up ? "+" : ""}
-            {quote.changePct.toFixed(2)}%
-          </>
-        ) : (
-          "—"
-        )}
-      </span>
+    <li className="group relative border rule-soft rounded-md p-3 hover:border-[var(--rule)] transition">
       <button
-        onClick={() => onRemove(symbol)}
-        className="opacity-0 group-hover:opacity-100 transition text-muted hover:text-accent"
+        onClick={(e) => { e.preventDefault(); e.stopPropagation(); onRemove(symbol); }}
+        className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition text-muted hover:text-accent"
         aria-label={`Remove ${symbol}`}
       >
         <X className="h-3.5 w-3.5" />
       </button>
+
+      <div className="flex items-baseline justify-between gap-2 mb-0.5">
+        <a
+          href={`https://stockinvest.us/stock/${encodeURIComponent(symbol)}`}
+          target="_blank"
+          rel="noreferrer"
+          className="font-mono text-[13px] tabular-nums font-medium hover:text-accent transition"
+        >
+          {symbol}
+        </a>
+        <span
+          className={`font-mono tabular-nums text-[12px] inline-flex items-center gap-0.5 ${changeClass}`}
+        >
+          {quote ? (
+            <>
+              {up ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
+              {up ? "+" : ""}
+              {quote.changePct.toFixed(2)}%
+            </>
+          ) : (
+            "—"
+          )}
+        </span>
+      </div>
+
+      <div className="text-[10.5px] text-muted truncate mb-2">
+        {quote?.name ?? (loading ? "Loading…" : symbol)}
+      </div>
+
+      <div className="flex items-end justify-between gap-2">
+        <span className="font-mono tabular-nums text-[15px]">
+          {fmtPrice(quote?.price ?? null)}
+        </span>
+        <Sparkline data={quote?.closes ?? []} width={110} height={28} up={up} />
+      </div>
     </li>
   );
 }
@@ -393,9 +416,9 @@ function MarketsBody() {
           No tickers yet. Type one above and press Enter.
         </p>
       ) : (
-        <ul className="divide-rule">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {tickers.map((s) => (
-            <WatchlistRow key={s} symbol={s} onRemove={remove} />
+            <WatchlistTile key={s} symbol={s} onRemove={remove} />
           ))}
         </ul>
       )}
