@@ -1,10 +1,10 @@
 # Britannica scrape debug dump
-# generated: 2026-05-22T15:36:24.348Z
+# generated: 2026-05-22T15:54:30.258Z
 # url:       https://www.britannica.com/on-this-day/may-22
-# fetcher:   Wayback Machine
+# fetcher:   CORS proxy
 # kind:      html
-# length:    73558
-# parsed:    YES (Wayback Machine)
+# length:    73695
+# parsed:    YES (CORS proxy)
 # -----------------------------------------------------------------
 
 
@@ -73,7 +73,7 @@
 
 <!doctype html>
 
-<html lang="en" class="dayinhistory-desktop ui-chrome148 ui-chrome">
+<html lang="en" class="dayinhistory-desktop ui-unknown0 ui-unknown">
 
 <head prefix="og: https://ogp.me/ns# fb: https://ogp.me/ns/fb#">
 
@@ -128,7 +128,7 @@
 
 
 <script   class="analytics-metadata" type="application/json">
-{"adLeg":"D","leg":"C","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+{"adLeg":"D","leg":"D","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
 </script>
 
 
@@ -162,14 +162,15 @@
         'analytics_storage': 'granted',
     });
 
-    window.geoCountry = 'US';
-    window.isGdprCountry = false;
-    window.isCcpaCountry = true;
-    window.geoRegion = 'CA';
+    window.geoCountry = 'FR';
+    window.isGdprCountry = true;
+    window.isCcpaCountry = false;
+    window.geoRegion = '75';
 
 </script>
 
-
+<script type="text/javascript" data-cmp-ab="1" src="https://cdn.consentmanager.net/delivery/autoblocking/f883f3936267c.js" data-cmp-host="d.delivery.consentmanager.net" data-cmp-cdn="cdn.consentmanager.net" data-cmp-codesrc="0"></script>
+    
 
     
 
@@ -280,15 +281,15 @@
 	    	"resourcesPrefixUrl": "https://cdn.britannica.com/mendel-resources/3-184/[url]?v=3.184.5",
 			"date": 20260522,
 			"userInfo": { "type": "ANONYMOUS"
-										,"currency": "USD"
-										,"country": "US"
-										,"state": "CA"
-										,"timezone": "America/Los_Angeles"
-										,"bcomId": "-686307751968734967"
+										,"currency": "EUR"
+										,"country": "FR"
+										,"state": "75"
+										,"timezone": "Europe/Paris"
+										,"bcomId": "-4623052487517733183"
 										,"adProvider": "ay"
-										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":true,"showConsent":true}
+										,"privacyInfo": {"inGdprCountry":true,"inCcpaState":false,"showConsent":true}
 										,"hasAds": true
-										,"testVersion": "C"
+										,"testVersion": "D"
 										,"adsTestVersion": "D"
 										,"consumerId": ""
 										,"instId": ""
@@ -312,7 +313,7 @@
 
 			"autocompleteToSearchPage": false,"pagesInfo": [{"url":"May-22","title":"On This Day - What Happened on May 22"},{"url":"May-23","title":"On This Day - What Happened on May 23"},{"url":"May-24","title":"On This Day - What Happened on May 24"},{"url":"May-25","title":"On This Day - What Happened on May 25"},{"url":"May-26","title":"On This Day - What Happened on May 26"},{"url":"May-27","title":"On This Day - What Happened on May 27"},{"url":"May-28","title":"On This Day - What Happened on May 28"},{"url":"May-29","title":"On This Day - What Happened on May 29"},{"url":"May-30","title":"On This Day - What Happened on May 30"},{"url":"May-31","title":"On This Day - What Happened on May 31"}]
 		},
-        "GA": {"adLeg":"D","leg":"C","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+        "GA": {"adLeg":"D","leg":"D","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
     };
 
 	</script>
@@ -416,7 +417,7 @@ Mendel.openGraph = {
 
 </head>
 
-<body data-leg="C" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-c ">
+<body data-leg="D" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-d ">
 
 
 
@@ -674,8 +675,8 @@ Mendel.openGraph = {
         </div>
     </div>
 
-    <div class="d-none hamburger-menu-subscription-link"><DIV class="marketing-HAMBURGER_MENU_CTA marketing-content" data-marketing-id="HAMBURGER_MENU_CTA"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=blue" class="subscribe-link btn btn-sm btn-blue py-5" target="_blank">
-  SUBSCRIBE
+    <div class="d-none hamburger-menu-subscription-link"><DIV class="marketing-HAMBURGER_MENU_CTA marketing-content" data-marketing-id="HAMBURGER_MENU_CTA"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=bdpremium" class="subscribe-link btn btn-sm btn-blue py-5" target="_blank">
+  SUBSCRIBE TO PREMIUM
 </a></DIV></div>
     <div id="global-nav-react">
         <div class="d-none">
@@ -1180,7 +1181,7 @@ Ask the Chatbot</a>
 </a>
                         </div>
                         <div class="card-footer font-16">
-                            <dl data-label="born"><dt class="label">born</dt><dd>May 22, 1859<br><a href="https://www.britannica.com/place/Edinburgh-Scotland">Edinburgh</a><span>, </span><a href="https://www.britannica.com/place/Scotland">Scotland</a><br>(Birthday tomorrow)<br></dd></dl><dl data-label="died"><dt class="label">died</dt><dd>July 7, 1930 (aged 71)<br><a href="https://www.britannica.com/place/Crowborough">Crowborough</a><span>, </span><a href="https://www.britannica.com/place/England">England</a><br></dd></dl><div class="credit mt-10">© Photos.com/Thinkstock</div>
+                            <dl data-label="born"><dt class="label">born</dt><dd>May 22, 1859<br><a href="https://www.britannica.com/place/Edinburgh-Scotland">Edinburgh</a><span>, </span><a href="https://www.britannica.com/place/Scotland">Scotland</a><br>(Born on this day)<br></dd></dl><dl data-label="died"><dt class="label">died</dt><dd>July 7, 1930 (aged 71)<br><a href="https://www.britannica.com/place/Crowborough">Crowborough</a><span>, </span><a href="https://www.britannica.com/place/England">England</a><br></dd></dl><div class="credit mt-10">© Photos.com/Thinkstock</div>
                         </div>
                     </div>
                 </div>
@@ -1928,8 +1929,6 @@ Ask the Chatbot</a>
 
 
 
-
-    <script src="https://cdn.britannica.com/mendel-resources/3-184/js/ccpa.js?v=3.184.5" defer="defer"></script>
 
 
 
