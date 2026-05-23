@@ -3,9 +3,14 @@
 /* eslint-disable @next/next/no-img-element */
 import useSWR from "swr";
 import { useState } from "react";
+import { RefreshCw } from "lucide-react";
 import { formatDistanceToNowStrict, format } from "date-fns";
 import { Card } from "@/components/Card";
 import { CATEGORY_LABELS, CATEGORY_ORDER, type NewsCategory, type NewsItem } from "@/lib/feeds";
+
+const EMPTY_RESP: Record<NewsCategory, NewsItem[]> = {
+  world: [], turkey: [], dallas: [], tech: [], finance: [],
+};
 
 type Resp = Record<NewsCategory, NewsItem[]>;
 const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<Resp>);
@@ -97,14 +102,51 @@ function PubDate({ iso }: { iso: string }) {
 }
 
 export function NewsCard() {
-  const { data, error, isLoading } = useSWR<Resp>("/api/news", fetcher, {
+  const { data, error, isLoading, mutate } = useSWR<Resp>("/api/news", fetcher, {
     refreshInterval: 1000 * 60 * 15,
     keepPreviousData: true,
   });
   const [active, setActive] = useState<NewsCategory>("world");
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Refresh ONLY the tab currently in view — hits the force-dynamic
+  // single-category endpoint and patches just that slice of the SWR
+  // cache, leaving the other four categories untouched.
+  async function refreshActive() {
+    if (refreshing) return;
+    setRefreshing(true);
+    try {
+      const res = await fetch(`/api/news/category?c=${active}`, { cache: "no-store" });
+      if (res.ok) {
+        const json = (await res.json()) as { items?: NewsItem[] };
+        if (json.items) {
+          await mutate(
+            (prev) => ({ ...(prev ?? EMPTY_RESP), [active]: json.items! }),
+            { revalidate: false },
+          );
+        }
+      }
+    } catch {
+      // swallow — leave the existing items in place on failure
+    } finally {
+      setRefreshing(false);
+    }
+  }
+
+  const refreshAction = (
+    <button
+      onClick={refreshActive}
+      disabled={refreshing}
+      title={`Refresh ${CATEGORY_LABELS[active]}`}
+      aria-label={`Refresh ${CATEGORY_LABELS[active]}`}
+      className="text-muted hover:text-accent transition disabled:opacity-50"
+    >
+      <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
+    </button>
+  );
 
   return (
-    <Card num="03" title="The Wire">
+    <Card num="03" title="The Wire" action={refreshAction}>
       <div className="flex flex-wrap gap-1.5 mb-4">
         {CATEGORY_ORDER.map((c) => (
           <button
