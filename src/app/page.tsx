@@ -63,9 +63,9 @@ export default async function Page() {
         </div>
       </div>
 
-      <UfcCard />
-
       <BodyCard />
+
+      <UfcCard />
     </main>
   );
 }
