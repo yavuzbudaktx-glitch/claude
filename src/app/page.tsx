@@ -27,7 +27,7 @@ export default async function Page() {
 
   return (
     <main className="max-w-[1480px] mx-auto px-5 md:px-10 pt-2 md:pt-3 pb-6 md:pb-8 space-y-5">
-      <section className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-6 lg:min-h-[240px]">
+      <section className="relative z-30 grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-6 lg:min-h-[240px]">
         <div className="flex flex-col justify-center gap-3">
           <Masthead
             name={name}

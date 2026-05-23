@@ -4,6 +4,8 @@ import useSWR from "swr";
 import {
   Cloud, CloudRain, CloudSnow, Sun, CloudSun, CloudLightning, Cloudy,
 } from "lucide-react";
+import { useCity } from "@/lib/use-city";
+import { CityPicker } from "@/components/CityPicker";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -38,23 +40,28 @@ function codeToLabel(code: number) {
 }
 
 export function WeatherSummary() {
-  const { data } = useSWR<WeatherResp>("/api/weather", fetcher, {
-    refreshInterval: 1000 * 60 * 10,
-  });
+  const { city } = useCity();
+  const { data } = useSWR<WeatherResp>(
+    `/api/weather?lat=${city.lat}&lon=${city.lon}&tz=${encodeURIComponent(city.timezone)}`,
+    fetcher,
+    { refreshInterval: 1000 * 60 * 10, keepPreviousData: true },
+  );
 
-  if (!data?.current || !data.daily) return null;
-
-  const c = data.current;
-  const d = data.daily;
+  const c = data?.current;
+  const d = data?.daily;
 
   return (
-    <span className="inline-flex items-center gap-1.5">
-      {codeToIcon(c.weather_code)}
-      <span>{codeToLabel(c.weather_code)} {Math.round(c.temperature_2m)}°</span>
-      <span className="text-muted/70">·</span>
-      <span>H {Math.round(d.temperature_2m_max[0])}° L {Math.round(d.temperature_2m_min[0])}°</span>
-      <span className="text-muted/70">·</span>
-      <span>Dallas</span>
+    <span className="inline-flex items-center gap-1.5 flex-wrap">
+      {c && d ? (
+        <>
+          {codeToIcon(c.weather_code)}
+          <span>{codeToLabel(c.weather_code)} {Math.round(c.temperature_2m)}°</span>
+          <span className="text-muted-2">·</span>
+          <span>H {Math.round(d.temperature_2m_max[0])}° L {Math.round(d.temperature_2m_min[0])}°</span>
+          <span className="text-muted-2">·</span>
+        </>
+      ) : null}
+      <CityPicker />
     </span>
   );
 }

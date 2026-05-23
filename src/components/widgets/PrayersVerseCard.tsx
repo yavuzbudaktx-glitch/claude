@@ -4,6 +4,7 @@ import useSWR from "swr";
 import { useEffect, useState } from "react";
 import { Card } from "@/components/Card";
 import { PrayerChecks } from "./PrayerChecks";
+import { PrayerTimes } from "./PrayerTimes";
 import type { HadithPayload } from "@/lib/hadith";
 import { localDateKey, msUntilLocalMidnight } from "@/lib/local-date";
 
@@ -28,6 +29,7 @@ export function PrayersVerseCard() {
   return (
     <Card num="01" title="Prayer · Hadith">
       <PrayerChecks />
+      <PrayerTimes />
 
       <div className="mt-4 pt-4 border-t rule">
         <div className="flex items-baseline justify-between mb-2">
