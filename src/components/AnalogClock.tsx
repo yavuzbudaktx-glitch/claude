@@ -69,7 +69,7 @@ export function AnalogClock() {
               y={-Math.cos(a) * r}
               textAnchor="middle"
               dominantBaseline="central"
-              fontFamily="Fraunces, serif"
+              fontFamily="'Space Grotesk', sans-serif"
               fontSize="11"
               fontWeight="500"
               fill="var(--ink)"
@@ -100,9 +100,11 @@ export function AnalogClock() {
         </g>
         <g style={{ transform: `rotate(${secondAngle}deg)`, transformOrigin: "0 0", transition: "none" }}>
           <line x1="0" y1="20" x2="0" y2="-80" stroke="var(--accent)" strokeWidth="1" strokeLinecap="round" />
+          <circle cx="0" cy="-58" r="6" fill="var(--accent)" opacity="0.25" />
           <circle cx="0" cy="-58" r="3" fill="var(--accent)" />
         </g>
 
+        <circle cx="0" cy="0" r="6" fill="var(--accent)" opacity="0.2" />
         <circle cx="0" cy="0" r="4" fill="var(--ink)" />
         <circle cx="0" cy="0" r="1.5" fill="var(--accent)" />
       </svg>
