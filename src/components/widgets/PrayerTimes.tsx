@@ -66,44 +66,65 @@ export function PrayerTimes() {
 
   const timings = data?.data?.timings;
 
-  // Which prayer is next, and how long until it.
+  // Which prayer is next, how long until it, and how far through the
+  // current interval (previous prayer → next prayer) we are — the latter
+  // drives the progress bar. Handles both wraparounds: before Fajr the
+  // previous prayer is yesterday's Isha; after Isha the next is tomorrow's
+  // Fajr.
   let nextId: PrayerId | null = null;
   let remaining = 0;
+  let progress = 0;
   if (timings && now) {
     const { h, m, s } = clockPartsInTz(now, city.timezone);
     const nowSec = h * 3600 + m * 60 + s;
-    for (const p of ORDER) {
-      const t = hhmmToSeconds(timings[p.id]);
-      if (Number.isFinite(t) && t > nowSec) {
-        nextId = p.id;
-        remaining = t - nowSec;
-        break;
+    const secs = ORDER.map((p) => ({ id: p.id, sec: hhmmToSeconds(timings[p.id]) }));
+    if (secs.every((p) => Number.isFinite(p.sec))) {
+      const lastIdx = secs.length - 1;
+      const nextIdx = secs.findIndex((p) => p.sec > nowSec);
+      let nextSecAbs: number;
+      let prevSecAbs: number;
+      if (nextIdx === -1) {
+        nextId = secs[0].id;                  // tomorrow's Fajr
+        nextSecAbs = secs[0].sec + 86400;
+        prevSecAbs = secs[lastIdx].sec;       // today's Isha
+      } else {
+        nextId = secs[nextIdx].id;
+        nextSecAbs = secs[nextIdx].sec;
+        prevSecAbs =
+          nextIdx === 0
+            ? secs[lastIdx].sec - 86400       // yesterday's Isha
+            : secs[nextIdx - 1].sec;
       }
-    }
-    if (!nextId) {
-      // All of today's prayers have passed — next is tomorrow's Fajr.
-      const fajr = hhmmToSeconds(timings.Fajr);
-      if (Number.isFinite(fajr)) {
-        nextId = "Fajr";
-        remaining = 86400 - nowSec + fajr;
-      }
+      remaining = nextSecAbs - nowSec;
+      const interval = nextSecAbs - prevSecAbs;
+      progress = interval > 0 ? Math.min(1, Math.max(0, (nowSec - prevSecAbs) / interval)) : 0;
     }
   }
 
   return (
-    <div className="mt-4">
-      <div className="text-center font-display tracking-tight text-ink text-[26px] md:text-[28px] leading-none">
+    <div>
+      <div className="h-1.5 w-full rounded-full bg-[var(--rule)] overflow-hidden">
+        <div
+          className="h-full rounded-full transition-[width] duration-1000 ease-linear"
+          style={{
+            width: `${(progress * 100).toFixed(2)}%`,
+            background: "linear-gradient(90deg, var(--grad-from), var(--grad-via), var(--grad-to))",
+          }}
+        />
+      </div>
+
+      <div className="text-center font-display tracking-tight text-ink text-xl mt-3.5 leading-snug">
         {timings && nextId ? (
           <>
             <span className="tabular-nums">{fmtCountdown(remaining)}</span>{" "}
-            <span className="text-muted text-[15px] font-normal">left until {nextId}</span>
+            <span className="text-muted font-normal">left until {nextId}</span>
           </>
         ) : (
-          <span className="text-muted text-[15px] font-normal">Loading prayer times…</span>
+          <span className="text-muted font-normal">Loading prayer times…</span>
         )}
       </div>
 
-      <div className="mt-3.5 grid grid-cols-5 gap-1 text-center">
+      <div className="mt-4 grid grid-cols-5 gap-1 text-center">
         {ORDER.map((p) => {
           const isNext = p.id === nextId;
           return (
