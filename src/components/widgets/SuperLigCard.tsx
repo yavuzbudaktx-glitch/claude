@@ -45,19 +45,46 @@ interface Resp {
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<Resp>);
 
-const BESIKTAS_NAMES = ["beşiktaş", "besiktas", "beşiktaş jk", "besiktas jk"];
-function isBesiktas(name: string) {
-  return BESIKTAS_NAMES.some((n) => name.toLowerCase().includes(n));
+// The team whose last/next match is tracked. Persisted per-device so the
+// dashboard remembers the last team you picked.
+const SELECTED_KEY = "morning.superligTeam.v1";
+interface SelectedTeam { name: string; teamId: string }
+const DEFAULT_TEAM: SelectedTeam = { name: "Beşiktaş", teamId: "1895" };
+
+function readSelectedTeam(): SelectedTeam {
+  if (typeof window === "undefined") return DEFAULT_TEAM;
+  try {
+    const raw = localStorage.getItem(SELECTED_KEY);
+    if (raw) {
+      const o = JSON.parse(raw) as Partial<SelectedTeam>;
+      if (o.name) return { name: o.name, teamId: o.teamId ?? "" };
+    }
+  } catch {
+    // fall through
+  }
+  return DEFAULT_TEAM;
+}
+
+function normTeam(s: string): string {
+  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+}
+function sameTeam(a: string, b: string): boolean {
+  const x = normTeam(a);
+  const y = normTeam(b);
+  if (!x || !y) return false;
+  return x === y || x.includes(y) || y.includes(x);
 }
 
 function MatchBox({
   label,
   match,
   variant,
+  selectedName,
 }: {
   label: string;
   match: Match;
   variant: "last" | "next";
+  selectedName: string;
 }) {
   let date: Date | null = null;
   try { date = parseISO(match.date); } catch {}
@@ -90,13 +117,13 @@ function MatchBox({
         )}
       </div>
       <div className="flex items-center gap-2 text-[12px]">
-        <span className={`flex-1 truncate text-right ${isBesiktas(match.home) ? "font-medium" : ""}`}>
+        <span className={`flex-1 truncate text-right ${sameTeam(match.home, selectedName) ? "font-medium text-accent" : ""}`}>
           {match.home}
         </span>
         <span className="font-mono tabular-nums px-2 py-0.5 border rule rounded shrink-0">
           {finished ? `${match.homeScore ?? "-"} – ${match.awayScore ?? "-"}` : "vs"}
         </span>
-        <span className={`flex-1 truncate ${isBesiktas(match.away) ? "font-medium" : ""}`}>
+        <span className={`flex-1 truncate ${sameTeam(match.away, selectedName) ? "font-medium text-accent" : ""}`}>
           {match.away}
         </span>
       </div>
@@ -127,8 +154,19 @@ export function SuperLigCard() {
     return () => clearTimeout(t);
   }, [dateKey]);
 
+  // The team whose fixtures we show — hydrated from localStorage after mount
+  // so SSR and the first client render match.
+  const [selected, setSelected] = useState<SelectedTeam>(DEFAULT_TEAM);
+  useEffect(() => { setSelected(readSelectedTeam()); }, []);
+
+  function pickTeam(s: Standing) {
+    const next: SelectedTeam = { name: s.team, teamId: s.teamId };
+    setSelected(next);
+    try { localStorage.setItem(SELECTED_KEY, JSON.stringify(next)); } catch {}
+  }
+
   const { data, error, isLoading } = useSWR<Resp>(
-    `/api/superlig?d=${dateKey}`,
+    `/api/superlig?team=${encodeURIComponent(selected.name)}&teamId=${encodeURIComponent(selected.teamId)}&d=${dateKey}`,
     fetcher,
     {
       refreshInterval: 1000 * 60 * 60,
@@ -151,9 +189,15 @@ export function SuperLigCard() {
 
       {data && (
         <>
+          <div className="flex items-baseline justify-between mb-2">
+            <div className="label">{selected.name} · Fixtures</div>
+            <div className="font-mono text-[9px] uppercase tracking-wider text-muted-2">
+              tap a team to track
+            </div>
+          </div>
           <div className="mb-4">
             {data.last ? (
-              <MatchBox label="Last match" match={data.last} variant="last" />
+              <MatchBox label="Last match" match={data.last} variant="last" selectedName={selected.name} />
             ) : (
               <div className="border rule rounded-md p-3 text-muted text-xs italic flex items-center justify-center">
                 No recent match.
@@ -174,15 +218,17 @@ export function SuperLigCard() {
               </div>
               <ul className="divide-rule">
                 {data.standings.map((s) => {
-                  const bk = isBesiktas(s.team);
+                  const sel = sameTeam(s.team, selected.name);
                   return (
                     <li
                       key={s.teamId || s.team}
-                      className={`grid grid-cols-[20px_1fr_28px_28px_28px] gap-x-2 items-center py-1.5 text-[12px] ${
-                        bk ? "bg-hl rounded px-1" : ""
+                      onClick={() => pickTeam(s)}
+                      title={`Track ${s.team}'s fixtures`}
+                      className={`grid grid-cols-[20px_1fr_28px_28px_28px] gap-x-2 items-center py-1.5 text-[12px] cursor-pointer rounded px-1 transition ${
+                        sel ? "bg-hl" : "hover:bg-[var(--rule-soft)]"
                       }`}
                     >
-                      <span className={`font-mono tabular-nums text-right ${bk ? "text-accent font-bold" : "text-muted"}`}>
+                      <span className={`font-mono tabular-nums text-right ${sel ? "text-accent font-bold" : "text-muted"}`}>
                         {s.rank}
                       </span>
                       <span className="flex items-center gap-2 min-w-0">
@@ -195,14 +241,14 @@ export function SuperLigCard() {
                             onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
                           />
                         )}
-                        <span className={`truncate ${bk ? "font-medium" : ""}`}>{s.team}</span>
+                        <span className={`truncate ${sel ? "font-medium" : ""}`}>{s.team}</span>
                         <RankArrow change={rankChanges[s.teamId || s.team]} />
                       </span>
                       <span className="font-mono tabular-nums text-right text-muted">{s.played}</span>
                       <span className="font-mono tabular-nums text-right text-muted">
                         {s.gd > 0 ? `+${s.gd}` : s.gd}
                       </span>
-                      <span className={`font-mono tabular-nums text-right ${bk ? "font-bold" : ""}`}>{s.points}</span>
+                      <span className={`font-mono tabular-nums text-right ${sel ? "font-bold" : ""}`}>{s.points}</span>
                     </li>
                   );
                 })}
@@ -212,7 +258,7 @@ export function SuperLigCard() {
 
           <div className="mt-4">
             {data.next ? (
-              <MatchBox label="Next match" match={data.next} variant="next" />
+              <MatchBox label="Next match" match={data.next} variant="next" selectedName={selected.name} />
             ) : (
               <div className="border rule rounded-md p-3 text-muted text-xs italic flex items-center justify-center">
                 No fixture scheduled.

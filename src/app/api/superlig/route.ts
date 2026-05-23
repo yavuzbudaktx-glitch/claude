@@ -31,6 +31,34 @@ function isBesiktas(s: string | undefined | null): boolean {
   return BESIKTAS_NAMES.some((n) => lower.includes(n));
 }
 
+// General team-name matcher so we can resolve last/next fixtures for ANY
+// Süper Lig team the user picks, not just Beşiktaş. Normalises accents and
+// strips common club suffixes, then matches on equality, containment, or a
+// shared significant token.
+function normalizeTeam(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/\b(jk|sk|fk|as|fc|kulubu|futbol)\b/g, " ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+type TeamMatcher = (name: string | null | undefined) => boolean;
+function makeTeamMatcher(teamName: string): TeamMatcher {
+  const target = normalizeTeam(teamName);
+  const targetTokens = target.split(/\s+/).filter((t) => t.length >= 4);
+  return (name) => {
+    if (!name) return false;
+    const n = normalizeTeam(name);
+    if (!n) return false;
+    if (n === target) return true;
+    if (target && (n.includes(target) || target.includes(n))) return true;
+    const nTokens = n.split(/\s+/).filter((t) => t.length >= 4);
+    return targetTokens.some((t) => nTokens.includes(t));
+  };
+}
+
 export interface Standing {
   rank: number;
   team: string;
@@ -182,7 +210,7 @@ const LEAGUE_LABELS: Record<string, string> = {
   "uefa.europa_conf.qual": "Conference Qual.",
 };
 
-const BESIKTAS_LEAGUES = Object.keys(LEAGUE_LABELS);
+const LEAGUE_SLUGS = Object.keys(LEAGUE_LABELS);
 
 function eventToMatch(e: EspnEvent, league: string): Match | null {
   const c = e.competitions?.[0];
@@ -219,17 +247,20 @@ async function fetchEspnTeamSchedule(
     .filter((m): m is Match => !!m);
 }
 
-async function fetchFromEspnTeamSchedule(): Promise<{ last: Match | null; next: Match | null }> {
+async function fetchFromEspnTeamSchedule(
+  espnId: number,
+  matchesTeam: TeamMatcher,
+): Promise<{ last: Match | null; next: Match | null }> {
   const all = await Promise.all(
-    BESIKTAS_LEAGUES.map((slug) => fetchEspnTeamSchedule(slug, ESPN_BESIKTAS_ID)),
+    LEAGUE_SLUGS.map((slug) => fetchEspnTeamSchedule(slug, espnId)),
   );
   const seen = new Set<string>();
   const matches: Match[] = [];
   for (const bucket of all) {
     for (const m of bucket) {
-      // Schedule endpoint sometimes echoes Beşiktaş against itself in
+      // Schedule endpoint sometimes echoes the team against itself in
       // pre/post-season exhibitions; require the team to actually appear.
-      if (!isBesiktas(m.home) && !isBesiktas(m.away)) continue;
+      if (!matchesTeam(m.home) && !matchesTeam(m.away)) continue;
       if (m.id && seen.has(m.id)) continue;
       if (m.id) seen.add(m.id);
       matches.push(m);
@@ -389,7 +420,7 @@ async function fetchFromSportsDb(): Promise<{ last: Match | null; next: Match | 
 function pad(n: number) { return String(n).padStart(2, "0"); }
 function ymd(d: Date) { return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}`; }
 
-async function fetchEspnScoreboardSweep(): Promise<{ last: Match | null; next: Match | null }> {
+async function fetchEspnScoreboardSweep(matchesTeam: TeamMatcher): Promise<{ last: Match | null; next: Match | null }> {
   const now = new Date();
   // ESPN's scoreboard endpoint rejects (returns empty) ranges wider than
   // roughly 30 days. The previous 270-day window was silently returning
@@ -400,7 +431,7 @@ async function fetchEspnScoreboardSweep(): Promise<{ last: Match | null; next: M
   const range = `${ymd(from)}-${ymd(to)}`;
 
   const buckets = await Promise.all(
-    BESIKTAS_LEAGUES.map((slug) =>
+    LEAGUE_SLUGS.map((slug) =>
       jsonFetch<EspnScoreboardResp>(
         `https://site.api.espn.com/apis/site/v2/sports/soccer/${slug}/scoreboard?dates=${range}`,
       ).then((j) =>
@@ -414,7 +445,7 @@ async function fetchEspnScoreboardSweep(): Promise<{ last: Match | null; next: M
   for (const bucket of buckets) {
     for (const m of bucket) {
       if (!m) continue;
-      if (!isBesiktas(m.home) && !isBesiktas(m.away)) continue;
+      if (!matchesTeam(m.home) && !matchesTeam(m.away)) continue;
       if (m.id && seen.has(m.id)) continue;
       if (m.id) seen.add(m.id);
       matches.push(m);
@@ -741,25 +772,32 @@ interface SourceResult {
   next: Match | null;
 }
 
-async function fetchBesiktasMatches(): Promise<{
+async function fetchTeamMatches(espnId: number, teamName: string): Promise<{
   last: Match | null;
   next: Match | null;
   source: string;
   debug: Array<{ source: string; last: string | null; next: string | null }>;
 }> {
-  // Run all sources in parallel and merge: pick the most-recent past match
-  // across sources for `last`, and the soonest future match across sources
-  // for `next`. Source-priority alone caused stale ESPN data to win over
-  // fresher SofaScore/SportsDB/FotMob results.
-  const sources: SourceResult[] = await Promise.all([
-    fetchFromWikipedia().then((r) => ({ name: "wikipedia", ...r })),
-    fetchFromFotmobHtml().then((r) => ({ name: "fotmob-html", ...r })),
-    fetchFromEspnTeamSchedule().then((r) => ({ name: "espn-team", ...r })),
-    fetchFromSofaScore().then((r) => ({ name: "sofascore", ...r })),
-    fetchFromSportsDb().then((r) => ({ name: "sportsdb", ...r })),
-    fetchEspnScoreboardSweep().then((r) => ({ name: "espn-sweep", ...r })),
-    fetchFromFotmob().then((r) => ({ name: "fotmob-api", ...r })),
-  ]);
+  // Run sources in parallel and merge: pick the most-recent past match
+  // across sources for `last`, and the soonest future match for `next`.
+  // ESPN (by team id) works for any club; the SofaScore / SportsDB /
+  // FotMob / Wikipedia sources are keyed to Beşiktaş-specific ids, so they
+  // only run when Beşiktaş — the default — is the selected team.
+  const matcher = makeTeamMatcher(teamName);
+  const sourcePromises: Promise<SourceResult>[] = [
+    fetchFromEspnTeamSchedule(espnId, matcher).then((r) => ({ name: "espn-team", ...r })),
+    fetchEspnScoreboardSweep(matcher).then((r) => ({ name: "espn-sweep", ...r })),
+  ];
+  if (isBesiktas(teamName)) {
+    sourcePromises.push(
+      fetchFromWikipedia().then((r) => ({ name: "wikipedia", ...r })),
+      fetchFromFotmobHtml().then((r) => ({ name: "fotmob-html", ...r })),
+      fetchFromSofaScore().then((r) => ({ name: "sofascore", ...r })),
+      fetchFromSportsDb().then((r) => ({ name: "sportsdb", ...r })),
+      fetchFromFotmob().then((r) => ({ name: "fotmob-api", ...r })),
+    );
+  }
+  const sources: SourceResult[] = await Promise.all(sourcePromises);
 
   const now = Date.now();
   let last: Match | null = null;
@@ -846,16 +884,22 @@ async function fallbackStandingsFromSportsDb(): Promise<Standing[]> {
   return [];
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const sp = new URL(req.url).searchParams;
+  const teamName = sp.get("team")?.trim() || "Beşiktaş";
+  const teamIdRaw = sp.get("teamId")?.trim();
+  const espnId = teamIdRaw && /^\d+$/.test(teamIdRaw) ? Number(teamIdRaw) : ESPN_BESIKTAS_ID;
+
   const [standings, matches] = await Promise.all([
     fetchStandings(),
-    fetchBesiktasMatches(),
+    fetchTeamMatches(espnId, teamName),
   ]);
 
   const finalStandings = standings.length > 0 ? standings : await fallbackStandingsFromSportsDb();
 
   return NextResponse.json({
     source: standings.length > 0 ? "espn" : "thesportsdb",
+    team: teamName,
     matchesSource: matches.source,
     matchesDebug: matches.debug,
     standings: finalStandings,

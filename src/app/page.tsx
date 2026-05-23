@@ -10,6 +10,7 @@ import { MoversCard } from "@/components/widgets/MoversCard";
 import { SuperLigCard } from "@/components/widgets/SuperLigCard";
 import { TodayInHistoryCard } from "@/components/widgets/TodayInHistoryCard";
 import { UfcCard } from "@/components/widgets/UfcCard";
+import { BodyCard } from "@/components/widgets/BodyCard";
 import { SignOutButton } from "@/components/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -63,6 +64,8 @@ export default async function Page() {
       </div>
 
       <UfcCard />
+
+      <BodyCard />
     </main>
   );
 }
