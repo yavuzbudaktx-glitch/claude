@@ -13,7 +13,7 @@ type Resp = Record<NewsCategory, NewsItem[]>;
 // How many headlines to show at once. Each refresh advances by this much
 // through a deep, freshly-fetched pool so the column shows different
 // stories every time.
-const WINDOW = 6;
+const WINDOW = 5;
 const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<Resp>);
 
 // Stable colour per source, derived from name. Used as the *final*

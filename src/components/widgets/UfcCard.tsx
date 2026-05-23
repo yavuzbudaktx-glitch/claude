@@ -444,6 +444,37 @@ function UpcomingBox({ ev }: { ev: UfcEvent }) {
   );
 }
 
+function initials(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + (parts[parts.length - 1][0] ?? "")).toUpperCase();
+}
+
+function ChampionPhoto({ name }: { name: string }) {
+  const { data } = useSWR<{ url: string | null }>(
+    `/api/fighter-photo?name=${encodeURIComponent(name)}`,
+    (u: string) => fetch(u).then((r) => r.json()),
+    { revalidateOnFocus: false },
+  );
+  const [failed, setFailed] = useState(false);
+  const url = data?.url;
+  return (
+    <div className="h-11 w-11 rounded-full overflow-hidden border border-[var(--glass-border)] bg-hl shrink-0 flex items-center justify-center">
+      {url && !failed ? (
+        <img
+          src={url}
+          alt={name}
+          className="h-full w-full object-cover"
+          referrerPolicy="no-referrer"
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        <span className="font-display text-[12px] text-accent">{initials(name)}</span>
+      )}
+    </div>
+  );
+}
+
 function DivisionRankBlock({ d }: { d: DivisionRanking }) {
   // Track movement across the full ranked list so a contender climbing
   // 6→5 still shows an arrow even though only the top 5 are displayed.
@@ -454,11 +485,14 @@ function DivisionRankBlock({ d }: { d: DivisionRanking }) {
     <div>
       <div className="label text-accent">{d.division}</div>
       {d.champion && (
-        <div className="mt-1.5">
-          <div className="font-semibold text-ink text-[13.5px] leading-tight truncate">
-            {d.champion}
+        <div className="mt-1.5 flex items-center gap-2.5">
+          <ChampionPhoto name={d.champion} />
+          <div className="min-w-0">
+            <div className="font-semibold text-ink text-[13.5px] leading-tight truncate">
+              {d.champion}
+            </div>
+            <div className="label !text-[9px] mt-0.5">Champion</div>
           </div>
-          <div className="label !text-[9px] mt-0.5">Champion</div>
         </div>
       )}
       <ul className="mt-2 divide-rule">
@@ -496,7 +530,6 @@ function UfcRankings() {
   if (isLoading && !data) {
     return (
       <div className="mt-5 pt-4 border-t rule">
-        <div className="label mb-2">Rankings · Top 5</div>
         <p className="text-muted text-xs italic">Loading rankings…</p>
       </div>
     );
@@ -504,7 +537,6 @@ function UfcRankings() {
   if (divisions.length === 0) {
     return (
       <div className="mt-5 pt-4 border-t rule">
-        <div className="label mb-2">Rankings · Top 5</div>
         <p className="text-muted text-xs italic">Rankings unavailable right now.</p>
       </div>
     );
@@ -512,7 +544,6 @@ function UfcRankings() {
 
   return (
     <div className="mt-5 pt-4 border-t rule">
-      <div className="label mb-3">Rankings · Top 5 · arrows show this week&rsquo;s moves</div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-5">
         {divisions.map((d) => (
           <DivisionRankBlock key={d.division} d={d} />
