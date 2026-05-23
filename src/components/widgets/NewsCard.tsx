@@ -109,25 +109,26 @@ export function NewsCard() {
   const [active, setActive] = useState<NewsCategory>("world");
   const [refreshing, setRefreshing] = useState(false);
 
-  // Refresh ONLY the tab currently in view — hits the force-dynamic
-  // single-category endpoint and patches just that slice of the SWR
-  // cache, leaving the other four categories untouched.
+  // Refresh ONLY the tab currently in view. We visibly clear the column
+  // first (so it's obvious something happened), then pull fresh items from
+  // the force-dynamic single-category endpoint with a cache-busting param
+  // — bypassing both the 15-min ISR cache and any PWA service-worker
+  // cache — and patch just that slice of the SWR cache. The other four
+  // categories are left untouched.
   async function refreshActive() {
     if (refreshing) return;
     setRefreshing(true);
+    const prevItems = data?.[active] ?? [];
     try {
-      const res = await fetch(`/api/news/category?c=${active}`, { cache: "no-store" });
-      if (res.ok) {
-        const json = (await res.json()) as { items?: NewsItem[] };
-        if (json.items) {
-          await mutate(
-            (prev) => ({ ...(prev ?? EMPTY_RESP), [active]: json.items! }),
-            { revalidate: false },
-          );
-        }
-      }
+      await mutate((prev) => ({ ...(prev ?? EMPTY_RESP), [active]: [] }), { revalidate: false });
+      const res = await fetch(`/api/news/category?c=${active}&t=${Date.now()}`, { cache: "no-store" });
+      if (!res.ok) throw new Error(`news refresh failed: ${res.status}`);
+      const json = (await res.json()) as { items?: NewsItem[] };
+      const items = json.items ?? [];
+      await mutate((prev) => ({ ...(prev ?? EMPTY_RESP), [active]: items }), { revalidate: false });
     } catch {
-      // swallow — leave the existing items in place on failure
+      // Restore the previous items so a failed refresh doesn't blank the tab.
+      await mutate((prev) => ({ ...(prev ?? EMPTY_RESP), [active]: prevItems }), { revalidate: false });
     } finally {
       setRefreshing(false);
     }

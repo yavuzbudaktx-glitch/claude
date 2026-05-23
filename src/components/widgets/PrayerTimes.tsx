@@ -66,11 +66,11 @@ export function PrayerTimes() {
 
   const timings = data?.data?.timings;
 
-  // Which prayer is next, how long until it, and how far through the
-  // current interval (previous prayer → next prayer) we are — the latter
-  // drives the progress bar. Handles both wraparounds: before Fajr the
-  // previous prayer is yesterday's Isha; after Isha the next is tomorrow's
-  // Fajr.
+  // Which prayer is next, how long until it, and how much of the current
+  // interval (previous prayer → next prayer) is still LEFT — the latter
+  // drives the progress bar, which empties as the next prayer approaches.
+  // Handles both wraparounds: before Fajr the previous prayer is
+  // yesterday's Isha; after Isha the next is tomorrow's Fajr.
   let nextId: PrayerId | null = null;
   let remaining = 0;
   let progress = 0;
@@ -97,7 +97,8 @@ export function PrayerTimes() {
       }
       remaining = nextSecAbs - nowSec;
       const interval = nextSecAbs - prevSecAbs;
-      progress = interval > 0 ? Math.min(1, Math.max(0, (nowSec - prevSecAbs) / interval)) : 0;
+      // Fraction of the interval REMAINING → bar drains toward the prayer.
+      progress = interval > 0 ? Math.min(1, Math.max(0, remaining / interval)) : 0;
     }
   }
 
