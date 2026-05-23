@@ -2,185 +2,131 @@
 @tailwind components;
 @tailwind utilities;
 
-/* -----------------------------------------------------------------------
-   Clean modern dashboard — Inter throughout, JetBrains Mono for numerals,
-   neutral palette with a single indigo accent. No serif, no paper
-   texture, no drama. Designed to be calm and readable for daily use.
------------------------------------------------------------------------ */
-@import url("https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
 
-/* ============== LIGHT ============== */
 :root {
-  --bg:           #fafafa;
-  --paper:        #ffffff;
-  --paper-2:      #f4f4f6;
-  --ink:          #0b0b10;
-  --ink-soft:     #3f3f49;
-  --muted:        #6e6e7a;
-  --muted-2:      #a8a8b3;
-  --rule:         rgba(11, 11, 16, 0.10);
-  --rule-soft:    rgba(11, 11, 16, 0.05);
-  --accent:       #4f46e5;          /* indigo-600 */
-  --accent-soft:  #eef0ff;
-  --accent-2:     #06b6d4;          /* cyan-500 — for secondary accents */
-  --hl:           #f5f3ff;           /* indigo wash */
-  --up:           #059669;
-  --down:         #dc2626;
-  --shadow-card:  0 1px 2px rgba(11, 11, 16, 0.04),
-                  0 1px 1px rgba(11, 11, 16, 0.02);
-  --shadow-hover: 0 4px 16px -4px rgba(11, 11, 16, 0.08),
-                  0 2px 6px rgba(11, 11, 16, 0.04);
+  --bg: #f1e8d3;
+  --paper: #e9dfc7;
+  --ink: #1a1410;
+  --muted: #6f6453;
+  --rule: rgba(26, 20, 16, 0.18);
+  --rule-soft: rgba(26, 20, 16, 0.08);
+  --accent: #8a1f17;
+  --accent-2: #c0651e;
+  --hl: #efe6cf;
 }
 
-/* ============== DARK ============== */
 .dark {
-  --bg:           #0a0a0d;
-  --paper:        #131318;
-  --paper-2:      #1a1a21;
-  --ink:          #fafafa;
-  --ink-soft:     #d4d4dc;
-  --muted:        #8e8e9a;
-  --muted-2:      #5a5a66;
-  --rule:         rgba(255, 255, 255, 0.08);
-  --rule-soft:    rgba(255, 255, 255, 0.04);
-  --accent:       #818cf8;          /* indigo-400 — gentler in dark */
-  --accent-soft:  rgba(129, 140, 248, 0.14);
-  --accent-2:     #22d3ee;
-  --hl:           rgba(129, 140, 248, 0.08);
-  --up:           #34d399;
-  --down:         #f87171;
-  --shadow-card:  0 1px 2px rgba(0, 0, 0, 0.4),
-                  0 0 0 1px rgba(255, 255, 255, 0.02);
-  --shadow-hover: 0 8px 24px -8px rgba(0, 0, 0, 0.5),
-                  0 0 0 1px rgba(129, 140, 248, 0.15);
+  --bg: #0e0a06;
+  --paper: #14100a;
+  --ink: #ede4d2;
+  --muted: #998c75;
+  --rule: rgba(237, 228, 210, 0.18);
+  --rule-soft: rgba(237, 228, 210, 0.08);
+  --accent: #e8a857;
+  --accent-2: #ef7b56;
+  --hl: #1a140d;
 }
 
-/* ---------- base ---------- */
 html, body {
   background: var(--bg);
   color: var(--ink);
   min-height: 100dvh;
   font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  letter-spacing: -0.005em;
+}
+
+body {
+  background-image:
+    radial-gradient(rgba(26,20,16,0.05) 1px, transparent 1px),
+    radial-gradient(rgba(26,20,16,0.04) 1px, transparent 1px);
+  background-size: 3px 3px, 7px 7px;
+  background-position: 0 0, 1px 2px;
+}
+
+.dark body {
+  background-image:
+    radial-gradient(rgba(237,228,210,0.04) 1px, transparent 1px),
+    radial-gradient(rgba(237,228,210,0.03) 1px, transparent 1px);
 }
 
 * { -webkit-tap-highlight-color: transparent; }
-::selection { background: var(--accent); color: #fff; }
 
-/* ---------- type ---------- */
-/* "Serif" mapped to Inter so existing components keep working without
-   visual surprise — true sans-serif throughout. */
-.font-serif    { font-family: "Inter", ui-sans-serif, system-ui, sans-serif; font-weight: 500; }
+.font-serif    { font-family: "Fraunces", ui-serif, Georgia, serif; font-feature-settings: "ss01", "ss02"; }
 .font-mono     { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; }
 .font-arabic   { font-family: "Amiri", "Scheherazade New", serif; }
 
-.font-display  {
-  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.025em;
-}
-
-/* ---------- text utilities ---------- */
 .text-ink      { color: var(--ink); }
-.text-ink-soft { color: var(--ink-soft); }
 .text-muted    { color: var(--muted); }
-.text-muted-2  { color: var(--muted-2); }
 .text-accent   { color: var(--accent); }
-.text-accent-2 { color: var(--accent-2); }
-.text-up       { color: var(--up); }
-.text-down     { color: var(--down); }
 
 .bg-paper      { background: var(--paper); }
-.bg-paper-2    { background: var(--paper-2); }
 .bg-hl         { background: var(--hl); }
-.bg-accent     { background: var(--accent); }
-.bg-accent-soft{ background: var(--accent-soft); }
 
-.rule          { border-color: var(--rule); }
-.rule-soft     { border-color: var(--rule-soft); }
-.divide-rule   > * + * { border-top: 1px solid var(--rule-soft); }
-
-/* ---------- labels ---------- */
 .label {
-  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
-  font-size: 11px;
-  letter-spacing: 0.02em;
-  text-transform: none;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   color: var(--muted);
-  font-weight: 600;
 }
 
-/* ---------- card surfaces ---------- */
+.rule        { border-color: var(--rule); }
+.rule-soft   { border-color: var(--rule-soft); }
+.divide-rule > * + * { border-top: 1px solid var(--rule-soft); }
+
 .card {
   position: relative;
   background: var(--paper);
   border: 1px solid var(--rule);
-  border-radius: 14px;
-  padding: 1.4rem 1.5rem 1.5rem;
-  box-shadow: var(--shadow-card);
-  transition: box-shadow .25s ease, border-color .2s ease, transform .25s ease;
-}
-.card:hover {
-  box-shadow: var(--shadow-hover);
-  border-color: var(--rule);
+  border-radius: 10px;
+  padding: 1.25rem 1.25rem 1.25rem;
 }
 
 .card-bare {
   position: relative;
   border: 1px solid var(--rule);
-  border-radius: 14px;
-  padding: 1.4rem 1.5rem;
+  border-radius: 10px;
+  padding: 1.25rem;
   background: transparent;
+}
+
+.headrule {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: .9rem;
 }
 
 .dot { display: inline-block; width: 6px; height: 6px; border-radius: 9999px; }
 
-/* Clean header — no rules, no decoration. Just a small accent dot
-   + bold title + optional action on the right. */
-.headrule {
-  display: flex;
-  align-items: center;
-  gap: .6rem;
-  margin-bottom: 1.1rem;
-}
-
-/* ---------- chips, buttons ---------- */
 .btn-ghost {
   border: 1px solid var(--rule);
-  background: var(--paper);
-  color: var(--ink-soft);
-  border-radius: 10px;
+  background: transparent;
+  color: var(--ink);
+  border-radius: 9999px;
   height: 36px; width: 36px;
   display: inline-flex; align-items: center; justify-content: center;
-  transition: background .15s ease, transform .12s ease, border-color .15s ease, color .15s ease;
+  transition: background .15s ease, transform .12s ease;
 }
-.btn-ghost:hover {
-  background: var(--accent-soft);
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.btn-ghost:active { transform: scale(.95); }
+.btn-ghost:hover { background: var(--hl); }
+.btn-ghost:active { transform: scale(.96); }
 
 .chip {
-  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0;
-  padding: 5px 12px;
-  border-radius: 8px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: 9999px;
   border: 1px solid var(--rule);
   color: var(--muted);
   background: transparent;
   transition: all .15s ease;
 }
-.chip:hover { color: var(--ink); border-color: var(--ink-soft); background: var(--paper-2); }
-.chip-active {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
-}
+.chip:hover { color: var(--ink); border-color: var(--ink); }
+.chip-active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 
 .kbd {
   font-family: "JetBrains Mono", monospace;
@@ -188,32 +134,21 @@ html, body {
   border: 1px solid var(--rule);
   border-bottom-width: 2px;
   padding: 1px 6px;
-  border-radius: 6px;
+  border-radius: 4px;
   color: var(--muted);
-  background: var(--paper-2);
 }
 
-/* ---------- motion ---------- */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.animate-fadeIn { animation: fadeIn .4s cubic-bezier(.16,.84,.34,1) both; }
+.animate-fadeIn { animation: fadeIn .35s ease-out both; }
 
 @keyframes spinSecond {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
 
-/* ---------- scrollbars ---------- */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 8px; }
-::-webkit-scrollbar-thumb:hover { background: var(--muted-2); }
 ::-webkit-scrollbar-track { background: transparent; }
-
-/* ---------- focus ---------- */
-*:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: 6px;
-}
