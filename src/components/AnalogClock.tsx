@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { format } from "date-fns";
+import { useCity, clockPartsInTz } from "@/lib/use-city";
 
 export function AnalogClock() {
+  const { city } = useCity();
   const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -16,10 +17,14 @@ export function AnalogClock() {
     return <div className="aspect-square w-full" aria-hidden />;
   }
 
+  // Render the SELECTED city's local time, not the browser's. Seconds come
+  // from the timezone-aware parts; sub-second smoothness from the raw Date
+  // (milliseconds are timezone-independent).
+  const { h: H, m: M, s: S } = clockPartsInTz(now, city.timezone);
   const ms = now.getMilliseconds();
-  const s = now.getSeconds() + ms / 1000;
-  const m = now.getMinutes() + s / 60;
-  const h = (now.getHours() % 12) + m / 60;
+  const s = S + ms / 1000;
+  const m = M + s / 60;
+  const h = (H % 12) + m / 60;
 
   const secondAngle = s * 6;
   const minuteAngle = m * 6;
@@ -69,7 +74,7 @@ export function AnalogClock() {
               y={-Math.cos(a) * r}
               textAnchor="middle"
               dominantBaseline="central"
-              fontFamily="Fraunces, serif"
+              fontFamily="'Space Grotesk', sans-serif"
               fontSize="11"
               fontWeight="500"
               fill="var(--ink)"
@@ -86,10 +91,10 @@ export function AnalogClock() {
           textAnchor="middle"
           fontFamily="JetBrains Mono, monospace"
           fontSize="6"
-          letterSpacing="2"
+          letterSpacing="1.5"
           fill="var(--muted)"
         >
-          DALLAS · TX
+          {`${city.name}${city.country ? ` · ${city.country}` : ""}`.toUpperCase()}
         </text>
 
         <g style={{ transform: `rotate(${hourAngle}deg)`, transformOrigin: "0 0", transition: "none" }}>
@@ -103,6 +108,7 @@ export function AnalogClock() {
           <circle cx="0" cy="-58" r="3" fill="var(--accent)" />
         </g>
 
+        <circle cx="0" cy="0" r="6" fill="var(--accent)" opacity="0.2" />
         <circle cx="0" cy="0" r="4" fill="var(--ink)" />
         <circle cx="0" cy="0" r="1.5" fill="var(--accent)" />
       </svg>

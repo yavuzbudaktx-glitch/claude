@@ -1,23 +1,51 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element */
-import useSWR from "swr";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { ArrowUp, ArrowDown, X, Plus } from "lucide-react";
 import { Card } from "@/components/Card";
 import { Sparkline } from "@/components/Sparkline";
+import { createClient } from "@/lib/supabase/client";
 
 // =============================================================================
-//   Watchlist: user-picked stock tickers, fetched entirely client-side from
-//   Yahoo Finance via the public CORS-proxy chain (the user's residential IP
-//   isn't on Yahoo's anti-bot blocklist the way Vercel's egress is).
+//   Watchlist — user-picked stock tickers, fetched client-side from Yahoo
+//   Finance via public CORS proxies and synced across devices via Supabase
+//   when the user is signed in. localStorage is a cache for cold-start +
+//   offline reads.
 // =============================================================================
 
 const WATCHLIST_KEY = "morning.watchlist.v1";
 const DEFAULT_WATCHLIST = ["NVDA", "AAPL", "TSLA", "AMZN", "GOOGL"];
 
 const QUOTE_CACHE_KEY = "morning.quote.v1";
-const QUOTE_CACHE_TTL = 1000 * 60 * 5; // 5min
+const QUOTE_FRESH_MS = 1000 * 60 * 5;       // <5min old → no refetch
+const QUOTE_STALE_MAX_MS = 1000 * 60 * 60 * 12; // up to 12h old still rendered
+
+// Cap concurrent CORS-proxy fetches so a watchlist with many tickers
+// doesn't trip per-IP rate limits on corsproxy.io / allorigins / etc.
+// Three slots is enough for fast aggregate load without saturating any
+// single proxy.
+const MAX_CONCURRENT_QUOTES = 3;
+let inFlight = 0;
+const queue: Array<() => void> = [];
+async function withSlot<T>(fn: () => Promise<T>): Promise<T> {
+  if (inFlight >= MAX_CONCURRENT_QUOTES) {
+    await new Promise<void>((r) => queue.push(r));
+  }
+  inFlight++;
+  try {
+    return await fn();
+  } finally {
+    inFlight--;
+    const next = queue.shift();
+    if (next) next();
+  }
+}
+
+// In-flight dedupe: if the same symbol is requested twice before the
+// first fetch resolves, both calls await the same Promise instead of
+// queueing two separate CORS-proxy round-trips.
+const inFlightBySymbol = new Map<string, Promise<Quote | null>>();
 
 interface YahooMeta {
   symbol?: string;
@@ -45,14 +73,16 @@ interface Quote {
   closes: number[];
 }
 
-function readQuoteCache(symbol: string): Quote | null {
+interface CachedQuote { data: Quote; ts: number; fresh: boolean }
+function readQuoteCache(symbol: string): CachedQuote | null {
   if (typeof window === "undefined") return null;
   try {
     const raw = localStorage.getItem(`${QUOTE_CACHE_KEY}.${symbol}`);
     if (!raw) return null;
     const entry = JSON.parse(raw) as { ts: number; data: Quote };
-    if (Date.now() - entry.ts > QUOTE_CACHE_TTL) return null;
-    return entry.data;
+    const age = Date.now() - entry.ts;
+    if (age > QUOTE_STALE_MAX_MS) return null;
+    return { data: entry.data, ts: entry.ts, fresh: age < QUOTE_FRESH_MS };
   } catch {
     return null;
   }
@@ -67,12 +97,9 @@ function writeQuoteCache(symbol: string, data: Quote) {
   } catch {}
 }
 
-async function fetchYahooQuote(symbol: string): Promise<Quote | null> {
-  // 5d/1d gives us roughly a week of daily closes plus today's live
-  // price in meta. interval=1d is the cleanest data shape; 5d is the
-  // tightest range Yahoo supports for daily bars.
+async function fetchYahooQuoteRaw(symbol: string): Promise<Quote | null> {
   const yahoo = (host: string) =>
-    `https://${host}/v8/finance/chart/${encodeURIComponent(symbol)}?range=5d&interval=1d`;
+    `https://${host}/v8/finance/chart/${encodeURIComponent(symbol)}?range=1mo&interval=1d`;
   const candidates = [
     `https://corsproxy.io/?${encodeURIComponent(yahoo("query1.finance.yahoo.com"))}`,
     `https://corsproxy.io/?${encodeURIComponent(yahoo("query2.finance.yahoo.com"))}`,
@@ -88,20 +115,32 @@ async function fetchYahooQuote(symbol: string): Promise<Quote | null> {
       const result = json.chart?.result?.[0];
       const meta = result?.meta;
       const price = meta?.regularMarketPrice;
-      const prevClose = meta?.chartPreviousClose ?? meta?.previousClose;
-      if (typeof price !== "number" || typeof prevClose !== "number") continue;
+      if (typeof price !== "number") continue;
+
       const closesRaw = result?.indicators?.quote?.[0]?.close ?? [];
       const closes = closesRaw.filter(
         (n): n is number => typeof n === "number" && Number.isFinite(n),
       );
+
+      // Yahoo's meta.chartPreviousClose for range=1mo is the close from
+      // ~30 days ago, NOT yesterday's — using that would render the
+      // monthly return, not today's move (and flip a lot of greens to
+      // reds). Today's move is current price vs the most recent prior
+      // close in the daily series.
+      const priorClose =
+        closes.length >= 2 ? closes[closes.length - 2] :
+        typeof meta?.chartPreviousClose === "number" ? meta.chartPreviousClose :
+        typeof meta?.previousClose === "number" ? meta.previousClose :
+        price;
+
       const sym = meta?.symbol?.toUpperCase() ?? symbol.toUpperCase();
       return {
         symbol: sym,
         name: meta?.shortName ?? meta?.longName ?? sym,
         price,
-        prevClose,
-        changePct: ((price - prevClose) / prevClose) * 100,
-        closes: closes.length > 0 ? closes : [prevClose, price],
+        prevClose: priorClose,
+        changePct: priorClose ? ((price - priorClose) / priorClose) * 100 : 0,
+        closes: closes.length > 0 ? closes : [priorClose, price],
       };
     } catch {
       // try next proxy
@@ -110,25 +149,66 @@ async function fetchYahooQuote(symbol: string): Promise<Quote | null> {
   return null;
 }
 
+// Shared accessor: same-symbol calls dedupe to one in-flight Promise,
+// and the work itself only runs when a concurrency slot is free.
+function fetchYahooQuote(symbol: string): Promise<Quote | null> {
+  const existing = inFlightBySymbol.get(symbol);
+  if (existing) return existing;
+  const p = withSlot(() => fetchYahooQuoteRaw(symbol)).finally(() => {
+    inFlightBySymbol.delete(symbol);
+  });
+  inFlightBySymbol.set(symbol, p);
+  return p;
+}
+
 function useTickerData(symbol: string): { quote: Quote | null; loading: boolean } {
-  const [quote, setQuote] = useState<Quote | null>(() => readQuoteCache(symbol));
-  const [loading, setLoading] = useState(!quote);
+  // Stale-while-revalidate: show cached data immediately (even when
+  // older than 5min) so the row never goes blank, then refresh in the
+  // background. Concurrency limiter in fetchYahooQuote ensures large
+  // watchlists don't hammer the CORS proxies all at once.
+  const initial = typeof window !== "undefined" ? readQuoteCache(symbol) : null;
+  const [quote, setQuote] = useState<Quote | null>(initial?.data ?? null);
+  const [loading, setLoading] = useState(!initial);
 
   useEffect(() => {
-    if (quote && quote.symbol === symbol) return; // already have fresh data
     let cancelled = false;
-    setLoading(true);
-    (async () => {
+    const cached = readQuoteCache(symbol);
+    // Cached + fresh → trust it, no fetch.
+    if (cached && cached.fresh && cached.data.symbol === symbol) {
+      setQuote(cached.data);
+      setLoading(false);
+      return;
+    }
+    // Cached + stale → show stale data immediately, refresh below.
+    if (cached) {
+      setQuote(cached.data);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+
+    const run = async (attempt: number) => {
       const fetched = await fetchYahooQuote(symbol);
       if (cancelled) return;
       if (fetched) {
         setQuote(fetched);
         writeQuoteCache(symbol, fetched);
+        setLoading(false);
+        return;
       }
-      setLoading(false);
-    })();
+      // No proxy returned data this round. If we still have nothing
+      // (no cached data even), retry a couple of times with backoff
+      // — usually it's one proxy briefly throttling.
+      if (attempt < 2) {
+        setTimeout(() => { if (!cancelled) run(attempt + 1); }, 1200 * (attempt + 1));
+      } else {
+        setLoading(false);
+      }
+    };
+    run(0);
+
     return () => { cancelled = true; };
-  }, [symbol, quote]);
+  }, [symbol]);
 
   return { quote, loading };
 }
@@ -141,90 +221,174 @@ function fmtPrice(p: number | null): string {
   return `$${p.toFixed(6)}`;
 }
 
-function WatchlistRow({ symbol, onRemove }: { symbol: string; onRemove: (s: string) => void }) {
+function WatchlistTile({ symbol, onRemove }: { symbol: string; onRemove: (s: string) => void }) {
   const { quote, loading } = useTickerData(symbol);
   const up = quote ? quote.changePct >= 0 : true;
+  const changeClass = quote
+    ? up
+      ? "text-emerald-600 dark:text-emerald-400"
+      : "text-accent"
+    : "text-muted";
 
   return (
-    <li className="group grid grid-cols-[60px_1fr_72px_88px_72px_18px] items-center gap-2 py-1.5 text-sm">
-      <span className="font-mono text-[12px] tabular-nums">{symbol}</span>
-      <span className="text-[11px] text-muted truncate">
-        {quote?.name ?? (loading ? "Loading…" : symbol)}
-      </span>
-      <span className="font-mono tabular-nums text-[12px] text-right">
-        {fmtPrice(quote?.price ?? null)}
-      </span>
-      <div className="flex justify-end">
-        <Sparkline data={quote?.closes ?? []} width={88} height={22} up={up} />
-      </div>
-      <span
-        className={`font-mono tabular-nums text-[12px] text-right inline-flex items-center justify-end gap-0.5 ${
-          quote
-            ? up
-              ? "text-emerald-600 dark:text-emerald-400"
-              : "text-accent"
-            : "text-muted"
-        }`}
-      >
-        {quote ? (
-          <>
-            {up ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
-            {up ? "+" : ""}
-            {quote.changePct.toFixed(2)}%
-          </>
-        ) : (
-          "—"
-        )}
-      </span>
+    <li className="group relative border rule-soft rounded-md p-3 hover:border-[var(--rule)] transition">
       <button
-        onClick={() => onRemove(symbol)}
-        className="opacity-0 group-hover:opacity-100 transition text-muted hover:text-accent"
+        onClick={(e) => { e.preventDefault(); e.stopPropagation(); onRemove(symbol); }}
+        className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition text-muted hover:text-accent"
         aria-label={`Remove ${symbol}`}
       >
         <X className="h-3.5 w-3.5" />
       </button>
+
+      <div className="flex items-baseline justify-between gap-2 mb-0.5">
+        <a
+          href={`https://stockinvest.us/stock/${encodeURIComponent(symbol)}`}
+          target="_blank"
+          rel="noreferrer"
+          className="font-mono text-[13px] tabular-nums font-medium hover:text-accent transition"
+        >
+          {symbol}
+        </a>
+        <span
+          className={`font-mono tabular-nums text-[12px] inline-flex items-center gap-0.5 ${changeClass}`}
+        >
+          {quote ? (
+            <>
+              {up ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
+              {up ? "+" : ""}
+              {quote.changePct.toFixed(2)}%
+            </>
+          ) : (
+            "—"
+          )}
+        </span>
+      </div>
+
+      <div className="text-[10.5px] text-muted truncate mb-2">
+        {quote?.name ?? (loading ? "Loading…" : symbol)}
+      </div>
+
+      <div className="flex items-end justify-between gap-2">
+        <span className="font-mono tabular-nums text-[15px]">
+          {fmtPrice(quote?.price ?? null)}
+        </span>
+        <Sparkline data={quote?.closes ?? []} width={110} height={28} up={up} />
+      </div>
     </li>
   );
 }
 
-function Watchlist() {
+interface WatchlistRow { symbol: string; position: number }
+
+function readLocalWatchlist(): string[] | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(WATCHLIST_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as string[];
+    return Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+function writeLocalWatchlist(list: string[]) {
+  if (typeof window === "undefined") return;
+  try { localStorage.setItem(WATCHLIST_KEY, JSON.stringify(list)); } catch {}
+}
+
+function MarketsBody() {
+  const supabase = useMemo(() => createClient(), []);
   const [tickers, setTickers] = useState<string[]>([]);
   const [adding, setAdding] = useState("");
+  const [userId, setUserId] = useState<string | null>(null);
   const hydrated = useRef(false);
 
+  // On mount: figure out auth state, then load tickers from the right source.
+  // - Signed-in: Supabase is source of truth. If empty, seed from
+  //   localStorage (carry-over from before sign-in) or defaults.
+  // - Signed-out: localStorage only.
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(WATCHLIST_KEY);
-      const parsed = raw ? (JSON.parse(raw) as string[]) : null;
-      setTickers(parsed && parsed.length > 0 ? parsed : DEFAULT_WATCHLIST);
-    } catch {
-      setTickers(DEFAULT_WATCHLIST);
-    }
-    hydrated.current = true;
-  }, []);
+    let cancelled = false;
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (cancelled) return;
+      const uid = session?.user?.id ?? null;
+      setUserId(uid);
 
+      if (uid) {
+        const { data, error } = await supabase
+          .from("watchlist")
+          .select("symbol, position, created_at")
+          .eq("user_id", uid)
+          .order("position", { ascending: true })
+          .order("created_at", { ascending: true });
+        if (cancelled) return;
+        const fromDb = !error && data ? data.map((r) => (r as { symbol: string }).symbol) : [];
+        if (fromDb.length > 0) {
+          setTickers(fromDb);
+        } else {
+          // First time signed in on this account — seed from the local
+          // list (if any) so the user doesn't lose tickers they added
+          // pre-auth, otherwise from defaults.
+          const seed = readLocalWatchlist() ?? DEFAULT_WATCHLIST;
+          setTickers(seed);
+          await supabase
+            .from("watchlist")
+            .insert(seed.map((symbol, i) => ({ user_id: uid, symbol, position: i })));
+        }
+      } else {
+        const local = readLocalWatchlist();
+        setTickers(local && local.length > 0 ? local : DEFAULT_WATCHLIST);
+      }
+      hydrated.current = true;
+    })();
+    return () => { cancelled = true; };
+  }, [supabase]);
+
+  // Mirror to localStorage so a fresh page-load before Supabase
+  // round-trips still shows the right list.
   useEffect(() => {
     if (!hydrated.current) return;
-    try { localStorage.setItem(WATCHLIST_KEY, JSON.stringify(tickers)); } catch {}
+    writeLocalWatchlist(tickers);
   }, [tickers]);
 
-  function add(raw: string) {
-    const sym = raw.trim().toUpperCase().replace(/[^A-Z0-9.\-]/g, "");
-    if (!sym || sym.length > 6) return;
-    if (tickers.includes(sym)) return;
-    setTickers((t) => [...t, sym]);
-    setAdding("");
-  }
-  function remove(sym: string) {
-    setTickers((t) => t.filter((s) => s !== sym));
-  }
+  const add = useCallback(
+    async (raw: string) => {
+      const sym = raw.trim().toUpperCase().replace(/[^A-Z0-9.\-]/g, "");
+      if (!sym || sym.length > 6) return;
+      if (tickers.includes(sym)) return;
+      const next = [...tickers, sym];
+      setTickers(next);
+      setAdding("");
+      if (userId) {
+        await supabase
+          .from("watchlist")
+          .upsert({ user_id: userId, symbol: sym, position: next.length - 1 });
+      }
+    },
+    [tickers, userId, supabase],
+  );
+
+  const remove = useCallback(
+    async (sym: string) => {
+      setTickers((t) => t.filter((s) => s !== sym));
+      if (userId) {
+        await supabase
+          .from("watchlist")
+          .delete()
+          .eq("user_id", userId)
+          .eq("symbol", sym);
+      }
+    },
+    [userId, supabase],
+  );
 
   return (
     <div>
       <div className="flex items-baseline gap-2 mb-1">
         <div className="label">Watchlist</div>
         <div className="font-mono text-[10px] uppercase tracking-wider text-muted">
-          5-day chart · today&rsquo;s move
+          30-day chart · today&rsquo;s move
         </div>
         <form
           className="ml-auto flex items-center gap-1"
@@ -252,137 +416,27 @@ function Watchlist() {
           No tickers yet. Type one above and press Enter.
         </p>
       ) : (
-        <ul className="divide-rule">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {tickers.map((s) => (
-            <WatchlistRow key={s} symbol={s} onRemove={remove} />
+            <WatchlistTile key={s} symbol={s} onRemove={remove} />
           ))}
         </ul>
       )}
-    </div>
-  );
-}
-
-// =============================================================================
-//   Crypto half — same as before. Server-side route returns top movers from
-//   CoinGecko (no Yahoo / FMP dependency); display unchanged.
-// =============================================================================
-
-interface Mover {
-  symbol: string;
-  name: string;
-  price: number | null;
-  changePct: number;
-  history: number[];
-  type: "stock" | "crypto";
-}
-interface Buckets { gainers: Mover[]; losers: Mover[] }
-interface Resp {
-  crypto: Buckets;
-  asOf: number;
-  fmpConfigured?: boolean;
-  fmpError?: string | null;
-}
-
-const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<Resp>);
-
-function fmtTime(ms: number | null | undefined) {
-  if (!ms) return null;
-  return new Date(ms).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
-}
-
-function CryptoRow({ m }: { m: Mover }) {
-  const up = m.changePct >= 0;
-  return (
-    <li className="grid grid-cols-[52px_1fr_64px_88px_64px] items-center gap-2 py-1.5 text-sm">
-      <span className="font-mono text-[12px] tabular-nums italic">{m.symbol}</span>
-      <span className="text-[11px] text-muted truncate">{m.name}</span>
-      <span className="font-mono tabular-nums text-[12px] text-right">
-        {fmtPrice(m.price)}
-      </span>
-      <div className="flex justify-end">
-        <Sparkline data={m.history} width={88} height={22} up={up} />
-      </div>
-      <span
-        className={`font-mono tabular-nums text-[12px] text-right inline-flex items-center justify-end gap-0.5 ${
-          up ? "text-emerald-600 dark:text-emerald-400" : "text-accent"
-        }`}
-      >
-        {up ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
-        {up ? "+" : ""}
-        {m.changePct.toFixed(2)}%
-      </span>
-    </li>
-  );
-}
-
-function CryptoSection({ label, items, meta }: { label: string; items: Mover[]; meta?: string }) {
-  return (
-    <div>
-      <div className="flex items-baseline gap-2 mb-1">
-        <div className="label">{label}</div>
-        {meta && (
-          <div className="font-mono text-[10px] uppercase tracking-wider text-muted">{meta}</div>
-        )}
-      </div>
-      {items.length === 0 ? (
-        <p className="text-muted text-xs italic py-2">No data right now — will refresh.</p>
-      ) : (
-        <ul className="divide-rule">
-          {items.map((m) => (
-            <CryptoRow key={`${m.type}:${m.symbol}`} m={m} />
-          ))}
-        </ul>
+      {userId === null && (
+        <div className="font-mono text-[9px] uppercase tracking-wider text-muted mt-3">
+          Sign in to sync this watchlist across devices.
+        </div>
       )}
     </div>
   );
 }
 
 export function MoversCard() {
-  const { data } = useSWR<Resp>("/api/movers", fetcher, {
-    refreshInterval: 1000 * 60 * 10,
-    keepPreviousData: true,
-    revalidateOnFocus: true,
-    shouldRetryOnError: false,
-  });
-
-  const cryptoView = useMemo(
-    () => ({
-      gainers: data?.crypto?.gainers ?? [],
-      losers: data?.crypto?.losers ?? [],
-    }),
-    [data],
-  );
-
   return (
-    <Card
-      num="05"
-      title="Markets"
-      action={
-        data?.asOf ? (
-          <span className="font-mono text-[10px] uppercase tracking-wider text-muted">
-            as of {fmtTime(data.asOf)}
-          </span>
-        ) : null
-      }
-    >
-      <div className="space-y-4">
-        <Watchlist />
-
-        <div className="border-t rule-soft -mx-5" />
-
-        <CryptoSection
-          label="Crypto · Top Gainers · Robinhood"
-          meta="1-mo chart · 24h move"
-          items={cryptoView.gainers}
-        />
-        <CryptoSection
-          label="Crypto · Top Losers · Robinhood"
-          items={cryptoView.losers}
-        />
-      </div>
-
+    <Card num="05" title="Watchlist">
+      <MarketsBody />
       <div className="font-mono text-[9px] uppercase tracking-wider text-muted mt-3">
-        Sources · Yahoo Finance · CoinGecko
+        Source · Yahoo Finance
       </div>
     </Card>
   );

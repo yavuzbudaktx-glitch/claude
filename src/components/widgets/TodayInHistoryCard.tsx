@@ -37,7 +37,7 @@ export function TodayInHistoryCard() {
   const labelKind =
     displayed.kind === "births" ? "Born today"
     : displayed.kind === "deaths" ? "Died today"
-    : displayed.kind === "featured" ? "Featured event"
+    : displayed.kind === "featured" ? "On This Day"
     : "On this day";
 
   const sourceLabel =
@@ -94,7 +94,18 @@ export function TodayInHistoryCard() {
             {displayed.year}
           </span>
         )}
-        {displayed.link ? (
+        {displayed.source === "britannica" ? (
+          // When the entry was scraped from Britannica, always point
+          // the user at the landing page (not the deep event article).
+          <a
+            href="https://www.britannica.com/on-this-day"
+            target="_blank"
+            rel="noreferrer"
+            className="font-serif text-[14px] leading-snug min-w-0 hover:underline underline-offset-4 decoration-[var(--rule)]"
+          >
+            {displayed.text}
+          </a>
+        ) : displayed.link ? (
           <a
             href={displayed.link}
             target="_blank"

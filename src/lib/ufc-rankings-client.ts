@@ -1,0 +1,169 @@
+// Client-side UFC rankings fetcher.
+//
+// The earlier server-side approach failed — datacenter IPs (Vercel) get
+// blocked by both octagon-api and ufc.com. So we fetch from the browser
+// through the same public CORS-proxy chain that already works for the
+// fighter-photo scraper in this app. We try octagon-api's clean JSON
+// first, then fall back to scraping ufc.com/rankings directly.
+
+export interface RankedFighter {
+  rank: number;
+  name: string;
+  id: string;
+}
+export interface DivisionRanking {
+  division: string;
+  champion: string | null;
+  contenders: RankedFighter[];
+}
+
+const WANTED = ["Featherweight", "Lightweight", "Welterweight", "Middleweight"] as const;
+
+function decode(s: string): string {
+  return s
+    .replace(/&amp;/g, "&")
+    .replace(/&#0?39;|&apos;|&rsquo;/g, "'")
+    .replace(/&quot;|&#34;/g, '"')
+    .replace(/&nbsp;/g, " ")
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
+    .trim();
+}
+
+function slugToName(slug: string): string {
+  return slug
+    .split(/[-_]+/)
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+async function fetchTextViaProxies(target: string): Promise<string | null> {
+  const candidates = [
+    target, // direct first — works when the source sends CORS headers
+    `https://corsproxy.io/?${encodeURIComponent(target)}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(target)}`,
+    `https://thingproxy.freeboard.io/fetch/${target}`,
+  ];
+  for (const url of candidates) {
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) continue;
+      const text = await res.text();
+      if (text && text.length > 50) return text;
+    } catch {
+      // try next proxy
+    }
+  }
+  return null;
+}
+
+// ---- Source 1: octagon-api JSON --------------------------------------------
+
+interface RawFighter { id?: string; fighterName?: string; name?: string; rank?: string | number }
+interface RawDivision { categoryName?: string; championId?: string; fighters?: RawFighter[] }
+
+function normalizeOctagon(json: unknown): DivisionRanking[] {
+  const rawDivisions: RawDivision[] = Array.isArray(json)
+    ? (json as RawDivision[])
+    : Object.values((json ?? {}) as Record<string, RawDivision>);
+
+  const byWanted = new Map<string, DivisionRanking>();
+  for (const raw of rawDivisions) {
+    const category = (raw.categoryName ?? "").trim();
+    const wanted = WANTED.find((w) => w.toLowerCase() === category.toLowerCase());
+    if (!wanted) continue;
+
+    let championId = raw.championId?.trim() || null;
+    let championName: string | null = null;
+    const contenders: RankedFighter[] = [];
+
+    for (const f of raw.fighters ?? []) {
+      const id = (f.id ?? "").trim();
+      const name = (f.fighterName ?? f.name ?? "").trim() || (id ? slugToName(id) : "");
+      const isChampLabel = typeof f.rank === "string" && /^(c|champion)$/i.test(f.rank.trim());
+      if (isChampLabel) {
+        championId = championId ?? id;
+        championName = name;
+        continue;
+      }
+      const rankNum = Number(f.rank);
+      if (Number.isFinite(rankNum) && name) contenders.push({ rank: rankNum, name, id: id || name });
+    }
+    if (!championName && championId) championName = slugToName(championId);
+    contenders.sort((a, b) => a.rank - b.rank);
+    if (contenders.length) byWanted.set(wanted, { division: wanted, champion: championName, contenders });
+  }
+  return WANTED.map((w) => byWanted.get(w)).filter((d): d is DivisionRanking => !!d);
+}
+
+async function fromOctagon(): Promise<DivisionRanking[]> {
+  const text = await fetchTextViaProxies("https://api.octagon-api.com/rankings");
+  if (!text) return [];
+  try {
+    return normalizeOctagon(JSON.parse(text));
+  } catch {
+    return [];
+  }
+}
+
+// ---- Source 2: ufc.com/rankings HTML scrape --------------------------------
+
+function parseUfcRankingsHtml(html: string): DivisionRanking[] {
+  const out: DivisionRanking[] = [];
+
+  // Locate each weight-class grouping by its header, then slice the chunk
+  // up to the next header.
+  const headerRe = /view-grouping-header"[^>]*>\s*([^<]+?)\s*</gi;
+  const headers: { name: string; index: number }[] = [];
+  let hm: RegExpExecArray | null;
+  while ((hm = headerRe.exec(html))) {
+    headers.push({ name: decode(hm[1]), index: hm.index });
+  }
+
+  for (let i = 0; i < headers.length; i++) {
+    const wanted = WANTED.find((w) => w.toLowerCase() === headers[i].name.toLowerCase());
+    if (!wanted) continue;
+    const chunk = html.slice(headers[i].index, headers[i + 1]?.index ?? html.length);
+
+    // Champion: name link inside the champion block.
+    let champion: string | null = null;
+    const champMatch =
+      chunk.match(/champion[\s\S]{0,400}?href="\/athlete\/[^"]*"[^>]*>\s*([^<]+?)\s*</i) ?? null;
+    if (champMatch) champion = decode(champMatch[1]);
+
+    // Contenders: a rank number followed by the athlete-link name.
+    const contenders: RankedFighter[] = [];
+    const seen = new Set<string>();
+    const rowRe =
+      /weight-class-rank"[^>]*>\s*(?:<span[^>]*>)?\s*(\d{1,2})\s*(?:<\/span>)?[\s\S]*?href="\/athlete\/([^"]+)"[^>]*>\s*([^<]+?)\s*</gi;
+    let rm: RegExpExecArray | null;
+    while ((rm = rowRe.exec(chunk))) {
+      const rank = Number(rm[1]);
+      const id = rm[2];
+      const name = decode(rm[3]);
+      if (!Number.isFinite(rank) || !name || seen.has(id)) continue;
+      seen.add(id);
+      contenders.push({ rank, name, id });
+    }
+    contenders.sort((a, b) => a.rank - b.rank);
+    if (contenders.length) out.push({ division: wanted, champion, contenders });
+  }
+  return out;
+}
+
+async function fromUfcCom(): Promise<DivisionRanking[]> {
+  const html = await fetchTextViaProxies("https://www.ufc.com/rankings");
+  if (!html) return [];
+  try {
+    return parseUfcRankingsHtml(html);
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchUfcRankings(): Promise<DivisionRanking[]> {
+  const fromApi = await fromOctagon();
+  if (fromApi.length) return fromApi;
+  return fromUfcCom();
+}

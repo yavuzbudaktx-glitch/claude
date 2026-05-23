@@ -19,25 +19,27 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-dvh flex items-center justify-center px-6">
-      <div className="card max-w-md w-full text-center animate-fadeIn">
-        <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted">
-          Vol. I · Subscribe
-        </div>
-        <h1 className="font-serif text-4xl md:text-5xl font-light tracking-tight mt-4 leading-none">
-          The Morning<br />
-          <em className="text-accent not-italic">Edition</em>.
+      <div className="card max-w-md w-full text-center animate-fadeIn !p-8 md:!p-10">
+        <div className="label">Your personal dashboard</div>
+        <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-4 leading-[0.95]">
+          <span className="text-ink">Good</span>{" "}
+          <span className="text-gradient">Morning</span>
         </h1>
         <p className="text-muted text-sm mt-5 leading-relaxed">
-          A private, single-reader newspaper.<br />
-          Time, weather, the day&rsquo;s ayet, your calendar, the wire, and a clear desk.
+          One calm place for your day — time, weather, the day&rsquo;s hadith,
+          your calendar, the headlines, markets, and a clear desk.
         </p>
         <button
           onClick={signIn}
-          className="mt-8 w-full px-4 py-3 font-mono text-[11px] uppercase tracking-[0.18em] border rule hover:bg-[var(--ink)] hover:text-[var(--bg)] hover:border-[var(--ink)] transition"
+          className="mt-8 w-full px-4 py-3.5 rounded-2xl text-[14px] font-semibold text-white transition hover:brightness-110 active:scale-[0.98]"
+          style={{
+            background: "linear-gradient(135deg, var(--grad-from), var(--grad-via), var(--grad-to))",
+            boxShadow: "0 10px 30px -8px var(--glow)",
+          }}
         >
           Sign in with Google
         </button>
-        <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted mt-6">
+        <div className="label mt-6 !tracking-[0.18em]">
           Calendar access · Read-only
         </div>
       </div>

@@ -8,8 +8,11 @@ name: Daily Britannica scrape
 
 on:
   schedule:
-    # 06:15 UTC ≈ 01:15 ET, right after Britannica's daily rollover.
-    - cron: "15 6 * * *"
+    # 05:00 UTC = midnight Central during DST (March–November).
+    # Drifts to 11:00 PM Central in standard time months — close
+    # enough that the morning view always has the freshly-rolled
+    # Featured Event.
+    - cron: "0 5 * * *"
   workflow_dispatch: {} # allow manual runs from the Actions tab
 
 jobs:
@@ -38,12 +41,21 @@ jobs:
         run: node scripts/scrape-britannica.mjs
 
       - name: Commit & push if changed
+        # Run even if the scrape step exited non-zero — the debug dump
+        # is exactly what we need when nothing parsed.
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [[ -n "$(git status --porcelain public/data/featured-event.json)" ]]; then
-            git add public/data/featured-event.json
-            git commit -m "data: daily Britannica Featured Event"
+          changed=""
+          for f in public/data/featured-event.json public/data/debug-britannica-raw.txt; do
+            if [[ -f "$f" && -n "$(git status --porcelain $f)" ]]; then
+              git add "$f"
+              changed="1"
+            fi
+          done
+          if [[ -n "$changed" ]]; then
+            git commit -m "data: daily Britannica scrape (with debug dump)"
             git push
           else
             echo "No change to commit."

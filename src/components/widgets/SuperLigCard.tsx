@@ -2,10 +2,11 @@
 
 /* eslint-disable @next/next/no-img-element */
 import useSWR from "swr";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { differenceInCalendarDays, format, parseISO } from "date-fns";
 import { Card } from "@/components/Card";
 import { localDateKey, msUntilLocalMidnight } from "@/lib/local-date";
+import { useRankChanges, RankArrow } from "@/lib/use-rank-changes";
 
 interface Standing {
   rank: number;
@@ -136,6 +137,13 @@ export function SuperLigCard() {
     },
   );
 
+  // Track week-over-week position moves for the up/down arrows.
+  const standingsOrder = useMemo(
+    () => (data?.standings ?? []).map((s) => s.teamId || s.team),
+    [data],
+  );
+  const rankChanges = useRankChanges("morning.superlig.rank", standingsOrder);
+
   return (
     <Card num="06" title="Süper Lig">
       {isLoading && !data && <p className="text-muted text-sm">Loading…</p>}
@@ -188,6 +196,7 @@ export function SuperLigCard() {
                           />
                         )}
                         <span className={`truncate ${bk ? "font-medium" : ""}`}>{s.team}</span>
+                        <RankArrow change={rankChanges[s.teamId || s.team]} />
                       </span>
                       <span className="font-mono tabular-nums text-right text-muted">{s.played}</span>
                       <span className="font-mono tabular-nums text-right text-muted">

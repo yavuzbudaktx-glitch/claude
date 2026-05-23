@@ -48,7 +48,10 @@ function absolutize(url) {
   return url;
 }
 function clampSummary(t) {
-  return t.length > 320 ? t.slice(0, 317).trimEnd() + "…" : t;
+  // No truncation — the card lays the full paragraph out below the
+  // title, and Britannica's descriptions are already a sensible
+  // length. Clamping was cutting them mid-thought.
+  return t.trim();
 }
 function isMeaningfulTitle(s) {
   const t = s.trim();
@@ -160,8 +163,79 @@ function tryFirstEventLink(html) {
   return extractFromChunk(html.slice(start, start + 10000));
 }
 
+function tryBritannicaFeaturedCard(html) {
+  // The actual Britannica markup uses a specific card class wrapper.
+  // Verified by inspecting public/data/debug-britannica-raw.txt:
+  //   <div class="otd-featured-event …">
+  //     <h2 class="mb-30">Featured Event</h2>
+  //     <div class="featured-event-card card">
+  //       <div class="card-media …">
+  //         <div class="date-label …">YEAR</div>   <!-- can be 3 or 4 digits -->
+  //         <img src="…" alt="…" />
+  //       </div>
+  //       <div class="card-body">
+  //         <div class="title …">{TITLE}</div>
+  //         <div class="description …">{DESCRIPTION (with inline <a> links)}</div>
+  //       </div>
+  //     </div>
+  //   </div>
+  const sectionM = html.match(/<div[^>]+class="[^"]*otd-featured-event[^"]*"[^>]*>([\s\S]*?)<\/h2>([\s\S]*?)(?=<div[^>]+class="[^"]*otd-feature-biography|<\/section|<footer)/i);
+  const card = sectionM ? sectionM[2] : (() => {
+    // Fall back to a looser locator if the wrapper class moves.
+    const altM = html.match(/<div[^>]+class="[^"]*featured-event-card[^"]*"[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/i);
+    return altM ? altM[0] : null;
+  })();
+  if (!card) return null;
+
+  // Year from date-label div — accept 1-4 digits (Britannica uses
+  // raw historical years including "337" or "44" BCE-ish notation).
+  let year = null;
+  const yearM = card.match(/<div[^>]+class="[^"]*date-label[^"]*"[^>]*>\s*(\d{1,4})\s*<\/div>/i);
+  if (yearM) year = parseInt(yearM[1], 10);
+
+  // Title: <div class="title …">
+  let title = "";
+  const titleM = card.match(/<div[^>]+class="[^"]*\btitle\b[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
+  if (titleM) title = stripTags(titleM[1]);
+
+  // Description: <div class="description …"> with embedded links we
+  // strip out. Britannica often appends a tag-along call-to-action
+  // link inside the same description div (class="otd-he-link") —
+  // strip those entire <a> tags BEFORE flattening so their text
+  // doesn't end up in the summary. Then do a text-level safety
+  // pass for any other trailing "Read … >>" / "Test your knowledge"
+  // style outros.
+  let summary = "";
+  let descRaw = "";
+  const descM = card.match(/<div[^>]+class="[^"]*\bdescription\b[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
+  if (descM) {
+    descRaw = descM[1].replace(/<a[^>]+class="[^"]*\botd-he-link\b[^"]*"[\s\S]*?<\/a>/gi, "");
+    summary = stripTags(descRaw)
+      .replace(/\s*Read\s+(?:today'?s\s+edition\s+of\s+)?Today in History[\s\S]*$/i, "")
+      .replace(/\s*Test your knowledge[\s\S]*$/i, "")
+      .replace(/\s*Learn more[\s\S]*$/i, "")
+      .replace(/\s*[›>»]+\s*[›>»]*\s*$/, "")
+      .trim();
+  }
+
+  // First Britannica article link inside the description = the canonical
+  // page for this event/topic. The href can be absolute
+  // (https://www.britannica.com/biography/…) or relative — handle both.
+  let link = null;
+  const linkM = (descRaw || card).match(
+    /<a[^>]+href="(?:https?:\/\/www\.britannica\.com)?(\/(?:event|biography|topic|place|story|art|science|technology|sports|animal)\/[^"]+)"/i,
+  );
+  if (linkM) link = `https://www.britannica.com${linkM[1]}`;
+
+  if (!title || !summary || summary.length < 30) return null;
+  return { year, title, summary: clampSummary(summary), link };
+}
+
 function extractFeaturedEvent(html) {
+  // Britannica-card pass goes first — it's a high-precision match
+  // against the exact markup, so when it works it's the truth.
   const candidates = [
+    tryBritannicaFeaturedCard(html),
     tryJsonLd(html),
     tryFeaturedMarker(html),
     tryFeaturedClass(html),
@@ -284,6 +358,75 @@ async function fetchViaJinaReader(url) {
   return { kind: "markdown", body: await res.text() };
 }
 
+async function fetchViaWaybackMachine(url) {
+  // Internet Archive hosts cached copies of Britannica's on-this-day
+  // page. archive.org IPs are typically unblocked. We query the
+  // availability API for the closest snapshot, then ensure it's
+  // recent enough — Britannica re-curates the "Featured Event" for
+  // a given date year-over-year, so a snapshot from 2024 will show
+  // a different event than 2026's. If the closest snapshot is older
+  // than 30 days we trigger a fresh capture and re-query.
+
+  const availability = `https://archive.org/wayback/available?url=${encodeURIComponent(url)}&timestamp=${new Date().toISOString().slice(0, 10).replace(/-/g, "")}`;
+  let availRes = await fetch(availability, {
+    headers: { "User-Agent": UA, Accept: "application/json" },
+  });
+  if (!availRes.ok) throw new Error(`HTTP ${availRes.status} querying Wayback availability`);
+  let availJson = await availRes.json();
+  let snap = availJson?.archived_snapshots?.closest;
+  if (!snap?.available || !snap?.url) throw new Error("No Wayback snapshot available");
+
+  // Wayback timestamp is YYYYMMDDhhmmss. Reject anything more than
+  // 30 days old.
+  const isFresh = (ts) => {
+    if (!ts || ts.length < 8) return false;
+    const y = parseInt(ts.slice(0, 4), 10);
+    const m = parseInt(ts.slice(4, 6), 10) - 1;
+    const d = parseInt(ts.slice(6, 8), 10);
+    const snapDate = new Date(Date.UTC(y, m, d));
+    return Date.now() - snapDate.getTime() < 30 * 24 * 3600 * 1000;
+  };
+
+  if (!isFresh(snap.timestamp)) {
+    console.log(`  ↳ snapshot is from ${snap.timestamp.slice(0, 8)} — triggering fresh capture…`);
+    try {
+      // Save Page Now — fire-and-forget, then poll availability for
+      // up to ~45s waiting for the new capture to land.
+      await fetch(`https://web.archive.org/save/${url}`, {
+        method: "GET",
+        headers: { "User-Agent": UA },
+      });
+    } catch { /* SPN often times out but the capture proceeds */ }
+
+    for (let i = 0; i < 9; i++) {
+      await new Promise((r) => setTimeout(r, 5000));
+      availRes = await fetch(availability, {
+        headers: { "User-Agent": UA, Accept: "application/json" },
+      });
+      if (!availRes.ok) continue;
+      availJson = await availRes.json();
+      const newSnap = availJson?.archived_snapshots?.closest;
+      if (newSnap?.timestamp && isFresh(newSnap.timestamp)) {
+        snap = newSnap;
+        console.log(`  ↳ fresh snapshot captured at ${snap.timestamp}`);
+        break;
+      }
+    }
+    if (!isFresh(snap.timestamp)) {
+      throw new Error(`Wayback snapshot stale (${snap.timestamp}) and Save Page Now didn't land in time`);
+    }
+  }
+
+  // id_ flag asks for the raw archived response (no IA toolbar).
+  const snapshotUrl = String(snap.url).replace(/\/web\/(\d+)\//, "/web/$1id_/");
+  console.log(`  ↳ using snapshot ${snap.timestamp}`);
+  const res = await fetch(snapshotUrl, {
+    headers: { "User-Agent": UA, Accept: "text/html" },
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status} fetching Wayback snapshot`);
+  return { kind: "html", body: await res.text() };
+}
+
 async function fetchViaCorsProxy(url) {
   // corsproxy.io / allorigins fetch on our behalf from yet another IP
   // pool. Tried last because they're rate-limited.
@@ -315,20 +458,25 @@ async function main() {
     "https://www.britannica.com/on-this-day",
   ];
 
-  // Order matters: ScrapingBee (when key is set) has residential IPs and
-  // is purpose-built for anti-bot bypass — it'll work where everything
-  // else fails. Then we try cheap options in order of decreasing
-  // friendliness to GitHub's IPs.
   const fetchers = [
-    { name: "ScrapingBee", fn: fetchViaScrapingBee },
-    { name: "Jina Reader", fn: fetchViaJinaReader },
-    { name: "Googlebot UA", fn: fetchAsGooglebot },
-    { name: "direct",      fn: fetchDirect },
-    { name: "CORS proxy",  fn: fetchViaCorsProxy },
+    { name: "ScrapingBee",     fn: fetchViaScrapingBee },
+    { name: "Jina Reader",     fn: fetchViaJinaReader },
+    { name: "Wayback Machine", fn: fetchViaWaybackMachine },
+    { name: "Googlebot UA",    fn: fetchAsGooglebot },
+    { name: "direct",          fn: fetchDirect },
+    { name: "CORS proxy",      fn: fetchViaCorsProxy },
   ];
 
   let topic = null;
   let usedUrl = null;
+  let usedFetcher = null;
+  // Stash the first body we successfully retrieved but couldn't parse —
+  // we dump it to public/data/debug-britannica-raw.txt so we can see
+  // what Britannica (or the proxy) is actually returning and iterate
+  // on the parser.
+  let firstNonEmptyBody = null;
+  let firstNonEmptyMeta = null;
+
   outer: for (const url of candidates) {
     for (const { name, fn } of fetchers) {
       try {
@@ -338,14 +486,19 @@ async function main() {
           console.log(`  → response too short (${body?.length ?? 0} chars)`);
           continue;
         }
+        if (!firstNonEmptyBody) {
+          firstNonEmptyBody = body;
+          firstNonEmptyMeta = { url, fetcher: name, kind, bodyLength: body.length };
+        }
         const parsed = kind === "markdown" ? parseMarkdown(body) : extractFeaturedEvent(body);
         if (parsed) {
           topic = parsed;
           usedUrl = url;
+          usedFetcher = name;
           console.log(`  ✓ parsed via ${name}`);
           break outer;
         } else {
-          console.log(`  → parser returned no plausible event from ${name} response`);
+          console.log(`  → parser returned no plausible event from ${name} response (${body.length} chars)`);
         }
       } catch (e) {
         console.log(`  → ${e.message}`);
@@ -353,8 +506,29 @@ async function main() {
     }
   }
 
+  // Always dump the first non-empty body we got, so the next iteration
+  // of the parser has something concrete to work against. Trimmed to
+  // ~80KB so we don't blow up the repo with a giant HTML file.
+  if (firstNonEmptyBody) {
+    const debugPath = path.resolve(__dirname, "../public/data/debug-britannica-raw.txt");
+    await fs.mkdir(path.dirname(debugPath), { recursive: true });
+    const head = `# Britannica scrape debug dump
+# generated: ${new Date().toISOString()}
+# url:       ${firstNonEmptyMeta.url}
+# fetcher:   ${firstNonEmptyMeta.fetcher}
+# kind:      ${firstNonEmptyMeta.kind}
+# length:    ${firstNonEmptyMeta.bodyLength}
+# parsed:    ${topic ? "YES (" + usedFetcher + ")" : "NO"}
+# -----------------------------------------------------------------
+`;
+    const trimmed = firstNonEmptyBody.slice(0, 80_000);
+    await fs.writeFile(debugPath, head + trimmed, "utf8");
+    console.log(`\nDebug dump → ${debugPath} (${trimmed.length} chars)`);
+  }
+
   if (!topic) {
     console.error("Could not extract a plausible Featured Event from any URL × any fetcher.");
+    console.error("Inspect public/data/debug-britannica-raw.txt to see what the proxy is returning.");
     process.exit(1);
   }
 
