@@ -159,16 +159,16 @@ async function parseFeed(f: FeedSource): Promise<NewsItem[]> {
   }
 }
 
-// Dedupe by title, sort newest-first, and cap each source to 2 items so
-// one prolific feed can't dominate the column.
-function rankItems(items: NewsItem[], perCategory: number): NewsItem[] {
+// Dedupe by title, sort newest-first, and cap each source so one prolific
+// feed can't dominate the column.
+function rankItems(items: NewsItem[], perCategory: number, perSource = 2): NewsItem[] {
   const sourceCount: Record<string, number> = {};
   return items
     .filter((v, i, arr) => arr.findIndex((x) => x.title === v.title) === i)
     .sort((a, b) => +new Date(b.pubDate) - +new Date(a.pubDate))
     .filter((item) => {
       sourceCount[item.source] = (sourceCount[item.source] ?? 0) + 1;
-      return sourceCount[item.source] <= 2;
+      return sourceCount[item.source] <= perSource;
     })
     .slice(0, perCategory);
 }
@@ -190,14 +190,16 @@ export async function fetchAllFeeds(perCategory = 10): Promise<Record<NewsCatego
 }
 
 // Fetch a single category's feeds fresh — used by the per-tab refresh
-// button so the user can pull the latest for just the column they're
-// looking at without refetching all five categories.
+// button. We pull a deep pool (and allow more items per source) so the
+// client can rotate through genuinely different headlines on each
+// refresh instead of re-showing the same top few.
 export async function fetchCategoryFeeds(
   category: NewsCategory,
-  perCategory = 10,
+  perCategory = 30,
+  perSource = 6,
 ): Promise<NewsItem[]> {
   const sources = FEEDS.filter((f) => f.category === category);
   const results = await Promise.allSettled(sources.map(parseFeed));
   const all = results.flatMap((r) => (r.status === "fulfilled" ? r.value : []));
-  return rankItems(all, perCategory);
+  return rankItems(all, perCategory, perSource);
 }

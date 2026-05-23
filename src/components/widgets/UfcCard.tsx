@@ -5,6 +5,9 @@ import useSWR from "swr";
 import { useEffect, useState } from "react";
 import { differenceInCalendarDays, format, parseISO } from "date-fns";
 import { Card } from "@/components/Card";
+import { localDateKey, msUntilLocalMidnight } from "@/lib/local-date";
+import { useRankChanges, RankArrow } from "@/lib/use-rank-changes";
+import { fetchUfcRankings, type DivisionRanking } from "@/lib/ufc-rankings-client";
 import type { UfcEvent, UfcFighter, UfcPayload } from "@/app/api/ufc/route";
 
 // Mirror of the slug-candidate helper in /api/ufc/route.ts. Kept inline
@@ -441,6 +444,84 @@ function UpcomingBox({ ev }: { ev: UfcEvent }) {
   );
 }
 
+function DivisionRankBlock({ d }: { d: DivisionRanking }) {
+  // Track movement across the full ranked list so a contender climbing
+  // 6→5 still shows an arrow even though only the top 5 are displayed.
+  const order = d.contenders.map((c) => c.id);
+  const changes = useRankChanges(`morning.ufcrank.${d.division}`, order);
+  const top5 = d.contenders.slice(0, 5);
+  return (
+    <div>
+      <div className="label text-accent">{d.division}</div>
+      {d.champion && (
+        <div className="mt-1.5">
+          <div className="font-semibold text-ink text-[13.5px] leading-tight truncate">
+            {d.champion}
+          </div>
+          <div className="label !text-[9px] mt-0.5">Champion</div>
+        </div>
+      )}
+      <ul className="mt-2 divide-rule">
+        {top5.map((c) => (
+          <li key={c.id} className="flex items-center gap-2 py-[5px] text-[13px]">
+            <span className="font-mono text-[11px] text-muted w-4 text-right tabular-nums shrink-0">
+              {c.rank}
+            </span>
+            <span className="flex-1 truncate">{c.name}</span>
+            <RankArrow change={changes[c.id]} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function UfcRankings() {
+  // Re-key at local midnight so rankings refresh nightly (plus hourly in
+  // the background), picking up post-fight moves within the hour.
+  const [dateKey, setDateKey] = useState(() => localDateKey());
+  useEffect(() => {
+    const t = setTimeout(() => setDateKey(localDateKey()), msUntilLocalMidnight());
+    return () => clearTimeout(t);
+  }, [dateKey]);
+
+  const { data, isLoading } = useSWR<DivisionRanking[]>(
+    `ufc-rankings:${dateKey}`,
+    () => fetchUfcRankings(),
+    { refreshInterval: 1000 * 60 * 60, keepPreviousData: true, revalidateOnFocus: false },
+  );
+
+  const divisions = data ?? [];
+
+  if (isLoading && !data) {
+    return (
+      <div className="mt-5 pt-4 border-t rule">
+        <div className="label mb-2">Rankings · Top 5</div>
+        <p className="text-muted text-xs italic">Loading rankings…</p>
+      </div>
+    );
+  }
+  if (divisions.length === 0) {
+    return (
+      <div className="mt-5 pt-4 border-t rule">
+        <div className="label mb-2">Rankings · Top 5</div>
+        <p className="text-muted text-xs italic">Rankings unavailable right now.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-5 pt-4 border-t rule">
+      <div className="label mb-3">Rankings · Top 5 · arrows show this week&rsquo;s moves</div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-5">
+        {divisions.map((d) => (
+          <DivisionRankBlock key={d.division} d={d} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function UfcCard() {
   const { data, isLoading, error } = useSWR<UfcPayload>("/api/ufc", fetcher, {
     refreshInterval: 1000 * 60 * 60,
@@ -477,6 +558,8 @@ export function UfcCard() {
           )}
         </div>
       )}
+
+      <UfcRankings />
 
       <div className="font-mono text-[9px] uppercase tracking-wider text-muted mt-3">
         Source · ESPN

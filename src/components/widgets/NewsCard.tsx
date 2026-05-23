@@ -8,11 +8,12 @@ import { formatDistanceToNowStrict, format } from "date-fns";
 import { Card } from "@/components/Card";
 import { CATEGORY_LABELS, CATEGORY_ORDER, type NewsCategory, type NewsItem } from "@/lib/feeds";
 
-const EMPTY_RESP: Record<NewsCategory, NewsItem[]> = {
-  world: [], turkey: [], dallas: [], tech: [], finance: [],
-};
-
 type Resp = Record<NewsCategory, NewsItem[]>;
+
+// How many headlines to show at once. Each refresh advances by this much
+// through a deep, freshly-fetched pool so the column shows different
+// stories every time.
+const WINDOW = 6;
 const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<Resp>);
 
 // Stable colour per source, derived from name. Used as the *final*
@@ -102,33 +103,45 @@ function PubDate({ iso }: { iso: string }) {
 }
 
 export function NewsCard() {
-  const { data, error, isLoading, mutate } = useSWR<Resp>("/api/news", fetcher, {
+  const { data, error, isLoading } = useSWR<Resp>("/api/news", fetcher, {
     refreshInterval: 1000 * 60 * 15,
     keepPreviousData: true,
   });
   const [active, setActive] = useState<NewsCategory>("world");
   const [refreshing, setRefreshing] = useState(false);
+  // Per-category deep pools fetched on refresh, plus a rolling window
+  // offset so each refresh reveals a different slice of headlines.
+  const [pools, setPools] = useState<Partial<Record<NewsCategory, NewsItem[]>>>({});
+  const [offsets, setOffsets] = useState<Partial<Record<NewsCategory, number>>>({});
 
-  // Refresh ONLY the tab currently in view. We visibly clear the column
-  // first (so it's obvious something happened), then pull fresh items from
-  // the force-dynamic single-category endpoint with a cache-busting param
-  // — bypassing both the 15-min ISR cache and any PWA service-worker
-  // cache — and patch just that slice of the SWR cache. The other four
-  // categories are left untouched.
+  const pool = pools[active];
+  const offset = offsets[active] ?? 0;
+  const visibleItems: NewsItem[] =
+    pool && pool.length > 0
+      ? Array.from({ length: Math.min(WINDOW, pool.length) }, (_, k) => pool[(offset + k) % pool.length])
+      : (data?.[active] ?? []).slice(0, WINDOW);
+
+  // Refresh ONLY the tab currently in view. Pulls a deep, freshly-fetched
+  // pool from the force-dynamic single-category endpoint (cache-busting
+  // param bypasses the ISR + PWA service-worker caches) and advances the
+  // window so genuinely different stories appear on every click.
   async function refreshActive() {
     if (refreshing) return;
+    const cat = active;
     setRefreshing(true);
-    const prevItems = data?.[active] ?? [];
     try {
-      await mutate((prev) => ({ ...(prev ?? EMPTY_RESP), [active]: [] }), { revalidate: false });
-      const res = await fetch(`/api/news/category?c=${active}&t=${Date.now()}`, { cache: "no-store" });
+      const res = await fetch(`/api/news/category?c=${cat}&t=${Date.now()}`, { cache: "no-store" });
       if (!res.ok) throw new Error(`news refresh failed: ${res.status}`);
       const json = (await res.json()) as { items?: NewsItem[] };
       const items = json.items ?? [];
-      await mutate((prev) => ({ ...(prev ?? EMPTY_RESP), [active]: items }), { revalidate: false });
+      if (items.length === 0) return;
+      setPools((p) => ({ ...p, [cat]: items }));
+      setOffsets((o) => {
+        const cur = o[cat] ?? 0;
+        return { ...o, [cat]: (cur + WINDOW) % items.length };
+      });
     } catch {
-      // Restore the previous items so a failed refresh doesn't blank the tab.
-      await mutate((prev) => ({ ...(prev ?? EMPTY_RESP), [active]: prevItems }), { revalidate: false });
+      // leave the current headlines in place on failure
     } finally {
       setRefreshing(false);
     }
@@ -162,36 +175,42 @@ export function NewsCard() {
 
       {isLoading && !data && <p className="text-muted text-sm">Loading…</p>}
       {error && !data && <p className="text-accent text-sm">Couldn&rsquo;t load news.</p>}
-      {data && (
-        <ul className="space-y-3 pr-1">
-          {(data[active] ?? []).map((item) => (
-            <li key={item.link}>
-              <a
-                href={item.link}
-                target="_blank"
-                rel="noreferrer"
-                className="group flex gap-3 items-start"
-              >
-                <div className="shrink-0 w-16 h-16 rounded-md overflow-hidden border rule-soft">
-                  <NewsThumb item={item} />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="text-[13px] leading-snug font-medium group-hover:underline underline-offset-2 line-clamp-3">
-                    {item.title}
+
+      {(data || pool) &&
+        (refreshing ? (
+          <div className="py-10 flex items-center justify-center gap-2 text-muted text-sm">
+            <RefreshCw className="h-4 w-4 animate-spin" /> Fetching fresh headlines…
+          </div>
+        ) : (
+          <ul className="space-y-3 pr-1">
+            {visibleItems.map((item) => (
+              <li key={item.link}>
+                <a
+                  href={item.link}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group flex gap-3 items-start"
+                >
+                  <div className="shrink-0 w-16 h-16 rounded-md overflow-hidden border rule-soft">
+                    <NewsThumb item={item} />
                   </div>
-                  <div className="font-mono text-[10px] uppercase tracking-wider text-muted mt-1 flex items-center gap-1.5 flex-wrap">
-                    <span>{item.source}</span>
-                    <PubDate iso={item.pubDate} />
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[13px] leading-snug font-medium group-hover:underline underline-offset-2 line-clamp-3">
+                      {item.title}
+                    </div>
+                    <div className="font-mono text-[10px] uppercase tracking-wider text-muted mt-1 flex items-center gap-1.5 flex-wrap">
+                      <span>{item.source}</span>
+                      <PubDate iso={item.pubDate} />
+                    </div>
                   </div>
-                </div>
-              </a>
-            </li>
-          ))}
-          {(data[active] ?? []).length === 0 && (
-            <li className="text-muted text-sm">No headlines.</li>
-          )}
-        </ul>
-      )}
+                </a>
+              </li>
+            ))}
+            {visibleItems.length === 0 && (
+              <li className="text-muted text-sm">No headlines.</li>
+            )}
+          </ul>
+        ))}
     </Card>
   );
 }

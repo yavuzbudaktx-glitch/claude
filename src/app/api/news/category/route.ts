@@ -11,7 +11,7 @@ export async function GET(req: Request) {
     if (!c || !CATEGORY_ORDER.includes(c)) {
       return NextResponse.json({ error: "bad_category" }, { status: 400 });
     }
-    const items = await fetchCategoryFeeds(c, 5);
+    const items = await fetchCategoryFeeds(c, 30, 6);
     return NextResponse.json(
       { items },
       { headers: { "Cache-Control": "no-store" } },
