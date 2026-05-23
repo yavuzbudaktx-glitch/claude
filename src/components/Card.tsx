@@ -18,19 +18,12 @@ export function Card({
   return (
     <section className={`card animate-fadeIn ${className}`}>
       <header className="headrule">
-        {num ? (
-          <span className="section-num" aria-hidden>
-            {num}
-          </span>
-        ) : null}
-        <span
-          className="font-serif text-[15px] font-medium tracking-tight text-ink leading-none"
-          style={{ fontVariationSettings: '"opsz" 144' }}
-        >
+        <span className="label">
+          {num ? <span className="text-accent mr-2">№ {num}</span> : null}
           {title}
         </span>
-        {meta && <span className="label ml-1.5">{meta}</span>}
         <div className="ml-auto flex items-center gap-2">{action}</div>
+        {meta && <div className="ml-2 label">{meta}</div>}
       </header>
       {children}
     </section>
