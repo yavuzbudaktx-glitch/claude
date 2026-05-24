@@ -35,14 +35,7 @@ export function AnalogClock() {
   return (
     <div className="flex items-center justify-center w-full">
       <svg viewBox="-110 -110 220 220" className="w-full max-w-[240px] aspect-square">
-        <defs>
-          <radialGradient id="clockface" cx="50%" cy="50%" r="55%">
-            <stop offset="0%" stopColor="var(--paper)" />
-            <stop offset="100%" stopColor="var(--bg)" />
-          </radialGradient>
-        </defs>
-
-        <circle cx="0" cy="0" r="100" fill="url(#clockface)" stroke="var(--rule)" strokeWidth="1" />
+        <circle cx="0" cy="0" r="100" fill="var(--paper)" stroke="var(--rule)" strokeWidth="1" />
         <circle cx="0" cy="0" r="92" fill="none" stroke="var(--rule-soft)" strokeWidth="0.5" />
 
         {Array.from({ length: 60 }).map((_, i) => {

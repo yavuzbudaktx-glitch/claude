@@ -36,10 +36,13 @@ function decodeEntities(s: string): string {
 }
 
 export async function fetchRecentEmails(accessToken: string, max = 5): Promise<EmailItem[]> {
-  // INBOX + CATEGORY_PERSONAL together = the "Primary" tab only (excludes
-  // Promotions / Social / Updates / Forums).
+  // Use Gmail's own "Primary" tab definition. The CATEGORY_PERSONAL label
+  // alone misses Primary messages that simply aren't categorised into
+  // another tab, which is why many were being skipped; the `category:primary`
+  // search operator includes those uncategorised inbox messages too.
+  const q = encodeURIComponent("in:inbox category:primary");
   const listRes = await fetch(
-    `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=${max}&labelIds=INBOX&labelIds=CATEGORY_PERSONAL`,
+    `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=${max}&q=${q}`,
     { headers: { Authorization: `Bearer ${accessToken}` }, cache: "no-store" },
   );
   if (!listRes.ok) {
