@@ -35,9 +35,11 @@ function decodeEntities(s: string): string {
     .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)));
 }
 
-export async function fetchRecentEmails(accessToken: string, max = 12): Promise<EmailItem[]> {
+export async function fetchRecentEmails(accessToken: string, max = 5): Promise<EmailItem[]> {
+  // INBOX + CATEGORY_PERSONAL together = the "Primary" tab only (excludes
+  // Promotions / Social / Updates / Forums).
   const listRes = await fetch(
-    `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=${max}&labelIds=INBOX`,
+    `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=${max}&labelIds=INBOX&labelIds=CATEGORY_PERSONAL`,
     { headers: { Authorization: `Bearer ${accessToken}` }, cache: "no-store" },
   );
   if (!listRes.ok) {

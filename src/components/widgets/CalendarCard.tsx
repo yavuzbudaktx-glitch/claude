@@ -235,6 +235,23 @@ export function CalendarCard() {
     saveHidden(next);
   }
 
+  const tabs = (
+    <span className="inline-flex items-center gap-1.5">
+      <button
+        onClick={() => setTab("calendar")}
+        className={`chip normal-case !px-2.5 !py-0.5 !text-[11px] ${tab === "calendar" ? "chip-active" : ""}`}
+      >
+        Calendar
+      </button>
+      <button
+        onClick={() => setTab("inbox")}
+        className={`chip normal-case !px-2.5 !py-0.5 !text-[11px] inline-flex items-center gap-1 ${tab === "inbox" ? "chip-active" : ""}`}
+      >
+        <Mail className="h-3 w-3" /> Inbox
+      </button>
+    </span>
+  );
+
   const action =
     tab === "calendar" && hidden.size > 0 ? (
       <button
@@ -247,16 +264,7 @@ export function CalendarCard() {
     ) : null;
 
   return (
-    <Card num="02" title="Upcoming" action={action}>
-      <div className="flex gap-1.5 mb-4">
-        <button onClick={() => setTab("calendar")} className={`chip ${tab === "calendar" ? "chip-active" : ""}`}>
-          Calendar
-        </button>
-        <button onClick={() => setTab("inbox")} className={`chip inline-flex items-center gap-1 ${tab === "inbox" ? "chip-active" : ""}`}>
-          <Mail className="h-3 w-3" /> Inbox
-        </button>
-      </div>
-
+    <Card num="02" title="Upcoming" meta={tabs} action={action}>
       {tab === "calendar" ? (
         <CalendarTab
           hidden={hidden}

@@ -23,7 +23,7 @@ export async function GET() {
 
   try {
     const accessToken = await refreshAccessToken(refreshToken);
-    const emails = await fetchRecentEmails(accessToken, 12);
+    const emails = await fetchRecentEmails(accessToken, 5);
     return NextResponse.json({ emails });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "gmail_failed";

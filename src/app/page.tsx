@@ -13,6 +13,7 @@ import { UfcCard } from "@/components/widgets/UfcCard";
 import { BodyCard } from "@/components/widgets/BodyCard";
 import { SignOutButton } from "@/components/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { FullscreenToggle } from "@/components/FullscreenToggle";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +35,7 @@ export default async function Page() {
             name={name}
             actions={
               <>
+                <FullscreenToggle />
                 <ThemeToggle />
                 <SignOutButton />
               </>

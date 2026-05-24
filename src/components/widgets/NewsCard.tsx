@@ -68,6 +68,8 @@ const SOURCE_LOGOS: Record<string, string> = {
   "Hacker News": "https://cdn-icons-png.flaticon.com/512/9543/9543111.png",
   "Anadolu Ajansı":
     "https://play-lh.googleusercontent.com/ME_9wBMHWB_QmJwy-QXRmEsOd_i0VFw4K-3wdHAmydgnmJnDmrqWVFfEOGnHzubdzg",
+  TechCrunch:
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/TechCrunch_logo.svg/250px-TechCrunch_logo.svg.png",
 };
 
 function NewsThumb({ item }: { item: NewsItem }) {
