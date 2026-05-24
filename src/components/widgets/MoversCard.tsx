@@ -462,12 +462,13 @@ function CurrencyRates() {
     ["USD/EUR", rates.EUR],
     ["USD/GBP", rates.GBP],
     ["USD/JPY", rates.JPY],
+    ["USD/CNY", rates.CNY],
   ];
   return (
-    <div className="grid grid-cols-4 gap-2 mt-3 pt-3 border-t rule-soft">
+    <div className="grid grid-cols-5 gap-2 mt-3 pt-3 border-t rule-soft">
       {pairs.map(([label, v]) => (
         <div key={label} className="text-center">
-          <div className="label !text-[9px] !tracking-[0.08em]">{label}</div>
+          <div className="label !text-[9px] !tracking-[0.06em]">{label}</div>
           <div className="font-mono tabular-nums text-[13px] text-ink mt-0.5">{fmt(v)}</div>
         </div>
       ))}

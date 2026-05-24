@@ -34,17 +34,20 @@ export function FocusMode() {
   const ss = String(secs % 60).padStart(2, "0");
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/45 backdrop-blur-2xl animate-fadeIn">
-      <div className="text-center">
-        <div className="label text-accent mb-4 !tracking-[0.3em]">Focus time</div>
-        <div className="font-display tabular-nums text-white leading-none text-[84px] md:text-[140px]">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/35 backdrop-blur-xl animate-fadeIn">
+      <div
+        className="flex flex-col items-center gap-4 px-12 py-9 rounded-3xl border border-white/10 bg-white/[0.06]"
+        style={{ boxShadow: "0 0 70px -12px var(--glow), inset 0 1px 0 rgba(255,255,255,0.08)" }}
+      >
+        <div className="text-[10px] font-semibold uppercase tracking-[0.4em] text-white/55">Focus</div>
+        <div className="font-display tabular-nums text-white/95 leading-none text-5xl md:text-6xl">
           {mm}:{ss}
         </div>
         <button
           onClick={() => setActive(false)}
-          className="mt-10 inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/25 text-white/85 hover:bg-white/10 transition text-sm"
+          className="mt-1 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-white/20 text-white/70 hover:bg-white/10 hover:text-white transition text-[13px]"
         >
-          <X className="h-4 w-4" /> End focus
+          <X className="h-3.5 w-3.5" /> End
         </button>
       </div>
     </div>

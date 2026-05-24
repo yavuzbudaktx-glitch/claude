@@ -40,12 +40,6 @@ export function TodayInHistoryCard() {
     : displayed.kind === "featured" ? "On This Day"
     : "On this day";
 
-  const sourceLabel =
-    displayed.source === "curated" ? null
-    : displayed.source === "britannica" ? "Britannica"
-    : displayed.source && displayed.source.startsWith("wikipedia") ? "Wikipedia"
-    : null;
-
   // Require something that actually looks like a real headline. The previous
   // !displayed.text guard accepted one-word link labels ("Read", "More"),
   // which the Britannica scraper occasionally grabs from the wrong card
@@ -79,11 +73,6 @@ export function TodayInHistoryCard() {
     <div className="animate-fadeIn">
       <div className="flex items-baseline justify-between mb-1.5">
         <div className="label">{labelKind}</div>
-        {sourceLabel && (
-          <div className="font-mono text-[9px] uppercase tracking-wider text-muted">
-            via {sourceLabel}
-          </div>
-        )}
       </div>
       {/* Text-only render. We dropped the thumbnail because Britannica's
           card images regularly loaded ahead of a missing/invalid title,

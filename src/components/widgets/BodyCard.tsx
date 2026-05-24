@@ -176,6 +176,20 @@ function smoothPath(pts: Array<[number, number]>): string {
   return d;
 }
 
+// A textarea that grows with its content instead of scrolling.
+function AutoTextarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  const resize = () => {
+    const el = ref.current;
+    if (el) {
+      el.style.height = "auto";
+      el.style.height = `${el.scrollHeight}px`;
+    }
+  };
+  useEffect(() => { resize(); }, [props.value]);
+  return <textarea ref={ref} onInput={resize} {...props} />;
+}
+
 function fmtDate(key: string): string {
   const [y, m, d] = key.split("-").map(Number);
   if (!y || !m || !d) return key;
@@ -357,13 +371,13 @@ export function BodyCard() {
   }
 
   const fieldClass =
-    "w-full rounded-xl px-3 py-2 text-[13px] leading-relaxed text-ink resize-y transition " +
+    "w-full rounded-xl px-3 py-2 text-[13px] leading-relaxed text-ink resize-none overflow-hidden transition " +
     "bg-[var(--rule-soft)] border border-transparent opacity-75 placeholder:text-muted-2 " +
     "hover:opacity-100 focus:opacity-100 focus:bg-[var(--paper)] focus:border-[var(--accent)] focus:outline-none";
 
   return (
     <Card num="09" title="Body · Weight & Training">
-      <div className="grid grid-cols-1 lg:grid-cols-[190px_1fr_minmax(240px,0.9fr)] gap-6 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-[210px_1fr_auto] gap-6 items-center">
         {/* Weight dial + arrows */}
         <div className="flex items-center justify-center gap-3">
           <div
@@ -460,7 +474,7 @@ export function BodyCard() {
 
         <div>
           <div className="label mb-2">Workout · Day A</div>
-          <textarea
+          <AutoTextarea
             value={state.workoutA}
             placeholder={"e.g.\nBench 4×8\nRows 4×10\nOHP 3×10"}
             onChange={(e) => setState((s) => ({ ...s, workoutA: e.target.value }))}
@@ -471,7 +485,7 @@ export function BodyCard() {
 
         <div>
           <div className="label mb-2">Workout · Day B</div>
-          <textarea
+          <AutoTextarea
             value={state.workoutB}
             placeholder={"e.g.\nSquat 4×6\nDeadlift 3×5\nCurls 3×12"}
             onChange={(e) => setState((s) => ({ ...s, workoutB: e.target.value }))}

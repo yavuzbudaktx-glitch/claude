@@ -74,6 +74,8 @@ const SOURCE_LOGOS: Record<string, string> = {
     "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/TechCrunch_logo.svg/250px-TechCrunch_logo.svg.png",
   "FT Markets":
     "https://pbs.twimg.com/profile_images/931162839905161216/FsnHwgvX_400x400.jpg",
+  "CNBC Finance":
+    "https://cdn.mos.cms.futurecdn.net/nf2EcKazcof5TuyxYHA3mF.webp",
 };
 
 function NewsThumb({ item }: { item: NewsItem }) {
@@ -203,22 +205,24 @@ export function NewsCard() {
 
   return (
     <Card num="03" title="The Wire" action={refreshAction}>
-      <div className="flex flex-wrap gap-1.5 mb-4">
+      <div className="flex flex-nowrap gap-1 mb-4">
         {CATEGORY_ORDER.map((c) => (
           <button
             key={c}
             onClick={() => setActive(c)}
-            className={`chip ${active === c ? "chip-active" : ""}`}
+            className={`chip !px-2 !py-1 !text-[11px] whitespace-nowrap ${active === c ? "chip-active" : ""}`}
           >
             {CATEGORY_LABELS[c]}
           </button>
         ))}
         <button
           onClick={() => setActive("saved")}
-          className={`chip inline-flex items-center gap-1 ${active === "saved" ? "chip-active" : ""}`}
+          className={`chip !px-2 !py-1 !text-[11px] inline-flex items-center gap-1 ${active === "saved" ? "chip-active" : ""}`}
+          aria-label="Saved"
+          title="Saved"
         >
-          <Star className="h-3 w-3" fill={active === "saved" ? "currentColor" : "none"} />
-          Saved{saved.length ? ` ${saved.length}` : ""}
+          <Star className="h-3 w-3 shrink-0" fill={active === "saved" ? "currentColor" : "none"} />
+          {saved.length ? saved.length : ""}
         </button>
       </div>
 

@@ -16,7 +16,6 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { FullscreenToggle } from "@/components/FullscreenToggle";
 import { Scratchpad } from "@/components/Scratchpad";
 import { FocusButton } from "@/components/FocusButton";
-import { CommandButton } from "@/components/CommandButton";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +37,6 @@ export default async function Page() {
             name={name}
             actions={
               <>
-                <CommandButton />
                 <Scratchpad />
                 <FocusButton />
                 <FullscreenToggle />

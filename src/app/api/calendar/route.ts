@@ -23,7 +23,7 @@ export async function GET() {
 
   try {
     const accessToken = await refreshAccessToken(refreshToken);
-    const events = await fetchUpcomingEvents(accessToken, 20, 5);
+    const events = await fetchUpcomingEvents(accessToken, 20, 4);
     return NextResponse.json({ events });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "calendar_failed";
