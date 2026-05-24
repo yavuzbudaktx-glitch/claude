@@ -50,17 +50,31 @@ function publisherLogoUrls(link: string): string[] {
   const domain = publisherDomain(link);
   if (!domain) return [];
   return [
-    `https://logo.clearbit.com/${domain}?size=128`,
+    // Higher-res first so logos stay crisp on retina (the 64px tile is
+    // 128–192 physical px). DuckDuckGo's icon service is a sharp fallback
+    // when Clearbit lacks a brand; Google favicons are the last resort.
+    `https://logo.clearbit.com/${domain}?size=256`,
+    `https://icons.duckduckgo.com/ip3/${domain}.ico`,
     `https://www.google.com/s2/favicons?sz=128&domain=${domain}`,
   ];
 }
+
+// Per-source logo overrides — used when the article link points at an
+// external domain (so the publisher favicon would be wrong) or when we want
+// a specific high-quality mark.
+const SOURCE_LOGOS: Record<string, string> = {
+  "Hacker News":
+    "https://static.vecteezy.com/system/resources/previews/068/705/976/non_2x/hackernews-circle-logo-editable-hackernews-app-free-png.png",
+};
 
 function NewsThumb({ item }: { item: NewsItem }) {
   // Three-tier image strategy. We don't conditionally render based on
   // `item.image` alone — we let the browser try the article image, then
   // walk down a fallback chain via onError so a 404'd thumbnail still
   // resolves to a publisher logo before settling on initials.
+  const sourceLogo = SOURCE_LOGOS[item.source];
   const candidates = [
+    ...(sourceLogo ? [sourceLogo] : []),
     ...(item.image ? [item.image] : []),
     ...publisherLogoUrls(item.link),
   ];
