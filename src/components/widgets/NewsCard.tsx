@@ -59,12 +59,15 @@ function publisherLogoUrls(link: string): string[] {
   ];
 }
 
-// Per-source logo overrides — used when the article link points at an
-// external domain (so the publisher favicon would be wrong) or when we want
-// a specific high-quality mark.
+// Per-source high-quality logo overrides — used as the logo fallback when
+// an article has no thumbnail (and for sources like Hacker News whose links
+// point at external domains, so the publisher favicon would be wrong).
 const SOURCE_LOGOS: Record<string, string> = {
-  "Hacker News":
-    "https://static.vecteezy.com/system/resources/previews/068/705/976/non_2x/hackernews-circle-logo-editable-hackernews-app-free-png.png",
+  "Al Jazeera":
+    "https://www.emergencyusa.org/wp-content/uploads/2017/03/Aljazeera-logo-English-1024x768.png",
+  "Hacker News": "https://cdn-icons-png.flaticon.com/512/9543/9543111.png",
+  "Anadolu Ajansı":
+    "https://play-lh.googleusercontent.com/ME_9wBMHWB_QmJwy-QXRmEsOd_i0VFw4K-3wdHAmydgnmJnDmrqWVFfEOGnHzubdzg",
 };
 
 function NewsThumb({ item }: { item: NewsItem }) {
@@ -89,13 +92,18 @@ function NewsThumb({ item }: { item: NewsItem }) {
       </div>
     );
   }
+  // Brand logos are letter-boxed on a clean background so wide/landscape
+  // marks (e.g. Al Jazeera) aren't cropped; article photos still cover.
+  const isLogo = !!sourceLogo && candidates[idx] === sourceLogo;
   return (
     <img
       src={candidates[idx]}
       alt=""
       loading="lazy"
       referrerPolicy="no-referrer"
-      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+      className={`h-full w-full transition-transform duration-300 group-hover:scale-105 ${
+        isLogo ? "object-contain bg-white p-1.5" : "object-cover"
+      }`}
       onError={() => setIdx((n) => n + 1)}
     />
   );

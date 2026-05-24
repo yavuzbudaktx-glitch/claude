@@ -317,14 +317,29 @@ export function BodyCard() {
           </div>
 
           <div className="label mb-1.5 mt-4">Today&rsquo;s intake</div>
-          <div className="flex items-baseline gap-2">
-            <span className="font-mono tabular-nums text-2xl text-ink">{calsToday.toLocaleString()}</span>
-            <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
-              {hasGoal ? `${Math.max(0, goalNum - calsToday).toLocaleString()} left` : "kcal"}
-            </span>
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-baseline gap-2">
+              <span className="font-mono tabular-nums text-2xl text-ink">{calsToday.toLocaleString()}</span>
+              <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
+                {hasGoal ? `${Math.max(0, goalNum - calsToday).toLocaleString()} left` : "kcal"}
+              </span>
+            </div>
+            <form onSubmit={addCals} className="flex items-center gap-1.5 ml-auto">
+              <input
+                value={calDraft}
+                onChange={(e) => setCalDraft(e.target.value)}
+                placeholder="+ 250"
+                inputMode="numeric"
+                className="w-20 bg-[var(--rule-soft)] rounded-lg px-2.5 py-1.5 font-mono tabular-nums text-[13px] text-ink focus:outline-none focus:bg-[var(--paper)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-muted-2"
+                aria-label="Add calories"
+              />
+              <button type="submit" className="btn-ghost !h-8 !w-8" aria-label="Add to today's intake">
+                <Plus className="h-4 w-4" />
+              </button>
+            </form>
           </div>
           {hasGoal && (
-            <div className="h-1.5 w-full rounded-full bg-[var(--rule)] overflow-hidden mt-2">
+            <div className="h-1.5 w-full rounded-full bg-[var(--rule)] overflow-hidden mt-2.5">
               <div
                 className="h-full rounded-full transition-[width] duration-500"
                 style={{
@@ -334,19 +349,6 @@ export function BodyCard() {
               />
             </div>
           )}
-          <form onSubmit={addCals} className="mt-2.5 flex items-center gap-1.5">
-            <input
-              value={calDraft}
-              onChange={(e) => setCalDraft(e.target.value)}
-              placeholder="+ 250"
-              inputMode="numeric"
-              className="w-24 bg-[var(--rule-soft)] rounded-lg px-2.5 py-1.5 font-mono tabular-nums text-[13px] text-ink focus:outline-none focus:bg-[var(--paper)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-muted-2"
-              aria-label="Add calories"
-            />
-            <button type="submit" className="btn-ghost !h-8 !w-8" aria-label="Add to today's intake">
-              <Plus className="h-4 w-4" />
-            </button>
-          </form>
         </div>
 
         <div>

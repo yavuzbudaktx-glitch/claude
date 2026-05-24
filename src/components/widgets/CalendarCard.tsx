@@ -17,6 +17,7 @@ interface MailResp {
   emails?: EmailItem[];
   error?: string;
   needsReauth?: boolean;
+  hint?: string;
 }
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
@@ -62,17 +63,19 @@ function InboxTab() {
   });
 
   if (isLoading && !data) return <p className="text-muted text-sm">Loading…</p>;
-  if (data?.needsReauth) {
+  if (data?.needsReauth || data?.error) {
     return (
       <div className="text-sm">
-        <p className="text-muted mb-2">Gmail access isn&rsquo;t connected yet.</p>
+        <p className="text-muted mb-2">
+          {data?.hint ?? "Gmail access isn’t connected yet."}
+        </p>
         <a href="/login" className="text-accent underline underline-offset-2">
-          Re-connect Google to read your inbox →
+          Re-connect Google →
         </a>
       </div>
     );
   }
-  if (error || data?.error) return <p className="text-accent text-sm">Couldn&rsquo;t load email.</p>;
+  if (error) return <p className="text-accent text-sm">Couldn&rsquo;t load email.</p>;
 
   const emails = data?.emails ?? [];
   if (emails.length === 0) return <p className="text-muted text-sm italic">Inbox zero. Nice.</p>;

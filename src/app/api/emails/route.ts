@@ -27,13 +27,16 @@ export async function GET() {
     return NextResponse.json({ emails });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "gmail_failed";
-    // 403 / insufficient scope → the user authorised before Gmail access was
-    // requested, so prompt them to reconnect Google.
-    const needsReauth =
-      msg.includes("invalid_grant") ||
-      msg.includes("403") ||
-      msg.toLowerCase().includes("insufficient") ||
-      msg.toLowerCase().includes("scope");
-    return NextResponse.json({ error: msg, needsReauth }, { status: 502 });
+    const lower = msg.toLowerCase();
+    // Distinguish the two common setup gaps so the UI can tell the user
+    // exactly what to fix.
+    let hint = "Reconnect Google and approve Gmail (read-only) access.";
+    if (/service_disabled|has not been used|accessnotconfigured|disabled/.test(lower)) {
+      hint = "Enable the Gmail API in your Google Cloud project, then reconnect Google.";
+    } else if (/insufficient|scope|accessdenied|access_denied/.test(lower)) {
+      hint = "Reconnect Google and check the Gmail (read-only) box on the consent screen.";
+    }
+    const needsReauth = true;
+    return NextResponse.json({ error: msg, needsReauth, hint }, { status: 502 });
   }
 }
