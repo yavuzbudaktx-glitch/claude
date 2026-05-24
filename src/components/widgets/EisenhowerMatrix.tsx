@@ -82,6 +82,11 @@ export function EisenhowerMatrix({ userId }: { userId: string }) {
     await supabase.from("tasks").update({ quadrant }).eq("id", id);
   }
 
+  async function editTask(task: Task, fields: { title: string; due_date: string | null }) {
+    setTasks((ts) => ts.map((t) => (t.id === task.id ? { ...t, ...fields } : t)));
+    await supabase.from("tasks").update(fields).eq("id", task.id);
+  }
+
   // Pre-load filter: drop tasks that were ALREADY complete in the DB when
   // we fetched. Tasks completed in this session stay until their fade
   // animation finishes.
@@ -134,6 +139,7 @@ export function EisenhowerMatrix({ userId }: { userId: string }) {
                       task={t}
                       onChangeStatus={changeStatus}
                       onDelete={remove}
+                      onEdit={editTask}
                     />
                   ))}
                 </ul>

@@ -436,7 +436,7 @@ function MarketsBody() {
 }
 
 function CurrencyRates() {
-  const [rates, setRates] = useState<{ usdtry: number; eurtry: number } | null>(null);
+  const [rates, setRates] = useState<Record<string, number> | null>(null);
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
@@ -444,11 +444,7 @@ function CurrencyRates() {
         const res = await fetch("https://open.er-api.com/v6/latest/USD", { cache: "no-store" });
         if (!res.ok) return;
         const j = (await res.json()) as { rates?: Record<string, number> };
-        const tryRate = j.rates?.TRY;
-        const eur = j.rates?.EUR;
-        if (!cancelled && typeof tryRate === "number" && typeof eur === "number" && eur) {
-          setRates({ usdtry: tryRate, eurtry: tryRate / eur });
-        }
+        if (!cancelled && j.rates) setRates(j.rates);
       } catch {
         // leave previous value
       }
@@ -459,15 +455,22 @@ function CurrencyRates() {
   }, []);
 
   if (!rates) return null;
+  const fmt = (v: number | undefined) =>
+    typeof v !== "number" ? "—" : v >= 10 ? v.toFixed(2) : v.toFixed(4);
+  const pairs: Array<[string, number | undefined]> = [
+    ["USD/TRY", rates.TRY],
+    ["USD/EUR", rates.EUR],
+    ["USD/GBP", rates.GBP],
+    ["USD/JPY", rates.JPY],
+  ];
   return (
-    <div className="flex items-center gap-4 mt-3 pt-3 border-t rule-soft font-mono text-[11px] tabular-nums">
-      <span className="label !text-[9px]">FX</span>
-      <span className="text-muted">
-        USD/TRY <span className="text-ink font-medium">{rates.usdtry.toFixed(2)}</span>
-      </span>
-      <span className="text-muted">
-        EUR/TRY <span className="text-ink font-medium">{rates.eurtry.toFixed(2)}</span>
-      </span>
+    <div className="grid grid-cols-4 gap-2 mt-3 pt-3 border-t rule-soft">
+      {pairs.map(([label, v]) => (
+        <div key={label} className="text-center">
+          <div className="label !text-[9px] !tracking-[0.08em]">{label}</div>
+          <div className="font-mono tabular-nums text-[13px] text-ink mt-0.5">{fmt(v)}</div>
+        </div>
+      ))}
     </div>
   );
 }

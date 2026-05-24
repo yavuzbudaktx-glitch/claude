@@ -54,10 +54,10 @@ export default async function Page() {
         </div>
       </section>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <div id="sec-calendar" className="scroll-mt-4"><CalendarCard /></div>
-        <div id="sec-news" className="scroll-mt-4"><NewsCard /></div>
-        <div id="sec-prayer" className="scroll-mt-4"><PrayersVerseCard /></div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
+        <div id="sec-calendar" className="scroll-mt-4 [&>*]:h-full"><CalendarCard /></div>
+        <div id="sec-news" className="scroll-mt-4 [&>*]:h-full"><NewsCard /></div>
+        <div id="sec-prayer" className="scroll-mt-4 [&>*]:h-full"><PrayersVerseCard /></div>
       </div>
 
       <div id="sec-tasks" className="scroll-mt-4">

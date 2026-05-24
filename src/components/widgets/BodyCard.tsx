@@ -1,64 +1,111 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronUp, ChevronDown, Plus } from "lucide-react";
+import { ChevronUp, ChevronDown, Plus, X } from "lucide-react";
 import { Card } from "@/components/Card";
 import { localDateKey } from "@/lib/local-date";
 import { createClient } from "@/lib/supabase/client";
 import { usePref } from "@/components/PrefsProvider";
 
-const HABITS = ["Water", "Steps", "Reading"];
-
-function HabitTracker() {
-  const [habits, setHabits] = usePref<Record<string, string[]>>("habits", {});
-  const days = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (6 - i));
+// Monday→Sunday keys for the current week, so the grid resets every week.
+function weekDays(): string[] {
+  const now = new Date();
+  const dow = (now.getDay() + 6) % 7; // 0 = Monday
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - dow);
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
     return localDateKey(d);
   });
+}
+
+function HabitTracker() {
+  const [list, setList] = usePref<string[]>("habitList", ["Water", "Steps", "Reading"]);
+  const [done, setDone] = usePref<Record<string, string[]>>("habits", {});
+  const [adding, setAdding] = useState("");
+  const days = weekDays();
+  const weekSet = new Set(days);
+  const todayKey = localDateKey();
   const dayLabel = (key: string) => {
     const [y, m, dd] = key.split("-").map(Number);
     return new Date(y, m - 1, dd).toLocaleDateString(undefined, { weekday: "narrow" });
   };
-  function toggle(habit: string, date: string) {
-    const cur = habits[habit] ?? [];
-    const next = cur.includes(date) ? cur.filter((d) => d !== date) : [...cur, date];
-    setHabits({ ...habits, [habit]: next });
+
+  function toggle(h: string, d: string) {
+    // Prune to the current week so old marks clear every Monday.
+    const cur = (done[h] ?? []).filter((x) => weekSet.has(x));
+    const next = cur.includes(d) ? cur.filter((x) => x !== d) : [...cur, d];
+    setDone({ ...done, [h]: next });
   }
+  function addHabit(e: React.FormEvent) {
+    e.preventDefault();
+    const name = adding.trim();
+    if (name && !list.includes(name)) setList([...list, name]);
+    setAdding("");
+  }
+  function removeHabit(h: string) {
+    setList(list.filter((x) => x !== h));
+    const rest = { ...done };
+    delete rest[h];
+    setDone(rest);
+  }
+
   return (
-    <div className="mt-5 pt-4 border-t rule">
-      <div className="label mb-3">Habits · last 7 days</div>
-      <div className="flex items-center gap-3 mb-1.5">
-        <span className="w-20 shrink-0" />
-        <div className="flex items-center gap-2">
-          {days.map((d) => (
-            <span key={d} className="w-6 text-center text-[9px] text-muted-2 uppercase">{dayLabel(d)}</span>
-          ))}
-        </div>
+    <div className="min-w-0">
+      <div className="label mb-2">Habits · this week</div>
+      <div className="flex items-center gap-1 mb-1 pl-[68px]">
+        {days.map((d) => (
+          <span key={d} className={`w-[18px] text-center text-[9px] uppercase ${d === todayKey ? "text-accent" : "text-muted-2"}`}>
+            {dayLabel(d)}
+          </span>
+        ))}
       </div>
-      {HABITS.map((h) => (
-        <div key={h} className="flex items-center gap-3 mb-2">
-          <span className="text-[13px] text-ink-soft w-20 shrink-0">{h}</span>
-          <div className="flex items-center gap-2">
-            {days.map((d) => {
-              const on = (habits[h] ?? []).includes(d);
-              const isToday = d === days[6];
-              return (
-                <button
-                  key={d}
-                  onClick={() => toggle(h, d)}
-                  title={d}
-                  aria-label={`${h} ${d}`}
-                  className={`h-6 w-6 rounded-full border transition ${
-                    on ? "border-transparent" : isToday ? "border-[var(--accent)]" : "border-[var(--rule)] hover:border-[var(--ink-soft)]"
-                  }`}
-                  style={on ? { background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" } : undefined}
-                />
-              );
-            })}
-          </div>
-        </div>
-      ))}
+      <div className="space-y-1.5">
+        {list.map((h) => {
+          const hdone = done[h] ?? [];
+          return (
+            <div key={h} className="group/h flex items-center gap-1">
+              <span className="w-16 shrink-0 truncate text-[12px] text-ink-soft" title={h}>{h}</span>
+              {days.map((d) => {
+                const on = hdone.includes(d) && weekSet.has(d);
+                const isToday = d === todayKey;
+                return (
+                  <button
+                    key={d}
+                    onClick={() => toggle(h, d)}
+                    aria-label={`${h} ${d}`}
+                    className={`h-[18px] w-[18px] rounded-full border transition shrink-0 ${
+                      on ? "border-transparent" : isToday ? "border-[var(--accent)]" : "border-[var(--rule)] hover:border-[var(--ink-soft)]"
+                    }`}
+                    style={on ? { background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" } : undefined}
+                  />
+                );
+              })}
+              <button
+                onClick={() => removeHabit(h)}
+                aria-label={`Remove ${h}`}
+                className="ml-0.5 text-muted-2 opacity-0 group-hover/h:opacity-100 hover:text-accent transition shrink-0"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          );
+        })}
+        {list.length === 0 && <p className="text-muted text-xs italic">No habits yet.</p>}
+      </div>
+      <form onSubmit={addHabit} className="mt-2.5 flex items-center gap-1.5">
+        <input
+          value={adding}
+          onChange={(e) => setAdding(e.target.value)}
+          placeholder="+ Add habit"
+          maxLength={18}
+          className="w-28 bg-[var(--rule-soft)] rounded-lg px-2.5 py-1 text-[12px] text-ink focus:outline-none focus:bg-[var(--paper)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-muted-2"
+        />
+        <button type="submit" className="text-muted hover:text-accent transition" aria-label="Add habit">
+          <Plus className="h-3.5 w-3.5" />
+        </button>
+      </form>
     </div>
   );
 }
@@ -316,7 +363,7 @@ export function BodyCard() {
 
   return (
     <Card num="09" title="Body · Weight & Training">
-      <div className="grid grid-cols-1 lg:grid-cols-[210px_1fr] gap-6 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-[190px_1fr_minmax(240px,0.9fr)] gap-6 items-center">
         {/* Weight dial + arrows */}
         <div className="flex items-center justify-center gap-3">
           <div
@@ -355,6 +402,9 @@ export function BodyCard() {
 
         {/* Progress graph */}
         <WeightChart entries={entries} />
+
+        {/* Habits */}
+        <HabitTracker />
       </div>
 
       <div className="mt-5 pt-4 border-t rule grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -414,7 +464,7 @@ export function BodyCard() {
             value={state.workoutA}
             placeholder={"e.g.\nBench 4×8\nRows 4×10\nOHP 3×10"}
             onChange={(e) => setState((s) => ({ ...s, workoutA: e.target.value }))}
-            rows={5}
+            rows={4}
             className={fieldClass}
           />
         </div>
@@ -425,13 +475,11 @@ export function BodyCard() {
             value={state.workoutB}
             placeholder={"e.g.\nSquat 4×6\nDeadlift 3×5\nCurls 3×12"}
             onChange={(e) => setState((s) => ({ ...s, workoutB: e.target.value }))}
-            rows={5}
+            rows={4}
             className={fieldClass}
           />
         </div>
       </div>
-
-      <HabitTracker />
     </Card>
   );
 }
