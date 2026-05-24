@@ -24,8 +24,8 @@ export function Card({
     <section className={`card animate-fadeIn ${className}`}>
       <header className="headrule">
         <span className="dot" aria-hidden />
-        <span className="text-[14px] font-semibold tracking-tight text-ink">{title}</span>
-        {meta && <span className="ml-1.5 label">{meta}</span>}
+        {title && <span className="text-[14px] font-semibold tracking-tight text-ink">{title}</span>}
+        {meta && <span className={title ? "ml-1.5 label" : "label"}>{meta}</span>}
         <div className="ml-auto flex items-center gap-2">{action}</div>
       </header>
       {children}

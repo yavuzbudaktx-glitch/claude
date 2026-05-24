@@ -264,7 +264,7 @@ export function CalendarCard() {
     ) : null;
 
   return (
-    <Card num="02" title="Upcoming" meta={tabs} action={action}>
+    <Card num="02" title="" meta={tabs} action={action}>
       {tab === "calendar" ? (
         <CalendarTab
           hidden={hidden}
