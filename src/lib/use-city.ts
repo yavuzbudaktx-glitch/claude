@@ -1,11 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { usePref } from "@/components/PrefsProvider";
 
-// A single source of truth for the dashboard's location. Persisted to
-// localStorage and broadcast over a window event so every widget that
-// depends on place (weather, the analog clock, prayer times) updates the
-// instant the user picks a new city — no page reload required.
+// A single source of truth for the dashboard's location, stored in the
+// synced prefs blob so weather, the analog clock, and prayer times update
+// instantly when the city changes — and follow the user across devices.
 
 export interface City {
   name: string;
@@ -25,68 +24,8 @@ export const DEFAULT_CITY: City = {
   timezone: "America/Chicago",
 };
 
-const CITY_KEY = "morning.city.v1";
-const CITY_EVENT = "morning:city-change";
-
-export function readCity(): City {
-  if (typeof window === "undefined") return DEFAULT_CITY;
-  try {
-    const raw = localStorage.getItem(CITY_KEY);
-    if (!raw) return DEFAULT_CITY;
-    const c = JSON.parse(raw) as Partial<City>;
-    if (
-      typeof c.lat === "number" &&
-      typeof c.lon === "number" &&
-      typeof c.name === "string" &&
-      typeof c.timezone === "string"
-    ) {
-      return {
-        name: c.name,
-        admin: c.admin,
-        country: c.country,
-        lat: c.lat,
-        lon: c.lon,
-        timezone: c.timezone,
-      };
-    }
-  } catch {
-    // fall through to default
-  }
-  return DEFAULT_CITY;
-}
-
-export function writeCity(c: City) {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(CITY_KEY, JSON.stringify(c));
-  } catch {
-    // ignore quota / privacy-mode errors
-  }
-  window.dispatchEvent(new CustomEvent(CITY_EVENT));
-}
-
 export function useCity(): { city: City; setCity: (c: City) => void } {
-  // Start from the default so the server render and the first client
-  // render match; hydrate the stored city in an effect to avoid a
-  // hydration mismatch.
-  const [city, setCityState] = useState<City>(DEFAULT_CITY);
-
-  useEffect(() => {
-    setCityState(readCity());
-    const onChange = () => setCityState(readCity());
-    window.addEventListener(CITY_EVENT, onChange);
-    window.addEventListener("storage", onChange);
-    return () => {
-      window.removeEventListener(CITY_EVENT, onChange);
-      window.removeEventListener("storage", onChange);
-    };
-  }, []);
-
-  const setCity = useCallback((c: City) => {
-    setCityState(c);   // optimistic, instant update in this component
-    writeCity(c);      // persist + notify every other useCity()
-  }, []);
-
+  const [city, setCity] = usePref<City>("city", DEFAULT_CITY);
   return { city, setCity };
 }
 

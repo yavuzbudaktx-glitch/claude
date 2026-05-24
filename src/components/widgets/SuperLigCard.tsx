@@ -7,6 +7,7 @@ import { differenceInCalendarDays, format, parseISO } from "date-fns";
 import { Card } from "@/components/Card";
 import { localDateKey, msUntilLocalMidnight } from "@/lib/local-date";
 import { useRankChanges, RankArrow } from "@/lib/use-rank-changes";
+import { usePref } from "@/components/PrefsProvider";
 
 interface Standing {
   rank: number;
@@ -45,25 +46,9 @@ interface Resp {
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<Resp>);
 
-// The team whose last/next match is tracked. Persisted per-device so the
-// dashboard remembers the last team you picked.
-const SELECTED_KEY = "morning.superligTeam.v1";
+// The team whose last/next match is tracked. Synced across devices.
 interface SelectedTeam { name: string; teamId: string }
 const DEFAULT_TEAM: SelectedTeam = { name: "Beşiktaş", teamId: "1895" };
-
-function readSelectedTeam(): SelectedTeam {
-  if (typeof window === "undefined") return DEFAULT_TEAM;
-  try {
-    const raw = localStorage.getItem(SELECTED_KEY);
-    if (raw) {
-      const o = JSON.parse(raw) as Partial<SelectedTeam>;
-      if (o.name) return { name: o.name, teamId: o.teamId ?? "" };
-    }
-  } catch {
-    // fall through
-  }
-  return DEFAULT_TEAM;
-}
 
 function normTeam(s: string): string {
   return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
@@ -154,15 +139,11 @@ export function SuperLigCard() {
     return () => clearTimeout(t);
   }, [dateKey]);
 
-  // The team whose fixtures we show — hydrated from localStorage after mount
-  // so SSR and the first client render match.
-  const [selected, setSelected] = useState<SelectedTeam>(DEFAULT_TEAM);
-  useEffect(() => { setSelected(readSelectedTeam()); }, []);
+  // The team whose fixtures we show — synced across devices.
+  const [selected, setSelected] = usePref<SelectedTeam>("superligTeam", DEFAULT_TEAM);
 
   function pickTeam(s: Standing) {
-    const next: SelectedTeam = { name: s.team, teamId: s.teamId };
-    setSelected(next);
-    try { localStorage.setItem(SELECTED_KEY, JSON.stringify(next)); } catch {}
+    setSelected({ name: s.team, teamId: s.teamId });
   }
 
   const { data, error, isLoading } = useSWR<Resp>(

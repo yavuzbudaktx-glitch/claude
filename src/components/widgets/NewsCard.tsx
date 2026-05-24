@@ -3,9 +3,11 @@
 /* eslint-disable @next/next/no-img-element */
 import useSWR from "swr";
 import { useState } from "react";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Star } from "lucide-react";
 import { formatDistanceToNowStrict, format } from "date-fns";
 import { Card } from "@/components/Card";
+import { usePref } from "@/components/PrefsProvider";
+import { useCommand } from "@/lib/commands";
 import { CATEGORY_LABELS, CATEGORY_ORDER, type NewsCategory, type NewsItem } from "@/lib/feeds";
 
 type Resp = Record<NewsCategory, NewsItem[]>;
@@ -70,6 +72,8 @@ const SOURCE_LOGOS: Record<string, string> = {
     "https://play-lh.googleusercontent.com/ME_9wBMHWB_QmJwy-QXRmEsOd_i0VFw4K-3wdHAmydgnmJnDmrqWVFfEOGnHzubdzg",
   TechCrunch:
     "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/TechCrunch_logo.svg/250px-TechCrunch_logo.svg.png",
+  "FT Markets":
+    "https://pbs.twimg.com/profile_images/931162839905161216/FsnHwgvX_400x400.jpg",
 };
 
 function NewsThumb({ item }: { item: NewsItem }) {
@@ -131,26 +135,39 @@ export function NewsCard() {
     refreshInterval: 1000 * 60 * 15,
     keepPreviousData: true,
   });
-  const [active, setActive] = useState<NewsCategory>("world");
+  const [active, setActive] = useState<NewsCategory | "saved">("world");
   const [refreshing, setRefreshing] = useState(false);
   // Per-category deep pools fetched on refresh, plus a rolling window
   // offset so each refresh reveals a different slice of headlines.
   const [pools, setPools] = useState<Partial<Record<NewsCategory, NewsItem[]>>>({});
   const [offsets, setOffsets] = useState<Partial<Record<NewsCategory, number>>>({});
 
-  const pool = pools[active];
-  const offset = offsets[active] ?? 0;
+  // Saved / read-later articles, synced across devices.
+  const [saved, setSaved] = usePref<NewsItem[]>("savedNews", []);
+  const isSaved = (link: string) => saved.some((s) => s.link === link);
+  function toggleSave(item: NewsItem) {
+    setSaved(isSaved(item.link) ? saved.filter((s) => s.link !== item.link) : [item, ...saved].slice(0, 50));
+  }
+
+  // Let the command palette switch the active news tab.
+  useCommand((c) => { if (c.kind === "news-tab") setActive(c.value as NewsCategory); });
+
+  const cat = active === "saved" ? null : active;
+  const pool = cat ? pools[cat] : undefined;
+  const offset = cat ? offsets[cat] ?? 0 : 0;
   const visibleItems: NewsItem[] =
-    pool && pool.length > 0
-      ? Array.from({ length: Math.min(WINDOW, pool.length) }, (_, k) => pool[(offset + k) % pool.length])
-      : (data?.[active] ?? []).slice(0, WINDOW);
+    active === "saved"
+      ? saved
+      : pool && pool.length > 0
+        ? Array.from({ length: Math.min(WINDOW, pool.length) }, (_, k) => pool[(offset + k) % pool.length])
+        : (data?.[active] ?? []).slice(0, WINDOW);
 
   // Refresh ONLY the tab currently in view. Pulls a deep, freshly-fetched
   // pool from the force-dynamic single-category endpoint (cache-busting
   // param bypasses the ISR + PWA service-worker caches) and advances the
   // window so genuinely different stories appear on every click.
   async function refreshActive() {
-    if (refreshing) return;
+    if (refreshing || active === "saved") return;
     const cat = active;
     setRefreshing(true);
     try {
@@ -171,17 +188,18 @@ export function NewsCard() {
     }
   }
 
-  const refreshAction = (
-    <button
-      onClick={refreshActive}
-      disabled={refreshing}
-      title={`Refresh ${CATEGORY_LABELS[active]}`}
-      aria-label={`Refresh ${CATEGORY_LABELS[active]}`}
-      className="text-muted hover:text-accent transition disabled:opacity-50"
-    >
-      <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
-    </button>
-  );
+  const refreshAction =
+    active === "saved" ? null : (
+      <button
+        onClick={refreshActive}
+        disabled={refreshing}
+        title={`Refresh ${CATEGORY_LABELS[active]}`}
+        aria-label={`Refresh ${CATEGORY_LABELS[active]}`}
+        className="text-muted hover:text-accent transition disabled:opacity-50"
+      >
+        <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
+      </button>
+    );
 
   return (
     <Card num="03" title="The Wire" action={refreshAction}>
@@ -195,12 +213,19 @@ export function NewsCard() {
             {CATEGORY_LABELS[c]}
           </button>
         ))}
+        <button
+          onClick={() => setActive("saved")}
+          className={`chip inline-flex items-center gap-1 ${active === "saved" ? "chip-active" : ""}`}
+        >
+          <Star className="h-3 w-3" fill={active === "saved" ? "currentColor" : "none"} />
+          Saved{saved.length ? ` ${saved.length}` : ""}
+        </button>
       </div>
 
       {isLoading && !data && <p className="text-muted text-sm">Loading…</p>}
       {error && !data && <p className="text-accent text-sm">Couldn&rsquo;t load news.</p>}
 
-      {(data || pool) &&
+      {(data || pool || active === "saved") &&
         (refreshing ? (
           <div className="py-10 flex items-center justify-center gap-2 text-muted text-sm">
             <RefreshCw className="h-4 w-4 animate-spin" /> Fetching fresh headlines…
@@ -208,12 +233,12 @@ export function NewsCard() {
         ) : (
           <ul className="space-y-3 pr-1">
             {visibleItems.map((item) => (
-              <li key={item.link}>
+              <li key={item.link} className="group relative">
                 <a
                   href={item.link}
                   target="_blank"
                   rel="noreferrer"
-                  className="group flex gap-3 items-start"
+                  className="flex gap-3 items-start pr-6"
                 >
                   <div className="shrink-0 w-16 h-16 rounded-md overflow-hidden border rule-soft">
                     <NewsThumb item={item} />
@@ -228,10 +253,24 @@ export function NewsCard() {
                     </div>
                   </div>
                 </a>
+                <button
+                  onClick={() => toggleSave(item)}
+                  title={isSaved(item.link) ? "Remove from saved" : "Save for later"}
+                  aria-label={isSaved(item.link) ? "Remove from saved" : "Save for later"}
+                  className={`absolute top-0 right-0 p-0.5 transition ${
+                    isSaved(item.link)
+                      ? "text-accent opacity-100"
+                      : "text-muted opacity-0 group-hover:opacity-100 hover:text-accent"
+                  }`}
+                >
+                  <Star className="h-4 w-4" fill={isSaved(item.link) ? "currentColor" : "none"} />
+                </button>
               </li>
             ))}
             {visibleItems.length === 0 && (
-              <li className="text-muted text-sm">No headlines.</li>
+              <li className="text-muted text-sm italic">
+                {active === "saved" ? "No saved articles yet — tap the star on any headline." : "No headlines."}
+              </li>
             )}
           </ul>
         ))}

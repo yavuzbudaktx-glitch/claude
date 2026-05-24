@@ -1,10 +1,11 @@
 "use client";
 
 import useSWR from "swr";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { format, formatDistanceToNowStrict } from "date-fns";
 import { EyeOff, Eye, RotateCcw, Mail } from "lucide-react";
 import { Card } from "@/components/Card";
+import { usePref } from "@/components/PrefsProvider";
 import type { CalendarEvent } from "@/lib/google/calendar";
 import type { EmailItem } from "@/lib/google/gmail";
 
@@ -34,21 +35,6 @@ function eventStartDate(e: CalendarEvent): Date {
   }
   return new Date(e.start);
 }
-const HIDDEN_KEY = "morning.hiddenEvents.v1";
-
-function loadHidden(): Set<string> {
-  if (typeof window === "undefined") return new Set();
-  try {
-    const raw = localStorage.getItem(HIDDEN_KEY);
-    return new Set(raw ? (JSON.parse(raw) as string[]) : []);
-  } catch {
-    return new Set();
-  }
-}
-function saveHidden(s: Set<string>) {
-  try { localStorage.setItem(HIDDEN_KEY, JSON.stringify([...s])); } catch {}
-}
-
 function relTime(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
@@ -212,27 +198,19 @@ function CalendarTab({
 
 export function CalendarCard() {
   const [tab, setTab] = useState<"calendar" | "inbox">("calendar");
-  const [hidden, setHidden] = useState<Set<string>>(new Set());
   const [showHidden, setShowHidden] = useState(false);
-
-  useEffect(() => { setHidden(loadHidden()); }, []);
+  // Hidden events sync across devices.
+  const [hiddenArr, setHiddenArr] = usePref<string[]>("hiddenEvents", []);
+  const hidden = useMemo(() => new Set(hiddenArr), [hiddenArr]);
 
   function hide(id: string) {
-    const next = new Set(hidden);
-    next.add(id);
-    setHidden(next);
-    saveHidden(next);
+    if (!hiddenArr.includes(id)) setHiddenArr([...hiddenArr, id]);
   }
   function unhide(id: string) {
-    const next = new Set(hidden);
-    next.delete(id);
-    setHidden(next);
-    saveHidden(next);
+    setHiddenArr(hiddenArr.filter((x) => x !== id));
   }
   function clearHidden() {
-    const next = new Set<string>();
-    setHidden(next);
-    saveHidden(next);
+    setHiddenArr([]);
   }
 
   const tabs = (

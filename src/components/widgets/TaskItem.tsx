@@ -59,7 +59,9 @@ export function TaskItem({
 
   return (
     <li
-      className="group flex items-start gap-2.5 py-2 transition-opacity ease-out"
+      draggable
+      onDragStart={(e) => e.dataTransfer.setData("text/plain", task.id)}
+      className="group flex items-start gap-2.5 py-2 transition-opacity ease-out cursor-grab active:cursor-grabbing"
       style={{
         transitionDuration: "2200ms",
         opacity: stage === "fading" ? 0 : 1,

@@ -14,6 +14,9 @@ import { BodyCard } from "@/components/widgets/BodyCard";
 import { SignOutButton } from "@/components/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { FullscreenToggle } from "@/components/FullscreenToggle";
+import { Scratchpad } from "@/components/Scratchpad";
+import { FocusButton } from "@/components/FocusButton";
+import { CommandButton } from "@/components/CommandButton";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +38,9 @@ export default async function Page() {
             name={name}
             actions={
               <>
+                <CommandButton />
+                <Scratchpad />
+                <FocusButton />
                 <FullscreenToggle />
                 <ThemeToggle />
                 <SignOutButton />
@@ -49,25 +55,31 @@ export default async function Page() {
       </section>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <CalendarCard />
-        <NewsCard />
-        <PrayersVerseCard />
+        <div id="sec-calendar" className="scroll-mt-4"><CalendarCard /></div>
+        <div id="sec-news" className="scroll-mt-4"><NewsCard /></div>
+        <div id="sec-prayer" className="scroll-mt-4"><PrayersVerseCard /></div>
       </div>
 
-      <EisenhowerMatrix userId={user.id} />
+      <div id="sec-tasks" className="scroll-mt-4">
+        <EisenhowerMatrix userId={user.id} />
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch">
-        <div className="lg:col-span-2 [&>*]:h-full">
+        <div id="sec-watchlist" className="scroll-mt-4 lg:col-span-2 [&>*]:h-full">
           <MoversCard />
         </div>
-        <div className="[&>*]:h-full">
+        <div id="sec-superlig" className="scroll-mt-4 [&>*]:h-full">
           <SuperLigCard />
         </div>
       </div>
 
-      <BodyCard />
+      <div id="sec-body" className="scroll-mt-4">
+        <BodyCard />
+      </div>
 
-      <UfcCard />
+      <div id="sec-ufc" className="scroll-mt-4">
+        <UfcCard />
+      </div>
     </main>
   );
 }

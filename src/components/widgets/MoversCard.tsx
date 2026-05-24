@@ -6,6 +6,7 @@ import { ArrowUp, ArrowDown, X, Plus } from "lucide-react";
 import { Card } from "@/components/Card";
 import { Sparkline } from "@/components/Sparkline";
 import { createClient } from "@/lib/supabase/client";
+import { useCommand } from "@/lib/commands";
 
 // =============================================================================
 //   Watchlist — user-picked stock tickers, fetched client-side from Yahoo
@@ -383,6 +384,9 @@ function MarketsBody() {
     [userId, supabase],
   );
 
+  // Let the command palette add a ticker.
+  useCommand((c) => { if (c.kind === "watchlist-add") add(c.value); });
+
   return (
     <div>
       <div className="flex items-baseline gap-2 mb-1">
@@ -431,12 +435,50 @@ function MarketsBody() {
   );
 }
 
+function CurrencyRates() {
+  const [rates, setRates] = useState<{ usdtry: number; eurtry: number } | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const res = await fetch("https://open.er-api.com/v6/latest/USD", { cache: "no-store" });
+        if (!res.ok) return;
+        const j = (await res.json()) as { rates?: Record<string, number> };
+        const tryRate = j.rates?.TRY;
+        const eur = j.rates?.EUR;
+        if (!cancelled && typeof tryRate === "number" && typeof eur === "number" && eur) {
+          setRates({ usdtry: tryRate, eurtry: tryRate / eur });
+        }
+      } catch {
+        // leave previous value
+      }
+    };
+    load();
+    const t = setInterval(load, 1000 * 60 * 30);
+    return () => { cancelled = true; clearInterval(t); };
+  }, []);
+
+  if (!rates) return null;
+  return (
+    <div className="flex items-center gap-4 mt-3 pt-3 border-t rule-soft font-mono text-[11px] tabular-nums">
+      <span className="label !text-[9px]">FX</span>
+      <span className="text-muted">
+        USD/TRY <span className="text-ink font-medium">{rates.usdtry.toFixed(2)}</span>
+      </span>
+      <span className="text-muted">
+        EUR/TRY <span className="text-ink font-medium">{rates.eurtry.toFixed(2)}</span>
+      </span>
+    </div>
+  );
+}
+
 export function MoversCard() {
   return (
     <Card num="05" title="Watchlist">
       <MarketsBody />
+      <CurrencyRates />
       <div className="font-mono text-[9px] uppercase tracking-wider text-muted mt-3">
-        Source · Yahoo Finance
+        Source · Yahoo Finance · exchangerate-api
       </div>
     </Card>
   );

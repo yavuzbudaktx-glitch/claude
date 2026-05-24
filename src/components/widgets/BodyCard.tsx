@@ -5,6 +5,63 @@ import { ChevronUp, ChevronDown, Plus } from "lucide-react";
 import { Card } from "@/components/Card";
 import { localDateKey } from "@/lib/local-date";
 import { createClient } from "@/lib/supabase/client";
+import { usePref } from "@/components/PrefsProvider";
+
+const HABITS = ["Water", "Steps", "Reading"];
+
+function HabitTracker() {
+  const [habits, setHabits] = usePref<Record<string, string[]>>("habits", {});
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    return localDateKey(d);
+  });
+  const dayLabel = (key: string) => {
+    const [y, m, dd] = key.split("-").map(Number);
+    return new Date(y, m - 1, dd).toLocaleDateString(undefined, { weekday: "narrow" });
+  };
+  function toggle(habit: string, date: string) {
+    const cur = habits[habit] ?? [];
+    const next = cur.includes(date) ? cur.filter((d) => d !== date) : [...cur, date];
+    setHabits({ ...habits, [habit]: next });
+  }
+  return (
+    <div className="mt-5 pt-4 border-t rule">
+      <div className="label mb-3">Habits · last 7 days</div>
+      <div className="flex items-center gap-3 mb-1.5">
+        <span className="w-20 shrink-0" />
+        <div className="flex items-center gap-2">
+          {days.map((d) => (
+            <span key={d} className="w-6 text-center text-[9px] text-muted-2 uppercase">{dayLabel(d)}</span>
+          ))}
+        </div>
+      </div>
+      {HABITS.map((h) => (
+        <div key={h} className="flex items-center gap-3 mb-2">
+          <span className="text-[13px] text-ink-soft w-20 shrink-0">{h}</span>
+          <div className="flex items-center gap-2">
+            {days.map((d) => {
+              const on = (habits[h] ?? []).includes(d);
+              const isToday = d === days[6];
+              return (
+                <button
+                  key={d}
+                  onClick={() => toggle(h, d)}
+                  title={d}
+                  aria-label={`${h} ${d}`}
+                  className={`h-6 w-6 rounded-full border transition ${
+                    on ? "border-transparent" : isToday ? "border-[var(--accent)]" : "border-[var(--rule)] hover:border-[var(--ink-soft)]"
+                  }`}
+                  style={on ? { background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" } : undefined}
+                />
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 // ============================================================================
 //   Body — weight tracker (dial + progress graph), a daily calorie goal with
@@ -373,6 +430,8 @@ export function BodyCard() {
           />
         </div>
       </div>
+
+      <HabitTracker />
     </Card>
   );
 }

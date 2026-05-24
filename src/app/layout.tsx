@@ -1,5 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { PrefsProvider } from "@/components/PrefsProvider";
+import { CommandPalette } from "@/components/CommandPalette";
+import { FocusMode } from "@/components/FocusMode";
 
 export const metadata: Metadata = {
   title: "Morning",
@@ -38,7 +41,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <PrefsProvider>
+          {children}
+          <CommandPalette />
+          <FocusMode />
+        </PrefsProvider>
+      </body>
     </html>
   );
 }

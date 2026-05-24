@@ -16,6 +16,7 @@ export function EisenhowerMatrix({ userId }: { userId: string }) {
   // page loaded should never render (no flash on reload).
   const recentlyCompleted = useRef<Set<string>>(new Set());
   const [, forceRerender] = useState(0);
+  const [dragQuad, setDragQuad] = useState<Quadrant | null>(null);
 
   const load = useCallback(async () => {
     const { data } = await supabase
@@ -74,6 +75,13 @@ export function EisenhowerMatrix({ userId }: { userId: string }) {
     await supabase.from("tasks").delete().eq("id", task.id);
   }
 
+  async function moveTask(id: string, quadrant: Quadrant) {
+    const task = tasks.find((t) => t.id === id);
+    if (!task || task.quadrant === quadrant) return;
+    setTasks((ts) => ts.map((t) => (t.id === id ? { ...t, quadrant } : t)));
+    await supabase.from("tasks").update({ quadrant }).eq("id", id);
+  }
+
   // Pre-load filter: drop tasks that were ALREADY complete in the DB when
   // we fetched. Tasks completed in this session stay until their fade
   // animation finishes.
@@ -94,7 +102,17 @@ export function EisenhowerMatrix({ userId }: { userId: string }) {
             return (
               <div
                 key={q.id}
-                className={`px-3 py-1 ${!isLast ? "lg:border-r border-r-[var(--rule-soft)]" : ""}`}
+                onDragOver={(e) => { e.preventDefault(); setDragQuad(q.id); }}
+                onDragLeave={() => setDragQuad((d) => (d === q.id ? null : d))}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const id = e.dataTransfer.getData("text/plain");
+                  setDragQuad(null);
+                  if (id) moveTask(id, q.id);
+                }}
+                className={`px-3 py-1 rounded-xl transition-colors ${!isLast ? "lg:border-r border-r-[var(--rule-soft)]" : ""} ${
+                  dragQuad === q.id ? "bg-hl" : ""
+                }`}
               >
                 <div className="flex items-baseline gap-2 mb-2">
                   <span className="font-mono text-[10px] text-accent tracking-widest">{q.number}</span>
