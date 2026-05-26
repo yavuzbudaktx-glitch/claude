@@ -8,11 +8,10 @@ name: Daily Britannica scrape
 
 on:
   schedule:
-    # 05:00 UTC = midnight Central during DST (March–November).
-    # Drifts to 11:00 PM Central in standard time months — close
-    # enough that the morning view always has the freshly-rolled
-    # Featured Event.
-    - cron: "0 5 * * *"
+    # 05:17 UTC ≈ 12:17 AM Central during DST. Deliberately an odd minute
+    # (not the top of the hour): GitHub's scheduler delays/drops runs queued
+    # at popular round times like ":00" under load.
+    - cron: "17 5 * * *"
   workflow_dispatch: {} # allow manual runs from the Actions tab
 
 jobs:
@@ -24,6 +23,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Full history so we can rebase our data commit onto whatever has
+          # landed on the branch since checkout.
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -54,9 +57,24 @@ jobs:
               changed="1"
             fi
           done
-          if [[ -n "$changed" ]]; then
-            git commit -m "data: daily Britannica scrape (with debug dump)"
-            git push
-          else
+          if [[ -z "$changed" ]]; then
             echo "No change to commit."
+            exit 0
           fi
+          git commit -m "data: daily Britannica scrape (with debug dump)"
+          # The default branch is also the active dev branch, so origin
+          # very likely moved since checkout. Rebase our single data commit
+          # on top and retry the push instead of failing on non-fast-forward.
+          branch="${GITHUB_REF_NAME}"
+          for i in 1 2 3 4 5; do
+            if git push origin "HEAD:${branch}"; then
+              echo "pushed on attempt $i"
+              exit 0
+            fi
+            echo "push rejected — rebasing onto origin/${branch} (attempt $i)"
+            git fetch origin "$branch"
+            git rebase "origin/${branch}" || { git rebase --abort; exit 1; }
+            sleep $((i * 3))
+          done
+          echo "push still failing after retries"
+          exit 1
