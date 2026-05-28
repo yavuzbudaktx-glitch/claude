@@ -1,10 +1,10 @@
 # Britannica scrape debug dump
-# generated: 2026-05-28T15:18:43.612Z
+# generated: 2026-05-28T23:54:05.066Z
 # url:       https://www.britannica.com/on-this-day/may-28
-# fetcher:   CORS proxy
+# fetcher:   Wayback Machine
 # kind:      html
-# length:    76593
-# parsed:    YES (CORS proxy)
+# length:    76487
+# parsed:    YES (Wayback Machine)
 # -----------------------------------------------------------------
 
 
@@ -73,7 +73,7 @@
 
 <!doctype html>
 
-<html lang="en" class="dayinhistory-desktop ui-unknown0 ui-unknown">
+<html lang="en" class="dayinhistory-desktop ui-chrome148 ui-chrome">
 
 <head prefix="og: https://ogp.me/ns# fb: https://ogp.me/ns/fb#">
 
@@ -128,7 +128,7 @@
 
 
 <script   class="analytics-metadata" type="application/json">
-{"adLeg":"D","leg":"A","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+{"adLeg":"D","leg":"B","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
 </script>
 
 
@@ -162,15 +162,14 @@
         'analytics_storage': 'granted',
     });
 
-    window.geoCountry = 'FR';
-    window.isGdprCountry = true;
-    window.isCcpaCountry = false;
-    window.geoRegion = '75';
+    window.geoCountry = 'US';
+    window.isGdprCountry = false;
+    window.isCcpaCountry = true;
+    window.geoRegion = 'CA';
 
 </script>
 
-<script type="text/javascript" data-cmp-ab="1" src="https://cdn.consentmanager.net/delivery/autoblocking/f883f3936267c.js" data-cmp-host="d.delivery.consentmanager.net" data-cmp-cdn="cdn.consentmanager.net" data-cmp-codesrc="0"></script>
-    
+
 
     
 
@@ -281,15 +280,15 @@
 	    	"resourcesPrefixUrl": "https://cdn.britannica.com/mendel-resources/3-184/[url]?v=3.184.5",
 			"date": 20260528,
 			"userInfo": { "type": "ANONYMOUS"
-										,"currency": "EUR"
-										,"country": "FR"
-										,"state": "75"
-										,"timezone": "Europe/Paris"
-										,"bcomId": "7435513602670876809"
+										,"currency": "USD"
+										,"country": "US"
+										,"state": "CA"
+										,"timezone": "America/Los_Angeles"
+										,"bcomId": "717581440355377044"
 										,"adProvider": "ay"
-										,"privacyInfo": {"inGdprCountry":true,"inCcpaState":false,"showConsent":true}
+										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":true,"showConsent":true}
 										,"hasAds": true
-										,"testVersion": "A"
+										,"testVersion": "B"
 										,"adsTestVersion": "D"
 										,"consumerId": ""
 										,"instId": ""
@@ -313,7 +312,7 @@
 
 			"autocompleteToSearchPage": false,"pagesInfo": [{"url":"May-28","title":"On This Day - What Happened on May 28"},{"url":"May-29","title":"On This Day - What Happened on May 29"},{"url":"May-30","title":"On This Day - What Happened on May 30"},{"url":"May-31","title":"On This Day - What Happened on May 31"},{"url":"June-1","title":"On This Day - What Happened on June 1"},{"url":"June-2","title":"On This Day - What Happened on June 2"},{"url":"June-3","title":"On This Day - What Happened on June 3"},{"url":"June-4","title":"On This Day - What Happened on June 4"},{"url":"June-5","title":"On This Day - What Happened on June 5"},{"url":"June-6","title":"On This Day - What Happened on June 6"}]
 		},
-        "GA": {"adLeg":"D","leg":"A","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+        "GA": {"adLeg":"D","leg":"B","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
     };
 
 	</script>
@@ -417,7 +416,7 @@ Mendel.openGraph = {
 
 </head>
 
-<body data-leg="A" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-a ">
+<body data-leg="B" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-b ">
 
 
 
@@ -675,8 +674,8 @@ Mendel.openGraph = {
         </div>
     </div>
 
-    <div class="d-none hamburger-menu-subscription-link"><DIV class="marketing-HAMBURGER_MENU_CTA marketing-content" data-marketing-id="HAMBURGER_MENU_CTA"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=blue" class="subscribe-link btn btn-sm btn-blue py-5" target="_blank">
-  SUBSCRIBE
+    <div class="d-none hamburger-menu-subscription-link"><DIV class="marketing-HAMBURGER_MENU_CTA marketing-content" data-marketing-id="HAMBURGER_MENU_CTA"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=bdpremium" class="subscribe-link btn btn-sm btn-blue py-5" target="_blank">
+  SUBSCRIBE TO PREMIUM
 </a></DIV></div>
     <div id="global-nav-react">
         <div class="d-none">
@@ -2029,6 +2028,8 @@ Ask the Chatbot</a>
 
 
 
+
+    <script src="https://cdn.britannica.com/mendel-resources/3-184/js/ccpa.js?v=3.184.5" defer="defer"></script>
 
 
 
