@@ -8,10 +8,16 @@ name: Daily Britannica scrape
 
 on:
   schedule:
-    # 05:17 UTC ≈ 12:17 AM Central during DST. Deliberately an odd minute
-    # (not the top of the hour): GitHub's scheduler delays/drops runs queued
-    # at popular round times like ":00" under load.
-    - cron: "17 5 * * *"
+    # GitHub's scheduled-workflow service is best-effort and routinely
+    # delays runs by 5–12 hours, especially at popular minutes. We schedule
+    # four off-peak slots throughout the day so at least one lands close to
+    # its target — the morning view in Central time then sees today's data.
+    # The script is idempotent: if the file content hasn't changed, the
+    # commit step is a no-op, so the extra runs cost nothing.
+    - cron: "17 6 * * *"   # ≈ 01:17 Central — primary, post-Britannica rollover
+    - cron: "23 10 * * *"  # ≈ 05:23 Central — catches a delayed primary
+    - cron: "7 15 * * *"   # ≈ 10:07 Central — mid-day safety net
+    - cron: "41 19 * * *"  # ≈ 14:41 Central — last-chance backstop
   workflow_dispatch: {} # allow manual runs from the Actions tab
 
 jobs:
