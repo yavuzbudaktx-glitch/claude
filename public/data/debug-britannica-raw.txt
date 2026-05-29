@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-05-29T19:41:43.867Z
+# generated: 2026-05-29T21:29:17.908Z
 # url:       https://www.britannica.com/on-this-day/may-29
 # fetcher:   Wayback Machine
 # kind:      html
