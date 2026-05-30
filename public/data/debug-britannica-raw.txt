@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-05-30T11:07:48.088Z
+# generated: 2026-05-30T14:54:42.018Z
 # url:       https://www.britannica.com/on-this-day/may-30
 # fetcher:   Wayback Machine
 # kind:      html
