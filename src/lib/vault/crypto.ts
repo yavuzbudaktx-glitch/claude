@@ -18,11 +18,14 @@ function toB64(bytes: ArrayBuffer | Uint8Array): string {
   return btoa(s);
 }
 
-function fromB64(s: string): Uint8Array {
+// Returns an ArrayBuffer (not a view) so it satisfies BufferSource on the strict
+// lib.dom Web Crypto overloads without SharedArrayBuffer ambiguity.
+function fromB64(s: string): ArrayBuffer {
   const bin = atob(s);
-  const out = new Uint8Array(bin.length);
+  const buf = new ArrayBuffer(bin.length);
+  const out = new Uint8Array(buf);
   for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
-  return out;
+  return buf;
 }
 
 export function randomSaltB64(): string {
