@@ -2,6 +2,17 @@
 -- Blobs live in Supabase Storage keyed by document UUID; this table is the
 -- source of truth for paths, hashes, versions, and the per-user sync cursor.
 
+-- Shared trigger function. Defined in 0001_init.sql for the dashboard; redefined
+-- here (idempotently) so these document migrations also apply standalone on a
+-- fresh project that has never run 0001.
+create or replace function set_updated_at()
+returns trigger as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$ language plpgsql;
+
 create table if not exists documents (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
