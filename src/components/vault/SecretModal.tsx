@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Check, Eye, EyeOff } from "lucide-react";
+import { Copy, Check, Eye, EyeOff, KeyRound } from "lucide-react";
 import type { VaultItem } from "@/lib/vault/types";
 
 type SecretFields = { username?: string; password?: string; notes?: string };
@@ -54,7 +54,7 @@ export function SecretModal({ item, onClose }: { item: VaultItem; onClose: () =>
   return (
     <div className="vault-modal-backdrop" onClick={onClose}>
       <div className="vault-modal" onClick={(e) => e.stopPropagation()}>
-        <h3>{item.title}</h3>
+        <h3><KeyRound size={15} className="vault-icon-secret" /> {item.title}</h3>
         {empty && <p style={{ color: "var(--v-muted)", fontSize: 13 }}>Nothing stored.</p>}
         <Row label="Username" value={fields.username ?? ""} />
         <Row label="Password" value={fields.password ?? ""} mask />

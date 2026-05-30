@@ -345,187 +345,328 @@ main { position: relative; z-index: 1; }
   .animate-fadeIn { animation: none; }
 }
 
+
 /* =======================================================================
-   THE VAULT — scoped "database console" skin
+   DOC ANYWHERE — scoped "database console" skin
    A graphite, gray-on-gray surface that deliberately ignores the dashboard's
-   aurora-glass theme. Everything vault-related lives under .vault-scope so
-   these variables and rules never leak into the rest of the app.
+   aurora-glass theme. Everything lives under .vault-scope so these variables
+   and rules never leak into the rest of the app.
 ======================================================================= */
 .vault-scope {
-  --v-bg:        #15171b;   /* page */
-  --v-panel:     #1d2025;   /* cards / rows */
-  --v-panel-2:   #23272d;   /* hover / raised */
-  --v-line:      #2c313a;   /* hairline borders */
-  --v-line-soft: #23272d;
-  --v-ink:       #e7eaef;   /* primary text */
-  --v-ink-soft:  #aeb4bf;
-  --v-muted:     #717885;   /* labels */
-  --v-accent:    #6ea8fe;   /* cool steel-blue accent */
-  --v-accent-dim:#2b3banull;
+  --v-bg:        #131519;
+  --v-bg-2:      #0f1115;
+  --v-panel:     #1b1e24;
+  --v-panel-2:   #232730;
+  --v-line:      #2b3038;
+  --v-line-soft: #21252c;
+  --v-ink:       #eceef2;
+  --v-ink-soft:  #b3b9c4;
+  --v-muted:     #757c8a;
+  --v-accent:    #74a8ff;
+  --v-accent-2:  #5b8cff;
   --v-danger:    #f0707f;
 
   min-height: 100vh;
   background:
-    radial-gradient(900px 500px at 100% -10%, rgba(110,168,254,0.06), transparent 60%),
+    radial-gradient(1100px 600px at 88% -12%, rgba(116,168,255,0.10), transparent 60%),
+    radial-gradient(900px 500px at 0% 110%, rgba(120,200,180,0.05), transparent 55%),
     var(--v-bg);
   color: var(--v-ink);
   font-family: "Inter", system-ui, sans-serif;
 }
-
-.vault-scope ::selection { background: rgba(110,168,254,0.28); }
-
+.vault-scope * { box-sizing: border-box; }
+.vault-scope ::selection { background: rgba(116,168,255,0.30); }
 .vault-mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
 
-.vault-shell { max-width: 1180px; margin: 0 auto; padding: 22px 18px 80px; }
+/* faint dotted grid like a db console */
+.vault-scope::before {
+  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: radial-gradient(rgba(255,255,255,0.022) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
 
+.vault-shell { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 18px 96px; }
+
+/* ---------- top bar ---------- */
 .vault-topbar {
   display: flex; align-items: center; gap: 14px;
-  padding-bottom: 16px; margin-bottom: 18px;
+  padding: 20px 0 16px; margin-bottom: 22px;
   border-bottom: 1px solid var(--v-line);
+  position: sticky; top: 0; z-index: 20;
+  background: linear-gradient(var(--v-bg) 70%, transparent);
+  backdrop-filter: blur(6px);
+}
+.vault-brand { display: flex; align-items: center; gap: 11px; }
+.vault-logo {
+  width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
+  background: linear-gradient(150deg, var(--v-accent), var(--v-accent-2));
+  box-shadow: 0 6px 18px -6px rgba(116,168,255,0.6), inset 0 1px 0 rgba(255,255,255,0.3);
+  color: #0b0e14;
 }
 .vault-title {
   font-family: "JetBrains Mono", monospace;
-  font-size: 15px; font-weight: 600; letter-spacing: 0.04em;
-  color: var(--v-ink); text-transform: uppercase;
+  font-size: 15px; font-weight: 600; letter-spacing: 0.02em; color: var(--v-ink);
 }
-.vault-title .vault-dot {
-  display: inline-block; width: 8px; height: 8px; border-radius: 2px;
-  background: var(--v-accent); margin-right: 9px; vertical-align: middle;
-  box-shadow: 0 0 10px rgba(110,168,254,0.7);
+.vault-title .vault-sub {
+  display: block; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--v-muted); font-weight: 500; margin-top: 1px;
 }
-
 .vault-chip {
   font-family: "JetBrains Mono", monospace;
-  font-size: 11px; color: var(--v-muted);
-  border: 1px solid var(--v-line); border-radius: 6px;
-  padding: 3px 8px; background: var(--v-panel);
+  font-size: 11px; color: var(--v-ink-soft);
+  border: 1px solid var(--v-line); border-radius: 999px;
+  padding: 4px 11px; background: var(--v-panel);
 }
+.vault-chip b { color: var(--v-accent); font-weight: 600; }
 
+/* ---------- buttons ---------- */
 .vault-btn {
-  display: inline-flex; align-items: center; gap: 6px;
+  display: inline-flex; align-items: center; gap: 7px;
   font-size: 13px; font-weight: 500; color: var(--v-ink-soft);
   background: var(--v-panel); border: 1px solid var(--v-line);
-  border-radius: 8px; padding: 7px 12px; cursor: pointer;
-  transition: background .14s, border-color .14s, color .14s;
+  border-radius: 9px; padding: 8px 13px; cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s, transform .12s;
 }
 .vault-btn:hover { background: var(--v-panel-2); color: var(--v-ink); border-color: #3a4150; }
+.vault-btn:active { transform: translateY(1px); }
 .vault-btn:disabled { opacity: .45; cursor: default; }
+.vault-btn-icon { padding: 8px; }
 .vault-btn-primary {
-  color: #0c1118; background: var(--v-accent); border-color: var(--v-accent);
-  font-weight: 600;
+  color: #0a0e16; border: none; font-weight: 600;
+  background: linear-gradient(150deg, var(--v-accent), var(--v-accent-2));
+  box-shadow: 0 8px 22px -8px rgba(116,168,255,0.65);
 }
-.vault-btn-primary:hover { background: #87b6ff; border-color: #87b6ff; color: #0c1118; }
+.vault-btn-primary:hover { filter: brightness(1.08); color: #0a0e16; }
 .vault-btn-danger:hover { color: var(--v-danger); border-color: #5a2a31; background: #241a1d; }
 
+/* ---------- inputs ---------- */
 .vault-input, .vault-textarea {
   width: 100%; font-size: 13px; color: var(--v-ink);
-  background: #14161a; border: 1px solid var(--v-line);
-  border-radius: 8px; padding: 9px 11px; outline: none;
-  transition: border-color .14s;
+  background: var(--v-bg-2); border: 1px solid var(--v-line);
+  border-radius: 9px; padding: 10px 12px; outline: none;
+  transition: border-color .15s, box-shadow .15s;
 }
 .vault-input::placeholder, .vault-textarea::placeholder { color: var(--v-muted); }
-.vault-input:focus, .vault-textarea:focus { border-color: var(--v-accent); }
-.vault-textarea { resize: vertical; min-height: 84px; font-family: "JetBrains Mono", monospace; }
-
-.vault-search {
-  flex: 1; max-width: 380px;
-  background: #14161a; border: 1px solid var(--v-line); border-radius: 8px;
-  padding: 8px 11px; font-size: 13px; color: var(--v-ink); outline: none;
+.vault-input:focus, .vault-textarea:focus {
+  border-color: var(--v-accent); box-shadow: 0 0 0 3px rgba(116,168,255,0.14);
 }
-.vault-search:focus { border-color: var(--v-accent); }
+.vault-textarea { resize: vertical; min-height: 96px; font-family: "JetBrains Mono", monospace; line-height: 1.5; }
 
-/* breadcrumb */
+/* ---------- breadcrumb ---------- */
 .vault-crumbs {
-  display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
   font-family: "JetBrains Mono", monospace; font-size: 12px;
-  color: var(--v-muted); margin-bottom: 16px;
+  color: var(--v-muted); margin-bottom: 20px;
 }
+.vault-crumbs button { transition: color .14s; padding: 2px 0; }
 .vault-crumbs button:hover { color: var(--v-accent); }
+.vault-crumbs .vault-crumb-cur { color: var(--v-ink); }
 
-/* grid of items */
+/* ---------- section label ---------- */
+.vault-sectionlabel {
+  grid-column: 1 / -1;
+  font-family: "JetBrains Mono", monospace; font-size: 10px;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--v-muted);
+  margin: 6px 2px 0; display: flex; align-items: center; gap: 8px;
+}
+.vault-sectionlabel::after { content: ""; flex: 1; height: 1px; background: var(--v-line-soft); }
+
+/* ---------- grid ---------- */
 .vault-grid {
-  display: grid; gap: 12px;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  display: grid; gap: 13px;
+  grid-template-columns: repeat(auto-fill, minmax(224px, 1fr));
 }
 
 .vault-item {
-  position: relative;
-  background: var(--v-panel); border: 1px solid var(--v-line);
-  border-radius: 10px; padding: 14px;
-  transition: border-color .14s, background .14s, transform .14s;
-  min-height: 92px; display: flex; flex-direction: column; gap: 8px;
+  position: relative; overflow: hidden;
+  background: linear-gradient(180deg, var(--v-panel), var(--v-bg-2));
+  border: 1px solid var(--v-line);
+  border-radius: 13px; padding: 15px;
+  transition: border-color .16s, transform .16s, box-shadow .16s;
+  min-height: 104px; display: flex; flex-direction: column; gap: 9px;
 }
-.vault-item:hover { border-color: #3a4150; background: var(--v-panel-2); }
+.vault-item::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--accent-bar, var(--v-line)); opacity: .8;
+}
+.vault-item:hover {
+  border-color: #3c4350; transform: translateY(-2px);
+  box-shadow: 0 16px 36px -22px rgba(0,0,0,0.9);
+}
+.vault-item-head { display: flex; align-items: center; gap: 9px; }
+.vault-item-iconwrap {
+  width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
+  background: var(--v-bg-2); border: 1px solid var(--v-line); flex-shrink: 0;
+}
 .vault-item-kind {
-  font-family: "JetBrains Mono", monospace; font-size: 10px;
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--v-muted);
+  font-family: "JetBrains Mono", monospace; font-size: 9.5px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--v-muted);
 }
 .vault-item-title {
-  font-size: 14px; font-weight: 600; color: var(--v-ink);
-  line-height: 1.3; word-break: break-word;
+  font-size: 14.5px; font-weight: 600; color: var(--v-ink);
+  line-height: 1.32; word-break: break-word;
 }
+.vault-item-title-btn { text-align: left; cursor: pointer; transition: color .14s; }
+.vault-item-title-btn:hover { color: var(--v-accent); }
 .vault-item-sub {
   font-size: 12px; color: var(--v-ink-soft); word-break: break-all;
   font-family: "JetBrains Mono", monospace;
+  overflow: hidden; text-overflow: ellipsis; display: -webkit-box;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical;
 }
 .vault-item-actions {
-  display: flex; gap: 10px; margin-top: auto; align-items: center;
+  display: flex; gap: 4px; margin-top: auto; padding-top: 4px; align-items: center;
   color: var(--v-muted);
 }
-.vault-item-actions button:hover { color: var(--v-accent); }
-.vault-item-actions .vault-act-danger:hover { color: var(--v-danger); }
+.vault-item-actions button, .vault-item-actions a {
+  display: grid; place-items: center; width: 30px; height: 30px; border-radius: 7px;
+  transition: background .14s, color .14s;
+}
+.vault-item-actions button:hover, .vault-item-actions a:hover { background: var(--v-panel-2); color: var(--v-accent); }
+.vault-item-actions .vault-act-danger:hover { color: var(--v-danger); background: #241a1d; }
 
-.vault-icon-folder { color: #d8b66a; }
-.vault-icon-link   { color: #6ea8fe; }
+/* image thumbnail tiles */
+.vault-thumb {
+  width: 100%; height: 120px; border-radius: 9px; object-fit: cover;
+  border: 1px solid var(--v-line); background: var(--v-bg-2);
+}
+
+/* per-kind accent bars + icon tints */
+.vault-k-folder { --accent-bar: #e0bd6b; }
+.vault-k-link   { --accent-bar: #74a8ff; }
+.vault-k-note   { --accent-bar: #8bd49c; }
+.vault-k-secret { --accent-bar: #d88ad8; }
+.vault-k-file   { --accent-bar: #9aa4b2; }
+.vault-icon-folder { color: #e0bd6b; }
+.vault-icon-link   { color: #74a8ff; }
 .vault-icon-note   { color: #8bd49c; }
 .vault-icon-secret { color: #d88ad8; }
 .vault-icon-file   { color: #9aa4b2; }
 
-/* modal */
+/* ---------- modal ---------- */
 .vault-modal-backdrop {
   position: fixed; inset: 0; z-index: 60;
-  background: rgba(8,9,11,0.66); backdrop-filter: blur(3px);
+  background: rgba(8,9,11,0.72); backdrop-filter: blur(4px);
   display: grid; place-items: center; padding: 20px;
+  animation: vfade .14s ease;
 }
+@keyframes vfade { from { opacity: 0; } to { opacity: 1; } }
 .vault-modal {
-  width: 100%; max-width: 440px;
-  background: var(--v-panel); border: 1px solid var(--v-line);
-  border-radius: 14px; padding: 20px;
-  box-shadow: 0 30px 80px -20px rgba(0,0,0,0.7);
+  width: 100%; max-width: 450px;
+  background: linear-gradient(180deg, var(--v-panel), var(--v-bg-2));
+  border: 1px solid var(--v-line);
+  border-radius: 16px; padding: 22px;
+  box-shadow: 0 40px 100px -24px rgba(0,0,0,0.8);
+  animation: vpop .16s ease;
 }
+@keyframes vpop { from { opacity: 0; transform: translateY(8px) scale(.985); } to { opacity: 1; transform: none; } }
 .vault-modal h3 {
   font-family: "JetBrains Mono", monospace; font-size: 13px;
-  letter-spacing: 0.05em; text-transform: uppercase; color: var(--v-ink);
-  margin-bottom: 14px;
+  letter-spacing: 0.04em; color: var(--v-ink);
+  margin-bottom: 16px; display: flex; align-items: center; gap: 9px;
 }
-.vault-field { margin-bottom: 12px; }
+.vault-field { margin-bottom: 13px; }
 .vault-label {
-  display: block; font-size: 11px; color: var(--v-muted);
-  margin-bottom: 5px; font-family: "JetBrains Mono", monospace;
-  letter-spacing: 0.04em; text-transform: uppercase;
+  display: block; font-size: 10.5px; color: var(--v-muted);
+  margin-bottom: 6px; font-family: "JetBrains Mono", monospace;
+  letter-spacing: 0.06em; text-transform: uppercase;
 }
 
-/* dropdown menu */
+/* ---------- dropdown menu ---------- */
 .vault-menu {
-  position: absolute; right: 0; top: calc(100% + 6px); z-index: 40;
+  position: absolute; right: 0; top: calc(100% + 8px); z-index: 40;
   background: var(--v-panel-2); border: 1px solid var(--v-line);
-  border-radius: 10px; padding: 6px; min-width: 168px;
-  box-shadow: 0 20px 50px -16px rgba(0,0,0,0.7);
+  border-radius: 12px; padding: 7px; min-width: 184px;
+  box-shadow: 0 24px 60px -18px rgba(0,0,0,0.8);
+  animation: vpop .14s ease;
 }
 .vault-menu button {
-  display: flex; align-items: center; gap: 9px; width: 100%;
-  padding: 8px 10px; border-radius: 7px; font-size: 13px;
-  color: var(--v-ink-soft); text-align: left;
+  display: flex; align-items: center; gap: 11px; width: 100%;
+  padding: 9px 11px; border-radius: 8px; font-size: 13px;
+  color: var(--v-ink-soft); text-align: left; transition: background .12s, color .12s;
 }
-.vault-menu button:hover { background: var(--v-panel); color: var(--v-ink); }
+.vault-menu button:hover { background: var(--v-bg-2); color: var(--v-ink); }
 
 .vault-empty {
-  grid-column: 1 / -1; text-align: center; padding: 64px 0;
+  grid-column: 1 / -1; text-align: center; padding: 80px 0;
   color: var(--v-muted); font-family: "JetBrains Mono", monospace; font-size: 13px;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+}
+.vault-empty-ring {
+  width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center;
+  border: 1px dashed var(--v-line); color: var(--v-muted);
 }
 
-.vault-locked-pill {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-family: "JetBrains Mono", monospace; font-size: 11px;
-  color: var(--v-muted);
+/* =======================================================================
+   DOC ANYWHERE — login screen (same console skin, centered)
+======================================================================= */
+.vault-login {
+  min-height: 100dvh; display: grid; place-items: center; padding: 24px;
+  position: relative;
+}
+.vault-login-card {
+  position: relative; z-index: 1; width: 100%; max-width: 400px;
+  background: linear-gradient(180deg, var(--v-panel), var(--v-bg-2));
+  border: 1px solid var(--v-line); border-radius: 18px;
+  padding: 34px 30px;
+  box-shadow: 0 50px 120px -30px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.03);
+  animation: vpop .2s ease;
+}
+.vault-login-logo {
+  width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center;
+  margin: 0 auto 18px;
+  background: linear-gradient(150deg, var(--v-accent), var(--v-accent-2));
+  box-shadow: 0 12px 30px -8px rgba(116,168,255,0.7), inset 0 1px 0 rgba(255,255,255,0.35);
+  color: #0a0e16;
+}
+.vault-login-title {
+  text-align: center; font-family: "JetBrains Mono", monospace;
+  font-size: 21px; font-weight: 600; color: var(--v-ink); letter-spacing: 0.01em;
+}
+.vault-login-tag {
+  text-align: center; font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px; letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--v-muted); margin-top: 7px;
+}
+.vault-login-desc {
+  text-align: center; font-size: 13px; color: var(--v-ink-soft);
+  margin: 16px 0 24px; line-height: 1.55;
+}
+.vault-login-form { display: flex; flex-direction: column; gap: 11px; }
+.vault-login-input {
+  width: 100%; font-size: 14px; color: var(--v-ink);
+  background: var(--v-bg-2); border: 1px solid var(--v-line);
+  border-radius: 11px; padding: 13px 14px; outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.vault-login-input::placeholder { color: var(--v-muted); }
+.vault-login-input:focus { border-color: var(--v-accent); box-shadow: 0 0 0 3px rgba(116,168,255,0.14); }
+.vault-login-submit {
+  width: 100%; margin-top: 4px; padding: 13px; border-radius: 11px;
+  font-size: 14px; font-weight: 600; color: #0a0e16; cursor: pointer;
+  background: linear-gradient(150deg, var(--v-accent), var(--v-accent-2));
+  box-shadow: 0 12px 30px -10px rgba(116,168,255,0.7);
+  transition: filter .15s, transform .12s;
+}
+.vault-login-submit:hover { filter: brightness(1.08); }
+.vault-login-submit:active { transform: translateY(1px); }
+.vault-login-submit:disabled { opacity: .6; cursor: default; }
+.vault-login-msg {
+  text-align: center; font-size: 12.5px; color: var(--v-ink-soft);
+  margin-top: 14px; padding: 9px; border-radius: 9px;
+  background: var(--v-bg-2); border: 1px solid var(--v-line);
+}
+.vault-login-switch {
+  display: block; margin: 18px auto 0; font-size: 12.5px; color: var(--v-muted);
+  font-family: "JetBrains Mono", monospace; transition: color .14s;
+}
+.vault-login-switch:hover { color: var(--v-accent); }
+.vault-login-foot {
+  text-align: center; margin-top: 26px; font-size: 10.5px; color: var(--v-muted);
+  font-family: "JetBrains Mono", monospace; letter-spacing: 0.08em;
+}
+
+@media (max-width: 560px) {
+  .vault-topbar { flex-wrap: wrap; gap: 10px; }
+  .vault-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
 }

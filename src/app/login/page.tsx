@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Database } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
@@ -38,62 +39,59 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-dvh flex items-center justify-center px-6">
-      <div className="card max-w-md w-full text-center animate-fadeIn !p-8 md:!p-10">
-        <div className="label">Documents Anywhere</div>
-        <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-4 leading-[0.95]">
-          <span className="text-ink">Your</span>{" "}
-          <span className="text-gradient">Documents</span>
-        </h1>
-        <p className="text-muted text-sm mt-5 leading-relaxed">
-          {mode === "signin"
-            ? "Sign in to access your files from anywhere."
-            : "Create an account to start syncing your documents."}
-        </p>
+    <div className="vault-scope">
+      <main className="vault-login">
+        <div className="vault-login-card">
+          <div className="vault-login-logo">
+            <Database size={22} strokeWidth={2.2} />
+          </div>
+          <h1 className="vault-login-title">Doc Anywhere</h1>
+          <div className="vault-login-tag">Personal Cloud Vault</div>
 
-        <form onSubmit={submit} className="mt-8 space-y-3 text-left">
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            className="w-full px-4 py-3 rounded-2xl bg-black/5 dark:bg-white/5 text-sm outline-none"
-          />
-          <input
-            type="password"
-            required
-            minLength={6}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            className="w-full px-4 py-3 rounded-2xl bg-black/5 dark:bg-white/5 text-sm outline-none"
-          />
+          <p className="vault-login-desc">
+            {mode === "signin"
+              ? "Sign in to reach your links, notes, passwords and files — from any device."
+              : "Create an account to start your private vault."}
+          </p>
+
+          <form onSubmit={submit} className="vault-login-form">
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="vault-login-input vault-mono"
+            />
+            <input
+              type="password"
+              required
+              minLength={6}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              className="vault-login-input vault-mono"
+            />
+            <button type="submit" disabled={busy} className="vault-login-submit">
+              {busy ? "…" : mode === "signin" ? "Sign in" : "Create account"}
+            </button>
+          </form>
+
+          {msg && <p className="vault-login-msg">{msg}</p>}
+
           <button
-            type="submit"
-            disabled={busy}
-            className="w-full px-4 py-3.5 rounded-2xl text-[14px] font-semibold text-white transition hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
-            style={{
-              background: "linear-gradient(135deg, var(--grad-from), var(--grad-via), var(--grad-to))",
-              boxShadow: "0 10px 30px -8px var(--glow)",
+            onClick={() => {
+              setMode(mode === "signin" ? "signup" : "signin");
+              setMsg(null);
             }}
+            className="vault-login-switch"
           >
-            {busy ? "…" : mode === "signin" ? "Sign in" : "Create account"}
+            {mode === "signin" ? "Need an account? Sign up →" : "← Have an account? Sign in"}
           </button>
-        </form>
 
-        {msg && <p className="text-[13px] text-muted mt-4">{msg}</p>}
-
-        <button
-          onClick={() => {
-            setMode(mode === "signin" ? "signup" : "signin");
-            setMsg(null);
-          }}
-          className="label mt-6 hover:text-ink"
-        >
-          {mode === "signin" ? "Need an account? Sign up" : "Have an account? Sign in"}
-        </button>
-      </div>
-    </main>
+          <div className="vault-login-foot">ENCRYPTED · PRIVATE · YOURS</div>
+        </div>
+      </main>
+    </div>
   );
 }

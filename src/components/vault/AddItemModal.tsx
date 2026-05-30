@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Folder, Link2, FileText, KeyRound } from "lucide-react";
 import type { VaultKind } from "@/lib/vault/types";
 
 type AddKind = Exclude<VaultKind, "file">;
@@ -10,6 +11,13 @@ const LABELS: Record<AddKind, string> = {
   link: "Save link",
   note: "New note",
   secret: "New password",
+};
+
+const ICONS: Record<AddKind, { Icon: typeof Folder; cls: string }> = {
+  folder: { Icon: Folder, cls: "vault-icon-folder" },
+  link: { Icon: Link2, cls: "vault-icon-link" },
+  note: { Icon: FileText, cls: "vault-icon-note" },
+  secret: { Icon: KeyRound, cls: "vault-icon-secret" },
 };
 
 // Create-item dialog for folder | link | note | secret. Secrets are stored as a
@@ -70,7 +78,10 @@ export function AddItemModal({
   return (
     <div className="vault-modal-backdrop" onClick={onClose}>
       <div className="vault-modal" onClick={(e) => e.stopPropagation()}>
-        <h3>{LABELS[kind]}</h3>
+        <h3>
+          {(() => { const { Icon, cls } = ICONS[kind]; return <Icon size={15} className={cls} />; })()}
+          {LABELS[kind]}
+        </h3>
 
         <div className="vault-field">
           <label className="vault-label">{kind === "secret" ? "Label" : "Title"}</label>
