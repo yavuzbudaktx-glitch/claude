@@ -2,11 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import useSWR from "swr";
-import Link from "next/link";
 import {
-  Folder, Link2, FileText, KeyRound, File as FileIcon, Image as ImageIcon,
+  Folder, Link2, FileText, KeyRound, File as FileIcon,
   Upload, Plus, Trash2, ExternalLink, Download, Eye, ChevronRight,
-  LayoutDashboard, Database,
 } from "lucide-react";
 import type { VaultItem, VaultKind } from "@/lib/vault/types";
 import { formatSize } from "@/lib/vault/types";
@@ -44,13 +42,15 @@ export function Vault() {
   const [menuOpen, setMenuOpen] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
 
-  // Signed thumbnail URLs for image files, fetched lazily once.
+  // Drag state: id of the item being dragged, and the folder currently hovered
+  // as a drop target (or "root" for the breadcrumb / empty page).
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dropTarget, setDropTarget] = useState<string | null>(null);
+  const [pageDrop, setPageDrop] = useState(false);
+
   const [thumbs, setThumbs] = useState<Record<string, string>>({});
 
-  const inFolder = useMemo(
-    () => items.filter((i) => i.parent_id === parent),
-    [items, parent],
-  );
+  const inFolder = useMemo(() => items.filter((i) => i.parent_id === parent), [items, parent]);
   const folders = useMemo(
     () => inFolder.filter((i) => i.kind === "folder").sort((a, b) => a.title.localeCompare(b.title)),
     [inFolder],
@@ -60,7 +60,6 @@ export function Vault() {
     [inFolder],
   );
 
-  // Fetch signed preview URLs for any image files currently visible.
   useEffect(() => {
     const imgs = things.filter((i) => i.kind === "file" && i.mime?.startsWith("image/") && !thumbs[i.id]);
     if (!imgs.length) return;
@@ -98,18 +97,18 @@ export function Vault() {
     setAddKind(kind);
   }
 
-  async function onUploadFiles(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = e.target.files;
-    if (!files?.length) return;
+  // Upload one or more browser File objects into a target folder (or root).
+  async function uploadFiles(files: File[], targetParent: string | null) {
+    if (!files.length) return;
     setBusy(true);
     try {
-      for (const file of Array.from(files)) {
+      for (const file of files) {
         const res = await fetch("/api/vault/upload", {
           method: "POST",
           headers: {
             "x-title": encodeURIComponent(file.name),
             "x-mime": file.type || "application/octet-stream",
-            "x-parent": parent ?? "null",
+            "x-parent": targetParent ?? "null",
           },
           body: await file.arrayBuffer(),
         });
@@ -119,14 +118,45 @@ export function Vault() {
       await mutate();
     } finally {
       setBusy(false);
-      if (fileInput.current) fileInput.current.value = "";
-      setMenuOpen(false);
     }
   }
 
+  async function onPickFiles(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    if (fileInput.current) fileInput.current.value = "";
+    setMenuOpen(false);
+    await uploadFiles(files, parent);
+  }
+
+  // Move an existing item into a folder (or to root) by updating parent_id.
+  async function moveItem(id: string, targetParent: string | null) {
+    if (id === targetParent) return;
+    const item = byId.get(id);
+    if (!item || item.parent_id === targetParent) return;
+    // Prevent dropping a folder into itself / its own descendant.
+    if (item.kind === "folder" && targetParent) {
+      let p: string | null = targetParent;
+      while (p) {
+        if (p === id) return;
+        p = byId.get(p)?.parent_id ?? null;
+      }
+    }
+    mutate(
+      (cur) => ({
+        items: (cur?.items ?? []).map((i) => (i.id === id ? { ...i, parent_id: targetParent } : i)),
+      }),
+      { revalidate: false },
+    );
+    await fetch(`/api/vault/items/${id}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ parent_id: targetParent }),
+    });
+    await mutate();
+  }
+
   async function openFile(item: VaultItem, inline: boolean) {
-    const res = await fetch(`/api/vault/download?id=${item.id}${inline ? "&inline=1" : ""}`)
-      .then((r) => r.json());
+    const res = await fetch(`/api/vault/download?id=${item.id}${inline ? "&inline=1" : ""}`).then((r) => r.json());
     if (res.url) window.open(res.url, "_blank");
   }
 
@@ -134,9 +164,7 @@ export function Vault() {
     const what = item.kind === "folder" ? "folder and everything in it" : "item";
     if (!confirm(`Delete this ${what}?`)) return;
     mutate(
-      (cur) => ({
-        items: (cur?.items ?? []).filter((i) => i.id !== item.id && i.parent_id !== item.id),
-      }),
+      (cur) => ({ items: (cur?.items ?? []).filter((i) => i.id !== item.id && i.parent_id !== item.id) }),
       { revalidate: false },
     );
     await fetch(`/api/vault/items/${item.id}`, { method: "DELETE" });
@@ -147,19 +175,44 @@ export function Vault() {
     try { return decodeURIComponent(t); } catch { return t; }
   }
 
+  // ---- drag/drop handlers ----
+  // A drop target accepts both internal item moves and OS file drops.
+  function onDropInto(targetParent: string | null, e: React.DragEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setDropTarget(null);
+    setPageDrop(false);
+    const dropped = e.dataTransfer.files ? Array.from(e.dataTransfer.files) : [];
+    if (dropped.length) {
+      uploadFiles(dropped, targetParent);
+    } else if (draggingId) {
+      moveItem(draggingId, targetParent);
+    }
+    setDraggingId(null);
+  }
+
   function renderItem(item: VaultItem) {
     const Icon = KIND_ICON[item.kind];
     const isImg = item.kind === "file" && item.mime?.startsWith("image/");
+    const isFolder = item.kind === "folder";
+    const isDropHover = dropTarget === item.id && isFolder;
     return (
-      <div key={item.id} className={`vault-item ${KIND_CARD[item.kind]}`}>
+      <div
+        key={item.id}
+        className={`vault-item ${KIND_CARD[item.kind]}${isDropHover ? " vault-item-drophover" : ""}${draggingId === item.id ? " vault-item-dragging" : ""}`}
+        draggable
+        onDragStart={(e) => { setDraggingId(item.id); e.dataTransfer.effectAllowed = "move"; }}
+        onDragEnd={() => { setDraggingId(null); setDropTarget(null); }}
+        onDragOver={isFolder ? (e) => { e.preventDefault(); e.stopPropagation(); setDropTarget(item.id); } : undefined}
+        onDragLeave={isFolder ? () => setDropTarget((t) => (t === item.id ? null : t)) : undefined}
+        onDrop={isFolder ? (e) => onDropInto(item.id, e) : undefined}
+      >
         <div className="vault-item-head">
-          <span className="vault-item-iconwrap">
-            <Icon size={15} className={KIND_CLASS[item.kind]} />
-          </span>
+          <span className="vault-item-iconwrap"><Icon size={15} className={KIND_CLASS[item.kind]} /></span>
           <span className="vault-item-kind">{item.kind}</span>
         </div>
 
-        {item.kind === "folder" ? (
+        {isFolder ? (
           <button className="vault-item-title vault-item-title-btn" onClick={() => setParent(item.id)}>
             {item.title}
           </button>
@@ -169,7 +222,7 @@ export function Vault() {
 
         {isImg && thumbs[item.id] && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={thumbs[item.id]} alt={decodeTitle(item.title)} className="vault-thumb" />
+          <img src={thumbs[item.id]} alt={decodeTitle(item.title)} className="vault-thumb" draggable={false} />
         )}
 
         {item.kind === "link" && item.url && (
@@ -184,9 +237,7 @@ export function Vault() {
           <span className="vault-item-sub">{formatSize(item.size)}</span>
         )}
         {item.kind === "secret" && (
-          <span className="vault-item-sub" style={{ color: "var(--v-muted)", letterSpacing: "0.15em" }}>
-            ••••••••••
-          </span>
+          <span className="vault-item-sub" style={{ color: "var(--v-muted)", letterSpacing: "0.15em" }}>••••••••••</span>
         )}
 
         <div className="vault-item-actions">
@@ -201,9 +252,7 @@ export function Vault() {
           )}
           {item.kind === "file" && (
             <>
-              {isImg && (
-                <button onClick={() => openFile(item, true)} title="Preview"><Eye size={15} /></button>
-              )}
+              {isImg && <button onClick={() => openFile(item, true)} title="Preview"><Eye size={15} /></button>}
               <button onClick={() => openFile(item, false)} title="Download"><Download size={15} /></button>
             </>
           )}
@@ -218,12 +267,22 @@ export function Vault() {
   const empty = folders.length === 0 && things.length === 0;
 
   return (
-    <div className="vault-scope">
+    <div
+      className={`vault-scope${pageDrop ? " vault-page-drop" : ""}`}
+      onDragOver={(e) => {
+        // Allow dropping onto blank page area = current folder. Only show the
+        // page overlay for OS file drags, not internal moves.
+        if (e.dataTransfer.types.includes("Files")) { e.preventDefault(); setPageDrop(true); }
+      }}
+      onDragLeave={(e) => { if (e.currentTarget === e.target) setPageDrop(false); }}
+      onDrop={(e) => { if (e.dataTransfer.files?.length) onDropInto(parent, e); }}
+    >
       <div className="vault-shell">
         {/* top bar */}
         <div className="vault-topbar">
           <div className="vault-brand">
-            <span className="vault-logo"><Database size={17} strokeWidth={2.3} /></span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/doc-anywhere-logo.svg" alt="Doc Anywhere" className="vault-logo-img" />
             <span className="vault-title">
               Doc Anywhere
               <span className="vault-sub">Personal Vault</span>
@@ -234,7 +293,7 @@ export function Vault() {
           <div style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center" }}>
             <div style={{ position: "relative" }}>
               <button className="vault-btn vault-btn-primary" onClick={() => setMenuOpen((m) => !m)} disabled={busy}>
-                <Plus size={15} /> {busy ? "Uploading…" : "New"}
+                <Plus size={15} /> {busy ? "Working…" : "New"}
               </button>
               {menuOpen && (
                 <>
@@ -249,20 +308,31 @@ export function Vault() {
                 </>
               )}
             </div>
-            <Link href="/" className="vault-btn vault-btn-icon" title="Back to dashboard">
-              <LayoutDashboard size={15} />
-            </Link>
           </div>
-          <input ref={fileInput} type="file" multiple className="hidden" onChange={onUploadFiles} />
+          <input ref={fileInput} type="file" multiple className="hidden" onChange={onPickFiles} />
         </div>
 
-        {/* breadcrumbs */}
+        {/* breadcrumbs — each crumb is a drop target to move items up a level */}
         <div className="vault-crumbs">
-          <button onClick={() => setParent(null)} className={parent ? "" : "vault-crumb-cur"}>~/doc-anywhere</button>
+          <button
+            onClick={() => setParent(null)}
+            className={`${parent ? "" : "vault-crumb-cur"}${dropTarget === "__root__" ? " vault-crumb-drop" : ""}`}
+            onDragOver={(e) => { e.preventDefault(); setDropTarget("__root__"); }}
+            onDragLeave={() => setDropTarget((t) => (t === "__root__" ? null : t))}
+            onDrop={(e) => onDropInto(null, e)}
+          >
+            ~/doc-anywhere
+          </button>
           {crumbs.map((c, i) => (
             <span key={c.id} style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <ChevronRight size={12} />
-              <button onClick={() => setParent(c.id)} className={i === crumbs.length - 1 ? "vault-crumb-cur" : ""}>
+              <button
+                onClick={() => setParent(c.id)}
+                className={`${i === crumbs.length - 1 ? "vault-crumb-cur" : ""}${dropTarget === c.id ? " vault-crumb-drop" : ""}`}
+                onDragOver={(e) => { e.preventDefault(); setDropTarget(c.id); }}
+                onDragLeave={() => setDropTarget((t) => (t === c.id ? null : t))}
+                onDrop={(e) => onDropInto(c.id, e)}
+              >
                 {c.title}
               </button>
             </span>
@@ -278,12 +348,20 @@ export function Vault() {
 
           {empty && (
             <div className="vault-empty">
-              <span className="vault-empty-ring"><Database size={22} /></span>
-              This space is empty — hit <b style={{ color: "var(--v-ink-soft)" }}>New</b> to add a link, note, password or file.
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/doc-anywhere-logo.svg" alt="" className="vault-empty-logo" />
+              Drop files here, or hit <b style={{ color: "var(--v-ink-soft)" }}>New</b> to add a link, note, password or folder.
             </div>
           )}
         </div>
       </div>
+
+      {/* full-page drop hint for OS file drags */}
+      {pageDrop && (
+        <div className="vault-drop-overlay">
+          <div className="vault-drop-card"><Upload size={26} /> Drop to upload here</div>
+        </div>
+      )}
 
       {/* modals */}
       {addKind && (

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Database } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
@@ -42,9 +41,8 @@ export default function LoginPage() {
     <div className="vault-scope">
       <main className="vault-login">
         <div className="vault-login-card">
-          <div className="vault-login-logo">
-            <Database size={22} strokeWidth={2.2} />
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/doc-anywhere-logo.svg" alt="Doc Anywhere" className="vault-login-logo-img" />
           <h1 className="vault-login-title">Doc Anywhere</h1>
           <div className="vault-login-tag">Personal Cloud Vault</div>
 

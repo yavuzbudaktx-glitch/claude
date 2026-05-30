@@ -670,3 +670,48 @@ main { position: relative; z-index: 1; }
   .vault-topbar { flex-wrap: wrap; gap: 10px; }
   .vault-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
 }
+
+/* ---------- Doc Anywhere: logo image + drag & drop ---------- */
+.vault-logo-img {
+  width: 34px; height: 34px; border-radius: 9px; display: block;
+  box-shadow: 0 6px 18px -6px rgba(0,0,0,0.6);
+}
+.vault-login-logo-img {
+  width: 76px; height: 76px; border-radius: 18px; display: block; margin: 0 auto 18px;
+  box-shadow: 0 16px 40px -10px rgba(0,0,0,0.6);
+}
+.vault-empty-logo { width: 64px; height: 64px; border-radius: 16px; opacity: 0.9; }
+
+/* item being dragged */
+.vault-item-dragging { opacity: 0.45; }
+.vault-item[draggable="true"] { cursor: grab; }
+.vault-item[draggable="true"]:active { cursor: grabbing; }
+
+/* folder card highlighted as a drop target */
+.vault-item-drophover {
+  border-color: var(--v-accent) !important;
+  box-shadow: 0 0 0 3px rgba(116,168,255,0.25), 0 16px 36px -22px rgba(0,0,0,0.9) !important;
+  transform: translateY(-2px);
+}
+
+/* breadcrumb drop target */
+.vault-crumb-drop {
+  color: var(--v-accent) !important;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+
+/* full-page OS file drop overlay */
+.vault-drop-overlay {
+  position: fixed; inset: 0; z-index: 70; pointer-events: none;
+  background: rgba(116,168,255,0.08); backdrop-filter: blur(2px);
+  display: grid; place-items: center;
+  border: 3px dashed rgba(116,168,255,0.5); border-radius: 0;
+}
+.vault-drop-card {
+  display: flex; align-items: center; gap: 12px;
+  font-family: "JetBrains Mono", monospace; font-size: 16px; font-weight: 600;
+  color: var(--v-ink); padding: 20px 28px; border-radius: 14px;
+  background: var(--v-panel); border: 1px solid var(--v-accent);
+  box-shadow: 0 30px 80px -20px rgba(0,0,0,0.8);
+}
+.vault-page-drop { outline: none; }
