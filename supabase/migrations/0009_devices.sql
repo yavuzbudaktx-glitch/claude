@@ -2,6 +2,15 @@
 -- We store only sha256(token); the raw token is shown to the user once at
 -- creation. sync_cursor is the highest documents.rev the device has processed.
 
+-- Redefined idempotently so this migration also applies standalone (see 0008).
+create or replace function set_updated_at()
+returns trigger as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$ language plpgsql;
+
 create table if not exists devices (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
