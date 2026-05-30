@@ -1,39 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Copy, Check, Eye, EyeOff } from "lucide-react";
 import type { VaultItem } from "@/lib/vault/types";
-import { decryptSecret, type SecretFields } from "@/lib/vault/crypto";
 
-// Decrypts and displays a secret using the in-memory master key. The plaintext
-// exists only here, in component state, for as long as the modal is open.
-export function SecretModal({
-  item,
-  masterKey,
-  onClose,
-}: {
-  item: VaultItem;
-  masterKey: CryptoKey;
-  onClose: () => void;
-}) {
-  const [fields, setFields] = useState<SecretFields | null>(null);
+type SecretFields = { username?: string; password?: string; notes?: string };
+
+function parse(blob: string | null): SecretFields {
+  if (!blob) return {};
+  try { return JSON.parse(blob) as SecretFields; } catch { return {}; }
+}
+
+// Displays a stored secret. Access is gated by the account login; the password
+// stays masked behind a show/hide toggle and offers copy-to-clipboard.
+export function SecretModal({ item, onClose }: { item: VaultItem; onClose: () => void }) {
+  const fields = parse(item.secret_ciphertext);
   const [show, setShow] = useState(false);
-  const [err, setErr] = useState("");
   const [copied, setCopied] = useState<string>("");
-
-  useEffect(() => {
-    let alive = true;
-    (async () => {
-      try {
-        if (!item.secret_ciphertext) return setErr("Empty secret.");
-        const f = await decryptSecret(masterKey, item.secret_ciphertext);
-        if (alive) setFields(f);
-      } catch {
-        if (alive) setErr("Could not decrypt with this master password.");
-      }
-    })();
-    return () => { alive = false; };
-  }, [item, masterKey]);
 
   function copy(label: string, value: string) {
     navigator.clipboard.writeText(value);
@@ -66,28 +49,23 @@ export function SecretModal({
     );
   }
 
+  const empty = !fields.username && !fields.password && !fields.notes;
+
   return (
     <div className="vault-modal-backdrop" onClick={onClose}>
       <div className="vault-modal" onClick={(e) => e.stopPropagation()}>
         <h3>{item.title}</h3>
-        {err && <p style={{ color: "var(--v-danger)", fontSize: 12 }}>{err}</p>}
-        {!fields && !err && (
-          <p style={{ color: "var(--v-muted)", fontSize: 13 }}>Decrypting…</p>
-        )}
-        {fields && (
-          <>
-            <Row label="Username" value={fields.username ?? ""} />
-            <Row label="Password" value={fields.password ?? ""} mask />
-            {fields.notes ? (
-              <div className="vault-field">
-                <label className="vault-label">Notes</label>
-                <div className="vault-input vault-mono" style={{ whiteSpace: "pre-wrap" }}>
-                  {fields.notes}
-                </div>
-              </div>
-            ) : null}
-          </>
-        )}
+        {empty && <p style={{ color: "var(--v-muted)", fontSize: 13 }}>Nothing stored.</p>}
+        <Row label="Username" value={fields.username ?? ""} />
+        <Row label="Password" value={fields.password ?? ""} mask />
+        {fields.notes ? (
+          <div className="vault-field">
+            <label className="vault-label">Notes</label>
+            <div className="vault-input vault-mono" style={{ whiteSpace: "pre-wrap" }}>
+              {fields.notes}
+            </div>
+          </div>
+        ) : null}
         <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 6 }}>
           <button className="vault-btn" onClick={onClose}>Close</button>
         </div>

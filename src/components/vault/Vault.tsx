@@ -5,11 +5,10 @@ import useSWR from "swr";
 import Link from "next/link";
 import {
   Folder, Link2, FileText, KeyRound, File as FileIcon, Upload, Plus,
-  Trash2, ExternalLink, Download, Eye, Lock, Unlock, ChevronRight, LayoutDashboard,
+  Trash2, ExternalLink, Download, Eye, ChevronRight, LayoutDashboard,
 } from "lucide-react";
 import type { VaultItem, VaultKind } from "@/lib/vault/types";
 import { formatSize } from "@/lib/vault/types";
-import { UnlockModal } from "./UnlockModal";
 import { AddItemModal } from "./AddItemModal";
 import { SecretModal } from "./SecretModal";
 
@@ -27,38 +26,25 @@ const KIND_CLASS: Record<VaultKind, string> = {
 
 export function Vault() {
   const { data, mutate } = useSWR<{ items: VaultItem[] }>("/api/vault/items", fetcher);
-  const { data: keyInfo, mutate: mutateKey } = useSWR<{
-    exists: boolean; salt?: string; verifier?: string;
-  }>("/api/vault/key", fetcher);
 
   const items = useMemo(() => data?.items ?? [], [data]);
   const byId = useMemo(() => new Map(items.map((i) => [i.id, i])), [items]);
 
   const [parent, setParent] = useState<string | null>(null);
-  const [query, setQuery] = useState("");
-  const [masterKey, setMasterKey] = useState<CryptoKey | null>(null);
   const [busy, setBusy] = useState(false);
 
   // Modals
   const [addKind, setAddKind] = useState<AddKind | null>(null);
-  const [unlockOpen, setUnlockOpen] = useState(false);
-  const [pendingAction, setPendingAction] = useState<null | ((key: CryptoKey) => void)>(null);
   const [viewSecret, setViewSecret] = useState<VaultItem | null>(null);
   const [viewNote, setViewNote] = useState<VaultItem | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
 
-  const q = query.trim().toLowerCase();
   const visible = useMemo(() => {
-    if (q) {
-      return items
-        .filter((i) => i.kind !== "folder" && i.title.toLowerCase().includes(q))
-        .sort((a, b) => a.title.localeCompare(b.title));
-    }
     return items
       .filter((i) => i.parent_id === parent)
       .sort((a, b) => (a.kind === "folder" ? -1 : 1) - (b.kind === "folder" ? -1 : 1) || a.title.localeCompare(b.title));
-  }, [items, parent, q]);
+  }, [items, parent]);
 
   // Breadcrumb chain from root to current folder.
   const crumbs = useMemo(() => {
@@ -68,33 +54,18 @@ export function Vault() {
     return chain;
   }, [parent, byId]);
 
-  // Run an action that needs the master key, unlocking first if necessary.
-  function withKey(action: (key: CryptoKey) => void) {
-    if (masterKey) return action(masterKey);
-    setPendingAction(() => action);
-    setUnlockOpen(true);
-  }
-
-  function onUnlocked(key: CryptoKey) {
-    setMasterKey(key);
-    setUnlockOpen(false);
-    mutateKey();
-    const pending = pendingAction;
-    setPendingAction(null);
-    if (pending) pending(key);
+  // Insert a freshly-created item into the cache immediately so it shows without
+  // waiting for a refetch, then revalidate in the background.
+  function addToCache(item: VaultItem) {
+    mutate(
+      (cur) => ({ items: [...(cur?.items ?? []), item] }),
+      { revalidate: true },
+    );
   }
 
   function startAdd(kind: AddKind) {
     setMenuOpen(false);
-    if (kind === "secret") {
-      withKey(() => setAddKind("secret"));
-    } else {
-      setAddKind(kind);
-    }
-  }
-
-  function openSecret(item: VaultItem) {
-    withKey(() => setViewSecret(item));
+    setAddKind(kind);
   }
 
   async function onUploadFiles(e: React.ChangeEvent<HTMLInputElement>) {
@@ -103,7 +74,7 @@ export function Vault() {
     setBusy(true);
     try {
       for (const file of Array.from(files)) {
-        await fetch("/api/vault/upload", {
+        const res = await fetch("/api/vault/upload", {
           method: "POST",
           headers: {
             "x-title": encodeURIComponent(file.name),
@@ -112,6 +83,8 @@ export function Vault() {
           },
           body: await file.arrayBuffer(),
         });
+        const json = await res.json().catch(() => null);
+        if (json?.item) addToCache(json.item);
       }
       await mutate();
     } finally {
@@ -130,6 +103,13 @@ export function Vault() {
   async function remove(item: VaultItem) {
     const what = item.kind === "folder" ? "folder and everything in it" : "item";
     if (!confirm(`Delete this ${what}?`)) return;
+    // Optimistically drop it (and any children) from the cache.
+    mutate(
+      (cur) => ({
+        items: (cur?.items ?? []).filter((i) => i.id !== item.id && i.parent_id !== item.id),
+      }),
+      { revalidate: false },
+    );
     await fetch(`/api/vault/items/${item.id}`, { method: "DELETE" });
     await mutate();
   }
@@ -146,30 +126,14 @@ export function Vault() {
           <span className="vault-title"><span className="vault-dot" />The Vault</span>
           <span className="vault-chip">{items.length} items</span>
 
-          <input
-            className="vault-search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="search everything…"
-          />
-
           <div style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center" }}>
-            <span className="vault-locked-pill">
-              {masterKey ? <Unlock size={12} /> : <Lock size={12} />}
-              {masterKey ? "unlocked" : "locked"}
-            </span>
-            {!masterKey && (
-              <button className="vault-btn" onClick={() => setUnlockOpen(true)}>
-                <KeyRound size={14} /> Unlock
-              </button>
-            )}
             <div style={{ position: "relative" }}>
               <button
                 className="vault-btn vault-btn-primary"
                 onClick={() => setMenuOpen((m) => !m)}
                 disabled={busy}
               >
-                <Plus size={14} /> New
+                <Plus size={14} /> {busy ? "Uploading…" : "New"}
               </button>
               {menuOpen && (
                 <>
@@ -192,17 +156,15 @@ export function Vault() {
         </div>
 
         {/* breadcrumbs */}
-        {!q && (
-          <div className="vault-crumbs">
-            <button onClick={() => setParent(null)}>~/vault</button>
-            {crumbs.map((c) => (
-              <span key={c.id} style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                <ChevronRight size={12} />
-                <button onClick={() => setParent(c.id)}>{c.title}</button>
-              </span>
-            ))}
-          </div>
-        )}
+        <div className="vault-crumbs">
+          <button onClick={() => setParent(null)}>~/vault</button>
+          {crumbs.map((c) => (
+            <span key={c.id} style={{ display: "flex", alignItems: "center", gap: 7 }}>
+              <ChevronRight size={12} />
+              <button onClick={() => setParent(c.id)}>{c.title}</button>
+            </span>
+          ))}
+        </div>
 
         {/* grid */}
         <div className="vault-grid">
@@ -219,7 +181,7 @@ export function Vault() {
                   <button
                     className="vault-item-title"
                     style={{ textAlign: "left", cursor: "pointer" }}
-                    onClick={() => { setParent(item.id); setQuery(""); }}
+                    onClick={() => setParent(item.id)}
                   >
                     {item.title}
                   </button>
@@ -248,7 +210,7 @@ export function Vault() {
                     <a href={item.url} target="_blank" rel="noreferrer" title="Open"><ExternalLink size={15} /></a>
                   )}
                   {item.kind === "secret" && (
-                    <button onClick={() => openSecret(item)} title="Reveal"><Eye size={15} /></button>
+                    <button onClick={() => setViewSecret(item)} title="Reveal"><Eye size={15} /></button>
                   )}
                   {item.kind === "note" && (
                     <button onClick={() => setViewNote(item)} title="Open"><Eye size={15} /></button>
@@ -271,7 +233,7 @@ export function Vault() {
 
           {visible.length === 0 && (
             <div className="vault-empty">
-              {q ? "no matches." : "empty — hit New to add a link, note, password or file."}
+              empty — hit New to add a link, note, password or file.
             </div>
           )}
         </div>
@@ -282,29 +244,17 @@ export function Vault() {
         <AddItemModal
           kind={addKind}
           parentId={parent}
-          masterKey={masterKey}
-          onCreated={() => mutate()}
+          onCreated={addToCache}
           onClose={() => setAddKind(null)}
         />
       )}
       {viewNote && <NoteModal item={viewNote} onClose={() => setViewNote(null)} />}
-      {viewSecret && masterKey && (
-        <SecretModal item={viewSecret} masterKey={masterKey} onClose={() => setViewSecret(null)} />
-      )}
-      {unlockOpen && keyInfo && (
-        <UnlockModal
-          exists={keyInfo.exists}
-          salt={keyInfo.salt}
-          verifier={keyInfo.verifier}
-          onUnlocked={onUnlocked}
-          onClose={() => { setUnlockOpen(false); setPendingAction(null); }}
-        />
-      )}
+      {viewSecret && <SecretModal item={viewSecret} onClose={() => setViewSecret(null)} />}
     </div>
   );
 }
 
-// Lightweight inline note reader (no encryption involved).
+// Lightweight inline note reader.
 function NoteModal({ item, onClose }: { item: VaultItem; onClose: () => void }) {
   return (
     <div className="vault-modal-backdrop" onClick={onClose}>

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import type { VaultKind } from "@/lib/vault/types";
-import { encryptSecret } from "@/lib/vault/crypto";
 
 type AddKind = Exclude<VaultKind, "file">;
 
@@ -13,19 +12,18 @@ const LABELS: Record<AddKind, string> = {
   secret: "New password",
 };
 
-// Create-item dialog for folder | link | note | secret. Secrets are encrypted
-// here with the in-memory master key before they ever leave the browser.
+// Create-item dialog for folder | link | note | secret. Secrets are stored as a
+// JSON blob (username/password/notes) in secret_ciphertext; access is gated by
+// the user's login, so no separate master-password encryption is used.
 export function AddItemModal({
   kind,
   parentId,
-  masterKey,
   onCreated,
   onClose,
 }: {
   kind: AddKind;
   parentId: string | null;
-  masterKey: CryptoKey | null;
-  onCreated: () => void;
+  onCreated: (item: import("@/lib/vault/types").VaultItem) => void;
   onClose: () => void;
 }) {
   const [title, setTitle] = useState("");
@@ -49,8 +47,7 @@ export function AddItemModal({
       }
       if (kind === "note") payload.body = body;
       if (kind === "secret") {
-        if (!masterKey) return setErr("Vault is locked.");
-        payload.secret_ciphertext = await encryptSecret(masterKey, {
+        payload.secret_ciphertext = JSON.stringify({
           username: username.trim(),
           password,
           notes: body.trim(),
@@ -61,8 +58,9 @@ export function AddItemModal({
         headers: { "content-type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) return setErr("Could not save.");
-      onCreated();
+      const json = await res.json();
+      if (!res.ok || !json.item) return setErr(json.error || "Could not save.");
+      onCreated(json.item);
       onClose();
     } finally {
       setBusy(false);
@@ -81,6 +79,7 @@ export function AddItemModal({
             className="vault-input"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && kind !== "note" && kind !== "secret" && submit()}
             placeholder={kind === "link" ? "e.g. Supabase dashboard" : "Name"}
           />
         </div>
@@ -92,6 +91,7 @@ export function AddItemModal({
               className="vault-input vault-mono"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && submit()}
               placeholder="https://…"
             />
           </div>
