@@ -1,6 +1,6 @@
 {
-  "name": "Morning",
-  "short_name": "Morning",
+  "name": "Brief",
+  "short_name": "Brief",
   "description": "Your personal daily edition: time, weather, hadith, calendar, headlines and tasks.",
   "start_url": "/",
   "display": "standalone",

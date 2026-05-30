@@ -22,9 +22,8 @@ export default function LoginPage() {
     <main className="min-h-dvh flex items-center justify-center px-6">
       <div className="card max-w-md w-full text-center animate-fadeIn !p-8 md:!p-10">
         <div className="label">Your personal dashboard</div>
-        <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-4 leading-[0.95]">
-          <span className="text-ink">Good</span>{" "}
-          <span className="text-gradient">Morning</span>
+        <h1 className="font-display text-6xl md:text-7xl tracking-tight mt-4 leading-[0.95]">
+          <span className="text-gradient">Brief</span>
         </h1>
         <p className="text-muted text-sm mt-5 leading-relaxed">
           One calm place for your day — time, weather, the day&rsquo;s hadith,
