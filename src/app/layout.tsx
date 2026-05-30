@@ -3,18 +3,20 @@ import "./globals.css";
 import { PrefsProvider } from "@/components/PrefsProvider";
 import { CommandPalette } from "@/components/CommandPalette";
 import { FocusMode } from "@/components/FocusMode";
+import { CURRENT } from "@/lib/app-config";
 
 export const metadata: Metadata = {
-  title: "Doc Anywhere",
-  description: "Your personal cloud vault — links, notes, passwords and files, anywhere.",
-  manifest: "/manifest.webmanifest",
-  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Doc Anywhere" },
+  title: CURRENT.name,
+  description: CURRENT.description,
+  manifest: CURRENT.manifest,
+  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: CURRENT.name },
   icons: {
     icon: [
-      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+      { url: CURRENT.icons.favicon },
+      { url: CURRENT.icons.icon192, sizes: "192x192", type: "image/png" },
+      { url: CURRENT.icons.icon512, sizes: "512x512", type: "image/png" },
     ],
-    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    apple: [{ url: CURRENT.icons.apple, sizes: "180x180", type: "image/png" }],
   },
 };
 
@@ -22,6 +24,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  themeColor: CURRENT.themeColor,
 };
 
 const themeScript = `
