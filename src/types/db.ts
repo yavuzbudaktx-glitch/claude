@@ -40,3 +40,30 @@ export interface UserSettings {
   weather_lat: number;
   weather_lon: number;
 }
+
+export interface DocumentRow {
+  id: string;
+  user_id: string;
+  path: string;
+  content_hash: string | null;
+  size: number;
+  mime: string | null;
+  version: number;
+  deleted: boolean;
+  rev: number;
+  storage_key: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DeviceRow {
+  id: string;
+  user_id: string;
+  name: string;
+  platform: string | null;
+  sync_cursor: number;
+  last_seen_at: string | null;
+  revoked: boolean;
+  created_at: string;
+  updated_at: string;
+}
