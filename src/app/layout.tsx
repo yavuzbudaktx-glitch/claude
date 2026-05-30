@@ -5,10 +5,10 @@ import { CommandPalette } from "@/components/CommandPalette";
 import { FocusMode } from "@/components/FocusMode";
 
 export const metadata: Metadata = {
-  title: "Brief",
-  description: "Your personal daily edition: time, weather, hadith, calendar, headlines and tasks.",
+  title: "Doc Anywhere",
+  description: "Your personal cloud vault — links, notes, passwords and files, anywhere.",
   manifest: "/manifest.webmanifest",
-  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Brief" },
+  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Doc Anywhere" },
   icons: {
     icon: [
       { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },

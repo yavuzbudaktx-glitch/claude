@@ -282,7 +282,7 @@ export function Vault() {
         <div className="vault-topbar">
           <div className="vault-brand">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/doc-anywhere-logo.svg" alt="Doc Anywhere" className="vault-logo-img" />
+            <img src="/doc-anywhere-logo.png" alt="Doc Anywhere" className="vault-logo-img" />
             <span className="vault-title">
               Doc Anywhere
               <span className="vault-sub">Personal Vault</span>
@@ -349,7 +349,7 @@ export function Vault() {
           {empty && (
             <div className="vault-empty">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/doc-anywhere-logo.svg" alt="" className="vault-empty-logo" />
+              <img src="/doc-anywhere-logo.png" alt="" className="vault-empty-logo" />
               Drop files here, or hit <b style={{ color: "var(--v-ink-soft)" }}>New</b> to add a link, note, password or folder.
             </div>
           )}

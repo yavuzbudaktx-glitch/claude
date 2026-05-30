@@ -1,12 +1,12 @@
 {
-  "name": "Brief",
-  "short_name": "Brief",
-  "description": "Your personal daily edition: time, weather, hadith, calendar, headlines and tasks.",
-  "start_url": "/",
+  "name": "Doc Anywhere",
+  "short_name": "Doc Anywhere",
+  "description": "Your personal cloud vault — links, notes, passwords and files, anywhere.",
+  "start_url": "/files",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#F4C84A",
-  "theme_color": "#F4C84A",
+  "background_color": "#0F5C56",
+  "theme_color": "#0F5C56",
   "icons": [
     { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },

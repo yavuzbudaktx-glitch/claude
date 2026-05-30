@@ -42,7 +42,7 @@ export default function LoginPage() {
       <main className="vault-login">
         <div className="vault-login-card">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/doc-anywhere-logo.svg" alt="Doc Anywhere" className="vault-login-logo-img" />
+          <img src="/doc-anywhere-logo.png" alt="Doc Anywhere" className="vault-login-logo-img" />
           <h1 className="vault-login-title">Doc Anywhere</h1>
           <div className="vault-login-tag">Personal Cloud Vault</div>
 
