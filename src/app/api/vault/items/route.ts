@@ -3,20 +3,27 @@ import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
-const COLS = "id, parent_id, kind, title, url, body, secret_ciphertext, storage_key, mime, size, updated_at";
+const COLS =
+  "id, parent_id, kind, title, url, body, secret_ciphertext, storage_key, mime, size, favorite, hidden, updated_at";
 
-// List every vault item the user owns (the client builds the folder tree).
-export async function GET() {
+// List the user's vault items. Hidden (private-vault) items are excluded unless
+// the request carries the unlocked flag (?private=1), which the client only
+// sends after the PIN has been verified this session.
+export async function GET(request: Request) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-  const { data, error } = await supabase
+  const includePrivate = new URL(request.url).searchParams.get("private") === "1";
+
+  let query = supabase
     .from("vault_items")
     .select(COLS)
     .order("kind", { ascending: true })
     .order("title", { ascending: true });
+  if (!includePrivate) query = query.eq("hidden", false);
 
+  const { data, error } = await query;
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ items: data });
 }
@@ -45,6 +52,7 @@ export async function POST(request: Request) {
       url: b.url ?? null,
       body: b.body ?? null,
       secret_ciphertext: b.secret_ciphertext ?? null,
+      hidden: b.hidden === true,
     })
     .select(COLS)
     .single();

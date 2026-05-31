@@ -11,6 +11,8 @@ export interface VaultItem {
   storage_key: string | null;
   mime: string | null;
   size: number;
+  favorite: boolean;
+  hidden: boolean;
   updated_at: string;
 }
 

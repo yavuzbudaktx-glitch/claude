@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Folder, Link2, FileText, KeyRound } from "lucide-react";
-import type { VaultKind } from "@/lib/vault/types";
+import type { VaultItem, VaultKind } from "@/lib/vault/types";
 
 type AddKind = Exclude<VaultKind, "file">;
 
@@ -20,34 +20,46 @@ const ICONS: Record<AddKind, { Icon: typeof Folder; cls: string }> = {
   secret: { Icon: KeyRound, cls: "vault-icon-secret" },
 };
 
-// Create-item dialog for folder | link | note | secret. Secrets are stored as a
-// JSON blob (username/password/notes) in secret_ciphertext; access is gated by
-// the user's login, so no separate master-password encryption is used.
+type SecretFields = { username?: string; password?: string; notes?: string };
+function parseSecret(blob: string | null): SecretFields {
+  if (!blob) return {};
+  try { return JSON.parse(blob) as SecretFields; } catch { return {}; }
+}
+
+// Create OR edit a non-file item. Pass `edit` to prefill and switch to PATCH.
+// `hidden` marks new items as part of the private vault.
 export function AddItemModal({
   kind,
   parentId,
-  onCreated,
+  hidden = false,
+  edit,
+  onSaved,
   onClose,
 }: {
   kind: AddKind;
   parentId: string | null;
-  onCreated: (item: import("@/lib/vault/types").VaultItem) => void;
+  hidden?: boolean;
+  edit?: VaultItem;
+  onSaved: (item: VaultItem) => void;
   onClose: () => void;
 }) {
-  const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
-  const [body, setBody] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const editSecret = edit ? parseSecret(edit.secret_ciphertext) : {};
+  const [title, setTitle] = useState(edit ? decode(edit.title) : "");
+  const [url, setUrl] = useState(edit?.url ?? "");
+  const [body, setBody] = useState(edit ? (kind === "secret" ? editSecret.notes ?? "" : edit.body ?? "") : "");
+  const [username, setUsername] = useState(editSecret.username ?? "");
+  const [password, setPassword] = useState(editSecret.password ?? "");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+
+  function decode(t: string) { try { return decodeURIComponent(t); } catch { return t; } }
 
   async function submit() {
     setErr("");
     if (!title.trim()) return setErr("Title is required.");
     setBusy(true);
     try {
-      const payload: Record<string, unknown> = { kind, parent_id: parentId, title: title.trim() };
+      const payload: Record<string, unknown> = { title: title.trim() };
       if (kind === "link") {
         let u = url.trim();
         if (u && !/^https?:\/\//i.test(u)) u = "https://" + u;
@@ -55,33 +67,39 @@ export function AddItemModal({
       }
       if (kind === "note") payload.body = body;
       if (kind === "secret") {
-        payload.secret_ciphertext = JSON.stringify({
-          username: username.trim(),
-          password,
-          notes: body.trim(),
+        payload.secret_ciphertext = JSON.stringify({ username: username.trim(), password, notes: body.trim() });
+      }
+
+      let res: Response;
+      if (edit) {
+        res = await fetch(`/api/vault/items/${edit.id}`, {
+          method: "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        res = await fetch("/api/vault/items", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ ...payload, kind, parent_id: parentId, hidden }),
         });
       }
-      const res = await fetch("/api/vault/items", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(payload),
-      });
       const json = await res.json();
       if (!res.ok || !json.item) return setErr(json.error || "Could not save.");
-      onCreated(json.item);
+      onSaved(json.item);
       onClose();
     } finally {
       setBusy(false);
     }
   }
 
+  const { Icon, cls } = ICONS[kind];
+  const heading = edit ? `Edit ${kind === "secret" ? "password" : kind}` : LABELS[kind];
+
   return (
     <div className="vault-modal-backdrop" onClick={onClose}>
       <div className="vault-modal" onClick={(e) => e.stopPropagation()}>
-        <h3>
-          {(() => { const { Icon, cls } = ICONS[kind]; return <Icon size={15} className={cls} />; })()}
-          {LABELS[kind]}
-        </h3>
+        <h3><Icon size={16} className={cls} /> {heading}</h3>
 
         <div className="vault-field">
           <label className="vault-label">{kind === "secret" ? "Label" : "Title"}</label>
@@ -112,22 +130,13 @@ export function AddItemModal({
           <>
             <div className="vault-field">
               <label className="vault-label">Username / email</label>
-              <input
-                className="vault-input vault-mono"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="optional"
-              />
+              <input className="vault-input vault-mono" value={username}
+                onChange={(e) => setUsername(e.target.value)} placeholder="optional" />
             </div>
             <div className="vault-field">
               <label className="vault-label">Password</label>
-              <input
-                className="vault-input vault-mono"
-                type="text"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="secret"
-              />
+              <input className="vault-input vault-mono" type="text" value={password}
+                onChange={(e) => setPassword(e.target.value)} placeholder="secret" />
             </div>
           </>
         )}
@@ -135,12 +144,9 @@ export function AddItemModal({
         {(kind === "note" || kind === "secret") && (
           <div className="vault-field">
             <label className="vault-label">{kind === "secret" ? "Notes" : "Body"}</label>
-            <textarea
-              className="vault-textarea"
-              value={body}
+            <textarea className="vault-textarea" value={body}
               onChange={(e) => setBody(e.target.value)}
-              placeholder={kind === "secret" ? "optional" : "Write something…"}
-            />
+              placeholder={kind === "secret" ? "optional" : "Write something…"} />
           </div>
         )}
 
@@ -149,7 +155,7 @@ export function AddItemModal({
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 4 }}>
           <button className="vault-btn" onClick={onClose} disabled={busy}>Cancel</button>
           <button className="vault-btn vault-btn-primary" onClick={submit} disabled={busy}>
-            {busy ? "…" : "Save"}
+            {busy ? "…" : edit ? "Save changes" : "Save"}
           </button>
         </div>
       </div>

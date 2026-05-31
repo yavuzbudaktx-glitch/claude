@@ -15,13 +15,14 @@ export async function POST(request: Request) {
   const mime = request.headers.get("x-mime") || "application/octet-stream";
   const parentHeader = request.headers.get("x-parent");
   const parent_id = parentHeader && parentHeader !== "null" ? parentHeader : null;
+  const hidden = request.headers.get("x-hidden") === "1";
 
   const body = Buffer.from(await request.arrayBuffer());
   if (body.length === 0) return NextResponse.json({ error: "empty body" }, { status: 400 });
 
   const { data: row, error: insErr } = await supabase
     .from("vault_items")
-    .insert({ user_id: user.id, parent_id, kind: "file", title, mime, size: body.length })
+    .insert({ user_id: user.id, parent_id, kind: "file", title, mime, size: body.length, hidden })
     .select("id")
     .single();
   if (insErr || !row) {
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
     .from("vault_items")
     .update({ storage_key: `vault/${storageKey}` })
     .eq("id", row.id)
-    .select("id, parent_id, kind, title, url, body, secret_ciphertext, storage_key, mime, size, updated_at")
+    .select("id, parent_id, kind, title, url, body, secret_ciphertext, storage_key, mime, size, favorite, hidden, updated_at")
     .single();
   if (finErr || !final) {
     return NextResponse.json({ error: finErr?.message ?? "finalize failed" }, { status: 500 });

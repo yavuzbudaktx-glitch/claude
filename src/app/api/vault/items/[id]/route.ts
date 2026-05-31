@@ -3,8 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
-const COLS = "id, parent_id, kind, title, url, body, secret_ciphertext, storage_key, mime, size, updated_at";
-const EDITABLE = ["title", "url", "body", "secret_ciphertext", "parent_id"] as const;
+const COLS =
+  "id, parent_id, kind, title, url, body, secret_ciphertext, storage_key, mime, size, favorite, hidden, updated_at";
+const EDITABLE = ["title", "url", "body", "secret_ciphertext", "parent_id", "favorite", "hidden"] as const;
 
 // Edit an item's fields (RLS scopes to the owner).
 export async function PATCH(request: Request, { params }: { params: { id: string } }) {
@@ -32,15 +33,12 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   return NextResponse.json({ item: data });
 }
 
-// Delete an item. Folders cascade in the DB; file blobs are removed from
-// Storage first. RLS ensures we only ever touch our own rows.
+// Delete an item. Folders cascade in the DB; file blobs are removed from Storage first.
 export async function DELETE(_request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-  // Collect blob keys for this item and any descendants (one level of file
-  // children covers the common case; deeper trees still cascade-delete rows).
   const { data: rows } = await supabase
     .from("vault_items")
     .select("id, storage_key")
