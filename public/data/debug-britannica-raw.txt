@@ -1,9 +1,9 @@
 # Britannica scrape debug dump
-# generated: 2026-05-31T11:55:11.093Z
+# generated: 2026-05-31T15:07:22.605Z
 # url:       https://www.britannica.com/on-this-day/may-31
 # fetcher:   CORS proxy
 # kind:      html
-# length:    74715
+# length:    74839
 # parsed:    YES (CORS proxy)
 # -----------------------------------------------------------------
 
@@ -160,14 +160,15 @@
         'analytics_storage': 'granted',
     });
 
-    window.geoCountry = 'US';
-    window.isGdprCountry = false;
-    window.isCcpaCountry = true;
-    window.geoRegion = 'FL';
+    window.geoCountry = 'FR';
+    window.isGdprCountry = true;
+    window.isCcpaCountry = false;
+    window.geoRegion = '75';
 
 </script>
 
-
+<script type="text/javascript" data-cmp-ab="1" src="https://cdn.consentmanager.net/delivery/autoblocking/f883f3936267c.js" data-cmp-host="d.delivery.consentmanager.net" data-cmp-cdn="cdn.consentmanager.net" data-cmp-codesrc="0"></script>
+    
 
     
 
@@ -278,13 +279,13 @@
 	    	"resourcesPrefixUrl": "https://cdn.britannica.com/mendel-resources/3-185/[url]?v=3.185.4",
 			"date": 20260531,
 			"userInfo": { "type": "ANONYMOUS"
-										,"currency": "USD"
-										,"country": "US"
-										,"state": "FL"
-										,"timezone": "America/New_York"
-										,"bcomId": "7603882747014968352"
+										,"currency": "EUR"
+										,"country": "FR"
+										,"state": "75"
+										,"timezone": "Europe/Paris"
+										,"bcomId": "-5961617222345748255"
 										,"adProvider": "ay"
-										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":true,"showConsent":true}
+										,"privacyInfo": {"inGdprCountry":true,"inCcpaState":false,"showConsent":true}
 										,"hasAds": true
 										,"testVersion": "C"
 										,"adsTestVersion": "D"
@@ -1178,7 +1179,7 @@ Ask the Chatbot</a>
 </a>
                         </div>
                         <div class="card-footer font-16">
-                            <dl data-label="born"><dt class="label">born</dt><dd>May 31, 1930 (age 95)<br><a href="https://www.britannica.com/place/San-Francisco-California">San Francisco</a><span>, </span><a href="https://www.britannica.com/place/California-state">California</a><br>(Birthday tomorrow)<br></dd></dl><div class="credit mt-10">© Paul Smith—Featureflash/Shutterstock.com</div>
+                            <dl data-label="born"><dt class="label">born</dt><dd>May 31, 1930 (age 96)<br><a href="https://www.britannica.com/place/San-Francisco-California">San Francisco</a><span>, </span><a href="https://www.britannica.com/place/California-state">California</a><br>(Born on this day)<br></dd></dl><div class="credit mt-10">© Paul Smith—Featureflash/Shutterstock.com</div>
                         </div>
                     </div>
                 </div>
@@ -1958,8 +1959,6 @@ Ask the Chatbot</a>
 
 
 
-
-    <script src="https://cdn.britannica.com/mendel-resources/3-185/js/ccpa.js?v=3.185.4" defer="defer"></script>
 
 
 
