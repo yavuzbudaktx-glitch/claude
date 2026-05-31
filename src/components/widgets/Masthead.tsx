@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
+import Link from "next/link";
 import { format } from "date-fns";
 import { Calculator } from "lucide-react";
 import { WeatherSummary } from "./WeatherSummary";
@@ -33,10 +34,8 @@ export function Masthead({ name, actions }: { name?: string; actions?: ReactNode
               <span className="h-1 w-1 rounded-full bg-[var(--accent)] shrink-0" aria-hidden />
               <WeatherSummary />
             </div>
-            <a
+            <Link
               href="/accounting"
-              target="_blank"
-              rel="noreferrer"
               title="Open the Accounting page"
               className="group inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--paper)] px-3.5 py-1.5 text-[12.5px] text-ink-soft backdrop-blur-md shadow-[var(--shadow-card)] hover:border-[var(--accent)] hover:text-accent transition"
             >
@@ -47,7 +46,7 @@ export function Masthead({ name, actions }: { name?: string; actions?: ReactNode
                 <Calculator className="h-2.5 w-2.5" />
               </span>
               <span className="font-medium">Accounting</span>
-            </a>
+            </Link>
           </div>
           <h1 className="font-display text-5xl md:text-6xl lg:text-[64px] leading-[1.0] tracking-tight m-0">
             <span className="text-ink">{greeting}</span>

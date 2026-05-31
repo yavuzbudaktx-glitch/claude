@@ -26,13 +26,10 @@ export default async function AccountingPage() {
           <h1 className="font-display text-4xl md:text-5xl tracking-tight m-0">
             <span className="text-gradient">Accounting</span>
           </h1>
-          <p className="text-[13px] text-muted">
-            Cash flow, recruiting pipeline, and CPA exam progress — all in one place.
-          </p>
         </div>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
         <div className="[&>*]:h-full">
           <Card title="Cash Flow"><CashFlowSection /></Card>
         </div>

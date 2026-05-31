@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react";
 import {
   Plus, Trash2, ChevronLeft, ChevronRight, X,
   TrendingUp, TrendingDown, Briefcase, GraduationCap,
+  Landmark, CreditCard,
 } from "lucide-react";
 import { usePref } from "@/components/PrefsProvider";
 
@@ -133,10 +134,16 @@ function MoneyList({
 export function CashFlowSection() {
   const [income, setIncome] = usePref<LineItem[]>("hub.income", []);
   const [expenses, setExpenses] = usePref<LineItem[]>("hub.expenses", []);
+  const [investments, setInvestments] = usePref<LineItem[]>("hub.investments", []);
+  const [debts, setDebts] = usePref<LineItem[]>("hub.debts", []);
   const inc = income.reduce((s, x) => s + x.amount, 0);
   const exp = expenses.reduce((s, x) => s + x.amount, 0);
   const surplus = inc - exp;
   const rate = inc > 0 ? Math.round((surplus / inc) * 100) : 0;
+  const invTotal = investments.reduce((s, x) => s + x.amount, 0);
+  const debtTotal = debts.reduce((s, x) => s + x.amount, 0);
+  const netWorth = invTotal - debtTotal;
+  const debtRatio = invTotal > 0 ? `${Math.round((debtTotal / invTotal) * 100)}%` : debtTotal > 0 ? "∞" : "0%";
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 gap-4">
@@ -146,6 +153,22 @@ export function CashFlowSection() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <MoneyList title="Monthly income" icon={<TrendingUp className="h-4 w-4" />} items={income} setItems={setIncome} />
         <MoneyList title="Monthly expenses" icon={<TrendingDown className="h-4 w-4" />} items={expenses} setItems={setExpenses} accentDown />
+      </div>
+
+      <div className="border-t rule pt-5 space-y-5">
+        <div className="grid grid-cols-2 gap-4">
+          <BigStat
+            label="Net worth"
+            value={money(netWorth)}
+            tone={netWorth >= 0 ? "up" : "down"}
+            sub={`${money(invTotal)} assets · ${money(debtTotal)} debt`}
+          />
+          <BigStat label="Debt-to-asset" value={debtRatio} sub={debtTotal === 0 ? "debt-free" : invTotal === 0 ? "no assets yet" : "of total assets"} />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <MoneyList title="Investments & assets" icon={<Landmark className="h-4 w-4" />} items={investments} setItems={setInvestments} />
+          <MoneyList title="Debt & liabilities" icon={<CreditCard className="h-4 w-4" />} items={debts} setItems={setDebts} accentDown />
+        </div>
       </div>
     </div>
   );
@@ -163,6 +186,8 @@ export function ApplicationsSection() {
   const [apps, setApps] = usePref<AppItem[]>("hub.apps", []);
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [overStage, setOverStage] = useState<Stage | null>(null);
 
   function add() {
     if (!company.trim()) return;
@@ -177,6 +202,16 @@ export function ApplicationsSection() {
       return { ...a, stage: STAGES[ni] };
     }));
   }
+  function setStage(id: string, stage: Stage) {
+    setApps(apps.map((a) => a.id === id ? { ...a, stage } : a));
+  }
+  function drop(stage: Stage, e: React.DragEvent) {
+    e.preventDefault();
+    const id = e.dataTransfer.getData("text/plain") || dragId;
+    if (id) setStage(id, stage);
+    setDragId(null);
+    setOverStage(null);
+  }
 
   return (
     <div className="space-y-4">
@@ -189,17 +224,29 @@ export function ApplicationsSection() {
         {STAGES.map((stage) => {
           const col = apps.filter((a) => a.stage === stage);
           return (
-            <div key={stage} className="min-w-[180px] flex-1">
-              <div className="flex items-center gap-1.5 mb-2">
+            <div
+              key={stage}
+              onDragOver={(e) => { e.preventDefault(); setOverStage(stage); }}
+              onDragLeave={() => setOverStage((s) => (s === stage ? null : s))}
+              onDrop={(e) => drop(stage, e)}
+              className={`min-w-[180px] flex-1 rounded-xl p-1 transition ${overStage === stage ? "bg-[var(--rule-soft)] ring-1 ring-[var(--accent)]" : ""}`}
+            >
+              <div className="flex items-center gap-1.5 mb-2 px-1">
                 <span className="h-2 w-2 rounded-full" style={{ background: STAGE_TONE[stage] }} />
                 <span className="text-[12px] font-semibold text-ink">{stage}</span>
                 <span className="ml-auto font-mono text-[11px] text-muted">{col.length}</span>
               </div>
-              <ul className="space-y-2">
+              <ul className="space-y-2 min-h-[44px]">
                 {col.map((a) => {
                   const i = STAGES.indexOf(a.stage);
                   return (
-                    <li key={a.id} className="group card-bare !p-2.5">
+                    <li
+                      key={a.id}
+                      draggable
+                      onDragStart={(e) => { e.dataTransfer.setData("text/plain", a.id); e.dataTransfer.effectAllowed = "move"; setDragId(a.id); }}
+                      onDragEnd={() => { setDragId(null); setOverStage(null); }}
+                      className={`group card-bare !p-2.5 cursor-grab active:cursor-grabbing ${dragId === a.id ? "opacity-40" : ""}`}
+                    >
                       <div className="flex items-start gap-1">
                         <div className="min-w-0 flex-1">
                           <div className="text-[13px] font-medium text-ink truncate">{a.company}</div>
@@ -226,6 +273,11 @@ export function ApplicationsSection() {
                     </li>
                   );
                 })}
+                {col.length === 0 && (
+                  <li className="rounded-lg border border-dashed border-[var(--rule)] py-3 text-center text-[11px] italic text-muted-2">
+                    Drop here
+                  </li>
+                )}
               </ul>
             </div>
           );
