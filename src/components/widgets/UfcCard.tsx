@@ -346,14 +346,17 @@ function FighterCell({ f, highlight }: { f: UfcFighter | null; highlight: boolea
           />
         )}
       </div>
-      <div
-        className={`text-[12px] font-medium leading-snug mt-2 max-w-[120px] truncate ${
+      <a
+        href={`https://www.ufc.com/athlete/${ufcSlugCandidates(f.name)[0] ?? ""}`}
+        target="_blank"
+        rel="noreferrer"
+        className={`text-[12px] font-medium leading-snug mt-2 max-w-[120px] truncate hover:underline underline-offset-2 ${
           highlight ? "text-accent" : ""
         }`}
-        title={f.name}
+        title={`${f.name} — open UFC profile`}
       >
         {f.name}
-      </div>
+      </a>
       {f.record && (
         <div className="font-mono text-[10px] tracking-wider text-muted mt-0.5">
           {f.record}
@@ -488,9 +491,15 @@ function DivisionRankBlock({ d }: { d: DivisionRanking }) {
         <div className="mt-1.5 flex items-center gap-2.5">
           <ChampionPhoto name={d.champion} />
           <div className="min-w-0">
-            <div className="font-semibold text-ink text-[13.5px] leading-tight truncate">
+            <a
+              href={`https://www.ufc.com/athlete/${ufcSlugCandidates(d.champion)[0] ?? ""}`}
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold text-ink text-[13.5px] leading-tight truncate block hover:underline underline-offset-2"
+              title={`${d.champion} — open UFC profile`}
+            >
               {d.champion}
-            </div>
+            </a>
             <div className="label !text-[9px] mt-0.5">Champion</div>
           </div>
         </div>
@@ -501,7 +510,15 @@ function DivisionRankBlock({ d }: { d: DivisionRanking }) {
             <span className="font-mono text-[11px] text-muted w-4 text-right tabular-nums shrink-0">
               {c.rank}
             </span>
-            <span className="flex-1 truncate">{c.name}</span>
+            <a
+              href={`https://www.ufc.com/athlete/${ufcSlugCandidates(c.name)[0] ?? ""}`}
+              target="_blank"
+              rel="noreferrer"
+              className="flex-1 truncate hover:underline underline-offset-2 hover:text-accent transition"
+              title={`${c.name} — open UFC profile`}
+            >
+              {c.name}
+            </a>
             <RankArrow change={changes[c.id]} />
           </li>
         ))}

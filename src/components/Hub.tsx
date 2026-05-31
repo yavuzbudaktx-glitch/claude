@@ -1,18 +1,21 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import {
-  Wallet, X, Plus, Trash2, ChevronLeft, ChevronRight,
-  TrendingUp, TrendingDown, CalendarClock, Briefcase, GraduationCap, PiggyBank,
+  Plus, Trash2, ChevronLeft, ChevronRight, X,
+  TrendingUp, TrendingDown, Briefcase, GraduationCap,
 } from "lucide-react";
 import { usePref } from "@/components/PrefsProvider";
-import { useCommand } from "@/lib/commands";
 
 // =============================================================================
-//   The Ledger — a personal finance + career command center for an accounting
-//   major. One shiny button opens a focused overlay with five tabs:
-//     Net Worth · Cash Flow · Bills · Applications · CPA
-//   Everything is stored in the synced prefs blob (cross-device).
+//   Accounting toolkit — three focused widgets the user opens on their own
+//   "Accounting" page (separate route, not a popup). All state lives in the
+//   synced prefs blob so everything follows the user across devices.
+//
+//   Sections:
+//     • Cash Flow   — monthly income/expenses → surplus + savings rate
+//     • Applications — recruiting kanban (Big-4 internships, etc.)
+//     • CPA         — AUD/FAR/REG/TCP with status, hours, exam date, score
 // =============================================================================
 
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -20,7 +23,6 @@ const money = (n: number) =>
   n.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
 interface LineItem { id: string; label: string; amount: number }
-interface Bill { id: string; name: string; amount: number; dueDay: number; cadence: "monthly" | "yearly" | "weekly" }
 type Stage = "Applied" | "OA" | "Interview" | "Offer" | "Rejected";
 const STAGES: Stage[] = ["Applied", "OA", "Interview", "Offer", "Rejected"];
 interface AppItem { id: string; company: string; role: string; stage: Stage; deadline: string }
@@ -30,9 +32,7 @@ const CPA_SECTIONS = ["AUD", "FAR", "REG", "TCP"] as const;
 type CpaSection = (typeof CPA_SECTIONS)[number];
 interface CpaEntry { status: CpaStatus; hours: number; examDate: string; score: string }
 
-type Tab = "networth" | "cashflow" | "bills" | "apps" | "cpa";
-
-// ---------- tiny shared inputs ----------------------------------------------
+// ---------- shared inputs ---------------------------------------------------
 
 function NumberInput({ value, onChange, placeholder, prefix }: {
   value: number; onChange: (n: number) => void; placeholder?: string; prefix?: string;
@@ -65,7 +65,17 @@ function TextInput({ value, onChange, placeholder, className = "" }: {
   );
 }
 
-// ---------- a reusable assets/liabilities/income/expenses editor ------------
+function BigStat({ label, value, sub, tone }: { label: string; value: string; sub?: string; tone?: "up" | "down" }) {
+  return (
+    <div className="text-center">
+      <div className="label mb-1.5">{label}</div>
+      <div className={`font-display text-4xl md:text-5xl tracking-tight ${tone === "up" ? "text-up" : tone === "down" ? "text-down" : "text-ink"}`}>
+        {value}
+      </div>
+      {sub && <div className="font-mono text-[11px] text-muted mt-1.5">{sub}</div>}
+    </div>
+  );
+}
 
 function MoneyList({
   title, icon, items, setItems, accentDown,
@@ -118,38 +128,9 @@ function MoneyList({
   );
 }
 
-function BigStat({ label, value, sub, tone }: { label: string; value: string; sub?: string; tone?: "up" | "down" }) {
-  return (
-    <div className="text-center">
-      <div className="label mb-1.5">{label}</div>
-      <div className={`font-display text-4xl md:text-5xl tracking-tight ${tone === "up" ? "text-up" : tone === "down" ? "text-down" : "text-ink"}`}>
-        {value}
-      </div>
-      {sub && <div className="font-mono text-[11px] text-muted mt-1.5">{sub}</div>}
-    </div>
-  );
-}
+// ---------- exported sections (consumed by /accounting page) ----------------
 
-// ---------- tabs -------------------------------------------------------------
-
-function NetWorthTab() {
-  const [assets, setAssets] = usePref<LineItem[]>("hub.assets", []);
-  const [liab, setLiab] = usePref<LineItem[]>("hub.liabilities", []);
-  const a = assets.reduce((s, x) => s + x.amount, 0);
-  const l = liab.reduce((s, x) => s + x.amount, 0);
-  const net = a - l;
-  return (
-    <div className="space-y-5">
-      <BigStat label="Net worth" value={money(net)} sub={`${money(a)} assets − ${money(l)} liabilities`} tone={net >= 0 ? "up" : "down"} />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <MoneyList title="Assets" icon={<TrendingUp className="h-4 w-4" />} items={assets} setItems={setAssets} />
-        <MoneyList title="Liabilities" icon={<TrendingDown className="h-4 w-4" />} items={liab} setItems={setLiab} accentDown />
-      </div>
-    </div>
-  );
-}
-
-function CashFlowTab() {
+export function CashFlowSection() {
   const [income, setIncome] = usePref<LineItem[]>("hub.income", []);
   const [expenses, setExpenses] = usePref<LineItem[]>("hub.expenses", []);
   const inc = income.reduce((s, x) => s + x.amount, 0);
@@ -170,85 +151,6 @@ function CashFlowTab() {
   );
 }
 
-function nextDue(dueDay: number, cadence: Bill["cadence"]): Date {
-  const now = new Date();
-  if (cadence === "weekly") {
-    const d = new Date(now);
-    const delta = (dueDay - now.getDay() + 7) % 7; // dueDay = 0..6
-    d.setDate(now.getDate() + delta);
-    return d;
-  }
-  if (cadence === "yearly") {
-    // dueDay encodes day-of-year-ish? Keep it simple: treat as day of month in
-    // current month rolling forward a year is overkill — use month/day later.
-  }
-  // monthly (and yearly fallback): next occurrence of dueDay in month
-  const d = new Date(now.getFullYear(), now.getMonth(), dueDay);
-  if (d < new Date(now.getFullYear(), now.getMonth(), now.getDate())) {
-    d.setMonth(d.getMonth() + 1);
-  }
-  return d;
-}
-
-function BillsTab() {
-  const [bills, setBills] = usePref<Bill[]>("hub.bills", []);
-  const [name, setName] = useState("");
-  const [amount, setAmount] = useState(0);
-  const [dueDay, setDueDay] = useState(1);
-
-  const monthlyTotal = bills.reduce((s, b) => {
-    const m = b.cadence === "yearly" ? b.amount / 12 : b.cadence === "weekly" ? b.amount * 4.33 : b.amount;
-    return s + m;
-  }, 0);
-
-  const sorted = [...bills].sort((a, b) => +nextDue(a.dueDay, a.cadence) - +nextDue(b.dueDay, b.cadence));
-
-  function add() {
-    if (!name.trim() || amount === 0) return;
-    setBills([...bills, { id: uid(), name: name.trim(), amount, dueDay, cadence: "monthly" }]);
-    setName(""); setAmount(0); setDueDay(1);
-  }
-
-  return (
-    <div className="space-y-4">
-      <BigStat label="Estimated monthly bills" value={money(monthlyTotal)} sub={`${bills.length} recurring`} />
-      <ul className="space-y-2">
-        {sorted.map((b) => {
-          const due = nextDue(b.dueDay, b.cadence);
-          const days = Math.ceil((+due - Date.now()) / 86_400_000);
-          const soon = days <= 7;
-          return (
-            <li key={b.id} className="group flex items-center gap-3 card-bare !py-2.5 !px-3.5">
-              <CalendarClock className={`h-4 w-4 shrink-0 ${soon ? "text-accent" : "text-muted"}`} />
-              <div className="min-w-0 flex-1">
-                <div className="text-[13px] text-ink truncate">{b.name}</div>
-                <div className={`font-mono text-[10px] uppercase tracking-wider ${soon ? "text-accent" : "text-muted"}`}>
-                  {days <= 0 ? "due today" : `in ${days}d`} · {due.toLocaleDateString(undefined, { month: "short", day: "numeric" })}
-                </div>
-              </div>
-              <span className="font-mono tabular-nums text-[14px] text-ink">{money(b.amount)}</span>
-              <button onClick={() => setBills(bills.filter((x) => x.id !== b.id))} className="text-muted-2 opacity-0 group-hover:opacity-100 hover:text-accent transition shrink-0" aria-label="Remove">
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
-            </li>
-          );
-        })}
-        {bills.length === 0 && <li className="text-muted text-xs italic">No bills yet — add rent, subscriptions, insurance…</li>}
-      </ul>
-      <div className="flex items-center gap-1.5 flex-wrap">
-        <TextInput value={name} onChange={setName} placeholder="Bill name" className="flex-1 min-w-[120px]" />
-        <NumberInput value={amount} prefix="$" onChange={setAmount} />
-        <label className="inline-flex items-center gap-1 rounded-lg bg-[var(--rule-soft)] px-2.5 py-1.5">
-          <span className="text-muted text-[11px]">day</span>
-          <input type="number" min={1} max={31} value={dueDay} onChange={(e) => setDueDay(Math.max(1, Math.min(31, Number(e.target.value) || 1)))}
-            className="w-10 bg-transparent font-mono tabular-nums text-[13px] text-ink focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none" />
-        </label>
-        <button onClick={add} className="btn-ghost !h-8 !w-8" aria-label="Add bill"><Plus className="h-4 w-4" /></button>
-      </div>
-    </div>
-  );
-}
-
 const STAGE_TONE: Record<Stage, string> = {
   Applied: "var(--muted)",
   OA: "#d97706",
@@ -257,7 +159,7 @@ const STAGE_TONE: Record<Stage, string> = {
   Rejected: "var(--down)",
 };
 
-function AppsTab() {
+export function ApplicationsSection() {
   const [apps, setApps] = usePref<AppItem[]>("hub.apps", []);
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
@@ -341,7 +243,7 @@ const CPA_TONE: Record<CpaStatus, string> = {
   Failed: "var(--down)",
 };
 
-function CpaTab() {
+export function CpaSection() {
   const [cpa, setCpa] = usePref<Record<CpaSection, CpaEntry>>("hub.cpa", {
     AUD: { status: "Not started", hours: 0, examDate: "", score: "" },
     FAR: { status: "Not started", hours: 0, examDate: "", score: "" },
@@ -413,81 +315,5 @@ function CpaTab() {
   );
 }
 
-// ---------- shell ------------------------------------------------------------
-
-const TABS: { id: Tab; label: string; icon: ReactNode }[] = [
-  { id: "networth", label: "Net Worth", icon: <PiggyBank className="h-3.5 w-3.5" /> },
-  { id: "cashflow", label: "Cash Flow", icon: <TrendingUp className="h-3.5 w-3.5" /> },
-  { id: "bills", label: "Bills", icon: <CalendarClock className="h-3.5 w-3.5" /> },
-  { id: "apps", label: "Applications", icon: <Briefcase className="h-3.5 w-3.5" /> },
-  { id: "cpa", label: "CPA", icon: <GraduationCap className="h-3.5 w-3.5" /> },
-];
-
-export function HubOverlay() {
-  const [open, setOpen] = useState(false);
-  const [tab, setTab] = useState<Tab>("networth");
-
-  useCommand((c) => {
-    if (c.kind === "hub") {
-      if (c.value && TABS.some((t) => t.id === c.value)) setTab(c.value as Tab);
-      setOpen(true);
-    }
-  });
-  useEffect(() => {
-    const onOpen = (e: Event) => {
-      const v = (e as CustomEvent<string>).detail;
-      if (v && TABS.some((t) => t.id === v)) setTab(v as Tab);
-      setOpen(true);
-    };
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
-    window.addEventListener("morning:open-hub", onOpen);
-    window.addEventListener("keydown", onKey);
-    return () => { window.removeEventListener("morning:open-hub", onOpen); window.removeEventListener("keydown", onKey); };
-  }, []);
-
-  if (!open) return null;
-
-  return (
-    <div className="fixed inset-0 z-[95] flex items-start justify-center pt-[6vh] px-4 bg-black/40 backdrop-blur-sm" onMouseDown={() => setOpen(false)}>
-      <div className="w-full max-w-4xl card !p-0 overflow-hidden animate-fadeIn flex flex-col max-h-[88vh]" onMouseDown={(e) => e.stopPropagation()}>
-        <header className="flex items-center gap-3 px-5 py-3.5 border-b rule">
-          <span className="dot" aria-hidden />
-          <span className="font-display text-[17px] tracking-tight text-ink">The Ledger</span>
-          <button onClick={() => setOpen(false)} className="ml-auto btn-ghost !h-8 !w-8" aria-label="Close"><X className="h-4 w-4" /></button>
-        </header>
-        <div className="flex gap-1.5 px-5 py-3 border-b rule overflow-x-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
-          {TABS.map((t) => (
-            <button key={t.id} onClick={() => setTab(t.id)}
-              className={`chip inline-flex items-center gap-1.5 whitespace-nowrap ${tab === t.id ? "chip-active" : ""}`}>
-              {t.icon}{t.label}
-            </button>
-          ))}
-        </div>
-        <div className="p-5 overflow-y-auto">
-          {tab === "networth" && <NetWorthTab />}
-          {tab === "cashflow" && <CashFlowTab />}
-          {tab === "bills" && <BillsTab />}
-          {tab === "apps" && <AppsTab />}
-          {tab === "cpa" && <CpaTab />}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export function HubButton() {
-  return (
-    <button
-      onClick={() => window.dispatchEvent(new CustomEvent("morning:open-hub"))}
-      aria-label="Open the Ledger"
-      title="The Ledger — finances & career"
-      className="relative inline-flex items-center justify-center h-[38px] w-[38px] rounded-xl text-white transition hover:brightness-110 active:scale-95"
-      style={{
-        background: "linear-gradient(135deg, var(--grad-from), var(--grad-via), var(--grad-to))",
-        boxShadow: "0 6px 18px -6px var(--glow)",
-      }}
-    >
-      <Wallet className="h-4 w-4" />
-    </button>
-  );
-}
+// Backward-compat icon export so the masthead pill can use it.
+export { Briefcase as AccountingIcon };
