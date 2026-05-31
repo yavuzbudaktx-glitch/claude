@@ -1,10 +1,10 @@
 # Britannica scrape debug dump
-# generated: 2026-05-31T15:07:22.605Z
+# generated: 2026-05-31T19:50:51.879Z
 # url:       https://www.britannica.com/on-this-day/may-31
-# fetcher:   CORS proxy
+# fetcher:   Wayback Machine
 # kind:      html
-# length:    74839
-# parsed:    YES (CORS proxy)
+# length:    74714
+# parsed:    YES (Wayback Machine)
 # -----------------------------------------------------------------
 
 
@@ -71,7 +71,7 @@
 
 <!doctype html>
 
-<html lang="en" class="dayinhistory-desktop ui-unknown0 ui-unknown">
+<html lang="en" class="dayinhistory-desktop ui-chrome148 ui-chrome">
 
 <head prefix="og: https://ogp.me/ns# fb: https://ogp.me/ns/fb#">
 
@@ -126,7 +126,7 @@
 
 
 <script   class="analytics-metadata" type="application/json">
-{"adLeg":"D","leg":"C","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+{"adLeg":"D","leg":"A","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
 </script>
 
 
@@ -160,15 +160,14 @@
         'analytics_storage': 'granted',
     });
 
-    window.geoCountry = 'FR';
-    window.isGdprCountry = true;
-    window.isCcpaCountry = false;
-    window.geoRegion = '75';
+    window.geoCountry = 'US';
+    window.isGdprCountry = false;
+    window.isCcpaCountry = true;
+    window.geoRegion = 'XX';
 
 </script>
 
-<script type="text/javascript" data-cmp-ab="1" src="https://cdn.consentmanager.net/delivery/autoblocking/f883f3936267c.js" data-cmp-host="d.delivery.consentmanager.net" data-cmp-cdn="cdn.consentmanager.net" data-cmp-codesrc="0"></script>
-    
+
 
     
 
@@ -279,15 +278,15 @@
 	    	"resourcesPrefixUrl": "https://cdn.britannica.com/mendel-resources/3-185/[url]?v=3.185.4",
 			"date": 20260531,
 			"userInfo": { "type": "ANONYMOUS"
-										,"currency": "EUR"
-										,"country": "FR"
-										,"state": "75"
-										,"timezone": "Europe/Paris"
-										,"bcomId": "-5961617222345748255"
+										,"currency": "USD"
+										,"country": "US"
+										,"state": "XX"
+										,"timezone": "America/Chicago"
+										,"bcomId": "4072403213483392614"
 										,"adProvider": "ay"
-										,"privacyInfo": {"inGdprCountry":true,"inCcpaState":false,"showConsent":true}
+										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":true,"showConsent":true}
 										,"hasAds": true
-										,"testVersion": "C"
+										,"testVersion": "A"
 										,"adsTestVersion": "D"
 										,"consumerId": ""
 										,"instId": ""
@@ -311,7 +310,7 @@
 
 			"autocompleteToSearchPage": false,"pagesInfo": [{"url":"May-31","title":"On This Day - What Happened on May 31"},{"url":"June-1","title":"On This Day - What Happened on June 1"},{"url":"June-2","title":"On This Day - What Happened on June 2"},{"url":"June-3","title":"On This Day - What Happened on June 3"},{"url":"June-4","title":"On This Day - What Happened on June 4"},{"url":"June-5","title":"On This Day - What Happened on June 5"},{"url":"June-6","title":"On This Day - What Happened on June 6"},{"url":"June-7","title":"On This Day - What Happened on June 7"},{"url":"June-8","title":"On This Day - What Happened on June 8"},{"url":"June-9","title":"On This Day - What Happened on June 9"}]
 		},
-        "GA": {"adLeg":"D","leg":"C","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+        "GA": {"adLeg":"D","leg":"A","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
     };
 
 	</script>
@@ -415,7 +414,7 @@ Mendel.openGraph = {
 
 </head>
 
-<body data-leg="C" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-c ">
+<body data-leg="A" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-a ">
 
 
 
@@ -1179,7 +1178,7 @@ Ask the Chatbot</a>
 </a>
                         </div>
                         <div class="card-footer font-16">
-                            <dl data-label="born"><dt class="label">born</dt><dd>May 31, 1930 (age 96)<br><a href="https://www.britannica.com/place/San-Francisco-California">San Francisco</a><span>, </span><a href="https://www.britannica.com/place/California-state">California</a><br>(Born on this day)<br></dd></dl><div class="credit mt-10">© Paul Smith—Featureflash/Shutterstock.com</div>
+                            <dl data-label="born"><dt class="label">born</dt><dd>May 31, 1930 (age 95)<br><a href="https://www.britannica.com/place/San-Francisco-California">San Francisco</a><span>, </span><a href="https://www.britannica.com/place/California-state">California</a><br>(Birthday tomorrow)<br></dd></dl><div class="credit mt-10">© Paul Smith—Featureflash/Shutterstock.com</div>
                         </div>
                     </div>
                 </div>
@@ -1959,6 +1958,8 @@ Ask the Chatbot</a>
 
 
 
+
+    <script src="https://cdn.britannica.com/mendel-resources/3-185/js/ccpa.js?v=3.185.4" defer="defer"></script>
 
 
 
