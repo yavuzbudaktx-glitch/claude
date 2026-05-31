@@ -449,7 +449,7 @@ export function Vault() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={onCmdKey}
-              placeholder="Search, or type your PIN…"
+              placeholder="Search…"
               type={isPinQuery ? "password" : "text"}
             />
             {!query && <span className="vault-cmd-hint">⌘K</span>}
