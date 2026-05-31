@@ -31,7 +31,7 @@ export function PrayersVerseCard() {
 
       <div className="mt-4 pt-4 border-t rule">
         <div className="flex items-baseline justify-between mb-2">
-          <div className="label">Hadith of the Day</div>
+          <div className="label">Günün Hadisi</div>
           {h && (
             <div className="font-mono text-[10px] tracking-wider text-muted uppercase">
               {h.bookName} · № {h.hadithNumber}
@@ -43,15 +43,17 @@ export function PrayersVerseCard() {
           <>
             {h.narrator && (
               <div className="font-mono text-[10px] tracking-wider text-muted mb-1 uppercase">
-                Narrated · {h.narrator}
+                {h.narrator}
               </div>
             )}
             <p className="font-serif italic text-[15px] leading-relaxed">
-              &ldquo;{h.english}&rdquo;
+              {h.text}
             </p>
-            {h.sectionName && (
-              <div className="font-mono text-[10px] tracking-wider text-muted mt-2 uppercase">
-                {h.sectionName}
+            {(h.sectionName || h.source) && (
+              <div className="font-mono text-[10px] tracking-wider text-muted mt-2 uppercase flex items-baseline gap-1.5 flex-wrap">
+                {h.sectionName && <span>{h.sectionName}</span>}
+                {h.sectionName && h.source && <span className="text-muted-2">·</span>}
+                {h.source && <span>{h.source}</span>}
               </div>
             )}
           </>

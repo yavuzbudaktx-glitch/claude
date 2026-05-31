@@ -1,115 +1,69 @@
-// Daily Sahih al-Bukhari hadith.
+// Daily hadith — sequential through Imam Nevevî's "Riyâzü's-Sâlihîn",
+// served in Turkish from a curated local dataset committed to the repo.
+// One hadith per day, in order, starting from START_KEY.
 //
-// Source: fawazahmed0/hadith-api on JSDelivr — a free, open-source mirror of
-// the canonical 9-Books collection. Two parallel editions:
-//   - https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/eng-bukhari.min.json
-//   - https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/ara-bukhari.min.json
-//
-// Each file is ~3-5MB; we fetch with revalidate: 86400 (24h) so JSDelivr
-// edge + Next.js data cache do almost all the work. Pick today's hadith by
-// (day-of-year mod hadith-count) so the same one shows all day for everyone.
+// To extend the dataset, append entries to
+// public/data/riyazus-salihin-tr.json; the rotation picks up automatically.
+
+import fs from "node:fs";
+import path from "node:path";
 
 export interface HadithPayload {
   hadithNumber: number;
-  arabic: string;
-  english: string;
+  text: string;
   narrator: string | null;
   bookName: string;
   sectionName: string | null;
+  source: string | null;
 }
 
-interface RawHadith {
-  hadithnumber?: number;
-  arabicnumber?: number;
-  text?: string;
-  grades?: unknown;
-  reference?: { book?: number; hadith?: number };
+interface RawEntry {
+  n: number;
+  chapter?: string;
+  narrator?: string;
+  text: string;
+  source?: string;
 }
 
-interface RawEdition {
-  metadata?: {
-    name?: string;
-    sections?: Record<string, string>;
-    section_details?: Record<string, { hadithnumber_first?: number; hadithnumber_last?: number }>;
-  };
-  hadiths?: RawHadith[];
-}
+const DATA_PATH = path.join(process.cwd(), "public", "data", "riyazus-salihin-tr.json");
+// Day 0 → the first hadith of the book. Pick a fixed date so the rotation
+// is deterministic and identical for every reader.
+const START_KEY = "2026-05-30";
 
-const ENG_URL = "https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/eng-bukhari.min.json";
-const ARA_URL = "https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/ara-bukhari.min.json";
-
-export function dailyHadithSeed(date = new Date()): number {
-  const start = Date.UTC(date.getUTCFullYear(), 0, 0);
-  const today = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
-  return Math.floor((today - start) / 86400000);
-}
-
-async function fetchEdition(url: string): Promise<RawEdition | null> {
+function loadDataset(): RawEntry[] {
   try {
-    const res = await fetch(url, {
-      headers: { Accept: "application/json" },
-      // 24h cache — content doesn't change, and the file is large enough that
-      // we never want to fetch it on every request.
-      next: { revalidate: 86400 },
-    });
-    if (!res.ok) return null;
-    return (await res.json()) as RawEdition;
+    const raw = fs.readFileSync(DATA_PATH, "utf-8");
+    const arr = JSON.parse(raw) as RawEntry[];
+    return Array.isArray(arr) ? arr.filter((e) => e && typeof e.text === "string") : [];
   } catch {
-    return null;
+    return [];
   }
 }
 
-function splitNarrator(text: string): { narrator: string | null; body: string } {
-  // Most Bukhari English hadiths begin "Narrated <Name>: <body>". Split that
-  // so we can render the narrator label small and the body as the main quote.
-  const m = /^Narrated\s+([^:]+?):\s*([\s\S]+)$/.exec(text);
-  if (m) return { narrator: m[1].trim(), body: m[2].trim() };
-  return { narrator: null, body: text.trim() };
+function daysBetween(startKey: string, dateKey: string): number {
+  const [y1, m1, d1] = startKey.split("-").map(Number);
+  const [y2, m2, d2] = dateKey.split("-").map(Number);
+  if (!y1 || !y2) return 0;
+  const start = Date.UTC(y1, m1 - 1, d1);
+  const day = Date.UTC(y2, m2 - 1, d2);
+  return Math.floor((day - start) / 86_400_000);
 }
 
-export async function fetchDailyHadith(date = new Date()): Promise<HadithPayload> {
-  const [eng, ara] = await Promise.all([fetchEdition(ENG_URL), fetchEdition(ARA_URL)]);
-  if (!eng?.hadiths?.length) throw new Error("Bukhari English edition unavailable");
-
-  const seed = dailyHadithSeed(date);
-  const idx = seed % eng.hadiths.length;
-  const engEntry = eng.hadiths[idx];
-
-  // Match Arabic by hadithnumber — collections sometimes have slightly
-  // different indices between language editions even though numbers align.
-  let arabicText = "";
-  if (ara?.hadiths?.length) {
-    const hadithNum = engEntry.hadithnumber;
-    const araEntry =
-      ara.hadiths.find((h) => h.hadithnumber === hadithNum) ??
-      ara.hadiths[idx % ara.hadiths.length];
-    arabicText = araEntry?.text ?? "";
+export function dailyHadith(dateKey: string): HadithPayload {
+  const dataset = loadDataset();
+  if (dataset.length === 0) {
+    throw new Error("riyazus-salihin-tr dataset empty");
   }
-
-  const { narrator, body } = splitNarrator(engEntry.text ?? "");
-  const sectionMap = eng.metadata?.sections ?? {};
-  const detailMap = eng.metadata?.section_details ?? {};
-  let sectionName: string | null = null;
-  for (const [num, name] of Object.entries(sectionMap)) {
-    const d = detailMap[num];
-    if (
-      d?.hadithnumber_first !== undefined &&
-      d?.hadithnumber_last !== undefined &&
-      engEntry.hadithnumber !== undefined &&
-      engEntry.hadithnumber >= d.hadithnumber_first &&
-      engEntry.hadithnumber <= d.hadithnumber_last
-    ) {
-      sectionName = name;
-      break;
-    }
-  }
-
+  const diff = daysBetween(START_KEY, dateKey);
+  // Wrap with modulo so we cycle when the dataset is exhausted.
+  const idx = ((diff % dataset.length) + dataset.length) % dataset.length;
+  const entry = dataset[idx];
   return {
-    hadithNumber: engEntry.hadithnumber ?? idx + 1,
-    arabic: arabicText,
-    english: body,
-    narrator,
-    bookName: eng.metadata?.name ?? "Sahih al-Bukhari",
-    sectionName,
+    hadithNumber: entry.n,
+    text: entry.text,
+    narrator: entry.narrator ?? null,
+    bookName: "Riyâzü's-Sâlihîn",
+    sectionName: entry.chapter ?? null,
+    source: entry.source ?? null,
   };
 }

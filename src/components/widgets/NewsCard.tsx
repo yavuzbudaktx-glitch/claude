@@ -205,7 +205,7 @@ export function NewsCard() {
 
   return (
     <Card num="03" title="The Wire" action={refreshAction}>
-      <div className="flex flex-nowrap gap-1 mb-4">
+      <div className="flex flex-nowrap gap-1 mb-4 overflow-x-auto -mx-1 px-1 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
         {CATEGORY_ORDER.map((c) => (
           <button
             key={c}

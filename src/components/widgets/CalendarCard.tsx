@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from "swr";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { format, formatDistanceToNowStrict } from "date-fns";
 import { EyeOff, Eye, RotateCcw, Mail } from "lucide-react";
 import { Card } from "@/components/Card";
@@ -203,6 +203,29 @@ export function CalendarCard() {
   const [hiddenArr, setHiddenArr] = usePref<string[]>("hiddenEvents", []);
   const hidden = useMemo(() => new Set(hiddenArr), [hiddenArr]);
 
+  // Subscribe to the same SWR cache the CalendarTab uses so we can count
+  // how many hidden events are still in the upcoming window (passed events
+  // drop out and would otherwise leave a stale "X hidden" counter pointing
+  // at nothing). SWR dedupes by key — this doesn't refetch.
+  const { data: calData } = useSWR<CalResp>("/api/calendar", fetcher, {
+    refreshInterval: 1000 * 60 * 5,
+  });
+  const liveHiddenIds = useMemo(
+    () => new Set((calData?.events ?? []).filter((e) => hidden.has(e.id)).map((e) => e.id)),
+    [calData?.events, hidden],
+  );
+  const liveHiddenCount = liveHiddenIds.size;
+
+  // Prune ghost IDs (events that have passed and are no longer returned by
+  // the API) so storage doesn't accumulate forever.
+  useEffect(() => {
+    const events = calData?.events;
+    if (!events || hiddenArr.length === 0) return;
+    const presentIds = new Set(events.map((e) => e.id));
+    const next = hiddenArr.filter((id) => presentIds.has(id));
+    if (next.length !== hiddenArr.length) setHiddenArr(next);
+  }, [calData?.events, hiddenArr, setHiddenArr]);
+
   function hide(id: string) {
     if (!hiddenArr.includes(id)) setHiddenArr([...hiddenArr, id]);
   }
@@ -231,13 +254,13 @@ export function CalendarCard() {
   );
 
   const action =
-    tab === "calendar" && hidden.size > 0 ? (
+    tab === "calendar" && liveHiddenCount > 0 ? (
       <button
         onClick={() => setShowHidden((v) => !v)}
-        title={showHidden ? "Hide hidden" : `Show ${hidden.size} hidden`}
+        title={showHidden ? "Hide hidden" : `Show ${liveHiddenCount} hidden`}
         className="font-mono text-[10px] uppercase tracking-wider text-muted hover:text-ink"
       >
-        {showHidden ? "hide" : `${hidden.size} hidden`}
+        {showHidden ? "hide" : `${liveHiddenCount} hidden`}
       </button>
     ) : null;
 
