@@ -1,29 +1,36 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   Plus, Trash2, ChevronLeft, ChevronRight, X,
   TrendingUp, TrendingDown, Briefcase, GraduationCap,
-  Landmark, CreditCard,
+  Landmark, CreditCard, Repeat, ArrowUpRight, ArrowDownRight, CalendarClock,
 } from "lucide-react";
-import { usePref } from "@/components/PrefsProvider";
+import { format } from "date-fns";
+import { usePref, usePrefsLoaded } from "@/components/PrefsProvider";
 
 // =============================================================================
-//   Accounting toolkit — three focused widgets the user opens on their own
+//   Accounting toolkit — focused widgets the user opens on their own
 //   "Accounting" page (separate route, not a popup). All state lives in the
 //   synced prefs blob so everything follows the user across devices.
 //
 //   Sections:
-//     • Cash Flow   — monthly income/expenses → surplus + savings rate
-//     • Applications — recruiting kanban (Big-4 internships, etc.)
-//     • CPA         — AUD/FAR/REG/TCP with status, hours, exam date, score
+//     • Net Worth     — assets − debt, auto-snapshotted monthly into a
+//                       12-month trend line.
+//     • Cash Flow     — monthly income vs expenses → surplus + savings rate.
+//     • Subscriptions — recurring spend, monthly cost + next-bill radar.
+//     • CPA           — AUD/FAR/REG/TCP with status, hours, exam date, score.
+//     • Applications  — recruiting kanban (Big-4 internships, etc.).
 // =============================================================================
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 const money = (n: number) =>
   n.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+const monthKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 
 interface LineItem { id: string; label: string; amount: number }
+interface Snapshot { month: string; net: number; assets: number; debt: number }
+interface Sub { id: string; name: string; amount: number; cycle: "mo" | "yr"; nextBill: string }
 type Stage = "Applied" | "OA" | "Interview" | "Offer" | "Rejected";
 const STAGES: Stage[] = ["Applied", "OA", "Interview", "Offer", "Rejected"];
 interface AppItem { id: string; company: string; role: string; stage: Stage; deadline: string }
@@ -53,24 +60,38 @@ function NumberInput({ value, onChange, placeholder, prefix, width = "w-16" }: {
   );
 }
 
-function TextInput({ value, onChange, placeholder, className = "" }: {
-  value: string; onChange: (v: string) => void; placeholder?: string; className?: string;
+function TextInput({ value, onChange, placeholder, className = "", onEnter }: {
+  value: string; onChange: (v: string) => void; placeholder?: string; className?: string; onEnter?: () => void;
 }) {
   return (
     <input
       value={value}
       placeholder={placeholder}
       onChange={(e) => onChange(e.target.value)}
+      onKeyDown={onEnter ? (e) => { if (e.key === "Enter") onEnter(); } : undefined}
       className={`bg-[var(--rule-soft)] rounded-lg px-2.5 py-1.5 text-[13px] text-ink focus:outline-none focus:ring-1 focus:ring-[var(--accent)] placeholder:text-muted-2 ${className}`}
     />
   );
 }
 
-function BigStat({ label, value, sub, tone }: { label: string; value: string; sub?: string; tone?: "up" | "down" }) {
+function DateInput({ value, onChange, className = "" }: { value: string; onChange: (v: string) => void; className?: string }) {
+  return (
+    <input
+      type="date"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className={`bg-[var(--rule-soft)] rounded-lg px-2.5 py-1.5 font-mono text-[12px] text-ink focus:outline-none focus:ring-1 focus:ring-[var(--accent)] ${className}`}
+    />
+  );
+}
+
+function BigStat({ label, value, sub, tone, size = "lg" }: {
+  label: string; value: string; sub?: string; tone?: "up" | "down"; size?: "lg" | "md";
+}) {
   return (
     <div className="text-center">
       <div className="label mb-1.5">{label}</div>
-      <div className={`font-display text-4xl md:text-5xl tracking-tight ${tone === "up" ? "text-up" : tone === "down" ? "text-down" : "text-ink"}`}>
+      <div className={`font-display tracking-tight ${size === "lg" ? "text-4xl md:text-5xl" : "text-2xl md:text-3xl"} ${tone === "up" ? "text-up" : tone === "down" ? "text-down" : "text-ink"}`}>
         {value}
       </div>
       {sub && <div className="font-mono text-[11px] text-muted mt-1.5">{sub}</div>}
@@ -124,7 +145,7 @@ function MoneyList({
         {items.length === 0 && <li className="text-muted-2 text-xs italic">Nothing here yet.</li>}
       </ul>
       <div className="flex items-center gap-1.5">
-        <TextInput value={label} onChange={setLabel} placeholder={`Add ${title.toLowerCase()}…`} className="flex-1 min-w-0" />
+        <TextInput value={label} onChange={setLabel} placeholder={`Add ${title.toLowerCase()}…`} className="flex-1 min-w-0" onEnter={add} />
         <NumberInput value={amount} prefix="$" onChange={setAmount} />
         <button onClick={add} className="btn-ghost !h-8 !w-8 shrink-0" aria-label="Add"><Plus className="h-4 w-4" /></button>
       </div>
@@ -132,50 +153,352 @@ function MoneyList({
   );
 }
 
-// ---------- exported sections (consumed by /accounting page) ----------------
+// =====================  NET WORTH  ==========================================
 
-export function CashFlowSection() {
-  const [income, setIncome] = usePref<LineItem[]>("hub.income", []);
-  const [expenses, setExpenses] = usePref<LineItem[]>("hub.expenses", []);
+function NetWorthChart({ data }: { data: Snapshot[] }) {
+  const series = useMemo(() => data.slice(-12), [data]);
+  const [hover, setHover] = useState<number | null>(null);
+
+  // Seed / single-point state — a calm dashed frame with the current value.
+  if (series.length < 2) {
+    const last = series[series.length - 1];
+    return (
+      <div className="relative h-[180px] rounded-2xl border border-dashed border-[var(--rule)] bg-[var(--rule-soft)] grid place-items-center px-6 text-center">
+        {last && (
+          <span className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--accent)] shadow-[0_0_18px_var(--glow)]" />
+        )}
+        <p className="relative text-[12.5px] text-muted leading-relaxed max-w-[260px]">
+          {last
+            ? <>First month logged at <span className="font-mono text-ink">{money(last.net)}</span>.<br />Your trend line builds from here — one point each month.</>
+            : <>Your net-worth line starts here.<br />Add assets &amp; debts below — each month is plotted automatically.</>}
+        </p>
+      </div>
+    );
+  }
+
+  const W = 680, H = 180;
+  const padT = 18, padB = 26, padX = 10;
+  const vals = series.map((s) => s.net);
+  const lo = Math.min(0, ...vals);
+  const hi = Math.max(0, ...vals);
+  const span = hi - lo || 1;
+  const x = (i: number) => padX + (i / (series.length - 1)) * (W - padX * 2);
+  const y = (v: number) => padT + (1 - (v - lo) / span) * (H - padT - padB);
+  const zeroY = y(0);
+
+  const line = series.map((s, i) => `${i === 0 ? "M" : "L"} ${x(i).toFixed(1)} ${y(s.net).toFixed(1)}`).join(" ");
+  const area = `${line} L ${x(series.length - 1).toFixed(1)} ${zeroY.toFixed(1)} L ${x(0).toFixed(1)} ${zeroY.toFixed(1)} Z`;
+
+  const hv = hover != null ? series[hover] : null;
+
+  function onMove(e: React.PointerEvent<SVGSVGElement>) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    setHover(Math.max(0, Math.min(series.length - 1, Math.round(ratio * (series.length - 1)))));
+  }
+
+  return (
+    <div className="relative">
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        preserveAspectRatio="none"
+        className="w-full h-[180px] touch-none"
+        onPointerMove={onMove}
+        onPointerLeave={() => setHover(null)}
+      >
+        <defs>
+          <linearGradient id="nwLine" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="var(--grad-from)" />
+            <stop offset="50%" stopColor="var(--grad-via)" />
+            <stop offset="100%" stopColor="var(--grad-to)" />
+          </linearGradient>
+          <linearGradient id="nwArea" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--grad-via)" stopOpacity="0.30" />
+            <stop offset="100%" stopColor="var(--grad-via)" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+
+        {lo < 0 && (
+          <line x1={padX} x2={W - padX} y1={zeroY} y2={zeroY} stroke="var(--rule)" strokeWidth="1" strokeDasharray="3 4" vectorEffect="non-scaling-stroke" />
+        )}
+        <path d={area} fill="url(#nwArea)" />
+        <path d={line} fill="none" stroke="url(#nwLine)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+
+        {/* last-point marker */}
+        <circle cx={x(series.length - 1)} cy={y(series[series.length - 1].net)} r="3.5" fill="var(--grad-to)" vectorEffect="non-scaling-stroke" />
+
+        {/* hover crosshair + dot */}
+        {hv && hover != null && (
+          <>
+            <line x1={x(hover)} x2={x(hover)} y1={padT - 6} y2={H - padB + 4} stroke="var(--accent)" strokeWidth="1" strokeDasharray="2 3" vectorEffect="non-scaling-stroke" />
+            <circle cx={x(hover)} cy={y(hv.net)} r="4.5" fill="var(--accent)" stroke="var(--bg)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+          </>
+        )}
+      </svg>
+
+      {/* x-axis labels: first / last (and hovered) */}
+      <div className="flex justify-between px-1 mt-0.5 font-mono text-[10px] text-muted-2 select-none">
+        <span>{monthLabel(series[0].month)}</span>
+        <span>{monthLabel(series[series.length - 1].month)}</span>
+      </div>
+
+      {/* tooltip */}
+      {hv && (
+        <div
+          className="pointer-events-none absolute -top-1 z-10 -translate-x-1/2 -translate-y-full rounded-lg border border-[var(--glass-border)] bg-[var(--paper-2)] px-2.5 py-1.5 backdrop-blur-md shadow-[var(--shadow-card)] whitespace-nowrap"
+          style={{ left: `${(hover! / (series.length - 1)) * 100}%` }}
+        >
+          <div className="label !text-[8.5px] !tracking-[0.1em]">{monthLabel(hv.month, true)}</div>
+          <div className="font-mono text-[13px] tabular-nums text-ink">{money(hv.net)}</div>
+          <div className="font-mono text-[10px] text-muted">{money(hv.assets)} · −{money(hv.debt)}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function monthLabel(m: string, full = false): string {
+  const [y, mo] = m.split("-").map(Number);
+  if (!y || !mo) return m;
+  return format(new Date(y, mo - 1, 1), full ? "MMMM yyyy" : "MMM");
+}
+
+export function NetWorthSection() {
   const [investments, setInvestments] = usePref<LineItem[]>("hub.investments", []);
   const [debts, setDebts] = usePref<LineItem[]>("hub.debts", []);
-  const inc = income.reduce((s, x) => s + x.amount, 0);
-  const exp = expenses.reduce((s, x) => s + x.amount, 0);
-  const surplus = inc - exp;
-  const rate = inc > 0 ? Math.round((surplus / inc) * 100) : 0;
+  const [history, setHistory] = usePref<Snapshot[]>("hub.networth.history", []);
+  const loaded = usePrefsLoaded();
+
   const invTotal = investments.reduce((s, x) => s + x.amount, 0);
   const debtTotal = debts.reduce((s, x) => s + x.amount, 0);
   const netWorth = invTotal - debtTotal;
   const debtRatio = invTotal > 0 ? `${Math.round((debtTotal / invTotal) * 100)}%` : debtTotal > 0 ? "∞" : "0%";
+
+  // Auto-snapshot the current month once prefs have hydrated. Re-runs whenever
+  // the totals change and overwrites the in-progress month; the guard makes it
+  // idempotent so it never loops.
+  useEffect(() => {
+    if (!loaded) return;
+    if (history.length === 0 && invTotal === 0 && debtTotal === 0) return;
+    const month = monthKey(new Date());
+    const cur = history.find((s) => s.month === month);
+    if (cur && cur.net === netWorth && cur.assets === invTotal && cur.debt === debtTotal) return;
+    const next = [...history.filter((s) => s.month !== month), { month, net: netWorth, assets: invTotal, debt: debtTotal }]
+      .sort((a, b) => a.month.localeCompare(b.month))
+      .slice(-24);
+    setHistory(next);
+  }, [loaded, netWorth, invTotal, debtTotal, history, setHistory]);
+
+  // Month-over-month delta (vs the latest completed month).
+  const curMonth = monthKey(new Date());
+  const past = history.filter((s) => s.month !== curMonth);
+  const prev = past.length ? past[past.length - 1] : null;
+  const delta = prev ? netWorth - prev.net : null;
+
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,260px)_1fr] gap-6 items-center">
+        <div className="text-center lg:text-left">
+          <div className="label mb-1.5">Net worth</div>
+          <div className={`font-display text-5xl md:text-6xl tracking-tight ${netWorth >= 0 ? "text-ink" : "text-down"}`}>
+            {money(netWorth)}
+          </div>
+          {delta != null && (
+            <div
+              className={`mt-2 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-medium ${delta >= 0 ? "text-up" : "text-down"}`}
+              style={{ background: `color-mix(in srgb, ${delta >= 0 ? "var(--up)" : "var(--down)"} 14%, transparent)` }}
+            >
+              {delta >= 0 ? <ArrowUpRight className="h-3.5 w-3.5" /> : <ArrowDownRight className="h-3.5 w-3.5" />}
+              {money(Math.abs(delta))} vs {monthLabel(prev!.month)}
+            </div>
+          )}
+          <div className="mt-3 flex items-center justify-center lg:justify-start gap-4 text-[12px]">
+            <span className="inline-flex items-center gap-1 text-up"><TrendingUp className="h-3.5 w-3.5" />{money(invTotal)}</span>
+            <span className="inline-flex items-center gap-1 text-down"><TrendingDown className="h-3.5 w-3.5" />{money(debtTotal)}</span>
+            <span className="font-mono text-[11px] text-muted">{debtRatio} D/A</span>
+          </div>
+        </div>
+        <NetWorthChart data={history} />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t rule pt-5">
+        <MoneyList title="Investments & assets" icon={<Landmark className="h-4 w-4" />} items={investments} setItems={setInvestments} />
+        <MoneyList title="Debt & liabilities" icon={<CreditCard className="h-4 w-4" />} items={debts} setItems={setDebts} accentDown />
+      </div>
+    </div>
+  );
+}
+
+// =====================  CASH FLOW  ==========================================
+
+export function CashFlowSection() {
+  const [income, setIncome] = usePref<LineItem[]>("hub.income", []);
+  const [expenses, setExpenses] = usePref<LineItem[]>("hub.expenses", []);
+  const inc = income.reduce((s, x) => s + x.amount, 0);
+  const exp = expenses.reduce((s, x) => s + x.amount, 0);
+  const surplus = inc - exp;
+  const rate = inc > 0 ? Math.round((surplus / inc) * 100) : 0;
+
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 gap-4">
         <BigStat label="Monthly surplus" value={money(surplus)} tone={surplus >= 0 ? "up" : "down"} />
         <BigStat label="Savings rate" value={`${rate}%`} sub={`${money(inc)} in · ${money(exp)} out`} />
       </div>
+      {/* in vs out bar */}
+      <div className="space-y-1.5">
+        <div className="h-2 w-full rounded-full bg-[var(--rule)] overflow-hidden flex">
+          <div className="h-full bg-[var(--up)] transition-[width] duration-500" style={{ width: `${inc + exp > 0 ? (inc / (inc + exp)) * 100 : 50}%` }} />
+          <div className="h-full bg-[var(--down)] transition-[width] duration-500" style={{ width: `${inc + exp > 0 ? (exp / (inc + exp)) * 100 : 50}%` }} />
+        </div>
+        <div className="flex justify-between font-mono text-[10px] text-muted">
+          <span className="text-up">{money(inc)} earned</span>
+          <span className="text-down">{money(exp)} spent</span>
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <MoneyList title="Monthly income" icon={<TrendingUp className="h-4 w-4" />} items={income} setItems={setIncome} />
         <MoneyList title="Monthly expenses" icon={<TrendingDown className="h-4 w-4" />} items={expenses} setItems={setExpenses} accentDown />
       </div>
+    </div>
+  );
+}
 
-      <div className="border-t rule pt-5 space-y-5">
-        <div className="grid grid-cols-2 gap-4">
-          <BigStat
-            label="Net worth"
-            value={money(netWorth)}
-            tone={netWorth >= 0 ? "up" : "down"}
-            sub={`${money(invTotal)} assets · ${money(debtTotal)} debt`}
-          />
-          <BigStat label="Debt-to-asset" value={debtRatio} sub={debtTotal === 0 ? "debt-free" : invTotal === 0 ? "no assets yet" : "of total assets"} />
+// =====================  SUBSCRIPTIONS  ======================================
+
+const SUB_PALETTE = [
+  "var(--grad-from)", "var(--grad-via)", "var(--grad-to)",
+  "var(--accent)", "var(--accent-2)", "var(--up)", "#d97706", "#a855f7",
+];
+function subColor(name: string): string {
+  let h = 0;
+  for (const c of name) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return SUB_PALETTE[h % SUB_PALETTE.length];
+}
+function daysUntil(dateStr: string): number {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const [y, m, d] = dateStr.split("-").map(Number);
+  return Math.round((new Date(y, m - 1, d).getTime() - today.getTime()) / 86_400_000);
+}
+function relDays(n: number): string {
+  if (n === 0) return "today";
+  if (n === 1) return "tomorrow";
+  if (n > 0) return `in ${n} days`;
+  return `${-n}d ago`;
+}
+
+export function SubscriptionsSection() {
+  const [subs, setSubs] = usePref<Sub[]>("hub.subscriptions", []);
+  const [name, setName] = useState("");
+  const [amount, setAmount] = useState(0);
+  const [cycle, setCycle] = useState<"mo" | "yr">("mo");
+  const [nextBill, setNextBill] = useState("");
+
+  const monthlyOf = (s: Sub) => (s.cycle === "yr" ? s.amount / 12 : s.amount);
+  const totalMonthly = subs.reduce((sum, s) => sum + monthlyOf(s), 0);
+  const annual = totalMonthly * 12;
+
+  function add() {
+    if (!name.trim() || amount === 0) return;
+    setSubs([...subs, { id: uid(), name: name.trim(), amount, cycle, nextBill }]);
+    setName(""); setAmount(0); setCycle("mo"); setNextBill("");
+  }
+
+  const sorted = useMemo(() => {
+    return [...subs].sort((a, b) => {
+      const da = a.nextBill ? daysUntil(a.nextBill) : Infinity;
+      const db = b.nextBill ? daysUntil(b.nextBill) : Infinity;
+      const ka = da === Infinity ? 2 : da < 0 ? 1 : 0;
+      const kb = db === Infinity ? 2 : db < 0 ? 1 : 0;
+      if (ka !== kb) return ka - kb;
+      return da - db;
+    });
+  }, [subs]);
+
+  const nextUp = sorted.find((s) => s.nextBill && daysUntil(s.nextBill) >= 0 && daysUntil(s.nextBill) <= 31);
+
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-2 gap-4">
+        <BigStat label="Per month" value={money(totalMonthly)} tone={totalMonthly > 0 ? "down" : undefined} />
+        <BigStat label="Per year" value={money(annual)} sub={`${subs.length} active`} />
+      </div>
+
+      {nextUp && (
+        <div className="flex items-center gap-2 rounded-xl bg-[var(--rule-soft)] px-3 py-2 text-[12px]">
+          <CalendarClock className="h-4 w-4 text-accent shrink-0" />
+          <span className="text-ink-soft">Next up</span>
+          <span className="font-medium text-ink">{nextUp.name}</span>
+          <span className="ml-auto font-mono text-muted">{relDays(daysUntil(nextUp.nextBill))}</span>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <MoneyList title="Investments & assets" icon={<Landmark className="h-4 w-4" />} items={investments} setItems={setInvestments} />
-          <MoneyList title="Debt & liabilities" icon={<CreditCard className="h-4 w-4" />} items={debts} setItems={setDebts} accentDown />
+      )}
+
+      <ul className="space-y-1.5">
+        {sorted.map((s) => {
+          const d = s.nextBill ? daysUntil(s.nextBill) : null;
+          const soon = d != null && d >= 0 && d <= 7;
+          return (
+            <li key={s.id} className="group flex items-center gap-3 rounded-xl border border-[var(--rule-soft)] px-3 py-2 hover:border-[var(--rule)] transition">
+              <span
+                className="grid h-7 w-7 shrink-0 place-items-center rounded-full text-[12px] font-semibold text-white"
+                style={{ background: subColor(s.name) }}
+              >
+                {s.name.charAt(0).toUpperCase()}
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="text-[13px] font-medium text-ink truncate">{s.name}</div>
+                <div className="flex items-center gap-1.5 text-[11px] text-muted">
+                  {s.nextBill ? (
+                    <>
+                      <span>{format(new Date(s.nextBill + "T00:00:00"), "MMM d")}</span>
+                      <span className={soon ? "text-accent font-medium" : ""}>· {relDays(d!)}</span>
+                    </>
+                  ) : (
+                    <span className="italic text-muted-2">no date set</span>
+                  )}
+                </div>
+              </div>
+              <div className="text-right shrink-0">
+                <div className="font-mono tabular-nums text-[13px] text-ink">
+                  {money(monthlyOf(s))}<span className="text-muted text-[11px]">/mo</span>
+                </div>
+                {s.cycle === "yr" && <div className="font-mono text-[10px] text-muted">{money(s.amount)}/yr billed</div>}
+              </div>
+              <button onClick={() => setSubs(subs.filter((x) => x.id !== s.id))} className="text-muted-2 opacity-0 group-hover:opacity-100 hover:text-accent transition shrink-0" aria-label="Remove">
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </li>
+          );
+        })}
+        {subs.length === 0 && (
+          <li className="rounded-xl border border-dashed border-[var(--rule)] py-4 text-center text-[12px] italic text-muted-2">
+            No subscriptions tracked — add Netflix, Spotify, that gym you forgot about…
+          </li>
+        )}
+      </ul>
+
+      <div className="flex flex-wrap items-center gap-1.5 border-t rule pt-3.5">
+        <TextInput value={name} onChange={setName} placeholder="Subscription (e.g. Netflix)" className="flex-1 min-w-[130px]" onEnter={add} />
+        <NumberInput value={amount} prefix="$" onChange={setAmount} />
+        <div className="inline-flex rounded-lg border border-[var(--rule)] overflow-hidden text-[12px]">
+          {(["mo", "yr"] as const).map((c) => (
+            <button
+              key={c}
+              onClick={() => setCycle(c)}
+              className={`px-2.5 py-1.5 transition ${cycle === c ? "bg-accent-soft text-accent font-medium" : "text-muted hover:text-ink"}`}
+            >
+              {c === "mo" ? "Monthly" : "Yearly"}
+            </button>
+          ))}
         </div>
+        <DateInput value={nextBill} onChange={setNextBill} />
+        <button onClick={add} className="btn-ghost !h-8 !w-8 shrink-0" aria-label="Add subscription"><Plus className="h-4 w-4" /></button>
       </div>
     </div>
   );
 }
+
+// =====================  APPLICATIONS  =======================================
 
 const STAGE_TONE: Record<Stage, string> = {
   Applied: "var(--muted)",
@@ -219,8 +542,8 @@ export function ApplicationsSection() {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-1.5 flex-wrap">
-        <TextInput value={company} onChange={setCompany} placeholder="Company (e.g. Deloitte)" className="flex-1 min-w-[140px]" />
-        <TextInput value={role} onChange={setRole} placeholder="Role (e.g. Audit Intern)" className="flex-1 min-w-[140px]" />
+        <TextInput value={company} onChange={setCompany} placeholder="Company (e.g. Deloitte)" className="flex-1 min-w-[140px]" onEnter={add} />
+        <TextInput value={role} onChange={setRole} placeholder="Role (e.g. Audit Intern)" className="flex-1 min-w-[140px]" onEnter={add} />
         <button onClick={add} className="btn-ghost !h-8 !w-8" aria-label="Add application"><Plus className="h-4 w-4" /></button>
       </div>
       <div className="flex gap-3 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
@@ -290,6 +613,8 @@ export function ApplicationsSection() {
   );
 }
 
+// =====================  CPA  ================================================
+
 const CPA_TONE: Record<CpaStatus, string> = {
   "Not started": "var(--muted-2)",
   Studying: "#d97706",
@@ -320,7 +645,7 @@ export function CpaSection() {
         <div className="h-full rounded-full transition-[width] duration-500"
           style={{ width: `${(passed / 4) * 100}%`, background: "linear-gradient(90deg, var(--grad-from), var(--grad-via), var(--grad-to))" }} />
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {CPA_SECTIONS.map((sec) => {
           const e = cpa[sec];
           return (
@@ -370,5 +695,36 @@ export function CpaSection() {
   );
 }
 
+// =====================  HEADER KPI STRIP  ===================================
+
+function Kpi({ label, value, tone }: { label: string; value: string; tone?: "up" | "down" }) {
+  return (
+    <div className="inline-flex items-baseline gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--paper)] px-3.5 py-1.5 backdrop-blur-md shadow-[var(--shadow-card)]">
+      <span className="label !text-[9px] !tracking-[0.12em]">{label}</span>
+      <span className={`font-mono text-[13px] tabular-nums ${tone === "up" ? "text-up" : tone === "down" ? "text-down" : "text-ink"}`}>{value}</span>
+    </div>
+  );
+}
+
+export function AccountingHeaderStats() {
+  const [income] = usePref<LineItem[]>("hub.income", []);
+  const [expenses] = usePref<LineItem[]>("hub.expenses", []);
+  const [investments] = usePref<LineItem[]>("hub.investments", []);
+  const [debts] = usePref<LineItem[]>("hub.debts", []);
+  const [subs] = usePref<Sub[]>("hub.subscriptions", []);
+
+  const surplus = income.reduce((s, x) => s + x.amount, 0) - expenses.reduce((s, x) => s + x.amount, 0);
+  const netWorth = investments.reduce((s, x) => s + x.amount, 0) - debts.reduce((s, x) => s + x.amount, 0);
+  const subMonthly = subs.reduce((s, x) => s + (x.cycle === "yr" ? x.amount / 12 : x.amount), 0);
+
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <Kpi label="Net worth" value={money(netWorth)} tone={netWorth >= 0 ? "up" : "down"} />
+      <Kpi label="Surplus / mo" value={money(surplus)} tone={surplus >= 0 ? "up" : "down"} />
+      <Kpi label="Subs / mo" value={money(subMonthly)} tone={subMonthly > 0 ? "down" : undefined} />
+    </div>
+  );
+}
+
 // Backward-compat icon export so the masthead pill can use it.
-export { Briefcase as AccountingIcon };
+export { Briefcase as AccountingIcon, Repeat as SubscriptionsIcon };

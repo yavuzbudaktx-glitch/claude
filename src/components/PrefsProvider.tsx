@@ -105,3 +105,10 @@ export function usePref<T>(key: string, fallback: T): [T, (v: T) => void] {
   const set = useCallback((v: T) => setPref(key, v), [key, setPref]);
   return [value, set];
 }
+
+// True once the cross-device prefs blob has finished hydrating from Supabase.
+// Effects that *write* derived data (e.g. monthly net-worth snapshots) should
+// gate on this so they don't record values built from the empty fallback.
+export function usePrefsLoaded(): boolean {
+  return useContext(PrefsContext).loaded;
+}
