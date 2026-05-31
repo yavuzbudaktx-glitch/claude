@@ -156,24 +156,43 @@ export function Vault() {
     }
   }
   async function attemptPin(pin: string) {
-    // priv.exists decides verify vs. create — but we route both through PinModal
-    // for the create/confirm flow. Here we try a direct verify for speed.
+    setQuery("");
     if (priv?.exists) {
       const res = await fetch("/api/vault/private", {
         method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ pin }),
       });
       const json = await res.json();
-      if (json.unlocked) { setUnlocked(true); setQuery(""); flash("Private vault unlocked"); }
+      if (json.unlocked) await enterPrivate();
       else flash("Incorrect PIN");
     } else {
-      setQuery("");
-      setPinOpen(true); // first-time setup
+      setPinOpen(true); // first-time setup → PinModal
     }
+  }
+
+  // Reveal the private vault and drop the user straight INTO their Private
+  // folder (creating it the first time). Everything inside it stays hidden, so
+  // the model is simple: "in the Private folder = private".
+  async function enterPrivate() {
+    setUnlocked(true);
+    const res = await fetch("/api/vault/items?private=1").then((r) => r.json()).catch(() => null);
+    const all: VaultItem[] = res?.items ?? [];
+    let root = all.find((i) => i.hidden && i.kind === "folder" && i.parent_id === null);
+    if (!root) {
+      const created = await fetch("/api/vault/items", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ kind: "folder", title: "Private", hidden: true }),
+      }).then((r) => r.json()).catch(() => null);
+      root = created?.item;
+    }
+    await mutate();
+    if (root) setParent(root.id);
+    flash("Private vault unlocked");
   }
 
   function lockPrivate() {
     setUnlocked(false);
     setParent(null);
+    setQuery("");
     flash("Private vault locked");
   }
 
@@ -457,16 +476,6 @@ export function Vault() {
                     <button onClick={() => startAdd("note")}><FileText size={15} className="vault-icon-note" /> Write note</button>
                     <button onClick={() => startAdd("secret")}><KeyRound size={15} className="vault-icon-secret" /> Add password</button>
                     <button onClick={() => fileInput.current?.click()}><Upload size={15} className="vault-icon-file" /> Upload file</button>
-                    <hr />
-                    {!unlocked ? (
-                      <button onClick={() => { setMenuOpen(false); setPinOpen(true); }}>
-                        <Lock size={15} className="vault-icon-secret" /> {priv?.exists ? "Unlock private vault" : "Set up private vault"}
-                      </button>
-                    ) : (
-                      <button onClick={() => { setMenuOpen(false); lockPrivate(); }}>
-                        <Unlock size={15} className="vault-icon-secret" /> Lock private vault
-                      </button>
-                    )}
                   </div>
                 </>
               )}
@@ -560,7 +569,7 @@ export function Vault() {
       {pinOpen && (
         <PinModal
           exists={!!priv?.exists}
-          onUnlocked={() => { setPinOpen(false); setUnlocked(true); flash("Private vault unlocked"); mutate(); }}
+          onUnlocked={() => { setPinOpen(false); enterPrivate(); }}
           onClose={() => setPinOpen(false)}
         />
       )}
@@ -568,8 +577,15 @@ export function Vault() {
   );
 }
 
-// Inline note reader.
+// Inline note reader, with quick-copy of the body.
 function NoteModal({ item, onClose }: { item: VaultItem; onClose: () => void }) {
+  const [copied, setCopied] = useState(false);
+  function copy() {
+    if (!item.body) return;
+    navigator.clipboard.writeText(item.body);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1400);
+  }
   return (
     <div className="vault-modal-backdrop" onClick={onClose}>
       <div className="vault-modal" onClick={(e) => e.stopPropagation()}>
@@ -577,7 +593,10 @@ function NoteModal({ item, onClose }: { item: VaultItem; onClose: () => void }) 
         <div className="vault-input" style={{ whiteSpace: "pre-wrap", minHeight: 130, lineHeight: 1.6 }}>
           {item.body || <span style={{ color: "var(--v-muted)" }}>Empty note.</span>}
         </div>
-        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 14 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 14 }}>
+          <button className="vault-btn" onClick={copy} disabled={!item.body}>
+            {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? "Copied" : "Copy text"}
+          </button>
           <button className="vault-btn" onClick={onClose}>Close</button>
         </div>
       </div>
