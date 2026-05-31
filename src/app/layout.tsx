@@ -3,6 +3,7 @@ import "./globals.css";
 import { PrefsProvider } from "@/components/PrefsProvider";
 import { CommandPalette } from "@/components/CommandPalette";
 import { FocusMode } from "@/components/FocusMode";
+import { HubOverlay } from "@/components/Hub";
 import { CURRENT } from "@/lib/app-config";
 
 export const metadata: Metadata = {
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <CommandPalette />
           <FocusMode />
+          <HubOverlay />
         </PrefsProvider>
       </body>
     </html>

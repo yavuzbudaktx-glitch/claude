@@ -201,6 +201,7 @@ function WeightChart({ entries }: { entries: WeightEntry[] }) {
   // the dots perfectly round and the stroke crisp at any width.
   const ref = useRef<HTMLDivElement>(null);
   const [w, setW] = useState(560);
+  const [hover, setHover] = useState<number | null>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || typeof ResizeObserver === "undefined") return;
@@ -241,8 +242,30 @@ function WeightChart({ entries }: { entries: WeightEntry[] }) {
   const area = n >= 2 ? `${line} L ${xAt(n - 1).toFixed(2)},${H - padBot} L ${xAt(0).toFixed(2)},${H - padBot} Z` : "";
   const last = pts[n - 1];
 
+  // Map a pointer position to the nearest data point index.
+  function handleMove(e: React.PointerEvent<HTMLDivElement>) {
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect) return;
+    const px = ((e.clientX - rect.left) / rect.width) * w;
+    if (n === 1) { setHover(0); return; }
+    const i = Math.round(((px - padX) / (w - 2 * padX)) * (n - 1));
+    setHover(Math.max(0, Math.min(n - 1, i)));
+  }
+
+  const active = hover ?? n - 1;
+  const ae = entries[active];
+  const ap = pts[active];
+  // Tooltip horizontal placement, clamped inside the chart.
+  const tipLeftPct = Math.max(6, Math.min(94, (ap[0] / w) * 100));
+
   return (
-    <div ref={ref} className="min-w-0">
+    <div
+      ref={ref}
+      className="min-w-0 relative touch-none cursor-crosshair select-none"
+      onPointerMove={handleMove}
+      onPointerDown={handleMove}
+      onPointerLeave={() => setHover(null)}
+    >
       <svg viewBox={`0 0 ${w} ${H}`} width="100%" height={H} className="block">
         <defs>
           <linearGradient id="weightFill" x1="0" y1="0" x2="0" y2="1">
@@ -262,9 +285,24 @@ function WeightChart({ entries }: { entries: WeightEntry[] }) {
           />
         )}
         {n >= 2 && <circle cx={pts[0][0]} cy={pts[0][1]} r="2.5" fill="var(--accent)" opacity="0.45" />}
-        <circle cx={last[0]} cy={last[1]} r="4.5" fill="var(--accent)" />
-        <circle cx={last[0]} cy={last[1]} r="8" fill="var(--accent)" opacity="0.18" />
+        {/* Crosshair + highlighted point under the cursor */}
+        {hover !== null && (
+          <line x1={ap[0]} y1={padTop - 6} x2={ap[0]} y2={H - padBot} stroke="var(--accent)" strokeWidth="1" strokeDasharray="3 3" opacity="0.5" />
+        )}
+        <circle cx={ap[0]} cy={ap[1]} r="8" fill="var(--accent)" opacity="0.18" />
+        <circle cx={ap[0]} cy={ap[1]} r="4.5" fill="var(--accent)" />
+        {hover === null && n >= 2 && <circle cx={last[0]} cy={last[1]} r="2" fill="var(--paper)" />}
       </svg>
+
+      {/* Tooltip */}
+      <div
+        className="pointer-events-none absolute -top-1 -translate-x-1/2 rounded-lg border border-[var(--glass-border)] bg-[var(--paper-2)] px-2 py-1 backdrop-blur-md shadow-[var(--shadow-card)] text-center transition-opacity"
+        style={{ left: `${tipLeftPct}%`, opacity: hover === null ? 0 : 1 }}
+      >
+        <div className="font-mono tabular-nums text-[13px] text-ink leading-none">{ae.weight.toFixed(1)}<span className="text-muted text-[9px]"> lbs</span></div>
+        <div className="font-mono text-[9px] uppercase tracking-wider text-muted mt-0.5">{fmtDate(ae.date)}</div>
+      </div>
+
       <div className="flex justify-between mt-1.5 font-mono text-[10px] uppercase tracking-wider text-muted">
         <span>{fmtDate(entries[0].date)}</span>
         <span>{min.toFixed(1)}{min !== max ? `–${max.toFixed(1)}` : ""} lbs</span>

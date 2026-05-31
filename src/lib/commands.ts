@@ -10,7 +10,8 @@ export type AppCommand =
   | { kind: "news-tab"; value: string }
   | { kind: "watchlist-add"; value: string }
   | { kind: "focus" }
-  | { kind: "scratchpad" };
+  | { kind: "scratchpad" }
+  | { kind: "hub"; value?: string };
 
 const EVT = "morning:command";
 

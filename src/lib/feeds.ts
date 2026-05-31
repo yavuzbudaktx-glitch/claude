@@ -143,11 +143,40 @@ function extractImage(item: CustomItem): string | undefined {
   return undefined;
 }
 
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: "&", lt: "<", gt: ">", quot: '"', apos: "'",
+  nbsp: " ", ndash: "–", mdash: "—", hellip: "…",
+  lsquo: "‘", rsquo: "’", ldquo: "“", rdquo: "”",
+  laquo: "«", raquo: "»", trade: "™", reg: "®", copy: "©", deg: "°",
+  eacute: "é", egrave: "è", agrave: "à", ccedil: "ç", uuml: "ü", ouml: "ö",
+};
+
+// RSS titles routinely arrive with HTML entities (named like &amp; or numeric
+// like &#8217;), sometimes double-encoded (&amp;#8217;). Decode them so the
+// card shows real punctuation instead of "Marathon&#8217;s".
+function decodeEntities(input: string): string {
+  let s = input;
+  for (let pass = 0; pass < 2 && /&[#a-zA-Z]/.test(s); pass++) {
+    s = s
+      .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => safeCodePoint(parseInt(h, 16)))
+      .replace(/&#(\d+);/g, (_, d) => safeCodePoint(parseInt(d, 10)))
+      .replace(/&([a-zA-Z][a-zA-Z0-9]+);/g, (m, name) => NAMED_ENTITIES[name] ?? m);
+  }
+  return s;
+}
+function safeCodePoint(cp: number): string {
+  try {
+    return Number.isFinite(cp) && cp > 0 ? String.fromCodePoint(cp) : "";
+  } catch {
+    return "";
+  }
+}
+
 async function parseFeed(f: FeedSource): Promise<NewsItem[]> {
   try {
     const feed = await parser.parseURL(f.url);
     return (feed.items ?? []).slice(0, 12).map((it) => ({
-      title: (it.title ?? "").trim(),
+      title: decodeEntities((it.title ?? "").trim()),
       link: it.link ?? "",
       source: f.name,
       category: f.category,

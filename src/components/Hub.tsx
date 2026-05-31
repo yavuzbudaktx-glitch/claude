@@ -1,0 +1,493 @@
+"use client";
+
+import { useEffect, useState, type ReactNode } from "react";
+import {
+  Wallet, X, Plus, Trash2, ChevronLeft, ChevronRight,
+  TrendingUp, TrendingDown, CalendarClock, Briefcase, GraduationCap, PiggyBank,
+} from "lucide-react";
+import { usePref } from "@/components/PrefsProvider";
+import { useCommand } from "@/lib/commands";
+
+// =============================================================================
+//   The Ledger — a personal finance + career command center for an accounting
+//   major. One shiny button opens a focused overlay with five tabs:
+//     Net Worth · Cash Flow · Bills · Applications · CPA
+//   Everything is stored in the synced prefs blob (cross-device).
+// =============================================================================
+
+const uid = () => Math.random().toString(36).slice(2, 9);
+const money = (n: number) =>
+  n.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+
+interface LineItem { id: string; label: string; amount: number }
+interface Bill { id: string; name: string; amount: number; dueDay: number; cadence: "monthly" | "yearly" | "weekly" }
+type Stage = "Applied" | "OA" | "Interview" | "Offer" | "Rejected";
+const STAGES: Stage[] = ["Applied", "OA", "Interview", "Offer", "Rejected"];
+interface AppItem { id: string; company: string; role: string; stage: Stage; deadline: string }
+type CpaStatus = "Not started" | "Studying" | "Scheduled" | "Passed" | "Failed";
+const CPA_STATUSES: CpaStatus[] = ["Not started", "Studying", "Scheduled", "Passed", "Failed"];
+const CPA_SECTIONS = ["AUD", "FAR", "REG", "TCP"] as const;
+type CpaSection = (typeof CPA_SECTIONS)[number];
+interface CpaEntry { status: CpaStatus; hours: number; examDate: string; score: string }
+
+type Tab = "networth" | "cashflow" | "bills" | "apps" | "cpa";
+
+// ---------- tiny shared inputs ----------------------------------------------
+
+function NumberInput({ value, onChange, placeholder, prefix }: {
+  value: number; onChange: (n: number) => void; placeholder?: string; prefix?: string;
+}) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-lg bg-[var(--rule-soft)] px-2 focus-within:ring-1 focus-within:ring-[var(--accent)]">
+      {prefix && <span className="text-muted text-[12px]">{prefix}</span>}
+      <input
+        type="number"
+        inputMode="decimal"
+        value={value === 0 ? "" : value}
+        placeholder={placeholder ?? "0"}
+        onChange={(e) => onChange(Number(e.target.value) || 0)}
+        className="w-24 bg-transparent py-1.5 font-mono tabular-nums text-[13px] text-ink focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none placeholder:text-muted-2"
+      />
+    </span>
+  );
+}
+
+function TextInput({ value, onChange, placeholder, className = "" }: {
+  value: string; onChange: (v: string) => void; placeholder?: string; className?: string;
+}) {
+  return (
+    <input
+      value={value}
+      placeholder={placeholder}
+      onChange={(e) => onChange(e.target.value)}
+      className={`bg-[var(--rule-soft)] rounded-lg px-2.5 py-1.5 text-[13px] text-ink focus:outline-none focus:ring-1 focus:ring-[var(--accent)] placeholder:text-muted-2 ${className}`}
+    />
+  );
+}
+
+// ---------- a reusable assets/liabilities/income/expenses editor ------------
+
+function MoneyList({
+  title, icon, items, setItems, accentDown,
+}: {
+  title: string; icon: ReactNode; items: LineItem[]; setItems: (v: LineItem[]) => void; accentDown?: boolean;
+}) {
+  const [label, setLabel] = useState("");
+  const [amount, setAmount] = useState(0);
+  const total = items.reduce((s, x) => s + x.amount, 0);
+
+  function add() {
+    if (!label.trim() || amount === 0) return;
+    setItems([...items, { id: uid(), label: label.trim(), amount }]);
+    setLabel(""); setAmount(0);
+  }
+
+  return (
+    <div className="card-bare !p-4">
+      <div className="flex items-center gap-2 mb-3">
+        <span className={accentDown ? "text-down" : "text-up"}>{icon}</span>
+        <span className="text-[13px] font-semibold text-ink">{title}</span>
+        <span className="ml-auto font-mono tabular-nums text-[15px] text-ink">{money(total)}</span>
+      </div>
+      <ul className="space-y-1.5 mb-3">
+        {items.map((it) => (
+          <li key={it.id} className="group flex items-center gap-2">
+            <input
+              value={it.label}
+              onChange={(e) => setItems(items.map((x) => x.id === it.id ? { ...x, label: e.target.value } : x))}
+              className="flex-1 bg-transparent text-[13px] text-ink-soft focus:outline-none focus:text-ink truncate"
+            />
+            <NumberInput
+              value={it.amount}
+              prefix="$"
+              onChange={(n) => setItems(items.map((x) => x.id === it.id ? { ...x, amount: n } : x))}
+            />
+            <button onClick={() => setItems(items.filter((x) => x.id !== it.id))} className="text-muted-2 opacity-0 group-hover:opacity-100 hover:text-accent transition shrink-0" aria-label="Remove">
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          </li>
+        ))}
+        {items.length === 0 && <li className="text-muted text-xs italic">Nothing here yet.</li>}
+      </ul>
+      <div className="flex items-center gap-1.5">
+        <TextInput value={label} onChange={setLabel} placeholder={`Add ${title.toLowerCase()}…`} className="flex-1" />
+        <NumberInput value={amount} prefix="$" onChange={setAmount} />
+        <button onClick={add} className="btn-ghost !h-8 !w-8" aria-label="Add"><Plus className="h-4 w-4" /></button>
+      </div>
+    </div>
+  );
+}
+
+function BigStat({ label, value, sub, tone }: { label: string; value: string; sub?: string; tone?: "up" | "down" }) {
+  return (
+    <div className="text-center">
+      <div className="label mb-1.5">{label}</div>
+      <div className={`font-display text-4xl md:text-5xl tracking-tight ${tone === "up" ? "text-up" : tone === "down" ? "text-down" : "text-ink"}`}>
+        {value}
+      </div>
+      {sub && <div className="font-mono text-[11px] text-muted mt-1.5">{sub}</div>}
+    </div>
+  );
+}
+
+// ---------- tabs -------------------------------------------------------------
+
+function NetWorthTab() {
+  const [assets, setAssets] = usePref<LineItem[]>("hub.assets", []);
+  const [liab, setLiab] = usePref<LineItem[]>("hub.liabilities", []);
+  const a = assets.reduce((s, x) => s + x.amount, 0);
+  const l = liab.reduce((s, x) => s + x.amount, 0);
+  const net = a - l;
+  return (
+    <div className="space-y-5">
+      <BigStat label="Net worth" value={money(net)} sub={`${money(a)} assets − ${money(l)} liabilities`} tone={net >= 0 ? "up" : "down"} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <MoneyList title="Assets" icon={<TrendingUp className="h-4 w-4" />} items={assets} setItems={setAssets} />
+        <MoneyList title="Liabilities" icon={<TrendingDown className="h-4 w-4" />} items={liab} setItems={setLiab} accentDown />
+      </div>
+    </div>
+  );
+}
+
+function CashFlowTab() {
+  const [income, setIncome] = usePref<LineItem[]>("hub.income", []);
+  const [expenses, setExpenses] = usePref<LineItem[]>("hub.expenses", []);
+  const inc = income.reduce((s, x) => s + x.amount, 0);
+  const exp = expenses.reduce((s, x) => s + x.amount, 0);
+  const surplus = inc - exp;
+  const rate = inc > 0 ? Math.round((surplus / inc) * 100) : 0;
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-2 gap-4">
+        <BigStat label="Monthly surplus" value={money(surplus)} tone={surplus >= 0 ? "up" : "down"} />
+        <BigStat label="Savings rate" value={`${rate}%`} sub={`${money(inc)} in · ${money(exp)} out`} />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <MoneyList title="Monthly income" icon={<TrendingUp className="h-4 w-4" />} items={income} setItems={setIncome} />
+        <MoneyList title="Monthly expenses" icon={<TrendingDown className="h-4 w-4" />} items={expenses} setItems={setExpenses} accentDown />
+      </div>
+    </div>
+  );
+}
+
+function nextDue(dueDay: number, cadence: Bill["cadence"]): Date {
+  const now = new Date();
+  if (cadence === "weekly") {
+    const d = new Date(now);
+    const delta = (dueDay - now.getDay() + 7) % 7; // dueDay = 0..6
+    d.setDate(now.getDate() + delta);
+    return d;
+  }
+  if (cadence === "yearly") {
+    // dueDay encodes day-of-year-ish? Keep it simple: treat as day of month in
+    // current month rolling forward a year is overkill — use month/day later.
+  }
+  // monthly (and yearly fallback): next occurrence of dueDay in month
+  const d = new Date(now.getFullYear(), now.getMonth(), dueDay);
+  if (d < new Date(now.getFullYear(), now.getMonth(), now.getDate())) {
+    d.setMonth(d.getMonth() + 1);
+  }
+  return d;
+}
+
+function BillsTab() {
+  const [bills, setBills] = usePref<Bill[]>("hub.bills", []);
+  const [name, setName] = useState("");
+  const [amount, setAmount] = useState(0);
+  const [dueDay, setDueDay] = useState(1);
+
+  const monthlyTotal = bills.reduce((s, b) => {
+    const m = b.cadence === "yearly" ? b.amount / 12 : b.cadence === "weekly" ? b.amount * 4.33 : b.amount;
+    return s + m;
+  }, 0);
+
+  const sorted = [...bills].sort((a, b) => +nextDue(a.dueDay, a.cadence) - +nextDue(b.dueDay, b.cadence));
+
+  function add() {
+    if (!name.trim() || amount === 0) return;
+    setBills([...bills, { id: uid(), name: name.trim(), amount, dueDay, cadence: "monthly" }]);
+    setName(""); setAmount(0); setDueDay(1);
+  }
+
+  return (
+    <div className="space-y-4">
+      <BigStat label="Estimated monthly bills" value={money(monthlyTotal)} sub={`${bills.length} recurring`} />
+      <ul className="space-y-2">
+        {sorted.map((b) => {
+          const due = nextDue(b.dueDay, b.cadence);
+          const days = Math.ceil((+due - Date.now()) / 86_400_000);
+          const soon = days <= 7;
+          return (
+            <li key={b.id} className="group flex items-center gap-3 card-bare !py-2.5 !px-3.5">
+              <CalendarClock className={`h-4 w-4 shrink-0 ${soon ? "text-accent" : "text-muted"}`} />
+              <div className="min-w-0 flex-1">
+                <div className="text-[13px] text-ink truncate">{b.name}</div>
+                <div className={`font-mono text-[10px] uppercase tracking-wider ${soon ? "text-accent" : "text-muted"}`}>
+                  {days <= 0 ? "due today" : `in ${days}d`} · {due.toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                </div>
+              </div>
+              <span className="font-mono tabular-nums text-[14px] text-ink">{money(b.amount)}</span>
+              <button onClick={() => setBills(bills.filter((x) => x.id !== b.id))} className="text-muted-2 opacity-0 group-hover:opacity-100 hover:text-accent transition shrink-0" aria-label="Remove">
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </li>
+          );
+        })}
+        {bills.length === 0 && <li className="text-muted text-xs italic">No bills yet — add rent, subscriptions, insurance…</li>}
+      </ul>
+      <div className="flex items-center gap-1.5 flex-wrap">
+        <TextInput value={name} onChange={setName} placeholder="Bill name" className="flex-1 min-w-[120px]" />
+        <NumberInput value={amount} prefix="$" onChange={setAmount} />
+        <label className="inline-flex items-center gap-1 rounded-lg bg-[var(--rule-soft)] px-2.5 py-1.5">
+          <span className="text-muted text-[11px]">day</span>
+          <input type="number" min={1} max={31} value={dueDay} onChange={(e) => setDueDay(Math.max(1, Math.min(31, Number(e.target.value) || 1)))}
+            className="w-10 bg-transparent font-mono tabular-nums text-[13px] text-ink focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none" />
+        </label>
+        <button onClick={add} className="btn-ghost !h-8 !w-8" aria-label="Add bill"><Plus className="h-4 w-4" /></button>
+      </div>
+    </div>
+  );
+}
+
+const STAGE_TONE: Record<Stage, string> = {
+  Applied: "var(--muted)",
+  OA: "#d97706",
+  Interview: "var(--accent)",
+  Offer: "var(--up)",
+  Rejected: "var(--down)",
+};
+
+function AppsTab() {
+  const [apps, setApps] = usePref<AppItem[]>("hub.apps", []);
+  const [company, setCompany] = useState("");
+  const [role, setRole] = useState("");
+
+  function add() {
+    if (!company.trim()) return;
+    setApps([...apps, { id: uid(), company: company.trim(), role: role.trim(), stage: "Applied", deadline: "" }]);
+    setCompany(""); setRole("");
+  }
+  function move(id: string, dir: -1 | 1) {
+    setApps(apps.map((a) => {
+      if (a.id !== id) return a;
+      const i = STAGES.indexOf(a.stage);
+      const ni = Math.max(0, Math.min(STAGES.length - 1, i + dir));
+      return { ...a, stage: STAGES[ni] };
+    }));
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-1.5 flex-wrap">
+        <TextInput value={company} onChange={setCompany} placeholder="Company (e.g. Deloitte)" className="flex-1 min-w-[140px]" />
+        <TextInput value={role} onChange={setRole} placeholder="Role (e.g. Audit Intern)" className="flex-1 min-w-[140px]" />
+        <button onClick={add} className="btn-ghost !h-8 !w-8" aria-label="Add application"><Plus className="h-4 w-4" /></button>
+      </div>
+      <div className="flex gap-3 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
+        {STAGES.map((stage) => {
+          const col = apps.filter((a) => a.stage === stage);
+          return (
+            <div key={stage} className="min-w-[180px] flex-1">
+              <div className="flex items-center gap-1.5 mb-2">
+                <span className="h-2 w-2 rounded-full" style={{ background: STAGE_TONE[stage] }} />
+                <span className="text-[12px] font-semibold text-ink">{stage}</span>
+                <span className="ml-auto font-mono text-[11px] text-muted">{col.length}</span>
+              </div>
+              <ul className="space-y-2">
+                {col.map((a) => {
+                  const i = STAGES.indexOf(a.stage);
+                  return (
+                    <li key={a.id} className="group card-bare !p-2.5">
+                      <div className="flex items-start gap-1">
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[13px] font-medium text-ink truncate">{a.company}</div>
+                          {a.role && <div className="text-[11px] text-muted truncate">{a.role}</div>}
+                        </div>
+                        <button onClick={() => setApps(apps.filter((x) => x.id !== a.id))} className="text-muted-2 opacity-0 group-hover:opacity-100 hover:text-accent transition shrink-0" aria-label="Remove">
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                      <input
+                        type="date"
+                        value={a.deadline}
+                        onChange={(e) => setApps(apps.map((x) => x.id === a.id ? { ...x, deadline: e.target.value } : x))}
+                        className="mt-1.5 w-full bg-transparent font-mono text-[10px] text-muted focus:outline-none focus:text-ink"
+                      />
+                      <div className="flex items-center justify-between mt-1.5 opacity-0 group-hover:opacity-100 transition">
+                        <button onClick={() => move(a.id, -1)} disabled={i === 0} className="text-muted hover:text-accent disabled:opacity-30" aria-label="Move back">
+                          <ChevronLeft className="h-4 w-4" />
+                        </button>
+                        <button onClick={() => move(a.id, 1)} disabled={i === STAGES.length - 1} className="text-muted hover:text-accent disabled:opacity-30" aria-label="Move forward">
+                          <ChevronRight className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+const CPA_TONE: Record<CpaStatus, string> = {
+  "Not started": "var(--muted-2)",
+  Studying: "#d97706",
+  Scheduled: "var(--accent)",
+  Passed: "var(--up)",
+  Failed: "var(--down)",
+};
+
+function CpaTab() {
+  const [cpa, setCpa] = usePref<Record<CpaSection, CpaEntry>>("hub.cpa", {
+    AUD: { status: "Not started", hours: 0, examDate: "", score: "" },
+    FAR: { status: "Not started", hours: 0, examDate: "", score: "" },
+    REG: { status: "Not started", hours: 0, examDate: "", score: "" },
+    TCP: { status: "Not started", hours: 0, examDate: "", score: "" },
+  });
+  const passed = CPA_SECTIONS.filter((s) => cpa[s]?.status === "Passed").length;
+  const totalHours = CPA_SECTIONS.reduce((s, k) => s + (cpa[k]?.hours ?? 0), 0);
+  const update = (sec: CpaSection, patch: Partial<CpaEntry>) =>
+    setCpa({ ...cpa, [sec]: { ...cpa[sec], ...patch } });
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <BigStat label="Sections passed" value={`${passed} / 4`} tone={passed === 4 ? "up" : undefined} />
+        <BigStat label="Study hours logged" value={totalHours.toLocaleString()} sub="across all sections" />
+      </div>
+      <div className="h-2 w-full rounded-full bg-[var(--rule)] overflow-hidden">
+        <div className="h-full rounded-full transition-[width] duration-500"
+          style={{ width: `${(passed / 4) * 100}%`, background: "linear-gradient(90deg, var(--grad-from), var(--grad-via), var(--grad-to))" }} />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {CPA_SECTIONS.map((sec) => {
+          const e = cpa[sec];
+          return (
+            <div key={sec} className="card-bare !p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <GraduationCap className="h-4 w-4 text-accent" />
+                <span className="font-display text-lg text-ink">{sec}</span>
+                <span className="ml-auto text-[11px] font-semibold px-2 py-0.5 rounded-full"
+                  style={{ color: CPA_TONE[e.status], background: "var(--rule-soft)" }}>
+                  {e.status}
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-1 mb-3">
+                {CPA_STATUSES.map((st) => (
+                  <button key={st} onClick={() => update(sec, { status: st })}
+                    className={`text-[10px] px-2 py-1 rounded-full border transition ${e.status === st ? "border-transparent text-white" : "border-[var(--rule)] text-muted hover:text-ink"}`}
+                    style={e.status === st ? { background: CPA_TONE[st] } : undefined}>
+                    {st}
+                  </button>
+                ))}
+              </div>
+              <div className="grid grid-cols-3 gap-2 items-end">
+                <label className="block">
+                  <span className="label !text-[9px]">Hours</span>
+                  <input type="number" value={e.hours === 0 ? "" : e.hours} placeholder="0"
+                    onChange={(ev) => update(sec, { hours: Number(ev.target.value) || 0 })}
+                    className="mt-1 w-full bg-[var(--rule-soft)] rounded-lg px-2 py-1.5 font-mono tabular-nums text-[13px] text-ink focus:outline-none focus:ring-1 focus:ring-[var(--accent)] [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none" />
+                </label>
+                <label className="block">
+                  <span className="label !text-[9px]">Exam</span>
+                  <input type="date" value={e.examDate}
+                    onChange={(ev) => update(sec, { examDate: ev.target.value })}
+                    className="mt-1 w-full bg-[var(--rule-soft)] rounded-lg px-2 py-1.5 font-mono text-[11px] text-ink focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                </label>
+                <label className="block">
+                  <span className="label !text-[9px]">Score</span>
+                  <input value={e.score} placeholder="—" maxLength={3}
+                    onChange={(ev) => update(sec, { score: ev.target.value.replace(/[^0-9]/g, "") })}
+                    className="mt-1 w-full bg-[var(--rule-soft)] rounded-lg px-2 py-1.5 font-mono tabular-nums text-[13px] text-ink focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                </label>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ---------- shell ------------------------------------------------------------
+
+const TABS: { id: Tab; label: string; icon: ReactNode }[] = [
+  { id: "networth", label: "Net Worth", icon: <PiggyBank className="h-3.5 w-3.5" /> },
+  { id: "cashflow", label: "Cash Flow", icon: <TrendingUp className="h-3.5 w-3.5" /> },
+  { id: "bills", label: "Bills", icon: <CalendarClock className="h-3.5 w-3.5" /> },
+  { id: "apps", label: "Applications", icon: <Briefcase className="h-3.5 w-3.5" /> },
+  { id: "cpa", label: "CPA", icon: <GraduationCap className="h-3.5 w-3.5" /> },
+];
+
+export function HubOverlay() {
+  const [open, setOpen] = useState(false);
+  const [tab, setTab] = useState<Tab>("networth");
+
+  useCommand((c) => {
+    if (c.kind === "hub") {
+      if (c.value && TABS.some((t) => t.id === c.value)) setTab(c.value as Tab);
+      setOpen(true);
+    }
+  });
+  useEffect(() => {
+    const onOpen = (e: Event) => {
+      const v = (e as CustomEvent<string>).detail;
+      if (v && TABS.some((t) => t.id === v)) setTab(v as Tab);
+      setOpen(true);
+    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    window.addEventListener("morning:open-hub", onOpen);
+    window.addEventListener("keydown", onKey);
+    return () => { window.removeEventListener("morning:open-hub", onOpen); window.removeEventListener("keydown", onKey); };
+  }, []);
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-[95] flex items-start justify-center pt-[6vh] px-4 bg-black/40 backdrop-blur-sm" onMouseDown={() => setOpen(false)}>
+      <div className="w-full max-w-4xl card !p-0 overflow-hidden animate-fadeIn flex flex-col max-h-[88vh]" onMouseDown={(e) => e.stopPropagation()}>
+        <header className="flex items-center gap-3 px-5 py-3.5 border-b rule">
+          <span className="dot" aria-hidden />
+          <span className="font-display text-[17px] tracking-tight text-ink">The Ledger</span>
+          <button onClick={() => setOpen(false)} className="ml-auto btn-ghost !h-8 !w-8" aria-label="Close"><X className="h-4 w-4" /></button>
+        </header>
+        <div className="flex gap-1.5 px-5 py-3 border-b rule overflow-x-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
+          {TABS.map((t) => (
+            <button key={t.id} onClick={() => setTab(t.id)}
+              className={`chip inline-flex items-center gap-1.5 whitespace-nowrap ${tab === t.id ? "chip-active" : ""}`}>
+              {t.icon}{t.label}
+            </button>
+          ))}
+        </div>
+        <div className="p-5 overflow-y-auto">
+          {tab === "networth" && <NetWorthTab />}
+          {tab === "cashflow" && <CashFlowTab />}
+          {tab === "bills" && <BillsTab />}
+          {tab === "apps" && <AppsTab />}
+          {tab === "cpa" && <CpaTab />}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function HubButton() {
+  return (
+    <button
+      onClick={() => window.dispatchEvent(new CustomEvent("morning:open-hub"))}
+      aria-label="Open the Ledger"
+      title="The Ledger — finances & career"
+      className="relative inline-flex items-center justify-center h-[38px] w-[38px] rounded-xl text-white transition hover:brightness-110 active:scale-95"
+      style={{
+        background: "linear-gradient(135deg, var(--grad-from), var(--grad-via), var(--grad-to))",
+        boxShadow: "0 6px 18px -6px var(--glow)",
+      }}
+    >
+      <Wallet className="h-4 w-4" />
+    </button>
+  );
+}
