@@ -2,12 +2,12 @@
 // served in Turkish. One hadith per day, in order, starting from START_KEY.
 //
 // Source priority:
-//   1. public/riyazus-salihin/   — the full book the user dropped in. We read
-//      every file in natural order and parse JSON / txt / md flexibly.
-//   2. public/data/riyazus-salihin-tr.json — curated fallback (first hadiths).
+//   1. public/riyazus-salihin/             — folder of JSON/txt/md files (optional)
+//   2. public/data/riyazus-salihin-tr.json — 545 hadiths extracted from
+//      public/riyazus-salihin.pdf by scripts/extract-riyazus.cjs.
 //
-// To refresh after editing the folder, just redeploy; the directory is read
-// at request time (route is force-dynamic).
+// To refresh from a new PDF: replace public/riyazus-salihin.pdf and run
+// `node scripts/extract-riyazus.cjs` to regenerate the JSON.
 
 import fs from "node:fs";
 import path from "node:path";

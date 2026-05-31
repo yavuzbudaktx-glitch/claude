@@ -35,8 +35,8 @@ interface CpaEntry { status: CpaStatus; hours: number; examDate: string; score: 
 
 // ---------- shared inputs ---------------------------------------------------
 
-function NumberInput({ value, onChange, placeholder, prefix }: {
-  value: number; onChange: (n: number) => void; placeholder?: string; prefix?: string;
+function NumberInput({ value, onChange, placeholder, prefix, width = "w-16" }: {
+  value: number; onChange: (n: number) => void; placeholder?: string; prefix?: string; width?: string;
 }) {
   return (
     <span className="inline-flex items-center gap-1 rounded-lg bg-[var(--rule-soft)] px-2 focus-within:ring-1 focus-within:ring-[var(--accent)]">
@@ -47,7 +47,7 @@ function NumberInput({ value, onChange, placeholder, prefix }: {
         value={value === 0 ? "" : value}
         placeholder={placeholder ?? "0"}
         onChange={(e) => onChange(Number(e.target.value) || 0)}
-        className="w-24 bg-transparent py-1.5 font-mono tabular-nums text-[13px] text-ink focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none placeholder:text-muted-2"
+        className={`${width} bg-transparent py-1.5 font-mono tabular-nums text-[13px] text-ink focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none placeholder:text-muted-2`}
       />
     </span>
   );
@@ -94,19 +94,22 @@ function MoneyList({
   }
 
   return (
-    <div className="card-bare !p-4">
-      <div className="flex items-center gap-2 mb-3">
+    <div className="card-bare !p-3.5">
+      <div className="flex items-center gap-2 mb-2.5">
         <span className={accentDown ? "text-down" : "text-up"}>{icon}</span>
         <span className="text-[13px] font-semibold text-ink">{title}</span>
         <span className="ml-auto font-mono tabular-nums text-[15px] text-ink">{money(total)}</span>
       </div>
-      <ul className="space-y-1.5 mb-3">
+      <ul className="space-y-1 mb-2.5">
         {items.map((it) => (
-          <li key={it.id} className="group flex items-center gap-2">
+          <li
+            key={it.id}
+            className="group flex items-center gap-1.5 opacity-60 hover:opacity-100 focus-within:opacity-100 transition"
+          >
             <input
               value={it.label}
               onChange={(e) => setItems(items.map((x) => x.id === it.id ? { ...x, label: e.target.value } : x))}
-              className="flex-1 bg-transparent text-[13px] text-ink-soft focus:outline-none focus:text-ink truncate"
+              className="flex-1 min-w-0 bg-transparent text-[13px] text-ink-soft focus:outline-none focus:text-ink truncate"
             />
             <NumberInput
               value={it.amount}
@@ -118,12 +121,12 @@ function MoneyList({
             </button>
           </li>
         ))}
-        {items.length === 0 && <li className="text-muted text-xs italic">Nothing here yet.</li>}
+        {items.length === 0 && <li className="text-muted-2 text-xs italic">Nothing here yet.</li>}
       </ul>
       <div className="flex items-center gap-1.5">
-        <TextInput value={label} onChange={setLabel} placeholder={`Add ${title.toLowerCase()}…`} className="flex-1" />
+        <TextInput value={label} onChange={setLabel} placeholder={`Add ${title.toLowerCase()}…`} className="flex-1 min-w-0" />
         <NumberInput value={amount} prefix="$" onChange={setAmount} />
-        <button onClick={add} className="btn-ghost !h-8 !w-8" aria-label="Add"><Plus className="h-4 w-4" /></button>
+        <button onClick={add} className="btn-ghost !h-8 !w-8 shrink-0" aria-label="Add"><Plus className="h-4 w-4" /></button>
       </div>
     </div>
   );
