@@ -16,6 +16,7 @@ import { SignOutButton } from "@/components/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { FullscreenToggle } from "@/components/FullscreenToggle";
 import { Scratchpad } from "@/components/Scratchpad";
+import { RadioButton } from "@/components/RadioButton";
 import { FocusButton } from "@/components/FocusButton";
 
 export const dynamic = "force-dynamic";
@@ -39,6 +40,7 @@ export default async function Page() {
             right={
               <>
                 <Scratchpad />
+                <RadioButton />
                 <FocusButton />
                 <FullscreenToggle />
                 <ThemeToggle />

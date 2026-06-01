@@ -43,15 +43,26 @@ export function Scratchpad() {
         )}
       </button>
       {open && (
-        <div className="absolute right-0 top-full mt-2 z-50 w-72 card !p-2.5">
-          <div className="label mb-1.5">Scratchpad</div>
+        <div className="absolute right-0 top-[calc(100%+10px)] z-[60] w-80 max-w-[calc(100vw-2.5rem)] card !p-4 animate-fadeIn origin-top-right">
+          {/* little pointer up toward the button */}
+          <span
+            className="absolute -top-1.5 right-4 h-3 w-3 rotate-45 border-l border-t border-[var(--glass-border)]"
+            style={{ background: "var(--glass)" }}
+            aria-hidden
+          />
+          <div className="flex items-center justify-between mb-2">
+            <span className="label flex items-center gap-1.5">
+              <StickyNote className="h-3 w-3" /> Scratchpad
+            </span>
+            {hasNote && <span className="font-mono text-[10px] text-muted-2">{(note ?? "").trim().length} chars</span>}
+          </div>
           <textarea
             autoFocus
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            rows={7}
+            rows={8}
             placeholder="Jot anything — it stays here and syncs across your devices."
-            className="w-full bg-transparent text-[13px] leading-relaxed text-ink resize-y focus:outline-none placeholder:text-muted-2"
+            className="w-full rounded-xl bg-[var(--rule-soft)] px-3 py-2.5 text-[13px] leading-relaxed text-ink resize-none focus:outline-none focus:ring-1 focus:ring-[var(--accent)] placeholder:text-muted-2"
           />
         </div>
       )}

@@ -21,7 +21,9 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 const SUBS = ["CPA", "Accounting", "Big4", "tax", "Bookkeeping"];
-const MAX = 16;
+// Return a deep pool so a single-sub filter still has plenty to show and the
+// client can rotate through fresh posts on refresh.
+const MAX = 70;
 
 const UA = "web:brief-dashboard:v1.0 (Accounting community feed)";
 const BROWSER_UA =

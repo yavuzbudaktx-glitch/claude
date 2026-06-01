@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import useSWR from "swr";
 import {
   Plus, Trash2, ChevronLeft, ChevronRight, X,
@@ -874,20 +874,20 @@ function VideoComments({ videoId }: { videoId: string }) {
   const comments = data?.comments ?? [];
 
   return (
-    // `flex-1 min-h-0` lets the comments fill whatever space the card has
-    // left after the video + title rows — and scroll inside that, never
-    // pushing the card taller than the row's stretched height.
-    <div className="flex-1 min-h-0 flex flex-col border-t rule pt-3">
-      <div className="label !text-[9px] !tracking-[0.12em] mb-2 flex items-center gap-1.5 shrink-0">
+    // The comments list is height-capped and scrolls internally, so no
+    // matter how many comments come back the card never grows past the
+    // video + title + this fixed block.
+    <div className="border-t rule pt-3 mt-1">
+      <div className="label !text-[9px] !tracking-[0.12em] mb-2 flex items-center gap-1.5">
         <MessageSquare className="h-3 w-3" /> Top comments
       </div>
       {isLoading && (
         <p className="text-[12px] text-muted italic">Loading comments…</p>
       )}
       {!isLoading && comments.length === 0 && (
-        <p className="text-[12px] text-muted-2 italic">Comments aren&rsquo;t available for this one.</p>
+        <p className="text-[12px] text-muted-2 italic">No comments on this video.</p>
       )}
-      <ul className="flex-1 min-h-0 overflow-y-auto pr-1 space-y-3">
+      <ul className="max-h-[300px] overflow-y-auto pr-1 space-y-3">
         {comments.map((c, i) => (
           <li key={i} className="flex gap-2.5">
             <span
@@ -948,10 +948,17 @@ export function CpaVideoSection() {
   // poster rather than auto-playing the wrong clip.
   useEffect(() => { setPlaying(false); }, [cur?.id]);
 
+  // Remember the last several picks so shuffle doesn't repeat a video until
+  // most of the catalogue has been seen — "random, indefinitely" without
+  // the obvious short loops.
+  const recentRef = useRef<number[]>([]);
   function shuffle() {
     if (videos.length < 2) return;
-    let n = idx;
-    while (n === idx) n = Math.floor(Math.random() * videos.length);
+    const recent = recentRef.current;
+    let pool = videos.map((_, i) => i).filter((i) => i !== idx && !recent.includes(i));
+    if (pool.length === 0) pool = videos.map((_, i) => i).filter((i) => i !== idx);
+    const n = pool[Math.floor(Math.random() * pool.length)];
+    recentRef.current = [...recent, n].slice(-Math.min(videos.length - 1, 12));
     setPick({ date: dateKey, id: videos[n].id });
   }
 
@@ -1096,6 +1103,8 @@ function sinceMs(ms: number): string {
   return format(new Date(ms), "MMM d");
 }
 
+const REDDIT_PAGE = 11; // posts shown per rotation window
+
 // Cache-bust fetcher: the route is now force-dynamic and cache: no-store,
 // but the BROWSER may still cache. cache: "reload" + a Date.now() in the URL
 // nukes every layer of caching between the button and the upstream Reddit.
@@ -1115,22 +1124,30 @@ export function RedditFeedSection() {
     { refreshInterval: 1000 * 60 * 15, keepPreviousData: true, revalidateOnFocus: false },
   );
   const [sub, setSub] = useState<string>("all");
+  // Rotation offset so the refresh button visibly cycles through the deep
+  // pool even when the top-of-week data itself hasn't changed.
+  const [offset, setOffset] = useState(0);
 
   function refresh() {
-    setNonce(Date.now());
+    setNonce(Date.now());             // genuinely re-pull (cache-busted)
+    setOffset((o) => o + REDDIT_PAGE); // …and rotate the visible window
     mutate();
   }
+  // Reset the rotation whenever you switch subreddits.
+  useEffect(() => { setOffset(0); }, [sub]);
 
   const all = useMemo(() => data?.posts ?? [], [data]);
   const subList = useMemo(
     () => data?.subs ?? Array.from(new Set(all.map((p) => p.subreddit))),
     [data, all],
   );
-  // Quality over quantity — a tight, readable list.
-  const posts = useMemo(
-    () => (sub === "all" ? all : all.filter((p) => p.subreddit.toLowerCase() === sub.toLowerCase())).slice(0, 8),
-    [all, sub],
-  );
+  const posts = useMemo(() => {
+    const pool = sub === "all" ? all : all.filter((p) => p.subreddit.toLowerCase() === sub.toLowerCase());
+    if (pool.length === 0) return pool;
+    const start = offset % pool.length;
+    const rotated = [...pool.slice(start), ...pool.slice(0, start)];
+    return rotated.slice(0, REDDIT_PAGE);
+  }, [all, sub, offset]);
 
   return (
     <div className="space-y-3">

@@ -489,7 +489,7 @@ export function BodyCard() {
         {/* Calorie goal + today's intake */}
         <div>
           <div className="label mb-2">Daily calorie goal</div>
-          <div className="flex items-baseline gap-2">
+          <div className="group/cal flex items-baseline gap-2 opacity-60 hover:opacity-100 focus-within:opacity-100 transition">
             <input
               type="number"
               inputMode="numeric"
