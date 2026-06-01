@@ -2,6 +2,11 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Card } from "@/components/Card";
 import { TopUtilityBar } from "@/components/widgets/TopUtilityBar";
+import { Scratchpad } from "@/components/Scratchpad";
+import { FocusButton } from "@/components/FocusButton";
+import { FullscreenToggle } from "@/components/FullscreenToggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { SignOutButton } from "@/components/SignOutButton";
 import {
   NetWorthSection,
   CashFlowSection,
@@ -22,7 +27,18 @@ export default async function AccountingPage() {
 
   return (
     <main className="max-w-[1480px] mx-auto px-5 md:px-10 pt-3 md:pt-4 pb-6 md:pb-8 space-y-5">
-      <TopUtilityBar context="accounting" />
+      <TopUtilityBar
+        context="accounting"
+        right={
+          <>
+            <Scratchpad />
+            <FocusButton />
+            <FullscreenToggle />
+            <ThemeToggle />
+            <SignOutButton />
+          </>
+        }
+      />
 
       <header className="flex flex-wrap items-end justify-between gap-4">
         <h1 className="font-display text-4xl md:text-5xl tracking-tight m-0">
@@ -56,10 +72,12 @@ export default async function AccountingPage() {
         <ApplicationsSection />
       </Card>
 
-      {/* Row 4 — Accounting trade news (left, wider) + compact CPA Exam tracker (right). */}
+      {/* Row 4 — Tax & Key Dates (left, wider) + compact CPA Exam tracker (right). */}
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-5 items-stretch">
         <div className="[&>*]:h-full">
-          <Card title="Accounting News" meta="trade publications"><AccountingNewsSection /></Card>
+          <Card title="Tax & Key Dates" meta="next 12 months">
+            <AccountingNewsSection />
+          </Card>
         </div>
         <div className="[&>*]:h-full">
           <Card title="CPA Exam"><CpaSection compact /></Card>

@@ -965,107 +965,286 @@ function useDailyKey(): string {
   return k;
 }
 
-// =====================  ACCOUNTING NEWS  ====================================
+// =====================  TAX & KEY DATES  ===================================
 //
-// Three trade publications: Journal of Accountancy, The CPA Journal,
-// Accounting Today. The /api/accounting-news route deduplicates and ranks
-// by recency.
+// Replaces the (mostly paywalled) trade-news feed with a deterministic, free
+// calendar of the deadlines a CPA-track person actually needs to track:
+//
+//   • US federal filing dates (1040, 1099/W-2, S-corp/1120-S, C-corp/1120,
+//     quarterly estimated taxes, FBAR, Form 5500, extensions).
+//   • Texas state — Franchise Tax (no individual income tax in TX).
+//   • The user's own CPA exam dates from `hub.cpa`.
+//   • Any custom deadlines the user adds.
+//
+// Everything is computed from the calendar (with weekend → next business
+// day adjustments per IRS rule), so this card never needs the network.
 
-interface AccountingNewsResp {
-  items?: Array<{ title: string; link: string; source: string; pubDate: string }>;
-  sources?: Array<{ name: string; site: string }>;
+interface CustomDeadline { id: string; title: string; date: string; note?: string }
+
+type DlCategory =
+  | "estimated" | "individual" | "info-return" | "entity" | "extension"
+  | "international" | "benefits" | "state" | "cpa-exam" | "custom";
+
+interface Deadline {
+  id: string; title: string; date: Date; category: DlCategory; note?: string;
 }
 
-function timeAgo(iso: string): string {
-  const d = new Date(iso);
-  const mins = Math.round((Date.now() - d.getTime()) / 60_000);
-  if (!Number.isFinite(mins) || mins < 1) return "just now";
-  if (mins < 60) return `${mins}m`;
-  const hrs = Math.round(mins / 60);
-  if (hrs < 24) return `${hrs}h`;
-  const days = Math.round(hrs / 24);
-  if (days < 7) return `${days}d`;
-  return format(d, "MMM d");
-}
-
-const SOURCE_TONE: Record<string, string> = {
-  "Journal of Accountancy": "var(--grad-from)",
-  "The CPA Journal": "var(--grad-via)",
-  "Accounting Today": "var(--grad-to)",
+const CATEGORY: Record<DlCategory, { tone: string; label: string }> = {
+  estimated:     { tone: "var(--accent)",   label: "Estimated tax" },
+  individual:    { tone: "var(--grad-from)",label: "Individual" },
+  "info-return": { tone: "var(--grad-via)", label: "Info return" },
+  entity:        { tone: "var(--grad-to)",  label: "Entity" },
+  extension:     { tone: "var(--muted)",    label: "Extension" },
+  international: { tone: "#a855f7",         label: "International" },
+  benefits:      { tone: "var(--up)",       label: "Benefits" },
+  state:         { tone: "#0ea5e9",         label: "Texas" },
+  "cpa-exam":    { tone: "var(--down)",     label: "CPA exam" },
+  custom:        { tone: "var(--ink-soft)", label: "Custom" },
 };
 
-export function AccountingNewsSection() {
-  const { data, error, isLoading } = useSWR<AccountingNewsResp>(
-    "/api/accounting-news",
-    jsonFetcher,
-    { refreshInterval: 1000 * 60 * 30, keepPreviousData: true },
-  );
+// IRS rule: if a deadline falls on Sat/Sun (or DC holiday — we don't model
+// holidays here), it shifts to the next business day.
+function pushWeekend(d: Date): Date {
+  const dow = d.getDay();
+  if (dow === 6) return new Date(d.getFullYear(), d.getMonth(), d.getDate() + 2);
+  if (dow === 0) return new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
+  return d;
+}
+function mk(year: number, month1: number, day: number): Date {
+  return pushWeekend(new Date(year, month1 - 1, day));
+}
 
-  const items = data?.items ?? [];
+// Federal + Texas deadlines for a given calendar year.
+function deadlinesForYear(y: number): Omit<Deadline, "id">[] {
+  return [
+    // Quarterly estimated tax (Form 1040-ES)
+    { title: "Q4 estimated tax (prior year)", date: mk(y, 1, 15), category: "estimated", note: "Form 1040-ES" },
+    { title: "Q1 estimated tax",              date: mk(y, 4, 15), category: "estimated", note: "Form 1040-ES" },
+    { title: "Q2 estimated tax",              date: mk(y, 6, 15), category: "estimated", note: "Form 1040-ES" },
+    { title: "Q3 estimated tax",              date: mk(y, 9, 15), category: "estimated", note: "Form 1040-ES" },
+    // Information returns
+    { title: "1099-NEC / W-2 to recipients", date: mk(y, 1, 31), category: "info-return", note: "Also to IRS/SSA" },
+    { title: "1099-MISC to recipients",      date: mk(y, 1, 31), category: "info-return" },
+    { title: "1042-S to recipients",         date: mk(y, 3, 15), category: "info-return", note: "Foreign-person U.S. source income" },
+    // Entity returns
+    { title: "S-corp (1120-S) & Partnership (1065)", date: mk(y, 3, 15), category: "entity", note: "Calendar-year filers" },
+    { title: "C-corp (1120) return",                  date: mk(y, 4, 15), category: "entity", note: "Calendar-year filers" },
+    // Individual
+    { title: "1040 Individual return",       date: mk(y, 4, 15), category: "individual", note: "Also IRA / HSA contribution deadline" },
+    // International
+    { title: "FBAR (FinCEN 114)",            date: mk(y, 4, 15), category: "international", note: "Auto-extended to Oct 15" },
+    // Benefits
+    { title: "Form 5500 — employee plans",   date: mk(y, 7, 31), category: "benefits", note: "Calendar-year plans" },
+    // Extensions
+    { title: "S-corp / Partnership extension", date: mk(y, 9, 15), category: "extension" },
+    { title: "1040 / C-corp extension",        date: mk(y, 10, 15), category: "extension" },
+    // Texas — no individual income tax, just franchise (May 15)
+    { title: "Texas Franchise Tax",          date: mk(y, 5, 15), category: "state", note: "Annual Report" },
+  ];
+}
+
+function buildDeadlines(cpa: Record<CpaSection, CpaEntry>, custom: CustomDeadline[]): Deadline[] {
+  const now = new Date();
+  const out: Deadline[] = [];
+  // Federal/state — emit for current and next year so the list spans
+  // ~15 months and never runs out late in the year.
+  for (const y of [now.getFullYear(), now.getFullYear() + 1]) {
+    for (const d of deadlinesForYear(y)) {
+      out.push({ id: `fed-${y}-${d.title}`, ...d });
+    }
+  }
+  // CPA exam dates the user already entered
+  for (const sec of CPA_SECTIONS) {
+    const e = cpa[sec];
+    if (e?.examDate && e.status !== "Passed") {
+      const [yy, mm, dd] = e.examDate.split("-").map(Number);
+      if (yy && mm && dd) {
+        out.push({
+          id: `cpa-${sec}`, title: `CPA · ${sec} exam`,
+          date: new Date(yy, mm - 1, dd), category: "cpa-exam",
+          note: e.status,
+        });
+      }
+    }
+  }
+  // User-added customs
+  for (const c of custom) {
+    const [yy, mm, dd] = c.date.split("-").map(Number);
+    if (yy && mm && dd) {
+      out.push({ id: c.id, title: c.title, date: new Date(yy, mm - 1, dd), category: "custom", note: c.note });
+    }
+  }
+  // Future + today only, sorted ascending.
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return out
+    .filter((d) => d.date.getTime() >= todayStart.getTime())
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
+}
+
+function dayDelta(d: Date): number {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  return Math.round((d.getTime() - today) / 86_400_000);
+}
+function relUntil(d: Date): string {
+  const n = dayDelta(d);
+  if (n === 0) return "today";
+  if (n === 1) return "tomorrow";
+  if (n < 14) return `in ${n} days`;
+  if (n < 56) return `in ${Math.round(n / 7)} weeks`;
+  return `in ${Math.round(n / 30)} mo`;
+}
+
+export function AccountingNewsSection() {
+  const [cpa] = usePref<Record<CpaSection, CpaEntry>>("hub.cpa", {
+    AUD: { status: "Not started", hours: 0, examDate: "", score: "" },
+    FAR: { status: "Not started", hours: 0, examDate: "", score: "" },
+    REG: { status: "Not started", hours: 0, examDate: "", score: "" },
+    TCP: { status: "Not started", hours: 0, examDate: "", score: "" },
+  });
+  const [custom, setCustom] = usePref<CustomDeadline[]>("hub.deadlines.custom", []);
+  const [filter, setFilter] = useState<"all" | "fed" | "cpa" | "custom">("all");
+  const [adding, setAdding] = useState(false);
+  const [draftTitle, setDraftTitle] = useState("");
+  const [draftDate, setDraftDate] = useState("");
+
+  const all = useMemo(() => buildDeadlines(cpa, custom), [cpa, custom]);
+  const filtered = useMemo(() => all.filter((d) => {
+    if (filter === "all") return true;
+    if (filter === "cpa") return d.category === "cpa-exam";
+    if (filter === "custom") return d.category === "custom";
+    // "fed" = everything that's not user content
+    return d.category !== "cpa-exam" && d.category !== "custom";
+  }), [all, filter]);
+
+  const next = filtered[0];
+  const list = filtered.slice(next ? 1 : 0, next ? 13 : 12);
+
+  function addCustom() {
+    if (!draftTitle.trim() || !draftDate) return;
+    setCustom([...custom, { id: uid(), title: draftTitle.trim(), date: draftDate }]);
+    setDraftTitle(""); setDraftDate(""); setAdding(false);
+  }
+  function removeCustom(id: string) {
+    setCustom(custom.filter((c) => c.id !== id));
+  }
+
+  const FILTERS: Array<{ key: typeof filter; label: string }> = [
+    { key: "all", label: "All" },
+    { key: "fed", label: "Tax & filing" },
+    { key: "cpa", label: "CPA exam" },
+    { key: "custom", label: "Yours" },
+  ];
 
   return (
-    <div className="space-y-3">
-      <div className="flex flex-wrap items-center gap-1.5 text-[10.5px]">
-        {(data?.sources ?? [
-          { name: "Journal of Accountancy", site: "https://www.journalofaccountancy.com/" },
-          { name: "The CPA Journal", site: "https://www.cpajournal.com/" },
-          { name: "Accounting Today", site: "https://www.accountingtoday.com/" },
-        ]).map((s) => (
-          <a
-            key={s.name}
-            href={s.site}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-1 rounded-full border border-[var(--rule)] px-2 py-0.5 text-muted hover:text-ink hover:border-[var(--accent)] transition"
+    <div className="space-y-4">
+      {/* Filter chips + add button */}
+      <div className="flex items-center gap-1.5 flex-wrap">
+        {FILTERS.map((f) => (
+          <button
+            key={f.key}
+            onClick={() => setFilter(f.key)}
+            className={`text-[11px] px-2.5 py-1 rounded-full border transition ${
+              filter === f.key
+                ? "border-transparent text-white"
+                : "border-[var(--rule)] text-muted hover:text-ink"
+            }`}
+            style={filter === f.key ? { background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" } : undefined}
           >
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: SOURCE_TONE[s.name] ?? "var(--muted)" }} />
-            {s.name}
-          </a>
+            {f.label}
+          </button>
         ))}
+        <button
+          onClick={() => setAdding((v) => !v)}
+          className="ml-auto inline-flex items-center gap-1 text-[11px] text-muted hover:text-accent transition"
+          title="Add your own deadline"
+        >
+          <Plus className="h-3.5 w-3.5" /> add
+        </button>
       </div>
 
-      {isLoading && items.length === 0 && (
-        <p className="text-muted text-sm italic">Loading the trades…</p>
-      )}
-      {error && items.length === 0 && (
-        <p className="text-down text-sm">Couldn’t reach the feeds right now.</p>
+      {/* Quick-add row */}
+      {adding && (
+        <div className="flex items-center gap-1.5 flex-wrap rounded-xl bg-[var(--rule-soft)] p-2">
+          <TextInput value={draftTitle} onChange={setDraftTitle} placeholder="Deadline name…" className="flex-1 min-w-[140px]" onEnter={addCustom} />
+          <DateInput value={draftDate} onChange={setDraftDate} />
+          <button onClick={addCustom} className="btn-ghost !h-8 !w-8 shrink-0" aria-label="Save"><Plus className="h-4 w-4" /></button>
+        </div>
       )}
 
-      <ul className="divide-rule">
-        {items.map((it, i) => (
-          <li key={`${it.link}-${i}`}>
-            <a
-              href={it.link}
-              target="_blank"
-              rel="noreferrer"
-              className="group flex items-start gap-3 py-2.5"
+      {/* Hero — the soonest upcoming deadline */}
+      {next ? (
+        <div
+          className="relative overflow-hidden rounded-2xl border border-[var(--rule)] bg-[var(--paper)] p-4"
+          style={{ boxShadow: "0 0 24px -10px var(--glow)" }}
+        >
+          <span aria-hidden className="absolute left-0 top-0 bottom-0 w-1" style={{ background: CATEGORY[next.category].tone }} />
+          <div className="flex items-center gap-2 mb-1">
+            <CalendarClock className="h-3.5 w-3.5" style={{ color: CATEGORY[next.category].tone }} />
+            <span className="label !text-[9px] !tracking-[0.14em]">Next up · {CATEGORY[next.category].label}</span>
+            {next.category === "custom" && (
+              <button
+                onClick={() => removeCustom(next.id)}
+                className="ml-auto text-muted-2 hover:text-accent transition"
+                aria-label="Remove"
+                title="Remove"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+          <div className="font-display text-xl md:text-2xl text-ink leading-tight">{next.title}</div>
+          <div className="mt-1.5 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-mono text-[12px]">
+            <span className="text-ink tabular-nums">{format(next.date, "EEEE, MMMM d, yyyy")}</span>
+            <span
+              className="rounded-full px-2 py-0.5 text-[11px] font-semibold tabular-nums"
+              style={{
+                color: CATEGORY[next.category].tone,
+                background: `color-mix(in srgb, ${CATEGORY[next.category].tone} 14%, transparent)`,
+              }}
             >
-              <span
-                aria-hidden
-                className="mt-[7px] h-1.5 w-1.5 rounded-full shrink-0"
-                style={{ background: SOURCE_TONE[it.source] ?? "var(--muted)" }}
-              />
-              <div className="min-w-0 flex-1">
-                <div className="text-[13.5px] leading-snug text-ink-soft group-hover:text-accent transition">
-                  {it.title}
-                </div>
-                <div className="mt-0.5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-muted">
-                  <span>{it.source}</span>
-                  <span className="text-muted-2">·</span>
-                  <span>{timeAgo(it.pubDate)}</span>
-                </div>
-              </div>
-            </a>
+              {relUntil(next.date)} · {dayDelta(next.date)}d
+            </span>
+            {next.note && <span className="text-muted">{next.note}</span>}
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-2xl border border-dashed border-[var(--rule)] py-6 text-center text-[12px] italic text-muted-2">
+          Nothing on the horizon for this filter.
+        </div>
+      )}
+
+      {/* Upcoming list */}
+      <ul className="divide-rule">
+        {list.map((d) => (
+          <li key={d.id} className="group flex items-center gap-3 py-2.5">
+            <span aria-hidden className="h-2 w-2 rounded-full shrink-0" style={{ background: CATEGORY[d.category].tone }} />
+            <div className="min-w-0 flex-1">
+              <div className="text-[13px] leading-snug text-ink truncate">{d.title}</div>
+              {d.note && (
+                <div className="font-mono text-[10px] text-muted truncate">{d.note}</div>
+              )}
+            </div>
+            <div className="text-right shrink-0">
+              <div className="font-mono tabular-nums text-[12px] text-ink-soft">{format(d.date, "MMM d, yyyy")}</div>
+              <div className="font-mono text-[10px] text-muted">{relUntil(d.date)}</div>
+            </div>
+            {d.category === "custom" && (
+              <button
+                onClick={() => removeCustom(d.id)}
+                className="ml-1 text-muted-2 opacity-0 group-hover:opacity-100 hover:text-accent transition shrink-0"
+                aria-label="Remove"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </li>
         ))}
-        {!isLoading && items.length === 0 && !error && (
-          <li className="text-muted text-sm italic py-2">No headlines yet.</li>
-        )}
       </ul>
 
       <div className="pt-1 font-mono text-[9px] uppercase tracking-wider text-muted">
-        <Newspaper className="inline h-3 w-3 mr-1 -mt-0.5" />
-        Sourced direct from each publication&rsquo;s RSS
+        <CalendarClock className="inline h-3 w-3 mr-1 -mt-0.5" />
+        US federal + Texas · weekend-adjusted · your CPA exam dates pull through automatically
       </div>
     </div>
   );

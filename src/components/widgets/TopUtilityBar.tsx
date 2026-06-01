@@ -1,21 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { format } from "date-fns";
 import { Calculator, LayoutDashboard } from "lucide-react";
 import { WeatherSummary } from "./WeatherSummary";
-import { Scratchpad } from "@/components/Scratchpad";
-import { FocusButton } from "@/components/FocusButton";
-import { FullscreenToggle } from "@/components/FullscreenToggle";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { SignOutButton } from "@/components/SignOutButton";
 
-// The shared utility strip that sits at the very top of every authed page:
-// a date + weather pill on the left, a context link pill, and the action
-// buttons on the right — all centered on one line so the two ends line up
-// on the same invisible baseline regardless of which page renders it.
-export function TopUtilityBar({ context }: { context: "dashboard" | "accounting" }) {
+// Shared utility strip that sits at the top of every authed page: a
+// date+weather pill, a context link pill, and an optional `right` slot.
+// The dashboard puts its action buttons inside the Masthead (next to the
+// clock); the accounting page passes them here instead via `right`, since
+// it has no clock to anchor against.
+export function TopUtilityBar({
+  context,
+  right,
+}: {
+  context: "dashboard" | "accounting";
+  right?: ReactNode;
+}) {
   const [now, setNow] = useState<Date | null>(null);
   useEffect(() => {
     setNow(new Date());
@@ -57,13 +59,7 @@ export function TopUtilityBar({ context }: { context: "dashboard" | "accounting"
         )}
       </div>
 
-      <div className="flex items-center gap-2 shrink-0">
-        <Scratchpad />
-        <FocusButton />
-        <FullscreenToggle />
-        <ThemeToggle />
-        <SignOutButton />
-      </div>
+      {right && <div className="flex items-center gap-2 shrink-0">{right}</div>}
     </div>
   );
 }

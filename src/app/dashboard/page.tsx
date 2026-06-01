@@ -12,6 +12,11 @@ import { SuperLigCard } from "@/components/widgets/SuperLigCard";
 import { TodayInHistoryCard } from "@/components/widgets/TodayInHistoryCard";
 import { UfcCard } from "@/components/widgets/UfcCard";
 import { BodyCard } from "@/components/widgets/BodyCard";
+import { SignOutButton } from "@/components/SignOutButton";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { FullscreenToggle } from "@/components/FullscreenToggle";
+import { Scratchpad } from "@/components/Scratchpad";
+import { FocusButton } from "@/components/FocusButton";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +36,18 @@ export default async function Page() {
 
       <section className="relative z-30 grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-6 lg:min-h-[200px]">
         <div className="flex flex-col justify-center gap-3">
-          <Masthead name={name} />
+          <Masthead
+            name={name}
+            actions={
+              <>
+                <Scratchpad />
+                <FocusButton />
+                <FullscreenToggle />
+                <ThemeToggle />
+                <SignOutButton />
+              </>
+            }
+          />
           <TodayInHistoryCard />
         </div>
         <div className="flex items-center justify-center lg:justify-end">
