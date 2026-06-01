@@ -32,13 +32,11 @@ export default async function Page() {
 
   return (
     <main className="max-w-[1480px] mx-auto px-5 md:px-10 pt-3 md:pt-4 pb-6 md:pb-8 space-y-5">
-      <TopUtilityBar context="dashboard" />
-
-      <section className="relative z-30 grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-6 lg:min-h-[200px]">
-        <div className="flex flex-col justify-center gap-3">
-          <Masthead
-            name={name}
-            actions={
+      <section className="relative z-30 grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-6 items-stretch lg:min-h-[220px]">
+        <div className="flex flex-col gap-4 min-w-0">
+          <TopUtilityBar
+            context="dashboard"
+            right={
               <>
                 <Scratchpad />
                 <FocusButton />
@@ -48,7 +46,10 @@ export default async function Page() {
               </>
             }
           />
-          <TodayInHistoryCard />
+          <div className="flex flex-col justify-center gap-3 flex-1">
+            <Masthead name={name} />
+            <TodayInHistoryCard />
+          </div>
         </div>
         <div className="flex items-center justify-center lg:justify-end">
           <AnalogClock />

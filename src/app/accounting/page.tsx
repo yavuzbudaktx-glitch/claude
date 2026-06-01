@@ -14,7 +14,7 @@ import {
   ApplicationsSection,
   CpaSection,
   CpaVideoSection,
-  AccountingNewsSection,
+  RedditFeedSection,
   AccountingHeaderStats,
 } from "@/components/Hub";
 
@@ -57,13 +57,13 @@ export default async function AccountingPage() {
         </div>
       </div>
 
-      {/* Row 2 — Operating cash flow + recurring subscriptions. */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
+      {/* Row 2 — Community feed (wide) + the CPA Exam tracker. */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-5 items-stretch">
         <div className="[&>*]:h-full">
-          <Card title="Cash Flow"><CashFlowSection /></Card>
+          <Card title="Community" meta="r/CPA · r/Accounting"><RedditFeedSection /></Card>
         </div>
         <div className="[&>*]:h-full">
-          <Card title="Subscriptions" meta="recurring spend"><SubscriptionsSection /></Card>
+          <Card title="CPA Exam"><CpaSection compact /></Card>
         </div>
       </div>
 
@@ -72,15 +72,13 @@ export default async function AccountingPage() {
         <ApplicationsSection />
       </Card>
 
-      {/* Row 4 — Tax & Key Dates (left, wider) + compact CPA Exam tracker (right). */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-5 items-stretch">
+      {/* Row 4 — Operating cash flow + recurring subscriptions. */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
         <div className="[&>*]:h-full">
-          <Card title="Tax & Key Dates" meta="next 12 months">
-            <AccountingNewsSection />
-          </Card>
+          <Card title="Cash Flow"><CashFlowSection /></Card>
         </div>
         <div className="[&>*]:h-full">
-          <Card title="CPA Exam"><CpaSection compact /></Card>
+          <Card title="Subscriptions" meta="recurring spend"><SubscriptionsSection /></Card>
         </div>
       </div>
     </main>
