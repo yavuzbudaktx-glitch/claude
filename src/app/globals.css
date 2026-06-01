@@ -632,67 +632,162 @@ main { position: relative; z-index: 1; }
   -webkit-background-clip: text; background-clip: text;
 }
 
-/* ============== COWBOY ============== */
-:root.theme-cowboy {
-  color-scheme: light;
-  --bg:           #ecdcc0;
-  --paper:        #f8eed8;
-  --paper-2:      #fdf6e3;
-  --ink:          #3a210e;
-  --ink-soft:     #61432a;
-  --muted:        #927259;
-  --muted-2:      #b59e84;
-  --rule:         rgba(58, 33, 14, 0.20);
-  --rule-soft:    rgba(58, 33, 14, 0.08);
-  --accent:       #a85535;
-  --accent-soft:  rgba(168, 85, 53, 0.14);
-  --accent-2:     #5d2f12;
-  --hl:           rgba(168, 85, 53, 0.10);
-  --up:           #5a7d35;
-  --down:         #9b2c2c;
-  --grad-from:    #5d2f12;
-  --grad-via:     #a85535;
-  --grad-to:      #c98947;
-  --glass:        #f8eed8;
-  --glass-border: rgba(58, 33, 14, 0.16);
-  --glow:         rgba(168, 85, 53, 0.30);
-  --shadow-card:  0 6px 22px -14px rgba(58, 33, 14, 0.30),
-                  inset 0 1px 0 rgba(255, 250, 235, 0.50);
-  --shadow-hover: 0 18px 44px -18px rgba(58, 33, 14, 0.40),
-                  inset 0 1px 0 rgba(255, 250, 235, 0.70);
+/* ============== MATTE DARK ============== */
+/* Default mode is dark — minimalist charcoal, low gloss, low saturation. */
+:root.theme-matte {
+  color-scheme: dark;
+  --bg:           #131316;
+  --paper:        rgba(255, 255, 255, 0.03);
+  --paper-2:      rgba(255, 255, 255, 0.06);
+  --ink:          #ebebee;
+  --ink-soft:     #b8b8c1;
+  --muted:        #7a7a85;
+  --muted-2:      #4d4d57;
+  --rule:         rgba(255, 255, 255, 0.085);
+  --rule-soft:    rgba(255, 255, 255, 0.04);
+  --accent:       #e6e6e8;
+  --accent-soft:  rgba(230, 230, 232, 0.10);
+  --accent-2:     #9aa0a6;
+  --hl:           rgba(230, 230, 232, 0.07);
+  --up:           #6ee7b7;
+  --down:         #fda4af;
+  --grad-from:    #9aa0a6;
+  --grad-via:     #e6e6e8;
+  --grad-to:      #6ee7b7;
+  --glass:        #1a1a1c;
+  --glass-border: rgba(255, 255, 255, 0.07);
+  --glow:         rgba(230, 230, 232, 0.10);
+  --shadow-card:  0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 8px 20px -16px rgba(0, 0, 0, 0.6);
+  --shadow-hover: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 14px 28px -16px rgba(0, 0, 0, 0.7);
   --aurora-1: transparent; --aurora-2: transparent;
   --aurora-3: transparent; --aurora-4: transparent;
-  --grain:        0.10; /* paper grain — leans in */
+  --grain: 0.02;
 }
-.theme-cowboy body::before { background: none; animation: none; }
-.theme-cowboy body {
-  background:
-    /* horizontal "horizon" gradient to evoke sky-over-desert */
-    linear-gradient(180deg, #f7e6c8 0%, #ecdcc0 32%, #d8c3a0 100%);
+/* Light variant — matte WHITE: pure flat off-white, no glass. */
+:root.theme-matte:not(.dark) {
+  color-scheme: light;
+  --bg:           #f4f4f5;
+  --paper:        #ffffff;
+  --paper-2:      #fafafa;
+  --ink:          #1a1a1c;
+  --ink-soft:     #45454a;
+  --muted:        #71717a;
+  --muted-2:      #a1a1aa;
+  --rule:         rgba(26, 26, 28, 0.10);
+  --rule-soft:    rgba(26, 26, 28, 0.04);
+  --accent:       #1a1a1c;
+  --accent-soft:  rgba(26, 26, 28, 0.06);
+  --accent-2:     #525258;
+  --hl:           rgba(26, 26, 28, 0.04);
+  --up:           #047857;
+  --down:         #b91c1c;
+  --grad-from:    #1a1a1c;
+  --grad-via:     #525258;
+  --grad-to:      #9ca3af;
+  --glass:        #ffffff;
+  --glass-border: rgba(26, 26, 28, 0.08);
+  --glow:         rgba(26, 26, 28, 0.06);
+  --shadow-card:  0 1px 2px rgba(26, 26, 28, 0.04), 0 4px 12px -10px rgba(26, 26, 28, 0.14);
+  --shadow-hover: 0 2px 4px rgba(26, 26, 28, 0.06), 0 10px 22px -12px rgba(26, 26, 28, 0.22);
 }
-.theme-cowboy .card {
-  background: var(--paper);
+.theme-matte body::before { background: none; animation: none; }
+.theme-matte body { background: var(--bg); }
+.theme-matte .card {
   -webkit-backdrop-filter: none; backdrop-filter: none;
-  border-radius: 6px;
-  border: 1px solid var(--rule);
-  /* aged-edge double-rule for the saddle-leather feel */
-  box-shadow: var(--shadow-card), inset 0 0 0 4px var(--paper-2), inset 0 0 0 5px var(--rule-soft);
+  border-radius: 10px;
 }
-.theme-cowboy .card::before { display: none; }
-.theme-cowboy .card::after { display: none; }
-.theme-cowboy .card-bare { border-radius: 4px; background: rgba(255, 250, 235, 0.55); }
-.theme-cowboy .btn-ghost { border-radius: 6px; background: var(--paper); }
-.theme-cowboy .chip { border-radius: 6px; }
-.theme-cowboy .dot { box-shadow: none; }
-.theme-cowboy .font-display {
-  /* heavy slab-feeling tracking + uppercase for a wanted-poster vibe */
-  font-weight: 800; letter-spacing: -0.025em;
-}
-.theme-cowboy .text-gradient {
-  background: linear-gradient(118deg, #5d2f12, #a85535 50%, #c98947);
+.theme-matte .card::before { display: none; }
+.theme-matte .card::after { display: none; }
+.theme-matte .card-bare { border-radius: 8px; }
+.theme-matte .btn-ghost { border-radius: 8px; }
+.theme-matte .chip { border-radius: 8px; }
+.theme-matte .dot { box-shadow: none; }
+.theme-matte .text-gradient {
+  background: linear-gradient(118deg, var(--grad-from), var(--grad-via) 50%, var(--grad-to));
   -webkit-background-clip: text; background-clip: text;
   animation: none;
 }
+.theme-matte .font-display { letter-spacing: -0.04em; font-weight: 700; }
+
+/* ============== WHITE MOCHA ============== */
+/* Default mode is light — warm latte cream + espresso brown, soft gradients. */
+:root.theme-mocha {
+  color-scheme: light;
+  --bg:           #f1e6d4;
+  --paper:        #faf3e6;
+  --paper-2:      #fbf6eb;
+  --ink:          #2a1b0e;
+  --ink-soft:     #5a4128;
+  --muted:        #8c7458;
+  --muted-2:      #b9a385;
+  --rule:         rgba(42, 27, 14, 0.14);
+  --rule-soft:    rgba(42, 27, 14, 0.06);
+  --accent:       #6b3a1a;
+  --accent-soft:  rgba(107, 58, 26, 0.10);
+  --accent-2:     #a67149;
+  --hl:           rgba(107, 58, 26, 0.07);
+  --up:           #5a7d35;
+  --down:         #9b2c2c;
+  --grad-from:    #3a230f;
+  --grad-via:     #a67149;
+  --grad-to:      #efd9b0;
+  --glass:        #faf3e6;
+  --glass-border: rgba(42, 27, 14, 0.10);
+  --glow:         rgba(166, 113, 73, 0.22);
+  --shadow-card:  0 1px 2px rgba(42, 27, 14, 0.04), 0 8px 22px -14px rgba(42, 27, 14, 0.20);
+  --shadow-hover: 0 2px 4px rgba(42, 27, 14, 0.06), 0 18px 36px -18px rgba(42, 27, 14, 0.30);
+  --aurora-1: transparent; --aurora-2: transparent;
+  --aurora-3: transparent; --aurora-4: transparent;
+  --grain: 0.05;
+}
+/* Dark variant — ESPRESSO: deep coffee bg, warm cream text, gold accents. */
+:root.theme-mocha.dark {
+  color-scheme: dark;
+  --bg:           #14100c;
+  --paper:        rgba(255, 240, 220, 0.04);
+  --paper-2:      rgba(255, 240, 220, 0.07);
+  --ink:          #f0e2c8;
+  --ink-soft:     #d3bd99;
+  --muted:        #9a8769;
+  --muted-2:      #5e5240;
+  --rule:         rgba(240, 226, 200, 0.10);
+  --rule-soft:    rgba(240, 226, 200, 0.045);
+  --accent:       #e6b97a;
+  --accent-soft:  rgba(230, 185, 122, 0.13);
+  --accent-2:     #c98947;
+  --hl:           rgba(230, 185, 122, 0.08);
+  --up:           #a3c585;
+  --down:         #e57373;
+  --grad-from:    #6b3a1a;
+  --grad-via:     #c98947;
+  --grad-to:      #e6b97a;
+  --glass:        rgba(28, 22, 16, 0.55);
+  --glass-border: rgba(240, 226, 200, 0.08);
+  --glow:         rgba(230, 185, 122, 0.28);
+  --shadow-card:  0 10px 28px -16px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 240, 220, 0.04);
+  --shadow-hover: 0 22px 52px -22px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 240, 220, 0.06);
+}
+.theme-mocha body::before { background: none; animation: none; }
+.theme-mocha body {
+  background:
+    radial-gradient(80% 60% at 50% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 70%),
+    var(--bg);
+}
+.theme-mocha .card {
+  border-radius: 14px;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+}
+.theme-mocha .card::after { display: none; }
+.theme-mocha .card-bare { border-radius: 10px; }
+.theme-mocha .btn-ghost { border-radius: 10px; }
+.theme-mocha .chip { border-radius: 9999px; }
+.theme-mocha .text-gradient {
+  background: linear-gradient(118deg, var(--grad-from), var(--grad-via) 55%, var(--grad-to));
+  -webkit-background-clip: text; background-clip: text;
+  animation: none;
+}
+.theme-mocha .font-display { letter-spacing: -0.03em; font-weight: 700; }
 
 /* ============== ACCOUNTING ============== */
 :root.theme-accounting {
@@ -754,6 +849,146 @@ main { position: relative; z-index: 1; }
   animation: none;
 }
 .theme-accounting .font-mono { font-feature-settings: "tnum" on, "ss01" on; }
+
+/* =======================================================================
+   THEME × MODE — dark/light counter-variants
+   Every theme that ships with only one base mode gets the other below, so
+   the global ThemeToggle flips brightness within whichever family the user
+   has chosen. Themes whose base already matches the requested mode are
+   untouched.
+======================================================================= */
+
+/* ---------- PAPER · DARK (newspaper at night) ---------- */
+:root.theme-paper.dark {
+  color-scheme: dark;
+  --bg:           #15120c;
+  --paper:        #1c1812;
+  --paper-2:      #221d15;
+  --ink:          #f0e8d6;
+  --ink-soft:     #c3b9a1;
+  --muted:        #8a7d63;
+  --muted-2:      #5a503e;
+  --rule:         rgba(240, 232, 214, 0.10);
+  --rule-soft:    rgba(240, 232, 214, 0.04);
+  --accent:       #d4a857;
+  --accent-soft:  rgba(212, 168, 87, 0.12);
+  --accent-2:     #c3b9a1;
+  --hl:           rgba(212, 168, 87, 0.08);
+  --up:           #a3c585;
+  --down:         #e57373;
+  --grad-from:    #c3b9a1;
+  --grad-via:     #d4a857;
+  --grad-to:      #b85c2a;
+  --glass:        #1c1812;
+  --glass-border: rgba(240, 232, 214, 0.10);
+  --glow:         rgba(212, 168, 87, 0.20);
+  --shadow-card:  0 10px 26px -16px rgba(0, 0, 0, 0.7);
+  --shadow-hover: 0 22px 50px -22px rgba(0, 0, 0, 0.85);
+}
+
+/* ---------- TERMINAL · LIGHT (amber phosphor / vintage CRT-paper) ---------- */
+:root.theme-terminal:not(.dark) {
+  color-scheme: light;
+  --bg:           #f6f1de;
+  --paper:        #ffffff;
+  --paper-2:      #fbf6e3;
+  --ink:          #2a1a05;
+  --ink-soft:     #5a3f1a;
+  --muted:        #8e6f3d;
+  --muted-2:      #b89b6a;
+  --rule:         rgba(42, 26, 5, 0.16);
+  --rule-soft:    rgba(42, 26, 5, 0.06);
+  --accent:       #b85c2a;
+  --accent-soft:  rgba(184, 92, 42, 0.10);
+  --accent-2:     #2a1a05;
+  --hl:           rgba(184, 92, 42, 0.08);
+  --up:           #4d7d2f;
+  --down:         #9b2c2c;
+  --grad-from:    #2a1a05;
+  --grad-via:     #b85c2a;
+  --grad-to:      #d4a857;
+  --glass:        #ffffff;
+  --glass-border: rgba(42, 26, 5, 0.14);
+  --glow:         rgba(184, 92, 42, 0.16);
+  --shadow-card:  0 1px 2px rgba(42, 26, 5, 0.04), 0 6px 16px -10px rgba(42, 26, 5, 0.20);
+  --shadow-hover: 0 2px 4px rgba(42, 26, 5, 0.06), 0 14px 30px -14px rgba(42, 26, 5, 0.30);
+}
+.theme-terminal:not(.dark) .text-ink { text-shadow: none; }
+.theme-terminal:not(.dark) body { background: var(--bg); }
+
+/* ---------- GALAXY · LIGHT (daytime sky / iridescent) ---------- */
+:root.theme-galaxy:not(.dark) {
+  color-scheme: light;
+  --bg:           #ecebf6;
+  --paper:        #ffffff;
+  --paper-2:      #fafaff;
+  --ink:          #1a1240;
+  --ink-soft:     #41386b;
+  --muted:        #756d99;
+  --muted-2:      #a8a1c4;
+  --rule:         rgba(26, 18, 64, 0.12);
+  --rule-soft:    rgba(26, 18, 64, 0.05);
+  --accent:       #7c3aed;
+  --accent-soft:  rgba(124, 58, 237, 0.10);
+  --accent-2:     #0891b2;
+  --hl:           rgba(124, 58, 237, 0.07);
+  --up:           #15803d;
+  --down:         #be185d;
+  --grad-from:    #4f46e5;
+  --grad-via:     #a855f7;
+  --grad-to:      #0891b2;
+  --glass:        #ffffff;
+  --glass-border: rgba(26, 18, 64, 0.08);
+  --glow:         rgba(124, 58, 237, 0.20);
+  --shadow-card:  0 1px 2px rgba(26, 18, 64, 0.04), 0 8px 22px -14px rgba(124, 58, 237, 0.24);
+  --shadow-hover: 0 2px 4px rgba(26, 18, 64, 0.06), 0 18px 38px -18px rgba(124, 58, 237, 0.36);
+  --aurora-1: rgba(79, 70, 229, 0.18);
+  --aurora-2: rgba(168, 85, 247, 0.16);
+  --aurora-3: rgba(8, 145, 178, 0.14);
+  --aurora-4: transparent;
+}
+/* Switch off the starfield when galaxy is in light mode — the daytime
+   sky reads as a soft gradient rather than a starfield. */
+.theme-galaxy:not(.dark) body::after { background-image: none; animation: none; }
+.theme-galaxy:not(.dark) body::before {
+  background:
+    radial-gradient(42% 42% at 16% 20%, var(--aurora-1), transparent 70%),
+    radial-gradient(38% 38% at 84% 12%, var(--aurora-2), transparent 70%),
+    radial-gradient(48% 48% at 82% 84%, var(--aurora-3), transparent 70%);
+}
+
+/* ---------- ACCOUNTING · DARK (ledger at night) ---------- */
+:root.theme-accounting.dark {
+  color-scheme: dark;
+  --bg:           #0b1220;
+  --paper:        #111a2c;
+  --paper-2:      #16223a;
+  --ink:          #e6edf7;
+  --ink-soft:     #b4c1d6;
+  --muted:        #7c8aa3;
+  --muted-2:      #50607d;
+  --rule:         rgba(230, 237, 247, 0.10);
+  --rule-soft:    rgba(230, 237, 247, 0.04);
+  --accent:       #60a5fa;
+  --accent-soft:  rgba(96, 165, 250, 0.13);
+  --accent-2:     #34d399;
+  --hl:           rgba(96, 165, 250, 0.08);
+  --up:           #34d399;
+  --down:         #f87171;
+  --grad-from:    #1e3a5f;
+  --grad-via:     #60a5fa;
+  --grad-to:      #34d399;
+  --glass:        #111a2c;
+  --glass-border: rgba(230, 237, 247, 0.08);
+  --glow:         rgba(96, 165, 250, 0.22);
+  --shadow-card:  0 8px 22px -14px rgba(0, 0, 0, 0.75);
+  --shadow-hover: 0 20px 44px -20px rgba(0, 0, 0, 0.85);
+}
+.theme-accounting.dark body {
+  background:
+    linear-gradient(to bottom, rgba(230, 237, 247, 0.025) 1px, transparent 1px) 0 0/100% 28px,
+    var(--bg);
+}
 
 /* =======================================================================
    DOC ANYWHERE — "soft graphite" skin

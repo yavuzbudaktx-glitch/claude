@@ -9,8 +9,9 @@ const SWATCHES: Record<ThemeId, string[]> = {
   paper:      ["#f7f3e9", "#1a1814", "#a16207"],
   terminal:   ["#000000", "#22ff77", "#ffb454"],
   galaxy:     ["#0b0628", "#c084fc", "#22d3ee"],
-  cowboy:     ["#ecdcc0", "#a85535", "#5d2f12"],
   accounting: ["#f8fafb", "#1e3a5f", "#15803d"],
+  matte:      ["#1a1a1c", "#e6e6e8", "#9aa0a6"],
+  mocha:      ["#f3e8d8", "#6b3a1a", "#a67149"],
 };
 
 export function ThemeVariantButton() {

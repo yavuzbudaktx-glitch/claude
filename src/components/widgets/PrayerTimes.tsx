@@ -44,6 +44,84 @@ function fmtCountdown(totalSec: number): string {
   return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
+// Shared hook so the full grid AND the mini-ticker can read the same
+// Aladhan response without firing two requests. SWR dedupes by key.
+function usePrayerData() {
+  const { city } = useCity();
+  const [now, setNow] = useState<Date | null>(null);
+
+  useEffect(() => {
+    setNow(new Date());
+    const t = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  const dateStr = cityDateDDMMYYYY(city.timezone);
+  const { data } = useSWR<AladhanResp>(
+    `https://api.aladhan.com/v1/timings/${dateStr}?latitude=${city.lat}&longitude=${city.lon}&method=2`,
+    fetcher,
+    { refreshInterval: 1000 * 60 * 30, keepPreviousData: true, revalidateOnFocus: false },
+  );
+  const timings = data?.data?.timings;
+
+  let nextId: PrayerId | null = null;
+  let remaining = 0;
+  let progress = 0;
+  if (timings && now) {
+    const { h, m, s } = clockPartsInTz(now, city.timezone);
+    const nowSec = h * 3600 + m * 60 + s;
+    const secs = ORDER.map((p) => ({ id: p.id, sec: hhmmToSeconds(timings[p.id]) }));
+    if (secs.every((p) => Number.isFinite(p.sec))) {
+      const lastIdx = secs.length - 1;
+      const nextIdx = secs.findIndex((p) => p.sec > nowSec);
+      let nextSecAbs: number;
+      let prevSecAbs: number;
+      if (nextIdx === -1) {
+        nextId = secs[0].id; nextSecAbs = secs[0].sec + 86400; prevSecAbs = secs[lastIdx].sec;
+      } else {
+        nextId = secs[nextIdx].id; nextSecAbs = secs[nextIdx].sec;
+        prevSecAbs = nextIdx === 0 ? secs[lastIdx].sec - 86400 : secs[nextIdx - 1].sec;
+      }
+      remaining = nextSecAbs - nowSec;
+      const interval = nextSecAbs - prevSecAbs;
+      progress = interval > 0 ? Math.min(1, Math.max(0, remaining / interval)) : 0;
+    }
+  }
+  return { timings, nextId, remaining, progress };
+}
+
+// Compact ticker — bar + countdown only. Designed to drop in under the
+// daily hadith as a one-glance "next prayer is in …" motivator.
+export function PrayerTicker() {
+  const { timings, nextId, remaining, progress } = usePrayerData();
+  if (!timings || !nextId) return null;
+  return (
+    <div className="mt-3 pt-3 border-t rule">
+      <div className="flex items-baseline justify-between gap-2 mb-1.5">
+        <span className="label !text-[9px] !tracking-[0.14em] inline-flex items-center gap-1">
+          Next prayer
+        </span>
+        <span className="font-mono text-[10px] uppercase tracking-wider text-muted">
+          {nextId} · {hhmm(timings[nextId])}
+        </span>
+      </div>
+      <div className="h-1.5 w-full rounded-full bg-[var(--rule)] overflow-hidden">
+        <div
+          className="h-full rounded-full transition-[width] duration-1000 ease-linear"
+          style={{
+            width: `${(progress * 100).toFixed(2)}%`,
+            background: "linear-gradient(90deg, var(--grad-from), var(--grad-via), var(--grad-to))",
+          }}
+        />
+      </div>
+      <div className="text-center font-display tracking-tight text-ink text-lg mt-2 leading-snug">
+        <span className="tabular-nums">{fmtCountdown(remaining)}</span>{" "}
+        <span className="text-muted font-normal">left until {nextId}</span>
+      </div>
+    </div>
+  );
+}
+
 export function PrayerTimes() {
   const { city } = useCity();
   const [now, setNow] = useState<Date | null>(null);
@@ -54,9 +132,6 @@ export function PrayerTimes() {
     return () => clearInterval(t);
   }, []);
 
-  // Aladhan, method 2 (ISNA). Keyed on the city's local date so it
-  // re-fetches at the city's midnight, and on coordinates so it re-fetches
-  // the instant the user picks a new city.
   const dateStr = cityDateDDMMYYYY(city.timezone);
   const { data } = useSWR<AladhanResp>(
     `https://api.aladhan.com/v1/timings/${dateStr}?latitude=${city.lat}&longitude=${city.lon}&method=2`,

@@ -55,21 +55,27 @@ export function WeatherSummary() {
   const c = data?.current;
   const d = data?.daily;
 
-  // Find today's index in the daily array, in the city's timezone.
-  // Open-Meteo *should* return today at [0] when `timezone` is passed, but it
-  // depends on the upstream's own clock — and a 1-index offset is exactly the
-  // "I see tomorrow's H/L" symptom. Matching by date is bullet-proof.
+  // Today's index in the daily array, matched by date in the city's TZ.
+  // Open-Meteo's `timezone` param should make daily.time[0] = today, but if
+  // anything's off (empty/auto tz, dst boundary, day-end) date matching is
+  // the only bulletproof way to land on the right cell.
   const todayIdx = (() => {
     if (!d?.time?.length) return 0;
-    const todayKey = new Date().toLocaleDateString("en-CA", { timeZone: city.timezone });
-    const i = d.time.findIndex((t) => t.startsWith(todayKey));
+    const tz = city.timezone || undefined;
+    let key: string;
+    try {
+      key = new Date().toLocaleDateString("en-CA", tz ? { timeZone: tz } : undefined);
+    } catch {
+      key = new Date().toLocaleDateString("en-CA");
+    }
+    const i = d.time.findIndex((t) => t === key || t.startsWith(key + "T") || t.startsWith(key));
     return i >= 0 ? i : 0;
   })();
 
-  // Status reflects today's overall forecast (so "Storms" for a stormy day,
-  // not "Clear" because right-now happens to be a calm hour). Current temp
-  // is still the live observation.
-  const codeForStatus = d?.weather_code?.[todayIdx] ?? c?.weather_code ?? -1;
+  // Status reflects what's happening RIGHT NOW (current observed/modeled
+  // weather), not the day's overall forecast — so a sunny morning before
+  // an afternoon storm reads as "Clear", not "Storms".
+  const codeForStatus = c?.weather_code ?? d?.weather_code?.[todayIdx] ?? -1;
 
   return (
     <span className="inline-flex items-center gap-1.5 flex-wrap">

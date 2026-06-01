@@ -6,7 +6,7 @@
 // theme variants stack on top to change the entire visual character of the
 // site (palette + corner radius + density + display face + texture).
 
-export type ThemeId = "aurora" | "paper" | "terminal" | "galaxy" | "cowboy" | "accounting";
+export type ThemeId = "aurora" | "paper" | "terminal" | "galaxy" | "accounting" | "matte" | "mocha";
 
 export const THEMES: Array<{
   id: ThemeId; label: string; description: string;
@@ -15,13 +15,14 @@ export const THEMES: Array<{
   { id: "paper",      label: "Paper",        description: "Warm off-white, ink text, single accent, no glass — editorial." },
   { id: "terminal",   label: "Terminal",     description: "Mono-typography, sharp corners, green-on-black phosphor feel." },
   { id: "galaxy",     label: "Galaxy",       description: "Deep space — magenta/violet accents, starfield drifting behind everything." },
-  { id: "cowboy",     label: "Cowboy",       description: "Sun-bleached parchment, leather brown, rust gold — frontier ledger." },
   { id: "accounting", label: "Accounting",   description: "Crisp ledger paper, navy/forest accents — clean numbers-first interface." },
+  { id: "matte",      label: "Matte Dark",   description: "Flat charcoal, low gloss, minimalist — content over chrome." },
+  { id: "mocha",      label: "White Mocha",  description: "Warm cream + espresso brown, soft latte gradients — cozy & gentle." },
 ];
 
 const KEY = "brief.theme.v1";
 
-const VALID: ThemeId[] = ["aurora", "paper", "terminal", "galaxy", "cowboy", "accounting"];
+const VALID: ThemeId[] = ["aurora", "paper", "terminal", "galaxy", "accounting", "matte", "mocha"];
 const NON_DEFAULT = VALID.filter((v) => v !== "aurora");
 
 export function getTheme(): ThemeId {
@@ -48,7 +49,7 @@ export const THEME_BOOT_SCRIPT = `
   (function() {
     try {
       var v = localStorage.getItem(${JSON.stringify(KEY)});
-      var ok = ['paper','terminal','galaxy','cowboy','accounting'];
+      var ok = ['paper','terminal','galaxy','accounting','matte','mocha'];
       var root = document.documentElement;
       if (v && ok.indexOf(v) >= 0) root.classList.add('theme-' + v);
       root.setAttribute('data-theme', v || 'aurora');

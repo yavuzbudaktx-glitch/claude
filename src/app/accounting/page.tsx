@@ -6,6 +6,7 @@ import { TopUtilityBar } from "@/components/widgets/TopUtilityBar";
 import { Scratchpad } from "@/components/Scratchpad";
 import { RadioButton } from "@/components/RadioButton";
 import { ThemeVariantButton } from "@/components/ThemeVariantButton";
+import { DocAnywhereButton } from "@/components/DocAnywhereButton";
 import { FocusButton } from "@/components/FocusButton";
 import { FullscreenToggle } from "@/components/FullscreenToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -38,6 +39,7 @@ export default async function AccountingPage() {
             <Scratchpad />
             <RadioButton />
             <FocusButton />
+            <DocAnywhereButton />
             <ThemeVariantButton />
             <FullscreenToggle />
             <ThemeToggle />
