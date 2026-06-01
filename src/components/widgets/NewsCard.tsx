@@ -8,6 +8,7 @@ import { formatDistanceToNowStrict, format } from "date-fns";
 import { Card } from "@/components/Card";
 import { usePref } from "@/components/PrefsProvider";
 import { useCommand } from "@/lib/commands";
+import { useFreshAt } from "@/lib/use-fresh";
 import { CATEGORY_LABELS, CATEGORY_ORDER, type NewsCategory, type NewsItem } from "@/lib/feeds";
 
 type Resp = Record<NewsCategory, NewsItem[]>;
@@ -133,10 +134,11 @@ function PubDate({ iso }: { iso: string }) {
 }
 
 export function NewsCard() {
-  const { data, error, isLoading } = useSWR<Resp>("/api/news", fetcher, {
+  const { data, error, isLoading, isValidating, mutate } = useSWR<Resp>("/api/news", fetcher, {
     refreshInterval: 1000 * 60 * 15,
     keepPreviousData: true,
   });
+  const updatedAt = useFreshAt(data);
   const [active, setActive] = useState<NewsCategory | "saved">("world");
   const [refreshing, setRefreshing] = useState(false);
   // Per-category deep pools fetched on refresh, plus a rolling window
@@ -204,7 +206,8 @@ export function NewsCard() {
     );
 
   return (
-    <Card num="03" title="The Wire" action={refreshAction}>
+    <Card num="03" title="The Wire" action={refreshAction}
+      status={{ updatedAt, loading: isValidating, error: !!error && !data, onRetry: () => mutate() }}>
       <div className="flex flex-nowrap gap-1 mb-4 overflow-x-auto -mx-1 px-1 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
         {CATEGORY_ORDER.map((c) => (
           <button

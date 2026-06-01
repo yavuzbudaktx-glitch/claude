@@ -8,6 +8,7 @@ import { Card } from "@/components/Card";
 import { localDateKey, msUntilLocalMidnight } from "@/lib/local-date";
 import { useRankChanges, RankArrow } from "@/lib/use-rank-changes";
 import { fetchUfcRankings, type DivisionRanking } from "@/lib/ufc-rankings-client";
+import { useFreshAt } from "@/lib/use-fresh";
 import type { UfcEvent, UfcFighter, UfcPayload } from "@/app/api/ufc/route";
 
 // Mirror of the slug-candidate helper in /api/ufc/route.ts. Kept inline
@@ -571,19 +572,21 @@ function UfcRankings() {
 }
 
 export function UfcCard() {
-  const { data, isLoading, error } = useSWR<UfcPayload>("/api/ufc", fetcher, {
+  const { data, isLoading, error, isValidating, mutate } = useSWR<UfcPayload>("/api/ufc", fetcher, {
     refreshInterval: 1000 * 60 * 60,
     keepPreviousData: true,
     revalidateOnFocus: true,
     errorRetryCount: 3,
     errorRetryInterval: 3000,
   });
+  const updatedAt = useFreshAt(data);
 
   return (
     <Card
       num="07"
       title="UFC"
       action={<UfcLogo />}
+      status={{ updatedAt, loading: isValidating, error: !!error && !data, onRetry: () => mutate() }}
     >
       {isLoading && !data && <p className="text-muted text-sm">Loading…</p>}
       {error && !data && <p className="text-accent text-sm">Couldn&rsquo;t load UFC schedule.</p>}

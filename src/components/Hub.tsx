@@ -7,7 +7,7 @@ import {
   TrendingUp, TrendingDown, Briefcase,
   Landmark, CreditCard, Repeat, ArrowUpRight, ArrowDownRight, CalendarClock,
   PlayCircle, ExternalLink, Shuffle, Award, Clock, CalendarDays, Check,
-  RefreshCw, MessageSquare, ArrowUp, Eye, EyeOff,
+  RefreshCw, MessageSquare, ArrowUp, Eye, EyeOff, Target, Pencil,
 } from "lucide-react";
 import { format } from "date-fns";
 import { usePref, usePrefsLoaded } from "@/components/PrefsProvider";
@@ -164,7 +164,7 @@ function MoneyList({
 
 // =====================  NET WORTH  ==========================================
 
-function NetWorthChart({ data, compact = false, hidden = false }: { data: Snapshot[]; compact?: boolean; hidden?: boolean }) {
+function NetWorthChart({ data, compact = false, hidden = false, goal = 0 }: { data: Snapshot[]; compact?: boolean; hidden?: boolean; goal?: number }) {
   const series = useMemo(() => data.slice(-12), [data]);
   const [hover, setHover] = useState<number | null>(null);
   const heightCls = compact ? "h-[120px]" : "h-[180px]";
@@ -190,11 +190,17 @@ function NetWorthChart({ data, compact = false, hidden = false }: { data: Snapsh
   const padT = 12, padB = compact ? 20 : 26, padX = 10;
   const vals = series.map((s) => s.net);
   const lo = Math.min(0, ...vals);
-  const hi = Math.max(0, ...vals);
+  // Fold the goal into the top of the range so the target line + the
+  // headroom-to-goal are both visible on the chart.
+  const hasGoal = goal > 0;
+  const hi = Math.max(0, ...vals, hasGoal ? goal : 0);
   const span = hi - lo || 1;
   const x = (i: number) => padX + (i / (series.length - 1)) * (W - padX * 2);
   const y = (v: number) => padT + (1 - (v - lo) / span) * (H - padT - padB);
   const zeroY = y(0);
+  const goalY = hasGoal ? y(goal) : 0;
+  const lastX = x(series.length - 1);
+  const lastY = y(series[series.length - 1].net);
 
   const line = series.map((s, i) => `${i === 0 ? "M" : "L"} ${x(i).toFixed(1)} ${y(s.net).toFixed(1)}`).join(" ");
   const area = `${line} L ${x(series.length - 1).toFixed(1)} ${zeroY.toFixed(1)} L ${x(0).toFixed(1)} ${zeroY.toFixed(1)} Z`;
@@ -231,11 +237,22 @@ function NetWorthChart({ data, compact = false, hidden = false }: { data: Snapsh
         {lo < 0 && (
           <line x1={padX} x2={W - padX} y1={zeroY} y2={zeroY} stroke="var(--rule)" strokeWidth="1" strokeDasharray="3 4" vectorEffect="non-scaling-stroke" />
         )}
+
+        {/* goal: a faint target line + a dashed trajectory from where you are
+            now up to the goal at the chart's right edge. */}
+        {hasGoal && (
+          <>
+            <line x1={padX} x2={W - padX} y1={goalY} y2={goalY} stroke="var(--grad-to)" strokeWidth="1.25" strokeDasharray="2 4" opacity="0.6" vectorEffect="non-scaling-stroke" />
+            <line x1={lastX} y1={lastY} x2={W - padX} y2={goalY} stroke="var(--grad-to)" strokeWidth="1.25" strokeDasharray="4 4" opacity="0.45" vectorEffect="non-scaling-stroke" />
+            <circle cx={W - padX} cy={goalY} r="2.5" fill="var(--grad-to)" opacity="0.8" vectorEffect="non-scaling-stroke" />
+          </>
+        )}
+
         <path d={area} fill="url(#nwArea)" />
         <path d={line} fill="none" stroke="url(#nwLine)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
 
         {/* last-point marker */}
-        <circle cx={x(series.length - 1)} cy={y(series[series.length - 1].net)} r="3.5" fill="var(--grad-to)" vectorEffect="non-scaling-stroke" />
+        <circle cx={lastX} cy={lastY} r="3.5" fill="var(--grad-to)" vectorEffect="non-scaling-stroke" />
 
         {/* hover crosshair + dot */}
         {hv && hover != null && (
@@ -280,6 +297,9 @@ export function NetWorthSection() {
   // Private mode hides every $ figure so you can show the dashboard on a
   // call / screenshare without baring your finances. Synced across devices.
   const [hidden, setHidden] = usePref<boolean>("hub.netWorth.hidden", false);
+  // 12-month net-worth target. 0 = unset (no goal line).
+  const [goal, setGoal] = usePref<number>("hub.netWorth.goal", 0);
+  const [editingGoal, setEditingGoal] = useState(false);
   const loaded = usePrefsLoaded();
   const dollar = (n: number) => (hidden ? "$•••" : money(n));
 
@@ -287,6 +307,9 @@ export function NetWorthSection() {
   const debtTotal = debts.reduce((s, x) => s + x.amount, 0);
   const netWorth = invTotal - debtTotal;
   const debtRatio = invTotal > 0 ? `${Math.round((debtTotal / invTotal) * 100)}%` : debtTotal > 0 ? "∞" : "0%";
+  // Goal math: how far to target, and what monthly gain gets there in a year.
+  const goalPct = goal > 0 ? Math.max(0, Math.min(100, Math.round((netWorth / goal) * 100))) : 0;
+  const perMonthNeeded = goal > netWorth ? (goal - netWorth) / 12 : 0;
 
   // Auto-snapshot the current month once prefs have hydrated. Re-runs whenever
   // the totals change and overwrites the in-progress month; the guard makes it
@@ -345,7 +368,37 @@ export function NetWorthSection() {
         <span className="ml-auto text-[10.5px] text-muted">{hidden ? "—" : debtRatio} D/A</span>
       </div>
 
-      <NetWorthChart data={history} compact hidden={hidden} />
+      <NetWorthChart data={history} compact hidden={hidden} goal={hidden ? 0 : goal} />
+
+      {/* Goal row — set a 12-month target; the chart draws the line + trajectory. */}
+      <div className="flex items-center gap-2 text-[11.5px]">
+        <Target className="h-3.5 w-3.5 shrink-0" style={{ color: "var(--grad-to)" }} />
+        {goal > 0 && !editingGoal ? (
+          <>
+            <span className="font-mono text-ink">{hidden ? "$•••" : money(goal)}</span>
+            <span className="text-muted">goal</span>
+            <div className="flex-1 h-1.5 rounded-full bg-[var(--rule)] overflow-hidden mx-1">
+              <div className="h-full rounded-full transition-[width] duration-500" style={{ width: `${goalPct}%`, background: "linear-gradient(90deg, var(--grad-from), var(--grad-via), var(--grad-to))" }} />
+            </div>
+            <span className="font-mono text-muted shrink-0">{goalPct}%</span>
+            {perMonthNeeded > 0 && !hidden && (
+              <span className="text-muted-2 shrink-0 hidden sm:inline">· {money(perMonthNeeded)}/mo</span>
+            )}
+            <button onClick={() => setEditingGoal(true)} className="text-muted-2 hover:text-accent transition shrink-0" aria-label="Edit goal">
+              <Pencil className="h-3 w-3" />
+            </button>
+          </>
+        ) : (
+          <>
+            <span className="text-muted">12-month target</span>
+            <NumberInput value={goal} prefix="$" width="w-24" onChange={setGoal} />
+            <button onClick={() => setEditingGoal(false)} className="text-[11px] text-accent hover:underline shrink-0">done</button>
+            {goal > 0 && (
+              <button onClick={() => { setGoal(0); setEditingGoal(false); }} className="text-[11px] text-muted-2 hover:text-down transition shrink-0">clear</button>
+            )}
+          </>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 border-t rule pt-4">
         <MoneyList title="Investments & assets" icon={<Landmark className="h-4 w-4" />} items={investments} setItems={setInvestments} hideAmounts={hidden} />
@@ -896,46 +949,71 @@ function VideoComments({ videoId }: { videoId: string }) {
     revalidateOnFocus: false,
   });
   const comments = data?.comments ?? [];
+  const [i, setI] = useState(0);
+  // New video → reset to the first comment.
+  useEffect(() => { setI(0); }, [videoId]);
+  const safeI = comments.length ? Math.min(i, comments.length - 1) : 0;
+  const c = comments[safeI];
 
   return (
-    // flex-1 + min-h-0 lets this section fill the card's remaining height
-    // (the parent is flex-col h-full) and scroll internally. Combined with
-    // the card's overflow-hidden, the comments can never push the card
-    // past the row's stretched height.
-    <div className="flex-1 min-h-0 flex flex-col border-t rule pt-3 mt-1">
-      <div className="label !text-[9px] !tracking-[0.12em] mb-2 flex items-center gap-1.5 shrink-0">
-        <MessageSquare className="h-3 w-3" /> Top comments
-      </div>
-      {isLoading && (
-        <p className="text-[12px] text-muted italic shrink-0">Loading comments…</p>
-      )}
-      {!isLoading && comments.length === 0 && (
-        <p className="text-[12px] text-muted-2 italic shrink-0">No comments on this video.</p>
-      )}
-      <ul className="flex-1 min-h-0 max-h-[260px] overflow-y-auto pr-1 space-y-3">
-        {comments.map((c, i) => (
-          <li key={i} className="flex gap-2.5">
-            <span
-              className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full text-[11px] font-semibold text-white"
-              style={{ background: avatarColor(c.author) }}
+    // Fixed-height block — one comment at a time, paged with the arrows, so
+    // the card can never grow with the number of comments.
+    <div className="border-t rule pt-3 mt-1 shrink-0">
+      <div className="flex items-center justify-between mb-2">
+        <span className="label !text-[9px] !tracking-[0.12em] flex items-center gap-1.5">
+          <MessageSquare className="h-3 w-3" /> Top comments
+        </span>
+        {comments.length > 0 && (
+          <div className="flex items-center gap-1.5">
+            <span className="font-mono text-[10px] tabular-nums text-muted-2">{safeI + 1}/{comments.length}</span>
+            <button
+              onClick={() => setI((n) => (n - 1 + comments.length) % comments.length)}
+              disabled={comments.length < 2}
+              aria-label="Previous comment"
+              className="text-muted hover:text-accent disabled:opacity-30 transition"
             >
-              {(c.author || "?").charAt(0).toUpperCase()}
-            </span>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-[12px] font-medium text-ink truncate">{c.author || "anon"}</span>
-                {c.time && <span className="text-[10px] text-muted-2 shrink-0">{c.time}</span>}
-              </div>
-              <div className="text-[12.5px] text-ink-soft leading-snug whitespace-pre-line break-words">{c.text}</div>
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setI((n) => (n + 1) % comments.length)}
+              disabled={comments.length < 2}
+              aria-label="Next comment"
+              className="text-muted hover:text-accent disabled:opacity-30 transition"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {isLoading && <p className="text-[12px] text-muted italic h-[88px]">Loading comments…</p>}
+      {!isLoading && comments.length === 0 && (
+        <p className="text-[12px] text-muted-2 italic h-[88px]">No comments on this video.</p>
+      )}
+      {c && (
+        <div className="flex gap-2.5 h-[88px]">
+          <span
+            className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full text-[12px] font-semibold text-white"
+            style={{ background: avatarColor(c.author) }}
+          >
+            {(c.author || "?").charAt(0).toUpperCase()}
+          </span>
+          <div className="min-w-0 flex-1 flex flex-col">
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-[12.5px] font-medium text-ink truncate">{c.author || "anon"}</span>
+              {c.time && <span className="text-[10px] text-muted-2 shrink-0">{c.time}</span>}
               {c.likes > 0 && (
-                <div className="mt-0.5 inline-flex items-center gap-1 text-[10px] text-muted">
+                <span className="ml-auto inline-flex items-center gap-1 text-[10px] text-muted shrink-0">
                   <ArrowUp className="h-3 w-3" />{c.likes.toLocaleString()}
-                </div>
+                </span>
               )}
             </div>
-          </li>
-        ))}
-      </ul>
+            <div className="mt-0.5 text-[12.5px] text-ink-soft leading-snug break-words overflow-y-auto pr-1">
+              {c.text}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

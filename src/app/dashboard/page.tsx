@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Masthead } from "@/components/widgets/Masthead";
+import { DailyReflection } from "@/components/DailyReflection";
 import { TopUtilityBar } from "@/components/widgets/TopUtilityBar";
 import { AnalogClock } from "@/components/AnalogClock";
 import { PrayersVerseCard } from "@/components/widgets/PrayersVerseCard";
@@ -52,6 +53,7 @@ export default async function Page() {
           />
           <div className="flex flex-col justify-center gap-3 flex-1">
             <Masthead name={name} />
+            <DailyReflection />
             <TodayInHistoryCard />
           </div>
         </div>

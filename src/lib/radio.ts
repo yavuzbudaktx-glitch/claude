@@ -1,32 +1,34 @@
 "use client";
 
 // SlowTurk radio — a module-level singleton so the stream keeps playing as
-// you navigate between pages (the button component unmounts/remounts, but the
-// <audio> lives here, outside React). HLS streams are played via hls.js,
-// loaded on demand from a CDN so it isn't bundled.
+// you navigate between pages. The reliable way to get a working stream URL is
+// to resolve it at play-time from the Radio Browser community API (which
+// tracks live, https-capable stream URLs for thousands of stations) rather
+// than hard-coding mirrors that rotate. Hard-coded HLS endpoints + a
+// user-supplied URL are kept as fallbacks. HLS is played via hls.js, loaded
+// on demand from a CDN.
 
 type Status = "idle" | "loading" | "playing" | "error";
 
-// SlowTurk's published HLS endpoints + several known mirrors. Tried in
-// order; the first that plays wins.
-const STREAMS = [
-  // Moon Digital edges (primary Turkish radio CDN)
+// Last-resort hard-coded candidates (Moon Digital / radyotvonline HLS).
+const FALLBACK_STREAMS = [
   "https://moondigitaledge1.radyotvonline.net/slowturk/playlist.m3u8",
   "https://moondigitaledge2.radyotvonline.net/slowturk/playlist.m3u8",
   "https://moondigitaledge3.radyotvonline.net/slowturk/playlist.m3u8",
-  "https://moondigital.radyotvonline.net/slowturk/playlist.m3u8",
-  // Direct stream IP (fallback when DNS misbehaves)
-  "https://moondigitaledge2.mediatriple.net/slowturk/playlist.m3u8",
-  // Shoutcast / icecast direct (last-ditch — usually still playable as audio)
-  "https://moondigitaledge.radyotvonline.net/slowturk",
-  // Aggregator stream
-  "https://radio.garden/api/ara/content/listen/yV9KpRdr/channel.mp3",
+];
+
+// Radio Browser mirrors (https, CORS-enabled, built for apps like this).
+const RB_SERVERS = [
+  "https://de2.api.radio-browser.info",
+  "https://nl1.api.radio-browser.info",
+  "https://at1.api.radio-browser.info",
+  "https://de1.api.radio-browser.info",
 ];
 
 let audio: HTMLAudioElement | null = null;
-// hls.js instance — loaded dynamically from a CDN, so it's untyped here.
 let hls: any = null;
 let status: Status = "idle";
+let resolved: string[] | null = null; // cached resolved stream URLs
 const listeners = new Set<() => void>();
 
 function emit() { listeners.forEach((l) => l()); }
@@ -38,8 +40,6 @@ export function subscribeRadio(l: () => void): () => void {
   return () => { listeners.delete(l); };
 }
 
-// Allow the user to set their own SlowTurk URL (in case the published
-// mirrors rotate). Stored in localStorage so it survives across sessions.
 const CUSTOM_KEY = "brief.radio.slowturk.url";
 export function getCustomRadioUrl(): string {
   if (typeof window === "undefined") return "";
@@ -49,7 +49,33 @@ export function setCustomRadioUrl(u: string) {
   try { localStorage.setItem(CUSTOM_KEY, u.trim()); } catch { /* noop */ }
 }
 
-// Loaded from a CDN, so the constructor is loosely typed.
+interface RbStation { url?: string; url_resolved?: string; name?: string; votes?: number; }
+
+// Ask Radio Browser for SlowTurk's live stream URLs (https only, so we never
+// trip mixed-content blocking on our https site). Cached after first success.
+async function resolveSlowTurk(): Promise<string[]> {
+  if (resolved && resolved.length) return resolved;
+  for (const base of RB_SERVERS) {
+    try {
+      const r = await fetch(`${base}/json/stations/search?name=slow&limit=120&hidebroken=true&order=votes&reverse=true`, {
+        headers: { "User-Agent": "brief-dashboard/1.0", Accept: "application/json" },
+        signal: AbortSignal.timeout(7000),
+      });
+      if (!r.ok) continue;
+      const arr = (await r.json()) as RbStation[];
+      const urls = arr
+        .filter((s) => /slow\s*t[uü]rk/i.test(s.name ?? ""))
+        .map((s) => (s.url_resolved || s.url || "").trim())
+        .filter((u) => u.startsWith("https://"));
+      const uniq = Array.from(new Set(urls));
+      if (uniq.length) { resolved = uniq; return uniq; }
+    } catch {
+      // try next mirror
+    }
+  }
+  return [];
+}
+
 function loadHls(): Promise<any> {
   const w = window as unknown as { Hls?: unknown };
   if (w.Hls) return Promise.resolve(w.Hls);
@@ -68,17 +94,22 @@ function teardownHls() {
 }
 
 async function playUrl(url: string): Promise<void> {
-  if (!audio) { audio = new Audio(); audio.preload = "none"; audio.volume = 0.72; }
+  if (!audio) { audio = new Audio(); audio.preload = "none"; audio.volume = 0.72; audio.crossOrigin = "anonymous"; }
   const el = audio;
   teardownHls();
 
-  // Safari & iOS play HLS natively.
+  const isHls = /\.m3u8(\?|$)/i.test(url);
+  if (!isHls) {
+    // Direct icecast / mp3 / aac stream.
+    el.src = url;
+    await el.play();
+    return;
+  }
   if (el.canPlayType("application/vnd.apple.mpegurl")) {
     el.src = url;
     await el.play();
     return;
   }
-  // Everyone else: hls.js.
   const Hls = await loadHls();
   if (Hls && Hls.isSupported()) {
     hls = new Hls({ enableWorker: true });
@@ -94,7 +125,6 @@ async function playUrl(url: string): Promise<void> {
     await el.play();
     return;
   }
-  // Last resort: hand the URL straight to the element.
   el.src = url;
   await el.play();
 }
@@ -109,9 +139,15 @@ export function stopRadio() {
 export async function toggleRadio() {
   if (status === "playing" || status === "loading") { stopRadio(); return; }
   setStatus("loading");
-  // User-supplied URL gets first crack, then the published mirrors.
+
   const custom = getCustomRadioUrl();
-  const ordered = custom ? [custom, ...STREAMS] : STREAMS;
+  const fromRb = await resolveSlowTurk();
+  const ordered = [
+    ...(custom ? [custom] : []),
+    ...fromRb,
+    ...FALLBACK_STREAMS,
+  ];
+
   for (const url of ordered) {
     try {
       await playUrl(url);
@@ -123,5 +159,5 @@ export async function toggleRadio() {
   }
   teardownHls();
   setStatus("error");
-  setTimeout(() => { if (status === "error") setStatus("idle"); }, 4000);
+  setTimeout(() => { if (status === "error") setStatus("idle"); }, 4500);
 }

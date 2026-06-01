@@ -8,6 +8,7 @@ import { Card } from "@/components/Card";
 import { localDateKey, msUntilLocalMidnight } from "@/lib/local-date";
 import { useRankChanges, RankArrow } from "@/lib/use-rank-changes";
 import { usePref } from "@/components/PrefsProvider";
+import { useFreshAt } from "@/lib/use-fresh";
 
 interface Standing {
   rank: number;
@@ -146,7 +147,7 @@ export function SuperLigCard() {
     setSelected({ name: s.team, teamId: s.teamId });
   }
 
-  const { data, error, isLoading } = useSWR<Resp>(
+  const { data, error, isLoading, isValidating, mutate } = useSWR<Resp>(
     `/api/superlig?team=${encodeURIComponent(selected.name)}&teamId=${encodeURIComponent(selected.teamId)}&d=${dateKey}`,
     fetcher,
     {
@@ -162,9 +163,11 @@ export function SuperLigCard() {
     [data],
   );
   const rankChanges = useRankChanges("morning.superlig.rank", standingsOrder);
+  const updatedAt = useFreshAt(data);
 
   return (
-    <Card num="06" title="Süper Lig">
+    <Card num="06" title="Süper Lig"
+      status={{ updatedAt, loading: isValidating, error: !!error && !data, onRetry: () => mutate() }}>
       {isLoading && !data && <p className="text-muted text-sm">Loading…</p>}
       {error && !data && <p className="text-accent text-sm">Couldn&rsquo;t load standings.</p>}
 

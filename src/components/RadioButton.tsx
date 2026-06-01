@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import { Radio, Settings2, X } from "lucide-react";
+import { RadioTower, Settings2, X } from "lucide-react";
 import {
   subscribeRadio, radioStatus, toggleRadio,
   getCustomRadioUrl, setCustomRadioUrl,
@@ -62,9 +62,9 @@ export function RadioButton() {
         className={`btn-ghost relative overflow-visible ${active || loading ? "!text-accent !border-[var(--accent)] !bg-[var(--accent-soft)]" : ""} ${error ? "!text-down !border-[var(--down)]" : ""}`}
         style={active ? { boxShadow: "0 0 18px -4px var(--glow), inset 0 1px 0 rgba(255,255,255,0.08)" } : undefined}
       >
-        {/* Idle / loading / error: keep the radio glyph. Playing: hide it and
+        {/* Idle / loading / error: broadcast-tower glyph. Playing: hide it and
             show the equalizer instead, so the button looks alive. */}
-        {!active && <Radio className={`h-4 w-4 ${loading ? "animate-pulse" : ""}`} />}
+        {!active && <RadioTower className={`h-4 w-4 ${loading ? "animate-pulse" : ""}`} />}
         {active && <Equalizer />}
 
         {/* Pulsing ring while loading */}
