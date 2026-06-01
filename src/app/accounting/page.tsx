@@ -9,6 +9,8 @@ import {
   SubscriptionsSection,
   ApplicationsSection,
   CpaSection,
+  CpaVideoSection,
+  AccountingNewsSection,
   AccountingHeaderStats,
 } from "@/components/Hub";
 
@@ -37,12 +39,17 @@ export default async function AccountingPage() {
         </div>
       </header>
 
-      {/* Hero: net worth + 12-month trend, with the balance-sheet lists below */}
-      <Card title="Net Worth" meta="12-month trend">
-        <NetWorthSection />
-      </Card>
+      {/* Row 1 — Net Worth (compact, left) + Daily Logan Graf CPA video (right). */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] gap-5 items-stretch">
+        <div className="[&>*]:h-full">
+          <Card title="Net Worth" meta="12-month trend"><NetWorthSection /></Card>
+        </div>
+        <div className="[&>*]:h-full">
+          <Card title="CPA Video" meta="daily pick · @logangrafcpa"><CpaVideoSection /></Card>
+        </div>
+      </div>
 
-      {/* Operating view: monthly cash flow beside recurring subscriptions */}
+      {/* Row 2 — Operating cash flow + recurring subscriptions. */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
         <div className="[&>*]:h-full">
           <Card title="Cash Flow"><CashFlowSection /></Card>
@@ -52,13 +59,20 @@ export default async function AccountingPage() {
         </div>
       </div>
 
-      <Card title="CPA Exam">
-        <CpaSection />
-      </Card>
-
+      {/* Row 3 — Applications kanban (full width). */}
       <Card title="Applications">
         <ApplicationsSection />
       </Card>
+
+      {/* Row 4 — Accounting trade news (left, wider) + compact CPA Exam tracker (right). */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-5 items-stretch">
+        <div className="[&>*]:h-full">
+          <Card title="Accounting News" meta="trade publications"><AccountingNewsSection /></Card>
+        </div>
+        <div className="[&>*]:h-full">
+          <Card title="CPA Exam"><CpaSection compact /></Card>
+        </div>
+      </div>
     </main>
   );
 }

@@ -1,13 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import useSWR from "swr";
 import {
   Plus, Trash2, ChevronLeft, ChevronRight, X,
   TrendingUp, TrendingDown, Briefcase, GraduationCap,
   Landmark, CreditCard, Repeat, ArrowUpRight, ArrowDownRight, CalendarClock,
+  PlayCircle, Newspaper, ExternalLink,
 } from "lucide-react";
 import { format } from "date-fns";
 import { usePref, usePrefsLoaded } from "@/components/PrefsProvider";
+import { localDateKey } from "@/lib/local-date";
 
 // =============================================================================
 //   Accounting toolkit — focused widgets the user opens on their own
@@ -155,29 +158,30 @@ function MoneyList({
 
 // =====================  NET WORTH  ==========================================
 
-function NetWorthChart({ data }: { data: Snapshot[] }) {
+function NetWorthChart({ data, compact = false }: { data: Snapshot[]; compact?: boolean }) {
   const series = useMemo(() => data.slice(-12), [data]);
   const [hover, setHover] = useState<number | null>(null);
+  const heightCls = compact ? "h-[120px]" : "h-[180px]";
 
   // Seed / single-point state — a calm dashed frame with the current value.
   if (series.length < 2) {
     const last = series[series.length - 1];
     return (
-      <div className="relative h-[180px] rounded-2xl border border-dashed border-[var(--rule)] bg-[var(--rule-soft)] grid place-items-center px-6 text-center">
+      <div className={`relative ${heightCls} rounded-2xl border border-dashed border-[var(--rule)] bg-[var(--rule-soft)] grid place-items-center px-6 text-center`}>
         {last && (
           <span className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--accent)] shadow-[0_0_18px_var(--glow)]" />
         )}
         <p className="relative text-[12.5px] text-muted leading-relaxed max-w-[260px]">
           {last
-            ? <>First month logged at <span className="font-mono text-ink">{money(last.net)}</span>.<br />Your trend line builds from here — one point each month.</>
+            ? <>First month logged at <span className="font-mono text-ink">{money(last.net)}</span>.<br />Your trend builds from here — one point each month.</>
             : <>Your net-worth line starts here.<br />Add assets &amp; debts below — each month is plotted automatically.</>}
         </p>
       </div>
     );
   }
 
-  const W = 680, H = 180;
-  const padT = 18, padB = 26, padX = 10;
+  const W = 680, H = compact ? 120 : 180;
+  const padT = 12, padB = compact ? 20 : 26, padX = 10;
   const vals = series.map((s) => s.net);
   const lo = Math.min(0, ...vals);
   const hi = Math.max(0, ...vals);
@@ -202,7 +206,7 @@ function NetWorthChart({ data }: { data: Snapshot[] }) {
       <svg
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="none"
-        className="w-full h-[180px] touch-none"
+        className={`w-full ${heightCls} touch-none`}
         onPointerMove={onMove}
         onPointerLeave={() => setHover(null)}
       >
@@ -296,32 +300,31 @@ export function NetWorthSection() {
   const delta = prev ? netWorth - prev.net : null;
 
   return (
-    <div className="space-y-5">
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,260px)_1fr] gap-6 items-center">
-        <div className="text-center lg:text-left">
-          <div className="label mb-1.5">Net worth</div>
-          <div className={`font-display text-5xl md:text-6xl tracking-tight ${netWorth >= 0 ? "text-ink" : "text-down"}`}>
-            {money(netWorth)}
-          </div>
-          {delta != null && (
-            <div
-              className={`mt-2 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-medium ${delta >= 0 ? "text-up" : "text-down"}`}
-              style={{ background: `color-mix(in srgb, ${delta >= 0 ? "var(--up)" : "var(--down)"} 14%, transparent)` }}
-            >
-              {delta >= 0 ? <ArrowUpRight className="h-3.5 w-3.5" /> : <ArrowDownRight className="h-3.5 w-3.5" />}
-              {money(Math.abs(delta))} vs {monthLabel(prev!.month)}
-            </div>
-          )}
-          <div className="mt-3 flex items-center justify-center lg:justify-start gap-4 text-[12px]">
-            <span className="inline-flex items-center gap-1 text-up"><TrendingUp className="h-3.5 w-3.5" />{money(invTotal)}</span>
-            <span className="inline-flex items-center gap-1 text-down"><TrendingDown className="h-3.5 w-3.5" />{money(debtTotal)}</span>
-            <span className="font-mono text-[11px] text-muted">{debtRatio} D/A</span>
-          </div>
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+        <div className={`font-display text-4xl md:text-5xl tracking-tight ${netWorth >= 0 ? "text-ink" : "text-down"}`}>
+          {money(netWorth)}
         </div>
-        <NetWorthChart data={history} />
+        {delta != null && (
+          <div
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ${delta >= 0 ? "text-up" : "text-down"}`}
+            style={{ background: `color-mix(in srgb, ${delta >= 0 ? "var(--up)" : "var(--down)"} 14%, transparent)` }}
+          >
+            {delta >= 0 ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+            {money(Math.abs(delta))} vs {monthLabel(prev!.month)}
+          </div>
+        )}
+      </div>
+      <div className="flex items-center gap-3 text-[11.5px] font-mono">
+        <span className="inline-flex items-center gap-1 text-up"><TrendingUp className="h-3.5 w-3.5" />{money(invTotal)}</span>
+        <span className="text-muted-2">·</span>
+        <span className="inline-flex items-center gap-1 text-down"><TrendingDown className="h-3.5 w-3.5" />{money(debtTotal)}</span>
+        <span className="ml-auto text-[10.5px] text-muted">{debtRatio} D/A</span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t rule pt-5">
+      <NetWorthChart data={history} compact />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 border-t rule pt-4">
         <MoneyList title="Investments & assets" icon={<Landmark className="h-4 w-4" />} items={investments} setItems={setInvestments} />
         <MoneyList title="Debt & liabilities" icon={<CreditCard className="h-4 w-4" />} items={debts} setItems={setDebts} accentDown />
       </div>
@@ -623,7 +626,7 @@ const CPA_TONE: Record<CpaStatus, string> = {
   Failed: "var(--down)",
 };
 
-export function CpaSection() {
+export function CpaSection({ compact = false }: { compact?: boolean } = {}) {
   const [cpa, setCpa] = usePref<Record<CpaSection, CpaEntry>>("hub.cpa", {
     AUD: { status: "Not started", hours: 0, examDate: "", score: "" },
     FAR: { status: "Not started", hours: 0, examDate: "", score: "" },
@@ -634,18 +637,22 @@ export function CpaSection() {
   const totalHours = CPA_SECTIONS.reduce((s, k) => s + (cpa[k]?.hours ?? 0), 0);
   const update = (sec: CpaSection, patch: Partial<CpaEntry>) =>
     setCpa({ ...cpa, [sec]: { ...cpa[sec], ...patch } });
+  // Single column when running beside another card; 2→4 columns at full width.
+  const gridCls = compact
+    ? "grid grid-cols-1 gap-3"
+    : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3";
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
-        <BigStat label="Sections passed" value={`${passed} / 4`} tone={passed === 4 ? "up" : undefined} />
-        <BigStat label="Study hours logged" value={totalHours.toLocaleString()} sub="across all sections" />
+        <BigStat label="Sections passed" value={`${passed} / 4`} tone={passed === 4 ? "up" : undefined} size={compact ? "md" : "lg"} />
+        <BigStat label="Study hours logged" value={totalHours.toLocaleString()} sub="across all sections" size={compact ? "md" : "lg"} />
       </div>
       <div className="h-2 w-full rounded-full bg-[var(--rule)] overflow-hidden">
         <div className="h-full rounded-full transition-[width] duration-500"
           style={{ width: `${(passed / 4) * 100}%`, background: "linear-gradient(90deg, var(--grad-from), var(--grad-via), var(--grad-to))" }} />
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className={gridCls}>
         {CPA_SECTIONS.map((sec) => {
           const e = cpa[sec];
           return (
@@ -722,6 +729,219 @@ export function AccountingHeaderStats() {
       <Kpi label="Net worth" value={money(netWorth)} tone={netWorth >= 0 ? "up" : "down"} />
       <Kpi label="Surplus / mo" value={money(surplus)} tone={surplus >= 0 ? "up" : "down"} />
       <Kpi label="Subs / mo" value={money(subMonthly)} tone={subMonthly > 0 ? "down" : undefined} />
+    </div>
+  );
+}
+
+// =====================  CPA VIDEO (Logan Graf)  =============================
+//
+// A single daily pick from https://www.youtube.com/@logangrafcpa/videos.
+// The /api/cpa-video route picks deterministically per local date, so the
+// pick is stable through the day and rotates at midnight.
+
+interface CpaVideoResp {
+  videoId?: string;
+  title?: string;
+  channelUrl?: string;
+  thumb?: string;
+  published?: string;
+  error?: string;
+}
+
+const jsonFetcher = (url: string) => fetch(url).then((r) => r.json());
+
+export function CpaVideoSection() {
+  const dateKey = useDailyKey();
+  const { data, isLoading } = useSWR<CpaVideoResp>(
+    `/api/cpa-video?d=${dateKey}`,
+    jsonFetcher,
+    { refreshInterval: 1000 * 60 * 60 * 6, keepPreviousData: true },
+  );
+  const [playing, setPlaying] = useState(false);
+  // New date → reset to the poster preview rather than a stale playing state.
+  useEffect(() => { setPlaying(false); }, [dateKey]);
+
+  const channelUrl = data?.channelUrl ?? "https://www.youtube.com/@logangrafcpa/videos";
+  const videoId = data?.videoId;
+  const title = data?.title ?? "";
+  const thumb = data?.thumb || (videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : "");
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="relative aspect-video rounded-xl overflow-hidden bg-[var(--rule-soft)] border border-[var(--rule)]">
+        {isLoading && (
+          <div className="absolute inset-0 grid place-items-center text-[12px] text-muted">Finding today’s video…</div>
+        )}
+        {!isLoading && !videoId && (
+          <div className="absolute inset-0 grid place-items-center px-4 text-center text-[12px] text-muted">
+            <a href={channelUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-accent hover:underline">
+              <PlayCircle className="h-4 w-4" /> Open Logan Graf on YouTube
+            </a>
+          </div>
+        )}
+        {!playing && videoId && (
+          <button
+            onClick={() => setPlaying(true)}
+            aria-label="Play today's video"
+            className="absolute inset-0 group"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={thumb} alt={title} className="h-full w-full object-cover transition group-hover:scale-[1.02]" />
+            <span className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
+            <span className="absolute inset-0 grid place-items-center">
+              <span className="grid h-14 w-14 place-items-center rounded-full bg-white/95 text-black shadow-lg transition group-hover:scale-110">
+                <PlayCircle className="h-9 w-9" strokeWidth={1.5} />
+              </span>
+            </span>
+          </button>
+        )}
+        {playing && videoId && (
+          <iframe
+            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
+            title={title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="h-full w-full"
+          />
+        )}
+      </div>
+      <div className="min-w-0">
+        <a
+          href={channelUrl}
+          target="_blank"
+          rel="noreferrer"
+          title={title || "Logan Graf CPA"}
+          className="group block text-[13.5px] font-medium text-ink-soft hover:text-accent transition leading-snug"
+        >
+          {title || "Logan Graf CPA — daily pick"}
+          <span className="ml-1.5 inline-block align-text-bottom opacity-0 group-hover:opacity-100 transition">
+            <ExternalLink className="h-3 w-3 inline" />
+          </span>
+        </a>
+        <div className="mt-1 flex items-center gap-2 text-[11px] text-muted">
+          <span className="label !text-[9px] !tracking-[0.1em]">Daily CPA</span>
+          <span>· rotates at midnight</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Today's local-date as a stable string; recomputed at midnight so SWR's
+// cache key flips and the next day's pick comes in automatically.
+function useDailyKey(): string {
+  const [k, setK] = useState<string>(() => localDateKey());
+  useEffect(() => {
+    const tick = () => setK(localDateKey());
+    tick();
+    const id = setInterval(tick, 60_000);
+    return () => clearInterval(id);
+  }, []);
+  return k;
+}
+
+// =====================  ACCOUNTING NEWS  ====================================
+//
+// Three trade publications: Journal of Accountancy, The CPA Journal,
+// Accounting Today. The /api/accounting-news route deduplicates and ranks
+// by recency.
+
+interface AccountingNewsResp {
+  items?: Array<{ title: string; link: string; source: string; pubDate: string }>;
+  sources?: Array<{ name: string; site: string }>;
+}
+
+function timeAgo(iso: string): string {
+  const d = new Date(iso);
+  const mins = Math.round((Date.now() - d.getTime()) / 60_000);
+  if (!Number.isFinite(mins) || mins < 1) return "just now";
+  if (mins < 60) return `${mins}m`;
+  const hrs = Math.round(mins / 60);
+  if (hrs < 24) return `${hrs}h`;
+  const days = Math.round(hrs / 24);
+  if (days < 7) return `${days}d`;
+  return format(d, "MMM d");
+}
+
+const SOURCE_TONE: Record<string, string> = {
+  "Journal of Accountancy": "var(--grad-from)",
+  "The CPA Journal": "var(--grad-via)",
+  "Accounting Today": "var(--grad-to)",
+};
+
+export function AccountingNewsSection() {
+  const { data, error, isLoading } = useSWR<AccountingNewsResp>(
+    "/api/accounting-news",
+    jsonFetcher,
+    { refreshInterval: 1000 * 60 * 30, keepPreviousData: true },
+  );
+
+  const items = data?.items ?? [];
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-center gap-1.5 text-[10.5px]">
+        {(data?.sources ?? [
+          { name: "Journal of Accountancy", site: "https://www.journalofaccountancy.com/" },
+          { name: "The CPA Journal", site: "https://www.cpajournal.com/" },
+          { name: "Accounting Today", site: "https://www.accountingtoday.com/" },
+        ]).map((s) => (
+          <a
+            key={s.name}
+            href={s.site}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 rounded-full border border-[var(--rule)] px-2 py-0.5 text-muted hover:text-ink hover:border-[var(--accent)] transition"
+          >
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: SOURCE_TONE[s.name] ?? "var(--muted)" }} />
+            {s.name}
+          </a>
+        ))}
+      </div>
+
+      {isLoading && items.length === 0 && (
+        <p className="text-muted text-sm italic">Loading the trades…</p>
+      )}
+      {error && items.length === 0 && (
+        <p className="text-down text-sm">Couldn’t reach the feeds right now.</p>
+      )}
+
+      <ul className="divide-rule">
+        {items.map((it, i) => (
+          <li key={`${it.link}-${i}`}>
+            <a
+              href={it.link}
+              target="_blank"
+              rel="noreferrer"
+              className="group flex items-start gap-3 py-2.5"
+            >
+              <span
+                aria-hidden
+                className="mt-[7px] h-1.5 w-1.5 rounded-full shrink-0"
+                style={{ background: SOURCE_TONE[it.source] ?? "var(--muted)" }}
+              />
+              <div className="min-w-0 flex-1">
+                <div className="text-[13.5px] leading-snug text-ink-soft group-hover:text-accent transition">
+                  {it.title}
+                </div>
+                <div className="mt-0.5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-muted">
+                  <span>{it.source}</span>
+                  <span className="text-muted-2">·</span>
+                  <span>{timeAgo(it.pubDate)}</span>
+                </div>
+              </div>
+            </a>
+          </li>
+        ))}
+        {!isLoading && items.length === 0 && !error && (
+          <li className="text-muted text-sm italic py-2">No headlines yet.</li>
+        )}
+      </ul>
+
+      <div className="pt-1 font-mono text-[9px] uppercase tracking-wider text-muted">
+        <Newspaper className="inline h-3 w-3 mr-1 -mt-0.5" />
+        Sourced direct from each publication&rsquo;s RSS
+      </div>
     </div>
   );
 }

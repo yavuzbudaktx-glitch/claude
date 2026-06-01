@@ -210,6 +210,12 @@ export function CalendarCard() {
   const { data: calData } = useSWR<CalResp>("/api/calendar", fetcher, {
     refreshInterval: 1000 * 60 * 5,
   });
+  // Same trick for the inbox: dedupes with InboxTab's own SWR so the badge
+  // updates in lockstep and we don't double-fetch.
+  const { data: mailData } = useSWR<MailResp>("/api/emails", fetcher, {
+    refreshInterval: 1000 * 60 * 3,
+  });
+  const unreadCount = (mailData?.emails ?? []).filter((m) => m.unread).length;
   const liveHiddenIds = useMemo(
     () => new Set((calData?.events ?? []).filter((e) => hidden.has(e.id)).map((e) => e.id)),
     [calData?.events, hidden],
@@ -247,8 +253,24 @@ export function CalendarCard() {
       <button
         onClick={() => setTab("inbox")}
         className={`chip normal-case !px-2.5 !py-0.5 !text-[11px] inline-flex items-center gap-1 ${tab === "inbox" ? "chip-active" : ""}`}
+        title={unreadCount > 0 ? `${unreadCount} unread` : "Inbox"}
       >
-        <Mail className="h-3 w-3" /> Inbox
+        <span className="relative inline-flex">
+          <Mail className="h-3 w-3" />
+          {unreadCount > 0 && (
+            <span
+              aria-hidden
+              className={`absolute -top-[3px] -right-[3px] h-1.5 w-1.5 rounded-full ${tab === "inbox" ? "bg-white" : "bg-accent"}`}
+              style={{ boxShadow: tab === "inbox" ? "none" : "0 0 6px var(--glow)" }}
+            />
+          )}
+        </span>
+        Inbox
+        {unreadCount > 0 && (
+          <span className={`font-mono text-[10px] tabular-nums ${tab === "inbox" ? "text-white/90" : "text-accent"}`}>
+            {unreadCount > 99 ? "99+" : unreadCount}
+          </span>
+        )}
       </button>
     </span>
   );

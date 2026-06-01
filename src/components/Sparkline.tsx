@@ -51,7 +51,7 @@ export function Sparkline({
 
   const path = smoothPath(pts);
   const isUp = up ?? data[data.length - 1] >= data[0];
-  const stroke = isUp ? "var(--up, #16a34a)" : "var(--accent)";
+  const stroke = isUp ? "var(--up, #16a34a)" : "var(--down, #dc2626)";
 
   return (
     <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} className={className} aria-hidden>

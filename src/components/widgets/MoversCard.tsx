@@ -225,14 +225,22 @@ function fmtPrice(p: number | null): string {
 function WatchlistTile({ symbol, onRemove }: { symbol: string; onRemove: (s: string) => void }) {
   const { quote, loading } = useTickerData(symbol);
   const up = quote ? quote.changePct >= 0 : true;
-  const changeClass = quote
-    ? up
-      ? "text-emerald-600 dark:text-emerald-400"
-      : "text-accent"
-    : "text-muted";
+  const big = quote ? Math.abs(quote.changePct) >= 5 : false;
+  const changeClass = quote ? (up ? "text-up" : "text-down") : "text-muted";
+  // Big-mover highlight: a subtle tinted background + ring in the move's
+  // direction so 5%+ jumps catch the eye without screaming.
+  const tileStyle: React.CSSProperties = big
+    ? {
+        background: `color-mix(in srgb, ${up ? "var(--up)" : "var(--down)"} 8%, transparent)`,
+        boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${up ? "var(--up)" : "var(--down)"} 55%, transparent), 0 0 18px -6px color-mix(in srgb, ${up ? "var(--up)" : "var(--down)"} 50%, transparent)`,
+      }
+    : {};
 
   return (
-    <li className="group relative border rule-soft rounded-md p-3 hover:border-[var(--rule)] transition">
+    <li
+      className={`group relative rounded-md p-3 transition ${big ? "" : "border rule-soft hover:border-[var(--rule)]"}`}
+      style={tileStyle}
+    >
       <button
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); onRemove(symbol); }}
         className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition text-muted hover:text-accent"

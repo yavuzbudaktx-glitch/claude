@@ -7,16 +7,16 @@ import { localDateKey } from "@/lib/local-date";
 import { createClient } from "@/lib/supabase/client";
 import { usePref } from "@/components/PrefsProvider";
 
-// Monday→Sunday keys for the current week, so the grid resets every week.
-function weekDays(): string[] {
-  const now = new Date();
-  const dow = (now.getDay() + 6) % 7; // 0 = Monday
-  const monday = new Date(now);
-  monday.setDate(now.getDate() - dow);
+// Monday→Sunday keys for the current week, all in local time. Re-computed
+// from the supplied `today` key so a tab left open across midnight still
+// shows the right column highlighted.
+function weekDaysFor(todayKey: string): string[] {
+  const [y, m, d] = todayKey.split("-").map(Number);
+  const today = new Date(y, m - 1, d);
+  const dow = (today.getDay() + 6) % 7; // 0 = Monday
   return Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-    return localDateKey(d);
+    const dd = new Date(y, m - 1, d - dow + i);
+    return localDateKey(dd);
   });
 }
 
@@ -24,15 +24,29 @@ function HabitTracker() {
   const [list, setList] = usePref<string[]>("habitList", ["Water", "Steps", "Reading"]);
   const [done, setDone] = usePref<Record<string, string[]>>("habits", {});
   const [adding, setAdding] = useState("");
-  const days = weekDays();
-  const weekSet = new Set(days);
-  const todayKey = localDateKey();
+  // Today is reactive: re-checked every minute (and when the tab regains
+  // focus) so the "today" column never points at yesterday after a tab has
+  // been sitting idle across local midnight.
+  const [todayKey, setTodayKey] = useState<string>(() => localDateKey());
+  useEffect(() => {
+    const tick = () => setTodayKey(localDateKey());
+    tick();
+    const id = setInterval(tick, 60_000);
+    const onVis = () => { if (!document.hidden) tick(); };
+    document.addEventListener("visibilitychange", onVis);
+    return () => { clearInterval(id); document.removeEventListener("visibilitychange", onVis); };
+  }, []);
+  const days = useMemo(() => weekDaysFor(todayKey), [todayKey]);
+  const weekSet = useMemo(() => new Set(days), [days]);
   const dayLabel = (key: string) => {
     const [y, m, dd] = key.split("-").map(Number);
     return new Date(y, m - 1, dd).toLocaleDateString(undefined, { weekday: "narrow" });
   };
 
   function toggle(h: string, d: string) {
+    // Only past + present days are toggleable — clicking the future is a
+    // common source of "wait, why is tomorrow highlighted?" reports.
+    if (d > todayKey) return;
     // Prune to the current week so old marks clear every Monday.
     const cur = (done[h] ?? []).filter((x) => weekSet.has(x));
     const next = cur.includes(d) ? cur.filter((x) => x !== d) : [...cur, d];
@@ -68,15 +82,27 @@ function HabitTracker() {
             <div key={h} className="group/h flex items-center gap-1">
               <span className="w-16 shrink-0 truncate text-[12px] text-ink-soft" title={h}>{h}</span>
               {days.map((d) => {
-                const on = hdone.includes(d) && weekSet.has(d);
+                // Only credit dates that are part of the current week AND
+                // are not in the future — a stale entry for tomorrow (left
+                // over from a previous version of this code) would
+                // otherwise paint tomorrow's circle green.
+                const on = hdone.includes(d) && weekSet.has(d) && d <= todayKey;
                 const isToday = d === todayKey;
+                const isFuture = d > todayKey;
                 return (
                   <button
                     key={d}
                     onClick={() => toggle(h, d)}
                     aria-label={`${h} ${d}`}
+                    disabled={isFuture}
                     className={`h-[18px] w-[18px] rounded-full border transition shrink-0 ${
-                      on ? "border-transparent" : isToday ? "border-[var(--accent)]" : "border-[var(--rule)] hover:border-[var(--ink-soft)]"
+                      on
+                        ? "border-transparent"
+                        : isToday
+                          ? "border-[var(--accent)]"
+                          : isFuture
+                            ? "border-[var(--rule-soft)] cursor-not-allowed"
+                            : "border-[var(--rule)] hover:border-[var(--ink-soft)]"
                     }`}
                     style={on ? { background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" } : undefined}
                   />
