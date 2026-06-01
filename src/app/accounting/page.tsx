@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Card } from "@/components/Card";
+import { AccountingGate } from "@/components/AccountingGate";
 import { TopUtilityBar } from "@/components/widgets/TopUtilityBar";
 import { Scratchpad } from "@/components/Scratchpad";
 import { FocusButton } from "@/components/FocusButton";
@@ -26,6 +27,7 @@ export default async function AccountingPage() {
   if (!user) redirect("/login");
 
   return (
+    <AccountingGate>
     <main className="max-w-[1480px] mx-auto px-5 md:px-10 pt-3 md:pt-4 pb-6 md:pb-8 space-y-5">
       <TopUtilityBar
         context="accounting"
@@ -82,5 +84,6 @@ export default async function AccountingPage() {
         </div>
       </div>
     </main>
+    </AccountingGate>
   );
 }

@@ -847,8 +847,62 @@ interface CpaVideoResp {
   channelTitle?: string;
   error?: string;
 }
+interface YtComment { author: string; text: string; likes: number; time: string }
+interface YtCommentsResp { comments?: YtComment[] }
 
 const jsonFetcher = (url: string) => fetch(url).then((r) => r.json());
+
+const AV_PALETTE = ["var(--grad-from)", "var(--grad-via)", "var(--grad-to)", "var(--accent)", "var(--accent-2)", "var(--up)"];
+function avatarColor(name: string): string {
+  let h = 0;
+  for (const c of name) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return AV_PALETTE[h % AV_PALETTE.length];
+}
+
+function VideoComments({ videoId }: { videoId: string }) {
+  const { data, isLoading } = useSWR<YtCommentsResp>(`/api/yt-comments?v=${videoId}`, jsonFetcher, {
+    revalidateOnFocus: false,
+  });
+  const comments = data?.comments ?? [];
+
+  return (
+    <div className="flex-1 min-h-0 flex flex-col border-t rule pt-3">
+      <div className="label !text-[9px] !tracking-[0.12em] mb-2 flex items-center gap-1.5">
+        <MessageSquare className="h-3 w-3" /> Top comments
+      </div>
+      {isLoading && (
+        <p className="text-[12px] text-muted italic">Loading comments…</p>
+      )}
+      {!isLoading && comments.length === 0 && (
+        <p className="text-[12px] text-muted-2 italic">Comments aren&rsquo;t available for this one.</p>
+      )}
+      <ul className="flex-1 min-h-0 max-h-[340px] overflow-y-auto pr-1 space-y-3">
+        {comments.map((c, i) => (
+          <li key={i} className="flex gap-2.5">
+            <span
+              className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full text-[11px] font-semibold text-white"
+              style={{ background: avatarColor(c.author) }}
+            >
+              {(c.author || "?").charAt(0).toUpperCase()}
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-[12px] font-medium text-ink truncate">{c.author || "anon"}</span>
+                {c.time && <span className="text-[10px] text-muted-2 shrink-0">{c.time}</span>}
+              </div>
+              <div className="text-[12.5px] text-ink-soft leading-snug whitespace-pre-line break-words">{c.text}</div>
+              {c.likes > 0 && (
+                <div className="mt-0.5 inline-flex items-center gap-1 text-[10px] text-muted">
+                  <ArrowUp className="h-3 w-3" />{c.likes.toLocaleString()}
+                </div>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export function CpaVideoSection() {
   const dateKey = useDailyKey();
@@ -893,8 +947,8 @@ export function CpaVideoSection() {
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="relative aspect-video rounded-xl overflow-hidden bg-[var(--rule-soft)] border border-[var(--rule)]">
+    <div className="flex flex-col gap-3 h-full">
+      <div className="relative aspect-video rounded-xl overflow-hidden bg-[var(--rule-soft)] border border-[var(--rule)] shrink-0">
         {isLoading && !cur && (
           <div className="absolute inset-0 grid place-items-center text-[12px] text-muted">Loading his latest videos…</div>
         )}
@@ -958,6 +1012,8 @@ export function CpaVideoSection() {
           <Shuffle className="h-4 w-4" />
         </button>
       </div>
+
+      {cur && <VideoComments videoId={cur.id} />}
     </div>
   );
 }
@@ -1015,8 +1071,11 @@ function sinceMs(ms: number): string {
 }
 
 export function RedditFeedSection() {
-  const { data, error, isLoading, isValidating, mutate } = useSWR<RedditResp>(
-    "/api/reddit",
+  // A nonce makes the refresh button bust the CDN cache (the SWR key changes,
+  // so it can't return a stale cached payload) and actually re-pull.
+  const [nonce, setNonce] = useState(0);
+  const { data, error, isLoading, isValidating } = useSWR<RedditResp>(
+    nonce ? `/api/reddit?n=${nonce}` : "/api/reddit",
     jsonFetcher,
     { refreshInterval: 1000 * 60 * 15, keepPreviousData: true },
   );
@@ -1027,8 +1086,9 @@ export function RedditFeedSection() {
     () => data?.subs ?? Array.from(new Set(all.map((p) => p.subreddit))),
     [data, all],
   );
+  // Quality over quantity — a tight, readable list.
   const posts = useMemo(
-    () => (sub === "all" ? all : all.filter((p) => p.subreddit.toLowerCase() === sub.toLowerCase())).slice(0, 14),
+    () => (sub === "all" ? all : all.filter((p) => p.subreddit.toLowerCase() === sub.toLowerCase())).slice(0, 8),
     [all, sub],
   );
 
@@ -1049,7 +1109,7 @@ export function RedditFeedSection() {
           );
         })}
         <button
-          onClick={() => mutate()}
+          onClick={() => setNonce((x) => x + 1)}
           disabled={isValidating}
           className="ml-auto inline-flex items-center gap-1 text-[11px] text-muted hover:text-accent transition disabled:opacity-40"
           title="Refresh"
@@ -1072,54 +1132,28 @@ export function RedditFeedSection() {
           return (
             <li key={p.id}>
               <a href={p.permalink} target="_blank" rel="noreferrer" className="group flex items-start gap-3 py-3">
-                <span
-                  className="mt-0.5 inline-flex min-w-[44px] flex-col items-center rounded-lg px-1.5 py-1.5 shrink-0"
-                  style={{ background: "var(--rule-soft)" }}
-                >
-                  <ArrowUp className="h-3.5 w-3.5" style={{ color: tone }} />
-                  <span className="font-mono text-[12px] tabular-nums font-medium text-ink leading-tight">
-                    {p.score > 0 ? compactNum(p.score) : "—"}
-                  </span>
-                  {p.ratio > 0 && (
-                    <span className="font-mono text-[8.5px] tabular-nums text-muted leading-none mt-0.5">{Math.round(p.ratio * 100)}%</span>
-                  )}
-                </span>
-
+                <span className="mt-1 h-2 w-2 rounded-full shrink-0" style={{ background: tone }} aria-hidden />
                 <div className="min-w-0 flex-1">
-                  <div className="text-[13.5px] leading-snug text-ink-soft group-hover:text-accent transition line-clamp-2">
+                  <div className="text-[14px] leading-snug text-ink group-hover:text-accent transition line-clamp-2">
                     {p.title}
                   </div>
-                  <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 font-mono text-[10px] uppercase tracking-wider text-muted">
-                    <span className="inline-flex items-center gap-1">
-                      <span className="h-1.5 w-1.5 rounded-full" style={{ background: tone }} />
-                      r/{p.subreddit}
-                    </span>
+                  <div className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[11px] text-muted">
+                    <span className="font-semibold" style={{ color: tone }}>r/{p.subreddit}</span>
                     {p.flair && (
-                      <span className="normal-case rounded-full px-1.5 py-0.5 text-[9px] font-semibold" style={{ color: tone, background: "var(--rule-soft)" }}>
+                      <span className="rounded-full px-1.5 py-0.5 text-[10px] font-medium" style={{ color: tone, background: "var(--rule-soft)" }}>
                         {p.flair}
                       </span>
                     )}
-                    <span className="text-muted-2">·</span>
                     <span>{sinceMs(p.created)}</span>
+                    {p.score > 0 && (
+                      <span className="inline-flex items-center gap-1"><ArrowUp className="h-3 w-3" />{compactNum(p.score)}{p.ratio > 0 ? ` · ${Math.round(p.ratio * 100)}%` : ""}</span>
+                    )}
                     {p.comments > 0 && (
-                      <>
-                        <span className="text-muted-2">·</span>
-                        <span className="inline-flex items-center gap-1"><MessageSquare className="h-3 w-3" />{compactNum(p.comments)}</span>
-                      </>
+                      <span className="inline-flex items-center gap-1"><MessageSquare className="h-3 w-3" />{compactNum(p.comments)}</span>
                     )}
                   </div>
                 </div>
-
-                {p.image && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={p.image}
-                    alt=""
-                    loading="lazy"
-                    className="h-16 w-24 shrink-0 rounded-lg object-cover border border-[var(--rule)] bg-[var(--rule-soft)]"
-                    onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
-                  />
-                )}
+                <ExternalLink className="mt-1 h-3.5 w-3.5 text-muted-2 opacity-0 group-hover:opacity-100 transition shrink-0" />
               </a>
             </li>
           );
@@ -1130,7 +1164,6 @@ export function RedditFeedSection() {
       </ul>
 
       <div className="pt-1 font-mono text-[9px] uppercase tracking-wider text-muted">
-        <ArrowUp className="inline h-3 w-3 mr-1 -mt-0.5" />
         Hot across {subList.length} accounting subreddits · opens on reddit.com
       </div>
     </div>
