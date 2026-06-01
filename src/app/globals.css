@@ -3,52 +3,56 @@
 @tailwind utilities;
 
 /* =======================================================================
-   AURORA GLASS
-   A modern, dark-first glassmorphism dashboard. Frosted translucent cards
-   float above a slow-drifting aurora mesh; the accent is a living
-   violet → fuchsia → cyan gradient; everything has depth, glow, and a
-   confident Space Grotesk display face.
+   MIDNIGHT CYAN — Aurora Glass v2
 
-   Every legacy class name and CSS variable is preserved, so all the
-   existing widgets keep working without markup changes.
+   A premium, dark-first glassmorphism system. Cards float above a slow
+   aurora mesh; the accent is an electric cyan; the gradient endpoint is a
+   warm copper (not amber yellow) for a more refined "sunset over slate"
+   feel. Restrained enough to read as a serious finance/productivity tool,
+   alive enough to feel like a product, not a template.
+
+   Every legacy class name and CSS variable is preserved, so all existing
+   widgets keep working without markup changes.
 ======================================================================= */
 @import url("https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 
 /* ============== LIGHT ============== */
 :root {
   color-scheme: light;
-  --bg:           #eef0f9;
-  --paper:        rgba(255, 255, 255, 0.55);
-  --paper-2:      rgba(255, 255, 255, 0.72);
-  --ink:          #14111e;
-  --ink-soft:     #443f52;
-  --muted:        #6b6678;
-  --muted-2:      #a29eac;
-  --rule:         rgba(20, 16, 30, 0.10);
-  --rule-soft:    rgba(20, 16, 30, 0.05);
-  --accent:       #1d4ed8;            /* blue-700 — confident, navy-leaning */
-  --accent-soft:  rgba(29, 78, 216, 0.12);
-  --accent-2:     #0d9488;            /* teal-600 */
-  --hl:           rgba(29, 78, 216, 0.09);
-  --up:           #059669;
+  --bg:           #e9ebf2;                 /* cooler, more refined off-white */
+  --paper:        rgba(255, 255, 255, 0.62);
+  --paper-2:      rgba(255, 255, 255, 0.82);
+  --ink:          #0a0c15;                  /* deeper, near-black */
+  --ink-soft:     #353748;
+  --muted:        #6a6c7c;
+  --muted-2:      #a0a2b0;
+  --rule:         rgba(10, 12, 21, 0.10);
+  --rule-soft:    rgba(10, 12, 21, 0.045);
+  --accent:       #0e7490;                  /* cyan-700 — confident, modern */
+  --accent-soft:  rgba(14, 116, 144, 0.13);
+  --accent-2:     #0f766e;                  /* teal-700 */
+  --hl:           rgba(14, 116, 144, 0.10);
+  --up:           #047857;
   --down:         #b91c1c;
 
-  --grad-from:    #1e40af;            /* deep blue */
-  --grad-via:     #0d9488;            /* teal */
-  --grad-to:      #d97706;            /* amber — warm endpoint */
+  --grad-from:    #0c4a6e;                  /* sky-900 (deep navy) */
+  --grad-via:     #0e7490;                  /* cyan-700 */
+  --grad-to:      #a16207;                  /* yellow-700 (copper) */
 
-  --glass:        rgba(255, 255, 255, 0.55);
-  --glass-border: rgba(255, 255, 255, 0.70);
-  --glow:         rgba(29, 78, 216, 0.25);
+  --glass:        rgba(255, 255, 255, 0.58);
+  --glass-border: rgba(255, 255, 255, 0.78);
+  --glow:         rgba(14, 116, 144, 0.28);
 
-  --shadow-card:  0 10px 34px -16px rgba(15, 23, 42, 0.32),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.55);
-  --shadow-hover: 0 22px 56px -20px rgba(15, 23, 42, 0.45),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.80);
+  --shadow-card:  0 12px 36px -18px rgba(8, 12, 25, 0.32),
+                  0 1px 2px rgba(8, 12, 25, 0.06),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.60);
+  --shadow-hover: 0 26px 60px -22px rgba(8, 12, 25, 0.42),
+                  0 3px 8px rgba(8, 12, 25, 0.08),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.85);
 
-  --aurora-1:     rgba(30, 64, 175, 0.32);   /* deep blue */
-  --aurora-2:     rgba(13, 148, 136, 0.24);  /* teal */
-  --aurora-3:     rgba(217, 119, 6, 0.22);   /* amber */
+  --aurora-1:     rgba(12, 74, 110, 0.30);   /* deep navy */
+  --aurora-2:     rgba(14, 116, 144, 0.24);  /* cyan */
+  --aurora-3:     rgba(161, 98, 7, 0.22);    /* copper */
   --aurora-4:     rgba(15, 23, 42, 0.22);    /* slate */
   --grain:        0.04;
 }
@@ -56,39 +60,41 @@
 /* ============== DARK ============== */
 .dark {
   color-scheme: dark;
-  --bg:           #07070d;
-  --paper:        rgba(255, 255, 255, 0.045);
-  --paper-2:      rgba(255, 255, 255, 0.08);
-  --ink:          #f4f4fb;
-  --ink-soft:     #c9c9d8;
-  --muted:        #9595ab;
-  --muted-2:      #63637a;
-  --rule:         rgba(255, 255, 255, 0.12);
-  --rule-soft:    rgba(255, 255, 255, 0.06);
-  --accent:       #60a5fa;            /* blue-400 — glows on dark */
-  --accent-soft:  rgba(96, 165, 250, 0.16);
-  --accent-2:     #2dd4bf;            /* teal-400 */
-  --hl:           rgba(96, 165, 250, 0.13);
+  --bg:           #06070e;                  /* deeper void with cool tint */
+  --paper:        rgba(255, 255, 255, 0.04);
+  --paper-2:      rgba(255, 255, 255, 0.075);
+  --ink:          #f6f5fc;
+  --ink-soft:     #cfcbdb;
+  --muted:        #8c889e;
+  --muted-2:      #55526a;
+  --rule:         rgba(255, 255, 255, 0.11);
+  --rule-soft:    rgba(255, 255, 255, 0.05);
+  --accent:       #22d3ee;                  /* cyan-400 — electric, modern */
+  --accent-soft:  rgba(34, 211, 238, 0.16);
+  --accent-2:     #2dd4bf;                  /* teal-400 */
+  --hl:           rgba(34, 211, 238, 0.13);
   --up:           #34d399;
   --down:         #f87171;
 
-  --grad-from:    #60a5fa;            /* blue */
-  --grad-via:     #2dd4bf;            /* teal */
-  --grad-to:      #fbbf24;            /* amber */
+  --grad-from:    #0284c7;                  /* sky-600 */
+  --grad-via:     #22d3ee;                  /* cyan-400 */
+  --grad-to:      #d97706;                  /* amber-600 (sunset copper) */
 
-  --glass:        rgba(14, 17, 28, 0.55);
-  --glass-border: rgba(255, 255, 255, 0.10);
-  --glow:         rgba(96, 165, 250, 0.38);
+  --glass:        rgba(14, 17, 28, 0.52);
+  --glass-border: rgba(255, 255, 255, 0.085);
+  --glow:         rgba(34, 211, 238, 0.36);
 
-  --shadow-card:  0 10px 34px -14px rgba(0, 0, 0, 0.65),
+  --shadow-card:  0 14px 38px -16px rgba(0, 0, 0, 0.72),
+                  0 1px 2px rgba(0, 0, 0, 0.35),
                   inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  --shadow-hover: 0 24px 60px -18px rgba(0, 0, 0, 0.75),
+  --shadow-hover: 0 28px 70px -22px rgba(0, 0, 0, 0.85),
+                  0 4px 12px rgba(0, 0, 0, 0.40),
                   inset 0 1px 0 rgba(255, 255, 255, 0.10);
 
-  --aurora-1:     rgba(30, 64, 175, 0.55);   /* deep blue */
-  --aurora-2:     rgba(13, 148, 136, 0.42);  /* teal */
-  --aurora-3:     rgba(217, 119, 6, 0.40);   /* amber */
-  --aurora-4:     rgba(15, 23, 42, 0.45);    /* slate */
+  --aurora-1:     rgba(2, 132, 199, 0.50);   /* sky */
+  --aurora-2:     rgba(34, 211, 238, 0.38);  /* cyan */
+  --aurora-3:     rgba(217, 119, 6, 0.36);   /* copper */
+  --aurora-4:     rgba(15, 23, 42, 0.50);    /* slate */
   --grain:        0.05;
 }
 
@@ -110,7 +116,8 @@ body {
 
 /* The aurora — a soft mesh of four colour fields that slowly breathes
    behind everything. Sits at z-index -1 with a transparent body so the
-   frosted cards blur it as they pass over. */
+   frosted cards blur it as they pass over. Larger blur radius + lower
+   amplitude than v1 for a calmer, more "expensive" feel. */
 body::before {
   content: "";
   position: fixed;
@@ -118,12 +125,12 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(38% 38% at 18% 22%, var(--aurora-1), transparent 72%),
-    radial-gradient(34% 34% at 82% 14%, var(--aurora-2), transparent 72%),
-    radial-gradient(44% 44% at 80% 82%, var(--aurora-3), transparent 72%),
-    radial-gradient(40% 40% at 12% 86%, var(--aurora-4), transparent 72%);
-  filter: blur(64px) saturate(140%);
-  animation: aurora 28s ease-in-out infinite alternate;
+    radial-gradient(42% 42% at 16% 20%, var(--aurora-1), transparent 70%),
+    radial-gradient(38% 38% at 84% 12%, var(--aurora-2), transparent 70%),
+    radial-gradient(48% 48% at 82% 84%, var(--aurora-3), transparent 70%),
+    radial-gradient(44% 44% at 10% 88%, var(--aurora-4), transparent 70%);
+  filter: blur(80px) saturate(150%);
+  animation: aurora 36s ease-in-out infinite alternate;
 }
 
 /* Fine film-grain overlay so the glass reads as a real surface, not flat
@@ -141,8 +148,8 @@ body::after {
 
 @keyframes aurora {
   0%   { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
-  50%  { transform: translate3d(2%, -1.5%, 0) scale(1.12) rotate(4deg); }
-  100% { transform: translate3d(-2%, 2%, 0) scale(1.06) rotate(-3deg); }
+  50%  { transform: translate3d(1.5%, -1%, 0) scale(1.08) rotate(2.5deg); }
+  100% { transform: translate3d(-1.5%, 1.5%, 0) scale(1.04) rotate(-2deg); }
 }
 
 main { position: relative; z-index: 1; }
@@ -160,17 +167,19 @@ main { position: relative; z-index: 1; }
 .font-display  {
   font-family: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.035em;
+  font-feature-settings: "ss01" on, "ss02" on;
 }
 
-/* Living gradient text — used for the masthead name and other hero bits. */
+/* Living gradient text — used for the masthead name and other hero bits.
+   Slower hue shift than v1; reads as confident rather than restless. */
 .text-gradient {
-  background: linear-gradient(115deg, var(--grad-from), var(--grad-via) 45%, var(--grad-to));
-  background-size: 200% 200%;
+  background: linear-gradient(118deg, var(--grad-from), var(--grad-via) 45%, var(--grad-to));
+  background-size: 220% 220%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: hueShift 8s ease-in-out infinite alternate;
+  animation: hueShift 14s ease-in-out infinite alternate;
 }
 @keyframes hueShift {
   from { background-position: 0% 50%; }
@@ -201,23 +210,26 @@ main { position: relative; z-index: 1; }
 .label {
   font-family: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
   font-size: 10.5px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
   font-weight: 600;
+  font-feature-settings: "tnum" on;
 }
 
 /* ---------- glass card surfaces ---------- */
 .card {
   position: relative;
   background: var(--glass);
-  -webkit-backdrop-filter: blur(18px) saturate(150%);
-  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  backdrop-filter: blur(22px) saturate(160%);
   border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  padding: 1.4rem 1.5rem 1.5rem;
+  border-radius: 22px;
+  padding: 1.45rem 1.55rem 1.55rem;
   box-shadow: var(--shadow-card);
-  transition: box-shadow .35s ease, border-color .3s ease;
+  transition: box-shadow .45s cubic-bezier(.16,.84,.34,1),
+              border-color .35s ease,
+              transform .45s cubic-bezier(.16,.84,.34,1);
 }
 /* Glass edge — a 1px gradient ring that catches light at the top-left,
    the signature highlight that sells the frosted surface. */
@@ -227,62 +239,107 @@ main { position: relative; z-index: 1; }
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(150deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.04) 32%, transparent 60%);
+  background: linear-gradient(155deg,
+              rgba(255, 255, 255, 0.55) 0%,
+              rgba(255, 255, 255, 0.06) 36%,
+              transparent 64%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
           mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
           mask-composite: exclude;
   pointer-events: none;
+  opacity: .85;
+}
+/* A second, accent-tinted glow that only blooms on hover. Creates the
+   "card is alive" feel without making the resting state busy. */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(70% 50% at 50% 0%, var(--glow), transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .45s ease;
 }
 .card:hover {
   border-color: var(--rule);
   box-shadow: var(--shadow-hover), 0 0 0 1px var(--glow);
+  transform: translateY(-1px);
 }
+.card:hover::after { opacity: .35; }
 
 .card-bare {
   position: relative;
   border: 1px solid var(--rule);
-  border-radius: 20px;
-  padding: 1.4rem 1.5rem;
-  background: transparent;
+  border-radius: 18px;
+  padding: 1.25rem 1.4rem;
+  background: var(--rule-soft);
+  transition: border-color .25s ease, background .25s ease;
 }
+.card-bare:hover { border-color: var(--rule); }
 
-/* glowing gradient status dot */
+/* glowing gradient status dot — refined with a soft outer halo */
 .dot {
   display: inline-block;
-  width: 7px; height: 7px;
+  width: 8px; height: 8px;
   border-radius: 9999px;
   background: linear-gradient(135deg, var(--grad-from), var(--grad-via));
-  box-shadow: 0 0 10px var(--glow);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.10),
+              0 0 12px var(--glow),
+              0 0 24px var(--glow);
 }
 
 /* Clean header — small glowing dot + bold title + optional action right. */
 .headrule {
   display: flex;
   align-items: center;
-  gap: .6rem;
-  margin-bottom: 1.1rem;
+  gap: .65rem;
+  margin-bottom: 1.15rem;
 }
 
 /* ---------- chips, buttons ---------- */
 .btn-ghost {
   border: 1px solid var(--glass-border);
   background: var(--paper);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   color: var(--ink-soft);
   border-radius: 12px;
   height: 38px; width: 38px;
   display: inline-flex; align-items: center; justify-content: center;
-  transition: background .18s ease, transform .12s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease;
+  transition: background .22s ease,
+              transform .14s cubic-bezier(.16,.84,.34,1),
+              border-color .22s ease,
+              color .22s ease,
+              box-shadow .22s ease;
 }
 .btn-ghost:hover {
   background: var(--accent-soft);
   border-color: var(--accent);
   color: var(--accent);
-  box-shadow: 0 0 22px -6px var(--glow);
+  box-shadow: 0 0 26px -6px var(--glow),
+              inset 0 1px 0 rgba(255,255,255,0.08);
+  transform: translateY(-1px);
 }
 .btn-ghost:active { transform: scale(.94); }
+
+/* Primary CTA — gradient pill, used for the lock screen, etc. */
+.btn-primary {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: .5rem;
+  padding: .65rem 1.1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 13.5px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--grad-from), var(--grad-via));
+  box-shadow: 0 10px 28px -10px var(--glow),
+              inset 0 1px 0 rgba(255,255,255,0.18);
+  transition: filter .2s ease, transform .14s ease, box-shadow .2s ease;
+}
+.btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); box-shadow: 0 16px 36px -12px var(--glow); }
+.btn-primary:active { transform: translateY(0) scale(.98); }
 
 .chip {
   font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -294,16 +351,17 @@ main { position: relative; z-index: 1; }
   border: 1px solid var(--glass-border);
   color: var(--muted);
   background: var(--paper);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  transition: all .18s ease;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: all .22s ease;
 }
 .chip:hover { color: var(--ink); border-color: var(--accent); }
 .chip-active {
   background: linear-gradient(135deg, var(--grad-from), var(--grad-via));
   color: #fff;
   border-color: transparent;
-  box-shadow: 0 6px 18px -6px var(--glow);
+  box-shadow: 0 6px 20px -6px var(--glow),
+              inset 0 1px 0 rgba(255,255,255,0.20);
 }
 .chip-active:hover { color: #fff; border-color: transparent; }
 
@@ -318,6 +376,28 @@ main { position: relative; z-index: 1; }
   background: var(--paper-2);
 }
 
+/* ---------- skeleton (use anywhere data hasn't arrived yet) ---------- */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--rule-soft);
+  border-radius: 10px;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+              transparent 0%,
+              var(--rule) 50%,
+              transparent 100%);
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
+
 /* ---------- motion ---------- */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px) scale(.995); }
@@ -325,11 +405,16 @@ main { position: relative; z-index: 1; }
 }
 .animate-fadeIn { animation: fadeIn .5s cubic-bezier(.16, .84, .34, 1) both; }
 
-/* ---------- scrollbars ---------- */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 8px; }
+/* ---------- scrollbars (refined: thinner, more "OS-native") ---------- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb {
+  background: var(--rule);
+  border-radius: 8px;
+  transition: background .2s ease;
+}
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 ::-webkit-scrollbar-track { background: transparent; }
+* { scrollbar-width: thin; scrollbar-color: var(--rule) transparent; }
 
 /* ---------- focus ---------- */
 *:focus-visible {

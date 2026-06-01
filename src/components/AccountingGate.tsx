@@ -63,11 +63,7 @@ export function AccountingGate({ children }: { children: ReactNode }) {
             aria-label="Passcode"
           />
           {err && <p className="text-[12px] text-down">Wrong passcode — try again.</p>}
-          <button
-            type="submit"
-            className="w-full rounded-xl py-2.5 text-[14px] font-semibold text-white transition hover:brightness-110"
-            style={{ background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" }}
-          >
+          <button type="submit" className="btn-primary w-full">
             Unlock
           </button>
         </form>

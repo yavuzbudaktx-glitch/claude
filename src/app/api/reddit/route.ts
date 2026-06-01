@@ -14,7 +14,11 @@
 import { NextResponse } from "next/server";
 import Parser from "rss-parser";
 
-export const revalidate = 600;
+// Force-dynamic + 0 revalidate so the refresh button truly re-fetches every
+// time — Next's own data cache used to swallow the request even when the
+// client sent a fresh URL with a nonce.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const SUBS = ["CPA", "Accounting", "Big4", "tax", "Bookkeeping"];
 const MAX = 16;
@@ -56,7 +60,7 @@ function proxies(url: string): string[] {
 async function fetchText(url: string, headers: Record<string, string>): Promise<string | null> {
   for (const c of proxies(url)) {
     try {
-      const res = await fetch(c, { headers, signal: AbortSignal.timeout(10000) });
+      const res = await fetch(c, { headers, signal: AbortSignal.timeout(10000), cache: "no-store" });
       if (!res.ok) continue;
       const text = await res.text();
       if (text && text.length > 80) return text;
@@ -149,14 +153,21 @@ function mapJson(listing: RedditListing, sub: string): Post[] {
     .filter((p) => p.id && p.title);
 }
 
+// "Best" on a sub = top-of-week — Reddit's "best" listing is only available
+// for the homepage. Top-of-week + sort-by-score gives the highest-quality
+// posts the community has surfaced lately, which is what the user wants.
+const SORT = "top";
+const PERIOD = "week";
+
 async function fetchSubJson(sub: string): Promise<Post[] | null> {
   // OAuth first
   const t = await getToken();
   if (t) {
     try {
-      const res = await fetch(`https://oauth.reddit.com/r/${sub}/hot?limit=20&raw_json=1`, {
+      const res = await fetch(`https://oauth.reddit.com/r/${sub}/${SORT}?t=${PERIOD}&limit=20&raw_json=1`, {
         headers: { Authorization: `Bearer ${t}`, "User-Agent": UA },
         signal: AbortSignal.timeout(9000),
+        cache: "no-store",
       });
       if (res.ok) {
         const j = (await res.json()) as RedditListing;
@@ -168,7 +179,7 @@ async function fetchSubJson(sub: string): Promise<Post[] | null> {
     }
   }
   // public json via proxy chain
-  const url = `https://www.reddit.com/r/${sub}/hot.json?limit=20&raw_json=1`;
+  const url = `https://www.reddit.com/r/${sub}/${SORT}.json?t=${PERIOD}&limit=20&raw_json=1`;
   const text =
     (await fetchText(url, { "User-Agent": UA, Accept: "application/json" })) ??
     (await fetchText(url, { "User-Agent": BROWSER_UA, Accept: "application/json" }));
@@ -205,7 +216,7 @@ function commentsFromHtml(html: string): number {
   return m ? Number(m[1].replace(/,/g, "")) : 0;
 }
 async function fetchSubRss(sub: string): Promise<Post[]> {
-  const url = `https://www.reddit.com/r/${sub}/hot/.rss?limit=20`;
+  const url = `https://www.reddit.com/r/${sub}/${SORT}/.rss?t=${PERIOD}&limit=20`;
   let feed: Awaited<ReturnType<typeof rssParser.parseURL>> | null = null;
   try {
     feed = await rssParser.parseURL(url);
@@ -261,11 +272,15 @@ export async function GET() {
     if (!advanced) break;
   }
 
+  // Sort by absolute score so the highest-quality posts surface first,
+  // regardless of which sub they came from.
+  out.sort((a, b) => b.score - a.score || b.created - a.created);
+
   if (out.length === 0) {
     return NextResponse.json({ posts: [], error: "no_posts" }, { status: 502 });
   }
   return NextResponse.json(
-    { posts: out, subs: SUBS },
-    { headers: { "Cache-Control": "s-maxage=600, stale-while-revalidate=1800" } },
+    { posts: out, subs: SUBS, sort: SORT, period: PERIOD },
+    { headers: { "Cache-Control": "no-store" } },
   );
 }

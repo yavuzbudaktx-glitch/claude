@@ -833,22 +833,30 @@ export function AccountingHeaderStats() {
   );
 }
 
-// =====================  CPA VIDEO (Logan Graf)  =============================
+// =====================  CPA VIDEO  ==========================================
 //
-// A single daily pick from https://www.youtube.com/@logangrafcpa/videos.
-// The /api/cpa-video route picks deterministically per local date, so the
-// pick is stable through the day and rotates at midnight.
+// Daily pick from a curated set of YouTube channels (Logan Graf + KPMG US
+// Careers). The /api/cpa-video route resolves each handle, pulls uploads,
+// interleaves them, and returns a per-day seed index so the pick is stable
+// through the day and rotates at midnight.
 
-interface CpaVideo { id: string; title: string; published: string; thumb: string }
+interface CpaVideo {
+  id: string; title: string; published: string; thumb: string;
+  channel: string; channelLabel: string; channelUrl: string;
+}
 interface CpaVideoResp {
   videos?: CpaVideo[];
   seed?: number;
-  channelUrl?: string;
-  channelTitle?: string;
+  channels?: Array<{ handle: string; label: string }>;
   error?: string;
 }
 interface YtComment { author: string; text: string; likes: number; time: string }
 interface YtCommentsResp { comments?: YtComment[] }
+
+const CHANNEL_TONE: Record<string, string> = {
+  logangrafcpa:  "var(--grad-via)",
+  KPMGusCareers: "var(--grad-from)",
+};
 
 const jsonFetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -866,8 +874,11 @@ function VideoComments({ videoId }: { videoId: string }) {
   const comments = data?.comments ?? [];
 
   return (
+    // `flex-1 min-h-0` lets the comments fill whatever space the card has
+    // left after the video + title rows — and scroll inside that, never
+    // pushing the card taller than the row's stretched height.
     <div className="flex-1 min-h-0 flex flex-col border-t rule pt-3">
-      <div className="label !text-[9px] !tracking-[0.12em] mb-2 flex items-center gap-1.5">
+      <div className="label !text-[9px] !tracking-[0.12em] mb-2 flex items-center gap-1.5 shrink-0">
         <MessageSquare className="h-3 w-3" /> Top comments
       </div>
       {isLoading && (
@@ -876,7 +887,7 @@ function VideoComments({ videoId }: { videoId: string }) {
       {!isLoading && comments.length === 0 && (
         <p className="text-[12px] text-muted-2 italic">Comments aren&rsquo;t available for this one.</p>
       )}
-      <ul className="flex-1 min-h-0 max-h-[340px] overflow-y-auto pr-1 space-y-3">
+      <ul className="flex-1 min-h-0 overflow-y-auto pr-1 space-y-3">
         {comments.map((c, i) => (
           <li key={i} className="flex gap-2.5">
             <span
@@ -912,8 +923,6 @@ export function CpaVideoSection() {
     { refreshInterval: 1000 * 60 * 60 * 6, keepPreviousData: true },
   );
 
-  const channelUrl = data?.channelUrl ?? "https://www.youtube.com/@logangrafcpa/videos";
-  const channelTitle = data?.channelTitle ?? "Logan Graf, CPA";
   const videos = useMemo(() => data?.videos ?? [], [data]);
 
   // A shuffled choice persists (synced) for the rest of the day, so a page
@@ -946,16 +955,23 @@ export function CpaVideoSection() {
     setPick({ date: dateKey, id: videos[n].id });
   }
 
+  const channelUrl = cur?.channelUrl ?? "https://www.youtube.com/@logangrafcpa/videos";
+  const channelLabel = cur?.channelLabel ?? "CPA video";
+  const channelTone = cur ? (CHANNEL_TONE[cur.channel] ?? "var(--accent)") : "var(--accent)";
+
   return (
-    <div className="flex flex-col gap-3 h-full">
+    // h-full + flex column so the comments fill any remaining vertical space
+    // (the row sets items-stretch) and scroll internally — the card itself
+    // never grows beyond the row's height.
+    <div className="flex flex-col gap-3 h-full min-h-0">
       <div className="relative aspect-video rounded-xl overflow-hidden bg-[var(--rule-soft)] border border-[var(--rule)] shrink-0">
         {isLoading && !cur && (
-          <div className="absolute inset-0 grid place-items-center text-[12px] text-muted">Loading his latest videos…</div>
+          <div className="absolute inset-0 grid place-items-center text-[12px] text-muted">Loading videos…</div>
         )}
         {!isLoading && !cur && (
           <div className="absolute inset-0 grid place-items-center px-4 text-center text-[12px] text-muted">
             <a href={channelUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-accent hover:underline">
-              <PlayCircle className="h-4 w-4" /> Open Logan Graf on YouTube
+              <PlayCircle className="h-4 w-4" /> Open the channel on YouTube
             </a>
           </div>
         )}
@@ -963,7 +979,14 @@ export function CpaVideoSection() {
           <button onClick={() => setPlaying(true)} aria-label="Play this video" className="absolute inset-0 group">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={thumb} alt={cur.title} className="h-full w-full object-cover transition group-hover:scale-[1.02]" />
-            <span className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+            <span className="absolute inset-0 bg-gradient-to-t from-black/72 via-black/10 to-transparent" />
+            {/* Channel chip pinned to the corner — tells you whose video it is at a glance. */}
+            <span
+              className="absolute left-2.5 top-2.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-md"
+              style={{ background: `color-mix(in srgb, ${channelTone} 70%, rgba(0,0,0,0.45))` }}
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-white/90" /> {channelLabel}
+            </span>
             <span className="absolute inset-0 grid place-items-center">
               <span className="grid h-14 w-14 place-items-center rounded-full bg-white/95 text-black shadow-lg transition group-hover:scale-110">
                 <PlayCircle className="h-9 w-9" strokeWidth={1.5} />
@@ -983,22 +1006,25 @@ export function CpaVideoSection() {
         )}
       </div>
 
-      <div className="flex items-start gap-2">
+      <div className="flex items-start gap-2 shrink-0">
         <div className="min-w-0 flex-1">
           <a
             href={channelUrl}
             target="_blank"
             rel="noreferrer"
-            title={cur?.title || channelTitle}
+            title={cur?.title || channelLabel}
             className="group block text-[13.5px] font-medium text-ink-soft hover:text-accent transition leading-snug line-clamp-2"
           >
-            {cur?.title || `${channelTitle} — videos`}
+            {cur?.title || `${channelLabel} — videos`}
             <span className="ml-1 inline-block align-text-bottom opacity-0 group-hover:opacity-100 transition">
               <ExternalLink className="h-3 w-3 inline" />
             </span>
           </a>
           <div className="mt-1 flex items-center gap-2 text-[11px] text-muted">
-            <span className="label !text-[9px] !tracking-[0.1em]">{channelTitle}</span>
+            <span className="inline-flex items-center gap-1 font-semibold" style={{ color: channelTone }}>
+              <span className="h-1.5 w-1.5 rounded-full" style={{ background: channelTone }} />
+              {channelLabel}
+            </span>
             {videos.length > 0 && <span>· {idx + 1}/{videos.length}</span>}
           </div>
         </div>
@@ -1070,16 +1096,30 @@ function sinceMs(ms: number): string {
   return format(new Date(ms), "MMM d");
 }
 
+// Cache-bust fetcher: the route is now force-dynamic and cache: no-store,
+// but the BROWSER may still cache. cache: "reload" + a Date.now() in the URL
+// nukes every layer of caching between the button and the upstream Reddit.
+const noStoreFetcher = (url: string) =>
+  fetch(url, { cache: "reload", headers: { "Cache-Control": "no-cache" } })
+    .then((r) => r.json());
+
 export function RedditFeedSection() {
-  // A nonce makes the refresh button bust the CDN cache (the SWR key changes,
-  // so it can't return a stale cached payload) and actually re-pull.
+  // A nonce changes the SWR key so it can't dedupe with a previous response,
+  // and `n=Date.now()` also defeats any browser/CDN cache between us and the
+  // route handler. Set it on click — refresh truly re-fetches.
   const [nonce, setNonce] = useState(0);
-  const { data, error, isLoading, isValidating } = useSWR<RedditResp>(
-    nonce ? `/api/reddit?n=${nonce}` : "/api/reddit",
-    jsonFetcher,
-    { refreshInterval: 1000 * 60 * 15, keepPreviousData: true },
+  const key = nonce ? `/api/reddit?n=${nonce}` : "/api/reddit";
+  const { data, error, isLoading, isValidating, mutate } = useSWR<RedditResp>(
+    key,
+    noStoreFetcher,
+    { refreshInterval: 1000 * 60 * 15, keepPreviousData: true, revalidateOnFocus: false },
   );
   const [sub, setSub] = useState<string>("all");
+
+  function refresh() {
+    setNonce(Date.now());
+    mutate();
+  }
 
   const all = useMemo(() => data?.posts ?? [], [data]);
   const subList = useMemo(
@@ -1109,10 +1149,10 @@ export function RedditFeedSection() {
           );
         })}
         <button
-          onClick={() => setNonce((x) => x + 1)}
+          onClick={refresh}
           disabled={isValidating}
           className="ml-auto inline-flex items-center gap-1 text-[11px] text-muted hover:text-accent transition disabled:opacity-40"
-          title="Refresh"
+          title="Refresh top posts"
           aria-label="Refresh"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${isValidating ? "animate-spin" : ""}`} /> refresh
@@ -1164,7 +1204,7 @@ export function RedditFeedSection() {
       </ul>
 
       <div className="pt-1 font-mono text-[9px] uppercase tracking-wider text-muted">
-        Hot across {subList.length} accounting subreddits · opens on reddit.com
+        Top of the week across {subList.length} accounting subs · opens on reddit.com
       </div>
     </div>
   );

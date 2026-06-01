@@ -1,34 +1,43 @@
-// Logan Graf CPA — his own uploads, surfaced one-at-a-time on the
-// Accounting page with a "shuffle" refresh.
+// CPA video feed for the Accounting page — videos from a curated list of
+// channels (Logan Graf + KPMG US Careers right now), interleaved.
 //
-//   1. Resolve the @logangrafcpa handle to its channel ID. We trust ONLY
-//      the page-owner signals — the <link rel="canonical">, og:url, and
-//      "externalId" — never a bare `channel/UC…` match, which on a channel
-//      page can point at a *recommended* channel and is exactly how you end
-//      up showing "videos tagged him" instead of his own.
-//   2. Pull the channel's uploads via the videos.xml Atom feed (this is the
-//      channel's own uploads, newest first). Page-scrape fallback if needed.
+// For each channel we:
+//   1. Resolve the @handle → channel ID via page-owner signals only
+//      (<link rel=canonical>, og:url, externalId, channelId). We
+//      explicitly avoid a bare `channel/UC…` regex match, which on a
+//      channel page can capture a *recommended* channel and surface
+//      "videos tagged him" instead of his own.
+//   2. Pull uploads via the channel's videos.xml Atom feed.
+//   3. Fall back to scraping the /videos page if the feed is blocked.
 //
-// We return the whole list so the client can shuffle through instantly, plus
-// a per-date seed index so each day opens on a different video by default.
+// Each video carries `channel` (handle) + `channelLabel` (display name) so
+// the client can label it. Interleaved round-robin so the daily seed and
+// the shuffle both see a balanced mix.
 
 import { NextResponse } from "next/server";
 import Parser from "rss-parser";
 
 export const revalidate = 3600;
 
-const HANDLE = "logangrafcpa";
-const CHANNEL_URL = `https://www.youtube.com/@${HANDLE}/videos`;
+const CHANNELS: Array<{ handle: string; label: string }> = [
+  { handle: "logangrafcpa",   label: "Logan Graf" },
+  { handle: "KPMGusCareers",  label: "KPMG Careers" },
+];
+
 const HEADERS = {
   "User-Agent":
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
   "Accept-Language": "en-US,en;q=0.9",
 };
 
-interface Video { id: string; title: string; published: string; thumb: string }
+interface Video {
+  id: string; title: string; published: string; thumb: string;
+  channel: string;        // handle
+  channelLabel: string;   // display name
+  channelUrl: string;     // /@handle/videos
+}
 
-let cachedChannelId: string | null = null;
-let cachedTitle: string | null = null;
+const idCache = new Map<string, string>();
 
 async function getHtml(url: string): Promise<string | null> {
   const tries = [
@@ -38,7 +47,7 @@ async function getHtml(url: string): Promise<string | null> {
   ];
   for (const u of tries) {
     try {
-      const res = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(10000) });
+      const res = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(10000), cache: "no-store" });
       if (!res.ok) continue;
       const text = await res.text();
       if (text && text.length > 1000) return text;
@@ -49,9 +58,10 @@ async function getHtml(url: string): Promise<string | null> {
   return null;
 }
 
-async function resolveChannelId(): Promise<string | null> {
-  if (cachedChannelId) return cachedChannelId;
-  const html = await getHtml(`https://www.youtube.com/@${HANDLE}`);
+async function resolveChannelId(handle: string): Promise<string | null> {
+  const hit = idCache.get(handle);
+  if (hit) return hit;
+  const html = await getHtml(`https://www.youtube.com/@${handle}`);
   if (!html) return null;
   const m =
     /<link[^>]+rel="canonical"[^>]+href="https:\/\/www\.youtube\.com\/channel\/(UC[\w-]{22})"/.exec(html) ||
@@ -59,10 +69,8 @@ async function resolveChannelId(): Promise<string | null> {
     /"externalId":"(UC[\w-]{22})"/.exec(html) ||
     /"channelId":"(UC[\w-]{22})"/.exec(html);
   if (m) {
-    cachedChannelId = m[1];
-    const t = /<meta[^>]+property="og:title"[^>]+content="([^"]+)"/.exec(html);
-    cachedTitle = t ? t[1] : null;
-    return cachedChannelId;
+    idCache.set(handle, m[1]);
+    return m[1];
   }
   return null;
 }
@@ -88,9 +96,8 @@ function thumbOf(item: YtItem, id: string): string {
   return first?.$?.url ?? `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 }
 
-async function fetchUploads(channelId: string): Promise<Video[]> {
+async function fetchUploads(channelId: string, channel: { handle: string; label: string }): Promise<Video[]> {
   const url = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
-  // rss-parser can fetch directly; if that's blocked, hand it proxied XML.
   let feed: Awaited<ReturnType<typeof ytParser.parseURL>> | null = null;
   try {
     feed = await ytParser.parseURL(url);
@@ -99,22 +106,26 @@ async function fetchUploads(channelId: string): Promise<Video[]> {
     if (xml) { try { feed = await ytParser.parseString(xml); } catch { feed = null; } }
   }
   if (!feed) return [];
-  if (feed.title) cachedTitle = feed.title;
   return (feed.items ?? [])
     .map((it) => {
       const id = it["yt:videoId"] ?? (it.id ?? "").replace(/^yt:video:/, "");
-      return { id, title: (it.title ?? "").trim(), published: it.isoDate ?? it.pubDate ?? "", thumb: thumbOf(it, id) };
+      return {
+        id, title: (it.title ?? "").trim(),
+        published: it.isoDate ?? it.pubDate ?? "",
+        thumb: thumbOf(it, id),
+        channel: channel.handle,
+        channelLabel: channel.label,
+        channelUrl: `https://www.youtube.com/@${channel.handle}/videos`,
+      };
     })
     .filter((v) => v.id && v.title);
 }
 
-// Last-ditch fallback: scrape the /videos page for the owner's video IDs.
-async function scrapeVideos(): Promise<Video[]> {
-  const html = await getHtml(CHANNEL_URL);
+async function scrapeVideos(channel: { handle: string; label: string }): Promise<Video[]> {
+  const html = await getHtml(`https://www.youtube.com/@${channel.handle}/videos`);
   if (!html) return [];
   const out: Video[] = [];
   const seen = new Set<string>();
-  // videoRenderer blocks carry the id then a title runs/text shortly after.
   const re = /"videoId":"([\w-]{11})"(?:(?!"videoId").){0,400}?"text":"((?:[^"\\]|\\.)*?)"/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(html)) && out.length < 20) {
@@ -124,7 +135,13 @@ async function scrapeVideos(): Promise<Video[]> {
     let title = "";
     try { title = JSON.parse(`"${m[2]}"`); } catch { title = m[2]; }
     if (title && !/^\d+:\d+$/.test(title)) {
-      out.push({ id, title, published: "", thumb: `https://i.ytimg.com/vi/${id}/hqdefault.jpg` });
+      out.push({
+        id, title, published: "",
+        thumb: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+        channel: channel.handle,
+        channelLabel: channel.label,
+        channelUrl: `https://www.youtube.com/@${channel.handle}/videos`,
+      });
     }
   }
   return out;
@@ -139,22 +156,42 @@ function seedIndex(dateKey: string, n: number): number {
 export async function GET(req: Request) {
   const dateKey = new URL(req.url).searchParams.get("d") ?? new Date().toISOString().slice(0, 10);
 
-  const channelId = await resolveChannelId();
-  let videos: Video[] = [];
-  if (channelId) videos = await fetchUploads(channelId);
-  if (videos.length === 0) videos = await scrapeVideos();
+  const perChannel = await Promise.all(
+    CHANNELS.map(async (ch) => {
+      const id = await resolveChannelId(ch.handle);
+      let vs = id ? await fetchUploads(id, ch) : [];
+      if (vs.length === 0) vs = await scrapeVideos(ch);
+      return vs;
+    }),
+  );
+
+  // Round-robin interleave so a shuffle never sticks on one channel.
+  const seen = new Set<string>();
+  const videos: Video[] = [];
+  for (let i = 0; ; i++) {
+    let advanced = false;
+    for (const list of perChannel) {
+      const v = list[i];
+      if (v) {
+        advanced = true;
+        if (!seen.has(v.id)) { seen.add(v.id); videos.push(v); }
+      }
+    }
+    if (!advanced) break;
+  }
 
   if (videos.length === 0) {
-    return NextResponse.json({ error: "no_videos", channelUrl: CHANNEL_URL }, { status: 502 });
+    return NextResponse.json(
+      { error: "no_videos", channels: CHANNELS },
+      { status: 502 },
+    );
   }
 
   return NextResponse.json(
     {
       videos,
       seed: seedIndex(dateKey, videos.length),
-      channelUrl: CHANNEL_URL,
-      channelTitle: cachedTitle ?? "Logan Graf, CPA",
-      channelId,
+      channels: CHANNELS,
     },
     { headers: { "Cache-Control": "s-maxage=3600, stale-while-revalidate=21600" } },
   );
