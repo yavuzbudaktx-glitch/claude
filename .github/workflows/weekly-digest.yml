@@ -1,0 +1,36 @@
+name: Weekly digest
+
+# Fires the digest by GET-ing /api/digest?send=1 on the deployed site, which
+# pulls fresh data from Supabase (server-side), renders the HTML, and sends
+# via Resend. Friday 23:00 UTC ≈ 18:00 Central. Manually triggerable too.
+#
+# Needs the following GitHub repo secrets:
+#   DIGEST_URL     — e.g. https://your-site.com/api/digest
+#   DIGEST_SECRET  — optional, if you protect the route. Sent as
+#                    "Authorization: Bearer …" (the route currently doesn't
+#                    enforce it; leave empty until you add the check.)
+
+on:
+  schedule:
+    - cron: "0 23 * * 5"   # Fri 23:00 UTC
+  workflow_dispatch: {}    # plus a manual button in the Actions tab
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger digest send
+        env:
+          DIGEST_URL: ${{ secrets.DIGEST_URL }}
+          DIGEST_SECRET: ${{ secrets.DIGEST_SECRET }}
+        run: |
+          if [ -z "$DIGEST_URL" ]; then
+            echo "::error::Set DIGEST_URL repo secret first."
+            exit 1
+          fi
+          echo "Calling $DIGEST_URL?send=1"
+          if [ -n "$DIGEST_SECRET" ]; then
+            curl -fsSL -H "Authorization: Bearer $DIGEST_SECRET" "$DIGEST_URL?send=1"
+          else
+            curl -fsSL "$DIGEST_URL?send=1"
+          fi

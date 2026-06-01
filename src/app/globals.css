@@ -297,6 +297,10 @@ main { position: relative; z-index: 1; }
   gap: .65rem;
   margin-bottom: 1.15rem;
 }
+/* Collapsed cards: tuck the body up against the header so the card reads
+   as a single-line summary you can scan past. */
+.is-collapsed { padding-bottom: 1rem; }
+.is-collapsed .headrule { margin-bottom: 0; }
 
 /* ---------- chips, buttons ---------- */
 .btn-ghost {
@@ -405,6 +409,20 @@ main { position: relative; z-index: 1; }
 }
 .animate-fadeIn { animation: fadeIn .5s cubic-bezier(.16, .84, .34, 1) both; }
 
+/* Equalizer bars for the radio button. Three offset breath rates so the
+   group reads as music-reactive rather than a metronome. */
+@keyframes eq1 { 0%,100% { height: 30%; } 50% { height: 95%; } }
+@keyframes eq2 { 0%,100% { height: 70%; } 50% { height: 30%; } }
+@keyframes eq3 { 0%,100% { height: 45%; } 50% { height: 100%; } }
+.animate-eq1 { animation: eq1 .9s ease-in-out infinite; height: 60%; }
+.animate-eq2 { animation: eq2 1.15s ease-in-out infinite; height: 50%; }
+.animate-eq3 { animation: eq3 .8s ease-in-out infinite; height: 70%; }
+
+@keyframes radioPing {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); }
+  100% { box-shadow: 0 0 0 14px transparent; }
+}
+
 /* ---------- scrollbars (refined: thinner, more "OS-native") ---------- */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-thumb {
@@ -430,6 +448,128 @@ main { position: relative; z-index: 1; }
   .animate-fadeIn { animation: none; }
 }
 
+
+/* =======================================================================
+   THEME VARIANTS
+   `.theme-paper` and `.theme-terminal` are applied to <html> by the
+   ThemeVariantButton and override the curated palette + a few shape /
+   typography knobs. They stack on top of `.dark`, but each variant ships
+   with its own dark/light handling so the result reads as a different
+   product, not a recolor.
+======================================================================= */
+
+/* ============== PAPER ============== */
+:root.theme-paper {
+  color-scheme: light;
+  --bg:           #f4f0e6;
+  --paper:        #ffffff;
+  --paper-2:      #fbf8ef;
+  --ink:          #1a1814;
+  --ink-soft:     #423d33;
+  --muted:        #6e6657;
+  --muted-2:      #a89e88;
+  --rule:         rgba(26, 24, 20, 0.14);
+  --rule-soft:    rgba(26, 24, 20, 0.06);
+  --accent:       #a16207;
+  --accent-soft:  rgba(161, 98, 7, 0.10);
+  --accent-2:     #1f2937;
+  --hl:           rgba(161, 98, 7, 0.08);
+  --up:           #15803d;
+  --down:         #b91c1c;
+  --grad-from:    #1f2937;
+  --grad-via:     #a16207;
+  --grad-to:      #b45309;
+  --glass:        #ffffff;
+  --glass-border: rgba(26, 24, 20, 0.10);
+  --glow:         rgba(161, 98, 7, 0.20);
+  --shadow-card:  0 6px 24px -14px rgba(26, 24, 20, 0.22), 0 1px 2px rgba(26, 24, 20, 0.05);
+  --shadow-hover: 0 18px 44px -18px rgba(26, 24, 20, 0.30), 0 2px 6px rgba(26, 24, 20, 0.06);
+  --aurora-1: transparent;
+  --aurora-2: transparent;
+  --aurora-3: transparent;
+  --aurora-4: transparent;
+  --grain:    0.02;
+}
+.theme-paper body::before { background: none; animation: none; }
+.theme-paper body { background: var(--bg); }
+.theme-paper .card {
+  background: var(--paper);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-radius: 4px;
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow-card);
+}
+.theme-paper .card::before { display: none; }
+.theme-paper .card::after { display: none; }
+.theme-paper .card:hover { transform: none; border-color: var(--ink-soft); }
+.theme-paper .card-bare { border-radius: 4px; }
+.theme-paper .btn-ghost { border-radius: 4px; background: transparent; border-color: var(--rule); }
+.theme-paper .chip { border-radius: 4px; }
+.theme-paper .dot { box-shadow: none; }
+.theme-paper .text-gradient {
+  background: linear-gradient(118deg, var(--ink) 0%, var(--accent) 60%, var(--accent) 100%);
+  animation: none;
+  -webkit-background-clip: text; background-clip: text;
+}
+.theme-paper .font-display { font-weight: 800; letter-spacing: -0.04em; }
+
+/* ============== TERMINAL ============== */
+:root.theme-terminal {
+  color-scheme: dark;
+  --bg:           #050707;
+  --paper:        rgba(0, 35, 20, 0.65);
+  --paper-2:      rgba(0, 45, 28, 0.85);
+  --ink:          #b8ffd1;
+  --ink-soft:     #7ee4a3;
+  --muted:        #4faa78;
+  --muted-2:      #2d6048;
+  --rule:         rgba(120, 255, 170, 0.18);
+  --rule-soft:    rgba(120, 255, 170, 0.08);
+  --accent:       #22ff77;
+  --accent-soft:  rgba(34, 255, 119, 0.12);
+  --accent-2:     #ffb454;
+  --hl:           rgba(34, 255, 119, 0.10);
+  --up:           #22ff77;
+  --down:         #ff5c5c;
+  --grad-from:    #22ff77;
+  --grad-via:     #22ff77;
+  --grad-to:      #ffb454;
+  --glass:        rgba(0, 25, 12, 0.55);
+  --glass-border: rgba(120, 255, 170, 0.25);
+  --glow:         rgba(34, 255, 119, 0.45);
+  --shadow-card:  0 0 0 1px rgba(34, 255, 119, 0.14), 0 8px 28px -14px rgba(34, 255, 119, 0.25);
+  --shadow-hover: 0 0 0 1px rgba(34, 255, 119, 0.30), 0 14px 42px -18px rgba(34, 255, 119, 0.45);
+  --aurora-1:     rgba(34, 255, 119, 0.08);
+  --aurora-2:     rgba(34, 255, 119, 0.05);
+  --aurora-3:     rgba(255, 180, 84, 0.06);
+  --aurora-4:     rgba(0, 0, 0, 0.6);
+  --grain:        0.08;
+}
+.theme-terminal body { background: var(--bg); }
+.theme-terminal { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; }
+.theme-terminal .font-display {
+  font-family: "JetBrains Mono", ui-monospace, monospace !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.005em !important;
+  text-transform: uppercase;
+}
+.theme-terminal .card {
+  border-radius: 2px;
+  border: 1px solid var(--rule);
+  background: var(--glass);
+}
+.theme-terminal .card::before { display: none; }
+.theme-terminal .card::after { display: none; }
+.theme-terminal .card-bare { border-radius: 2px; }
+.theme-terminal .btn-ghost { border-radius: 2px; }
+.theme-terminal .chip { border-radius: 2px; }
+.theme-terminal .text-gradient {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  animation: none;
+  -webkit-background-clip: text; background-clip: text;
+}
+.theme-terminal .text-ink { text-shadow: 0 0 8px rgba(34, 255, 119, 0.18); }
 
 /* =======================================================================
    DOC ANYWHERE — "soft graphite" skin

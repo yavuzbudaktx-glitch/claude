@@ -5,6 +5,7 @@ import { AccountingGate } from "@/components/AccountingGate";
 import { TopUtilityBar } from "@/components/widgets/TopUtilityBar";
 import { Scratchpad } from "@/components/Scratchpad";
 import { RadioButton } from "@/components/RadioButton";
+import { ThemeVariantButton } from "@/components/ThemeVariantButton";
 import { FocusButton } from "@/components/FocusButton";
 import { FullscreenToggle } from "@/components/FullscreenToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -37,6 +38,7 @@ export default async function AccountingPage() {
             <Scratchpad />
             <RadioButton />
             <FocusButton />
+            <ThemeVariantButton />
             <FullscreenToggle />
             <ThemeToggle />
             <SignOutButton />
@@ -51,23 +53,23 @@ export default async function AccountingPage() {
         <AccountingHeaderStats />
       </header>
 
-      {/* Row 1 — Net Worth (compact, left) + Daily Logan Graf CPA video (right). */}
+      {/* Row 1 — CPA Exam (left, wide) + Daily CPA video (right). */}
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-5 items-stretch">
         <div className="[&>*]:h-full">
-          <Card title="Net Worth" meta="12-month trend"><NetWorthSection /></Card>
+          <Card title="CPA Exam"><CpaSection /></Card>
         </div>
         <div className="[&>*]:h-full">
-          <Card title="CPA Video" meta="daily pick · @logangrafcpa"><CpaVideoSection /></Card>
+          <Card title="CPA Video" meta="daily pick"><CpaVideoSection /></Card>
         </div>
       </div>
 
-      {/* Row 2 — Community feed (wide) + the CPA Exam tracker. */}
+      {/* Row 2 — Community feed (wide) + Net Worth (compact). */}
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-5 items-stretch">
         <div className="[&>*]:h-full">
           <Card title="Community" meta="r/CPA · r/Accounting"><RedditFeedSection /></Card>
         </div>
         <div className="[&>*]:h-full">
-          <Card title="CPA Exam"><CpaSection compact /></Card>
+          <Card title="Net Worth" meta="12-month trend"><NetWorthSection /></Card>
         </div>
       </div>
 

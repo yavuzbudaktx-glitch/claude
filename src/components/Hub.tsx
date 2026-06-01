@@ -7,7 +7,7 @@ import {
   TrendingUp, TrendingDown, Briefcase,
   Landmark, CreditCard, Repeat, ArrowUpRight, ArrowDownRight, CalendarClock,
   PlayCircle, ExternalLink, Shuffle, Award, Clock, CalendarDays, Check,
-  RefreshCw, MessageSquare, ArrowUp,
+  RefreshCw, MessageSquare, ArrowUp, Eye, EyeOff,
 } from "lucide-react";
 import { format } from "date-fns";
 import { usePref, usePrefsLoaded } from "@/components/PrefsProvider";
@@ -104,9 +104,10 @@ function BigStat({ label, value, sub, tone, size = "lg" }: {
 }
 
 function MoneyList({
-  title, icon, items, setItems, accentDown,
+  title, icon, items, setItems, accentDown, hideAmounts,
 }: {
-  title: string; icon: ReactNode; items: LineItem[]; setItems: (v: LineItem[]) => void; accentDown?: boolean;
+  title: string; icon: ReactNode; items: LineItem[]; setItems: (v: LineItem[]) => void;
+  accentDown?: boolean; hideAmounts?: boolean;
 }) {
   const [label, setLabel] = useState("");
   const [amount, setAmount] = useState(0);
@@ -123,7 +124,7 @@ function MoneyList({
       <div className="flex items-center gap-2 mb-2.5">
         <span className={accentDown ? "text-down" : "text-up"}>{icon}</span>
         <span className="text-[13px] font-semibold text-ink">{title}</span>
-        <span className="ml-auto font-mono tabular-nums text-[15px] text-ink">{money(total)}</span>
+        <span className="ml-auto font-mono tabular-nums text-[15px] text-ink">{hideAmounts ? "$•••" : money(total)}</span>
       </div>
       <ul className="space-y-1 mb-2.5">
         {items.map((it) => (
@@ -136,11 +137,15 @@ function MoneyList({
               onChange={(e) => setItems(items.map((x) => x.id === it.id ? { ...x, label: e.target.value } : x))}
               className="flex-1 min-w-0 bg-transparent text-[13px] text-ink-soft focus:outline-none focus:text-ink truncate"
             />
-            <NumberInput
-              value={it.amount}
-              prefix="$"
-              onChange={(n) => setItems(items.map((x) => x.id === it.id ? { ...x, amount: n } : x))}
-            />
+            {hideAmounts ? (
+              <span className="font-mono text-[13px] text-muted px-2">$•••</span>
+            ) : (
+              <NumberInput
+                value={it.amount}
+                prefix="$"
+                onChange={(n) => setItems(items.map((x) => x.id === it.id ? { ...x, amount: n } : x))}
+              />
+            )}
             <button onClick={() => setItems(items.filter((x) => x.id !== it.id))} className="text-muted-2 opacity-0 group-hover:opacity-100 hover:text-accent transition shrink-0" aria-label="Remove">
               <Trash2 className="h-3.5 w-3.5" />
             </button>
@@ -159,7 +164,7 @@ function MoneyList({
 
 // =====================  NET WORTH  ==========================================
 
-function NetWorthChart({ data, compact = false }: { data: Snapshot[]; compact?: boolean }) {
+function NetWorthChart({ data, compact = false, hidden = false }: { data: Snapshot[]; compact?: boolean; hidden?: boolean }) {
   const series = useMemo(() => data.slice(-12), [data]);
   const [hover, setHover] = useState<number | null>(null);
   const heightCls = compact ? "h-[120px]" : "h-[180px]";
@@ -174,7 +179,7 @@ function NetWorthChart({ data, compact = false }: { data: Snapshot[]; compact?: 
         )}
         <p className="relative text-[12.5px] text-muted leading-relaxed max-w-[260px]">
           {last
-            ? <>First month logged at <span className="font-mono text-ink">{money(last.net)}</span>.<br />Your trend builds from here — one point each month.</>
+            ? <>First month logged at <span className="font-mono text-ink">{hidden ? "$•••" : money(last.net)}</span>.<br />Your trend builds from here — one point each month.</>
             : <>Your net-worth line starts here.<br />Add assets &amp; debts below — each month is plotted automatically.</>}
         </p>
       </div>
@@ -254,8 +259,8 @@ function NetWorthChart({ data, compact = false }: { data: Snapshot[]; compact?: 
           style={{ left: `${(hover! / (series.length - 1)) * 100}%` }}
         >
           <div className="label !text-[8.5px] !tracking-[0.1em]">{monthLabel(hv.month, true)}</div>
-          <div className="font-mono text-[13px] tabular-nums text-ink">{money(hv.net)}</div>
-          <div className="font-mono text-[10px] text-muted">{money(hv.assets)} · −{money(hv.debt)}</div>
+          <div className="font-mono text-[13px] tabular-nums text-ink">{hidden ? "$•••" : money(hv.net)}</div>
+          <div className="font-mono text-[10px] text-muted">{hidden ? "$••• · −$•••" : `${money(hv.assets)} · −${money(hv.debt)}`}</div>
         </div>
       )}
     </div>
@@ -272,7 +277,11 @@ export function NetWorthSection() {
   const [investments, setInvestments] = usePref<LineItem[]>("hub.investments", []);
   const [debts, setDebts] = usePref<LineItem[]>("hub.debts", []);
   const [history, setHistory] = usePref<Snapshot[]>("hub.networth.history", []);
+  // Private mode hides every $ figure so you can show the dashboard on a
+  // call / screenshare without baring your finances. Synced across devices.
+  const [hidden, setHidden] = usePref<boolean>("hub.netWorth.hidden", false);
   const loaded = usePrefsLoaded();
+  const dollar = (n: number) => (hidden ? "$•••" : money(n));
 
   const invTotal = investments.reduce((s, x) => s + x.amount, 0);
   const debtTotal = debts.reduce((s, x) => s + x.amount, 0);
@@ -303,10 +312,15 @@ export function NetWorthSection() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-        <div className={`font-display text-4xl md:text-5xl tracking-tight ${netWorth >= 0 ? "text-ink" : "text-down"}`}>
-          {money(netWorth)}
-        </div>
-        {delta != null && (
+        <button
+          onClick={() => setHidden(!hidden)}
+          title={hidden ? "Show your net worth" : "Hide your net worth"}
+          className={`group relative font-display text-4xl md:text-5xl tracking-tight transition ${netWorth >= 0 ? "text-ink" : "text-down"} ${hidden ? "tracking-[0.05em]" : ""}`}
+        >
+          {dollar(netWorth)}
+          <span className="absolute -bottom-1 left-0 right-0 mx-auto h-px w-6 bg-[var(--accent)] opacity-0 group-hover:opacity-100 transition" />
+        </button>
+        {delta != null && !hidden && (
           <div
             className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ${delta >= 0 ? "text-up" : "text-down"}`}
             style={{ background: `color-mix(in srgb, ${delta >= 0 ? "var(--up)" : "var(--down)"} 14%, transparent)` }}
@@ -315,19 +329,27 @@ export function NetWorthSection() {
             {money(Math.abs(delta))} vs {monthLabel(prev!.month)}
           </div>
         )}
+        <button
+          onClick={() => setHidden(!hidden)}
+          aria-label={hidden ? "Show amounts" : "Hide amounts"}
+          title={hidden ? "Show amounts" : "Hide amounts"}
+          className="ml-auto text-muted-2 hover:text-accent transition"
+        >
+          {hidden ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+        </button>
       </div>
       <div className="flex items-center gap-3 text-[11.5px] font-mono">
-        <span className="inline-flex items-center gap-1 text-up"><TrendingUp className="h-3.5 w-3.5" />{money(invTotal)}</span>
+        <span className="inline-flex items-center gap-1 text-up"><TrendingUp className="h-3.5 w-3.5" />{dollar(invTotal)}</span>
         <span className="text-muted-2">·</span>
-        <span className="inline-flex items-center gap-1 text-down"><TrendingDown className="h-3.5 w-3.5" />{money(debtTotal)}</span>
-        <span className="ml-auto text-[10.5px] text-muted">{debtRatio} D/A</span>
+        <span className="inline-flex items-center gap-1 text-down"><TrendingDown className="h-3.5 w-3.5" />{dollar(debtTotal)}</span>
+        <span className="ml-auto text-[10.5px] text-muted">{hidden ? "—" : debtRatio} D/A</span>
       </div>
 
-      <NetWorthChart data={history} compact />
+      <NetWorthChart data={history} compact hidden={hidden} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 border-t rule pt-4">
-        <MoneyList title="Investments & assets" icon={<Landmark className="h-4 w-4" />} items={investments} setItems={setInvestments} />
-        <MoneyList title="Debt & liabilities" icon={<CreditCard className="h-4 w-4" />} items={debts} setItems={setDebts} accentDown />
+        <MoneyList title="Investments & assets" icon={<Landmark className="h-4 w-4" />} items={investments} setItems={setInvestments} hideAmounts={hidden} />
+        <MoneyList title="Debt & liabilities" icon={<CreditCard className="h-4 w-4" />} items={debts} setItems={setDebts} accentDown hideAmounts={hidden} />
       </div>
     </div>
   );
@@ -819,16 +841,18 @@ export function AccountingHeaderStats() {
   const [investments] = usePref<LineItem[]>("hub.investments", []);
   const [debts] = usePref<LineItem[]>("hub.debts", []);
   const [subs] = usePref<Sub[]>("hub.subscriptions", []);
+  const [hidden] = usePref<boolean>("hub.netWorth.hidden", false);
 
   const surplus = income.reduce((s, x) => s + x.amount, 0) - expenses.reduce((s, x) => s + x.amount, 0);
   const netWorth = investments.reduce((s, x) => s + x.amount, 0) - debts.reduce((s, x) => s + x.amount, 0);
   const subMonthly = subs.reduce((s, x) => s + (x.cycle === "yr" ? x.amount / 12 : x.amount), 0);
+  const $ = (n: number) => (hidden ? "$•••" : money(n));
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <Kpi label="Net worth" value={money(netWorth)} tone={netWorth >= 0 ? "up" : "down"} />
-      <Kpi label="Surplus / mo" value={money(surplus)} tone={surplus >= 0 ? "up" : "down"} />
-      <Kpi label="Subs / mo" value={money(subMonthly)} tone={subMonthly > 0 ? "down" : undefined} />
+      <Kpi label="Net worth" value={$(netWorth)} tone={netWorth >= 0 ? "up" : "down"} />
+      <Kpi label="Surplus / mo" value={$(surplus)} tone={surplus >= 0 ? "up" : "down"} />
+      <Kpi label="Subs / mo" value={$(subMonthly)} tone={subMonthly > 0 ? "down" : undefined} />
     </div>
   );
 }
@@ -874,20 +898,21 @@ function VideoComments({ videoId }: { videoId: string }) {
   const comments = data?.comments ?? [];
 
   return (
-    // The comments list is height-capped and scrolls internally, so no
-    // matter how many comments come back the card never grows past the
-    // video + title + this fixed block.
-    <div className="border-t rule pt-3 mt-1">
-      <div className="label !text-[9px] !tracking-[0.12em] mb-2 flex items-center gap-1.5">
+    // flex-1 + min-h-0 lets this section fill the card's remaining height
+    // (the parent is flex-col h-full) and scroll internally. Combined with
+    // the card's overflow-hidden, the comments can never push the card
+    // past the row's stretched height.
+    <div className="flex-1 min-h-0 flex flex-col border-t rule pt-3 mt-1">
+      <div className="label !text-[9px] !tracking-[0.12em] mb-2 flex items-center gap-1.5 shrink-0">
         <MessageSquare className="h-3 w-3" /> Top comments
       </div>
       {isLoading && (
-        <p className="text-[12px] text-muted italic">Loading comments…</p>
+        <p className="text-[12px] text-muted italic shrink-0">Loading comments…</p>
       )}
       {!isLoading && comments.length === 0 && (
-        <p className="text-[12px] text-muted-2 italic">No comments on this video.</p>
+        <p className="text-[12px] text-muted-2 italic shrink-0">No comments on this video.</p>
       )}
-      <ul className="max-h-[300px] overflow-y-auto pr-1 space-y-3">
+      <ul className="flex-1 min-h-0 max-h-[260px] overflow-y-auto pr-1 space-y-3">
         {comments.map((c, i) => (
           <li key={i} className="flex gap-2.5">
             <span
@@ -967,10 +992,11 @@ export function CpaVideoSection() {
   const channelTone = cur ? (CHANNEL_TONE[cur.channel] ?? "var(--accent)") : "var(--accent)";
 
   return (
-    // h-full + flex column so the comments fill any remaining vertical space
-    // (the row sets items-stretch) and scroll internally — the card itself
-    // never grows beyond the row's height.
-    <div className="flex flex-col gap-3 h-full min-h-0">
+    // h-full + flex column + overflow-hidden bounds the card to the row's
+    // stretched height (set by items-stretch from the sibling card). Comments
+    // fill what's left and scroll internally — the card itself can never
+    // grow taller than the row.
+    <div className="flex flex-col gap-3 h-full min-h-0 overflow-hidden">
       <div className="relative aspect-video rounded-xl overflow-hidden bg-[var(--rule-soft)] border border-[var(--rule)] shrink-0">
         {isLoading && !cur && (
           <div className="absolute inset-0 grid place-items-center text-[12px] text-muted">Loading videos…</div>
