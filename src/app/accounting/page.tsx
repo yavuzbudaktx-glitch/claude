@@ -48,7 +48,7 @@ export default async function AccountingPage() {
       </header>
 
       {/* Row 1 — Net Worth (compact, left) + Daily Logan Graf CPA video (right). */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] gap-5 items-stretch">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-5 items-stretch">
         <div className="[&>*]:h-full">
           <Card title="Net Worth" meta="12-month trend"><NetWorthSection /></Card>
         </div>

@@ -982,14 +982,21 @@ function useDailyKey(): string {
 
 interface RedditPost {
   id: string; title: string; subreddit: string; permalink: string;
-  score: number; comments: number; created: number; flair: string | null; author: string;
+  score: number; ratio: number; comments: number; created: number;
+  flair: string | null; author: string; image: string | null;
 }
-interface RedditResp { posts?: RedditPost[] }
+interface RedditResp { posts?: RedditPost[]; subs?: string[] }
 
 const SUB_TONE: Record<string, string> = {
   cpa: "var(--accent)",
   accounting: "var(--grad-to)",
+  big4: "var(--grad-from)",
+  tax: "var(--grad-via)",
+  bookkeeping: "var(--up)",
 };
+function toneFor(sub: string): string {
+  return SUB_TONE[sub.toLowerCase()] ?? "var(--muted)";
+}
 
 function compactNum(n: number): string {
   if (n >= 10000) return `${Math.round(n / 1000)}k`;
@@ -1013,33 +1020,31 @@ export function RedditFeedSection() {
     jsonFetcher,
     { refreshInterval: 1000 * 60 * 15, keepPreviousData: true },
   );
-  const [sub, setSub] = useState<"all" | "CPA" | "Accounting">("all");
+  const [sub, setSub] = useState<string>("all");
 
-  const all = data?.posts ?? [];
+  const all = useMemo(() => data?.posts ?? [], [data]);
+  const subList = useMemo(
+    () => data?.subs ?? Array.from(new Set(all.map((p) => p.subreddit))),
+    [data, all],
+  );
   const posts = useMemo(
-    () => (sub === "all" ? all : all.filter((p) => p.subreddit.toLowerCase() === sub.toLowerCase())).slice(0, 16),
+    () => (sub === "all" ? all : all.filter((p) => p.subreddit.toLowerCase() === sub.toLowerCase())).slice(0, 14),
     [all, sub],
   );
-
-  const TABS: Array<{ key: typeof sub; label: string }> = [
-    { key: "all", label: "All" },
-    { key: "CPA", label: "r/CPA" },
-    { key: "Accounting", label: "r/Accounting" },
-  ];
 
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-1.5 flex-wrap">
-        {TABS.map((t) => {
-          const on = sub === t.key;
+        {["all", ...subList].map((key) => {
+          const on = sub === key;
           return (
             <button
-              key={t.key}
-              onClick={() => setSub(t.key)}
+              key={key}
+              onClick={() => setSub(key)}
               className={`text-[11px] px-2.5 py-1 rounded-full border transition ${on ? "border-transparent text-white" : "border-[var(--rule)] text-muted hover:text-ink"}`}
               style={on ? { background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" } : undefined}
             >
-              {t.label}
+              {key === "all" ? "All" : `r/${key}`}
             </button>
           );
         })}
@@ -1063,19 +1068,23 @@ export function RedditFeedSection() {
 
       <ul className="divide-rule">
         {posts.map((p) => {
-          const tone = SUB_TONE[p.subreddit.toLowerCase()] ?? "var(--muted)";
+          const tone = toneFor(p.subreddit);
           return (
             <li key={p.id}>
-              <a href={p.permalink} target="_blank" rel="noreferrer" className="group flex items-start gap-3 py-2.5">
+              <a href={p.permalink} target="_blank" rel="noreferrer" className="group flex items-start gap-3 py-3">
                 <span
-                  className="mt-0.5 inline-flex min-w-[40px] flex-col items-center rounded-lg px-1.5 py-1 shrink-0"
+                  className="mt-0.5 inline-flex min-w-[44px] flex-col items-center rounded-lg px-1.5 py-1.5 shrink-0"
                   style={{ background: "var(--rule-soft)" }}
                 >
-                  <ArrowUp className="h-3 w-3" style={{ color: tone }} />
-                  <span className="font-mono text-[11px] tabular-nums text-ink leading-tight">
+                  <ArrowUp className="h-3.5 w-3.5" style={{ color: tone }} />
+                  <span className="font-mono text-[12px] tabular-nums font-medium text-ink leading-tight">
                     {p.score > 0 ? compactNum(p.score) : "—"}
                   </span>
+                  {p.ratio > 0 && (
+                    <span className="font-mono text-[8.5px] tabular-nums text-muted leading-none mt-0.5">{Math.round(p.ratio * 100)}%</span>
+                  )}
                 </span>
+
                 <div className="min-w-0 flex-1">
                   <div className="text-[13.5px] leading-snug text-ink-soft group-hover:text-accent transition line-clamp-2">
                     {p.title}
@@ -1100,6 +1109,17 @@ export function RedditFeedSection() {
                     )}
                   </div>
                 </div>
+
+                {p.image && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={p.image}
+                    alt=""
+                    loading="lazy"
+                    className="h-16 w-24 shrink-0 rounded-lg object-cover border border-[var(--rule)] bg-[var(--rule-soft)]"
+                    onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+                  />
+                )}
               </a>
             </li>
           );
@@ -1111,7 +1131,7 @@ export function RedditFeedSection() {
 
       <div className="pt-1 font-mono text-[9px] uppercase tracking-wider text-muted">
         <ArrowUp className="inline h-3 w-3 mr-1 -mt-0.5" />
-        Hot on r/CPA &amp; r/Accounting · opens on reddit.com
+        Hot across {subList.length} accounting subreddits · opens on reddit.com
       </div>
     </div>
   );
