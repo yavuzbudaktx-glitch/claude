@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Masthead } from "@/components/widgets/Masthead";
+import { TopUtilityBar } from "@/components/widgets/TopUtilityBar";
 import { AnalogClock } from "@/components/AnalogClock";
 import { PrayersVerseCard } from "@/components/widgets/PrayersVerseCard";
 import { CalendarCard } from "@/components/widgets/CalendarCard";
@@ -11,11 +12,6 @@ import { SuperLigCard } from "@/components/widgets/SuperLigCard";
 import { TodayInHistoryCard } from "@/components/widgets/TodayInHistoryCard";
 import { UfcCard } from "@/components/widgets/UfcCard";
 import { BodyCard } from "@/components/widgets/BodyCard";
-import { SignOutButton } from "@/components/SignOutButton";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { FullscreenToggle } from "@/components/FullscreenToggle";
-import { Scratchpad } from "@/components/Scratchpad";
-import { FocusButton } from "@/components/FocusButton";
 
 export const dynamic = "force-dynamic";
 
@@ -30,21 +26,12 @@ export default async function Page() {
     user.email?.split("@")[0];
 
   return (
-    <main className="max-w-[1480px] mx-auto px-5 md:px-10 pt-2 md:pt-3 pb-6 md:pb-8 space-y-5">
-      <section className="relative z-30 grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-6 lg:min-h-[240px]">
+    <main className="max-w-[1480px] mx-auto px-5 md:px-10 pt-3 md:pt-4 pb-6 md:pb-8 space-y-5">
+      <TopUtilityBar context="dashboard" />
+
+      <section className="relative z-30 grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-6 lg:min-h-[200px]">
         <div className="flex flex-col justify-center gap-3">
-          <Masthead
-            name={name}
-            actions={
-              <>
-                <Scratchpad />
-                <FocusButton />
-                <FullscreenToggle />
-                <ThemeToggle />
-                <SignOutButton />
-              </>
-            }
-          />
+          <Masthead name={name} />
           <TodayInHistoryCard />
         </div>
         <div className="flex items-center justify-center lg:justify-end">

@@ -4,9 +4,9 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import useSWR from "swr";
 import {
   Plus, Trash2, ChevronLeft, ChevronRight, X,
-  TrendingUp, TrendingDown, Briefcase, GraduationCap,
+  TrendingUp, TrendingDown, Briefcase,
   Landmark, CreditCard, Repeat, ArrowUpRight, ArrowDownRight, CalendarClock,
-  PlayCircle, Newspaper, ExternalLink,
+  PlayCircle, Newspaper, ExternalLink, Shuffle, Award, Clock, CalendarDays, Check,
 } from "lucide-react";
 import { format } from "date-fns";
 import { usePref, usePrefsLoaded } from "@/components/PrefsProvider";
@@ -625,6 +625,124 @@ const CPA_TONE: Record<CpaStatus, string> = {
   Passed: "var(--up)",
   Failed: "var(--down)",
 };
+const CPA_PCT: Record<CpaStatus, number> = {
+  "Not started": 4, Studying: 45, Scheduled: 72, Passed: 100, Failed: 28,
+};
+const CPA_NAMES: Record<CpaSection, string> = {
+  AUD: "Auditing & Attestation",
+  FAR: "Financial Acct. & Reporting",
+  REG: "Taxation & Regulation",
+  TCP: "Tax Compliance & Planning",
+};
+
+function ProgressRing({ value, max, size = 72 }: { value: number; max: number; size?: number }) {
+  const sw = 6;
+  const r = (size - sw) / 2;
+  const c = 2 * Math.PI * r;
+  const pct = max > 0 ? Math.min(1, value / max) : 0;
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="shrink-0 -rotate-90">
+      <defs>
+        <linearGradient id="cpaRing" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="var(--grad-from)" />
+          <stop offset="50%" stopColor="var(--grad-via)" />
+          <stop offset="100%" stopColor="var(--grad-to)" />
+        </linearGradient>
+      </defs>
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--rule)" strokeWidth={sw} />
+      <circle
+        cx={size / 2} cy={size / 2} r={r} fill="none" stroke="url(#cpaRing)" strokeWidth={sw} strokeLinecap="round"
+        strokeDasharray={c} strokeDashoffset={c * (1 - pct)} style={{ transition: "stroke-dashoffset .6s ease" }}
+      />
+    </svg>
+  );
+}
+
+function CpaSectionCard({ sec, e, update }: {
+  sec: CpaSection; e: CpaEntry; update: (sec: CpaSection, patch: Partial<CpaEntry>) => void;
+}) {
+  const passed = e.status === "Passed";
+  const tone = CPA_TONE[e.status];
+  const days = e.examDate ? daysUntil(e.examDate) : null;
+  const upcoming = !passed && days != null && days >= 0;
+
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-[var(--rule)] bg-[var(--paper)] p-3.5 pl-4 transition hover:border-[var(--rule)]">
+      <span className="absolute left-0 top-0 bottom-0 w-1" style={{ background: tone }} aria-hidden />
+
+      <div className="flex items-center gap-3">
+        <div
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-xl font-display text-[13px]"
+          style={passed
+            ? { background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))", color: "#fff", boxShadow: "0 6px 16px -8px var(--glow)" }
+            : { background: "var(--rule-soft)", color: "var(--ink)" }}
+        >
+          {passed ? <Check className="h-5 w-5" strokeWidth={2.5} /> : sec}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="font-display text-[15px] text-ink leading-none">{sec}</div>
+          <div className="mt-1 truncate text-[10.5px] text-muted">{CPA_NAMES[sec]}</div>
+        </div>
+        <div className="relative shrink-0">
+          <select
+            value={e.status}
+            onChange={(ev) => update(sec, { status: ev.target.value as CpaStatus })}
+            className="appearance-none cursor-pointer rounded-full border border-transparent bg-[var(--rule-soft)] py-1 pl-2.5 pr-6 text-[11px] font-semibold focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+            style={{ color: tone }}
+            aria-label={`${sec} status`}
+          >
+            {CPA_STATUSES.map((st) => <option key={st} value={st}>{st}</option>)}
+          </select>
+          <ChevronDownInline />
+        </div>
+      </div>
+
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        <label className="block">
+          <span className="flex items-center gap-1 label !text-[8.5px]"><Clock className="h-2.5 w-2.5" />Hours</span>
+          <input type="number" value={e.hours === 0 ? "" : e.hours} placeholder="0"
+            onChange={(ev) => update(sec, { hours: Number(ev.target.value) || 0 })}
+            className="mt-1 w-full bg-[var(--rule-soft)] rounded-lg px-2 py-1.5 font-mono tabular-nums text-[13px] text-ink focus:outline-none focus:ring-1 focus:ring-[var(--accent)] [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none" />
+        </label>
+        <label className="block">
+          <span className="flex items-center gap-1 label !text-[8.5px]"><CalendarDays className="h-2.5 w-2.5" />Exam</span>
+          <input type="date" value={e.examDate}
+            onChange={(ev) => update(sec, { examDate: ev.target.value })}
+            className="mt-1 w-full bg-[var(--rule-soft)] rounded-lg px-2 py-1.5 font-mono text-[11px] text-ink focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+        </label>
+        <label className="block">
+          <span className="flex items-center gap-1 label !text-[8.5px]"><Award className="h-2.5 w-2.5" />Score</span>
+          <input value={e.score} placeholder="—" maxLength={3} inputMode="numeric"
+            onChange={(ev) => update(sec, { score: ev.target.value.replace(/[^0-9]/g, "") })}
+            className="mt-1 w-full bg-[var(--rule-soft)] rounded-lg px-2 py-1.5 font-mono tabular-nums text-[13px] text-ink focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+        </label>
+      </div>
+
+      <div className="mt-3 flex items-center gap-2">
+        <div className="h-1.5 flex-1 rounded-full bg-[var(--rule)] overflow-hidden">
+          <div className="h-full rounded-full transition-[width] duration-500"
+            style={{ width: `${CPA_PCT[e.status]}%`, background: passed ? "linear-gradient(90deg, var(--grad-from), var(--grad-via), var(--grad-to))" : tone }} />
+        </div>
+        {upcoming && (
+          <span className="inline-flex items-center gap-1 font-mono text-[10px] text-accent shrink-0">
+            <CalendarClock className="h-3 w-3" />{days === 0 ? "today" : `${days}d`}
+          </span>
+        )}
+        {passed && e.score && (
+          <span className="font-mono text-[10px] text-up shrink-0">scored {e.score}</span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ChevronDownInline() {
+  return (
+    <svg className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  );
+}
 
 export function CpaSection({ compact = false }: { compact?: boolean } = {}) {
   const [cpa, setCpa] = usePref<Record<CpaSection, CpaEntry>>("hub.cpa", {
@@ -637,66 +755,47 @@ export function CpaSection({ compact = false }: { compact?: boolean } = {}) {
   const totalHours = CPA_SECTIONS.reduce((s, k) => s + (cpa[k]?.hours ?? 0), 0);
   const update = (sec: CpaSection, patch: Partial<CpaEntry>) =>
     setCpa({ ...cpa, [sec]: { ...cpa[sec], ...patch } });
-  // Single column when running beside another card; 2→4 columns at full width.
-  const gridCls = compact
-    ? "grid grid-cols-1 gap-3"
-    : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3";
+  // Single column beside another card; 2-up at full width.
+  const gridCls = compact ? "grid grid-cols-1 gap-3" : "grid grid-cols-1 sm:grid-cols-2 gap-3";
+
+  // Soonest upcoming exam across not-yet-passed sections.
+  const nextExam = CPA_SECTIONS
+    .map((s) => ({ sec: s, date: cpa[s]?.examDate, status: cpa[s]?.status }))
+    .filter((x) => x.date && x.status !== "Passed" && daysUntil(x.date!) >= 0)
+    .map((x) => ({ sec: x.sec, days: daysUntil(x.date!) }))
+    .sort((a, b) => a.days - b.days)[0];
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <BigStat label="Sections passed" value={`${passed} / 4`} tone={passed === 4 ? "up" : undefined} size={compact ? "md" : "lg"} />
-        <BigStat label="Study hours logged" value={totalHours.toLocaleString()} sub="across all sections" size={compact ? "md" : "lg"} />
-      </div>
-      <div className="h-2 w-full rounded-full bg-[var(--rule)] overflow-hidden">
-        <div className="h-full rounded-full transition-[width] duration-500"
-          style={{ width: `${(passed / 4) * 100}%`, background: "linear-gradient(90deg, var(--grad-from), var(--grad-via), var(--grad-to))" }} />
-      </div>
-      <div className={gridCls}>
-        {CPA_SECTIONS.map((sec) => {
-          const e = cpa[sec];
-          return (
-            <div key={sec} className="card-bare !p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <GraduationCap className="h-4 w-4 text-accent" />
-                <span className="font-display text-lg text-ink">{sec}</span>
-                <span className="ml-auto text-[11px] font-semibold px-2 py-0.5 rounded-full"
-                  style={{ color: CPA_TONE[e.status], background: "var(--rule-soft)" }}>
-                  {e.status}
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-1 mb-3">
-                {CPA_STATUSES.map((st) => (
-                  <button key={st} onClick={() => update(sec, { status: st })}
-                    className={`text-[10px] px-2 py-1 rounded-full border transition ${e.status === st ? "border-transparent text-white" : "border-[var(--rule)] text-muted hover:text-ink"}`}
-                    style={e.status === st ? { background: CPA_TONE[st] } : undefined}>
-                    {st}
-                  </button>
-                ))}
-              </div>
-              <div className="grid grid-cols-3 gap-2 items-end">
-                <label className="block">
-                  <span className="label !text-[9px]">Hours</span>
-                  <input type="number" value={e.hours === 0 ? "" : e.hours} placeholder="0"
-                    onChange={(ev) => update(sec, { hours: Number(ev.target.value) || 0 })}
-                    className="mt-1 w-full bg-[var(--rule-soft)] rounded-lg px-2 py-1.5 font-mono tabular-nums text-[13px] text-ink focus:outline-none focus:ring-1 focus:ring-[var(--accent)] [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none" />
-                </label>
-                <label className="block">
-                  <span className="label !text-[9px]">Exam</span>
-                  <input type="date" value={e.examDate}
-                    onChange={(ev) => update(sec, { examDate: ev.target.value })}
-                    className="mt-1 w-full bg-[var(--rule-soft)] rounded-lg px-2 py-1.5 font-mono text-[11px] text-ink focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
-                </label>
-                <label className="block">
-                  <span className="label !text-[9px]">Score</span>
-                  <input value={e.score} placeholder="—" maxLength={3}
-                    onChange={(ev) => update(sec, { score: ev.target.value.replace(/[^0-9]/g, "") })}
-                    className="mt-1 w-full bg-[var(--rule-soft)] rounded-lg px-2 py-1.5 font-mono tabular-nums text-[13px] text-ink focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
-                </label>
-              </div>
+      {/* hero: ring + headline + study/next-exam meta */}
+      <div className="flex items-center gap-4">
+        <div className="relative grid place-items-center">
+          <ProgressRing value={passed} max={4} size={72} />
+          <div className="absolute inset-0 grid place-items-center">
+            <div className="font-display text-xl text-ink leading-none">
+              {passed}<span className="text-muted text-sm">/4</span>
             </div>
-          );
-        })}
+          </div>
+        </div>
+        <div className="min-w-0">
+          <div className="text-[14px] font-semibold text-ink">
+            {passed === 4 ? "All four passed 🎉" : `${4 - passed} section${4 - passed > 1 ? "s" : ""} to go`}
+          </div>
+          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] text-muted">
+            <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{totalHours.toLocaleString()} hrs studied</span>
+            {nextExam && (
+              <span className="inline-flex items-center gap-1 text-accent">
+                <CalendarClock className="h-3 w-3" />{nextExam.sec} {nextExam.days === 0 ? "today" : `in ${nextExam.days}d`}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className={gridCls}>
+        {CPA_SECTIONS.map((sec) => (
+          <CpaSectionCard key={sec} sec={sec} e={cpa[sec]} update={update} />
+        ))}
       </div>
     </div>
   );
@@ -739,12 +838,12 @@ export function AccountingHeaderStats() {
 // The /api/cpa-video route picks deterministically per local date, so the
 // pick is stable through the day and rotates at midnight.
 
+interface CpaVideo { id: string; title: string; published: string; thumb: string }
 interface CpaVideoResp {
-  videoId?: string;
-  title?: string;
+  videos?: CpaVideo[];
+  seed?: number;
   channelUrl?: string;
-  thumb?: string;
-  published?: string;
+  channelTitle?: string;
   error?: string;
 }
 
@@ -757,37 +856,50 @@ export function CpaVideoSection() {
     jsonFetcher,
     { refreshInterval: 1000 * 60 * 60 * 6, keepPreviousData: true },
   );
-  const [playing, setPlaying] = useState(false);
-  // New date → reset to the poster preview rather than a stale playing state.
-  useEffect(() => { setPlaying(false); }, [dateKey]);
 
   const channelUrl = data?.channelUrl ?? "https://www.youtube.com/@logangrafcpa/videos";
-  const videoId = data?.videoId;
-  const title = data?.title ?? "";
-  const thumb = data?.thumb || (videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : "");
+  const channelTitle = data?.channelTitle ?? "Logan Graf, CPA";
+  const videos = useMemo(() => data?.videos ?? [], [data]);
+
+  // `idx` walks the upload list. It starts on the per-day seed pick and
+  // advances on shuffle; clamped whenever the list changes.
+  const [idx, setIdx] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  // New day → jump to that day's seeded video and reset to the poster.
+  useEffect(() => {
+    if (videos.length) setIdx(((data?.seed ?? 0) % videos.length + videos.length) % videos.length);
+    setPlaying(false);
+  }, [dateKey, data?.seed, videos.length]);
+
+  const cur = videos[idx];
+  const thumb = cur ? cur.thumb || `https://i.ytimg.com/vi/${cur.id}/hqdefault.jpg` : "";
+
+  function shuffle() {
+    if (videos.length < 2) return;
+    let n = idx;
+    while (n === idx) n = Math.floor(Math.random() * videos.length);
+    setIdx(n);
+    setPlaying(false);
+  }
 
   return (
     <div className="flex flex-col gap-3">
       <div className="relative aspect-video rounded-xl overflow-hidden bg-[var(--rule-soft)] border border-[var(--rule)]">
-        {isLoading && (
-          <div className="absolute inset-0 grid place-items-center text-[12px] text-muted">Finding today’s video…</div>
+        {isLoading && !cur && (
+          <div className="absolute inset-0 grid place-items-center text-[12px] text-muted">Loading his latest videos…</div>
         )}
-        {!isLoading && !videoId && (
+        {!isLoading && !cur && (
           <div className="absolute inset-0 grid place-items-center px-4 text-center text-[12px] text-muted">
             <a href={channelUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-accent hover:underline">
               <PlayCircle className="h-4 w-4" /> Open Logan Graf on YouTube
             </a>
           </div>
         )}
-        {!playing && videoId && (
-          <button
-            onClick={() => setPlaying(true)}
-            aria-label="Play today's video"
-            className="absolute inset-0 group"
-          >
+        {!playing && cur && (
+          <button onClick={() => setPlaying(true)} aria-label="Play this video" className="absolute inset-0 group">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={thumb} alt={title} className="h-full w-full object-cover transition group-hover:scale-[1.02]" />
-            <span className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
+            <img src={thumb} alt={cur.title} className="h-full w-full object-cover transition group-hover:scale-[1.02]" />
+            <span className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
             <span className="absolute inset-0 grid place-items-center">
               <span className="grid h-14 w-14 place-items-center rounded-full bg-white/95 text-black shadow-lg transition group-hover:scale-110">
                 <PlayCircle className="h-9 w-9" strokeWidth={1.5} />
@@ -795,33 +907,46 @@ export function CpaVideoSection() {
             </span>
           </button>
         )}
-        {playing && videoId && (
+        {playing && cur && (
           <iframe
-            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
-            title={title}
+            key={cur.id}
+            src={`https://www.youtube.com/embed/${cur.id}?autoplay=1&rel=0&modestbranding=1`}
+            title={cur.title}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
             className="h-full w-full"
           />
         )}
       </div>
-      <div className="min-w-0">
-        <a
-          href={channelUrl}
-          target="_blank"
-          rel="noreferrer"
-          title={title || "Logan Graf CPA"}
-          className="group block text-[13.5px] font-medium text-ink-soft hover:text-accent transition leading-snug"
-        >
-          {title || "Logan Graf CPA — daily pick"}
-          <span className="ml-1.5 inline-block align-text-bottom opacity-0 group-hover:opacity-100 transition">
-            <ExternalLink className="h-3 w-3 inline" />
-          </span>
-        </a>
-        <div className="mt-1 flex items-center gap-2 text-[11px] text-muted">
-          <span className="label !text-[9px] !tracking-[0.1em]">Daily CPA</span>
-          <span>· rotates at midnight</span>
+
+      <div className="flex items-start gap-2">
+        <div className="min-w-0 flex-1">
+          <a
+            href={channelUrl}
+            target="_blank"
+            rel="noreferrer"
+            title={cur?.title || channelTitle}
+            className="group block text-[13.5px] font-medium text-ink-soft hover:text-accent transition leading-snug line-clamp-2"
+          >
+            {cur?.title || `${channelTitle} — videos`}
+            <span className="ml-1 inline-block align-text-bottom opacity-0 group-hover:opacity-100 transition">
+              <ExternalLink className="h-3 w-3 inline" />
+            </span>
+          </a>
+          <div className="mt-1 flex items-center gap-2 text-[11px] text-muted">
+            <span className="label !text-[9px] !tracking-[0.1em]">{channelTitle}</span>
+            {videos.length > 0 && <span>· {idx + 1}/{videos.length}</span>}
+          </div>
         </div>
+        <button
+          onClick={shuffle}
+          disabled={videos.length < 2}
+          title="Show another video"
+          aria-label="Show another video"
+          className="btn-ghost !h-8 !w-8 shrink-0 disabled:opacity-40"
+        >
+          <Shuffle className="h-4 w-4" />
+        </button>
       </div>
     </div>
   );

@@ -1,20 +1,21 @@
-// Daily "CPA video" from Logan Graf's YouTube channel.
+// Logan Graf CPA — his own uploads, surfaced one-at-a-time on the
+// Accounting page with a "shuffle" refresh.
 //
-// Two-stage fetch:
-//   1. Resolve the @logangrafcpa handle to a channel ID by scraping the
-//      channel page once and stashing the result on a module global. The
-//      result lives as long as the Lambda instance.
-//   2. Pull the channel's videos.xml feed (latest ~15 uploads) and pick a
-//      deterministic-per-day video so the page is stable for the whole day
-//      but rotates at local midnight.
+//   1. Resolve the @logangrafcpa handle to its channel ID. We trust ONLY
+//      the page-owner signals — the <link rel="canonical">, og:url, and
+//      "externalId" — never a bare `channel/UC…` match, which on a channel
+//      page can point at a *recommended* channel and is exactly how you end
+//      up showing "videos tagged him" instead of his own.
+//   2. Pull the channel's uploads via the videos.xml Atom feed (this is the
+//      channel's own uploads, newest first). Page-scrape fallback if needed.
 //
-// The picker is keyed off the requested date (sent by the client so we
-// follow the user's timezone, not the server's), with a sensible fallback.
+// We return the whole list so the client can shuffle through instantly, plus
+// a per-date seed index so each day opens on a different video by default.
 
 import { NextResponse } from "next/server";
 import Parser from "rss-parser";
 
-export const revalidate = 3600; // 1h floor; the rotation is date-keyed anyway
+export const revalidate = 3600;
 
 const HANDLE = "logangrafcpa";
 const CHANNEL_URL = `https://www.youtube.com/@${HANDLE}/videos`;
@@ -24,38 +25,50 @@ const HEADERS = {
   "Accept-Language": "en-US,en;q=0.9",
 };
 
+interface Video { id: string; title: string; published: string; thumb: string }
+
 let cachedChannelId: string | null = null;
+let cachedTitle: string | null = null;
+
+async function getHtml(url: string): Promise<string | null> {
+  const tries = [
+    url,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+  ];
+  for (const u of tries) {
+    try {
+      const res = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(10000) });
+      if (!res.ok) continue;
+      const text = await res.text();
+      if (text && text.length > 1000) return text;
+    } catch {
+      // next
+    }
+  }
+  return null;
+}
 
 async function resolveChannelId(): Promise<string | null> {
   if (cachedChannelId) return cachedChannelId;
-  try {
-    const res = await fetch(`https://www.youtube.com/@${HANDLE}`, {
-      headers: HEADERS,
-      next: { revalidate: 86400 },
-    });
-    if (!res.ok) return null;
-    const html = await res.text();
-    // The channel ID appears in several places; "channelId" / "externalId"
-    // / "browseId" are the most reliable.
-    const m =
-      /"channelId":"(UC[\w-]{22})"/.exec(html) ||
-      /"externalId":"(UC[\w-]{22})"/.exec(html) ||
-      /"browseId":"(UC[\w-]{22})"/.exec(html) ||
-      /<meta[^>]+itemprop="(?:channelId|identifier)"[^>]+content="(UC[\w-]{22})"/.exec(html) ||
-      /channel\/(UC[\w-]{22})/.exec(html);
-    if (m) {
-      cachedChannelId = m[1];
-      return cachedChannelId;
-    }
-  } catch {
-    // fall through
+  const html = await getHtml(`https://www.youtube.com/@${HANDLE}`);
+  if (!html) return null;
+  const m =
+    /<link[^>]+rel="canonical"[^>]+href="https:\/\/www\.youtube\.com\/channel\/(UC[\w-]{22})"/.exec(html) ||
+    /<meta[^>]+property="og:url"[^>]+content="https:\/\/www\.youtube\.com\/channel\/(UC[\w-]{22})"/.exec(html) ||
+    /"externalId":"(UC[\w-]{22})"/.exec(html) ||
+    /"channelId":"(UC[\w-]{22})"/.exec(html);
+  if (m) {
+    cachedChannelId = m[1];
+    const t = /<meta[^>]+property="og:title"[^>]+content="([^"]+)"/.exec(html);
+    cachedTitle = t ? t[1] : null;
+    return cachedChannelId;
   }
   return null;
 }
 
 interface YtItem {
   title?: string;
-  link?: string;
   pubDate?: string;
   isoDate?: string;
   id?: string;
@@ -63,80 +76,86 @@ interface YtItem {
   ["media:group"]?: { ["media:thumbnail"]?: { $?: { url?: string } } | Array<{ $?: { url?: string } }> };
 }
 
-const ytParser = new Parser<{}, YtItem>({
-  timeout: 9000,
+const ytParser = new Parser<{ title?: string }, YtItem>({
+  timeout: 10000,
   headers: HEADERS,
-  customFields: {
-    item: [
-      ["yt:videoId", "yt:videoId"],
-      ["media:group", "media:group"],
-    ],
-  },
+  customFields: { item: [["yt:videoId", "yt:videoId"], ["media:group", "media:group"]] },
 });
 
-function thumbOf(item: YtItem): string {
-  const g = item["media:group"];
-  const t = g?.["media:thumbnail"];
-  const first = Array.isArray(t) ? t[0] : t;
-  return first?.$?.url ?? "";
+function thumbOf(item: YtItem, id: string): string {
+  const g = item["media:group"]?.["media:thumbnail"];
+  const first = Array.isArray(g) ? g[0] : g;
+  return first?.$?.url ?? `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 }
 
-async function fetchVideos(channelId: string): Promise<Array<{ id: string; title: string; published: string; thumb: string }>> {
+async function fetchUploads(channelId: string): Promise<Video[]> {
+  const url = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
+  // rss-parser can fetch directly; if that's blocked, hand it proxied XML.
+  let feed: Awaited<ReturnType<typeof ytParser.parseURL>> | null = null;
   try {
-    const feed = await ytParser.parseURL(
-      `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`,
-    );
-    return (feed.items ?? [])
-      .map((it) => {
-        const id = it["yt:videoId"] ?? (it.id ?? "").replace(/^yt:video:/, "");
-        return {
-          id,
-          title: (it.title ?? "").trim(),
-          published: it.isoDate ?? it.pubDate ?? "",
-          thumb: thumbOf(it),
-        };
-      })
-      .filter((v) => v.id && v.title);
+    feed = await ytParser.parseURL(url);
   } catch {
-    return [];
+    const xml = await getHtml(url);
+    if (xml) { try { feed = await ytParser.parseString(xml); } catch { feed = null; } }
   }
+  if (!feed) return [];
+  if (feed.title) cachedTitle = feed.title;
+  return (feed.items ?? [])
+    .map((it) => {
+      const id = it["yt:videoId"] ?? (it.id ?? "").replace(/^yt:video:/, "");
+      return { id, title: (it.title ?? "").trim(), published: it.isoDate ?? it.pubDate ?? "", thumb: thumbOf(it, id) };
+    })
+    .filter((v) => v.id && v.title);
 }
 
-// Deterministic per-day picker: a small hash of the date string mod N.
-function pickIndex(dateKey: string, n: number): number {
+// Last-ditch fallback: scrape the /videos page for the owner's video IDs.
+async function scrapeVideos(): Promise<Video[]> {
+  const html = await getHtml(CHANNEL_URL);
+  if (!html) return [];
+  const out: Video[] = [];
+  const seen = new Set<string>();
+  // videoRenderer blocks carry the id then a title runs/text shortly after.
+  const re = /"videoId":"([\w-]{11})"(?:(?!"videoId").){0,400}?"text":"((?:[^"\\]|\\.)*?)"/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(html)) && out.length < 20) {
+    const id = m[1];
+    if (seen.has(id)) continue;
+    seen.add(id);
+    let title = "";
+    try { title = JSON.parse(`"${m[2]}"`); } catch { title = m[2]; }
+    if (title && !/^\d+:\d+$/.test(title)) {
+      out.push({ id, title, published: "", thumb: `https://i.ytimg.com/vi/${id}/hqdefault.jpg` });
+    }
+  }
+  return out;
+}
+
+function seedIndex(dateKey: string, n: number): number {
   let h = 0;
   for (const c of dateKey) h = (h * 31 + c.charCodeAt(0)) >>> 0;
-  return h % n;
+  return n > 0 ? h % n : 0;
 }
 
 export async function GET(req: Request) {
-  const url = new URL(req.url);
-  const dateKey =
-    url.searchParams.get("d") ?? new Date().toISOString().slice(0, 10);
+  const dateKey = new URL(req.url).searchParams.get("d") ?? new Date().toISOString().slice(0, 10);
 
   const channelId = await resolveChannelId();
-  if (!channelId) {
-    return NextResponse.json(
-      { error: "channel_unresolved", channelUrl: CHANNEL_URL },
-      { status: 502 },
-    );
-  }
-  const videos = await fetchVideos(channelId);
+  let videos: Video[] = [];
+  if (channelId) videos = await fetchUploads(channelId);
+  if (videos.length === 0) videos = await scrapeVideos();
+
   if (videos.length === 0) {
-    return NextResponse.json(
-      { error: "no_videos", channelUrl: CHANNEL_URL },
-      { status: 502 },
-    );
+    return NextResponse.json({ error: "no_videos", channelUrl: CHANNEL_URL }, { status: 502 });
   }
 
-  const pick = videos[pickIndex(dateKey, videos.length)];
-  return NextResponse.json({
-    videoId: pick.id,
-    title: pick.title,
-    published: pick.published,
-    thumb: pick.thumb,
-    channelUrl: CHANNEL_URL,
-    channelId,
-    of: videos.length,
-  });
+  return NextResponse.json(
+    {
+      videos,
+      seed: seedIndex(dateKey, videos.length),
+      channelUrl: CHANNEL_URL,
+      channelTitle: cachedTitle ?? "Logan Graf, CPA",
+      channelId,
+    },
+    { headers: { "Cache-Control": "s-maxage=3600, stale-while-revalidate=21600" } },
+  );
 }

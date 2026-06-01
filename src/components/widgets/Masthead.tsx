@@ -1,12 +1,8 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
-import Link from "next/link";
-import { format } from "date-fns";
-import { Calculator } from "lucide-react";
-import { WeatherSummary } from "./WeatherSummary";
+import { useEffect, useState } from "react";
 
-export function Masthead({ name, actions }: { name?: string; actions?: ReactNode }) {
+export function Masthead({ name }: { name?: string }) {
   const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -25,41 +21,16 @@ export function Masthead({ name, actions }: { name?: string; actions?: ReactNode
   })();
 
   return (
-    <header className="space-y-4">
-      <div className="flex items-start justify-between gap-4">
-        <div className="space-y-3.5 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <div className="inline-flex items-center gap-2.5 rounded-full border border-[var(--glass-border)] bg-[var(--paper)] px-3.5 py-1.5 text-[12.5px] text-ink-soft backdrop-blur-md shadow-[var(--shadow-card)]">
-              <span className="font-medium">{now ? format(now, "EEEE, MMMM d") : ""}</span>
-              <span className="h-1 w-1 rounded-full bg-[var(--accent)] shrink-0" aria-hidden />
-              <WeatherSummary />
-            </div>
-            <Link
-              href="/accounting"
-              title="Open the Accounting page"
-              className="group inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--paper)] px-3.5 py-1.5 text-[12.5px] text-ink-soft backdrop-blur-md shadow-[var(--shadow-card)] hover:border-[var(--accent)] hover:text-accent transition"
-            >
-              <span
-                className="inline-flex h-4 w-4 items-center justify-center rounded-full text-white"
-                style={{ background: "linear-gradient(135deg, var(--grad-from), var(--grad-via), var(--grad-to))" }}
-              >
-                <Calculator className="h-2.5 w-2.5" />
-              </span>
-              <span className="font-medium">Accounting</span>
-            </Link>
-          </div>
-          <h1 className="font-display text-5xl md:text-6xl lg:text-[64px] leading-[1.0] tracking-tight m-0">
-            <span className="text-ink">{greeting}</span>
-            {name ? (
-              <>
-                <span className="text-ink">,</span>{" "}
-                <span className="text-gradient">{name}</span>
-              </>
-            ) : ""}
-          </h1>
-        </div>
-        {actions && <div className="flex items-center gap-2 shrink-0 pt-1">{actions}</div>}
-      </div>
+    <header>
+      <h1 className="font-display text-5xl md:text-6xl lg:text-[64px] leading-[1.0] tracking-tight m-0">
+        <span className="text-ink">{greeting}</span>
+        {name ? (
+          <>
+            <span className="text-ink">,</span>{" "}
+            <span className="text-gradient">{name}</span>
+          </>
+        ) : ""}
+      </h1>
     </header>
   );
 }
