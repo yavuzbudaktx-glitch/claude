@@ -484,9 +484,39 @@ function CurrencyRates() {
   );
 }
 
+// Aggregate watchlist freshness — watch our quote cache for the most recent
+// write and surface that as the card's "last updated" pill. Refreshed every
+// 30s, which is more than fine for an indicator.
+function useWatchlistFresh(): number | undefined {
+  const [ts, setTs] = useState<number | undefined>();
+  useEffect(() => {
+    function scan() {
+      if (typeof localStorage === "undefined") return;
+      let latest = 0;
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (!k || !k.startsWith(`${QUOTE_CACHE_KEY}.`)) continue;
+        try {
+          const raw = localStorage.getItem(k);
+          if (!raw) continue;
+          const e = JSON.parse(raw) as { ts?: number };
+          if (typeof e.ts === "number" && e.ts > latest) latest = e.ts;
+        } catch { /* skip */ }
+      }
+      if (latest) setTs(latest);
+    }
+    scan();
+    const t = setInterval(scan, 30_000);
+    return () => clearInterval(t);
+  }, []);
+  return ts;
+}
+
 export function MoversCard() {
+  const updatedAt = useWatchlistFresh();
   return (
-    <Card num="05" title="Watchlist">
+    <Card num="05" title="Watchlist"
+      status={{ updatedAt, loading: false, error: false }}>
       <MarketsBody />
       <CurrencyRates />
       <div className="font-mono text-[9px] uppercase tracking-wider text-muted mt-3">

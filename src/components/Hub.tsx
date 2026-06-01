@@ -1207,7 +1207,7 @@ function sinceMs(ms: number): string {
   return format(new Date(ms), "MMM d");
 }
 
-const REDDIT_PAGE = 11; // posts shown per rotation window
+const REDDIT_PAGE = 6; // posts shown per rotation window
 
 // Cache-bust fetcher: the route is now force-dynamic and cache: no-store,
 // but the BROWSER may still cache. cache: "reload" + a Date.now() in the URL

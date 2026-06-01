@@ -10,8 +10,13 @@ import { CityPicker } from "@/components/CityPicker";
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 interface WeatherResp {
-  current?: { temperature_2m: number; apparent_temperature: number; weather_code: number };
-  daily?: { temperature_2m_max: number[]; temperature_2m_min: number[] };
+  current?: { temperature_2m: number; apparent_temperature: number; weather_code: number; time?: string };
+  daily?: {
+    time?: string[];
+    temperature_2m_max: number[];
+    temperature_2m_min: number[];
+    weather_code?: number[];
+  };
 }
 
 function codeToIcon(code: number) {
@@ -50,14 +55,30 @@ export function WeatherSummary() {
   const c = data?.current;
   const d = data?.daily;
 
+  // Find today's index in the daily array, in the city's timezone.
+  // Open-Meteo *should* return today at [0] when `timezone` is passed, but it
+  // depends on the upstream's own clock — and a 1-index offset is exactly the
+  // "I see tomorrow's H/L" symptom. Matching by date is bullet-proof.
+  const todayIdx = (() => {
+    if (!d?.time?.length) return 0;
+    const todayKey = new Date().toLocaleDateString("en-CA", { timeZone: city.timezone });
+    const i = d.time.findIndex((t) => t.startsWith(todayKey));
+    return i >= 0 ? i : 0;
+  })();
+
+  // Status reflects today's overall forecast (so "Storms" for a stormy day,
+  // not "Clear" because right-now happens to be a calm hour). Current temp
+  // is still the live observation.
+  const codeForStatus = d?.weather_code?.[todayIdx] ?? c?.weather_code ?? -1;
+
   return (
     <span className="inline-flex items-center gap-1.5 flex-wrap">
       {c && d ? (
         <>
-          {codeToIcon(c.weather_code)}
-          <span>{codeToLabel(c.weather_code)} {Math.round(c.temperature_2m)}°</span>
+          {codeToIcon(codeForStatus)}
+          <span>{codeToLabel(codeForStatus)} {Math.round(c.temperature_2m)}°</span>
           <span className="text-muted-2">·</span>
-          <span>H {Math.round(d.temperature_2m_max[0])}° L {Math.round(d.temperature_2m_min[0])}°</span>
+          <span>H {Math.round(d.temperature_2m_max[todayIdx])}° L {Math.round(d.temperature_2m_min[todayIdx])}°</span>
           <span className="text-muted-2">·</span>
         </>
       ) : null}

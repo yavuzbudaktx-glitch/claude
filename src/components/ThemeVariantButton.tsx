@@ -5,9 +5,12 @@ import { Palette, Check } from "lucide-react";
 import { applyTheme, getTheme, THEMES, type ThemeId } from "@/lib/theme";
 
 const SWATCHES: Record<ThemeId, string[]> = {
-  aurora:   ["#0284c7", "#22d3ee", "#d97706"],
-  paper:    ["#f7f3e9", "#1a1814", "#a16207"],
-  terminal: ["#000000", "#22ff77", "#ffb454"],
+  aurora:     ["#0284c7", "#22d3ee", "#d97706"],
+  paper:      ["#f7f3e9", "#1a1814", "#a16207"],
+  terminal:   ["#000000", "#22ff77", "#ffb454"],
+  galaxy:     ["#0b0628", "#c084fc", "#22d3ee"],
+  cowboy:     ["#ecdcc0", "#a85535", "#5d2f12"],
+  accounting: ["#f8fafb", "#1e3a5f", "#15803d"],
 };
 
 export function ThemeVariantButton() {
