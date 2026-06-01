@@ -1072,7 +1072,9 @@ export function RedditFeedSection() {
                   style={{ background: "var(--rule-soft)" }}
                 >
                   <ArrowUp className="h-3 w-3" style={{ color: tone }} />
-                  <span className="font-mono text-[11px] tabular-nums text-ink leading-tight">{compactNum(p.score)}</span>
+                  <span className="font-mono text-[11px] tabular-nums text-ink leading-tight">
+                    {p.score > 0 ? compactNum(p.score) : "—"}
+                  </span>
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="text-[13.5px] leading-snug text-ink-soft group-hover:text-accent transition line-clamp-2">
@@ -1090,8 +1092,12 @@ export function RedditFeedSection() {
                     )}
                     <span className="text-muted-2">·</span>
                     <span>{sinceMs(p.created)}</span>
-                    <span className="text-muted-2">·</span>
-                    <span className="inline-flex items-center gap-1"><MessageSquare className="h-3 w-3" />{compactNum(p.comments)}</span>
+                    {p.comments > 0 && (
+                      <>
+                        <span className="text-muted-2">·</span>
+                        <span className="inline-flex items-center gap-1"><MessageSquare className="h-3 w-3" />{compactNum(p.comments)}</span>
+                      </>
+                    )}
                   </div>
                 </div>
               </a>
