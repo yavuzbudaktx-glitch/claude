@@ -4,6 +4,16 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { isVault, CURRENT } from "@/lib/app-config";
 
+// Scopes we ask Google for. Each one is gated independently in Google's
+// consent screen — the user can untick any of them and the corresponding
+// dashboard widget will show a friendly "reconnect & approve" hint.
+const GOOGLE_SCOPES = [
+  "openid", "email", "profile",
+  "https://www.googleapis.com/auth/calendar.readonly",
+  "https://www.googleapis.com/auth/gmail.readonly",
+  "https://www.googleapis.com/auth/drive.metadata.readonly",
+].join(" ");
+
 export default function LoginPage() {
   const supabase = createClient();
   const [email, setEmail] = useState("");
@@ -37,6 +47,26 @@ export default function LoginPage() {
     } finally {
       setBusy(false);
     }
+  }
+
+  // Sign in with Google through Supabase's OAuth flow. `access_type=offline`
+  // + `prompt=consent` are required for Google to issue a refresh_token —
+  // without that, the /api/calendar | /api/emails | /api/drive routes can't
+  // mint fresh access tokens later, which is the most common silent failure.
+  async function googleSignIn() {
+    setBusy(true);
+    setMsg(null);
+    const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(home)}`;
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo,
+        scopes: GOOGLE_SCOPES,
+        queryParams: { access_type: "offline", prompt: "consent" },
+      },
+    });
+    if (error) { setMsg(error.message); setBusy(false); }
+    // On success the browser is redirected; nothing else to do here.
   }
 
   // Doc Anywhere (vault) gets the dark console login. Brief (dashboard) gets a
@@ -98,7 +128,31 @@ export default function LoginPage() {
             : "Create an account to set up your dashboard."}
         </p>
 
-        <form onSubmit={submit} className="mt-8 space-y-3 text-left">
+        {/* Sign in with Google — the only way Calendar / Inbox / Drive widgets
+            get a refresh token. Always rendered first so it's the obvious path. */}
+        <button
+          type="button"
+          onClick={googleSignIn}
+          disabled={busy}
+          className="mt-8 w-full px-4 py-3 rounded-2xl text-[14px] font-medium inline-flex items-center justify-center gap-2.5 border border-[var(--rule)] bg-[var(--paper)] hover:bg-[var(--paper-2)] hover:border-[var(--accent)] transition disabled:opacity-50"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <svg className="h-4 w-4" viewBox="0 0 48 48" aria-hidden>
+            <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 8 3l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.4-.4-3.5z"/>
+            <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3 0 5.8 1.1 8 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.6 8.3 6.3 14.7z"/>
+            <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.5-5.2l-6.2-5.2c-2.1 1.5-4.7 2.4-7.3 2.4-5.3 0-9.7-3.3-11.3-8L6.3 33C9.6 39.7 16.3 44 24 44z"/>
+            <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.6l6.2 5.2c-.4.3 6.7-4.9 6.7-14.8 0-1.3-.1-2.4-.4-3.5z"/>
+          </svg>
+          {busy ? "Connecting…" : "Continue with Google"}
+        </button>
+
+        <div className="my-5 flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] text-muted-2">
+          <span className="flex-1 h-px bg-[var(--rule)]" />
+          or email
+          <span className="flex-1 h-px bg-[var(--rule)]" />
+        </div>
+
+        <form onSubmit={submit} className="space-y-3 text-left">
           <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             className="w-full px-4 py-3 rounded-2xl bg-black/5 dark:bg-white/5 text-sm outline-none" />
