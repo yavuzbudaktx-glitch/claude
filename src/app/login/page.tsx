@@ -90,7 +90,7 @@ export default function LoginPage() {
         <div className="label">{CURRENT.name}</div>
         <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-4 leading-[0.95]">
           <span className="text-ink">Your</span>{" "}
-          <span className="text-gradient">Brief</span>
+          <span className="text-gradient">Rest Area</span>
         </h1>
         <p className="text-muted text-sm mt-5 leading-relaxed">
           {mode === "signin"

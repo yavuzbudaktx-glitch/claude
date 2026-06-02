@@ -1,12 +1,12 @@
 {
-  "name": "Brief",
-  "short_name": "Brief",
+  "name": "Rest Area",
+  "short_name": "Rest Area",
   "description": "Your personal daily edition: time, weather, hadith, calendar, headlines and tasks.",
   "start_url": "/dashboard",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#F4C84A",
-  "theme_color": "#F4C84A",
+  "background_color": "#6C6CF0",
+  "theme_color": "#6C6CF0",
   "icons": [
     { "src": "/icons/brief-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "/icons/brief-512.png", "sizes": "512x512", "type": "image/png" },

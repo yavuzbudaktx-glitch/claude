@@ -709,86 +709,6 @@ main { position: relative; z-index: 1; }
 }
 .theme-matte .font-display { letter-spacing: -0.04em; font-weight: 700; }
 
-/* ============== WHITE MOCHA ============== */
-/* Default mode is light — warm latte cream + espresso brown, soft gradients. */
-:root.theme-mocha {
-  color-scheme: light;
-  --bg:           #f1e6d4;
-  --paper:        #faf3e6;
-  --paper-2:      #fbf6eb;
-  --ink:          #2a1b0e;
-  --ink-soft:     #5a4128;
-  --muted:        #8c7458;
-  --muted-2:      #b9a385;
-  --rule:         rgba(42, 27, 14, 0.14);
-  --rule-soft:    rgba(42, 27, 14, 0.06);
-  --accent:       #6b3a1a;
-  --accent-soft:  rgba(107, 58, 26, 0.10);
-  --accent-2:     #a67149;
-  --hl:           rgba(107, 58, 26, 0.07);
-  --up:           #5a7d35;
-  --down:         #9b2c2c;
-  --grad-from:    #3a230f;
-  --grad-via:     #a67149;
-  --grad-to:      #efd9b0;
-  --glass:        #faf3e6;
-  --glass-border: rgba(42, 27, 14, 0.10);
-  --glow:         rgba(166, 113, 73, 0.22);
-  --shadow-card:  0 1px 2px rgba(42, 27, 14, 0.04), 0 8px 22px -14px rgba(42, 27, 14, 0.20);
-  --shadow-hover: 0 2px 4px rgba(42, 27, 14, 0.06), 0 18px 36px -18px rgba(42, 27, 14, 0.30);
-  --aurora-1: transparent; --aurora-2: transparent;
-  --aurora-3: transparent; --aurora-4: transparent;
-  --grain: 0.05;
-}
-/* Dark variant — ESPRESSO: deep coffee bg, warm cream text, gold accents. */
-:root.theme-mocha.dark {
-  color-scheme: dark;
-  --bg:           #14100c;
-  --paper:        rgba(255, 240, 220, 0.04);
-  --paper-2:      rgba(255, 240, 220, 0.07);
-  --ink:          #f0e2c8;
-  --ink-soft:     #d3bd99;
-  --muted:        #9a8769;
-  --muted-2:      #5e5240;
-  --rule:         rgba(240, 226, 200, 0.10);
-  --rule-soft:    rgba(240, 226, 200, 0.045);
-  --accent:       #e6b97a;
-  --accent-soft:  rgba(230, 185, 122, 0.13);
-  --accent-2:     #c98947;
-  --hl:           rgba(230, 185, 122, 0.08);
-  --up:           #a3c585;
-  --down:         #e57373;
-  --grad-from:    #6b3a1a;
-  --grad-via:     #c98947;
-  --grad-to:      #e6b97a;
-  --glass:        rgba(28, 22, 16, 0.55);
-  --glass-border: rgba(240, 226, 200, 0.08);
-  --glow:         rgba(230, 185, 122, 0.28);
-  --shadow-card:  0 10px 28px -16px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 240, 220, 0.04);
-  --shadow-hover: 0 22px 52px -22px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 240, 220, 0.06);
-}
-.theme-mocha body::before { background: none; animation: none; }
-.theme-mocha body {
-  background:
-    radial-gradient(80% 60% at 50% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 70%),
-    var(--bg);
-}
-.theme-mocha .card {
-  border-radius: 14px;
-  background: var(--glass);
-  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-}
-.theme-mocha .card::after { display: none; }
-.theme-mocha .card-bare { border-radius: 10px; }
-.theme-mocha .btn-ghost { border-radius: 10px; }
-.theme-mocha .chip { border-radius: 9999px; }
-.theme-mocha .text-gradient {
-  background: linear-gradient(118deg, var(--grad-from), var(--grad-via) 55%, var(--grad-to));
-  -webkit-background-clip: text; background-clip: text;
-  animation: none;
-}
-.theme-mocha .font-display { letter-spacing: -0.03em; font-weight: 700; }
-
 /* ============== ACCOUNTING ============== */
 :root.theme-accounting {
   color-scheme: light;
@@ -886,32 +806,32 @@ main { position: relative; z-index: 1; }
   --shadow-hover: 0 22px 50px -22px rgba(0, 0, 0, 0.85);
 }
 
-/* ---------- TERMINAL · LIGHT (amber phosphor / vintage CRT-paper) ---------- */
+/* ---------- TERMINAL · LIGHT (green phosphor on paper — stays green) ---------- */
 :root.theme-terminal:not(.dark) {
   color-scheme: light;
-  --bg:           #f6f1de;
+  --bg:           #eef6ee;
   --paper:        #ffffff;
-  --paper-2:      #fbf6e3;
-  --ink:          #2a1a05;
-  --ink-soft:     #5a3f1a;
-  --muted:        #8e6f3d;
-  --muted-2:      #b89b6a;
-  --rule:         rgba(42, 26, 5, 0.16);
-  --rule-soft:    rgba(42, 26, 5, 0.06);
-  --accent:       #b85c2a;
-  --accent-soft:  rgba(184, 92, 42, 0.10);
-  --accent-2:     #2a1a05;
-  --hl:           rgba(184, 92, 42, 0.08);
-  --up:           #4d7d2f;
-  --down:         #9b2c2c;
-  --grad-from:    #2a1a05;
-  --grad-via:     #b85c2a;
-  --grad-to:      #d4a857;
+  --paper-2:      #f4faf4;
+  --ink:          #0a2e16;
+  --ink-soft:     #1f6b3a;
+  --muted:        #3f8a5c;
+  --muted-2:      #84b89a;
+  --rule:         rgba(10, 46, 22, 0.16);
+  --rule-soft:    rgba(10, 46, 22, 0.06);
+  --accent:       #138a3e;
+  --accent-soft:  rgba(19, 138, 62, 0.10);
+  --accent-2:     #0a2e16;
+  --hl:           rgba(19, 138, 62, 0.08);
+  --up:           #138a3e;
+  --down:         #b23b3b;
+  --grad-from:    #0a2e16;
+  --grad-via:     #138a3e;
+  --grad-to:      #4cc46a;
   --glass:        #ffffff;
-  --glass-border: rgba(42, 26, 5, 0.14);
-  --glow:         rgba(184, 92, 42, 0.16);
-  --shadow-card:  0 1px 2px rgba(42, 26, 5, 0.04), 0 6px 16px -10px rgba(42, 26, 5, 0.20);
-  --shadow-hover: 0 2px 4px rgba(42, 26, 5, 0.06), 0 14px 30px -14px rgba(42, 26, 5, 0.30);
+  --glass-border: rgba(10, 46, 22, 0.14);
+  --glow:         rgba(19, 138, 62, 0.18);
+  --shadow-card:  0 1px 2px rgba(10, 46, 22, 0.04), 0 6px 16px -10px rgba(10, 46, 22, 0.18);
+  --shadow-hover: 0 2px 4px rgba(10, 46, 22, 0.06), 0 14px 30px -14px rgba(10, 46, 22, 0.28);
 }
 .theme-terminal:not(.dark) .text-ink { text-shadow: none; }
 .theme-terminal:not(.dark) body { background: var(--bg); }

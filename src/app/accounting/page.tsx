@@ -4,6 +4,7 @@ import { Card } from "@/components/Card";
 import { AccountingGate } from "@/components/AccountingGate";
 import { TopUtilityBar } from "@/components/widgets/TopUtilityBar";
 import { Scratchpad } from "@/components/Scratchpad";
+import { Calculator } from "@/components/Calculator";
 import { RadioButton } from "@/components/RadioButton";
 import { ThemeVariantButton } from "@/components/ThemeVariantButton";
 import { DocAnywhereButton } from "@/components/DocAnywhereButton";
@@ -37,6 +38,7 @@ export default async function AccountingPage() {
         right={
           <>
             <Scratchpad />
+            <Calculator />
             <RadioButton />
             <FocusButton />
             <DocAnywhereButton />

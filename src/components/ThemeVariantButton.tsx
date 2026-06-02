@@ -11,7 +11,6 @@ const SWATCHES: Record<ThemeId, string[]> = {
   galaxy:     ["#0b0628", "#c084fc", "#22d3ee"],
   accounting: ["#f8fafb", "#1e3a5f", "#15803d"],
   matte:      ["#1a1a1c", "#e6e6e8", "#9aa0a6"],
-  mocha:      ["#f3e8d8", "#6b3a1a", "#a67149"],
 };
 
 export function ThemeVariantButton() {

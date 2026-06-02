@@ -12,6 +12,7 @@ import {
 import { format } from "date-fns";
 import { usePref, usePrefsLoaded } from "@/components/PrefsProvider";
 import { localDateKey } from "@/lib/local-date";
+import { useFreshAt } from "@/lib/use-fresh";
 
 // =============================================================================
 //   Accounting toolkit — focused widgets the user opens on their own
@@ -1253,6 +1254,17 @@ export function RedditFeedSection() {
     return rotated.slice(0, REDDIT_PAGE);
   }, [all, sub, offset]);
 
+  // Freshness indicator (matches the Card pill on the dashboard widgets).
+  const updatedAt = useFreshAt(data);
+  const redditAgo = (() => {
+    if (!updatedAt) return isValidating ? "updating" : "";
+    const m = Math.floor((Date.now() - updatedAt) / 60_000);
+    if (m < 1) return "just now";
+    if (m < 60) return `${m}m ago`;
+    const h = Math.floor(m / 60);
+    return h < 24 ? `${h}h ago` : `${Math.floor(h / 24)}d ago`;
+  })();
+
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-1.5 flex-wrap">
@@ -1269,10 +1281,20 @@ export function RedditFeedSection() {
             </button>
           );
         })}
+        <span className="ml-auto inline-flex items-center gap-1.5 text-[10px] text-muted-2" title="Last updated">
+          {error ? (
+            <span className="text-down">failed</span>
+          ) : (
+            <>
+              <span className={`h-1.5 w-1.5 rounded-full ${isValidating ? "bg-accent animate-pulse" : "bg-[var(--up)]"}`} />
+              {redditAgo}
+            </>
+          )}
+        </span>
         <button
           onClick={refresh}
           disabled={isValidating}
-          className="ml-auto inline-flex items-center gap-1 text-[11px] text-muted hover:text-accent transition disabled:opacity-40"
+          className="inline-flex items-center gap-1 text-[11px] text-muted hover:text-accent transition disabled:opacity-40"
           title="Refresh top posts"
           aria-label="Refresh"
         >

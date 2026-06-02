@@ -2,7 +2,10 @@
 
 import useSWR from "swr";
 import { useEffect, useState } from "react";
+import { Check } from "lucide-react";
 import { useCity, clockPartsInTz, cityDateDDMMYYYY } from "@/lib/use-city";
+import { usePref } from "@/components/PrefsProvider";
+import { localDateKey } from "@/lib/local-date";
 
 // The five obligatory prayers only — sunrise/imsak/etc. are intentionally
 // excluded per the design.
@@ -44,79 +47,56 @@ function fmtCountdown(totalSec: number): string {
   return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
-// Shared hook so the full grid AND the mini-ticker can read the same
-// Aladhan response without firing two requests. SWR dedupes by key.
-function usePrayerData() {
-  const { city } = useCity();
-  const [now, setNow] = useState<Date | null>(null);
+// Daily prayer checklist — five tap-to-mark boxes that track which of the
+// day's prayers you've prayed. Stored per local-date in synced prefs, so it
+// naturally resets each day and follows you across devices. Lives under the
+// daily hadith as a gentle accountability nudge.
+export function PrayerChecklist() {
+  const today = localDateKey();
+  const [doneMap, setDoneMap] = usePref<Record<string, string[]>>("hub.prayers.done", {});
+  const todayDone = doneMap[today] ?? [];
+  const count = todayDone.length;
 
-  useEffect(() => {
-    setNow(new Date());
-    const t = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(t);
-  }, []);
-
-  const dateStr = cityDateDDMMYYYY(city.timezone);
-  const { data } = useSWR<AladhanResp>(
-    `https://api.aladhan.com/v1/timings/${dateStr}?latitude=${city.lat}&longitude=${city.lon}&method=2`,
-    fetcher,
-    { refreshInterval: 1000 * 60 * 30, keepPreviousData: true, revalidateOnFocus: false },
-  );
-  const timings = data?.data?.timings;
-
-  let nextId: PrayerId | null = null;
-  let remaining = 0;
-  let progress = 0;
-  if (timings && now) {
-    const { h, m, s } = clockPartsInTz(now, city.timezone);
-    const nowSec = h * 3600 + m * 60 + s;
-    const secs = ORDER.map((p) => ({ id: p.id, sec: hhmmToSeconds(timings[p.id]) }));
-    if (secs.every((p) => Number.isFinite(p.sec))) {
-      const lastIdx = secs.length - 1;
-      const nextIdx = secs.findIndex((p) => p.sec > nowSec);
-      let nextSecAbs: number;
-      let prevSecAbs: number;
-      if (nextIdx === -1) {
-        nextId = secs[0].id; nextSecAbs = secs[0].sec + 86400; prevSecAbs = secs[lastIdx].sec;
-      } else {
-        nextId = secs[nextIdx].id; nextSecAbs = secs[nextIdx].sec;
-        prevSecAbs = nextIdx === 0 ? secs[lastIdx].sec - 86400 : secs[nextIdx - 1].sec;
-      }
-      remaining = nextSecAbs - nowSec;
-      const interval = nextSecAbs - prevSecAbs;
-      progress = interval > 0 ? Math.min(1, Math.max(0, remaining / interval)) : 0;
-    }
+  function toggle(id: string) {
+    const cur = todayDone.includes(id) ? todayDone.filter((x) => x !== id) : [...todayDone, id];
+    // Keep only today's bucket + the last few days so the blob stays tiny.
+    const recent = Object.keys(doneMap).filter((d) => d >= today || (Date.now() - new Date(d).getTime()) < 7 * 86400000);
+    const trimmed: Record<string, string[]> = {};
+    for (const d of recent) trimmed[d] = doneMap[d];
+    setDoneMap({ ...trimmed, [today]: cur });
   }
-  return { timings, nextId, remaining, progress };
-}
 
-// Compact ticker — bar + countdown only. Designed to drop in under the
-// daily hadith as a one-glance "next prayer is in …" motivator.
-export function PrayerTicker() {
-  const { timings, nextId, remaining, progress } = usePrayerData();
-  if (!timings || !nextId) return null;
   return (
-    <div className="mt-3 pt-3 border-t rule">
-      <div className="flex items-baseline justify-between gap-2 mb-1.5">
-        <span className="label !text-[9px] !tracking-[0.14em] inline-flex items-center gap-1">
-          Next prayer
-        </span>
-        <span className="font-mono text-[10px] uppercase tracking-wider text-muted">
-          {nextId} · {hhmm(timings[nextId])}
+    <div className="mt-4 pt-4 border-t rule">
+      <div className="flex items-baseline justify-between mb-2">
+        <span className="label">Today&rsquo;s prayers</span>
+        <span className={`font-mono text-[10px] uppercase tracking-wider ${count === 5 ? "text-accent" : "text-muted"}`}>
+          {count}/5{count === 5 ? " · complete" : ""}
         </span>
       </div>
-      <div className="h-1.5 w-full rounded-full bg-[var(--rule)] overflow-hidden">
-        <div
-          className="h-full rounded-full transition-[width] duration-1000 ease-linear"
-          style={{
-            width: `${(progress * 100).toFixed(2)}%`,
-            background: "linear-gradient(90deg, var(--grad-from), var(--grad-via), var(--grad-to))",
-          }}
-        />
-      </div>
-      <div className="text-center font-display tracking-tight text-ink text-lg mt-2 leading-snug">
-        <span className="tabular-nums">{fmtCountdown(remaining)}</span>{" "}
-        <span className="text-muted font-normal">left until {nextId}</span>
+      <div className="grid grid-cols-5 gap-1.5">
+        {ORDER.map((p) => {
+          const on = todayDone.includes(p.id);
+          return (
+            <button
+              key={p.id}
+              onClick={() => toggle(p.id)}
+              aria-pressed={on}
+              title={`Mark ${p.id} ${on ? "not prayed" : "prayed"}`}
+              className={`flex flex-col items-center gap-1.5 rounded-xl py-2.5 border transition ${
+                on ? "border-transparent" : "border-[var(--rule)] hover:border-[var(--ink-soft)]"
+              }`}
+              style={on ? { background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" } : undefined}
+            >
+              <span className={`label !text-[9px] !tracking-[0.1em] ${on ? "!text-white" : ""}`}>{p.abbr}</span>
+              {on ? (
+                <Check className="h-4 w-4 text-white" strokeWidth={2.5} />
+              ) : (
+                <span className="h-4 w-4 rounded-full border border-[var(--muted-2)]" />
+              )}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

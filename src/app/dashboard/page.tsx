@@ -16,6 +16,7 @@ import { SignOutButton } from "@/components/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { FullscreenToggle } from "@/components/FullscreenToggle";
 import { Scratchpad } from "@/components/Scratchpad";
+import { Calculator } from "@/components/Calculator";
 import { RadioButton } from "@/components/RadioButton";
 import { ThemeVariantButton } from "@/components/ThemeVariantButton";
 import { DocAnywhereButton } from "@/components/DocAnywhereButton";
@@ -42,6 +43,7 @@ export default async function Page() {
             right={
               <>
                 <Scratchpad />
+                <Calculator />
                 <RadioButton />
                 <FocusButton />
                 <DocAnywhereButton />

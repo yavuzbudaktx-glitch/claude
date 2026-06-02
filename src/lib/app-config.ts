@@ -23,9 +23,9 @@ export const APP_CONFIG = {
     },
   },
   dashboard: {
-    name: "Brief",
+    name: "Rest Area",
     description: "Your personal daily edition: time, weather, hadith, calendar, headlines and tasks.",
-    themeColor: "#F4C84A",
+    themeColor: "#6C6CF0",
     manifest: "/manifest.brief.webmanifest",
     home: "/dashboard",
     icons: {

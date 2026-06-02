@@ -3,7 +3,7 @@
 import useSWR from "swr";
 import { useEffect, useState } from "react";
 import { Card } from "@/components/Card";
-import { PrayerTimes, PrayerTicker } from "./PrayerTimes";
+import { PrayerTimes, PrayerChecklist } from "./PrayerTimes";
 import type { HadithPayload } from "@/lib/hadith";
 import { localDateKey, msUntilLocalMidnight } from "@/lib/local-date";
 
@@ -59,9 +59,9 @@ export function PrayersVerseCard() {
           </>
         )}
 
-        {/* Motivational reminder: a compact next-prayer ticker that lives
-            right under the hadith — same data as the top, dedup'd by SWR. */}
-        <PrayerTicker />
+        {/* Daily accountability: five tap-to-mark prayer boxes under the
+            hadith, persisted per day. */}
+        <PrayerChecklist />
       </div>
     </Card>
   );

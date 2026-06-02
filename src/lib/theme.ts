@@ -6,23 +6,22 @@
 // theme variants stack on top to change the entire visual character of the
 // site (palette + corner radius + density + display face + texture).
 
-export type ThemeId = "aurora" | "paper" | "terminal" | "galaxy" | "accounting" | "matte" | "mocha";
+export type ThemeId = "aurora" | "paper" | "terminal" | "galaxy" | "accounting" | "matte";
 
 export const THEMES: Array<{
   id: ThemeId; label: string; description: string;
 }> = [
   { id: "aurora",     label: "Aurora Glass", description: "Default — frosted cards, cyan accent, drifting aurora background." },
   { id: "paper",      label: "Paper",        description: "Warm off-white, ink text, single accent, no glass — editorial." },
-  { id: "terminal",   label: "Terminal",     description: "Mono-typography, sharp corners, green-on-black phosphor feel." },
+  { id: "terminal",   label: "Terminal",     description: "Mono-typography, sharp corners, green phosphor — day or night." },
   { id: "galaxy",     label: "Galaxy",       description: "Deep space — magenta/violet accents, starfield drifting behind everything." },
   { id: "accounting", label: "Accounting",   description: "Crisp ledger paper, navy/forest accents — clean numbers-first interface." },
-  { id: "matte",      label: "Matte Dark",   description: "Flat charcoal, low gloss, minimalist — content over chrome." },
-  { id: "mocha",      label: "White Mocha",  description: "Warm cream + espresso brown, soft latte gradients — cozy & gentle." },
+  { id: "matte",      label: "Matte",        description: "Flat charcoal or off-white, low gloss, minimalist — content over chrome." },
 ];
 
 const KEY = "brief.theme.v1";
 
-const VALID: ThemeId[] = ["aurora", "paper", "terminal", "galaxy", "accounting", "matte", "mocha"];
+const VALID: ThemeId[] = ["aurora", "paper", "terminal", "galaxy", "accounting", "matte"];
 const NON_DEFAULT = VALID.filter((v) => v !== "aurora");
 
 export function getTheme(): ThemeId {
@@ -49,7 +48,7 @@ export const THEME_BOOT_SCRIPT = `
   (function() {
     try {
       var v = localStorage.getItem(${JSON.stringify(KEY)});
-      var ok = ['paper','terminal','galaxy','accounting','matte','mocha'];
+      var ok = ['paper','terminal','galaxy','accounting','matte'];
       var root = document.documentElement;
       if (v && ok.indexOf(v) >= 0) root.classList.add('theme-' + v);
       root.setAttribute('data-theme', v || 'aurora');
