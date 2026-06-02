@@ -60,7 +60,7 @@ export function Bookmarks() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-[calc(100%+8px)] z-[70] w-[300px] rounded-2xl border border-[var(--glass-border)] bg-[var(--paper-2)] backdrop-blur-xl shadow-[var(--shadow-hover)] p-3 animate-fadeIn origin-top-right">
+        <div className="fixed right-3 top-[58px] md:absolute md:right-0 md:top-[calc(100%+8px)] z-[70] w-[min(300px,calc(100vw-1.5rem))] rounded-2xl border border-[var(--glass-border)] bg-[var(--paper-2)] backdrop-blur-xl shadow-[var(--shadow-hover)] p-3 animate-fadeIn origin-top-right">
           <div className="label px-1 pb-2 flex items-center gap-1.5"><Bookmark className="h-3 w-3" /> Bookmarks</div>
 
           <ul className="space-y-0.5 max-h-[240px] overflow-y-auto mb-2">

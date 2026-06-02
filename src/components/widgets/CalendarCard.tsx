@@ -3,31 +3,31 @@
 import useSWR from "swr";
 import { useEffect, useMemo, useState } from "react";
 import { format, formatDistanceToNowStrict } from "date-fns";
-import { EyeOff, Eye, RotateCcw, Mail, HardDrive, File, FileText, Image as ImageIcon, FileSpreadsheet, ExternalLink } from "lucide-react";
+import { EyeOff, Eye, RotateCcw, Mail, HardDrive, File, FileText, Image as ImageIcon, FileSpreadsheet, ExternalLink, Folder } from "lucide-react";
 import { Card } from "@/components/Card";
 import { usePref } from "@/components/PrefsProvider";
 import { useFitCount } from "@/lib/use-fit";
 import type { CalendarEvent } from "@/lib/google/calendar";
 import type { EmailItem } from "@/lib/google/gmail";
 
-const VAULT_URL = "https://doc-anywhere.vercel.app/files";
+const DRIVE_URL = "https://drive.google.com";
 
-interface DocItem { id: string; path: string; size: number; mime: string; updated_at: string }
+interface DriveFile { id: string; name: string; mimeType: string; modifiedTime: string; size: number | null; webViewLink: string }
+interface DriveResp { files?: DriveFile[]; error?: string; needsReauth?: boolean; hint?: string }
 
-function fmtSize(n: number): string {
-  if (!n || n < 1024) return `${n || 0} B`;
+function fmtSize(n: number | null): string {
+  if (!n || n < 1024) return n ? `${n} B` : "";
   if (n < 1024 * 1024) return `${Math.round(n / 1024)} KB`;
-  return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+  if (n < 1024 * 1024 * 1024) return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+  return `${(n / (1024 * 1024 * 1024)).toFixed(1)} GB`;
 }
 function mimeIcon(mime: string) {
   const cls = "h-4 w-4";
+  if (/folder/.test(mime)) return <Folder className={cls} />;
   if (/image\//.test(mime)) return <ImageIcon className={cls} />;
-  if (/(sheet|excel|csv)/.test(mime)) return <FileSpreadsheet className={cls} />;
-  if (/(pdf|word|text|document)/.test(mime)) return <FileText className={cls} />;
+  if (/(spreadsheet|sheet|excel|csv)/.test(mime)) return <FileSpreadsheet className={cls} />;
+  if (/(pdf|document|word|presentation|text)/.test(mime)) return <FileText className={cls} />;
   return <File className={cls} />;
-}
-function baseName(path: string): string {
-  return path.split("/").filter(Boolean).pop() ?? path;
 }
 
 interface CalResp {
@@ -63,7 +63,7 @@ function relTime(iso: string): string {
   return ageH < 24 ? formatDistanceToNowStrict(d, { addSuffix: false }) : format(d, "MMM d");
 }
 
-function InboxTab() {
+function InboxTab({ limit }: { limit: number }) {
   const { data, error, isLoading } = useSWR<MailResp>("/api/emails", fetcher, {
     refreshInterval: 1000 * 60 * 3,
     keepPreviousData: true,
@@ -84,7 +84,7 @@ function InboxTab() {
   }
   if (error) return <p className="text-accent text-sm">Couldn&rsquo;t load email.</p>;
 
-  const emails = data?.emails ?? [];
+  const emails = (data?.emails ?? []).slice(0, limit);
   if (emails.length === 0) return <p className="text-muted text-sm italic">Inbox zero. Nice.</p>;
 
   return (
@@ -123,25 +123,31 @@ function InboxTab() {
   );
 }
 
-// "Files" — your Doc Anywhere vault, surfaced right here. Same Supabase auth,
-// so no extra login; rows open in the Doc Anywhere app.
-function FilesTab() {
-  const { data, error, isLoading } = useSWR<{ documents?: DocItem[] }>(
-    "/api/files/list", fetcher, { refreshInterval: 1000 * 60 * 5, keepPreviousData: true },
+// "Drive" — your most-recent Google Drive files, surfaced right here. Uses the
+// same Google connection as Calendar/Inbox (needs the Drive read-only scope).
+function DriveTab({ limit }: { limit: number }) {
+  const { data, error, isLoading } = useSWR<DriveResp>(
+    "/api/drive", fetcher, { refreshInterval: 1000 * 60 * 5, keepPreviousData: true },
   );
 
   if (isLoading && !data) return <p className="text-muted text-sm">Loading…</p>;
-  if (error) return <p className="text-accent text-sm">Couldn&rsquo;t load files.</p>;
-
-  const docs = [...(data?.documents ?? [])]
-    .sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? ""));
-
-  if (docs.length === 0) {
+  if (data?.needsReauth || data?.error) {
     return (
       <div className="text-sm">
-        <p className="text-muted italic mb-2">No files in your vault yet.</p>
-        <a href={VAULT_URL} target="_blank" rel="noreferrer" className="text-accent inline-flex items-center gap-1 hover:underline">
-          Open Doc Anywhere <ExternalLink className="h-3 w-3" />
+        <p className="text-muted mb-2">{data?.hint ?? "Google Drive isn’t connected yet."}</p>
+        <a href="/login" className="text-accent underline underline-offset-2">Re-connect Google →</a>
+      </div>
+    );
+  }
+  if (error) return <p className="text-accent text-sm">Couldn&rsquo;t load Drive.</p>;
+
+  const files = (data?.files ?? []).slice(0, limit);
+  if (files.length === 0) {
+    return (
+      <div className="text-sm">
+        <p className="text-muted italic mb-2">No recent files.</p>
+        <a href={DRIVE_URL} target="_blank" rel="noreferrer" className="text-accent inline-flex items-center gap-1 hover:underline">
+          Open Google Drive <ExternalLink className="h-3 w-3" />
         </a>
       </div>
     );
@@ -150,22 +156,22 @@ function FilesTab() {
   return (
     <>
       <ul className="divide-rule pr-1">
-        {docs.map((d) => (
-          <li key={d.id}>
+        {files.map((f) => (
+          <li key={f.id}>
             <a
-              href={VAULT_URL}
+              href={f.webViewLink}
               target="_blank"
               rel="noreferrer"
               className="group flex items-center gap-2.5 py-2.5"
-              title={d.path}
+              title={f.name}
             >
               <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[var(--rule-soft)] text-accent">
-                {mimeIcon(d.mime ?? "")}
+                {mimeIcon(f.mimeType)}
               </span>
               <div className="min-w-0 flex-1">
-                <div className="text-[13px] text-ink truncate group-hover:text-accent transition">{baseName(d.path)}</div>
+                <div className="text-[13px] text-ink truncate group-hover:text-accent transition">{f.name}</div>
                 <div className="font-mono text-[10px] uppercase tracking-wider text-muted">
-                  {fmtSize(d.size)}{d.updated_at ? ` · ${relTime(d.updated_at)}` : ""}
+                  {[fmtSize(f.size), f.modifiedTime ? relTime(f.modifiedTime) : ""].filter(Boolean).join(" · ")}
                 </div>
               </div>
               <ExternalLink className="h-3.5 w-3.5 text-muted-2 opacity-0 group-hover:opacity-100 transition shrink-0" />
@@ -173,8 +179,8 @@ function FilesTab() {
           </li>
         ))}
       </ul>
-      <a href={VAULT_URL} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-[11px] text-muted hover:text-accent transition">
-        <HardDrive className="h-3 w-3" /> Open Doc Anywhere
+      <a href={DRIVE_URL} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-[11px] text-muted hover:text-accent transition">
+        <HardDrive className="h-3 w-3" /> Open Google Drive
       </a>
     </>
   );
@@ -278,7 +284,7 @@ function CalendarTab({
 }
 
 export function CalendarCard() {
-  const [tab, setTab] = useState<"calendar" | "inbox" | "files">("calendar");
+  const [tab, setTab] = useState<"calendar" | "inbox" | "drive">("calendar");
   // Smart fill: base 4 days (~6 events), grow to fill a taller card.
   const [fitRef, fitCount] = useFitCount(6, 56, 18);
   const [showHidden, setShowHidden] = useState(false);
@@ -356,11 +362,11 @@ export function CalendarCard() {
         )}
       </button>
       <button
-        onClick={() => setTab("files")}
-        className={`chip normal-case !px-2.5 !py-0.5 !text-[11px] inline-flex items-center gap-1 ${tab === "files" ? "chip-active" : ""}`}
-        title="Your Doc Anywhere files"
+        onClick={() => setTab("drive")}
+        className={`chip normal-case !px-2.5 !py-0.5 !text-[11px] inline-flex items-center gap-1 ${tab === "drive" ? "chip-active" : ""}`}
+        title="Your Google Drive files"
       >
-        <HardDrive className="h-3 w-3" /> Files
+        <HardDrive className="h-3 w-3" /> Drive
       </button>
     </span>
   );
@@ -389,9 +395,9 @@ export function CalendarCard() {
             limit={fitCount}
           />
         ) : tab === "inbox" ? (
-          <InboxTab />
+          <InboxTab limit={fitCount} />
         ) : (
-          <FilesTab />
+          <DriveTab limit={fitCount} />
         )}
       </div>
     </Card>

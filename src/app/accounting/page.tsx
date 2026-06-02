@@ -39,14 +39,14 @@ export default async function AccountingPage() {
         right={
           <>
             <Scratchpad />
-            <Calculator />
-            <Bookmarks />
             <RadioButton />
+            <Bookmarks />
+            <Calculator />
             <FocusButton />
             <DocAnywhereButton />
             <ThemeVariantButton />
-            <FullscreenToggle />
             <ThemeToggle />
+            <FullscreenToggle />
             <SignOutButton />
           </>
         }

@@ -44,14 +44,14 @@ export default async function Page() {
             right={
               <>
                 <Scratchpad />
-                <Calculator />
-                <Bookmarks />
                 <RadioButton />
+                <Bookmarks />
+                <Calculator />
                 <FocusButton />
                 <DocAnywhereButton />
                 <ThemeVariantButton />
-                <FullscreenToggle />
                 <ThemeToggle />
+                <FullscreenToggle />
                 <SignOutButton />
               </>
             }

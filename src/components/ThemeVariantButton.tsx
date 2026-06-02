@@ -11,6 +11,11 @@ const SWATCHES: Record<ThemeId, string[]> = {
   galaxy:     ["#0b0628", "#c084fc", "#22d3ee"],
   accounting: ["#f8fafb", "#1e3a5f", "#15803d"],
   matte:      ["#1a1a1c", "#e6e6e8", "#9aa0a6"],
+  synthwave:  ["#1b1036", "#ff2e97", "#2de2e6"],
+  forest:     ["#0e1a12", "#4ade80", "#a3c585"],
+  mono:       ["#ffffff", "#000000", "#737373"],
+  sakura:     ["#fff5f7", "#e0567a", "#f9a8c4"],
+  nord:       ["#2e3440", "#88c0d0", "#a3be8c"],
 };
 
 export function ThemeVariantButton() {
@@ -52,7 +57,7 @@ export function ThemeVariantButton() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-[calc(100%+8px)] z-[70] w-[270px] rounded-2xl border border-[var(--glass-border)] bg-[var(--paper-2)] backdrop-blur-xl shadow-[var(--shadow-hover)] p-2.5 animate-fadeIn origin-top-right">
+        <div className="fixed right-3 top-[58px] md:absolute md:right-0 md:top-[calc(100%+8px)] z-[70] w-[min(280px,calc(100vw-1.5rem))] max-h-[80vh] overflow-y-auto rounded-2xl border border-[var(--glass-border)] bg-[var(--paper-2)] backdrop-blur-xl shadow-[var(--shadow-hover)] p-2.5 animate-fadeIn origin-top-right">
           <div className="label px-1.5 pb-2 flex items-center gap-1.5">
             <Palette className="h-3 w-3" /> Theme
           </div>

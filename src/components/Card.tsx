@@ -89,7 +89,6 @@ export function Card({
 
   return (
     <section className={`card animate-fadeIn ${collapsed ? "is-collapsed" : ""} ${className}`}>
-      <span className="card-shine" aria-hidden />
       <header className="headrule">
         <span className="dot" aria-hidden />
         {title && <span className="text-[14px] font-semibold tracking-tight text-ink">{title}</span>}

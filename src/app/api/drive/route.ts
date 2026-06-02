@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { refreshAccessToken } from "@/lib/google/refresh";
-import { fetchRecentEmails } from "@/lib/google/gmail";
+import { fetchRecentDriveFiles } from "@/lib/google/drive";
 
 export const dynamic = "force-dynamic";
 
@@ -23,21 +23,17 @@ export async function GET() {
 
   try {
     const accessToken = await refreshAccessToken(refreshToken);
-    // Deeper pull so a tall Inbox can show more; the client slices to fit.
-    const emails = await fetchRecentEmails(accessToken, 20);
-    return NextResponse.json({ emails });
+    const files = await fetchRecentDriveFiles(accessToken, 25);
+    return NextResponse.json({ files });
   } catch (e) {
-    const msg = e instanceof Error ? e.message : "gmail_failed";
+    const msg = e instanceof Error ? e.message : "drive_failed";
     const lower = msg.toLowerCase();
-    // Distinguish the two common setup gaps so the UI can tell the user
-    // exactly what to fix.
-    let hint = "Reconnect Google and approve Gmail (read-only) access.";
+    let hint = "Reconnect Google and approve Drive (read-only) access.";
     if (/service_disabled|has not been used|accessnotconfigured|disabled/.test(lower)) {
-      hint = "Enable the Gmail API in your Google Cloud project, then reconnect Google.";
+      hint = "Enable the Google Drive API in your Cloud project, then reconnect Google.";
     } else if (/insufficient|scope|accessdenied|access_denied/.test(lower)) {
-      hint = "Reconnect Google and check the Gmail (read-only) box on the consent screen.";
+      hint = "Reconnect Google and grant Drive (read-only) on the consent screen.";
     }
-    const needsReauth = true;
-    return NextResponse.json({ error: msg, needsReauth, hint }, { status: 502 });
+    return NextResponse.json({ error: msg, needsReauth: true, hint }, { status: 502 });
   }
 }
