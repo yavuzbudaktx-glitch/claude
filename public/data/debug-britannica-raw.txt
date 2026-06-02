@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-06-02T19:02:12.348Z
+# generated: 2026-06-02T19:57:28.054Z
 # url:       https://www.britannica.com/on-this-day/june-2
 # fetcher:   CORS proxy
 # kind:      html
@@ -283,7 +283,7 @@
 										,"country": "FR"
 										,"state": "75"
 										,"timezone": "Europe/Paris"
-										,"bcomId": "-7683628325640268375"
+										,"bcomId": "-2357256554585395191"
 										,"adProvider": "ay"
 										,"privacyInfo": {"inGdprCountry":true,"inCcpaState":false,"showConsent":true}
 										,"hasAds": true
