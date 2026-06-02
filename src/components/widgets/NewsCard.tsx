@@ -9,6 +9,7 @@ import { Card } from "@/components/Card";
 import { usePref } from "@/components/PrefsProvider";
 import { useCommand } from "@/lib/commands";
 import { useFreshAt } from "@/lib/use-fresh";
+import { useFitCount } from "@/lib/use-fit";
 import { CATEGORY_LABELS, CATEGORY_ORDER, type NewsCategory, type NewsItem } from "@/lib/feeds";
 
 type Resp = Record<NewsCategory, NewsItem[]>;
@@ -156,6 +157,9 @@ export function NewsCard() {
   // Let the command palette switch the active news tab.
   useCommand((c) => { if (c.kind === "news-tab") setActive(c.value as NewsCategory); });
 
+  // Smart fill: base 5 headlines, growing to fill a taller card.
+  const [fitRef, fitCount] = useFitCount(WINDOW, 84, 14);
+
   const cat = active === "saved" ? null : active;
   const pool = cat ? pools[cat] : undefined;
   const offset = cat ? offsets[cat] ?? 0 : 0;
@@ -163,8 +167,8 @@ export function NewsCard() {
     active === "saved"
       ? saved
       : pool && pool.length > 0
-        ? Array.from({ length: Math.min(WINDOW, pool.length) }, (_, k) => pool[(offset + k) % pool.length])
-        : (data?.[active] ?? []).slice(0, WINDOW);
+        ? Array.from({ length: Math.min(fitCount, pool.length) }, (_, k) => pool[(offset + k) % pool.length])
+        : (data?.[active] ?? []).slice(0, fitCount);
 
   // Refresh ONLY the tab currently in view. Pulls a deep, freshly-fetched
   // pool from the force-dynamic single-category endpoint (cache-busting
@@ -206,9 +210,9 @@ export function NewsCard() {
     );
 
   return (
-    <Card num="03" title="The Wire" action={refreshAction}
+    <Card num="03" title="The Wire" action={refreshAction} className="flex flex-col"
       status={{ updatedAt, loading: isValidating, error: !!error && !data, onRetry: () => mutate() }}>
-      <div className="flex flex-nowrap gap-1 mb-4 overflow-x-auto -mx-1 px-1 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
+      <div className="flex flex-nowrap gap-1 mb-4 overflow-x-auto -mx-1 px-1 [&::-webkit-scrollbar]:hidden [scrollbar-width:none] shrink-0">
         {CATEGORY_ORDER.map((c) => (
           <button
             key={c}
@@ -232,6 +236,10 @@ export function NewsCard() {
       {isLoading && !data && <p className="text-muted text-sm">Loading…</p>}
       {error && !data && <p className="text-accent text-sm">Couldn&rsquo;t load news.</p>}
 
+      {/* flex-1 fill area: the list grows to occupy the (possibly stretched)
+          card height; useFitCount reads this height to decide how many
+          headlines to render (min 5). */}
+      <div ref={fitRef} className="flex-1 min-h-0">
       {(data || pool || active === "saved") &&
         (refreshing ? (
           <div className="py-10 flex items-center justify-center gap-2 text-muted text-sm">
@@ -281,6 +289,7 @@ export function NewsCard() {
             )}
           </ul>
         ))}
+      </div>
     </Card>
   );
 }

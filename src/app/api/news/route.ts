@@ -5,7 +5,8 @@ export const revalidate = 900;
 
 export async function GET() {
   try {
-    const grouped = await fetchAllFeeds(5);
+    // Deeper pool per category so a tall News card can grow past the base 5.
+    const grouped = await fetchAllFeeds(14);
     return NextResponse.json(grouped);
   } catch (e) {
     return NextResponse.json(

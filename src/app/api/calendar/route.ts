@@ -23,7 +23,9 @@ export async function GET() {
 
   try {
     const accessToken = await refreshAccessToken(refreshToken);
-    const events = await fetchUpcomingEvents(accessToken, 20, 4);
+    // Pull a deeper window (up to 30 events over ~45 days) so a tall card can
+    // grow to fill itself; the client decides how many to actually show.
+    const events = await fetchUpcomingEvents(accessToken, 30, 45);
     return NextResponse.json({ events });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "calendar_failed";

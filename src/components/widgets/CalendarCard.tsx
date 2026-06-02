@@ -3,11 +3,32 @@
 import useSWR from "swr";
 import { useEffect, useMemo, useState } from "react";
 import { format, formatDistanceToNowStrict } from "date-fns";
-import { EyeOff, Eye, RotateCcw, Mail } from "lucide-react";
+import { EyeOff, Eye, RotateCcw, Mail, HardDrive, File, FileText, Image as ImageIcon, FileSpreadsheet, ExternalLink } from "lucide-react";
 import { Card } from "@/components/Card";
 import { usePref } from "@/components/PrefsProvider";
+import { useFitCount } from "@/lib/use-fit";
 import type { CalendarEvent } from "@/lib/google/calendar";
 import type { EmailItem } from "@/lib/google/gmail";
+
+const VAULT_URL = "https://doc-anywhere.vercel.app/files";
+
+interface DocItem { id: string; path: string; size: number; mime: string; updated_at: string }
+
+function fmtSize(n: number): string {
+  if (!n || n < 1024) return `${n || 0} B`;
+  if (n < 1024 * 1024) return `${Math.round(n / 1024)} KB`;
+  return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+}
+function mimeIcon(mime: string) {
+  const cls = "h-4 w-4";
+  if (/image\//.test(mime)) return <ImageIcon className={cls} />;
+  if (/(sheet|excel|csv)/.test(mime)) return <FileSpreadsheet className={cls} />;
+  if (/(pdf|word|text|document)/.test(mime)) return <FileText className={cls} />;
+  return <File className={cls} />;
+}
+function baseName(path: string): string {
+  return path.split("/").filter(Boolean).pop() ?? path;
+}
 
 interface CalResp {
   events?: CalendarEvent[];
@@ -102,25 +123,85 @@ function InboxTab() {
   );
 }
 
+// "Files" — your Doc Anywhere vault, surfaced right here. Same Supabase auth,
+// so no extra login; rows open in the Doc Anywhere app.
+function FilesTab() {
+  const { data, error, isLoading } = useSWR<{ documents?: DocItem[] }>(
+    "/api/files/list", fetcher, { refreshInterval: 1000 * 60 * 5, keepPreviousData: true },
+  );
+
+  if (isLoading && !data) return <p className="text-muted text-sm">Loading…</p>;
+  if (error) return <p className="text-accent text-sm">Couldn&rsquo;t load files.</p>;
+
+  const docs = [...(data?.documents ?? [])]
+    .sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? ""));
+
+  if (docs.length === 0) {
+    return (
+      <div className="text-sm">
+        <p className="text-muted italic mb-2">No files in your vault yet.</p>
+        <a href={VAULT_URL} target="_blank" rel="noreferrer" className="text-accent inline-flex items-center gap-1 hover:underline">
+          Open Doc Anywhere <ExternalLink className="h-3 w-3" />
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <ul className="divide-rule pr-1">
+        {docs.map((d) => (
+          <li key={d.id}>
+            <a
+              href={VAULT_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="group flex items-center gap-2.5 py-2.5"
+              title={d.path}
+            >
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[var(--rule-soft)] text-accent">
+                {mimeIcon(d.mime ?? "")}
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="text-[13px] text-ink truncate group-hover:text-accent transition">{baseName(d.path)}</div>
+                <div className="font-mono text-[10px] uppercase tracking-wider text-muted">
+                  {fmtSize(d.size)}{d.updated_at ? ` · ${relTime(d.updated_at)}` : ""}
+                </div>
+              </div>
+              <ExternalLink className="h-3.5 w-3.5 text-muted-2 opacity-0 group-hover:opacity-100 transition shrink-0" />
+            </a>
+          </li>
+        ))}
+      </ul>
+      <a href={VAULT_URL} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-[11px] text-muted hover:text-accent transition">
+        <HardDrive className="h-3 w-3" /> Open Doc Anywhere
+      </a>
+    </>
+  );
+}
+
 function CalendarTab({
   hidden,
   hide,
   unhide,
   clearHidden,
   showHidden,
+  limit,
 }: {
   hidden: Set<string>;
   hide: (id: string) => void;
   unhide: (id: string) => void;
   clearHidden: () => void;
   showHidden: boolean;
+  limit: number;
 }) {
   const { data, error, isLoading } = useSWR<CalResp>("/api/calendar", fetcher, {
     refreshInterval: 1000 * 60 * 5,
   });
 
   const all = useMemo(() => data?.events ?? [], [data]);
-  const visible = useMemo(() => all.filter((e) => !hidden.has(e.id)), [all, hidden]);
+  const visibleAll = useMemo(() => all.filter((e) => !hidden.has(e.id)), [all, hidden]);
+  const visible = useMemo(() => visibleAll.slice(0, limit), [visibleAll, limit]);
   const hiddenList = useMemo(() => all.filter((e) => hidden.has(e.id)), [all, hidden]);
 
   return (
@@ -197,7 +278,9 @@ function CalendarTab({
 }
 
 export function CalendarCard() {
-  const [tab, setTab] = useState<"calendar" | "inbox">("calendar");
+  const [tab, setTab] = useState<"calendar" | "inbox" | "files">("calendar");
+  // Smart fill: base 4 days (~6 events), grow to fill a taller card.
+  const [fitRef, fitCount] = useFitCount(6, 56, 18);
   const [showHidden, setShowHidden] = useState(false);
   // Hidden events sync across devices.
   const [hiddenArr, setHiddenArr] = usePref<string[]>("hiddenEvents", []);
@@ -272,6 +355,13 @@ export function CalendarCard() {
           </span>
         )}
       </button>
+      <button
+        onClick={() => setTab("files")}
+        className={`chip normal-case !px-2.5 !py-0.5 !text-[11px] inline-flex items-center gap-1 ${tab === "files" ? "chip-active" : ""}`}
+        title="Your Doc Anywhere files"
+      >
+        <HardDrive className="h-3 w-3" /> Files
+      </button>
     </span>
   );
 
@@ -287,18 +377,23 @@ export function CalendarCard() {
     ) : null;
 
   return (
-    <Card num="02" title="" meta={tabs} action={action}>
-      {tab === "calendar" ? (
-        <CalendarTab
-          hidden={hidden}
-          hide={hide}
-          unhide={unhide}
-          clearHidden={clearHidden}
-          showHidden={showHidden}
-        />
-      ) : (
-        <InboxTab />
-      )}
+    <Card num="02" title="" meta={tabs} action={action} className="flex flex-col">
+      <div ref={fitRef} className="flex-1 min-h-0 overflow-y-auto">
+        {tab === "calendar" ? (
+          <CalendarTab
+            hidden={hidden}
+            hide={hide}
+            unhide={unhide}
+            clearHidden={clearHidden}
+            showHidden={showHidden}
+            limit={fitCount}
+          />
+        ) : tab === "inbox" ? (
+          <InboxTab />
+        ) : (
+          <FilesTab />
+        )}
+      </div>
     </Card>
   );
 }

@@ -269,6 +269,38 @@ main { position: relative; z-index: 1; }
 }
 .card:hover::after { opacity: .35; }
 
+/* Design element — a soft diagonal "shine" that sweeps across a card once on
+   hover. Lives on a real child (the card already uses ::before/::after), so
+   it never collides with the glass edge or the hover halo. */
+.card-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+.card-shine::before {
+  content: "";
+  position: absolute;
+  top: -10%;
+  left: -70%;
+  width: 45%;
+  height: 120%;
+  transform: skewX(-18deg);
+  background: linear-gradient(105deg, transparent, color-mix(in srgb, var(--accent) 20%, transparent), transparent);
+  opacity: 0;
+}
+.card:hover .card-shine::before { animation: cardShine 0.9s cubic-bezier(.22,.61,.36,1); }
+@keyframes cardShine {
+  0%   { left: -70%; opacity: 0; }
+  12%  { opacity: 1; }
+  100% { left: 130%; opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card:hover .card-shine::before { animation: none; }
+}
+
 .card-bare {
   position: relative;
   border: 1px solid var(--rule);

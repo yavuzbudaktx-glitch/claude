@@ -13,6 +13,7 @@ import { format } from "date-fns";
 import { usePref, usePrefsLoaded } from "@/components/PrefsProvider";
 import { localDateKey } from "@/lib/local-date";
 import { useFreshAt } from "@/lib/use-fresh";
+import { useCountUp } from "@/lib/use-count-up";
 
 // =============================================================================
 //   Accounting toolkit — focused widgets the user opens on their own
@@ -332,6 +333,8 @@ export function NetWorthSection() {
   const past = history.filter((s) => s.month !== curMonth);
   const prev = past.length ? past[past.length - 1] : null;
   const delta = prev ? netWorth - prev.net : null;
+  // Count-up the hero number so it ticks into place.
+  const animatedNet = useCountUp(netWorth);
 
   return (
     <div className="space-y-4">
@@ -341,7 +344,7 @@ export function NetWorthSection() {
           title={hidden ? "Show your net worth" : "Hide your net worth"}
           className={`group relative font-display text-4xl md:text-5xl tracking-tight transition ${netWorth >= 0 ? "text-ink" : "text-down"} ${hidden ? "tracking-[0.05em]" : ""}`}
         >
-          {dollar(netWorth)}
+          {hidden ? "$•••" : money(Math.round(animatedNet))}
           <span className="absolute -bottom-1 left-0 right-0 mx-auto h-px w-6 bg-[var(--accent)] opacity-0 group-hover:opacity-100 transition" />
         </button>
         {delta != null && !hidden && (

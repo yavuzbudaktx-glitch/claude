@@ -94,7 +94,9 @@ function teardownHls() {
 }
 
 async function playUrl(url: string): Promise<void> {
-  if (!audio) { audio = new Audio(); audio.preload = "none"; audio.volume = 0.72; audio.crossOrigin = "anonymous"; }
+  // NOTE: do NOT set crossOrigin — radio streams rarely send CORS headers,
+  // and requiring them ("anonymous") silently breaks plain <audio> playback.
+  if (!audio) { audio = new Audio(); audio.preload = "none"; audio.volume = 0.72; }
   const el = audio;
   teardownHls();
 
