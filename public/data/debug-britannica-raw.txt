@@ -1,9 +1,9 @@
 # Britannica scrape debug dump
-# generated: 2026-06-02T19:57:28.054Z
+# generated: 2026-06-02T20:16:32.945Z
 # url:       https://www.britannica.com/on-this-day/june-2
 # fetcher:   CORS proxy
 # kind:      html
-# length:    71277
+# length:    71260
 # parsed:    YES (CORS proxy)
 # -----------------------------------------------------------------
 
@@ -126,7 +126,7 @@
 
 
 <script   class="analytics-metadata" type="application/json">
-{"adLeg":"D","leg":"D","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+{"adLeg":"D","leg":"C","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
 </script>
 
 
@@ -283,11 +283,11 @@
 										,"country": "FR"
 										,"state": "75"
 										,"timezone": "Europe/Paris"
-										,"bcomId": "-2357256554585395191"
+										,"bcomId": "5850620150887367273"
 										,"adProvider": "ay"
 										,"privacyInfo": {"inGdprCountry":true,"inCcpaState":false,"showConsent":true}
 										,"hasAds": true
-										,"testVersion": "D"
+										,"testVersion": "C"
 										,"adsTestVersion": "D"
 										,"consumerId": ""
 										,"instId": ""
@@ -311,7 +311,7 @@
 
 			"autocompleteToSearchPage": false,"pagesInfo": [{"url":"June-2","title":"On This Day - What Happened on June 2"},{"url":"June-3","title":"On This Day - What Happened on June 3"},{"url":"June-4","title":"On This Day - What Happened on June 4"},{"url":"June-5","title":"On This Day - What Happened on June 5"},{"url":"June-6","title":"On This Day - What Happened on June 6"},{"url":"June-7","title":"On This Day - What Happened on June 7"},{"url":"June-8","title":"On This Day - What Happened on June 8"},{"url":"June-9","title":"On This Day - What Happened on June 9"},{"url":"June-10","title":"On This Day - What Happened on June 10"},{"url":"June-11","title":"On This Day - What Happened on June 11"}]
 		},
-        "GA": {"adLeg":"D","leg":"D","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+        "GA": {"adLeg":"D","leg":"C","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
     };
 
 	</script>
@@ -415,7 +415,7 @@ Mendel.openGraph = {
 
 </head>
 
-<body data-leg="D" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-d ">
+<body data-leg="C" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-c ">
 
 
 
@@ -669,8 +669,8 @@ Mendel.openGraph = {
         </div>
     </div>
 
-    <div class="d-none hamburger-menu-subscription-link"><div class="KUSTOM-MARKETING-HAMBURGER_MENU_CTA"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=bdpremium" class="subscribe-link btn btn-sm btn-blue py-5" target="_blank">
-  SUBSCRIBE TO PREMIUM
+    <div class="d-none hamburger-menu-subscription-link"><div class="KUSTOM-MARKETING-HAMBURGER_MENU_CTA"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=blue" class="subscribe-link btn btn-sm btn-blue py-5" target="_blank">
+  SUBSCRIBE
 </a></div></div>
     <div id="global-nav-react">
         <div class="d-none">
