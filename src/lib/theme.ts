@@ -9,7 +9,7 @@
 export type ThemeId =
   | "aurora" | "paper" | "terminal" | "galaxy" | "accounting" | "matte"
   | "synthwave" | "forest" | "mono" | "sakura" | "nord"
-  | "newspaper" | "blueprint";
+  | "newspaper" | "blueprint" | "comic" | "sketch";
 
 export const THEMES: Array<{
   id: ThemeId; label: string; description: string;
@@ -27,11 +27,13 @@ export const THEMES: Array<{
   { id: "nord",       label: "Nord",         description: "Cool arctic blue-greys with frost accents — quiet and balanced." },
   { id: "newspaper",  label: "Newspaper",    description: "Times-style serif type, columns, drop-caps, hairline ruling — like reading a Sunday paper." },
   { id: "blueprint",  label: "Blueprint",    description: "Architect's drafting page — white technical strokes on cyan, corner brackets, drafting grid." },
+  { id: "comic",      label: "Comic",        description: "Halftone dots, ink-line panels, KAPOW red, offset hard shadows — your dashboard as a comic book." },
+  { id: "sketch",     label: "Sketchbook",   description: "Pencil on grid paper, wobbly hand-drawn outlines, Caveat handwriting — work in your own margin notes." },
 ];
 
 const KEY = "brief.theme.v1";
 
-const VALID: ThemeId[] = ["aurora", "paper", "terminal", "galaxy", "accounting", "matte", "synthwave", "forest", "mono", "sakura", "nord", "newspaper", "blueprint"];
+const VALID: ThemeId[] = ["aurora", "paper", "terminal", "galaxy", "accounting", "matte", "synthwave", "forest", "mono", "sakura", "nord", "newspaper", "blueprint", "comic", "sketch"];
 const NON_DEFAULT = VALID.filter((v) => v !== "aurora");
 
 export function getTheme(): ThemeId {
@@ -58,7 +60,7 @@ export const THEME_BOOT_SCRIPT = `
   (function() {
     try {
       var v = localStorage.getItem(${JSON.stringify(KEY)});
-      var ok = ['paper','terminal','galaxy','accounting','matte','synthwave','forest','mono','sakura','nord','newspaper','blueprint'];
+      var ok = ['paper','terminal','galaxy','accounting','matte','synthwave','forest','mono','sakura','nord','newspaper','blueprint','comic','sketch'];
       var root = document.documentElement;
       if (v && ok.indexOf(v) >= 0) root.classList.add('theme-' + v);
       root.setAttribute('data-theme', v || 'aurora');

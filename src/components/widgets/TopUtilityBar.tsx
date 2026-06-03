@@ -47,11 +47,17 @@ export function TopUtilityBar({
         {pills
           .filter((p) => p.id !== context)
           .map(({ id, href, label, Icon }) => (
-            <Link key={id} href={href} title={`Open ${label}`} className={pill}>
+            <Link
+              key={id}
+              href={href}
+              title={`Open ${label}`}
+              aria-label={label}
+              className={`${pill} ${id === "fun" ? "!px-2" : ""}`}
+            >
               <span className={dot} style={dotStyle}>
                 <Icon className="h-2.5 w-2.5" />
               </span>
-              <span className="font-medium">{label}</span>
+              {id !== "fun" && <span className="font-medium">{label}</span>}
             </Link>
           ))}
       </div>

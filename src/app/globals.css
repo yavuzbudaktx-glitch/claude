@@ -570,6 +570,46 @@ main { position: relative; z-index: 1; }
   -webkit-background-clip: text; background-clip: text;
 }
 .theme-terminal .text-ink { text-shadow: 0 0 8px rgba(34, 255, 119, 0.18); }
+/* Concept layer — make Terminal feel like an actual CRT, not just green
+   text. Scanlines drift over the whole page, the body has a slight bloom,
+   and cards get a flickering top-left "PROMPT >" badge. */
+.theme-terminal body::after {
+  background-image:
+    repeating-linear-gradient(to bottom, rgba(34,255,119,0.06) 0 1px, transparent 1px 3px),
+    radial-gradient(120% 90% at 50% 0%, rgba(34,255,119,0.06), transparent 60%);
+  background-size: auto, auto;
+  animation: crtScan 8s linear infinite;
+  mix-blend-mode: screen;
+  opacity: 0.7;
+}
+@keyframes crtScan {
+  from { background-position: 0 0, 50% 0; }
+  to   { background-position: 0 6px, 50% 0; }
+}
+.theme-terminal .card {
+  position: relative;
+}
+.theme-terminal .card::before {
+  /* prompt-style top bracket on every card — sells the "console window" vibe */
+  content: "▌";
+  display: block !important;
+  position: absolute;
+  top: 14px; left: 12px;
+  color: var(--accent);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  animation: termBlink 1.05s steps(2, end) infinite;
+  z-index: 2;
+  background: none !important; padding: 0 !important; mask: none !important; -webkit-mask: none !important;
+}
+.theme-terminal .headrule { padding-left: 16px; }
+@keyframes termBlink {
+  50% { opacity: 0; }
+}
+.theme-terminal .chip { letter-spacing: 0.08em; text-transform: uppercase; }
+.theme-terminal input, .theme-terminal textarea {
+  caret-color: var(--accent);
+}
 
 /* ============== GALAXY ============== */
 :root.theme-galaxy {
@@ -630,6 +670,42 @@ main { position: relative; z-index: 1; }
 .theme-galaxy .text-gradient {
   background: linear-gradient(118deg, #6366f1, #c084fc 45%, #22d3ee);
   -webkit-background-clip: text; background-clip: text;
+}
+/* Concept layer — Galaxy gets a slow nebula sweep on the body, every card
+   gets a faint orbital ring etched on it (a "planet card"), and the
+   header dot becomes a tiny ringed planet. */
+.theme-galaxy body::before {
+  filter: blur(110px) saturate(170%);
+  animation: nebulaDrift 70s ease-in-out infinite alternate;
+}
+@keyframes nebulaDrift {
+  from { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+  to   { transform: translate3d(-3%, 2%, 0) scale(1.18) rotate(8deg); }
+}
+.theme-galaxy .card::before {
+  /* faint orbital ellipse across each card */
+  content: "";
+  display: block !important;
+  position: absolute;
+  inset: 14% -10%;
+  border: 1px solid rgba(192, 132, 252, 0.18);
+  border-radius: 50%;
+  transform: rotate(-12deg);
+  padding: 0 !important;
+  pointer-events: none;
+  background: none !important;
+  mask: none !important;
+  -webkit-mask: none !important;
+  z-index: 0;
+}
+.theme-galaxy .headrule, .theme-galaxy > * { position: relative; z-index: 1; }
+.theme-galaxy .dot {
+  background: radial-gradient(circle at 30% 30%, #ffffff, #c084fc 60%, #4c1d95);
+  box-shadow:
+    0 0 0 1px rgba(192,132,252,0.45),
+    0 0 0 4px rgba(192,132,252,0.10),       /* Saturn-style ring */
+    0 0 12px rgba(192,132,252,0.45),
+    0 0 24px rgba(34,211,238,0.30);
 }
 
 /* ============== MATTE DARK ============== */
@@ -1463,6 +1539,243 @@ main { position: relative; z-index: 1; }
 .theme-blueprint:not(.dark) .card::before { background-image:
     linear-gradient(var(--ink) 1px, transparent 1px) 0 0/100% 100%,
     linear-gradient(90deg, var(--ink) 1px, transparent 1px) 0 0/100% 100%; }
+
+/* ---------- NEWSPAPER · DARK (evening edition) ---------- */
+:root.theme-newspaper.dark {
+  color-scheme: dark;
+  --bg:           #181513;
+  --paper:        #211d1a;
+  --paper-2:      #2a2521;
+  --ink:          #f4ede0;
+  --ink-soft:     #c8bfaf;
+  --muted:        #8c8170;
+  --muted-2:      #5a5246;
+  --rule:         rgba(244, 237, 224, 0.40);
+  --rule-soft:    rgba(244, 237, 224, 0.10);
+  --accent:       #e07a5f;
+  --accent-soft:  rgba(224, 122, 95, 0.10);
+  --accent-2:     #d4a857;
+  --hl:           rgba(224, 122, 95, 0.08);
+  --up:           #a3c585;
+  --down:         #e07a5f;
+  --grad-from:    #f4ede0;
+  --grad-via:     #e07a5f;
+  --grad-to:      #d4a857;
+  --glass:        #211d1a;
+  --glass-border: rgba(244, 237, 224, 0.30);
+  --glow:         rgba(224, 122, 95, 0.18);
+  --shadow-card:  none;
+  --shadow-hover: 0 2px 0 0 rgba(244,237,224,0.30);
+  --grain:        0.04;
+}
+.theme-newspaper.dark body {
+  background:
+    radial-gradient(rgba(244,237,224,0.025) 1px, transparent 1.5px) 0 0/4px 4px,
+    var(--bg);
+}
+
+/* =======================================================================
+   TWO MORE CONCEPT THEMES — Comic · Sketchbook
+======================================================================= */
+
+/* ============== COMIC (halftone + ink lines + Ben-Day) ============== */
+:root.theme-comic {
+  color-scheme: light;
+  --bg:           #fff8e6;
+  --paper:        #ffffff;
+  --paper-2:      #fffdef;
+  --ink:          #111111;
+  --ink-soft:     #2a2a2a;
+  --muted:        #5c5c5c;
+  --muted-2:      #9a9a9a;
+  --rule:         #111111;
+  --rule-soft:    rgba(17, 17, 17, 0.20);
+  --accent:       #ff2d2d;       /* KAPOW red */
+  --accent-soft:  rgba(255, 45, 45, 0.10);
+  --accent-2:     #1d4ed8;
+  --hl:           rgba(255, 45, 45, 0.07);
+  --up:           #1d8a3e;
+  --down:         #c2185b;
+  --grad-from:    #ff2d2d;
+  --grad-via:     #f4c84a;
+  --grad-to:      #1d4ed8;
+  --glass:        #ffffff;
+  --glass-border: #111111;
+  --glow:         rgba(255, 45, 45, 0.20);
+  --shadow-card:  4px 4px 0 0 #111111;
+  --shadow-hover: 6px 6px 0 0 #111111;
+  --grain:        0;
+}
+.theme-comic body::before { background: none; animation: none; }
+.theme-comic body {
+  background:
+    radial-gradient(#111111 1px, transparent 1.2px) 0 0/6px 6px,
+    var(--bg);
+  background-blend-mode: multiply;
+}
+.theme-comic .card {
+  background: var(--paper);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  border: 3px solid #111111;
+  border-radius: 14px;
+  /* halftone dot pattern subtly visible on every card panel */
+  background-image:
+    radial-gradient(rgba(17,17,17,0.08) 1px, transparent 1.2px),
+    linear-gradient(180deg, transparent, transparent);
+  background-size: 8px 8px, 100% 100%;
+}
+.theme-comic .card::before { display: none; }
+.theme-comic .card::after { display: none; }
+.theme-comic .card:hover { transform: translate(-2px, -2px); }
+.theme-comic .card-bare { border: 2px solid #111111; border-radius: 10px; }
+.theme-comic .btn-ghost { border: 2px solid #111111; border-radius: 12px; background: var(--paper); }
+.theme-comic .btn-ghost:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 0 #111111; }
+.theme-comic .chip { border: 2px solid #111111; border-radius: 999px; background: var(--paper); font-weight: 700; }
+.theme-comic .chip-active { background: var(--accent); color: #fff; box-shadow: 3px 3px 0 0 #111111; }
+.theme-comic .dot { background: var(--accent); border: 1.5px solid #111111; box-shadow: none; width: 10px; height: 10px; }
+.theme-comic .font-display { font-weight: 900; letter-spacing: -0.02em; text-transform: uppercase; }
+.theme-comic .text-gradient {
+  background: linear-gradient(118deg, #ff2d2d, #1d4ed8 60%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-stroke: 1px #111111;
+  animation: none;
+}
+:root.theme-comic.dark {
+  color-scheme: dark;
+  --bg:           #14141a;
+  --paper:        #1c1c24;
+  --paper-2:      #232330;
+  --ink:          #fff8e6;
+  --ink-soft:     #d5d5e0;
+  --muted:        #9a9aa9;
+  --muted-2:      #5a5a70;
+  --rule:         #fff8e6;
+  --rule-soft:    rgba(255, 248, 230, 0.15);
+  --accent:       #ff3a3a;
+  --accent-soft:  rgba(255, 58, 58, 0.14);
+  --accent-2:     #f4c84a;
+  --glass:        #1c1c24;
+  --glass-border: #fff8e6;
+  --shadow-card:  4px 4px 0 0 #fff8e6;
+  --shadow-hover: 6px 6px 0 0 #fff8e6;
+}
+.theme-comic.dark body {
+  background:
+    radial-gradient(rgba(255,248,230,0.05) 1px, transparent 1.2px) 0 0/6px 6px,
+    var(--bg);
+}
+.theme-comic.dark .card { border-color: var(--ink); }
+.theme-comic.dark .card-bare,
+.theme-comic.dark .btn-ghost,
+.theme-comic.dark .chip { border-color: var(--ink); }
+
+/* ============== SKETCHBOOK (pencil + grid paper) ============== */
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&display=swap");
+:root.theme-sketch {
+  color-scheme: light;
+  --bg:           #fbfaf3;
+  --paper:        #fffefa;
+  --paper-2:      #fcf9ee;
+  --ink:          #2b2b2b;
+  --ink-soft:     #4a4a4a;
+  --muted:        #7a7a7a;
+  --muted-2:      #b8b3a3;
+  --rule:         rgba(43, 43, 43, 0.35);
+  --rule-soft:    rgba(43, 43, 43, 0.12);
+  --accent:       #2b2b2b;
+  --accent-soft:  rgba(43, 43, 43, 0.08);
+  --accent-2:     #b58a3a;
+  --hl:           rgba(43, 43, 43, 0.06);
+  --up:           #4e8c4e;
+  --down:         #b34a4a;
+  --grad-from:    #2b2b2b;
+  --grad-via:     #6e6e6e;
+  --grad-to:      #b58a3a;
+  --glass:        #fffefa;
+  --glass-border: rgba(43, 43, 43, 0.35);
+  --glow:         rgba(43, 43, 43, 0.15);
+  --shadow-card:  1px 1px 0 rgba(43,43,43,0.12), 3px 3px 0 rgba(43,43,43,0.06);
+  --shadow-hover: 1px 1px 0 rgba(43,43,43,0.18), 5px 5px 0 rgba(43,43,43,0.08);
+  --grain:        0.06;
+}
+.theme-sketch body::before { background: none; animation: none; }
+.theme-sketch body {
+  background:
+    linear-gradient(rgba(43,43,43,0.06) 1px, transparent 1px) 0 0/100% 24px,
+    linear-gradient(90deg, rgba(43,43,43,0.04) 1px, transparent 1px) 0 0/24px 100%,
+    var(--bg);
+  font-family: "Patrick Hand", "Caveat", "Comic Sans MS", system-ui, sans-serif;
+}
+.theme-sketch .font-display {
+  font-family: "Caveat", "Patrick Hand", cursive !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+}
+.theme-sketch .label { font-family: "Patrick Hand", system-ui, sans-serif; letter-spacing: 0.08em; font-weight: 600; }
+.theme-sketch .card {
+  background: var(--paper);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  border: 1.5px solid var(--rule);
+  border-radius: 22px 14px 26px 16px / 16px 22px 14px 24px; /* wobbly */
+  /* hand-drawn outline feel — a second offset edge */
+  position: relative;
+}
+.theme-sketch .card::before {
+  content: "";
+  position: absolute; inset: 4px;
+  border: 1px dashed rgba(43,43,43,0.20);
+  border-radius: inherit;
+  pointer-events: none;
+  padding: 0 !important; background: none !important;
+  mask: none !important; -webkit-mask: none !important;
+}
+.theme-sketch .card::after { display: none; }
+.theme-sketch .card:hover { transform: rotate(-0.2deg); }
+.theme-sketch .card-bare {
+  border: 1.5px solid var(--rule);
+  border-radius: 16px 22px 14px 20px / 20px 14px 22px 16px;
+  background: var(--paper-2);
+}
+.theme-sketch .btn-ghost {
+  border: 1.5px solid var(--rule);
+  background: var(--paper-2);
+  border-radius: 14px 10px 16px 12px / 12px 14px 10px 16px;
+}
+.theme-sketch .chip {
+  border: 1.5px solid var(--rule);
+  border-radius: 14px 18px 12px 16px / 16px 12px 18px 14px;
+  font-family: "Patrick Hand", system-ui;
+  font-weight: 700;
+}
+.theme-sketch .chip-active { background: var(--ink); color: #fff; border-color: var(--ink); }
+.theme-sketch .dot { background: var(--ink); box-shadow: 0 0 0 2px var(--bg); width: 9px; height: 9px; }
+.theme-sketch .text-gradient {
+  background: none !important;
+  -webkit-text-fill-color: var(--ink); color: var(--ink); animation: none;
+}
+:root.theme-sketch.dark {
+  color-scheme: dark;
+  --bg:           #0f0d09;
+  --paper:        #181510;
+  --paper-2:      #1f1b15;
+  --ink:          #f0e8d2;
+  --ink-soft:     #c8bea4;
+  --muted:        #8b8268;
+  --muted-2:      #5a5340;
+  --rule:         rgba(240, 232, 210, 0.42);
+  --rule-soft:    rgba(240, 232, 210, 0.16);
+  --accent:       #e0c98a;
+  --accent-2:     #ffffff;
+  --glass:        #181510;
+  --glass-border: rgba(240, 232, 210, 0.42);
+  --glow:         rgba(240, 232, 210, 0.16);
+}
+.theme-sketch.dark body {
+  background:
+    linear-gradient(rgba(240,232,210,0.07) 1px, transparent 1px) 0 0/100% 24px,
+    linear-gradient(90deg, rgba(240,232,210,0.05) 1px, transparent 1px) 0 0/24px 100%,
+    var(--bg);
+}
 
 /* =======================================================================
    DOC ANYWHERE — "soft graphite" skin

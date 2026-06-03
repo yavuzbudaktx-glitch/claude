@@ -10,11 +10,15 @@
 
 type Status = "idle" | "loading" | "playing" | "error";
 
-// Last-resort hard-coded candidates (Moon Digital / radyotvonline HLS).
+// Last-resort hard-coded candidates (Moon Digital / radyotvonline HLS) +
+// a YouTube live broadcast as the absolute fallback when every audio stream
+// is unreachable from the browser. The yt: scheme is intercepted below and
+// played via a hidden YouTube IFrame instead of <audio>.
 const FALLBACK_STREAMS = [
   "https://moondigitaledge1.radyotvonline.net/slowturk/playlist.m3u8",
   "https://moondigitaledge2.radyotvonline.net/slowturk/playlist.m3u8",
   "https://moondigitaledge3.radyotvonline.net/slowturk/playlist.m3u8",
+  "yt:6He9sFxFv8Y",  // Kral Müzik Akustik 24/7 broadcast
 ];
 
 // Radio Browser mirrors (https, CORS-enabled, built for apps like this).
@@ -93,6 +97,31 @@ function teardownHls() {
   if (hls) { try { hls.destroy(); } catch { /* noop */ } hls = null; }
 }
 
+// ---- YouTube fallback (a hidden iframe player) -----------------------------
+// Some "stations" we want as the last-resort fallback only exist as YouTube
+// 24/7 broadcasts (Kral Müzik Akustik, etc). YouTube can't be played via
+// <audio>, so when the URL starts with `yt:` we mount a hidden iframe instead.
+// One iframe at a time; tear down on stop.
+let ytWrap: HTMLDivElement | null = null;
+function mountYouTube(videoId: string) {
+  if (typeof document === "undefined") return;
+  if (!ytWrap) {
+    ytWrap = document.createElement("div");
+    ytWrap.style.cssText = "position:fixed;left:-9999px;top:0;width:320px;height:180px;";
+    ytWrap.setAttribute("aria-hidden", "true");
+    document.body.appendChild(ytWrap);
+  }
+  // `enablejsapi=1` lets us send commands; `mute=0` keeps it audible. Setting
+  // a `playlist` value with the same id makes the broadcast loop indefinitely
+  // for non-live videos; live broadcasts already loop.
+  ytWrap.innerHTML =
+    `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=0&loop=1&playlist=${videoId}&enablejsapi=1" ` +
+    `allow="autoplay; encrypted-media" width="320" height="180" frameborder="0"></iframe>`;
+}
+function unmountYouTube() {
+  if (ytWrap) { ytWrap.innerHTML = ""; }
+}
+
 // Indefinite playback — radio streams drop on network glitches, sleeping
 // tabs, and after long idle periods (the common ~5 minute symptom). When the
 // element errors or quietly ends, automatically resume from the same URL.
@@ -143,6 +172,21 @@ function bindKeepAlive(el: HTMLAudioElement) {
 }
 
 async function playUrl(url: string): Promise<void> {
+  // YouTube intercept — `yt:VIDEO_ID` mounts a hidden iframe instead of
+  // trying to feed YouTube into the <audio> element.
+  if (url.startsWith("yt:")) {
+    const id = url.slice(3);
+    // Make sure the <audio> element isn't also playing in the background.
+    try { audio?.pause(); } catch { /* noop */ }
+    teardownHls();
+    lastPlayedUrl = url;
+    mountYouTube(id);
+    return;
+  }
+  // For audio streams we leave any prior YouTube iframe up only until the
+  // first audio frame arrives; tear it down so we don't double-broadcast.
+  unmountYouTube();
+
   // NOTE: do NOT set crossOrigin — radio streams rarely send CORS headers,
   // and requiring them ("anonymous") silently breaks plain <audio> playback.
   if (!audio) { audio = new Audio(); audio.preload = "none"; audio.volume = 0.72; }
@@ -188,6 +232,7 @@ export function stopRadio() {
   reconnectAttempts = 0;
   try { audio?.pause(); } catch { /* noop */ }
   teardownHls();
+  unmountYouTube();
   if (audio) audio.src = "";
   setStatus("idle");
 }

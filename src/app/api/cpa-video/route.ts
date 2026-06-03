@@ -20,8 +20,7 @@ import Parser from "rss-parser";
 export const revalidate = 3600;
 
 const CHANNELS: Array<{ handle: string; label: string }> = [
-  { handle: "logangrafcpa",   label: "Logan Graf" },
-  { handle: "KPMGusCareers",  label: "KPMG Careers" },
+  { handle: "logangrafcpa", label: "Logan Graf" },
 ];
 
 const HEADERS = {
@@ -81,7 +80,10 @@ interface YtItem {
   isoDate?: string;
   id?: string;
   ["yt:videoId"]?: string;
-  ["media:group"]?: { ["media:thumbnail"]?: { $?: { url?: string } } | Array<{ $?: { url?: string } }> };
+  ["media:group"]?: {
+    ["media:thumbnail"]?: { $?: { url?: string; height?: string; width?: string } } | Array<{ $?: { url?: string; height?: string; width?: string } }>;
+    ["media:description"]?: string;
+  };
 }
 
 const ytParser = new Parser<{ title?: string }, YtItem>({
@@ -90,10 +92,23 @@ const ytParser = new Parser<{ title?: string }, YtItem>({
   customFields: { item: [["yt:videoId", "yt:videoId"], ["media:group", "media:group"]] },
 });
 
-function thumbOf(item: YtItem, id: string): string {
+function thumbOf(item: YtItem, id: string): { url: string; w: number; h: number } {
   const g = item["media:group"]?.["media:thumbnail"];
   const first = Array.isArray(g) ? g[0] : g;
-  return first?.$?.url ?? `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+  return {
+    url: first?.$?.url ?? `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+    w: Number(first?.$?.width ?? 0),
+    h: Number(first?.$?.height ?? 0),
+  };
+}
+// Heuristics for "this is a Short" — title contains #shorts, or the thumbnail
+// is portrait/square. YouTube doesn't put Shorts in a separate feed, so we
+// have to filter client-side.
+function looksLikeShort(item: YtItem, t: { w: number; h: number }): boolean {
+  const title = (item.title ?? "").toLowerCase();
+  if (/#short|#shorts/.test(title)) return true;
+  if (t.w > 0 && t.h > 0 && t.h >= t.w) return true; // portrait thumbnail
+  return false;
 }
 
 async function fetchUploads(channelId: string, channel: { handle: string; label: string }): Promise<Video[]> {
@@ -107,12 +122,18 @@ async function fetchUploads(channelId: string, channel: { handle: string; label:
   }
   if (!feed) return [];
   return (feed.items ?? [])
+    .filter((it) => {
+      const id = it["yt:videoId"] ?? (it.id ?? "").replace(/^yt:video:/, "");
+      // Drop Shorts: title hashtags or portrait thumbnail. We only want
+      // landscape, regular videos here.
+      return !looksLikeShort(it, thumbOf(it, id));
+    })
     .map((it) => {
       const id = it["yt:videoId"] ?? (it.id ?? "").replace(/^yt:video:/, "");
       return {
         id, title: (it.title ?? "").trim(),
         published: it.isoDate ?? it.pubDate ?? "",
-        thumb: thumbOf(it, id),
+        thumb: thumbOf(it, id).url,
         channel: channel.handle,
         channelLabel: channel.label,
         channelUrl: `https://www.youtube.com/@${channel.handle}/videos`,

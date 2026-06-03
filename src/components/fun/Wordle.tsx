@@ -1,0 +1,202 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import useSWR from "swr";
+import { Check, X, RotateCcw } from "lucide-react";
+import { localDateKey } from "@/lib/local-date";
+import { usePref } from "@/components/PrefsProvider";
+
+interface WordleResp { date: string; refresh: string | null; answer: string }
+type Letter = { ch: string; state: "right" | "present" | "wrong" | "empty" };
+const ROWS = 6;
+const COLS = 5;
+
+const fetcher = (u: string) => fetch(u).then((r) => r.json());
+
+interface SavedState { date: string; refresh: string; guesses: string[]; won: boolean }
+
+function scoreGuess(guess: string, answer: string): Letter[] {
+  const out: Letter[] = Array.from({ length: COLS }, () => ({ ch: "", state: "wrong" }));
+  const remaining = answer.split("");
+  // First pass — exact matches.
+  for (let i = 0; i < COLS; i++) {
+    out[i].ch = guess[i] ?? "";
+    if (guess[i] === answer[i]) {
+      out[i].state = "right";
+      remaining[i] = "_"; // consumed
+    }
+  }
+  // Second pass — present but wrong position, only against remaining slots.
+  for (let i = 0; i < COLS; i++) {
+    if (out[i].state === "right") continue;
+    const idx = remaining.indexOf(guess[i] ?? "");
+    if (idx >= 0) { out[i].state = "present"; remaining[idx] = "_"; }
+  }
+  return out;
+}
+
+const KEYS = [
+  "Q W E R T Y U I O P".split(" "),
+  "A S D F G H J K L".split(" "),
+  ["ENTER", ..."Z X C V B N M".split(" "), "BACK"],
+];
+
+export function Wordle() {
+  const dateKey = useMemo(() => localDateKey(), []);
+  // Bump this to force a fresh word from the server (manual refresh).
+  const [refreshN, setRefreshN] = useState(0);
+  const { data, mutate } = useSWR<WordleResp>(
+    `/api/wordle?d=${dateKey}&r=${refreshN}`,
+    fetcher,
+    { keepPreviousData: true },
+  );
+  const refreshKey = String(refreshN);
+
+  const [state, setState] = usePref<SavedState>("hub.wordle.daily", { date: dateKey, refresh: "0", guesses: [], won: false });
+  useEffect(() => {
+    if (state.date !== dateKey || state.refresh !== refreshKey) {
+      setState({ date: dateKey, refresh: refreshKey, guesses: [], won: false });
+    }
+  }, [dateKey, refreshKey, state.date, state.refresh, setState]);
+
+  const [current, setCurrent] = useState("");
+  const guesses = state.date === dateKey && state.refresh === refreshKey ? state.guesses : [];
+  const won = state.date === dateKey && state.refresh === refreshKey && state.won;
+  const exhausted = guesses.length >= ROWS;
+  const answer = (data?.answer ?? "").toUpperCase();
+
+  function press(k: string) {
+    if (!answer || won || exhausted) return;
+    if (k === "ENTER") {
+      if (current.length !== COLS) return;
+      const next = [...guesses, current];
+      const isWin = current === answer;
+      setState({ date: dateKey, refresh: refreshKey, guesses: next, won: isWin });
+      setCurrent("");
+    } else if (k === "BACK") {
+      setCurrent((c) => c.slice(0, -1));
+    } else if (/^[A-Z]$/.test(k)) {
+      setCurrent((c) => (c.length >= COLS ? c : c + k));
+    }
+  }
+
+  // Keyboard
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Enter") { e.preventDefault(); press("ENTER"); return; }
+      if (e.key === "Backspace") { e.preventDefault(); press("BACK"); return; }
+      const k = e.key.toUpperCase();
+      if (/^[A-Z]$/.test(k)) { e.preventDefault(); press(k); }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [current, guesses, won, exhausted, answer]);
+
+  // For the keyboard letter-colouring: best status this letter has been
+  // scored as across all past guesses.
+  const letterStatus = useMemo(() => {
+    type Scored = "right" | "present" | "wrong";
+    const m: Record<string, Scored> = {};
+    const rank: Record<Scored, number> = { wrong: 0, present: 1, right: 2 };
+    for (const g of guesses) {
+      const scored = scoreGuess(g, answer);
+      for (const s of scored) {
+        if (s.state === "empty") continue;
+        const prev = m[s.ch];
+        const cur = s.state as Scored;
+        if (!prev || rank[cur] > rank[prev]) m[s.ch] = cur;
+      }
+    }
+    return m;
+  }, [guesses, answer]);
+
+  function newGame() {
+    setRefreshN((n) => n + 1);
+    setCurrent("");
+    mutate();
+  }
+
+  if (!data) return <p className="text-muted text-sm">Loading…</p>;
+
+  return (
+    <div className="flex flex-col items-center gap-2.5 h-full">
+      <div className="flex items-center justify-between w-full text-[10.5px] font-mono uppercase tracking-wider text-muted-2 shrink-0">
+        <span>Daily · {dateKey}</span>
+        <button onClick={newGame} className="inline-flex items-center gap-1 hover:text-accent transition" title="New game">
+          <RotateCcw className="h-3 w-3" /> new
+        </button>
+      </div>
+
+      {/* Grid */}
+      <div className="grid gap-1.5 shrink-0" style={{ gridTemplateRows: `repeat(${ROWS}, minmax(0, 1fr))` }}>
+        {Array.from({ length: ROWS }).map((_, r) => {
+          const g = guesses[r] ?? (r === guesses.length ? current : "");
+          const scored = guesses[r] ? scoreGuess(g, answer) : null;
+          return (
+            <div key={r} className="grid grid-cols-5 gap-1.5">
+              {Array.from({ length: COLS }).map((_, c) => {
+                const ch = g[c] ?? "";
+                const s = scored?.[c]?.state;
+                const filled = !!ch;
+                const bg = s === "right" ? "var(--up)"
+                  : s === "present" ? "#d97706"
+                  : s === "wrong" ? "var(--muted)" : "transparent";
+                const fg = s ? "#fff" : "var(--ink)";
+                const border = s
+                  ? "transparent"
+                  : filled ? "var(--ink-soft)" : "var(--rule)";
+                return (
+                  <span
+                    key={c}
+                    className="w-9 h-9 sm:w-10 sm:h-10 grid place-items-center font-display text-xl font-bold rounded-md transition"
+                    style={{ background: bg, color: fg, border: `2px solid ${border}` }}
+                  >
+                    {ch}
+                  </span>
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Keyboard */}
+      <div className="flex flex-col gap-1 mt-auto shrink-0 w-full max-w-[360px]">
+        {KEYS.map((row, ri) => (
+          <div key={ri} className="flex justify-center gap-1">
+            {row.map((k) => {
+              const st = letterStatus[k];
+              const wide = k === "ENTER" || k === "BACK";
+              const bg = st === "right" ? "var(--up)"
+                : st === "present" ? "#d97706"
+                : st === "wrong" ? "var(--muted)" : "var(--rule-soft)";
+              const fg = st ? "#fff" : "var(--ink)";
+              return (
+                <button
+                  key={k}
+                  onClick={() => press(k)}
+                  className={`rounded-md font-semibold text-[12px] transition ${wide ? "px-2 text-[10px]" : "w-7"} h-9`}
+                  style={{ background: bg, color: fg, minWidth: wide ? "auto" : undefined }}
+                >
+                  {k === "BACK" ? "⌫" : k}
+                </button>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+
+      {(won || exhausted) && (
+        <div
+          className={`mt-auto text-center text-[12.5px] px-3 py-1.5 rounded-full shrink-0 ${won ? "text-up" : "text-down"}`}
+          style={{ background: won ? "color-mix(in srgb, var(--up) 14%, transparent)" : "color-mix(in srgb, var(--down) 14%, transparent)" }}
+        >
+          {won
+            ? <><Check className="inline h-3.5 w-3.5" /> Solved in {guesses.length}!</>
+            : <><X className="inline h-3.5 w-3.5" /> Answer: <b>{answer}</b></>}
+        </div>
+      )}
+    </div>
+  );
+}

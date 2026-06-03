@@ -18,6 +18,8 @@ const SWATCHES: Record<ThemeId, string[]> = {
   nord:       ["#2e3440", "#88c0d0", "#a3be8c"],
   newspaper:  ["#f7f3e8", "#111111", "#9a1010"],
   blueprint:  ["#0e3a64", "#ffffff", "#7fc6ff"],
+  comic:      ["#fff8e6", "#ff2d2d", "#111111"],
+  sketch:     ["#fbfaf3", "#2b2b2b", "#b58a3a"],
 };
 
 export function ThemeVariantButton() {

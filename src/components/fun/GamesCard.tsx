@@ -1,25 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { Globe2, Crown, Worm } from "lucide-react";
-import { Worldle } from "./Worldle";
+import { Type, Crown, Worm } from "lucide-react";
+import { Wordle } from "./Wordle";
 import { ChessPuzzle } from "./ChessPuzzle";
 import { Snake } from "./Snake";
 
-type GameTab = "worldle" | "chess" | "snake";
+type GameTab = "wordle" | "chess" | "snake";
 
 export function GamesCard() {
-  const [tab, setTab] = useState<GameTab>("worldle");
+  const [tab, setTab] = useState<GameTab>("wordle");
 
   return (
-    <div className="flex flex-col gap-3 h-full min-h-0">
-      <div className="flex items-center gap-1.5">
+    // Fixed inner height so the games card never stretches the row regardless
+    // of which game is active — each game just scrolls/centers inside this
+    // bound. Card content is constrained to ~560px tall.
+    <div className="flex flex-col gap-3 h-[560px]">
+      <div className="flex items-center gap-1.5 shrink-0">
         {(
           [
-            { id: "worldle", label: "Worldle", icon: Globe2 },
-            { id: "chess",   label: "Chess",   icon: Crown },
-            { id: "snake",   label: "Snake",   icon: Worm  },
-          ] as Array<{ id: GameTab; label: string; icon: typeof Globe2 }>
+            { id: "wordle", label: "Wordle", icon: Type },
+            { id: "chess",  label: "Chess",  icon: Crown },
+            { id: "snake",  label: "Snake",  icon: Worm  },
+          ] as Array<{ id: GameTab; label: string; icon: typeof Type }>
         ).map((g) => {
           const Icon = g.icon;
           const on = tab === g.id;
@@ -35,8 +38,8 @@ export function GamesCard() {
         })}
       </div>
 
-      <div className="flex-1 min-h-0">
-        {tab === "worldle" && <Worldle />}
+      <div className="flex-1 min-h-0 overflow-hidden">
+        {tab === "wordle" && <Wordle />}
         {tab === "chess" && <ChessPuzzle />}
         {tab === "snake" && <Snake />}
       </div>

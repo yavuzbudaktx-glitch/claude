@@ -15,6 +15,8 @@ import { SignOutButton } from "@/components/SignOutButton";
 import { NasaApod } from "@/components/fun/NasaApod";
 import { GamesCard } from "@/components/fun/GamesCard";
 import { TypingTest } from "@/components/fun/TypingTest";
+import { NatureShort } from "@/components/fun/NatureShort";
+import { TRex } from "@/components/fun/TRex";
 
 export const dynamic = "force-dynamic";
 
@@ -63,6 +65,16 @@ export default async function FunPage() {
       <Card title="Typing speed" meta="how fast are you, really">
         <TypingTest />
       </Card>
+
+      {/* Row 3 — Portrait nature short (narrow) + classic T-Rex (wide) */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,2.4fr)] gap-5 items-stretch">
+        <div className="[&>*]:h-full">
+          <Card title="Nature short" meta="BBC Earth · Nat Geo"><NatureShort /></Card>
+        </div>
+        <div className="[&>*]:h-full">
+          <Card title="T-Rex run" meta="press space to jump"><TRex /></Card>
+        </div>
+      </div>
     </main>
   );
 }
