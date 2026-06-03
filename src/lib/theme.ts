@@ -8,7 +8,8 @@
 
 export type ThemeId =
   | "aurora" | "paper" | "terminal" | "galaxy" | "accounting" | "matte"
-  | "synthwave" | "forest" | "mono" | "sakura" | "nord";
+  | "synthwave" | "forest" | "mono" | "sakura" | "nord"
+  | "newspaper" | "blueprint";
 
 export const THEMES: Array<{
   id: ThemeId; label: string; description: string;
@@ -24,11 +25,13 @@ export const THEMES: Array<{
   { id: "mono",       label: "Mono",         description: "Pure black & white, hard edges, heavy rules — brutalist clarity." },
   { id: "sakura",     label: "Sakura",       description: "Soft cherry-blossom pinks on warm white — gentle and airy." },
   { id: "nord",       label: "Nord",         description: "Cool arctic blue-greys with frost accents — quiet and balanced." },
+  { id: "newspaper",  label: "Newspaper",    description: "Times-style serif type, columns, drop-caps, hairline ruling — like reading a Sunday paper." },
+  { id: "blueprint",  label: "Blueprint",    description: "Architect's drafting page — white technical strokes on cyan, corner brackets, drafting grid." },
 ];
 
 const KEY = "brief.theme.v1";
 
-const VALID: ThemeId[] = ["aurora", "paper", "terminal", "galaxy", "accounting", "matte", "synthwave", "forest", "mono", "sakura", "nord"];
+const VALID: ThemeId[] = ["aurora", "paper", "terminal", "galaxy", "accounting", "matte", "synthwave", "forest", "mono", "sakura", "nord", "newspaper", "blueprint"];
 const NON_DEFAULT = VALID.filter((v) => v !== "aurora");
 
 export function getTheme(): ThemeId {
@@ -55,7 +58,7 @@ export const THEME_BOOT_SCRIPT = `
   (function() {
     try {
       var v = localStorage.getItem(${JSON.stringify(KEY)});
-      var ok = ['paper','terminal','galaxy','accounting','matte','synthwave','forest','mono','sakura','nord'];
+      var ok = ['paper','terminal','galaxy','accounting','matte','synthwave','forest','mono','sakura','nord','newspaper','blueprint'];
       var root = document.documentElement;
       if (v && ok.indexOf(v) >= 0) root.classList.add('theme-' + v);
       root.setAttribute('data-theme', v || 'aurora');

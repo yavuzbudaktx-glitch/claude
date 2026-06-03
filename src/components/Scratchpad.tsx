@@ -50,7 +50,7 @@ export function Scratchpad() {
       </button>
 
       {open && (
-        <div className="fixed right-3 top-[58px] md:absolute md:right-0 md:top-[calc(100%+8px)] z-[70] w-[min(320px,calc(100vw-1.5rem))] rounded-2xl border border-[var(--glass-border)] bg-[var(--paper-2)] backdrop-blur-xl shadow-[var(--shadow-hover)] p-3.5 animate-fadeIn origin-top-right">
+        <div className="fixed inset-x-2 top-[64px] md:absolute md:right-0 md:top-[calc(100%+8px)] z-[70] w-[320px] max-w-[calc(100vw-1rem)] rounded-2xl border border-[var(--glass-border)] bg-[var(--paper-2)] backdrop-blur-xl shadow-[var(--shadow-hover)] p-3.5 animate-fadeIn origin-top-right">
           <div className="flex items-center justify-between mb-2">
             <span className="label flex items-center gap-1.5">
               <StickyNote className="h-3 w-3" /> Scratchpad

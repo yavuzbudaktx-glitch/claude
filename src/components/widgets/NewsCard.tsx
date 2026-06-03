@@ -236,10 +236,13 @@ export function NewsCard() {
       {isLoading && !data && <p className="text-muted text-sm">Loading…</p>}
       {error && !data && <p className="text-accent text-sm">Couldn&rsquo;t load news.</p>}
 
-      {/* flex-1 fill area: the list grows to occupy the (possibly stretched)
-          card height; useFitCount reads this height to decide how many
-          headlines to render (min 5). */}
-      <div ref={fitRef} className="flex-1 min-h-0">
+      {/* The list is absolutely positioned inside a flex-1 box so its content
+          NEVER contributes to the card's intrinsic height — that's what keeps
+          the row sized by the (fixed-content) prayer card instead of letting
+          a long list grow the row. useFitCount reads the available height and
+          renders just enough headlines to fill it (min 5). */}
+      <div className="relative flex-1 min-h-0">
+        <div ref={fitRef} className="absolute inset-0 overflow-y-auto pr-0.5">
       {(data || pool || active === "saved") &&
         (refreshing ? (
           <div className="py-10 flex items-center justify-center gap-2 text-muted text-sm">
@@ -289,6 +292,7 @@ export function NewsCard() {
             )}
           </ul>
         ))}
+        </div>
       </div>
     </Card>
   );

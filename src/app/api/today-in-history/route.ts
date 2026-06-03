@@ -145,24 +145,11 @@ export async function GET(req: Request) {
     });
   }
 
-  // Secondary: hand-curated MM-DD dataset of ~80 globally notable
-  // historical events.
-  const curated = CURATED[`${mm}-${dd}`];
-  if (curated) {
-    return NextResponse.json({
-      date: `${mm}-${dd}`,
-      year: curated.year,
-      text: curated.title,
-      summary: curated.summary,
-      kind: "featured",
-      source: "curated",
-      thumbnail: null,
-      pageTitle: curated.title,
-      link: curated.link ?? null,
-    });
-  }
-
   // Secondary: Wikipedia's editor-curated daily feed.
+  // (Reordered so Wikipedia outranks the curated dataset — Wikipedia always
+  // returns FRESH content, the curated dataset is the same one-of-80 entry
+  // we shipped with the codebase. Curated stays as the last-resort sane
+  // default so we never 404.)
   try {
     interface FeedFeaturedPage {
       type?: string;
@@ -277,6 +264,23 @@ export async function GET(req: Request) {
       link,
     });
   } catch (e) {
+    // Final-final fallback: the curated dataset if today's date is in it,
+    // otherwise a 502 with the error. The curated entry is stale but at
+    // least the card is never empty.
+    const curated = CURATED[`${mm}-${dd}`];
+    if (curated) {
+      return NextResponse.json({
+        date: `${mm}-${dd}`,
+        year: curated.year,
+        text: curated.title,
+        summary: curated.summary,
+        kind: "featured",
+        source: "curated",
+        thumbnail: null,
+        pageTitle: curated.title,
+        link: curated.link ?? null,
+      });
+    }
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "unknown" },
       { status: 502 },

@@ -43,8 +43,8 @@ export default async function Page() {
             context="dashboard"
             right={
               <>
-                <Scratchpad />
                 <RadioButton />
+                <Scratchpad />
                 <Bookmarks />
                 <Calculator />
                 <FocusButton />

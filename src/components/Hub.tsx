@@ -191,16 +191,25 @@ function NetWorthChart({ data, compact = false, hidden = false, goal = 0 }: { da
   const W = 680, H = compact ? 120 : 180;
   const padT = 12, padB = compact ? 20 : 26, padX = 10;
   const vals = series.map((s) => s.net);
-  const lo = Math.min(0, ...vals);
-  // Fold the goal into the top of the range so the target line + the
-  // headroom-to-goal are both visible on the chart.
+  const dataLo = Math.min(0, ...vals);
+  const dataHi = Math.max(0, ...vals);
+  const dataSpan = dataHi - dataLo || 1;
+  // Old version folded the goal into the y-range — but if the goal was
+  // 50× your current net worth, the actual data line collapsed to a
+  // flat smear at the bottom. Now: only stretch the range upward if the
+  // goal is within 1.5× the data span; otherwise clamp the goal to the
+  // top of the chart and add some headroom so it's visibly "off-screen
+  // above" rather than crowding the data.
   const hasGoal = goal > 0;
-  const hi = Math.max(0, ...vals, hasGoal ? goal : 0);
+  const goalFits = hasGoal && goal <= dataHi + dataSpan * 1.5;
+  const hi = goalFits ? Math.max(dataHi, goal) : dataHi + dataSpan * 0.15;
+  const lo = dataLo;
   const span = hi - lo || 1;
   const x = (i: number) => padX + (i / (series.length - 1)) * (W - padX * 2);
   const y = (v: number) => padT + (1 - (v - lo) / span) * (H - padT - padB);
   const zeroY = y(0);
-  const goalY = hasGoal ? y(goal) : 0;
+  const goalY = hasGoal ? Math.max(padT - 4, Math.min(H - padB + 4, y(goal))) : 0;
+  const goalOffscreen = hasGoal && !goalFits;
   const lastX = x(series.length - 1);
   const lastY = y(series[series.length - 1].net);
 
@@ -241,13 +250,18 @@ function NetWorthChart({ data, compact = false, hidden = false, goal = 0 }: { da
         )}
 
         {/* goal: a faint target line + a dashed trajectory from where you are
-            now up to the goal at the chart's right edge. */}
-        {hasGoal && (
+            now up to the goal at the chart's right edge. When the goal is way
+            above the data, draw an "above-chart" indicator arrow instead so
+            we don't squish the line. */}
+        {hasGoal && !goalOffscreen && (
           <>
             <line x1={padX} x2={W - padX} y1={goalY} y2={goalY} stroke="var(--grad-to)" strokeWidth="1.25" strokeDasharray="2 4" opacity="0.6" vectorEffect="non-scaling-stroke" />
             <line x1={lastX} y1={lastY} x2={W - padX} y2={goalY} stroke="var(--grad-to)" strokeWidth="1.25" strokeDasharray="4 4" opacity="0.45" vectorEffect="non-scaling-stroke" />
             <circle cx={W - padX} cy={goalY} r="2.5" fill="var(--grad-to)" opacity="0.8" vectorEffect="non-scaling-stroke" />
           </>
+        )}
+        {hasGoal && goalOffscreen && (
+          <line x1={lastX} y1={lastY} x2={W - padX} y2={padT} stroke="var(--grad-to)" strokeWidth="1.25" strokeDasharray="4 4" opacity="0.5" vectorEffect="non-scaling-stroke" />
         )}
 
         <path d={area} fill="url(#nwArea)" />
@@ -271,11 +285,11 @@ function NetWorthChart({ data, compact = false, hidden = false, goal = 0 }: { da
         <span>{monthLabel(series[series.length - 1].month)}</span>
       </div>
 
-      {/* tooltip */}
+      {/* tooltip — left% clamped to [6, 94] so it can't overflow the card edges */}
       {hv && (
         <div
           className="pointer-events-none absolute -top-1 z-10 -translate-x-1/2 -translate-y-full rounded-lg border border-[var(--glass-border)] bg-[var(--paper-2)] px-2.5 py-1.5 backdrop-blur-md shadow-[var(--shadow-card)] whitespace-nowrap"
-          style={{ left: `${(hover! / (series.length - 1)) * 100}%` }}
+          style={{ left: `${Math.max(6, Math.min(94, (hover! / (series.length - 1)) * 100))}%` }}
         >
           <div className="label !text-[8.5px] !tracking-[0.1em]">{monthLabel(hv.month, true)}</div>
           <div className="font-mono text-[13px] tabular-nums text-ink">{hidden ? "$•••" : money(hv.net)}</div>

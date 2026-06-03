@@ -18,13 +18,15 @@ interface RawFile {
   iconLink?: string;
 }
 
-// Most-recently-modified files from the user's Drive (not trashed). Needs the
-// drive.metadata.readonly (or drive.readonly) scope on the OAuth consent.
+// Most-recently-modified FOLDERS from the user's Drive (not trashed). Needs
+// the drive.metadata.readonly (or drive.readonly) scope on the OAuth consent.
+// The folder-only filter mirrors what people actually navigate in Drive — a
+// stack of files is noisier than the handful of folders you actually visit.
 export async function fetchRecentDriveFiles(accessToken: string, max = 20): Promise<DriveFile[]> {
   const params = new URLSearchParams({
     pageSize: String(max),
     orderBy: "modifiedTime desc",
-    q: "trashed = false",
+    q: "mimeType = 'application/vnd.google-apps.folder' and trashed = false",
     fields: "files(id,name,mimeType,modifiedTime,size,webViewLink,iconLink)",
     spaces: "drive",
   });

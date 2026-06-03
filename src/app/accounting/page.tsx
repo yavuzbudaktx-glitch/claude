@@ -38,8 +38,8 @@ export default async function AccountingPage() {
         context="accounting"
         right={
           <>
-            <Scratchpad />
             <RadioButton />
+            <Scratchpad />
             <Bookmarks />
             <Calculator />
             <FocusButton />

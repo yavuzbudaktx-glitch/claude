@@ -3,7 +3,7 @@
 import useSWR from "swr";
 import { useEffect, useMemo, useState } from "react";
 import { format, formatDistanceToNowStrict } from "date-fns";
-import { EyeOff, Eye, RotateCcw, Mail, HardDrive, File, FileText, Image as ImageIcon, FileSpreadsheet, ExternalLink, Folder } from "lucide-react";
+import { EyeOff, Eye, RotateCcw, Mail, HardDrive, File, FileText, Image as ImageIcon, FileSpreadsheet, ExternalLink, Folder, CalendarDays } from "lucide-react";
 import { Card } from "@/components/Card";
 import { usePref } from "@/components/PrefsProvider";
 import { useFitCount } from "@/lib/use-fit";
@@ -335,9 +335,9 @@ export function CalendarCard() {
     <span className="inline-flex items-center gap-1.5">
       <button
         onClick={() => setTab("calendar")}
-        className={`chip normal-case !px-2.5 !py-0.5 !text-[11px] ${tab === "calendar" ? "chip-active" : ""}`}
+        className={`chip normal-case !px-2.5 !py-0.5 !text-[11px] inline-flex items-center gap-1 ${tab === "calendar" ? "chip-active" : ""}`}
       >
-        Calendar
+        <CalendarDays className="h-3 w-3" /> Calendar
       </button>
       <button
         onClick={() => setTab("inbox")}
@@ -384,21 +384,27 @@ export function CalendarCard() {
 
   return (
     <Card num="02" title="" meta={tabs} action={action} className="flex flex-col">
-      <div ref={fitRef} className="flex-1 min-h-0 overflow-y-auto">
-        {tab === "calendar" ? (
-          <CalendarTab
-            hidden={hidden}
-            hide={hide}
-            unhide={unhide}
-            clearHidden={clearHidden}
-            showHidden={showHidden}
-            limit={fitCount}
-          />
-        ) : tab === "inbox" ? (
-          <InboxTab limit={fitCount} />
-        ) : (
-          <DriveTab limit={fitCount} />
-        )}
+      {/* relative + absolute child = the tab content never contributes to the
+          card's intrinsic height. The row is sized by whatever sibling is
+          tallest (the hadith), and this card stretches to match — its content
+          scrolls internally instead of growing the row. */}
+      <div className="relative flex-1 min-h-0">
+        <div ref={fitRef} className="absolute inset-0 overflow-y-auto pr-0.5">
+          {tab === "calendar" ? (
+            <CalendarTab
+              hidden={hidden}
+              hide={hide}
+              unhide={unhide}
+              clearHidden={clearHidden}
+              showHidden={showHidden}
+              limit={fitCount}
+            />
+          ) : tab === "inbox" ? (
+            <InboxTab limit={fitCount} />
+          ) : (
+            <DriveTab limit={fitCount} />
+          )}
+        </div>
       </div>
     </Card>
   );

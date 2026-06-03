@@ -1261,6 +1261,210 @@ main { position: relative; z-index: 1; }
 }
 
 /* =======================================================================
+   CONCEPT THEMES — Newspaper · Blueprint
+   These two go beyond a recolor: they change the typography, the card
+   silhouette, the background texture, and the auxiliary decoration so the
+   site reads as a different physical object.
+======================================================================= */
+
+/* ============== NEWSPAPER (Sunday-paper concept) ============== */
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&family=Source+Serif+4:wght@400;500;600&display=swap");
+:root.theme-newspaper {
+  color-scheme: light;
+  --bg:           #f3eed8;       /* aged-paper cream */
+  --paper:        #fbf6e3;
+  --paper-2:      #fffaea;
+  --ink:          #111111;       /* press-black */
+  --ink-soft:     #2a2723;
+  --muted:        #6a655a;
+  --muted-2:      #a7a190;
+  --rule:         rgba(17, 17, 17, 0.55);   /* hairline rules are dark */
+  --rule-soft:    rgba(17, 17, 17, 0.12);
+  --accent:       #9a1010;       /* masthead red */
+  --accent-soft:  rgba(154, 16, 16, 0.10);
+  --accent-2:     #1f2a44;
+  --hl:           rgba(154, 16, 16, 0.07);
+  --up:           #2e6e3a;
+  --down:         #8b1c1c;
+  --grad-from:    #111111;
+  --grad-via:     #9a1010;
+  --grad-to:      #4a2a18;
+  --glass:        #fbf6e3;
+  --glass-border: rgba(17, 17, 17, 0.45);
+  --glow:         rgba(154, 16, 16, 0.10);
+  --shadow-card:  none;
+  --shadow-hover: 0 2px 0 0 rgba(17,17,17,0.45);
+  --aurora-1: transparent; --aurora-2: transparent;
+  --aurora-3: transparent; --aurora-4: transparent;
+  --grain:        0.06;
+}
+.theme-newspaper body::before { background: none; animation: none; }
+.theme-newspaper body {
+  /* faint newsprint dot pattern */
+  background:
+    radial-gradient(rgba(17,17,17,0.04) 1px, transparent 1.5px) 0 0/4px 4px,
+    var(--bg);
+  font-family: "Source Serif 4", "Source Serif Pro", Georgia, serif;
+}
+.theme-newspaper .font-display {
+  font-family: "Playfair Display", "Times New Roman", serif !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.01em !important;
+}
+.theme-newspaper .label {
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-weight: 700;
+  letter-spacing: 0.20em;
+}
+.theme-newspaper .card {
+  background: var(--paper);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  border: none;
+  border-top: 2px solid var(--rule);
+  border-bottom: 1px solid var(--rule-soft);
+  border-radius: 0;
+  padding: 1.6rem 1.4rem 1.4rem;
+  /* the small column-rule on the left edge sells the broadsheet feel */
+  box-shadow: inset 2px 0 0 -1px rgba(17,17,17,0.18);
+}
+.theme-newspaper .card::before { display: none; }
+.theme-newspaper .card::after { display: none; }
+.theme-newspaper .card:hover { transform: none; }
+.theme-newspaper .card-bare { border-radius: 0; border-top: 1px solid var(--rule-soft); border-bottom: 1px solid var(--rule-soft); }
+.theme-newspaper .btn-ghost { border-radius: 0; border: 1px solid var(--rule); background: var(--paper); }
+.theme-newspaper .chip { border-radius: 0; border-width: 1px; border-color: var(--rule); padding: 4px 11px; font-family: "Playfair Display", serif; font-weight: 600; }
+.theme-newspaper .dot { background: var(--ink); box-shadow: none; }
+.theme-newspaper .headrule {
+  padding-bottom: 0.55rem;
+  border-bottom: 2px double var(--rule);
+}
+.theme-newspaper .text-gradient {
+  background: none !important;
+  -webkit-text-fill-color: var(--ink); color: var(--ink); animation: none;
+}
+
+/* ============== BLUEPRINT (architect's drafting page) ============== */
+:root.theme-blueprint {
+  color-scheme: dark;
+  --bg:           #0e3a64;       /* draftsman's cyan */
+  --paper:        rgba(255, 255, 255, 0.06);
+  --paper-2:      rgba(255, 255, 255, 0.10);
+  --ink:          #f0f9ff;
+  --ink-soft:     #c7e2f8;
+  --muted:        #8db6dc;
+  --muted-2:      #5a86ab;
+  --rule:         rgba(255, 255, 255, 0.62);  /* technical white lines */
+  --rule-soft:    rgba(255, 255, 255, 0.20);
+  --accent:       #7fc6ff;
+  --accent-soft:  rgba(127, 198, 255, 0.16);
+  --accent-2:     #ffffff;
+  --hl:           rgba(127, 198, 255, 0.10);
+  --up:           #b3f5b3;
+  --down:         #ff9c9c;
+  --grad-from:    #ffffff;
+  --grad-via:     #7fc6ff;
+  --grad-to:      #ffffff;
+  --glass:        rgba(13, 52, 90, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.70);
+  --glow:         rgba(255, 255, 255, 0.18);
+  --shadow-card:  none;
+  --shadow-hover: 0 0 0 1px rgba(255,255,255,0.85);
+  --aurora-1: transparent; --aurora-2: transparent;
+  --aurora-3: transparent; --aurora-4: transparent;
+  --grain:        0.03;
+}
+.theme-blueprint body::before { background: none; animation: none; }
+.theme-blueprint body {
+  /* drafting grid — major + minor lines */
+  background:
+    linear-gradient(rgba(255,255,255,0.10) 1px, transparent 1px) 0 0/100% 80px,
+    linear-gradient(90deg, rgba(255,255,255,0.10) 1px, transparent 1px) 0 0/80px 100%,
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px) 0 0/100% 16px,
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px) 0 0/16px 100%,
+    var(--bg);
+}
+.theme-blueprint { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; }
+.theme-blueprint .font-display {
+  font-family: "JetBrains Mono", ui-monospace, monospace !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.005em !important;
+  text-transform: uppercase;
+}
+.theme-blueprint .card {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  /* corner crosshair brackets — the drafting "construction marks" */
+  position: relative;
+}
+.theme-blueprint .card::before {
+  content: "";
+  position: absolute; inset: -4px;
+  background:
+    linear-gradient(var(--rule) 1px, transparent 1px) 0 0/100% 100%,
+    linear-gradient(90deg, var(--rule) 1px, transparent 1px) 0 0/100% 100%;
+  /* show only the 4 corner ticks via radial masks */
+  -webkit-mask:
+    radial-gradient(circle 14px at 0 0, #000 99%, transparent 100%),
+    radial-gradient(circle 14px at 100% 0, #000 99%, transparent 100%),
+    radial-gradient(circle 14px at 0 100%, #000 99%, transparent 100%),
+    radial-gradient(circle 14px at 100% 100%, #000 99%, transparent 100%);
+          mask:
+    radial-gradient(circle 14px at 0 0, #000 99%, transparent 100%),
+    radial-gradient(circle 14px at 100% 0, #000 99%, transparent 100%),
+    radial-gradient(circle 14px at 0 100%, #000 99%, transparent 100%),
+    radial-gradient(circle 14px at 100% 100%, #000 99%, transparent 100%);
+  -webkit-mask-composite: source-over; mask-composite: add;
+  padding: 0;
+  pointer-events: none;
+}
+.theme-blueprint .card::after { display: none; }
+.theme-blueprint .card-bare { border-radius: 0; border-width: 1px; border-style: dashed; }
+.theme-blueprint .btn-ghost { border-radius: 0; border-width: 1px; }
+.theme-blueprint .chip { border-radius: 0; border-width: 1px; }
+.theme-blueprint .dot { background: #fff; box-shadow: 0 0 0 1px #fff, 0 0 6px #7fc6ff; }
+.theme-blueprint .text-gradient {
+  background: linear-gradient(118deg, #ffffff, #7fc6ff 50%, #ffffff);
+  -webkit-background-clip: text; background-clip: text;
+  animation: none;
+}
+/* Light variant — flipped: ink on white paper, "redline drawing" red accent */
+:root.theme-blueprint:not(.dark) {
+  color-scheme: light;
+  --bg:           #f7f9fb;
+  --paper:        #ffffff;
+  --paper-2:      #f3f6fa;
+  --ink:          #0e3a64;
+  --ink-soft:     #1f4b7c;
+  --muted:        #5a779a;
+  --muted-2:      #94abc7;
+  --rule:         rgba(14, 58, 100, 0.70);
+  --rule-soft:    rgba(14, 58, 100, 0.18);
+  --accent:       #c01b1b;
+  --accent-soft:  rgba(192, 27, 27, 0.10);
+  --accent-2:     #0e3a64;
+  --grad-from:    #0e3a64;
+  --grad-via:     #c01b1b;
+  --grad-to:      #0e3a64;
+  --glass:        #ffffff;
+  --glass-border: rgba(14, 58, 100, 0.50);
+  --glow:         rgba(192, 27, 27, 0.16);
+}
+.theme-blueprint:not(.dark) body {
+  background:
+    linear-gradient(rgba(14, 58, 100, 0.10) 1px, transparent 1px) 0 0/100% 80px,
+    linear-gradient(90deg, rgba(14, 58, 100, 0.10) 1px, transparent 1px) 0 0/80px 100%,
+    linear-gradient(rgba(14, 58, 100, 0.04) 1px, transparent 1px) 0 0/100% 16px,
+    linear-gradient(90deg, rgba(14, 58, 100, 0.04) 1px, transparent 1px) 0 0/16px 100%,
+    var(--bg);
+}
+.theme-blueprint:not(.dark) .dot { background: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 0 6px var(--accent); }
+.theme-blueprint:not(.dark) .card::before { background-image:
+    linear-gradient(var(--ink) 1px, transparent 1px) 0 0/100% 100%,
+    linear-gradient(90deg, var(--ink) 1px, transparent 1px) 0 0/100% 100%; }
+
+/* =======================================================================
    DOC ANYWHERE — "soft graphite" skin
    A light, refined gray surface (not near-black). Teal anchor from the logo;
    the four logo colors drive the category system. Scoped to .vault-scope so

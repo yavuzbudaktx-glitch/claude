@@ -16,6 +16,8 @@ const SWATCHES: Record<ThemeId, string[]> = {
   mono:       ["#ffffff", "#000000", "#737373"],
   sakura:     ["#fff5f7", "#e0567a", "#f9a8c4"],
   nord:       ["#2e3440", "#88c0d0", "#a3be8c"],
+  newspaper:  ["#f7f3e8", "#111111", "#9a1010"],
+  blueprint:  ["#0e3a64", "#ffffff", "#7fc6ff"],
 };
 
 export function ThemeVariantButton() {
@@ -57,7 +59,7 @@ export function ThemeVariantButton() {
       </button>
 
       {open && (
-        <div className="fixed right-3 top-[58px] md:absolute md:right-0 md:top-[calc(100%+8px)] z-[70] w-[min(280px,calc(100vw-1.5rem))] max-h-[80vh] overflow-y-auto rounded-2xl border border-[var(--glass-border)] bg-[var(--paper-2)] backdrop-blur-xl shadow-[var(--shadow-hover)] p-2.5 animate-fadeIn origin-top-right">
+        <div className="fixed inset-x-2 top-[64px] md:absolute md:right-0 md:top-[calc(100%+8px)] z-[70] w-[280px] max-w-[calc(100vw-1rem)] max-h-[80vh] overflow-y-auto rounded-2xl border border-[var(--glass-border)] bg-[var(--paper-2)] backdrop-blur-xl shadow-[var(--shadow-hover)] p-2.5 animate-fadeIn origin-top-right">
           <div className="label px-1.5 pb-2 flex items-center gap-1.5">
             <Palette className="h-3 w-3" /> Theme
           </div>

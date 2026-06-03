@@ -93,11 +93,62 @@ function teardownHls() {
   if (hls) { try { hls.destroy(); } catch { /* noop */ } hls = null; }
 }
 
+// Indefinite playback — radio streams drop on network glitches, sleeping
+// tabs, and after long idle periods (the common ~5 minute symptom). When the
+// element errors or quietly ends, automatically resume from the same URL.
+// Bumps are throttled so we never burn through every candidate URL at once.
+let lastPlayedUrl: string | null = null;
+let intentionallyStopped = true;
+let reconnectAttempts = 0;
+let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+function scheduleReconnect() {
+  if (intentionallyStopped) return;
+  if (reconnectTimer) clearTimeout(reconnectTimer);
+  const delay = Math.min(15000, 1500 * Math.pow(1.6, reconnectAttempts));
+  reconnectAttempts++;
+  reconnectTimer = setTimeout(async () => {
+    if (intentionallyStopped) return;
+    setStatus("loading");
+    try {
+      if (lastPlayedUrl) {
+        await playUrl(lastPlayedUrl);
+        setStatus("playing");
+        reconnectAttempts = 0;
+        return;
+      }
+    } catch { /* fall through to full retry */ }
+    // Re-resolve from scratch
+    await toggleRadio(); // toggle off
+    await toggleRadio(); // toggle back on
+  }, delay);
+}
+
+function bindKeepAlive(el: HTMLAudioElement) {
+  // Bind once. Each event nudges a reconnect if the user hasn't intentionally
+  // stopped — covering network blips, station rotation, and tab-throttled
+  // idle drops.
+  if ((el as any)._briefBound) return;
+  (el as any)._briefBound = true;
+  el.addEventListener("error", () => { if (!intentionallyStopped) scheduleReconnect(); });
+  el.addEventListener("ended", () => { if (!intentionallyStopped) scheduleReconnect(); });
+  el.addEventListener("stalled", () => { if (!intentionallyStopped) scheduleReconnect(); });
+  el.addEventListener("waiting", () => { /* buffering — just wait */ });
+  el.addEventListener("playing", () => { reconnectAttempts = 0; });
+  // Resume on tab refocus if we got dropped.
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden && !intentionallyStopped && el.paused) {
+      scheduleReconnect();
+    }
+  });
+}
+
 async function playUrl(url: string): Promise<void> {
   // NOTE: do NOT set crossOrigin — radio streams rarely send CORS headers,
   // and requiring them ("anonymous") silently breaks plain <audio> playback.
   if (!audio) { audio = new Audio(); audio.preload = "none"; audio.volume = 0.72; }
   const el = audio;
+  bindKeepAlive(el);
+  lastPlayedUrl = url;
   teardownHls();
 
   const isHls = /\.m3u8(\?|$)/i.test(url);
@@ -132,6 +183,9 @@ async function playUrl(url: string): Promise<void> {
 }
 
 export function stopRadio() {
+  intentionallyStopped = true;
+  if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
+  reconnectAttempts = 0;
   try { audio?.pause(); } catch { /* noop */ }
   teardownHls();
   if (audio) audio.src = "";
@@ -140,6 +194,8 @@ export function stopRadio() {
 
 export async function toggleRadio() {
   if (status === "playing" || status === "loading") { stopRadio(); return; }
+  intentionallyStopped = false;
+  reconnectAttempts = 0;
   setStatus("loading");
 
   const custom = getCustomRadioUrl();

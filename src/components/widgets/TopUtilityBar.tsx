@@ -3,19 +3,19 @@
 import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
 import { format } from "date-fns";
-import { Calculator, LayoutDashboard } from "lucide-react";
+import { Calculator, LayoutDashboard, Sparkles } from "lucide-react";
 import { WeatherSummary } from "./WeatherSummary";
 
-// Shared utility strip that sits at the top of every authed page: a
-// date+weather pill, a context link pill, and an optional `right` slot.
-// The dashboard puts its action buttons inside the Masthead (next to the
-// clock); the accounting page passes them here instead via `right`, since
-// it has no clock to anchor against.
+// Shared utility strip at the top of every authed page: a date+weather pill,
+// a pair of context pills that link to the other two sister pages
+// (Dashboard / Accounting / Fun), and an optional `right` slot for action
+// buttons. Whichever context this is rendered in is dropped from the pill
+// list so the user never sees a link to the page they're already on.
 export function TopUtilityBar({
   context,
   right,
 }: {
-  context: "dashboard" | "accounting";
+  context: "dashboard" | "accounting" | "fun";
   right?: ReactNode;
 }) {
   const [now, setNow] = useState<Date | null>(null);
@@ -27,6 +27,14 @@ export function TopUtilityBar({
 
   const pill =
     "group inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--paper)] px-3.5 py-1.5 text-[12.5px] text-ink-soft backdrop-blur-md shadow-[var(--shadow-card)] hover:border-[var(--accent)] hover:text-accent transition";
+  const dot = "inline-flex h-4 w-4 items-center justify-center rounded-full text-white";
+  const dotStyle = { background: "linear-gradient(135deg, var(--grad-from), var(--grad-via), var(--grad-to))" };
+
+  const pills: Array<{ id: typeof context; href: string; label: string; Icon: typeof Calculator }> = [
+    { id: "dashboard",  href: "/dashboard",  label: "Dashboard",  Icon: LayoutDashboard },
+    { id: "accounting", href: "/accounting", label: "Accounting", Icon: Calculator },
+    { id: "fun",        href: "/fun",        label: "Fun",        Icon: Sparkles },
+  ];
 
   return (
     <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -36,27 +44,16 @@ export function TopUtilityBar({
           <span className="h-1 w-1 rounded-full bg-[var(--accent)] shrink-0" aria-hidden />
           <WeatherSummary />
         </div>
-        {context === "dashboard" ? (
-          <Link href="/accounting" title="Open the Accounting page" className={pill}>
-            <span
-              className="inline-flex h-4 w-4 items-center justify-center rounded-full text-white"
-              style={{ background: "linear-gradient(135deg, var(--grad-from), var(--grad-via), var(--grad-to))" }}
-            >
-              <Calculator className="h-2.5 w-2.5" />
-            </span>
-            <span className="font-medium">Accounting</span>
-          </Link>
-        ) : (
-          <Link href="/dashboard" title="Back to the dashboard" className={pill}>
-            <span
-              className="inline-flex h-4 w-4 items-center justify-center rounded-full text-white"
-              style={{ background: "linear-gradient(135deg, var(--grad-from), var(--grad-via), var(--grad-to))" }}
-            >
-              <LayoutDashboard className="h-2.5 w-2.5" />
-            </span>
-            <span className="font-medium">Dashboard</span>
-          </Link>
-        )}
+        {pills
+          .filter((p) => p.id !== context)
+          .map(({ id, href, label, Icon }) => (
+            <Link key={id} href={href} title={`Open ${label}`} className={pill}>
+              <span className={dot} style={dotStyle}>
+                <Icon className="h-2.5 w-2.5" />
+              </span>
+              <span className="font-medium">{label}</span>
+            </Link>
+          ))}
       </div>
 
       {right && <div className="flex items-center gap-2 shrink-0">{right}</div>}
