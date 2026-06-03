@@ -1,10 +1,10 @@
 # Britannica scrape debug dump
-# generated: 2026-06-03T12:56:01.974Z
+# generated: 2026-06-03T17:24:25.383Z
 # url:       https://www.britannica.com/on-this-day/june-3
-# fetcher:   CORS proxy
+# fetcher:   Wayback Machine
 # kind:      html
-# length:    79307
-# parsed:    YES (CORS proxy)
+# length:    79063
+# parsed:    YES (Wayback Machine)
 # -----------------------------------------------------------------
 
 
@@ -94,9 +94,9 @@
 
     
 
-    <meta name="description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences." />
+    <meta name="description" content="On This Day In History - June 3: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences." />
     <meta name="keywords" content="today in history, anniversary, daily events, today’s historical events, today’s birthdays, born today, on this date, this day in history" />
-    <link rel="canonical" href="https://www.britannica.com/on-this-day/june-3" />
+    <link rel="canonical" href="https://www.britannica.com/on-this-day/June-3" />
 
     
 
@@ -113,7 +113,7 @@
 
     
 
-    <title>On This Day - What Happened Today In History | Britannica</title>
+    <title>On This Day - What Happened on June 3 | Britannica</title>
 
     
 
@@ -126,7 +126,7 @@
 
 
 <script   class="analytics-metadata" type="application/json">
-{"adLeg":"D","leg":"D","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+{"adLeg":"D","leg":"A","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
 </script>
 
 
@@ -160,15 +160,14 @@
         'analytics_storage': 'granted',
     });
 
-    window.geoCountry = 'FR';
-    window.isGdprCountry = true;
+    window.geoCountry = 'CA';
+    window.isGdprCountry = false;
     window.isCcpaCountry = false;
-    window.geoRegion = '75';
+    window.geoRegion = 'XX';
 
 </script>
 
-<script type="text/javascript" data-cmp-ab="1" src="https://cdn.consentmanager.net/delivery/autoblocking/f883f3936267c.js" data-cmp-host="d.delivery.consentmanager.net" data-cmp-cdn="cdn.consentmanager.net" data-cmp-codesrc="0"></script>
-    
+
 
     
 
@@ -274,20 +273,20 @@
             "videoPlayerId" : "UyMCoK2v",
       		"domain": "britannica.com",
 			"page": "DayInHistory",
-			"sharedUrl": "https://www.britannica.com/on-this-day/june-3",
+			"sharedUrl": "https://www.britannica.com/on-this-day/June-3",
 			"amuselabsUrl": "https://cdn3.amuselabs.com",
 	    	"resourcesPrefixUrl": "https://cdn.britannica.com/mendel-resources/3-185/[url]?v=3.185.4",
-			"date": 20260603,
+			"date": 20260601,
 			"userInfo": { "type": "ANONYMOUS"
-										,"currency": "EUR"
-										,"country": "FR"
-										,"state": "75"
-										,"timezone": "Europe/Paris"
-										,"bcomId": "-4223103210638234988"
+										,"currency": "USD"
+										,"country": "CA"
+										,"state": "XX"
+										,"timezone": "America/Toronto"
+										,"bcomId": "1624905731562589412"
 										,"adProvider": "ay"
-										,"privacyInfo": {"inGdprCountry":true,"inCcpaState":false,"showConsent":true}
+										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":false,"showConsent":false}
 										,"hasAds": true
-										,"testVersion": "D"
+										,"testVersion": "A"
 										,"adsTestVersion": "D"
 										,"consumerId": ""
 										,"instId": ""
@@ -306,12 +305,12 @@
 	        "fetchOffset": 800,
 			
 			"mendelCookieName": "__mendel",
-			"mendelCookie": {"currentDate":20260603,"lti":0,"surveyShown":false,"ts":0},
+			"mendelCookie": {"currentDate":20260601,"lti":0,"surveyShown":false,"ts":0},
 			
 
 			"autocompleteToSearchPage": false,"pagesInfo": [{"url":"June-3","title":"On This Day - What Happened on June 3"},{"url":"June-4","title":"On This Day - What Happened on June 4"},{"url":"June-5","title":"On This Day - What Happened on June 5"},{"url":"June-6","title":"On This Day - What Happened on June 6"},{"url":"June-7","title":"On This Day - What Happened on June 7"},{"url":"June-8","title":"On This Day - What Happened on June 8"},{"url":"June-9","title":"On This Day - What Happened on June 9"},{"url":"June-10","title":"On This Day - What Happened on June 10"},{"url":"June-11","title":"On This Day - What Happened on June 11"},{"url":"June-12","title":"On This Day - What Happened on June 12"}]
 		},
-        "GA": {"adLeg":"D","leg":"D","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+        "GA": {"adLeg":"D","leg":"A","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
     };
 
 	</script>
@@ -325,22 +324,22 @@
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:site" content="@britannica" />
 <meta name="twitter:image" content="https://cdn.britannica.com/66/91866-050-FFA3B03E/man-Chinese-line-tanks-Beijing-demonstrators-Tiananmen-June-5-1989.jpg" />
-<meta name="twitter:description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
+<meta name="twitter:description" content="On This Day In History - June 3: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
 
 <meta property="og:type"  content="WEBSITE"/>
-<meta property="og:title" content="On This Day - What Happened Today In History | Britannica"/>
-<meta property="og:description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
+<meta property="og:title" content="On This Day - What Happened on June 3 | Britannica"/>
+<meta property="og:description" content="On This Day In History - June 3: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
 <meta property="og:site_name" content="Encyclopedia Britannica" />
-<meta property="og:url" content="https://www.britannica.com/on-this-day/june-3"/>
+<meta property="og:url" content="https://www.britannica.com/on-this-day/June-3"/>
 <meta property="og:image" content="https://cdn.britannica.com/66/91866-050-FFA3B03E/man-Chinese-line-tanks-Beijing-demonstrators-Tiananmen-June-5-1989.jpg" />
 
 <script type="text/javascript" data-type="init opengraph">
 Mendel.openGraph = {
     "type": "WEBSITE",
-    "title": "On This Day - What Happened Today In History",
-    "description": "On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences.",
+    "title": "On This Day - What Happened on June 3",
+    "description": "On This Day In History - June 3: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences.",
     "imageUrl": "https://cdn.britannica.com/66/91866-050-FFA3B03E/man-Chinese-line-tanks-Beijing-demonstrators-Tiananmen-June-5-1989.jpg",
-    "pageUrl": "https://www.britannica.com/on-this-day/june-3"
+    "pageUrl": "https://www.britannica.com/on-this-day/June-3"
 }
 </script>
 
@@ -415,7 +414,7 @@ Mendel.openGraph = {
 
 </head>
 
-<body data-leg="D" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-d ">
+<body data-leg="A" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-a ">
 
 
 
@@ -669,8 +668,8 @@ Mendel.openGraph = {
         </div>
     </div>
 
-    <div class="d-none hamburger-menu-subscription-link"><div class="KUSTOM-MARKETING-HAMBURGER_MENU_CTA"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=bdpremium" class="subscribe-link btn btn-sm btn-blue py-5" target="_blank">
-  SUBSCRIBE TO PREMIUM
+    <div class="d-none hamburger-menu-subscription-link"><div class="KUSTOM-MARKETING-HAMBURGER_MENU_CTA"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=blue" class="subscribe-link btn btn-sm btn-blue py-5" target="_blank">
+  SUBSCRIBE
 </a></div></div>
     <div id="global-nav-react">
         <div class="d-none">
@@ -906,7 +905,7 @@ Ask the Chatbot</a>
 {
         "calendarInfo": {"day":3,"month":6,"monthName":"June","nbDays":30,"nextMonth":7,"nextMonthName":"July","previousMonth":5,"previousMonthName":"May"},
         "url": "/on-this-day/June/3",
-	    "title": "On This Day - What Happened Today In History"
+	    "title": "On This Day - What Happened on June 3"
     }
 </script>
 
@@ -1170,7 +1169,7 @@ Ask the Chatbot</a>
 </a>
                         </div>
                         <div class="card-footer font-16">
-                            <dl data-label="born"><dt class="label">born</dt><dd>June 3, 1906<br><a href="https://www.britannica.com/place/Saint-Louis-Missouri">Saint Louis</a><span>, </span><a href="https://www.britannica.com/place/Missouri-state">Missouri</a><br>(Birthday tomorrow)<br></dd></dl><dl data-label="died"><dt class="label">died</dt><dd>April 12, 1975 (aged 68)<br><a href="https://www.britannica.com/place/Paris">Paris</a><span>, </span><a href="https://www.britannica.com/place/France">France</a><br></dd></dl><div class="credit mt-10">© Gaston Paris—Roger-Viollet/Getty Images</div>
+                            <dl data-label="born"><dt class="label">born</dt><dd>June 3, 1906<br><a href="https://www.britannica.com/place/Saint-Louis-Missouri">Saint Louis</a><span>, </span><a href="https://www.britannica.com/place/Missouri-state">Missouri</a><br>(Birthday in 2 days)<br></dd></dl><dl data-label="died"><dt class="label">died</dt><dd>April 12, 1975 (aged 68)<br><a href="https://www.britannica.com/place/Paris">Paris</a><span>, </span><a href="https://www.britannica.com/place/France">France</a><br></dd></dl><div class="credit mt-10">© Gaston Paris—Roger-Viollet/Getty Images</div>
                         </div>
                     </div>
                 </div>
