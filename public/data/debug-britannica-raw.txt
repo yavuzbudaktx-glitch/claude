@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-06-03T19:58:08.017Z
+# generated: 2026-06-03T20:04:05.288Z
 # url:       https://www.britannica.com/on-this-day/june-3
 # fetcher:   Wayback Machine
 # kind:      html
