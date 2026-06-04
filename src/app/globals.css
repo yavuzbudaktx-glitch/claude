@@ -687,6 +687,20 @@ main { position: relative; z-index: 1; }
   0%, 100% { opacity: 0.7; }
   50%      { opacity: 1; }
 }
+/* Force these full-screen background layers onto their own compositor layer.
+   A `position:fixed; z-index:-1` pseudo-element with no transform is, on some
+   Chrome/Safari builds, skipped on the FIRST paint and only shows up after a
+   scroll/overscroll forces a repaint — exactly the "I only see the stars when
+   I scroll up to refresh" symptom. translateZ(0) promotes the layer so it
+   paints immediately and stays painted. (Galaxy / Mosaic / Stained Glass set
+   no transform animation, so they need this explicitly.) */
+.theme-galaxy body::after,
+.theme-mosaic body::after,
+.theme-stainedglass body::after {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
 .theme-galaxy .text-gradient {
   background: linear-gradient(118deg, #6366f1, #c084fc 45%, #22d3ee);
   -webkit-background-clip: text; background-clip: text;
@@ -1993,6 +2007,150 @@ main { position: relative; z-index: 1; }
 .theme-stainedglass .text-gradient {
   background: linear-gradient(118deg, var(--accent-2), var(--accent) 50%, #e0a82e);
   -webkit-background-clip: text; background-clip: text;
+}
+
+/* =======================================================================
+   ART DECO (concept) — 1920s glamour
+   Gold geometry on deep emerald + black. The body carries a faint sunburst
+   fan + chevron field; cards are framed in double gold hairlines with a
+   sunburst crowning the header; the dot is a gold lozenge; display type is a
+   high-contrast serif. Light variant is "cream & gold" stationery.
+======================================================================= */
+:root.theme-deco {
+  color-scheme: dark;
+  --bg:           #07241d;             /* deep emerald-black */
+  --paper:        rgba(212, 175, 55, 0.05);
+  --paper-2:      rgba(212, 175, 55, 0.09);
+  --ink:          #f4ecd6;             /* warm ivory */
+  --ink-soft:     #d9caa0;
+  --muted:        #9a8a63;
+  --muted-2:      #5e553c;
+  --rule:         rgba(212, 175, 55, 0.30);
+  --rule-soft:    rgba(212, 175, 55, 0.12);
+  --accent:       #d4af37;             /* gold */
+  --accent-soft:  rgba(212, 175, 55, 0.14);
+  --accent-2:     #0b9e74;             /* emerald */
+  --hl:           rgba(212, 175, 55, 0.12);
+  --up:           #2fae7a;
+  --down:         #d9694e;
+  --grad-from:    #0b9e74;
+  --grad-via:     #d4af37;
+  --grad-to:      #f0d97a;
+  --glass:        rgba(7, 30, 24, 0.66);
+  --glass-border: rgba(212, 175, 55, 0.45);
+  --glow:         rgba(212, 175, 55, 0.40);
+  --shadow-card:  0 18px 44px -18px rgba(0, 0, 0, 0.85);
+  --shadow-hover: 0 28px 64px -22px rgba(0, 0, 0, 0.92), 0 0 0 1px var(--accent);
+  --aurora-1: rgba(11, 110, 84, 0.45);
+  --aurora-2: rgba(212, 175, 55, 0.16);
+  --aurora-3: rgba(7, 40, 30, 0.55);
+  --aurora-4: rgba(0, 0, 0, 0.6);
+  --grain:        0.04;
+}
+:root.theme-deco:not(.dark) {
+  color-scheme: light;
+  --bg:           #f3ead2;             /* cream stationery */
+  --paper:        #fffaef;
+  --paper-2:      #fbf3dd;
+  --ink:          #1a2a23;
+  --ink-soft:     #3d4a3f;
+  --muted:        #6e6a54;
+  --muted-2:      #a99f7d;
+  --rule:         rgba(120, 95, 20, 0.32);
+  --rule-soft:    rgba(120, 95, 20, 0.12);
+  --accent:       #9a7b1f;             /* antique gold */
+  --accent-soft:  rgba(154, 123, 31, 0.10);
+  --accent-2:     #0b6e54;
+  --hl:           rgba(154, 123, 31, 0.08);
+  --up:           #0b6e54;
+  --down:         #b3441e;
+  --grad-from:    #0b6e54;
+  --grad-via:     #9a7b1f;
+  --grad-to:      #c8a23a;
+  --glass:        #fffaef;
+  --glass-border: rgba(120, 95, 20, 0.42);
+  --glow:         rgba(154, 123, 31, 0.20);
+  --shadow-card:  0 1px 2px rgba(40,30,0,0.06), 0 14px 34px -18px rgba(120,95,20,0.32);
+  --shadow-hover: 0 2px 4px rgba(40,30,0,0.08), 0 24px 52px -20px rgba(120,95,20,0.42);
+  --aurora-1: transparent; --aurora-2: transparent;
+  --aurora-3: transparent; --aurora-4: transparent;
+}
+.theme-deco .font-display {
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+.theme-deco body { background: var(--bg); }
+.theme-deco body::before { background: none; animation: none; }
+/* Background: a faint gold sunburst fanning from top-centre + a chevron field
+   along the very bottom — the unmistakable Deco vocabulary. */
+.theme-deco body::after {
+  opacity: 1;
+  mix-blend-mode: normal;
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  background-image:
+    repeating-conic-gradient(from 0deg at 50% 0%,
+      rgba(212,175,55,0.05) 0deg 2deg, transparent 2deg 9deg),
+    repeating-linear-gradient(135deg, rgba(212,175,55,0.05) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(45deg,  rgba(212,175,55,0.05) 0 1px, transparent 1px 22px);
+  background-size: 100% 100%, 44px 44px, 44px 44px;
+  background-position: 50% 0, 0 100%, 0 100%;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.25) 30%, rgba(0,0,0,0.25) 70%, #000 100%);
+          mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.25) 30%, rgba(0,0,0,0.25) 70%, #000 100%);
+}
+.theme-deco:not(.dark) body::after {
+  background-image:
+    repeating-conic-gradient(from 0deg at 50% 0%,
+      rgba(154,123,31,0.07) 0deg 2deg, transparent 2deg 9deg),
+    repeating-linear-gradient(135deg, rgba(154,123,31,0.06) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(45deg,  rgba(154,123,31,0.06) 0 1px, transparent 1px 22px);
+  opacity: 0.8;
+}
+.theme-deco .card {
+  border-radius: 4px;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+  /* double gold hairline frame */
+  border: 1px solid var(--accent);
+  box-shadow: var(--shadow-card), inset 0 0 0 3px var(--bg), inset 0 0 0 4px var(--rule-soft);
+}
+.theme-deco .card::before { display: none; }
+/* sunburst fan crowning each card, behind the header */
+.theme-deco .card::after {
+  content: "";
+  display: block !important;
+  position: absolute;
+  top: 0; left: 50%;
+  width: 180px; height: 70px;
+  transform: translateX(-50%);
+  background: repeating-conic-gradient(from 0deg at 50% 0%,
+    rgba(212,175,55,0.16) 0deg 3deg, transparent 3deg 11deg);
+  -webkit-mask-image: radial-gradient(70% 100% at 50% 0%, #000, transparent 72%);
+          mask-image: radial-gradient(70% 100% at 50% 0%, #000, transparent 72%);
+  opacity: 1;
+  pointer-events: none;
+  z-index: 0;
+}
+.theme-deco .card > * { position: relative; z-index: 1; }
+.theme-deco .card:hover { transform: translateY(-1px); }
+.theme-deco .card-bare { border-radius: 3px; border: 1px solid var(--accent); background: var(--paper-2); }
+.theme-deco .btn-ghost { border-radius: 3px; border: 1px solid var(--accent); background: var(--paper); }
+.theme-deco .chip { border-radius: 2px; border: 1px solid var(--accent); background: var(--paper); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+.theme-deco .chip-active { background: var(--accent); color: #1a1208; border-color: var(--accent); }
+.theme-deco .headrule { border-bottom: 1px solid var(--rule); padding-bottom: .55rem; }
+.theme-deco .dot {
+  width: 11px; height: 11px; border-radius: 2px;
+  transform: rotate(45deg);                         /* a gold lozenge */
+  background: linear-gradient(135deg, #f4e3a1, var(--accent) 60%, #8a6d18);
+  box-shadow: 0 0 0 1px rgba(212,175,55,0.5), 0 0 10px var(--glow);
+}
+.theme-deco .text-gradient {
+  background: linear-gradient(118deg, var(--accent-2), var(--accent) 50%, #f0d97a);
+  -webkit-background-clip: text; background-clip: text;
+  animation: none;
 }
 
 /* =======================================================================

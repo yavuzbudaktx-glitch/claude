@@ -125,7 +125,7 @@ export function TonightSky() {
         </div>
       </div>
 
-      {/* Planets up tonight */}
+      {/* Planets up tonight — capped to a tidy, scrollable list */}
       <div className="flex flex-col min-h-0 flex-1">
         <div className="flex items-center justify-between mb-1 shrink-0">
           <div className="text-[10.5px] font-mono uppercase tracking-wider text-muted">Visible · naked eye</div>
@@ -149,7 +149,78 @@ export function TonightSky() {
         )}
       </div>
 
-      <div className="text-[9.5px] text-muted-2 shrink-0 inline-flex items-center gap-1.5">
+      {/* Lower half — the year clock: where we are in the orbit. */}
+      <YearClock />
+    </div>
+  );
+}
+
+// ---- Year clock -------------------------------------------------------------
+const SEASONS_N = ["Winter", "Spring", "Summer", "Autumn"]; // northern hemisphere
+function dayOfYear(d: Date): number {
+  const start = new Date(d.getFullYear(), 0, 1);
+  return Math.floor((+d - +start) / 86400000) + 1;
+}
+function isLeap(y: number): boolean { return (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0; }
+function seasonOf(d: Date): string {
+  const m = d.getMonth();
+  if (m <= 1 || m === 11) return SEASONS_N[0];
+  if (m <= 4) return SEASONS_N[1];
+  if (m <= 7) return SEASONS_N[2];
+  return SEASONS_N[3];
+}
+
+function YearClock() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const total = isLeap(year) ? 366 : 365;
+  const doy = dayOfYear(now);
+  // include the fraction of the current day so the ring creeps in real time
+  const frac = (doy - 1 + (now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) / 86400) / total;
+  const pct = frac * 100;
+  const daysLeft = total - doy;
+
+  const size = 84, stroke = 8, r = (size - stroke) / 2, C = 2 * Math.PI * r;
+  // Quarter ticks for the solstices/equinoxes (~day 80/172/266/355).
+  const ticks = [0, 0.25, 0.5, 0.75];
+
+  return (
+    <div className="shrink-0 border-t border-[var(--rule-soft)] pt-3 mt-1">
+      <div className="flex items-center gap-3.5">
+        <div className="relative shrink-0" style={{ width: size, height: size }}>
+          <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
+            <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--rule)" strokeWidth={stroke} />
+            <circle
+              cx={size / 2} cy={size / 2} r={r} fill="none"
+              stroke="var(--accent)" strokeWidth={stroke} strokeLinecap="round"
+              strokeDasharray={C} strokeDashoffset={C * (1 - frac)}
+              style={{ transition: "stroke-dashoffset 1s linear" }}
+            />
+            {ticks.map((t, i) => {
+              const a = t * 2 * Math.PI;
+              const x1 = size / 2 + Math.cos(a) * (r - stroke / 2 - 1);
+              const y1 = size / 2 + Math.sin(a) * (r - stroke / 2 - 1);
+              const x2 = size / 2 + Math.cos(a) * (r + stroke / 2 + 1);
+              const y2 = size / 2 + Math.sin(a) * (r + stroke / 2 + 1);
+              return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--muted-2)" strokeWidth="1.5" />;
+            })}
+          </svg>
+          <div className="absolute inset-0 grid place-items-center text-center">
+            <div>
+              <div className="font-mono tabular-nums text-[15px] font-bold text-ink leading-none">{pct.toFixed(1)}%</div>
+              <div className="text-[8.5px] uppercase tracking-wider text-muted-2 mt-0.5">of {year}</div>
+            </div>
+          </div>
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="text-[11px] font-mono uppercase tracking-wider text-accent">Year clock</div>
+          <div className="text-[12.5px] text-ink-soft mt-1 leading-snug">
+            Day <b className="text-ink tabular-nums">{doy}</b> of {total} · <b className="text-ink tabular-nums">{daysLeft}</b> left
+          </div>
+          <div className="text-[11px] text-muted mt-0.5">{seasonOf(now)} · {now.toLocaleDateString(undefined, { month: "long", day: "numeric" })}</div>
+        </div>
+      </div>
+      <div className="text-[9.5px] text-muted-2 mt-2 inline-flex items-center gap-1.5">
         <Sun className="h-3 w-3" /> Computed locally — no network calls.
       </div>
     </div>

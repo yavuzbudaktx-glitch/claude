@@ -12,7 +12,7 @@ export type ThemeId =
   | "aurora" | "galaxy" | "forest" | "water" | "sunset"
   | "terminal" | "accounting" | "mono"
   | "newspaper" | "blueprint" | "comic" | "sketch"
-  | "mosaic" | "stainedglass";
+  | "mosaic" | "stainedglass" | "deco";
 
 export const THEMES: Array<{
   id: ThemeId; label: string; description: string;
@@ -24,6 +24,7 @@ export const THEMES: Array<{
   { id: "sunset",       label: "Sunset",       description: "Golden hour at the coast — peach sky, a slowly sinking sun, long horizon afterglow." },
   { id: "mosaic",       label: "Mosaic",       description: "Mediterranean azulejo — terracotta + cobalt tiles, hand-laid grout, an unmistakably handmade surface." },
   { id: "stainedglass", label: "Stained Glass",description: "Leaded cathedral panes — jewel reds, sapphire, emerald, with light spilling through the glazing." },
+  { id: "deco",         label: "Art Deco",     description: "1920s glamour — gold geometry on deep emerald & black, sunburst fans, symmetric chevrons, high-contrast serif." },
   { id: "terminal",     label: "Terminal",     description: "Mono-typography, sharp corners, green phosphor, CRT scanlines — day or night." },
   { id: "accounting",   label: "Accounting",   description: "Crisp ledger paper, navy/forest accents — clean numbers-first interface." },
   { id: "mono",         label: "Mono",         description: "Pure black & white, hard edges, heavy rules — brutalist clarity." },
@@ -35,7 +36,7 @@ export const THEMES: Array<{
 
 const KEY = "brief.theme.v1";
 
-const VALID: ThemeId[] = ["aurora", "galaxy", "forest", "water", "sunset", "mosaic", "stainedglass", "terminal", "accounting", "mono", "newspaper", "blueprint", "comic", "sketch"];
+const VALID: ThemeId[] = ["aurora", "galaxy", "forest", "water", "sunset", "mosaic", "stainedglass", "deco", "terminal", "accounting", "mono", "newspaper", "blueprint", "comic", "sketch"];
 const NON_DEFAULT = VALID.filter((v) => v !== "aurora");
 
 export function getTheme(): ThemeId {
@@ -69,7 +70,7 @@ export const THEME_BOOT_SCRIPT = `
   (function() {
     try {
       var v = localStorage.getItem(${JSON.stringify(KEY)});
-      var ok = ['galaxy','forest','water','sunset','mosaic','stainedglass','terminal','accounting','mono','newspaper','blueprint','comic','sketch'];
+      var ok = ['galaxy','forest','water','sunset','mosaic','stainedglass','deco','terminal','accounting','mono','newspaper','blueprint','comic','sketch'];
       var root = document.documentElement;
       if (v && ok.indexOf(v) >= 0) root.classList.add('theme-' + v);
       root.setAttribute('data-theme', v || 'aurora');
