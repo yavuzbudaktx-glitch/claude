@@ -11,28 +11,31 @@
 export type ThemeId =
   | "aurora" | "galaxy" | "forest" | "water" | "sunset"
   | "terminal" | "accounting" | "mono"
-  | "newspaper" | "blueprint" | "comic" | "sketch";
+  | "newspaper" | "blueprint" | "comic" | "sketch"
+  | "mosaic" | "stainedglass";
 
 export const THEMES: Array<{
   id: ThemeId; label: string; description: string;
 }> = [
-  { id: "aurora",     label: "Aurora Glass", description: "Default — frosted cards, cyan accent, drifting aurora background." },
-  { id: "galaxy",     label: "Galaxy",       description: "Deep space — violet nebula, a dense drifting starfield behind everything." },
-  { id: "forest",     label: "Forest",       description: "A living woodland — sun shafts through the canopy, drifting leaves, bark-grain cards." },
-  { id: "water",      label: "Water",        description: "Submerged in a turquoise sea — flowing caustics, streaming bubbles, deep aqua glow." },
-  { id: "sunset",     label: "Sunset",       description: "Golden hour at the coast — peach sky, a slowly sinking sun, long horizon afterglow." },
-  { id: "terminal",   label: "Terminal",     description: "Mono-typography, sharp corners, green phosphor, CRT scanlines — day or night." },
-  { id: "accounting", label: "Accounting",   description: "Crisp ledger paper, navy/forest accents — clean numbers-first interface." },
-  { id: "mono",       label: "Mono",         description: "Pure black & white, hard edges, heavy rules — brutalist clarity." },
-  { id: "newspaper",  label: "Newspaper",    description: "Times-style serif type, columns, drop-caps, hairline ruling — like reading a Sunday paper." },
-  { id: "blueprint",  label: "Blueprint",    description: "Architect's drafting page — white technical strokes on cyan, corner brackets, drafting grid." },
-  { id: "comic",      label: "Comic",        description: "Halftone dots, ink-line panels, KAPOW red, offset hard shadows — your dashboard as a comic book." },
-  { id: "sketch",     label: "Sketchbook",   description: "Pencil on grid paper, wobbly hand-drawn outlines, Caveat handwriting — work in your own margin notes." },
+  { id: "aurora",       label: "Aurora Glass", description: "Default — frosted cards, cyan accent, drifting aurora background." },
+  { id: "galaxy",       label: "Galaxy",       description: "Deep space — violet nebula, a dense drifting starfield behind everything." },
+  { id: "forest",       label: "Forest",       description: "A living woodland — sun shafts through the canopy, drifting leaves, bark-grain cards." },
+  { id: "water",        label: "Water",        description: "Submerged in a turquoise sea — flowing caustics, streaming bubbles, deep aqua glow." },
+  { id: "sunset",       label: "Sunset",       description: "Golden hour at the coast — peach sky, a slowly sinking sun, long horizon afterglow." },
+  { id: "mosaic",       label: "Mosaic",       description: "Mediterranean azulejo — terracotta + cobalt tiles, hand-laid grout, an unmistakably handmade surface." },
+  { id: "stainedglass", label: "Stained Glass",description: "Leaded cathedral panes — jewel reds, sapphire, emerald, with light spilling through the glazing." },
+  { id: "terminal",     label: "Terminal",     description: "Mono-typography, sharp corners, green phosphor, CRT scanlines — day or night." },
+  { id: "accounting",   label: "Accounting",   description: "Crisp ledger paper, navy/forest accents — clean numbers-first interface." },
+  { id: "mono",         label: "Mono",         description: "Pure black & white, hard edges, heavy rules — brutalist clarity." },
+  { id: "newspaper",    label: "Newspaper",    description: "Times-style serif type, columns, drop-caps, hairline ruling — like reading a Sunday paper." },
+  { id: "blueprint",    label: "Blueprint",    description: "Architect's drafting page — white technical strokes on cyan, corner brackets, drafting grid." },
+  { id: "comic",        label: "Comic",        description: "Halftone dots, ink-line panels, KAPOW red, offset hard shadows — your dashboard as a comic book." },
+  { id: "sketch",       label: "Sketchbook",   description: "Pencil on grid paper, wobbly hand-drawn outlines, Caveat handwriting — work in your own margin notes." },
 ];
 
 const KEY = "brief.theme.v1";
 
-const VALID: ThemeId[] = ["aurora", "galaxy", "forest", "water", "sunset", "terminal", "accounting", "mono", "newspaper", "blueprint", "comic", "sketch"];
+const VALID: ThemeId[] = ["aurora", "galaxy", "forest", "water", "sunset", "mosaic", "stainedglass", "terminal", "accounting", "mono", "newspaper", "blueprint", "comic", "sketch"];
 const NON_DEFAULT = VALID.filter((v) => v !== "aurora");
 
 export function getTheme(): ThemeId {
@@ -66,7 +69,7 @@ export const THEME_BOOT_SCRIPT = `
   (function() {
     try {
       var v = localStorage.getItem(${JSON.stringify(KEY)});
-      var ok = ['galaxy','forest','water','sunset','terminal','accounting','mono','newspaper','blueprint','comic','sketch'];
+      var ok = ['galaxy','forest','water','sunset','mosaic','stainedglass','terminal','accounting','mono','newspaper','blueprint','comic','sketch'];
       var root = document.documentElement;
       if (v && ok.indexOf(v) >= 0) root.classList.add('theme-' + v);
       root.setAttribute('data-theme', v || 'aurora');

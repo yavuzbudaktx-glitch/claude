@@ -163,7 +163,10 @@ function ArtPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: (
 }
 
 export function NasaApod() {
-  const [tab, setTab] = useState<"nasa" | "art">("nasa");
+  // Art of the day is the default panel — it lands on something painterly
+  // most days, where APOD frequently lands on a noisy astrophotograph the
+  // user is unlikely to want as their cover image.
+  const [tab, setTab] = useState<"nasa" | "art">("art");
   // Per request: info is OPEN by default; the "i" button toggles it off.
   const [showInfo, setShowInfo] = useState(true);
 
@@ -172,8 +175,8 @@ export function NasaApod() {
       <div className="flex items-center gap-1.5 shrink-0">
         {(
           [
-            { id: "nasa", label: "NASA · APOD", icon: Rocket },
             { id: "art",  label: "Art of the day", icon: PaletteIcon },
+            { id: "nasa", label: "NASA · APOD", icon: Rocket },
           ] as Array<{ id: "nasa" | "art"; label: string; icon: typeof Rocket }>
         ).map((t) => {
           const Icon = t.icon;

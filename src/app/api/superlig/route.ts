@@ -799,6 +799,18 @@ async function fetchTeamMatches(espnId: number, teamName: string): Promise<{
   }
   const sources: SourceResult[] = await Promise.all(sourcePromises);
 
+  // A match is only valid for THIS team if the team's name actually appears
+  // in it. Otherwise we end up surfacing another club's fixture (the
+  // "Beşiktaş next match is showing some random teams match" bug — when
+  // a team's season is over, SofaScore/SportsDB/Wikipedia sometimes echo
+  // back a fixture they tagged to the same id slot for a different
+  // competition / different team).
+  const involvesTeam = (m: Match | null) => !!m && (matcher(m.home) || matcher(m.away));
+  for (const s of sources) {
+    if (!involvesTeam(s.last)) s.last = null;
+    if (!involvesTeam(s.next)) s.next = null;
+  }
+
   const now = Date.now();
   let last: Match | null = null;
   let lastSrc = "";
@@ -822,17 +834,10 @@ async function fetchTeamMatches(espnId: number, teamName: string): Promise<{
     }
   }
 
-  // Fallback: if a slot is still empty, accept anything any source returned.
-  if (!last) {
-    for (const s of sources) {
-      if (s.last) { last = s.last; lastSrc = s.name; break; }
-    }
-  }
-  if (!next) {
-    for (const s of sources) {
-      if (s.next) { next = s.next; nextSrc = s.name; break; }
-    }
-  }
+  // No "accept anything" fallback: every candidate was already validated
+  // against the selected team above, so any remaining slot that's null
+  // genuinely means "nothing scheduled for this team" — which is exactly
+  // what the UI should say, instead of borrowing a different team's match.
 
   const fmtSummary = (m: Match | null) =>
     m ? `${m.date.slice(0, 10)} ${m.home} vs ${m.away}${m.isFinished ? " ✓" : ""}` : null;

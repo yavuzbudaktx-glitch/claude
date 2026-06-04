@@ -17,6 +17,7 @@ import { TypingTest } from "@/components/fun/TypingTest";
 import { NatureShort } from "@/components/fun/NatureShort";
 import { TRex } from "@/components/fun/TRex";
 import { AmbientVideo } from "@/components/fun/AmbientVideo";
+import { TonightSky } from "@/components/fun/TonightSky";
 
 export const dynamic = "force-dynamic";
 
@@ -51,14 +52,18 @@ export default async function FunPage() {
         <div className="h-[440px] lg:h-[640px] 2xl:h-[560px]"><AmbientVideo /></div>
       </Card>
 
-      {/* Row 1 — NASA / Art + games box. items-start so collapsing one card
-          doesn't leave the other stretched to its (now-empty) height. */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-5 items-start">
+      {/* Row 1 — Frame of the day · Unwind · Tonight (local-astronomy panel).
+          items-start so collapsing one card doesn't leave the others
+          stretched. Tonight is narrow because it's all type + a moon glyph. */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,0.85fr)] gap-5 items-start">
         <Card id="fun.apod" title="Frame of the day">
           <div className="h-[560px]"><NasaApod /></div>
         </Card>
         <Card id="fun.games" title="Unwind">
           <GamesCard />
+        </Card>
+        <Card id="fun.tonight" title="Tonight">
+          <div className="h-[560px]"><TonightSky /></div>
         </Card>
       </div>
 

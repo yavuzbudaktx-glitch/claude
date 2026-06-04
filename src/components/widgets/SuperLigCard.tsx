@@ -244,8 +244,9 @@ export function SuperLigCard() {
             {data.next ? (
               <MatchBox label="Next match" match={data.next} variant="next" selectedName={selected.name} />
             ) : (
-              <div className="border rule rounded-md p-3 text-muted text-xs italic flex items-center justify-center">
-                No fixture scheduled.
+              <div className="border rule rounded-md p-3 text-muted text-xs italic flex flex-col items-center justify-center gap-0.5">
+                <span>No fixture scheduled for {selected.name}.</span>
+                <span className="text-muted-2 text-[10.5px]">Likely off-season.</span>
               </div>
             )}
           </div>
