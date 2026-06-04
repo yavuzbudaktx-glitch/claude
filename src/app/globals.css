@@ -610,35 +610,55 @@ main { position: relative; z-index: 1; }
   --grain:        0.06;
 }
 .theme-galaxy body { background: var(--bg); }
-/* Starfield — a DENSE field of stars for dark mode. Two tiled layers (a fine
-   far layer + a coarser near layer) at different sizes drift at different
-   speeds for parallax, plus a slow twinkle. No lines anywhere — just stars. */
+/* Starfield — a DENSE, multi-layer field of stars for dark mode: three
+   tiled depths (near bright, mid, and fine far dust). Each layer scrolls
+   at a slightly different rate for real parallax, plus a slow twinkle.
+   No lines anywhere — just stars. */
 .theme-galaxy body::after {
   background-image:
-    /* near, brighter stars (bigger tile) */
-    radial-gradient(1.6px 1.6px at 12% 18%, #fff 50%, transparent 100%),
-    radial-gradient(2px 2px at 78% 9%, #fff 45%, transparent 100%),
-    radial-gradient(1.6px 1.6px at 41% 81%, rgba(255,255,255,0.95) 50%, transparent 100%),
-    radial-gradient(1.4px 1.4px at 64% 54%, #fff 50%, transparent 100%),
-    radial-gradient(2px 2px at 27% 62%, rgba(214,224,255,0.95) 45%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 90% 72%, #fff 50%, transparent 100%),
-    /* far, fine star dust (smaller tile via second background-size) */
-    radial-gradient(1px 1px at 8% 42%, rgba(255,255,255,0.85) 50%, transparent 100%),
-    radial-gradient(1px 1px at 33% 12%, rgba(255,255,255,0.8) 50%, transparent 100%),
-    radial-gradient(1px 1px at 55% 28%, rgba(255,255,255,0.8) 50%, transparent 100%),
-    radial-gradient(1px 1px at 72% 38%, rgba(255,255,255,0.75) 50%, transparent 100%),
-    radial-gradient(1px 1px at 88% 22%, rgba(255,255,255,0.8) 50%, transparent 100%),
-    radial-gradient(1px 1px at 18% 73%, rgba(255,255,255,0.75) 50%, transparent 100%),
-    radial-gradient(1px 1px at 47% 67%, rgba(255,255,255,0.8) 50%, transparent 100%),
-    radial-gradient(1px 1px at 62% 88%, rgba(255,255,255,0.7) 50%, transparent 100%),
-    radial-gradient(1px 1px at 82% 92%, rgba(255,255,255,0.8) 50%, transparent 100%),
-    radial-gradient(1px 1px at 5% 90%, rgba(255,255,255,0.7) 50%, transparent 100%);
+    /* near, brightest stars — big tile so they're sparse but pop */
+    radial-gradient(1.8px 1.8px at 12% 18%, #fff 55%, transparent 100%),
+    radial-gradient(2px 2px at 78% 9%, #fff 50%, transparent 100%),
+    radial-gradient(1.8px 1.8px at 41% 81%, #fff 55%, transparent 100%),
+    radial-gradient(1.6px 1.6px at 64% 54%, #fff 55%, transparent 100%),
+    radial-gradient(2px 2px at 27% 62%, rgba(214,224,255,0.95) 50%, transparent 100%),
+    radial-gradient(1.6px 1.6px at 90% 72%, #fff 55%, transparent 100%),
+    radial-gradient(1.6px 1.6px at 8% 73%, #fff 55%, transparent 100%),
+    radial-gradient(1.6px 1.6px at 55% 14%, #fff 55%, transparent 100%),
+    /* mid layer — small tile, many slots */
+    radial-gradient(1.3px 1.3px at 8% 42%, rgba(255,255,255,0.92) 55%, transparent 100%),
+    radial-gradient(1.3px 1.3px at 33% 12%, rgba(255,255,255,0.88) 55%, transparent 100%),
+    radial-gradient(1.3px 1.3px at 55% 28%, rgba(255,255,255,0.88) 55%, transparent 100%),
+    radial-gradient(1.3px 1.3px at 72% 38%, rgba(255,255,255,0.82) 55%, transparent 100%),
+    radial-gradient(1.3px 1.3px at 88% 22%, rgba(255,255,255,0.88) 55%, transparent 100%),
+    radial-gradient(1.3px 1.3px at 18% 73%, rgba(255,255,255,0.82) 55%, transparent 100%),
+    radial-gradient(1.3px 1.3px at 47% 67%, rgba(220,228,255,0.88) 55%, transparent 100%),
+    radial-gradient(1.3px 1.3px at 62% 88%, rgba(255,255,255,0.78) 55%, transparent 100%),
+    radial-gradient(1.3px 1.3px at 82% 92%, rgba(255,255,255,0.88) 55%, transparent 100%),
+    radial-gradient(1.3px 1.3px at 5% 90%, rgba(255,255,255,0.78) 55%, transparent 100%),
+    radial-gradient(1.3px 1.3px at 38% 46%, rgba(230,220,255,0.88) 55%, transparent 100%),
+    radial-gradient(1.3px 1.3px at 92% 56%, rgba(255,255,255,0.82) 55%, transparent 100%),
+    /* far star dust — tiniest tile, very dense */
+    radial-gradient(0.9px 0.9px at 6% 8%, rgba(255,255,255,0.7) 55%, transparent 100%),
+    radial-gradient(0.9px 0.9px at 18% 34%, rgba(255,255,255,0.65) 55%, transparent 100%),
+    radial-gradient(0.9px 0.9px at 27% 58%, rgba(255,255,255,0.7) 55%, transparent 100%),
+    radial-gradient(0.9px 0.9px at 36% 80%, rgba(255,255,255,0.6) 55%, transparent 100%),
+    radial-gradient(0.9px 0.9px at 44% 14%, rgba(255,255,255,0.7) 55%, transparent 100%),
+    radial-gradient(0.9px 0.9px at 51% 50%, rgba(255,255,255,0.6) 55%, transparent 100%),
+    radial-gradient(0.9px 0.9px at 62% 26%, rgba(255,255,255,0.7) 55%, transparent 100%),
+    radial-gradient(0.9px 0.9px at 70% 70%, rgba(255,255,255,0.6) 55%, transparent 100%),
+    radial-gradient(0.9px 0.9px at 78% 84%, rgba(255,255,255,0.7) 55%, transparent 100%),
+    radial-gradient(0.9px 0.9px at 84% 12%, rgba(255,255,255,0.6) 55%, transparent 100%),
+    radial-gradient(0.9px 0.9px at 92% 38%, rgba(255,255,255,0.7) 55%, transparent 100%),
+    radial-gradient(0.9px 0.9px at 96% 76%, rgba(255,255,255,0.6) 55%, transparent 100%);
   background-size:
-    520px 520px, 520px 520px, 520px 520px, 520px 520px, 520px 520px, 520px 520px,
-    260px 260px, 260px 260px, 260px 260px, 260px 260px, 260px 260px,
-    260px 260px, 260px 260px, 260px 260px, 260px 260px, 260px 260px;
+    720px 720px, 720px 720px, 720px 720px, 720px 720px, 720px 720px, 720px 720px, 720px 720px, 720px 720px,
+    320px 320px, 320px 320px, 320px 320px, 320px 320px, 320px 320px, 320px 320px,
+    320px 320px, 320px 320px, 320px 320px, 320px 320px, 320px 320px, 320px 320px,
+    160px 160px, 160px 160px, 160px 160px, 160px 160px, 160px 160px, 160px 160px,
+    160px 160px, 160px 160px, 160px 160px, 160px 160px, 160px 160px, 160px 160px;
   animation: starfield 200s linear infinite, twinkle 5.5s ease-in-out infinite;
-  opacity: 0.95;
+  opacity: 1;
   mix-blend-mode: screen;
 }
 @keyframes starfield {
@@ -1089,37 +1109,42 @@ main { position: relative; z-index: 1; }
 }
 
 /* =======================================================================
-   WATER (concept) — underwater calm: caustic light, rising bubbles, aqua glass
+   WATER (concept) — fully submerged: turquoise depth, rolling caustic
+   shafts, streaming bubbles, glass cards lit from below.
 ======================================================================= */
 :root.theme-water {
   color-scheme: dark;
-  --bg:           #04212e;
-  --paper:        rgba(120, 220, 230, 0.05);
-  --paper-2:      rgba(120, 220, 230, 0.085);
-  --ink:          #e6fbff;
-  --ink-soft:     #b6e6ec;
-  --muted:        #6fa7b3;
-  --muted-2:      #3f6f7a;
-  --rule:         rgba(120, 220, 230, 0.16);
-  --rule-soft:    rgba(120, 220, 230, 0.07);
-  --accent:       #34d3e0;
-  --accent-soft:  rgba(52, 211, 224, 0.15);
-  --accent-2:     #7fe7d9;
-  --hl:           rgba(52, 211, 224, 0.12);
-  --up:           #4fd6b0;
+  --bg:           #02101a;
+  --paper:        rgba(120, 235, 245, 0.075);
+  --paper-2:      rgba(120, 235, 245, 0.12);
+  --ink:          #ecffff;
+  --ink-soft:     #bdf2f7;
+  --muted:        #74bbc8;
+  --muted-2:      #3f8090;
+  --rule:         rgba(120, 235, 245, 0.24);
+  --rule-soft:    rgba(120, 235, 245, 0.10);
+  --accent:       #14e1ee;
+  --accent-soft:  rgba(20, 225, 238, 0.24);
+  --accent-2:     #7ff2e0;
+  --hl:           rgba(20, 225, 238, 0.20);
+  --up:           #4fe6b8;
   --down:         #ff8aa0;
   --grad-from:    #0a6e8c;
-  --grad-via:     #34d3e0;
-  --grad-to:      #7fe7d9;
-  --glass:        rgba(8, 40, 55, 0.55);
-  --glass-border: rgba(120, 220, 230, 0.18);
-  --glow:         rgba(52, 211, 224, 0.40);
-  --shadow-card:  0 14px 38px -16px rgba(0, 20, 30, 0.80), inset 0 1px 0 rgba(200, 250, 255, 0.06);
-  --shadow-hover: 0 26px 60px -22px rgba(0, 40, 60, 0.85), inset 0 1px 0 rgba(200, 250, 255, 0.10);
-  --aurora-1:     rgba(10, 110, 140, 0.55);
-  --aurora-2:     rgba(52, 211, 224, 0.30);
-  --aurora-3:     rgba(20, 80, 120, 0.35);
-  --aurora-4:     rgba(0, 10, 20, 0.60);
+  --grad-via:     #14e1ee;
+  --grad-to:      #b8fff0;
+  --glass:        rgba(4, 28, 42, 0.62);
+  --glass-border: rgba(120, 235, 245, 0.30);
+  --glow:         rgba(20, 225, 238, 0.75);
+  --shadow-card:  0 18px 50px -16px rgba(0, 30, 45, 0.90),
+                  inset 0 1px 0 rgba(220, 255, 255, 0.12),
+                  0 0 28px -8px rgba(20, 225, 238, 0.35);
+  --shadow-hover: 0 34px 78px -22px rgba(0, 55, 80, 0.92),
+                  inset 0 1px 0 rgba(220, 255, 255, 0.18),
+                  0 0 56px -10px rgba(20, 225, 238, 0.55);
+  --aurora-1:     rgba(8, 140, 180, 0.90);
+  --aurora-2:     rgba(20, 225, 238, 0.65);
+  --aurora-3:     rgba(20, 90, 140, 0.60);
+  --aurora-4:     rgba(0, 18, 32, 0.75);
   --grain:        0.04;
 }
 :root.theme-water:not(.dark) {
@@ -1154,126 +1179,137 @@ main { position: relative; z-index: 1; }
   background: linear-gradient(118deg, #0a6e8c, #34d3e0 50%, #7fe7d9);
   -webkit-background-clip: text; background-clip: text;
 }
-/* Caustic surface light + a column of bubbles rising from the depths. */
+/* Streaming bubbles rising in five columns + a hard glow at the surface. */
 .theme-water body::after {
-  opacity: 0.9;
+  opacity: 1;
   mix-blend-mode: screen;
   background-image:
-    radial-gradient(2px 2px at 20% 90%, rgba(220,255,255,0.55), transparent 60%),
-    radial-gradient(1.5px 1.5px at 50% 95%, rgba(220,255,255,0.45), transparent 60%),
-    radial-gradient(2px 2px at 76% 88%, rgba(220,255,255,0.50), transparent 60%),
-    radial-gradient(1.5px 1.5px at 36% 92%, rgba(220,255,255,0.42), transparent 60%),
-    radial-gradient(1.5px 1.5px at 88% 93%, rgba(220,255,255,0.42), transparent 60%),
-    radial-gradient(70% 32% at 50% -6%, rgba(150,240,255,0.12), transparent 70%);
-  background-size: 300px 600px, 380px 720px, 340px 660px, 420px 760px, 280px 700px, 100% 100%;
-  animation: bubbles 16s linear infinite;
+    radial-gradient(3px 3px at 20% 90%, rgba(230,255,255,0.95), transparent 60%),
+    radial-gradient(2.5px 2.5px at 50% 95%, rgba(230,255,255,0.85), transparent 60%),
+    radial-gradient(3px 3px at 76% 88%, rgba(230,255,255,0.90), transparent 60%),
+    radial-gradient(2.5px 2.5px at 36% 92%, rgba(230,255,255,0.85), transparent 60%),
+    radial-gradient(2.5px 2.5px at 88% 93%, rgba(230,255,255,0.85), transparent 60%),
+    radial-gradient(2px 2px at 12% 50%, rgba(220,255,255,0.6), transparent 60%),
+    radial-gradient(2px 2px at 62% 65%, rgba(220,255,255,0.55), transparent 60%),
+    radial-gradient(140% 50% at 50% -10%, rgba(180,255,255,0.30), transparent 70%);
+  background-size: 220px 520px, 280px 620px, 250px 560px, 310px 660px, 200px 600px, 360px 760px, 320px 700px, 100% 100%;
+  animation: bubbles 8s linear infinite;
 }
 @keyframes bubbles {
-  from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 50% 0; }
-  to   { background-position: 0 -600px, 0 -720px, 0 -660px, 0 -760px, 0 -700px, 50% 0; }
+  from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 50% 0; }
+  to   { background-position: 0 -520px, 0 -620px, 0 -560px, 0 -660px, 0 -600px, 0 -760px, 0 -700px, 50% 0; }
 }
-.theme-water:not(.dark) body::after { opacity: 0.5; }
-.theme-water .card { border-radius: 18px; }
+/* Caustic light shafts crossing the page — large blurry diagonal gradients
+   that pulse to read as broken sunlight through water. */
+.theme-water body::before {
+  filter: blur(95px) saturate(180%) contrast(115%);
+  animation: aurora 30s ease-in-out infinite alternate, waterCaustics 8s ease-in-out infinite;
+}
+@keyframes waterCaustics {
+  0%, 100% { opacity: 0.85; transform: translate3d(0,0,0); }
+  50%      { opacity: 1; transform: translate3d(-2%, 1%, 0) scale(1.08); }
+}
+.theme-water:not(.dark) body::after { opacity: 0.55; }
+.theme-water .card {
+  border-radius: 18px;
+  background-image: linear-gradient(180deg, rgba(180,255,255,0.06), transparent 35%);
+}
 .theme-water .card-bare, .theme-water .btn-ghost, .theme-water .chip { border-radius: 13px; }
 .theme-water .dot {
-  background: radial-gradient(circle at 32% 30%, #e6ffff, var(--accent) 60%, #0a6e8c);
-  box-shadow: 0 0 0 3px rgba(52,211,224,0.12), 0 0 12px var(--glow);
+  background: radial-gradient(circle at 32% 30%, #e6ffff, var(--accent) 55%, #0a6e8c);
+  box-shadow: 0 0 0 3px rgba(20,225,238,0.18), 0 0 14px var(--glow), 0 0 28px rgba(20,225,238,0.45);
 }
 
 /* =======================================================================
-   LUST (concept) — candlelit & intimate: deep crimson velvet, a slow
-   breathing glow, rose-gold warmth. Sensual, never explicit.
+   SUNSET (concept) — golden hour at the coast: peach sky, the sun slowly
+   sinking, long orange afterglow streaks above a deep horizon.
 ======================================================================= */
-:root.theme-lust {
+:root.theme-sunset {
   color-scheme: dark;
-  --bg:           #160206;
-  --paper:        rgba(255, 80, 90, 0.05);
-  --paper-2:      rgba(255, 80, 90, 0.085);
-  --ink:          #ffe7ea;
-  --ink-soft:     #e6b4bc;
-  --muted:        #b07882;
-  --muted-2:      #6e3a44;
-  --rule:         rgba(230, 120, 130, 0.18);
-  --rule-soft:    rgba(230, 120, 130, 0.08);
-  --accent:       #e0294a;
-  --accent-soft:  rgba(224, 41, 74, 0.16);
-  --accent-2:     #e8b06a;
-  --hl:           rgba(224, 41, 74, 0.14);
-  --up:           #e8b06a;
-  --down:         #ff5c7a;
-  --grad-from:    #7a0b22;
-  --grad-via:     #e0294a;
-  --grad-to:      #e8b06a;
-  --glass:        rgba(40, 8, 14, 0.60);
-  --glass-border: rgba(230, 120, 130, 0.20);
-  --glow:         rgba(224, 41, 74, 0.45);
-  --shadow-card:  0 16px 44px -18px rgba(0, 0, 0, 0.85), 0 0 40px -20px rgba(224, 41, 74, 0.40);
-  --shadow-hover: 0 26px 64px -22px rgba(0, 0, 0, 0.90), 0 0 60px -20px rgba(224, 41, 74, 0.55);
-  --aurora-1:     rgba(122, 11, 34, 0.60);
-  --aurora-2:     rgba(224, 41, 74, 0.35);
-  --aurora-3:     rgba(232, 176, 106, 0.22);
-  --aurora-4:     rgba(10, 0, 4, 0.60);
-  --grain:        0.05;
+  --bg:           #1c0a1c;
+  --paper:        rgba(255, 180, 130, 0.06);
+  --paper-2:      rgba(255, 180, 130, 0.10);
+  --ink:          #fff2e3;
+  --ink-soft:     #f1c8a3;
+  --muted:        #b08474;
+  --muted-2:      #6e4a44;
+  --rule:         rgba(255, 180, 130, 0.18);
+  --rule-soft:    rgba(255, 180, 130, 0.08);
+  --accent:       #ff8a4c;
+  --accent-soft:  rgba(255, 138, 76, 0.20);
+  --accent-2:     #ffd17a;
+  --hl:           rgba(255, 138, 76, 0.16);
+  --up:           #ffd17a;
+  --down:         #ff5c8a;
+  --grad-from:    #6a1e4a;
+  --grad-via:     #ff7a59;
+  --grad-to:      #ffd17a;
+  --glass:        rgba(38, 14, 30, 0.60);
+  --glass-border: rgba(255, 180, 130, 0.22);
+  --glow:         rgba(255, 138, 76, 0.55);
+  --shadow-card:  0 16px 44px -16px rgba(20, 0, 15, 0.85),
+                  0 0 32px -12px rgba(255, 138, 76, 0.30);
+  --shadow-hover: 0 28px 64px -20px rgba(30, 0, 20, 0.90),
+                  0 0 56px -14px rgba(255, 138, 76, 0.50);
+  --aurora-1:     rgba(106, 30, 74, 0.65);
+  --aurora-2:     rgba(255, 122, 89, 0.55);
+  --aurora-3:     rgba(255, 209, 122, 0.35);
+  --aurora-4:     rgba(20, 0, 15, 0.55);
+  --grain:        0.04;
 }
-:root.theme-lust:not(.dark) {
+:root.theme-sunset:not(.dark) {
   color-scheme: light;
-  --bg:           #fbeef0;
-  --paper:        #fffafb;
-  --paper-2:      #fff3f5;
-  --ink:          #3a0f18;
-  --ink-soft:     #6e2733;
-  --muted:        #a06673;
-  --muted-2:      #d0a3ac;
-  --rule:         rgba(58, 15, 24, 0.12);
-  --rule-soft:    rgba(58, 15, 24, 0.05);
-  --accent:       #c81e43;
-  --accent-soft:  rgba(200, 30, 67, 0.10);
-  --accent-2:     #c08a3e;
-  --hl:           rgba(200, 30, 67, 0.07);
-  --up:           #b07d2a;
+  --bg:           #fff2e1;
+  --paper:        #ffffff;
+  --paper-2:      #fffaf0;
+  --ink:          #3a1a1a;
+  --ink-soft:     #6e3a2e;
+  --muted:        #a06a55;
+  --muted-2:      #d0a895;
+  --rule:         rgba(58, 26, 26, 0.12);
+  --rule-soft:    rgba(58, 26, 26, 0.05);
+  --accent:       #e85a2b;
+  --accent-soft:  rgba(232, 90, 43, 0.10);
+  --accent-2:     #c97a18;
+  --hl:           rgba(232, 90, 43, 0.07);
+  --up:           #c97a18;
   --down:         #c81e43;
   --grad-from:    #8a1230;
-  --grad-via:     #c81e43;
-  --grad-to:      #d99a5a;
+  --grad-via:     #e85a2b;
+  --grad-to:      #f5b350;
   --glass:        rgba(255, 255, 255, 0.72);
-  --glass-border: rgba(58, 15, 24, 0.10);
-  --glow:         rgba(200, 30, 67, 0.22);
-  --shadow-card:  0 1px 2px rgba(58, 15, 24, 0.04), 0 12px 30px -16px rgba(200, 30, 67, 0.30);
-  --shadow-hover: 0 2px 4px rgba(58, 15, 24, 0.06), 0 22px 48px -20px rgba(200, 30, 67, 0.40);
-  --aurora-1: rgba(200,30,67,0.14); --aurora-2: rgba(217,154,90,0.14);
+  --glass-border: rgba(58, 26, 26, 0.10);
+  --glow:         rgba(232, 90, 43, 0.22);
+  --shadow-card:  0 1px 2px rgba(58, 26, 26, 0.04), 0 12px 30px -16px rgba(232, 90, 43, 0.30);
+  --shadow-hover: 0 2px 4px rgba(58, 26, 26, 0.06), 0 22px 48px -20px rgba(232, 90, 43, 0.40);
+  --aurora-1: rgba(232,90,43,0.14); --aurora-2: rgba(245,179,80,0.16);
   --aurora-3: rgba(138,18,48,0.10); --aurora-4: transparent;
 }
-.theme-lust .font-display { font-family: "Playfair Display", Georgia, "Times New Roman", serif; font-weight: 600; letter-spacing: -0.01em; }
-.theme-lust .text-gradient {
-  background: linear-gradient(118deg, #e0294a, #ff7a9c 45%, #e8b06a);
+.theme-sunset .text-gradient {
+  background: linear-gradient(118deg, #ff5c8a, #ff7a59 50%, #ffd17a);
   -webkit-background-clip: text; background-clip: text;
 }
-/* The candle breathes; the room darkens at the edges into a soft vignette;
-   a faint diagonal sheen reads as velvet. */
-.theme-lust body::before {
-  filter: blur(95px) saturate(165%);
-  animation: aurora 36s ease-in-out infinite alternate, lustBreath 7s ease-in-out infinite;
-}
-@keyframes lustBreath {
-  0%, 100% { opacity: 0.7; }
-  50%      { opacity: 1; }
-}
-.theme-lust body::after {
+/* Horizon band: a soft horizontal sun glow on the lower third + a sinking
+   "sun" disc that drifts down at the centre. */
+.theme-sunset body::after {
   opacity: 1;
   mix-blend-mode: normal;
   background-image:
-    radial-gradient(120% 95% at 50% 50%, transparent 42%, rgba(8, 0, 3, 0.55) 100%),
-    repeating-linear-gradient(135deg, rgba(255, 190, 160, 0.028) 0 3px, transparent 3px 9px);
+    radial-gradient(56% 22% at 50% 78%, rgba(255, 200, 110, 0.28), transparent 70%),
+    radial-gradient(circle 110px at 50% 82%, rgba(255, 158, 90, 0.55), transparent 72%),
+    linear-gradient(to bottom, transparent 0%, transparent 60%, rgba(120, 24, 60, 0.18) 78%, transparent 100%);
+  animation: sunsetSink 22s ease-in-out infinite alternate;
 }
-.theme-lust:not(.dark) body::after {
-  background-image: repeating-linear-gradient(135deg, rgba(180, 60, 80, 0.03) 0 3px, transparent 3px 9px);
+@keyframes sunsetSink {
+  from { background-position: 50% 78%, 50% 82%, 0 0; }
+  to   { background-position: 50% 88%, 50% 95%, 0 0; }
 }
-.theme-lust .card { border-radius: 18px; }
-.theme-lust .card-bare, .theme-lust .btn-ghost, .theme-lust .chip { border-radius: 13px; }
-.theme-lust .dot {
-  background: radial-gradient(circle at 32% 30%, #fff0f0, var(--accent) 55%, #7a0b22);
-  box-shadow: 0 0 12px var(--glow), 0 0 24px rgba(232, 176, 106, 0.30);
-  animation: lustBreath 5s ease-in-out infinite;
+.theme-sunset:not(.dark) body::after { opacity: 0.7; }
+.theme-sunset .card { border-radius: 16px; }
+.theme-sunset .card-bare, .theme-sunset .btn-ghost, .theme-sunset .chip { border-radius: 12px; }
+.theme-sunset .dot {
+  background: radial-gradient(circle at 32% 30%, #fff2d6, var(--accent) 55%, #8a1230);
+  box-shadow: 0 0 12px var(--glow), 0 0 24px rgba(255, 209, 122, 0.40);
 }
 
 /* =======================================================================

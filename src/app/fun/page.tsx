@@ -60,12 +60,14 @@ export default async function FunPage() {
         <TypingTest />
       </Card>
 
-      {/* Row 3 — Portrait nature short (narrow) + classic T-Rex (wide) */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,2.4fr)] gap-5 items-stretch">
-        <div className="[&>*]:h-full">
+      {/* Row 3 — Portrait nature short (narrow) + classic T-Rex (wide).
+          The row gets an explicit min-height so the T-Rex canvas is always
+          visible even when the Nature short slot is empty/errored. */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,2.4fr)] gap-5 items-stretch min-h-[440px]">
+        <div className="[&>*]:h-full min-h-[440px]">
           <Card title=""><NatureShort /></Card>
         </div>
-        <div className="[&>*]:h-full">
+        <div className="[&>*]:h-full min-h-[440px]">
           <Card title=""><TRex /></Card>
         </div>
       </div>

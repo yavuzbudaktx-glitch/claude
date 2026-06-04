@@ -9,7 +9,7 @@
 // carry a full atmosphere, not just a recolor.
 
 export type ThemeId =
-  | "aurora" | "galaxy" | "forest" | "water" | "lust"
+  | "aurora" | "galaxy" | "forest" | "water" | "sunset"
   | "terminal" | "accounting" | "nord" | "mono"
   | "newspaper" | "blueprint" | "comic" | "sketch";
 
@@ -19,8 +19,8 @@ export const THEMES: Array<{
   { id: "aurora",     label: "Aurora Glass", description: "Default — frosted cards, cyan accent, drifting aurora background." },
   { id: "galaxy",     label: "Galaxy",       description: "Deep space — violet nebula, a dense drifting starfield behind everything." },
   { id: "forest",     label: "Forest",       description: "A living woodland — sun shafts through the canopy, drifting leaves, bark-grain cards." },
-  { id: "water",      label: "Water",        description: "Underwater calm — caustic light ripples, rising bubbles, glassy aqua glow." },
-  { id: "lust",       label: "Lust",         description: "Candlelit and intimate — deep crimson velvet, a slow breathing glow, rose-gold warmth." },
+  { id: "water",      label: "Water",        description: "Submerged in a turquoise sea — flowing caustics, streaming bubbles, deep aqua glow." },
+  { id: "sunset",     label: "Sunset",       description: "Golden hour at the coast — peach sky, a slowly sinking sun, long horizon afterglow." },
   { id: "terminal",   label: "Terminal",     description: "Mono-typography, sharp corners, green phosphor, CRT scanlines — day or night." },
   { id: "accounting", label: "Accounting",   description: "Crisp ledger paper, navy/forest accents — clean numbers-first interface." },
   { id: "nord",       label: "Nord",         description: "Cool arctic blue-greys with frost accents — quiet and balanced." },
@@ -33,7 +33,7 @@ export const THEMES: Array<{
 
 const KEY = "brief.theme.v1";
 
-const VALID: ThemeId[] = ["aurora", "galaxy", "forest", "water", "lust", "terminal", "accounting", "nord", "mono", "newspaper", "blueprint", "comic", "sketch"];
+const VALID: ThemeId[] = ["aurora", "galaxy", "forest", "water", "sunset", "terminal", "accounting", "nord", "mono", "newspaper", "blueprint", "comic", "sketch"];
 const NON_DEFAULT = VALID.filter((v) => v !== "aurora");
 
 export function getTheme(): ThemeId {
@@ -60,7 +60,7 @@ export const THEME_BOOT_SCRIPT = `
   (function() {
     try {
       var v = localStorage.getItem(${JSON.stringify(KEY)});
-      var ok = ['galaxy','forest','water','lust','terminal','accounting','nord','mono','newspaper','blueprint','comic','sketch'];
+      var ok = ['galaxy','forest','water','sunset','terminal','accounting','nord','mono','newspaper','blueprint','comic','sketch'];
       var root = document.documentElement;
       if (v && ok.indexOf(v) >= 0) root.classList.add('theme-' + v);
       root.setAttribute('data-theme', v || 'aurora');

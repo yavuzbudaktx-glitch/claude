@@ -1,25 +1,17 @@
-// CPA video feed for the Accounting page — videos from a curated list of
-// channels (Logan Graf + KPMG US Careers right now), interleaved.
-//
-// For each channel we:
-//   1. Resolve the @handle → channel ID via page-owner signals only
-//      (<link rel=canonical>, og:url, externalId, channelId). We
-//      explicitly avoid a bare `channel/UC…` regex match, which on a
-//      channel page can capture a *recommended* channel and surface
-//      "videos tagged him" instead of his own.
-//   2. Pull uploads via the channel's videos.xml Atom feed.
-//   3. Fall back to scraping the /videos page if the feed is blocked.
-//
-// Each video carries `channel` (handle) + `channelLabel` (display name) so
-// the client can label it. Interleaved round-robin so the daily seed and
-// the shuffle both see a balanced mix.
+// CPA video feed for the Accounting page — Logan Graf's channel uploads via
+// YouTube's public Atom feed (no API key, no scraping, no egress games — the
+// /feeds/videos.xml endpoint is reachable from serverless runtimes that the
+// regular /@handle pages are not). We resolve the @handle → channel ID once
+// (canonical / og:url / externalId) via proxies and cache it.
 
 import { NextResponse } from "next/server";
 import Parser from "rss-parser";
 
 export const revalidate = 3600;
 
-const CHANNELS: Array<{ handle: string; label: string }> = [
+// `staticId` short-circuits the page scrape — when we already know the UC ID
+// the route is one network call away from a result.
+const CHANNELS: Array<{ handle: string; label: string; staticId?: string }> = [
   { handle: "logangrafcpa", label: "Logan Graf" },
 ];
 
@@ -31,9 +23,9 @@ const HEADERS = {
 
 interface Video {
   id: string; title: string; published: string; thumb: string;
-  channel: string;        // handle
-  channelLabel: string;   // display name
-  channelUrl: string;     // /@handle/videos
+  channel: string;
+  channelLabel: string;
+  channelUrl: string;
 }
 
 const idCache = new Map<string, string>();
@@ -50,14 +42,13 @@ async function getHtml(url: string): Promise<string | null> {
       if (!res.ok) continue;
       const text = await res.text();
       if (text && text.length > 1000) return text;
-    } catch {
-      // next
-    }
+    } catch { /* next */ }
   }
   return null;
 }
 
-async function resolveChannelId(handle: string): Promise<string | null> {
+async function resolveChannelId(handle: string, staticId?: string): Promise<string | null> {
+  if (staticId) return staticId;
   const hit = idCache.get(handle);
   if (hit) return hit;
   const html = await getHtml(`https://www.youtube.com/@${handle}`);
@@ -67,10 +58,7 @@ async function resolveChannelId(handle: string): Promise<string | null> {
     /<meta[^>]+property="og:url"[^>]+content="https:\/\/www\.youtube\.com\/channel\/(UC[\w-]{22})"/.exec(html) ||
     /"externalId":"(UC[\w-]{22})"/.exec(html) ||
     /"channelId":"(UC[\w-]{22})"/.exec(html);
-  if (m) {
-    idCache.set(handle, m[1]);
-    return m[1];
-  }
+  if (m) { idCache.set(handle, m[1]); return m[1]; }
   return null;
 }
 
@@ -101,13 +89,10 @@ function thumbOf(item: YtItem, id: string): { url: string; w: number; h: number 
     h: Number(first?.$?.height ?? 0),
   };
 }
-// Heuristics for "this is a Short" — title contains #shorts, or the thumbnail
-// is portrait/square. YouTube doesn't put Shorts in a separate feed, so we
-// have to filter client-side.
 function looksLikeShort(item: YtItem, t: { w: number; h: number }): boolean {
   const title = (item.title ?? "").toLowerCase();
   if (/#short|#shorts/.test(title)) return true;
-  if (t.w > 0 && t.h > 0 && t.h >= t.w) return true; // portrait thumbnail
+  if (t.w > 0 && t.h > 0 && t.h >= t.w) return true;
   return false;
 }
 
@@ -124,8 +109,6 @@ async function fetchUploads(channelId: string, channel: { handle: string; label:
   return (feed.items ?? [])
     .filter((it) => {
       const id = it["yt:videoId"] ?? (it.id ?? "").replace(/^yt:video:/, "");
-      // Drop Shorts: title hashtags or portrait thumbnail. We only want
-      // landscape, regular videos here.
       return !looksLikeShort(it, thumbOf(it, id));
     })
     .map((it) => {
@@ -142,35 +125,6 @@ async function fetchUploads(channelId: string, channel: { handle: string; label:
     .filter((v) => v.id && v.title);
 }
 
-async function scrapeVideos(channel: { handle: string; label: string }): Promise<Video[]> {
-  // The /videos tab's ytInitialData carries ~30 of the channel's latest
-  // uploads (Shorts live on a separate /shorts tab, so /videos is already
-  // landscape-only). We grab as many as the page exposes.
-  const html = await getHtml(`https://www.youtube.com/@${channel.handle}/videos`);
-  if (!html) return [];
-  const out: Video[] = [];
-  const seen = new Set<string>();
-  const re = /"videoId":"([\w-]{11})"(?:(?!"videoId").){0,400}?"text":"((?:[^"\\]|\\.)*?)"/g;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(html)) && out.length < 90) {
-    const id = m[1];
-    if (seen.has(id)) continue;
-    seen.add(id);
-    let title = "";
-    try { title = JSON.parse(`"${m[2]}"`); } catch { title = m[2]; }
-    if (title && !/^\d+:\d+$/.test(title) && !/#short/i.test(title)) {
-      out.push({
-        id, title, published: "",
-        thumb: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
-        channel: channel.handle,
-        channelLabel: channel.label,
-        channelUrl: `https://www.youtube.com/@${channel.handle}/videos`,
-      });
-    }
-  }
-  return out;
-}
-
 function seedIndex(dateKey: string, n: number): number {
   let h = 0;
   for (const c of dateKey) h = (h * 31 + c.charCodeAt(0)) >>> 0;
@@ -182,24 +136,11 @@ export async function GET(req: Request) {
 
   const perChannel = await Promise.all(
     CHANNELS.map(async (ch) => {
-      // Run BOTH sources and merge so we surface as much of the library as
-      // possible: the Atom feed gives the latest 15 (with reliable titles),
-      // the /videos scrape adds up to ~90 more older uploads. Dedupe by id.
-      const id = await resolveChannelId(ch.handle);
-      const [feed, scraped] = await Promise.all([
-        id ? fetchUploads(id, ch) : Promise.resolve([] as Video[]),
-        scrapeVideos(ch),
-      ]);
-      const seen = new Set<string>();
-      const merged: Video[] = [];
-      for (const v of [...feed, ...scraped]) {
-        if (v.id && v.title && !seen.has(v.id)) { seen.add(v.id); merged.push(v); }
-      }
-      return merged;
+      const id = await resolveChannelId(ch.handle, ch.staticId);
+      return id ? fetchUploads(id, ch) : ([] as Video[]);
     }),
   );
 
-  // Round-robin interleave so a shuffle never sticks on one channel.
   const seen = new Set<string>();
   const videos: Video[] = [];
   for (let i = 0; ; i++) {
@@ -215,18 +156,11 @@ export async function GET(req: Request) {
   }
 
   if (videos.length === 0) {
-    return NextResponse.json(
-      { error: "no_videos", channels: CHANNELS },
-      { status: 502 },
-    );
+    return NextResponse.json({ error: "no_videos", channels: CHANNELS }, { status: 502 });
   }
 
   return NextResponse.json(
-    {
-      videos,
-      seed: seedIndex(dateKey, videos.length),
-      channels: CHANNELS,
-    },
+    { videos, seed: seedIndex(dateKey, videos.length), channels: CHANNELS },
     { headers: { "Cache-Control": "s-maxage=3600, stale-while-revalidate=21600" } },
   );
 }

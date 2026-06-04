@@ -9,7 +9,7 @@ const SWATCHES: Record<ThemeId, string[]> = {
   galaxy:     ["#0b0628", "#c084fc", "#22d3ee"],
   forest:     ["#0e1a12", "#4ade80", "#a3c585"],
   water:      ["#04212e", "#34d3e0", "#7fe7d9"],
-  lust:       ["#1a0306", "#e0294a", "#e8b06a"],
+  sunset:     ["#3a0e22", "#ff7a59", "#ffd17a"],
   terminal:   ["#000000", "#22ff77", "#ffb454"],
   accounting: ["#f8fafb", "#1e3a5f", "#15803d"],
   nord:       ["#2e3440", "#88c0d0", "#a3be8c"],
