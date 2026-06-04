@@ -44,15 +44,17 @@ export default async function FunPage() {
         }
       />
 
-      {/* Row 0 — full-width ambient video (Country Life / Bob Ross / Elif) */}
-      <Card id="fun.ambient" title="Long view" meta="put one on in the background">
-        <div className="h-[440px] md:h-[540px]"><AmbientVideo /></div>
+      {/* Row 0 — full-width ambient video (Country Life / Bob Ross / Elif).
+          Taller on laptop-class widths (lg/xl) where a fixed 540 letterboxes
+          the 16:9 video; mobile/portrait and very-large desktops are fine. */}
+      <Card id="fun.ambient" title="Long view">
+        <div className="h-[440px] lg:h-[640px] 2xl:h-[560px]"><AmbientVideo /></div>
       </Card>
 
       {/* Row 1 — NASA / Art + games box. items-start so collapsing one card
           doesn't leave the other stretched to its (now-empty) height. */}
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-5 items-start">
-        <Card id="fun.apod" title="Frame of the day" meta="NASA · Art Institute">
+        <Card id="fun.apod" title="Frame of the day">
           <div className="h-[560px]"><NasaApod /></div>
         </Card>
         <Card id="fun.games" title="Unwind">
@@ -61,7 +63,7 @@ export default async function FunPage() {
       </div>
 
       {/* Row 2 — typing tape */}
-      <Card id="fun.typing" title="Cadence" meta="practice your hands">
+      <Card id="fun.typing" title="Cadence">
         <TypingTest />
       </Card>
 
@@ -69,7 +71,7 @@ export default async function FunPage() {
           column); the T-Rex game gets the rest of the width and matches the
           short's fixed height so the two cards read as a matched pair. */}
       <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-5 items-start">
-        <Card id="fun.short" title="Wildlife" meta="BBC Earth">
+        <Card id="fun.short" title="Wildlife">
           <div className="h-[520px]"><NatureShort /></div>
         </Card>
         <Card id="fun.trex" title="Dino">

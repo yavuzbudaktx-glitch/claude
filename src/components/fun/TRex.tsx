@@ -8,9 +8,8 @@
 export function TRex() {
   return (
     <div className="flex flex-col gap-2.5 h-full min-h-0">
-      <div className="flex items-center justify-between text-[10.5px] font-mono uppercase tracking-wider text-muted shrink-0">
-        <span>T-Rex run</span>
-        <span className="text-muted-2">click, then Space / ↑ to jump</span>
+      <div className="text-center text-[10.5px] font-mono uppercase tracking-wider text-muted-2 shrink-0">
+        click, then Space / ↑ to jump · ↓ to duck
       </div>
       <div className="relative flex-1 min-h-0 rounded-2xl border border-[var(--rule)] bg-white overflow-hidden">
         <iframe

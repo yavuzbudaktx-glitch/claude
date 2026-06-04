@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 import { fetchChannelVideos } from "@/lib/youtube-library";
 
 export const revalidate = 3600;
+export const maxDuration = 30;
 
 const HANDLE = "logangrafcpa";
 const LABEL = "Logan Graf";

@@ -251,7 +251,18 @@ async function fetchSubRss(sub: string): Promise<Post[]> {
 
 // -------- handler -----------------------------------------------------------
 
-export async function GET() {
+interface Payload { posts: Post[]; subs: string[]; sort: string; period: string }
+
+// Warm snapshot. The live fetch hits 5 subreddits through OAuth/proxy chains,
+// which can take several seconds — far too slow to run on every page load when
+// the content barely changes hour to hour. We keep the last good result in
+// memory and serve it instantly; the slow path only runs when the snapshot is
+// stale or the user explicitly forces a refresh (the client adds ?n=… then).
+let snapshot: { at: number; data: Payload } | null = null;
+const SNAP_TTL = 1000 * 60 * 20; // 20 minutes
+const CDN_CACHE = "public, s-maxage=1200, stale-while-revalidate=3600";
+
+async function buildPayload(): Promise<Payload> {
   const perSub = await Promise.all(
     SUBS.map(async (sub) => {
       const json = await fetchSubJson(sub);
@@ -274,15 +285,37 @@ export async function GET() {
     if (!advanced) break;
   }
 
-  // Sort by absolute score so the highest-quality posts surface first,
-  // regardless of which sub they came from.
+  // Highest-quality posts first, regardless of which sub they came from.
   out.sort((a, b) => b.score - a.score || b.created - a.created);
+  return { posts: out, subs: SUBS, sort: SORT, period: PERIOD };
+}
 
-  if (out.length === 0) {
+export async function GET(req: Request) {
+  const force = new URL(req.url).searchParams.has("n"); // manual refresh nonce
+
+  // Serve the warm snapshot immediately unless the user forced a refresh.
+  if (!force && snapshot && Date.now() - snapshot.at < SNAP_TTL) {
+    return NextResponse.json(snapshot.data, { headers: { "Cache-Control": CDN_CACHE } });
+  }
+
+  let payload: Payload;
+  try {
+    payload = await buildPayload();
+  } catch {
+    payload = { posts: [], subs: SUBS, sort: SORT, period: PERIOD };
+  }
+
+  // Only adopt a fresh, non-empty result; otherwise keep the last good one so
+  // a transient upstream blip never wipes the feed.
+  if (payload.posts.length > 0) {
+    snapshot = { at: Date.now(), data: payload };
+  } else if (snapshot) {
+    return NextResponse.json(snapshot.data, { headers: { "Cache-Control": CDN_CACHE } });
+  } else {
     return NextResponse.json({ posts: [], error: "no_posts" }, { status: 502 });
   }
-  return NextResponse.json(
-    { posts: out, subs: SUBS, sort: SORT, period: PERIOD },
-    { headers: { "Cache-Control": "no-store" } },
-  );
+
+  return NextResponse.json(payload, {
+    headers: { "Cache-Control": force ? "no-store" : CDN_CACHE },
+  });
 }

@@ -7,6 +7,9 @@ import { NextResponse } from "next/server";
 import { fetchChannelVideos, fetchChannelShorts, fetchPlaylistVideos, type LibVideo } from "@/lib/youtube-library";
 
 export const revalidate = 3600;
+// Walking a whole library is several round-trips; give the function headroom
+// (Vercel caps this to the plan max — 10s hobby / up to 60s pro).
+export const maxDuration = 30;
 
 type Source =
   | { kind: "channel"; handle: string; label: string; url: string }

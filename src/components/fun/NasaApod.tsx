@@ -46,17 +46,20 @@ function NasaPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: 
 
   return (
     <div className="flex flex-col gap-3 h-full min-h-0">
-      <div className="relative aspect-video rounded-xl overflow-hidden bg-[var(--rule-soft)] border border-[var(--rule)] shrink-0">
+      {/* Image takes the upper ~3/5; the caption gets the rest and scrolls
+          inside it, so the whole panel always fits the card (no overflow off
+          the bottom — the "doesn't fit on my Mac" bug). */}
+      <div className="relative flex-[3] min-h-0 rounded-xl overflow-hidden bg-[var(--rule-soft)] border border-[var(--rule)]">
         {isVideo ? (
           <iframe
             src={data.url}
             title={data.title}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
-            className="h-full w-full"
+            className="absolute inset-0 h-full w-full"
           />
         ) : (
-          <a href={data.hdurl || data.url} target="_blank" rel="noreferrer" className="block h-full w-full">
+          <a href={data.hdurl || data.url} target="_blank" rel="noreferrer" className="absolute inset-0">
             <img src={data.url} alt={data.title} className="h-full w-full object-cover transition hover:scale-[1.01]" loading="lazy" />
             <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 rounded-full bg-black/55 backdrop-blur px-2 py-0.5 text-[10px] font-semibold text-white">
               <Rocket className="h-3 w-3" /> NASA · {data.date}
@@ -65,8 +68,8 @@ function NasaPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: 
         )}
       </div>
 
-      <div className="min-w-0">
-        <div className="flex items-start gap-2">
+      <div className="flex flex-col min-h-0 flex-[2]">
+        <div className="flex items-start gap-2 shrink-0">
           <div className="min-w-0 flex-1">
             <a
               href={data.hdurl || data.url}
@@ -92,7 +95,7 @@ function NasaPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: 
         </div>
 
         {showInfo && data.explanation && (
-          <p className="mt-2.5 text-[12.5px] leading-relaxed text-ink-soft max-h-[160px] overflow-y-auto pr-1">
+          <p className="mt-2.5 text-[12.5px] leading-relaxed text-ink-soft min-h-0 flex-1 overflow-y-auto pr-1">
             {data.explanation}
           </p>
         )}
@@ -113,8 +116,8 @@ function ArtPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: (
 
   return (
     <div className="flex flex-col gap-3 h-full min-h-0">
-      <div className="relative aspect-video rounded-xl overflow-hidden bg-[var(--rule-soft)] border border-[var(--rule)] shrink-0">
-        <a href={data.pageUrl} target="_blank" rel="noreferrer" className="block h-full w-full">
+      <div className="relative flex-[3] min-h-0 rounded-xl overflow-hidden bg-[var(--rule-soft)] border border-[var(--rule)]">
+        <a href={data.pageUrl} target="_blank" rel="noreferrer" className="absolute inset-0">
           <img src={data.imageUrl} alt={data.alt ?? ""} className="h-full w-full object-contain bg-black/20 transition hover:scale-[1.01]" loading="lazy" />
           <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 rounded-full bg-black/55 backdrop-blur px-2 py-0.5 text-[10px] font-semibold text-white">
             <PaletteIcon className="h-3 w-3" /> {data.source}
@@ -122,8 +125,8 @@ function ArtPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: (
         </a>
       </div>
 
-      <div className="min-w-0">
-        <div className="flex items-start gap-2">
+      <div className="flex flex-col min-h-0 flex-[2]">
+        <div className="flex items-start gap-2 shrink-0">
           <div className="min-w-0 flex-1">
             <a
               href={data.pageUrl}
@@ -149,7 +152,7 @@ function ArtPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: (
         </div>
 
         {showInfo && (
-          <div className="mt-2.5 text-[12.5px] leading-relaxed text-ink-soft max-h-[160px] overflow-y-auto pr-1">
+          <div className="mt-2.5 text-[12.5px] leading-relaxed text-ink-soft min-h-0 flex-1 overflow-y-auto pr-1">
             {data.medium && <div className="text-[11px] text-muted mb-1">{data.medium}{data.origin ? ` · ${data.origin}` : ""}</div>}
             {data.description ? <p>{data.description}</p> : <p className="italic text-muted-2">No description on file.</p>}
           </div>

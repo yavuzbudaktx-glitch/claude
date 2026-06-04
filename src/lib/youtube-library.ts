@@ -12,14 +12,22 @@ const HEADERS = {
   "User-Agent":
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
   "Accept-Language": "en-US,en;q=0.9",
+  // Pre-accept the consent interstitial. From datacenter / EU egress IPs
+  // YouTube otherwise serves a consent.youtube.com gate whose HTML has NO
+  // ytInitialData, which is exactly how a channel silently collapses to a
+  // handful of videos. These cookies make it serve the real page.
+  "Cookie": "CONSENT=YES+cb; SOCS=CAISEwgDEgk0ODE3Nzk3MjQaAmVuIAEaBgiA_LyaBg",
 };
 
 // Public web innertube key (embedded in every youtube.com page).
 const INNERTUBE_KEY = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
 const CLIENT = { clientName: "WEB", clientVersion: "2.20240101.00.00", hl: "en", gl: "US" };
 
-const MAX_PAGES = 80;        // up to ~80 * 100 ≈ 8k videos
-const TIME_BUDGET_MS = 22000; // soft cap on the total walk
+// Kept modest so a single request stays well inside a serverless function's
+// wall-clock limit (we merge in the Atom feed for resilience anyway).
+const MAX_PAGES = 40;        // up to ~40 * 100 videos
+const TIME_BUDGET_MS = 8000; // soft cap on the total walk
+const MIN_CACHEABLE = 8;     // never cache an obviously-truncated result
 
 export interface LibVideo { id: string; title: string }
 
@@ -177,13 +185,37 @@ function cached(key: string): LibVideo[] | null {
   return null;
 }
 
+// The Atom upload feed — always exactly the latest 15, but rock-solid (it's a
+// plain XML endpoint that isn't behind the consent gate). We merge it in so a
+// channel can never collapse to a near-empty list even if the HTML walk fails.
+async function fetchAtom(channelId: string): Promise<LibVideo[]> {
+  const xml = await getText(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`);
+  if (!xml) return [];
+  const out: LibVideo[] = [];
+  const seen = new Set<string>();
+  const re = /<entry>[\s\S]*?<yt:videoId>([\w-]{11})<\/yt:videoId>[\s\S]*?<title>([\s\S]*?)<\/title>/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(xml))) {
+    const id = m[1];
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const title = m[2].replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&#39;/g, "'").replace(/&quot;/g, '"').trim();
+    out.push({ id, title });
+  }
+  return out;
+}
+
+function mergeInto(out: LibVideo[], seen: Set<string>, more: LibVideo[]) {
+  for (const v of more) if (v.id && !seen.has(v.id)) { seen.add(v.id); out.push(v); }
+}
+
 export async function fetchPlaylistVideos(playlistId: string): Promise<LibVideo[]> {
   const key = `pl:${playlistId}`;
   const hit = cached(key);
   if (hit) return hit;
   const html = await getText(`https://www.youtube.com/playlist?list=${playlistId}&hl=en`);
   const items = await walk(html, extractVideos);
-  if (items.length) cache.set(key, { at: Date.now(), items });
+  if (items.length >= MIN_CACHEABLE) cache.set(key, { at: Date.now(), items });
   return items;
 }
 
@@ -191,13 +223,27 @@ export async function fetchChannelVideos(handle: string): Promise<LibVideo[]> {
   const key = `ch:${handle}`;
   const hit = cached(key);
   if (hit) return hit;
+
   const id = await resolveChannelId(handle);
-  if (!id) return [];
-  // The uploads playlist (UU…) is the whole upload history, newest first.
-  const uploads = "UU" + id.slice(2);
-  const items = await fetchPlaylistVideos(uploads);
-  if (items.length) cache.set(key, { at: Date.now(), items });
-  return items;
+  const out: LibVideo[] = [];
+  const seen = new Set<string>();
+
+  if (id) {
+    // 1) Walk the uploads playlist (UU…) — the whole history, newest first.
+    const uploads = "UU" + id.slice(2);
+    const uploadsHtml = await getText(`https://www.youtube.com/playlist?list=${uploads}&hl=en`);
+    mergeInto(out, seen, await walk(uploadsHtml, extractVideos));
+    // 2) Always fold in the Atom feed so we never collapse to near-empty.
+    mergeInto(out, seen, await fetchAtom(id));
+  }
+  // 3) If something starved the walk, fall back to the /videos tab HTML.
+  if (out.length < 20) {
+    const vidsHtml = await getText(`https://www.youtube.com/@${handle}/videos?hl=en`);
+    mergeInto(out, seen, await walk(vidsHtml, extractVideos));
+  }
+
+  if (out.length >= MIN_CACHEABLE) cache.set(key, { at: Date.now(), items: out });
+  return out;
 }
 
 export async function fetchChannelShorts(handle: string): Promise<LibVideo[]> {
@@ -206,6 +252,6 @@ export async function fetchChannelShorts(handle: string): Promise<LibVideo[]> {
   if (hit) return hit;
   const html = await getText(`https://www.youtube.com/@${handle}/shorts?hl=en`);
   const items = await walk(html, extractShorts);
-  if (items.length) cache.set(key, { at: Date.now(), items });
+  if (items.length >= MIN_CACHEABLE) cache.set(key, { at: Date.now(), items });
   return items;
 }
