@@ -88,15 +88,15 @@ export function Card({
   const [collapsed, setCollapsed] = usePref<boolean>(key, false);
 
   // We always render a header when the card is collapsible — otherwise there's
-  // no chevron to click. Title-less cards get a minimal header (just the
-  // chevron flushed right, no dot, no rule) so the chrome stays out of the way.
+  // no chevron to click. Title-less cards get a slim header that's just the
+  // chevron, right-aligned, in normal flow (NOT overlapping the content).
   const hasContent = !!(title || meta || action || status);
   const showHeader = hasContent || collapsible;
 
   return (
     <section className={`card animate-fadeIn ${collapsed ? "is-collapsed" : ""} ${className}`}>
       {showHeader && (
-        <header className={hasContent ? "headrule" : "flex items-center justify-end -mt-1 -mb-1"}>
+        <header className={hasContent ? "headrule" : "flex items-center justify-end mb-2.5"}>
           {hasContent && <span className="dot" aria-hidden />}
           {title && <span className="text-[14px] font-semibold tracking-tight text-ink">{title}</span>}
           {meta && <span className={title ? "ml-1.5 label" : "label"}>{meta}</span>}

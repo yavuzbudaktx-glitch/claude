@@ -12,7 +12,6 @@ const SWATCHES: Record<ThemeId, string[]> = {
   sunset:     ["#3a0e22", "#ff7a59", "#ffd17a"],
   terminal:   ["#000000", "#22ff77", "#ffb454"],
   accounting: ["#f8fafb", "#1e3a5f", "#15803d"],
-  nord:       ["#2e3440", "#88c0d0", "#a3be8c"],
   mono:       ["#ffffff", "#000000", "#737373"],
   newspaper:  ["#f7f3e8", "#111111", "#9a1010"],
   blueprint:  ["#0e3a64", "#ffffff", "#7fc6ff"],

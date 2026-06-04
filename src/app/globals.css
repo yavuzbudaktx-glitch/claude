@@ -657,14 +657,18 @@ main { position: relative; z-index: 1; }
     radial-gradient(0.9px 0.9px at 92% 38%, rgba(255,255,255,0.7) 55%, transparent 100%),
     radial-gradient(0.9px 0.9px at 96% 76%, rgba(255,255,255,0.6) 55%, transparent 100%);
   background-size:
-    720px 720px, 720px 720px, 720px 720px, 720px 720px, 720px 720px, 720px 720px, 720px 720px, 720px 720px,
-    320px 320px, 320px 320px, 320px 320px, 320px 320px, 320px 320px, 320px 320px,
-    320px 320px, 320px 320px, 320px 320px, 320px 320px, 320px 320px, 320px 320px,
-    160px 160px, 160px 160px, 160px 160px, 160px 160px, 160px 160px, 160px 160px,
-    160px 160px, 160px 160px, 160px 160px, 160px 160px, 160px 160px, 160px 160px;
+    560px 560px, 560px 560px, 560px 560px, 560px 560px, 560px 560px, 560px 560px, 560px 560px, 560px 560px,
+    260px 260px, 260px 260px, 260px 260px, 260px 260px, 260px 260px, 260px 260px,
+    260px 260px, 260px 260px, 260px 260px, 260px 260px, 260px 260px, 260px 260px,
+    130px 130px, 130px 130px, 130px 130px, 130px 130px, 130px 130px, 130px 130px,
+    130px 130px, 130px 130px, 130px 130px, 130px 130px, 130px 130px, 130px 130px;
+  /* Plain white dots, NORMAL blend — `mix-blend-mode: screen` on a z-index:-1
+     fixed pseudo-element is composited inconsistently across browsers and was
+     the reason the stars weren't showing. White on the near-black sky needs
+     no blending anyway. */
   animation: starfield 200s linear infinite, twinkle 5.5s ease-in-out infinite;
   opacity: 1;
-  mix-blend-mode: screen;
+  mix-blend-mode: normal;
 }
 @keyframes starfield {
   from { background-position: 0 0; }
@@ -872,7 +876,7 @@ main { position: relative; z-index: 1; }
 }
 
 /* =======================================================================
-   CONCEPT & PALETTE THEMES — Forest · Mono · Nord
+   CONCEPT & PALETTE THEMES — Forest · Mono
    Each ships with a dark and a light counter-variant so the global
    ThemeToggle flips brightness within the family.
 ======================================================================= */
@@ -963,8 +967,12 @@ main { position: relative; z-index: 1; }
 .theme-forest:not(.dark) body::after { opacity: 0.55; }
 .theme-forest .card {
   border-radius: 16px;
-  background-image: repeating-linear-gradient(90deg, rgba(74,120,70,0.05) 0 1px, transparent 1px 7px);
   box-shadow: var(--shadow-card), inset 0 1px 0 rgba(180,230,150,0.10);
+}
+/* Bark-grain lines on cards — LIGHT mode only (in dark mode they read as
+   distracting lines over the glass, so we drop them there). */
+.theme-forest:not(.dark) .card {
+  background-image: repeating-linear-gradient(90deg, rgba(74,120,70,0.05) 0 1px, transparent 1px 7px);
 }
 .theme-forest .card:hover { box-shadow: var(--shadow-hover), inset 0 1px 0 rgba(180,230,150,0.16); }
 .theme-forest .card-bare { border-radius: 12px; }
@@ -1048,69 +1056,6 @@ main { position: relative; z-index: 1; }
 .theme-mono .font-display { letter-spacing: -0.04em; font-weight: 800; }
 .theme-mono .text-gradient {
   background: none; -webkit-text-fill-color: var(--ink); color: var(--ink); animation: none;
-}
-
-/* ============== NORD (base dark) ============== */
-:root.theme-nord {
-  color-scheme: dark;
-  --bg:           #2e3440;
-  --paper:        rgba(236, 239, 244, 0.04);
-  --paper-2:      rgba(236, 239, 244, 0.07);
-  --ink:          #eceff4;
-  --ink-soft:     #d8dee9;
-  --muted:        #8b94a6;
-  --muted-2:      #5a6273;
-  --rule:         rgba(216, 222, 233, 0.13);
-  --rule-soft:    rgba(216, 222, 233, 0.06);
-  --accent:       #88c0d0;
-  --accent-soft:  rgba(136, 192, 208, 0.14);
-  --accent-2:     #a3be8c;
-  --hl:           rgba(136, 192, 208, 0.10);
-  --up:           #a3be8c;
-  --down:         #bf616a;
-  --grad-from:    #5e81ac;
-  --grad-via:     #88c0d0;
-  --grad-to:      #b48ead;
-  --glass:        rgba(46, 52, 64, 0.62);
-  --glass-border: rgba(216, 222, 233, 0.10);
-  --glow:         rgba(136, 192, 208, 0.30);
-  --shadow-card:  0 12px 32px -16px rgba(0, 0, 0, 0.6);
-  --shadow-hover: 0 22px 50px -22px rgba(0, 0, 0, 0.7);
-  --aurora-1: rgba(94, 129, 172, 0.45);
-  --aurora-2: rgba(136, 192, 208, 0.25);
-  --aurora-3: rgba(180, 142, 173, 0.22);
-  --aurora-4: rgba(0, 0, 0, 0.4);
-  --grain: 0.04;
-}
-.theme-nord .text-gradient {
-  background: linear-gradient(118deg, #5e81ac, #88c0d0 50%, #b48ead);
-  -webkit-background-clip: text; background-clip: text;
-}
-:root.theme-nord:not(.dark) {
-  color-scheme: light;
-  --bg:           #eceff4;
-  --paper:        #ffffff;
-  --paper-2:      #f7f9fc;
-  --ink:          #2e3440;
-  --ink-soft:     #434c5e;
-  --muted:        #6b7589;
-  --muted-2:      #aab2c0;
-  --rule:         rgba(46, 52, 64, 0.12);
-  --rule-soft:    rgba(46, 52, 64, 0.05);
-  --accent:       #5e81ac;
-  --accent-soft:  rgba(94, 129, 172, 0.10);
-  --accent-2:     #6a8d4f;
-  --hl:           rgba(94, 129, 172, 0.07);
-  --up:           #4f7d3f;
-  --down:         #bf616a;
-  --grad-from:    #5e81ac;
-  --grad-via:     #81a1c1;
-  --grad-to:      #b48ead;
-  --glass:        #ffffff;
-  --glass-border: rgba(46, 52, 64, 0.10);
-  --glow:         rgba(94, 129, 172, 0.16);
-  --aurora-1: rgba(94,129,172,0.12); --aurora-2: rgba(129,161,193,0.10);
-  --aurora-3: rgba(180,142,173,0.10); --aurora-4: transparent;
 }
 
 /* =======================================================================

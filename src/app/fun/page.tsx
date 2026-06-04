@@ -45,18 +45,15 @@ export default async function FunPage() {
       />
 
       {/* Row 0 — full-width ambient video (Country Life / Bob Ross / Elif) */}
-      <Card id="fun.ambient" title="" className="min-h-[420px] md:min-h-[520px]">
-        <AmbientVideo />
+      <Card id="fun.ambient" title="">
+        <div className="h-[440px] md:h-[540px]"><AmbientVideo /></div>
       </Card>
 
-      {/* Row 1 — NASA APOD + Games */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-5 items-stretch">
-        <div className="[&>*]:h-full">
-          <Card id="fun.apod" title=""><NasaApod /></Card>
-        </div>
-        <div className="[&>*]:h-full">
-          <Card id="fun.games" title=""><GamesCard /></Card>
-        </div>
+      {/* Row 1 — NASA APOD + Games. items-start so collapsing one card doesn't
+          leave the other stretched to its (now-empty) height. */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-5 items-start">
+        <Card id="fun.apod" title=""><div className="h-[560px]"><NasaApod /></div></Card>
+        <Card id="fun.games" title=""><GamesCard /></Card>
       </div>
 
       {/* Row 2 — Wide typing speed tester */}
@@ -64,15 +61,11 @@ export default async function FunPage() {
         <TypingTest />
       </Card>
 
-      {/* Row 3 — Nature short, kept exactly as thin as a 9:16 Short, with the
-          rest of the width handed to the T-Rex game. Fixed row height. */}
-      <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-5 items-stretch h-[520px]">
-        <div className="[&>*]:h-full">
-          <Card id="fun.short" title=""><NatureShort /></Card>
-        </div>
-        <div className="[&>*]:h-full">
-          <Card id="fun.trex" title=""><TRex /></Card>
-        </div>
+      {/* Row 3 — Nature short kept exactly as thin as a 9:16 Short (300px
+          column); the rest of the width goes to the T-Rex game. */}
+      <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-5 items-start">
+        <Card id="fun.short" title=""><div className="h-[520px]"><NatureShort /></div></Card>
+        <Card id="fun.trex" title=""><div className="h-[320px]"><TRex /></div></Card>
       </div>
     </main>
   );

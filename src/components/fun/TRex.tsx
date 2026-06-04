@@ -1,10 +1,9 @@
 "use client";
 
-// The real Chrome dino, served from Wayou's canonical standalone port (a
-// blank page with nothing on it but the game). The iframe is scaled up and
-// vertically re-centered so the play area fills the box without showing the
-// "Press space to play" hint above the canvas. Click to focus, Space / ↑ to
-// jump, ↓ to duck.
+// The real Chrome dino, served from Wayou's canonical standalone port — a
+// blank page with nothing on it but the game (GitHub Pages doesn't block
+// framing). The iframe simply fills the box; the game centers its own canvas.
+// Click once to give it focus, then Space / ↑ to jump, ↓ to duck.
 
 export function TRex() {
   return (
@@ -13,19 +12,11 @@ export function TRex() {
         <span>T-Rex run</span>
         <span className="text-muted-2">click, then Space / ↑ to jump</span>
       </div>
-      <div className="relative flex-1 min-h-0 rounded-2xl border border-[var(--rule)] bg-[var(--rule-soft)] overflow-hidden">
+      <div className="relative flex-1 min-h-0 rounded-2xl border border-[var(--rule)] bg-white overflow-hidden">
         <iframe
           src="https://wayou.github.io/t-rex-runner/"
           title="T-Rex Runner"
-          className="absolute"
-          // The standalone port centers the canvas vertically in a full-height
-          // body. Scaling it up + pulling it slightly down crops the empty
-          // sky and parks the dino's feet on the bottom of our card.
-          style={{
-            top: "-8%", left: "-10%",
-            width: "120%", height: "120%",
-            transformOrigin: "center center",
-          }}
+          className="absolute inset-0 h-full w-full"
           loading="lazy"
           scrolling="no"
           allow="autoplay; fullscreen"
