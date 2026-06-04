@@ -1,10 +1,10 @@
 # Britannica scrape debug dump
-# generated: 2026-06-04T17:25:12.757Z
+# generated: 2026-06-04T21:16:25.789Z
 # url:       https://www.britannica.com/on-this-day/june-4
-# fetcher:   CORS proxy
+# fetcher:   Wayback Machine
 # kind:      html
-# length:    76206
-# parsed:    YES (CORS proxy)
+# length:    74400
+# parsed:    YES (Wayback Machine)
 # -----------------------------------------------------------------
 
 
@@ -94,9 +94,9 @@
 
     
 
-    <meta name="description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences." />
+    <meta name="description" content="On This Day In History - June 4: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences." />
     <meta name="keywords" content="today in history, anniversary, daily events, today’s historical events, today’s birthdays, born today, on this date, this day in history" />
-    <link rel="canonical" href="https://www.britannica.com/on-this-day/june-4" />
+    <link rel="canonical" href="https://www.britannica.com/on-this-day/June-4" />
 
     
 
@@ -113,7 +113,7 @@
 
     
 
-    <title>On This Day - What Happened Today In History | Britannica</title>
+    <title>On This Day - What Happened on June 4 | Britannica</title>
 
     
 
@@ -126,7 +126,7 @@
 
 
 <script   class="analytics-metadata" type="application/json">
-{"adLeg":"D","leg":"B","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+{"adLeg":"D","leg":"D","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
 </script>
 
 
@@ -160,10 +160,10 @@
         'analytics_storage': 'granted',
     });
 
-    window.geoCountry = 'US';
+    window.geoCountry = 'CA';
     window.isGdprCountry = false;
-    window.isCcpaCountry = true;
-    window.geoRegion = 'FL';
+    window.isCcpaCountry = false;
+    window.geoRegion = 'XX';
 
 </script>
 
@@ -273,20 +273,20 @@
             "videoPlayerId" : "UyMCoK2v",
       		"domain": "britannica.com",
 			"page": "DayInHistory",
-			"sharedUrl": "https://www.britannica.com/on-this-day/june-4",
+			"sharedUrl": "https://www.britannica.com/on-this-day/June-4",
 			"amuselabsUrl": "https://cdn3.amuselabs.com",
 	    	"resourcesPrefixUrl": "https://cdn.britannica.com/mendel-resources/3-185/[url]?v=3.185.4",
-			"date": 20260604,
+			"date": 20260530,
 			"userInfo": { "type": "ANONYMOUS"
 										,"currency": "USD"
-										,"country": "US"
-										,"state": "FL"
-										,"timezone": "America/New_York"
-										,"bcomId": "-909903061446176848"
+										,"country": "CA"
+										,"state": "XX"
+										,"timezone": "America/Toronto"
+										,"bcomId": "5071660707329437578"
 										,"adProvider": "ay"
-										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":true,"showConsent":true}
+										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":false,"showConsent":false}
 										,"hasAds": true
-										,"testVersion": "B"
+										,"testVersion": "D"
 										,"adsTestVersion": "D"
 										,"consumerId": ""
 										,"instId": ""
@@ -305,12 +305,12 @@
 	        "fetchOffset": 800,
 			
 			"mendelCookieName": "__mendel",
-			"mendelCookie": {"currentDate":20260604,"lti":0,"surveyShown":false,"ts":0},
+			"mendelCookie": {"currentDate":20260530,"lti":0,"surveyShown":false,"ts":0},
 			
 
 			"autocompleteToSearchPage": false,"pagesInfo": [{"url":"June-4","title":"On This Day - What Happened on June 4"},{"url":"June-5","title":"On This Day - What Happened on June 5"},{"url":"June-6","title":"On This Day - What Happened on June 6"},{"url":"June-7","title":"On This Day - What Happened on June 7"},{"url":"June-8","title":"On This Day - What Happened on June 8"},{"url":"June-9","title":"On This Day - What Happened on June 9"},{"url":"June-10","title":"On This Day - What Happened on June 10"},{"url":"June-11","title":"On This Day - What Happened on June 11"},{"url":"June-12","title":"On This Day - What Happened on June 12"},{"url":"June-13","title":"On This Day - What Happened on June 13"}]
 		},
-        "GA": {"adLeg":"D","leg":"B","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+        "GA": {"adLeg":"D","leg":"D","userType":"ANONYMOUS","pageType":"DayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
     };
 
 	</script>
@@ -323,23 +323,23 @@
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:site" content="@britannica" />
-<meta name="twitter:image" content="https://cdn.britannica.com/63/288863-050-60AEBD37/today-in-history-shopping-cart-debut.jpg" />
-<meta name="twitter:description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
+<meta name="twitter:image" content="https://cdn.britannica.com/12/130312-050-54544554/British-troops-beach-Allied-France-Dunkirk-1940.jpg" />
+<meta name="twitter:description" content="On This Day In History - June 4: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
 
 <meta property="og:type"  content="WEBSITE"/>
-<meta property="og:title" content="On This Day - What Happened Today In History | Britannica"/>
-<meta property="og:description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
+<meta property="og:title" content="On This Day - What Happened on June 4 | Britannica"/>
+<meta property="og:description" content="On This Day In History - June 4: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
 <meta property="og:site_name" content="Encyclopedia Britannica" />
-<meta property="og:url" content="https://www.britannica.com/on-this-day/june-4"/>
-<meta property="og:image" content="https://cdn.britannica.com/63/288863-050-60AEBD37/today-in-history-shopping-cart-debut.jpg" />
+<meta property="og:url" content="https://www.britannica.com/on-this-day/June-4"/>
+<meta property="og:image" content="https://cdn.britannica.com/12/130312-050-54544554/British-troops-beach-Allied-France-Dunkirk-1940.jpg" />
 
 <script type="text/javascript" data-type="init opengraph">
 Mendel.openGraph = {
     "type": "WEBSITE",
-    "title": "On This Day - What Happened Today In History",
-    "description": "On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences.",
-    "imageUrl": "https://cdn.britannica.com/63/288863-050-60AEBD37/today-in-history-shopping-cart-debut.jpg",
-    "pageUrl": "https://www.britannica.com/on-this-day/june-4"
+    "title": "On This Day - What Happened on June 4",
+    "description": "On This Day In History - June 4: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences.",
+    "imageUrl": "https://cdn.britannica.com/12/130312-050-54544554/British-troops-beach-Allied-France-Dunkirk-1940.jpg",
+    "pageUrl": "https://www.britannica.com/on-this-day/June-4"
 }
 </script>
 
@@ -414,7 +414,7 @@ Mendel.openGraph = {
 
 </head>
 
-<body data-leg="B" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-b ">
+<body data-leg="D" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-d ">
 
 
 
@@ -463,10 +463,10 @@ Mendel.openGraph = {
 {"britannicaMenu1":[{"title":"Home","url":"/"},{"title":"History & Society","url":"/History-Society"},{"title":"Science & Tech","url":"/Science-Tech"},{"title":"Biographies","url":"/Biographies"},{"title":"Animals & Nature","url":"/Animals-Nature"},{"title":"Geography & Travel","url":"/Geography-Travel"},{"title":"Arts & Culture","url":"/Arts-Culture"},{"title":"ProCon","url":"/procon"},{"title":"Money","url":"/money"}],"britannicaMenu2":[{"title":"Games & Quizzes","url":"/quiz/browse"},{"title":"Videos","url":"/videos"},{"title":"On This Day","url":"/on-this-day"},{"title":"One Good Fact","url":"/one-good-fact"},{"title":"Dictionary","url":"/dictionary"},{"title":"New Articles","url":"/new-articles"}],"browseByCategory":[{"title":{"id":5,"title":"History & Society","url":"/History-Society"},"links":[{"title":"History","url":"/browse/World-History"},{"title":"Philosophy & Religion","url":"/browse/Philosophy-Religion"},{"title":"Politics, Law & Government","url":"/browse/Politics-Law-Government"},{"title":"Society & Social Issues","url":"/browse/Lifestyles-Social-Issues"}]},{"title":{"id":6,"title":"Science & Tech","url":"/Science-Tech"},"links":[{"title":"Health & Medicine","url":"/browse/Health-Medicine"},{"title":"Science","url":"/browse/Science"},{"title":"Technology","url":"/browse/Technology"}]},{"title":{"id":3,"title":"Biographies","url":"/Biographies"},"links":[{"title":"Browse Biographies","url":"/browse/biographies"}]},{"title":{"id":1,"title":"Animals & Nature","url":"/Animals-Nature"},"links":[{"title":"Birds, Reptiles & Other Vertebrates","url":"/browse/Birds-Reptiles-Vertebrates"},{"title":"Environment","url":"/browse/Environment"},{"title":"Fossils & Geologic Time","url":"/browse/Fossil-Geologic-Time"},{"title":"Insects & Other Invertebrates","url":"/browse/Bugs-Mollusks-Invertebrates"},{"title":"Mammals","url":"/browse/Mammals"},{"title":"Plants","url":"/browse/Plants"}]},{"title":{"id":4,"title":"Geography & Travel","url":"/Geography-Travel"},"links":[{"title":"Geography & Travel","url":"/browse/Geography-Travel"}]},{"title":{"id":2,"title":"Arts & Culture","url":"/Arts-Culture"},"links":[{"title":"Entertainment & Pop Culture","url":"/browse/Entertainment-Pop-Culture"},{"title":"Literature","url":"/browse/Literature"},{"title":"Sports & Recreation","url":"/browse/Sports-Recreation"},{"title":"Visual Arts","url":"/browse/Visual-Arts"}]}],"browseByFeature":[{"title":"Image Galleries","url":"/gallery/browse"},{"title":"Podcasts","url":"/podcasts"},{"title":"Summaries","url":"/summary"},{"title":"Top Questions","url":"/question"},{"title":"Lists and Stories","url":"/lists-and-stories"}],"moreFromBritannica":[{"newTab":true,"title":"Britannica Kids","url":"https://kids.britannica.com/"}],"menuType":"DEFAULT"}
 </script>
 
-<div class="KUSTOM-MARKETING-TOUPEE_BANNER"><a href="https://signup.britannica.com/thepitch?utm_source=premium&amp;utm_medium=toupee&amp;utm_campaign=mm-mobile" class="toupee-banner" style="text-decoration: none;">
+<div class="KUSTOM-MARKETING-TOUPEE_BANNER"><a href="https://signup.britannica.com/howeverythingworks/?utm_source=premium&amp;utm_medium=toupee&amp;utm_campaign=hew" class="toupee-banner" style="text-decoration: none;">
     
     <div>
-       ⚽️ Get Our World Cup Newsletter:&nbsp;<strong>The Pitch</strong>&nbsp;⚽️
+       ✨<b>How Everything Works</b>: A Britannica Newsletter✨
         <span style="color: #BCDAF7; text-decoration: underline;">
             Learn More
         </span>
@@ -914,7 +914,7 @@ Ask the Chatbot</a>
 {
         "calendarInfo": {"day":4,"month":6,"monthName":"June","nbDays":30,"nextMonth":7,"nextMonthName":"July","previousMonth":5,"previousMonthName":"May"},
         "url": "/on-this-day/June/4",
-	    "title": "On This Day - What Happened Today In History"
+	    "title": "On This Day - What Happened on June 4"
     }
 </script>
 
@@ -1075,7 +1075,7 @@ Ask the Chatbot</a>
                     <div class="featured-event-card card">
                         <div class="card-media position-relative">
                             <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">
-                                1937</div>
+                                1940</div>
                             
 
 
@@ -1115,13 +1115,13 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/63/288863-050-60AEBD37/today-in-history-shopping-cart-debut.jpg?w=725&h=408&c=crop" alt="June 4, 1937: An innovation that created fewer shoppers in the “10 items or less” aisle" class="w-100"   />
+        <img loading="lazy" src="https://cdn.britannica.com/12/130312-050-54544554/British-troops-beach-Allied-France-Dunkirk-1940.jpg?w=725&h=408&c=crop" alt="Dunkirk evacuation" class="w-100"   />
     
 </div>
                         <div class="card-body">
-                            <div class="title font-18 font-weight-bold mb-10"><a href="https://www.britannica.com/today-in-history/June-4-1937-Debut-of-the-Shopping-Cart" class="md-crosslink " data-show-preview="true">The debut of the shopping cart</a></div>
-                            <div class="description font-serif">On this day in 1937, a Humpty Dumpty grocery store in Oklahoma introduced the first shopping carts. Alas, customers were initially doubtful. Women already pushed carts around (albeit ones with babies in them) and were tired of doing so, and male shoppers thought the cart made them look effeminate. However, the new invention became hugely popular, revolutionizing grocery shopping. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/today-in-history/June-4-1937-Debut-of-the-Shopping-Cart">Read today's version of Today in History &gt; &gt;</a></div>
-                            <div class="credit mt-10">© Bettmann/Getty Images; Photo Illustration Encyclopædia Britannica, Inc.</div></div>
+                            <div class="title font-18 font-weight-bold mb-10">Dunkirk evacuation ended</div>
+                            <div class="description font-serif">Following a massive rescue effort that included civilian boats, the <a href="https://www.britannica.com/event/Dunkirk-evacuation" class="md-crosslink " data-show-preview="true">withdrawal</a> of <a href="https://www.britannica.com/topic/Allied-Powers-international-alliance" class="md-crosslink " data-show-preview="true">Allied</a> troops trapped at <a href="https://www.britannica.com/place/Dunkirk-France" class="md-crosslink " data-show-preview="true">Dunkirk</a>, France, was completed on this day during <a href="https://www.britannica.com/event/World-War-II" class="md-crosslink " data-show-preview="true">World War II</a>; more than 300,000 soldiers were saved. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/quiz/world-war-ii-quiz">Test your knowledge of World War II</a></div>
+                            <div class="credit mt-10">© Photos.com/Getty Images Plus</div></div>
                     </div>
                 </div>
                 <div class="otd-feature-biography col border-left">
@@ -1178,7 +1178,7 @@ Ask the Chatbot</a>
 </a>
                         </div>
                         <div class="card-footer font-16">
-                            <dl data-label="born"><dt class="label">born</dt><dd>June 4, 1738<br><a href="https://www.britannica.com/place/London">London</a><span>, </span><a href="https://www.britannica.com/place/England">England</a><br>(Birthday tomorrow)<br></dd></dl><dl data-label="died"><dt class="label">died</dt><dd>January 29, 1820 (aged 81)<br><a href="https://www.britannica.com/topic/Windsor-Castle">Windsor Castle</a><span>, </span><a href="https://www.britannica.com/place/England">England</a><br></dd></dl><div class="credit mt-10">© Photos.com/Getty Images</div>
+                            <dl data-label="born"><dt class="label">born</dt><dd>June 4, 1738<br><a href="https://www.britannica.com/place/London">London</a><span>, </span><a href="https://www.britannica.com/place/England">England</a><br>(Birthday in 5 days)<br></dd></dl><dl data-label="died"><dt class="label">died</dt><dd>January 29, 1820 (aged 81)<br><a href="https://www.britannica.com/topic/Windsor-Castle">Windsor Castle</a><span>, </span><a href="https://www.britannica.com/place/England">England</a><br></dd></dl><div class="credit mt-10">© Photos.com/Getty Images</div>
                         </div>
                     </div>
                 </div>
@@ -1495,55 +1495,6 @@ Ask the Chatbot</a>
 </div>
                             <div class="card-body font-serif">
                                 <a href="https://www.britannica.com/place/Japan" class="md-crosslink " data-show-preview="true">Japan</a> was repulsed by the <a href="https://www.britannica.com/place/United-States" class="md-crosslink " data-show-preview="true">United States</a> at the <a href="https://www.britannica.com/event/Battle-of-Midway" class="md-crosslink " data-show-preview="true">Battle of Midway</a> in <a href="https://www.britannica.com/event/World-War-II" class="md-crosslink " data-show-preview="true">World War II</a>. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/quiz/the-second-world-war-fact-or-fiction">How much do you know about World War II?</a><div class="credit mt-10">U.S. Dept. of Defense</div>
-                                </div>
-                        </div>
-                    <div class="md-history-event card d-flex mb-20 flex-column flex-sm-row">
-                            <div class="card-media col-sm-25 position-relative">
-                                <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">1940</div>
-                                
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-        <img loading="lazy" src="https://cdn.britannica.com/12/130312-004-929A1A78/British-troops-beach-Allied-France-Dunkirk-1940.jpg?w=400&h=200&c=crop" alt="Dunkirk evacuation" class="fit-cover h-100 w-100"   />
-    
-</div>
-                            <div class="card-body font-serif">
-                                Following a massive rescue effort that included civilian boats, the <a href="https://www.britannica.com/event/Dunkirk-evacuation" class="md-crosslink " data-show-preview="true">withdrawal</a> of <a href="https://www.britannica.com/topic/Allied-Powers-international-alliance" class="md-crosslink " data-show-preview="true">Allied</a> troops trapped at <a href="https://www.britannica.com/place/Dunkirk-France" class="md-crosslink " data-show-preview="true">Dunkirk</a>, France, was completed during <a href="https://www.britannica.com/event/World-War-II" class="md-crosslink " data-show-preview="true">World War II</a>; more than 300,000 soldiers were saved. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/quiz/world-war-ii-quiz">Test your knowledge of World War II</a><div class="credit mt-10">© Photos.com/Getty Images Plus</div>
                                 </div>
                         </div>
                     <div class="md-history-event card d-flex mb-20 flex-column flex-sm-row">
@@ -1870,11 +1821,11 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/27/114727-004-7BC68918/balloon-Jean-Francois-Pilatre-de-Rozier-Francois-Laurent-November-21-1783.jpg?w=400&h=200&c=crop" alt="Montgolfier balloon" class="fit-cover h-100 w-100"   />
+        <img loading="lazy" src="https://cdn.britannica.com/27/114727-004-424C89B4/balloon-Jean-Francois-Pilatre-de-Rozier-Francois-Laurent-November-21-1783.jpg?w=400&h=200&c=crop" alt="Montgolfier balloon" class="fit-cover h-100 w-100"   />
     
 </div>
                             <div class="card-body font-serif">
-                                <a href="https://www.britannica.com/biography/Montgolfier-brothers" class="md-crosslink " data-show-preview="true">Joseph-Michel and Jacques-Étienne Montgolfier</a> launched an uncrewed hot-air <a href="https://www.britannica.com/technology/balloon" class="md-crosslink " data-show-preview="true">balloon</a>, the first public demonstration of the discovery that hot air in a large lightweight bag rises. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/quiz/history-of-flight-quiz">Take our quiz about the history of aviation</a><div class="credit mt-10">© Photos.com/Getty Images</div>
+                                <a href="https://www.britannica.com/biography/Montgolfier-brothers" class="md-crosslink " data-show-preview="true">Joseph-Michel and Jacques-Étienne Montgolfier</a> launched an uncrewed hot-air <a href="https://www.britannica.com/technology/balloon" class="md-crosslink " data-show-preview="true">balloon</a>, the first public demonstration of the discovery that hot air in a large lightweight bag rises. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/quiz/history-of-flight-quiz">Take our quiz about the history of aviation</a><div class="credit mt-10">© Photos.com/Jupiterimages</div>
                                 </div>
                         </div>
                     </div>
@@ -2001,8 +1952,6 @@ Ask the Chatbot</a>
 
 
 
-
-    <script src="https://cdn.britannica.com/mendel-resources/3-185/js/ccpa.js?v=3.185.4" defer="defer"></script>
 
 
 
