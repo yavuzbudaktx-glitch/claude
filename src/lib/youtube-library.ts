@@ -18,8 +18,8 @@ const HEADERS = {
 const INNERTUBE_KEY = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
 const CLIENT = { clientName: "WEB", clientVersion: "2.20240101.00.00", hl: "en", gl: "US" };
 
-const MAX_PAGES = 25;       // ~25 * 100 videos
-const TIME_BUDGET_MS = 9000; // stop paging if we're taking too long
+const MAX_PAGES = 80;        // up to ~80 * 100 ≈ 8k videos
+const TIME_BUDGET_MS = 22000; // soft cap on the total walk
 
 export interface LibVideo { id: string; title: string }
 
@@ -46,19 +46,45 @@ async function getText(url: string): Promise<string | null> {
 }
 
 async function innertubeBrowse(continuation: string): Promise<string | null> {
+  // Try innertube directly, then proxy-wrapped (browser-style POST through a
+  // public CORS reflector). Direct gets blocked from a lot of egress IPs; the
+  // proxies don't easily forward POST/JSON, so we also have a GET fallback
+  // path via `playlist?list=…&continuation=…` for playlists where possible.
+  const body = JSON.stringify({ context: { client: CLIENT }, continuation });
   try {
-    const res = await fetch(`https://www.youtube.com/youtubei/v1/browse?key=${INNERTUBE_KEY}`, {
+    const res = await fetch(`https://www.youtube.com/youtubei/v1/browse?key=${INNERTUBE_KEY}&prettyPrint=false`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "User-Agent": HEADERS["User-Agent"] },
-      body: JSON.stringify({ context: { client: CLIENT }, continuation }),
-      signal: AbortSignal.timeout(10000),
+      headers: {
+        "Content-Type": "application/json",
+        "User-Agent": HEADERS["User-Agent"],
+        "Accept-Language": HEADERS["Accept-Language"],
+        "X-YouTube-Client-Name": "1",
+        "X-YouTube-Client-Version": CLIENT.clientVersion,
+        "Origin": "https://www.youtube.com",
+        "Referer": "https://www.youtube.com/",
+      },
+      body,
+      signal: AbortSignal.timeout(12000),
       cache: "no-store",
     });
-    if (!res.ok) return null;
-    return await res.text();
-  } catch {
-    return null;
-  }
+    if (res.ok) return await res.text();
+  } catch { /* fall through to proxy */ }
+  // Proxy fallback — POST through a CORS reflector that supports it.
+  try {
+    const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://www.youtube.com/youtubei/v1/browse?key=${INNERTUBE_KEY}&prettyPrint=false`)}`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+      },
+      body,
+      signal: AbortSignal.timeout(12000),
+      cache: "no-store",
+    });
+    if (res.ok) return await res.text();
+  } catch { /* give up */ }
+  return null;
 }
 
 export async function resolveChannelId(handle: string): Promise<string | null> {
@@ -75,13 +101,20 @@ export async function resolveChannelId(handle: string): Promise<string | null> {
   return null;
 }
 
-// Grab the LAST continuation token in a blob — that's the "load more" handle.
-function lastContinuation(blob: string): string | null {
-  const re = /"continuationCommand":\{"token":"((?:[^"\\]|\\.)*?)"/g;
-  let m: RegExpExecArray | null, last: string | null = null;
-  while ((m = re.exec(blob))) last = m[1];
-  if (!last) return null;
-  try { return JSON.parse(`"${last}"`); } catch { return last; }
+// Grab the load-more continuation token from a blob. YouTube's responses can
+// contain multiple `continuationCommand` tokens (one for the main list, one
+// each for sidebars, related, sorts, …). Empirically the FIRST one inside a
+// `continuationItemRenderer` is the actual "load more" handle for the main
+// list, so we anchor on that. We also fall back to the legacy
+// `nextContinuationData` shape used in older snapshots.
+function findContinuation(blob: string): string | null {
+  const reA = /"continuationItemRenderer":\{[^]*?"continuationCommand":\{"token":"((?:[^"\\]|\\.)*?)"/;
+  const a = reA.exec(blob);
+  if (a) { try { return JSON.parse(`"${a[1]}"`); } catch { return a[1]; } }
+  const reB = /"nextContinuationData":\{"continuation":"((?:[^"\\]|\\.)*?)"/;
+  const b = reB.exec(blob);
+  if (b) { try { return JSON.parse(`"${b[1]}"`); } catch { return b[1]; } }
+  return null;
 }
 
 function pushVideo(out: LibVideo[], seen: Set<string>, id: string, rawTitle: string) {
@@ -124,14 +157,14 @@ async function walk(
   if (!firstHtml) return out;
   const started = Date.now();
   extractor(firstHtml, out, seen);
-  let token = lastContinuation(firstHtml);
+  let token = findContinuation(firstHtml);
   let pages = 0;
   while (token && pages < MAX_PAGES && Date.now() - started < TIME_BUDGET_MS) {
     const resp = await innertubeBrowse(token);
     if (!resp) break;
     const before = out.length;
     extractor(resp, out, seen);
-    token = lastContinuation(resp);
+    token = findContinuation(resp);
     pages++;
     if (out.length === before) break; // no new videos — stop
   }

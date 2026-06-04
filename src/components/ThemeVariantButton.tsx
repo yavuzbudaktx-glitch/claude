@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Palette, Check } from "lucide-react";
-import { applyTheme, getTheme, THEMES, type ThemeId } from "@/lib/theme";
+import { applyTheme, applyThemeDom, getTheme, THEMES, type ThemeId } from "@/lib/theme";
 
 const SWATCHES: Record<ThemeId, string[]> = {
   aurora:     ["#0284c7", "#22d3ee", "#d97706"],
@@ -21,10 +21,12 @@ const SWATCHES: Record<ThemeId, string[]> = {
 
 export function ThemeVariantButton() {
   const [open, setOpen] = useState(false);
-  const [theme, setTheme] = useState<ThemeId>("aurora");
+  // Lazy initial value reads the saved theme synchronously on first client
+  // render — important so a mouse-leave from a hover preview restores the
+  // SAVED theme, not the default. (The previous default of "aurora" was the
+  // real cause of "theme reverts to aurora on refresh after a hover-peek".)
+  const [theme, setTheme] = useState<ThemeId>(() => (typeof window === "undefined" ? "aurora" : getTheme()));
   const wrapRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => { setTheme(getTheme()); }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -69,8 +71,8 @@ export function ThemeVariantButton() {
                 <li key={t.id}>
                   <button
                     onClick={() => choose(t.id)}
-                    onMouseEnter={() => applyTheme(t.id)}        /* live preview on hover */
-                    onMouseLeave={() => applyTheme(theme)}        /* restore on leave */
+                    onMouseEnter={() => applyThemeDom(t.id)}      /* live preview only — never writes localStorage */
+                    onMouseLeave={() => applyThemeDom(theme)}     /* restore the saved theme */
                     className={`group w-full text-left rounded-xl border p-2.5 transition ${
                       on ? "border-[var(--accent)] bg-[var(--accent-soft)]" : "border-transparent hover:bg-[var(--rule-soft)]"
                     }`}

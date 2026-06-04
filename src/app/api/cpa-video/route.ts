@@ -23,7 +23,7 @@ export async function GET(req: Request) {
   let lib: Array<{ id: string; title: string }> = [];
   try { lib = await fetchChannelVideos(HANDLE); } catch { lib = []; }
 
-  const videos = lib.slice(0, 800).map((v) => ({
+  const videos = lib.map((v) => ({
     id: v.id,
     title: v.title,
     published: "",

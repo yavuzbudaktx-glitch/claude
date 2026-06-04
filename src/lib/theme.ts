@@ -44,13 +44,20 @@ export function getTheme(): ThemeId {
 }
 
 export function applyTheme(id: ThemeId) {
+  applyThemeDom(id);
+  try { localStorage.setItem(KEY, id); } catch { /* noop */ }
+}
+
+// Apply theme to the DOM without writing to localStorage. Used for hover
+// previews in the picker, so peeking at a theme never overwrites the user's
+// actual saved choice (the previous code wrote to localStorage on every
+// hover, which is why the theme sometimes "reverted" after a refresh).
+export function applyThemeDom(id: ThemeId) {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
-  // strip every non-default theme class, then add the requested one
   for (const v of NON_DEFAULT) root.classList.remove(`theme-${v}`);
   if (id !== "aurora") root.classList.add(`theme-${id}`);
   root.setAttribute("data-theme", id);
-  try { localStorage.setItem(KEY, id); } catch { /* noop */ }
 }
 
 // Inline script that runs in <head> before paint so we never get a flash

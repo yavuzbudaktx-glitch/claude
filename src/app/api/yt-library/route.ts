@@ -39,8 +39,10 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "no_videos", label: src.label, url: src.url, videos: [] }, { status: 502 });
   }
 
-  // Cap the payload — a few hundred is plenty for "random, indefinitely".
-  const capped = videos.slice(0, 800);
+  // No payload cap — for "truly random from the whole library" we want every
+  // video the walker found. A {id,title} pair is ~30 bytes, so even a 5k
+  // channel is ~150KB before gzip.
+  const capped = videos;
 
   return NextResponse.json(
     { label: src.label, url: src.url, count: capped.length, videos: capped },

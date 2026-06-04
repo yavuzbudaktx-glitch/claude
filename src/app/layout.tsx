@@ -4,6 +4,7 @@ import { PrefsProvider } from "@/components/PrefsProvider";
 import { CommandPalette } from "@/components/CommandPalette";
 import { FocusMode } from "@/components/FocusMode";
 import { ScrollProgress } from "@/components/ScrollProgress";
+import { ThemeRestorer } from "@/components/ThemeRestorer";
 import { CURRENT } from "@/lib/app-config";
 import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="antialiased">
         <PrefsProvider>
+          <ThemeRestorer />
           <ScrollProgress />
           {children}
           <CommandPalette />

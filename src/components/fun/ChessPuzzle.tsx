@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { ExternalLink, RotateCcw, Crown } from "lucide-react";
+import { useDailyKey } from "@/lib/use-daily-key";
 
-// Lichess's puzzle iframe. We tightly bound its size and re-mount it on
-// "refresh" so you get a fresh puzzle without leaving the page. Iframe is
-// centered inside a 1:1 frame so it looks intentional rather than skewed.
+// Lichess's puzzle iframe. We tightly bound its size, re-mount on the
+// "refresh" button, AND re-mount automatically at local midnight so a fresh
+// daily puzzle slides in without you doing anything.
 export function ChessPuzzle() {
   const [n, setN] = useState(0);
+  const dateKey = useDailyKey();
   return (
     <div className="flex flex-col gap-2 h-full min-h-0">
       <div className="flex items-center justify-between text-[10.5px] font-mono uppercase tracking-wider text-muted-2 shrink-0">
@@ -26,8 +28,8 @@ export function ChessPuzzle() {
       <div className="relative flex-1 min-h-0 grid place-items-center" style={{ containerType: "size" }}>
         <div className="relative rounded-xl overflow-hidden border border-[var(--rule)] bg-[var(--rule-soft)]" style={{ width: "100cqmin", height: "100cqmin" }}>
           <iframe
-            key={n}
-            src="https://lichess.org/training/frame?theme=brown&bg=light"
+            key={`${dateKey}:${n}`}
+            src={`https://lichess.org/training/frame?theme=brown&bg=light#${dateKey}`}
             title="Daily chess puzzle"
             className="absolute inset-0 h-full w-full"
             scrolling="no"
