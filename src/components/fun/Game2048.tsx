@@ -188,7 +188,8 @@ export function Game2048() {
         </div>
       </div>
 
-      <div ref={wrapRef} className="relative w-full max-w-[340px] aspect-square select-none touch-none">
+      <div className="flex-1 min-h-0 w-full grid place-items-center" style={{ containerType: "size" }}>
+      <div ref={wrapRef} className="relative select-none touch-none" style={{ width: "100cqmin", height: "100cqmin" }}>
         <div className="absolute inset-0 grid grid-cols-4 grid-rows-4 gap-2 rounded-xl p-2"
              style={{ background: "var(--rule)" }}>
           {Array.from({ length: N }).map((_, i) => (
@@ -233,6 +234,7 @@ export function Game2048() {
             </div>
           </div>
         )}
+      </div>
       </div>
 
       <div className="text-center text-[10.5px] text-muted-2 shrink-0">Arrows / WASD — or swipe</div>

@@ -23,8 +23,8 @@ export function ChessPuzzle() {
         </button>
       </div>
 
-      <div className="relative flex-1 min-h-0 grid place-items-center">
-        <div className="relative w-full max-w-[360px] aspect-square rounded-xl overflow-hidden border border-[var(--rule)] bg-[var(--rule-soft)]">
+      <div className="relative flex-1 min-h-0 grid place-items-center" style={{ containerType: "size" }}>
+        <div className="relative rounded-xl overflow-hidden border border-[var(--rule)] bg-[var(--rule-soft)]" style={{ width: "100cqmin", height: "100cqmin" }}>
           <iframe
             key={n}
             src="https://lichess.org/training/frame?theme=brown&bg=light"

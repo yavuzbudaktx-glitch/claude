@@ -156,7 +156,7 @@ export function TypingTest() {
             const o = typedAlready ? 0.3 : 1;
             return (
               <span key={i} style={{ display: "inline-block", width: `${CHAR_W}px`, color, opacity: o }}>
-                {ch === " " ? "·" : ch}
+                {ch}
               </span>
             );
           })}

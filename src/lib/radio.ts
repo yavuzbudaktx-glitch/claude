@@ -243,15 +243,19 @@ export async function toggleRadio() {
   reconnectAttempts = 0;
   setStatus("loading");
 
+  // Primary station is now the Kral Müzik Akustik 24/7 YouTube broadcast —
+  // the SlowTurk HLS mirrors keep dropping after a few minutes, the YouTube
+  // live stream does not. SlowTurk (resolved + hard-coded) stays as fallback.
   const custom = getCustomRadioUrl();
-  const fromRb = await resolveSlowTurk();
-  const ordered = [
-    ...(custom ? [custom] : []),
-    ...fromRb,
-    ...FALLBACK_STREAMS,
-  ];
+  const primary = "yt:6He9sFxFv8Y";
 
-  for (const url of ordered) {
+  // Try Kral first; only spend time resolving SlowTurk if it fails.
+  for (const url of [...(custom ? [custom] : []), primary]) {
+    try { await playUrl(url); setStatus("playing"); return; }
+    catch { /* next */ }
+  }
+  const fromRb = await resolveSlowTurk();
+  for (const url of [...fromRb, ...FALLBACK_STREAMS]) {
     try {
       await playUrl(url);
       setStatus("playing");

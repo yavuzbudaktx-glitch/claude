@@ -147,7 +147,8 @@ export function TicTacToe() {
 
       <div className="text-[12.5px] font-semibold text-ink-soft shrink-0">{status}</div>
 
-      <div className="relative w-full max-w-[280px] aspect-square">
+      <div className="flex-1 min-h-0 w-full grid place-items-center" style={{ containerType: "size" }}>
+      <div className="relative" style={{ width: "100cqmin", height: "100cqmin" }}>
         <div className="grid grid-cols-3 grid-rows-3 gap-2 h-full">
           {board.map((v, i) => {
             const inWin = line?.includes(i);
@@ -168,6 +169,7 @@ export function TicTacToe() {
             );
           })}
         </div>
+      </div>
       </div>
 
       <div className="flex items-center gap-2.5 mt-auto shrink-0 text-[11px]">

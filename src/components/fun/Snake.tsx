@@ -154,10 +154,11 @@ export function Snake() {
         <span>Best <span className="text-accent tabular-nums">{best}</span></span>
       </div>
 
-      <div ref={wrapRef} className="relative flex-1 min-h-0 grid place-items-center select-none touch-none">
+      <div ref={wrapRef} className="relative flex-1 min-h-0 grid place-items-center select-none touch-none" style={{ containerType: "size" }}>
         <div
-          className="relative aspect-square w-full max-w-[380px] rounded-2xl border border-[var(--rule)] overflow-hidden"
+          className="relative rounded-2xl border border-[var(--rule)] overflow-hidden"
           style={{
+            width: "100cqmin", height: "100cqmin",
             background: `
               radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%),
               var(--rule-soft)

@@ -17,6 +17,7 @@ import { GamesCard } from "@/components/fun/GamesCard";
 import { TypingTest } from "@/components/fun/TypingTest";
 import { NatureShort } from "@/components/fun/NatureShort";
 import { TRex } from "@/components/fun/TRex";
+import { AmbientVideo } from "@/components/fun/AmbientVideo";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +46,11 @@ export default async function FunPage() {
         }
       />
 
+      {/* Row 0 — full-width ambient video (Country Life / Bob Ross / Elif) */}
+      <Card title="" className="min-h-[420px] md:min-h-[520px]">
+        <AmbientVideo />
+      </Card>
+
       {/* Row 1 — NASA APOD + Games */}
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-5 items-stretch">
         <div className="[&>*]:h-full">
@@ -60,14 +66,13 @@ export default async function FunPage() {
         <TypingTest />
       </Card>
 
-      {/* Row 3 — Portrait nature short (narrow) + classic T-Rex (wide).
-          The row gets an explicit min-height so the T-Rex canvas is always
-          visible even when the Nature short slot is empty/errored. */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,2.4fr)] gap-5 items-stretch min-h-[440px]">
-        <div className="[&>*]:h-full min-h-[440px]">
+      {/* Row 3 — Nature short, kept exactly as thin as a 9:16 Short, with the
+          rest of the width handed to the T-Rex game. Fixed row height. */}
+      <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-5 items-stretch h-[520px]">
+        <div className="[&>*]:h-full">
           <Card title=""><NatureShort /></Card>
         </div>
-        <div className="[&>*]:h-full min-h-[440px]">
+        <div className="[&>*]:h-full">
           <Card title=""><TRex /></Card>
         </div>
       </div>

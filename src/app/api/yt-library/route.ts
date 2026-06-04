@@ -1,0 +1,49 @@
+// One endpoint for every "random video from a whole library" box. Each source
+// is a named channel/playlist/shorts feed; we return the full (cached) list of
+// {id,title} and the client picks/shuffles/persists. The heavy library walk
+// lives in src/lib/youtube-library.ts.
+
+import { NextResponse } from "next/server";
+import { fetchChannelVideos, fetchChannelShorts, fetchPlaylistVideos, type LibVideo } from "@/lib/youtube-library";
+
+export const revalidate = 3600;
+
+type Source =
+  | { kind: "channel"; handle: string; label: string; url: string }
+  | { kind: "shorts"; handle: string; label: string; url: string }
+  | { kind: "playlist"; list: string; label: string; url: string };
+
+const SOURCES: Record<string, Source> = {
+  logan:   { kind: "channel",  handle: "logangrafcpa",       label: "Logan Graf",       url: "https://www.youtube.com/@logangrafcpa/videos" },
+  bbc:     { kind: "shorts",   handle: "bbcearth",           label: "BBC Earth",        url: "https://www.youtube.com/@bbcearth/shorts" },
+  vlog:    { kind: "channel",  handle: "country_life_vlog",  label: "Country Life Vlog", url: "https://www.youtube.com/@country_life_vlog/videos" },
+  bobross: { kind: "playlist", list: "PLaLOVNqqD-2HgiA-GZyzcfZN9n-YelhB5", label: "Bob Ross", url: "https://www.youtube.com/playlist?list=PLaLOVNqqD-2HgiA-GZyzcfZN9n-YelhB5" },
+  elif:    { kind: "channel",  handle: "ElifinHecesi",       label: "Elif'in Hecesi",   url: "https://www.youtube.com/@ElifinHecesi/videos" },
+};
+
+export async function GET(req: Request) {
+  const sourceKey = new URL(req.url).searchParams.get("source") ?? "";
+  const src = SOURCES[sourceKey];
+  if (!src) return NextResponse.json({ error: "unknown_source" }, { status: 400 });
+
+  let videos: LibVideo[] = [];
+  try {
+    if (src.kind === "channel") videos = await fetchChannelVideos(src.handle);
+    else if (src.kind === "shorts") videos = await fetchChannelShorts(src.handle);
+    else videos = await fetchPlaylistVideos(src.list);
+  } catch {
+    videos = [];
+  }
+
+  if (videos.length === 0) {
+    return NextResponse.json({ error: "no_videos", label: src.label, url: src.url, videos: [] }, { status: 502 });
+  }
+
+  // Cap the payload — a few hundred is plenty for "random, indefinitely".
+  const capped = videos.slice(0, 800);
+
+  return NextResponse.json(
+    { label: src.label, url: src.url, count: capped.length, videos: capped },
+    { headers: { "Cache-Control": "s-maxage=3600, stale-while-revalidate=43200" } },
+  );
+}
