@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-06-04T10:29:36.400Z
+# generated: 2026-06-04T11:24:42.773Z
 # url:       https://www.britannica.com/on-this-day/june-4
 # fetcher:   Wayback Machine
 # kind:      html
