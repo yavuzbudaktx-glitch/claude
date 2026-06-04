@@ -20,7 +20,6 @@ import { Calculator } from "@/components/Calculator";
 import { Bookmarks } from "@/components/Bookmarks";
 import { RadioButton } from "@/components/RadioButton";
 import { ThemeVariantButton } from "@/components/ThemeVariantButton";
-import { DocAnywhereButton } from "@/components/DocAnywhereButton";
 import { FocusButton } from "@/components/FocusButton";
 
 export const dynamic = "force-dynamic";
@@ -48,7 +47,6 @@ export default async function Page() {
                 <Bookmarks />
                 <Calculator />
                 <FocusButton />
-                <DocAnywhereButton />
                 <ThemeVariantButton />
                 <ThemeToggle />
                 <FullscreenToggle />

@@ -8,7 +8,7 @@ import { Snake } from "./Snake";
 import { Game2048 } from "./Game2048";
 import { TicTacToe } from "./TicTacToe";
 
-type GameTab = "chess" | "wordle" | "2048" | "snake" | "tictactoe";
+type GameTab = "chess" | "2048" | "snake" | "tictactoe" | "wordle";
 
 export function GamesCard() {
   const [tab, setTab] = useState<GameTab>("chess");
@@ -22,10 +22,10 @@ export function GamesCard() {
         {(
           [
             { id: "chess",     label: "Chess",  icon: Crown },
-            { id: "wordle",    label: "Wordle", icon: Type },
             { id: "2048",      label: "2048",   icon: Grid3x3 },
             { id: "snake",     label: "Snake",  icon: Worm },
             { id: "tictactoe", label: "Tic-Tac-Toe", icon: Hash },
+            { id: "wordle",    label: "Wordle", icon: Type },
           ] as Array<{ id: GameTab; label: string; icon: typeof Type }>
         ).map((g) => {
           const Icon = g.icon;

@@ -7,7 +7,6 @@ import { Calculator } from "@/components/Calculator";
 import { Bookmarks } from "@/components/Bookmarks";
 import { RadioButton } from "@/components/RadioButton";
 import { ThemeVariantButton } from "@/components/ThemeVariantButton";
-import { DocAnywhereButton } from "@/components/DocAnywhereButton";
 import { FocusButton } from "@/components/FocusButton";
 import { FullscreenToggle } from "@/components/FullscreenToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -37,7 +36,6 @@ export default async function FunPage() {
             <Bookmarks />
             <Calculator />
             <FocusButton />
-            <DocAnywhereButton />
             <ThemeVariantButton />
             <ThemeToggle />
             <FullscreenToggle />
@@ -47,22 +45,22 @@ export default async function FunPage() {
       />
 
       {/* Row 0 — full-width ambient video (Country Life / Bob Ross / Elif) */}
-      <Card title="" className="min-h-[420px] md:min-h-[520px]">
+      <Card id="fun.ambient" title="" className="min-h-[420px] md:min-h-[520px]">
         <AmbientVideo />
       </Card>
 
       {/* Row 1 — NASA APOD + Games */}
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-5 items-stretch">
         <div className="[&>*]:h-full">
-          <Card title=""><NasaApod /></Card>
+          <Card id="fun.apod" title=""><NasaApod /></Card>
         </div>
         <div className="[&>*]:h-full">
-          <Card title=""><GamesCard /></Card>
+          <Card id="fun.games" title=""><GamesCard /></Card>
         </div>
       </div>
 
       {/* Row 2 — Wide typing speed tester */}
-      <Card title="">
+      <Card id="fun.typing" title="">
         <TypingTest />
       </Card>
 
@@ -70,10 +68,10 @@ export default async function FunPage() {
           rest of the width handed to the T-Rex game. Fixed row height. */}
       <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-5 items-stretch h-[520px]">
         <div className="[&>*]:h-full">
-          <Card title=""><NatureShort /></Card>
+          <Card id="fun.short" title=""><NatureShort /></Card>
         </div>
         <div className="[&>*]:h-full">
-          <Card title=""><TRex /></Card>
+          <Card id="fun.trex" title=""><TRex /></Card>
         </div>
       </div>
     </main>

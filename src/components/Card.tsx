@@ -87,19 +87,20 @@ export function Card({
   const key = `ui.card.collapsed.${id ?? (title || "untitled").toLowerCase().replace(/\s+/g, "-")}`;
   const [collapsed, setCollapsed] = usePref<boolean>(key, false);
 
-  // A titleless card with no meta/action/status has nothing to put in a
-  // header — so we drop the header entirely (no stray dot or collapse arrow)
-  // and just render the content full-bleed.
-  const showHeader = !!(title || meta || action || status);
+  // We always render a header when the card is collapsible — otherwise there's
+  // no chevron to click. Title-less cards get a minimal header (just the
+  // chevron flushed right, no dot, no rule) so the chrome stays out of the way.
+  const hasContent = !!(title || meta || action || status);
+  const showHeader = hasContent || collapsible;
 
   return (
     <section className={`card animate-fadeIn ${collapsed ? "is-collapsed" : ""} ${className}`}>
       {showHeader && (
-        <header className="headrule">
-          <span className="dot" aria-hidden />
+        <header className={hasContent ? "headrule" : "flex items-center justify-end -mt-1 -mb-1"}>
+          {hasContent && <span className="dot" aria-hidden />}
           {title && <span className="text-[14px] font-semibold tracking-tight text-ink">{title}</span>}
           {meta && <span className={title ? "ml-1.5 label" : "label"}>{meta}</span>}
-          <div className="ml-auto flex items-center gap-2">
+          <div className={`${hasContent ? "ml-auto" : ""} flex items-center gap-2`}>
             {status && <FreshPill status={status} />}
             {action}
             {collapsible && (
@@ -118,7 +119,7 @@ export function Card({
           </div>
         </header>
       )}
-      {(!collapsed || !showHeader) && children}
+      {!collapsed && children}
     </section>
   );
 }

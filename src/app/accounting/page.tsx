@@ -8,7 +8,6 @@ import { Calculator } from "@/components/Calculator";
 import { Bookmarks } from "@/components/Bookmarks";
 import { RadioButton } from "@/components/RadioButton";
 import { ThemeVariantButton } from "@/components/ThemeVariantButton";
-import { DocAnywhereButton } from "@/components/DocAnywhereButton";
 import { FocusButton } from "@/components/FocusButton";
 import { FullscreenToggle } from "@/components/FullscreenToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -43,7 +42,6 @@ export default async function AccountingPage() {
             <Bookmarks />
             <Calculator />
             <FocusButton />
-            <DocAnywhereButton />
             <ThemeVariantButton />
             <ThemeToggle />
             <FullscreenToggle />
@@ -56,20 +54,20 @@ export default async function AccountingPage() {
         <AccountingHeaderStats />
       </header>
 
-      {/* Row 1 — CPA Exam (left, wide) + Daily CPA video (right). */}
+      {/* Row 1 — Community feed (left, wide) + Daily CPA video (right). */}
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-5 items-stretch">
         <div className="[&>*]:h-full">
-          <Card title="CPA Exam"><CpaSection /></Card>
+          <Card title="Community" meta="r/CPA · r/Accounting"><RedditFeedSection /></Card>
         </div>
         <div className="[&>*]:h-full">
           <Card title="CPA Video" meta="daily pick"><CpaVideoSection /></Card>
         </div>
       </div>
 
-      {/* Row 2 — Community feed (wide) + Net Worth (compact). */}
+      {/* Row 2 — CPA Exam (left, wide) + Net Worth (compact). */}
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-5 items-stretch">
         <div className="[&>*]:h-full">
-          <Card title="Community" meta="r/CPA · r/Accounting"><RedditFeedSection /></Card>
+          <Card title="CPA Exam"><CpaSection /></Card>
         </div>
         <div className="[&>*]:h-full">
           <Card title="Net Worth" meta="12-month trend"><NetWorthSection /></Card>

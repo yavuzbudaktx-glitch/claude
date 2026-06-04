@@ -50,24 +50,47 @@ export function TypingTest() {
     }
   }, [startedAt, finishedAt]);
 
-  function onChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const v = e.target.value;
+  // Wrong keys are REJECTED rather than committed — the cursor refuses to
+  // advance until you type the right character. We also flash a quick "miss"
+  // pulse so the rejection is visible, and count misses for accuracy.
+  const [miss, setMiss] = useState(0);
+  const [missPulse, setMissPulse] = useState(0);
+  function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (finished) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    // Backspace just steps back one — useful if you want to start over from
+    // an earlier point without resetting the whole test.
+    if (e.key === "Backspace") {
+      e.preventDefault();
+      setTyped((t) => t.slice(0, -1));
+      return;
+    }
+    if (e.key.length !== 1) return; // ignore modifier-only / arrow / etc.
+    e.preventDefault();
     if (!startedAt) setStartedAt(Date.now());
-    setTyped(v);
-    if (v.length >= target.length) {
-      const finishedTs = Date.now();
-      setFinishedAt(finishedTs);
-      const elapsed = (finishedTs - (startedAt ?? finishedTs)) / 1000 / 60;
-      const wordsRaw = target.length / 5;
-      const correctChars = v.split("").reduce((acc, c, i) => acc + (c === target[i] ? 1 : 0), 0);
-      const acc = Math.round((correctChars / target.length) * 100);
-      const wpm = elapsed > 0 ? Math.round(wordsRaw / elapsed) : 0;
-      if (!best || wpm > best.wpm) setBest({ wpm, acc, at: finishedTs });
+    const expected = target[typed.length];
+    if (e.key === expected) {
+      const next = typed + e.key;
+      setTyped(next);
+      if (next.length >= target.length) {
+        const finishedTs = Date.now();
+        setFinishedAt(finishedTs);
+        const elapsed = (finishedTs - (startedAt ?? finishedTs)) / 1000 / 60;
+        const wordsRaw = target.length / 5;
+        const wpm = elapsed > 0 ? Math.round(wordsRaw / elapsed) : 0;
+        const acc = Math.round((target.length / (target.length + miss)) * 100);
+        if (!best || wpm > best.wpm) setBest({ wpm, acc, at: finishedTs });
+      }
+    } else {
+      // Wrong key — block, flash, count.
+      setMiss((m) => m + 1);
+      setMissPulse((n) => n + 1);
     }
   }
 
   function reset(newSeed?: number) {
     setTyped("");
+    setMiss(0);
     setStartedAt(null);
     setFinishedAt(null);
     setSeed(newSeed ?? Date.now());
@@ -75,9 +98,12 @@ export function TypingTest() {
   }
 
   const elapsedSec = startedAt ? ((finishedAt ?? now) - startedAt) / 1000 : 0;
-  const correctChars = typed.split("").reduce((acc, c, i) => acc + (c === target[i] ? 1 : 0), 0);
-  const liveWpm = elapsedSec > 0 ? Math.round((correctChars / 5) / (elapsedSec / 60)) : 0;
-  const liveAcc = typed.length > 0 ? Math.round((correctChars / typed.length) * 100) : 100;
+  // typed is guaranteed correct (mistakes never commit), so wpm is just
+  // typed-chars / 5 over elapsed minutes, and accuracy is correct / total
+  // keystrokes (correct + missed).
+  const liveWpm = elapsedSec > 0 ? Math.round((typed.length / 5) / (elapsedSec / 60)) : 0;
+  const totalKeystrokes = typed.length + miss;
+  const liveAcc = totalKeystrokes > 0 ? Math.round((typed.length / totalKeystrokes) * 100) : 100;
   const finished = !!finishedAt;
 
   // Put the cursor LINE exactly to the LEFT of the next character to type:
@@ -126,8 +152,13 @@ export function TypingTest() {
             "linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%)",
         }}
       >
-        {/* caret — sits at the centre, just left of the next character */}
-        <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-8 w-[2.5px] rounded-full bg-[var(--accent)] z-10 animate-pulse shadow-[0_0_8px_var(--glow)]" />
+        {/* caret — sits at the centre, just left of the next character; flashes
+            red briefly on a missed keystroke so the rejection is unmistakable */}
+        <div
+          key={missPulse}
+          className={`pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-8 w-[2.5px] rounded-full z-10 ${missPulse ? "bg-[var(--down)] animate-[shake_.18s]" : "bg-[var(--accent)] animate-pulse"}`}
+          style={{ boxShadow: missPulse ? "0 0 10px var(--down)" : "0 0 8px var(--glow)" }}
+        />
 
         <div
           className="absolute top-1/2 -translate-y-1/2 font-mono whitespace-pre"
@@ -140,19 +171,11 @@ export function TypingTest() {
           }}
         >
           {target.split("").map((ch, i) => {
-            const t = typed[i];
+            // typed[] is always correct-only now (wrong keys never commit),
+            // so we just split on cursorIdx: left = already-typed (faded),
+            // right = upcoming (full opacity, bright ink).
             const typedAlready = i < cursorIdx;
-            // Upcoming text (right of the cursor) → full opacity, bright ink.
-            // Already-typed text (left of the cursor) → low opacity so it
-            // visibly fades as it slides away.
-            let color: string;
-            if (t == null) {
-              color = "var(--ink)";              // upcoming
-            } else if (t === ch) {
-              color = "var(--ink-soft)";          // correctly typed
-            } else {
-              color = "var(--down)";              // mistyped
-            }
+            const color = typedAlready ? "var(--ink-soft)" : "var(--ink)";
             const o = typedAlready ? 0.3 : 1;
             return (
               <span key={i} style={{ display: "inline-block", width: `${CHAR_W}px`, color, opacity: o }}>
@@ -163,15 +186,18 @@ export function TypingTest() {
         </div>
       </div>
 
-      {/* Hidden input — captures every keystroke; focus follows the tape click. */}
+      {/* Hidden input — captures every keystroke; focus follows the tape click.
+          Wrong keys never reach `typed`; they're swallowed in onKeyDown so the
+          cursor parks on the missed letter until you get it right. */}
       <input
         ref={inputRef}
         value={typed}
-        onChange={onChange}
+        onChange={() => { /* noop — onKeyDown is the source of truth */ }}
+        onKeyDown={onKeyDown}
         disabled={finished}
         placeholder="Click the line above and start typing…"
         autoFocus
-        className="rounded-xl bg-[var(--paper)] border border-[var(--rule)] px-3.5 py-2 text-[12.5px] text-muted focus:outline-none focus:ring-1 focus:ring-[var(--accent)] placeholder:text-muted-2 disabled:opacity-50"
+        className={`rounded-xl bg-[var(--paper)] border px-3.5 py-2 text-[12.5px] text-muted focus:outline-none focus:ring-1 focus:ring-[var(--accent)] placeholder:text-muted-2 disabled:opacity-50 transition ${missPulse % 2 ? "border-[var(--down)] animate-[shake_.18s]" : "border-[var(--rule)]"}`}
       />
 
       {finished && (

@@ -429,6 +429,11 @@ main { position: relative; z-index: 1; }
   100% { transform: translateY(0); }
 }
 @keyframes pop2048 { 0% { transform: scale(0.7); } 100% { transform: scale(1); } }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-3px); }
+  75%      { transform: translateX(3px); }
+}
 
 /* Equalizer bars for the radio button. Three offset breath rates so the
    group reads as music-reactive rather than a metronome. */
