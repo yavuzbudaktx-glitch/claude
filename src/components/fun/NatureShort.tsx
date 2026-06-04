@@ -3,14 +3,13 @@
 /* eslint-disable @next/next/no-img-element */
 import useSWR from "swr";
 import { useEffect, useState } from "react";
-import { PlayCircle, RotateCcw, Leaf } from "lucide-react";
+import { Play, RotateCcw, Leaf } from "lucide-react";
 import { localDateKey } from "@/lib/local-date";
 
 interface ShortResp {
   videoId?: string;
   title?: string;
   channel?: string;
-  published?: string;
   thumb?: string;
   isPortrait?: boolean;
   error?: string;
@@ -27,7 +26,6 @@ export function NatureShort() {
     { refreshInterval: 1000 * 60 * 60 * 6, keepPreviousData: true },
   );
   const [playing, setPlaying] = useState(false);
-  // New pick → reset playback.
   useEffect(() => { setPlaying(false); }, [data?.videoId]);
 
   if (isLoading && !data) return <p className="text-muted text-sm">Loading nature…</p>;
@@ -40,50 +38,66 @@ export function NatureShort() {
   }
 
   return (
-    <div className="flex flex-col gap-3 h-full min-h-0">
+    <div className="flex flex-col gap-2.5 h-full min-h-0">
       <div className="flex items-center justify-between text-[10.5px] font-mono uppercase tracking-wider text-muted shrink-0">
-        <span className="inline-flex items-center gap-1.5"><Leaf className="h-3 w-3" /> {data.channel}</span>
-        <button onClick={() => { setN((x) => x + 1); mutate(); }} className="inline-flex items-center gap-1 hover:text-accent transition" title="New short">
+        <span className="inline-flex items-center gap-1.5 text-accent">
+          <Leaf className="h-3 w-3" /> {data.channel}
+        </span>
+        <button
+          onClick={() => { setN((x) => x + 1); mutate(); }}
+          className="inline-flex items-center gap-1 hover:text-accent transition"
+          title="New short"
+        >
           <RotateCcw className="h-3 w-3" /> new
         </button>
       </div>
 
-      <div
-        className="relative mx-auto rounded-2xl overflow-hidden bg-[var(--rule-soft)] border border-[var(--rule)] shrink-0"
-        style={{ aspectRatio: "9 / 16", width: "100%", maxWidth: "220px" }}
-      >
-        {!playing && data.thumb && (
-          <button onClick={() => setPlaying(true)} aria-label="Play" className="absolute inset-0 group">
-            <img src={data.thumb} alt={data.title} className="h-full w-full object-cover transition group-hover:scale-[1.02]" />
-            <span className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
-            <span className="absolute inset-0 grid place-items-center">
-              <span className="grid h-12 w-12 place-items-center rounded-full bg-white/95 text-black shadow-lg">
-                <PlayCircle className="h-7 w-7" strokeWidth={1.5} />
-              </span>
-            </span>
-          </button>
-        )}
-        {playing && (
-          <iframe
-            key={data.videoId}
-            src={`https://www.youtube.com/embed/${data.videoId}?autoplay=1&rel=0&modestbranding=1`}
-            title={data.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="h-full w-full"
-          />
-        )}
-      </div>
-
-      <div className="min-w-0 text-center">
-        <a
-          href={`https://www.youtube.com/watch?v=${data.videoId}`}
-          target="_blank" rel="noreferrer"
-          className="block text-[12.5px] font-medium text-ink-soft hover:text-accent transition leading-snug line-clamp-2"
-          title={data.title}
+      {/* Big vertical Short — fills the available height, centered. */}
+      <div className="relative flex-1 min-h-0 grid place-items-center">
+        <div
+          className="relative h-full max-h-full rounded-[22px] overflow-hidden shadow-[var(--shadow-hover)]"
+          style={{
+            aspectRatio: "9 / 16",
+            background: "var(--rule-soft)",
+            padding: "2px",
+            backgroundImage: "linear-gradient(160deg, color-mix(in srgb, var(--accent) 55%, transparent), color-mix(in srgb, var(--accent-2) 45%, transparent))",
+          }}
         >
-          {data.title}
-        </a>
+          <div className="relative h-full w-full rounded-[20px] overflow-hidden bg-black">
+            {!playing && data.thumb && (
+              <button onClick={() => setPlaying(true)} aria-label="Play" className="absolute inset-0 group">
+                <img
+                  src={data.thumb}
+                  alt={data.title}
+                  className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                />
+                <span className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/25" />
+                <span className="absolute inset-0 grid place-items-center">
+                  <span className="grid h-16 w-16 place-items-center rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-white shadow-2xl transition group-hover:scale-110 group-hover:bg-white/25">
+                    <Play className="h-7 w-7 translate-x-[2px]" fill="currentColor" strokeWidth={0} />
+                  </span>
+                </span>
+                {data.title && (
+                  <span className="absolute inset-x-0 bottom-0 p-3 text-left">
+                    <span className="block text-[12.5px] font-semibold text-white leading-snug line-clamp-2 drop-shadow">
+                      {data.title}
+                    </span>
+                  </span>
+                )}
+              </button>
+            )}
+            {playing && (
+              <iframe
+                key={data.videoId}
+                src={`https://www.youtube.com/embed/${data.videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
+                title={data.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="absolute inset-0 h-full w-full"
+              />
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

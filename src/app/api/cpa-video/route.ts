@@ -143,19 +143,22 @@ async function fetchUploads(channelId: string, channel: { handle: string; label:
 }
 
 async function scrapeVideos(channel: { handle: string; label: string }): Promise<Video[]> {
+  // The /videos tab's ytInitialData carries ~30 of the channel's latest
+  // uploads (Shorts live on a separate /shorts tab, so /videos is already
+  // landscape-only). We grab as many as the page exposes.
   const html = await getHtml(`https://www.youtube.com/@${channel.handle}/videos`);
   if (!html) return [];
   const out: Video[] = [];
   const seen = new Set<string>();
   const re = /"videoId":"([\w-]{11})"(?:(?!"videoId").){0,400}?"text":"((?:[^"\\]|\\.)*?)"/g;
   let m: RegExpExecArray | null;
-  while ((m = re.exec(html)) && out.length < 20) {
+  while ((m = re.exec(html)) && out.length < 90) {
     const id = m[1];
     if (seen.has(id)) continue;
     seen.add(id);
     let title = "";
     try { title = JSON.parse(`"${m[2]}"`); } catch { title = m[2]; }
-    if (title && !/^\d+:\d+$/.test(title)) {
+    if (title && !/^\d+:\d+$/.test(title) && !/#short/i.test(title)) {
       out.push({
         id, title, published: "",
         thumb: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
@@ -179,10 +182,20 @@ export async function GET(req: Request) {
 
   const perChannel = await Promise.all(
     CHANNELS.map(async (ch) => {
+      // Run BOTH sources and merge so we surface as much of the library as
+      // possible: the Atom feed gives the latest 15 (with reliable titles),
+      // the /videos scrape adds up to ~90 more older uploads. Dedupe by id.
       const id = await resolveChannelId(ch.handle);
-      let vs = id ? await fetchUploads(id, ch) : [];
-      if (vs.length === 0) vs = await scrapeVideos(ch);
-      return vs;
+      const [feed, scraped] = await Promise.all([
+        id ? fetchUploads(id, ch) : Promise.resolve([] as Video[]),
+        scrapeVideos(ch),
+      ]);
+      const seen = new Set<string>();
+      const merged: Video[] = [];
+      for (const v of [...feed, ...scraped]) {
+        if (v.id && v.title && !seen.has(v.id)) { seen.add(v.id); merged.push(v); }
+      }
+      return merged;
     }),
   );
 

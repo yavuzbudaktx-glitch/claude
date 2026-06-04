@@ -4,27 +4,27 @@
 //
 // Themes are NOT the same as light/dark. Light/dark is the `.dark` class;
 // theme variants stack on top to change the entire visual character of the
-// site (palette + corner radius + density + display face + texture).
+// site (palette + corner radius + density + display face + texture). The
+// strongest ones (Galaxy, Forest, Water, Lust, Terminal, the concept set)
+// carry a full atmosphere, not just a recolor.
 
 export type ThemeId =
-  | "aurora" | "paper" | "terminal" | "galaxy" | "accounting" | "matte"
-  | "synthwave" | "forest" | "mono" | "sakura" | "nord"
+  | "aurora" | "galaxy" | "forest" | "water" | "lust"
+  | "terminal" | "accounting" | "nord" | "mono"
   | "newspaper" | "blueprint" | "comic" | "sketch";
 
 export const THEMES: Array<{
   id: ThemeId; label: string; description: string;
 }> = [
   { id: "aurora",     label: "Aurora Glass", description: "Default — frosted cards, cyan accent, drifting aurora background." },
-  { id: "paper",      label: "Paper",        description: "Warm off-white, ink text, single accent, no glass — editorial." },
-  { id: "terminal",   label: "Terminal",     description: "Mono-typography, sharp corners, green phosphor — day or night." },
-  { id: "galaxy",     label: "Galaxy",       description: "Deep space — magenta/violet accents, starfield drifting behind everything." },
+  { id: "galaxy",     label: "Galaxy",       description: "Deep space — violet nebula, a dense drifting starfield behind everything." },
+  { id: "forest",     label: "Forest",       description: "A living woodland — sun shafts through the canopy, drifting leaves, bark-grain cards." },
+  { id: "water",      label: "Water",        description: "Underwater calm — caustic light ripples, rising bubbles, glassy aqua glow." },
+  { id: "lust",       label: "Lust",         description: "Candlelit and intimate — deep crimson velvet, a slow breathing glow, rose-gold warmth." },
+  { id: "terminal",   label: "Terminal",     description: "Mono-typography, sharp corners, green phosphor, CRT scanlines — day or night." },
   { id: "accounting", label: "Accounting",   description: "Crisp ledger paper, navy/forest accents — clean numbers-first interface." },
-  { id: "matte",      label: "Matte",        description: "Flat charcoal or off-white, low gloss, minimalist — content over chrome." },
-  { id: "synthwave",  label: "Synthwave",    description: "Neon magenta + cyan over deep indigo, retro-grade glow. Pure 80s." },
-  { id: "forest",     label: "Forest",       description: "Deep pine, moss and bark — calm, earthy, organic." },
-  { id: "mono",       label: "Mono",         description: "Pure black & white, hard edges, heavy rules — brutalist clarity." },
-  { id: "sakura",     label: "Sakura",       description: "Soft cherry-blossom pinks on warm white — gentle and airy." },
   { id: "nord",       label: "Nord",         description: "Cool arctic blue-greys with frost accents — quiet and balanced." },
+  { id: "mono",       label: "Mono",         description: "Pure black & white, hard edges, heavy rules — brutalist clarity." },
   { id: "newspaper",  label: "Newspaper",    description: "Times-style serif type, columns, drop-caps, hairline ruling — like reading a Sunday paper." },
   { id: "blueprint",  label: "Blueprint",    description: "Architect's drafting page — white technical strokes on cyan, corner brackets, drafting grid." },
   { id: "comic",      label: "Comic",        description: "Halftone dots, ink-line panels, KAPOW red, offset hard shadows — your dashboard as a comic book." },
@@ -33,7 +33,7 @@ export const THEMES: Array<{
 
 const KEY = "brief.theme.v1";
 
-const VALID: ThemeId[] = ["aurora", "paper", "terminal", "galaxy", "accounting", "matte", "synthwave", "forest", "mono", "sakura", "nord", "newspaper", "blueprint", "comic", "sketch"];
+const VALID: ThemeId[] = ["aurora", "galaxy", "forest", "water", "lust", "terminal", "accounting", "nord", "mono", "newspaper", "blueprint", "comic", "sketch"];
 const NON_DEFAULT = VALID.filter((v) => v !== "aurora");
 
 export function getTheme(): ThemeId {
@@ -60,7 +60,7 @@ export const THEME_BOOT_SCRIPT = `
   (function() {
     try {
       var v = localStorage.getItem(${JSON.stringify(KEY)});
-      var ok = ['paper','terminal','galaxy','accounting','matte','synthwave','forest','mono','sakura','nord','newspaper','blueprint','comic','sketch'];
+      var ok = ['galaxy','forest','water','lust','terminal','accounting','nord','mono','newspaper','blueprint','comic','sketch'];
       var root = document.documentElement;
       if (v && ok.indexOf(v) >= 0) root.classList.add('theme-' + v);
       root.setAttribute('data-theme', v || 'aurora');

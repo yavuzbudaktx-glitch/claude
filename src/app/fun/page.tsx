@@ -45,34 +45,28 @@ export default async function FunPage() {
         }
       />
 
-      <header>
-        <h1 className="font-display text-4xl md:text-5xl tracking-tight m-0">
-          <span className="text-gradient">Fun</span>
-        </h1>
-      </header>
-
       {/* Row 1 — NASA APOD + Games */}
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-5 items-stretch">
         <div className="[&>*]:h-full">
-          <Card title="NASA · Picture of the day"><NasaApod /></Card>
+          <Card title=""><NasaApod /></Card>
         </div>
         <div className="[&>*]:h-full">
-          <Card title="Games"><GamesCard /></Card>
+          <Card title=""><GamesCard /></Card>
         </div>
       </div>
 
       {/* Row 2 — Wide typing speed tester */}
-      <Card title="Typing speed" meta="how fast are you, really">
+      <Card title="">
         <TypingTest />
       </Card>
 
       {/* Row 3 — Portrait nature short (narrow) + classic T-Rex (wide) */}
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,2.4fr)] gap-5 items-stretch">
         <div className="[&>*]:h-full">
-          <Card title="Nature short" meta="BBC Earth · Nat Geo"><NatureShort /></Card>
+          <Card title=""><NatureShort /></Card>
         </div>
         <div className="[&>*]:h-full">
-          <Card title="T-Rex run" meta="press space to jump"><TRex /></Card>
+          <Card title=""><TRex /></Card>
         </div>
       </div>
     </main>

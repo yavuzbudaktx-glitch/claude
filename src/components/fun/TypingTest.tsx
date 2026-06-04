@@ -80,12 +80,12 @@ export function TypingTest() {
   const liveAcc = typed.length > 0 ? Math.round((correctChars / typed.length) * 100) : 100;
   const finished = !!finishedAt;
 
-  // Center the cursor character in the visible tape: shift the whole text
-  // left by (cursor index × char width) − (half tape width). Negative offset
-  // means typed characters slide off to the left; upcoming ones come from
-  // the right, exactly the "ben yazdıkça yazı sağdan gelip sola doğru" feel.
+  // Put the cursor LINE exactly to the LEFT of the next character to type:
+  // the char at `cursorIdx` starts at the centre, so the centre indicator
+  // sits just before it. Typed text drifts off to the left (and is faded);
+  // upcoming text waits to the right at full opacity.
   const cursorIdx = typed.length;
-  const offset = trackWidth ? trackWidth / 2 - cursorIdx * CHAR_W - CHAR_W / 2 : 0;
+  const offset = trackWidth ? trackWidth / 2 - cursorIdx * CHAR_W : 0;
 
   return (
     <div className="flex flex-col gap-3">
@@ -126,8 +126,8 @@ export function TypingTest() {
             "linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%)",
         }}
       >
-        {/* center indicator line — subtle so it doesn't fight the text */}
-        <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-7 w-[2px] bg-[var(--accent)] opacity-50 z-10" />
+        {/* caret — sits at the centre, just left of the next character */}
+        <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-8 w-[2.5px] rounded-full bg-[var(--accent)] z-10 animate-pulse shadow-[0_0_8px_var(--glow)]" />
 
         <div
           className="absolute top-1/2 -translate-y-1/2 font-mono whitespace-pre"
@@ -141,19 +141,19 @@ export function TypingTest() {
         >
           {target.split("").map((ch, i) => {
             const t = typed[i];
-            const distFromCursor = i - cursorIdx;
-            // Already typed → fade out toward the left; upcoming → muted; near cursor → bright.
+            const typedAlready = i < cursorIdx;
+            // Upcoming text (right of the cursor) → full opacity, bright ink.
+            // Already-typed text (left of the cursor) → low opacity so it
+            // visibly fades as it slides away.
             let color: string;
             if (t == null) {
-              color = "var(--muted-2)";
+              color = "var(--ink)";              // upcoming
             } else if (t === ch) {
-              color = distFromCursor < -3 ? "var(--ink-soft)" : "var(--ink)";
+              color = "var(--ink-soft)";          // correctly typed
             } else {
-              color = "var(--down)";
+              color = "var(--down)";              // mistyped
             }
-            // Opacity falls off the further you are from the cursor in either
-            // direction — sells the "drifting" feel.
-            const o = Math.max(0.25, 1 - Math.abs(distFromCursor) / 50);
+            const o = typedAlready ? 0.3 : 1;
             return (
               <span key={i} style={{ display: "inline-block", width: `${CHAR_W}px`, color, opacity: o }}>
                 {ch === " " ? "·" : ch}

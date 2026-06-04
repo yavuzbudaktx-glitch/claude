@@ -52,10 +52,7 @@ export default async function AccountingPage() {
         }
       />
 
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <h1 className="font-display text-4xl md:text-5xl tracking-tight m-0">
-          <span className="text-gradient">Accounting</span>
-        </h1>
+      <header className="flex flex-wrap items-center justify-end gap-4">
         <AccountingHeaderStats />
       </header>
 

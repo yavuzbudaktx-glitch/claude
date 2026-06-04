@@ -38,17 +38,23 @@ export async function GET(req: Request) {
   const refresh = url.searchParams.get("r") ?? "";
 
   try {
-    // Pull a stable, decent-quality pool (top 100 public-domain artworks
-    // with images), then pick deterministically per day.
+    // The bracketed Elasticsearch query params on /artworks/search don't
+    // survive a plain URL the way the docs imply, so we use the simple
+    // /artworks listing instead: grab a date-seeded page of 100, keep the
+    // ones that have an image (preferring public-domain), and pick one
+    // deterministically per day. ?r=N salts both the page and the pick.
     const fields = "id,title,artist_display,date_display,image_id,medium_display,place_of_origin,is_public_domain,description,thumbnail";
+    const PAGES = 60; // ~6,000 of the most prominent artworks
+    const page = (seedIdx(dateKey + "-" + refresh + "-page", PAGES)) + 1;
     const r = await fetch(
-      `https://api.artic.edu/api/v1/artworks/search?q=&fields=${fields}` +
-      `&limit=100&query[term][is_public_domain]=true&query[exists][field]=image_id`,
-      { next: { revalidate: 86400 }, headers: { "User-Agent": "rest-area/1.0" } },
+      `https://api.artic.edu/api/v1/artworks?fields=${fields}&limit=100&page=${page}`,
+      { next: { revalidate: 86400 }, headers: { "User-Agent": "rest-area/1.0", Accept: "application/json" } },
     );
     if (!r.ok) return NextResponse.json({ error: `aic_${r.status}` }, { status: 502 });
     const j = (await r.json()) as AICResp;
-    const pool = (j.data ?? []).filter((p) => p.image_id);
+    const withImage = (j.data ?? []).filter((p) => p.image_id);
+    const publicDomain = withImage.filter((p) => p.is_public_domain);
+    const pool = publicDomain.length > 0 ? publicDomain : withImage;
     if (pool.length === 0) return NextResponse.json({ error: "no_art" }, { status: 502 });
 
     const idx = seedIdx(dateKey + "-" + refresh + "-art", pool.length);

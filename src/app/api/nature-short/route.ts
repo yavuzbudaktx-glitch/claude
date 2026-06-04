@@ -1,10 +1,11 @@
-// One daily nature short — pulled from BBC Earth + National Geographic
-// channel uploads via the public Atom feed (no API key). We filter the
-// recent uploads to short-form (or just-portrait-aspect when we can tell)
-// and pick deterministically per day so the spot is stable through the day.
+// One daily nature SHORT — scraped from the /shorts tab of a few nature
+// channels (BBC Earth, National Geographic, …). The Atom upload feed mixes in
+// full landscape videos, so instead we hit each channel's dedicated /shorts
+// page and pull the vertical Shorts straight out of its ytInitialData. Picked
+// deterministically per day so the spot is stable through the day; ?r=N salts
+// the seed for a manual refresh.
 
 import { NextResponse } from "next/server";
-import Parser from "rss-parser";
 
 export const revalidate = 3600;
 
@@ -13,33 +14,71 @@ const HEADERS = {
   "Accept-Language": "en-US,en;q=0.9",
 };
 
-// Channel UC IDs for BBC Earth & National Geographic. Their @handles resolve
-// to these. /shorts/ uploads also show up in this feed.
-const CHANNELS = [
-  { id: "UCwmZiChSryoWQCZMIQezgTg", label: "BBC Earth" },
-  { id: "UCpVm7bg6pXKo1Pr6k5kxG9A", label: "National Geographic" },
+// @handles whose /shorts tab we scrape. A failing channel just contributes
+// nothing — the pool is the union of whoever answered.
+const CHANNELS: Array<{ handle: string; label: string }> = [
+  { handle: "bbcearth",          label: "BBC Earth" },
+  { handle: "NatGeo",            label: "National Geographic" },
+  { handle: "BBCEarthUnplugged", label: "BBC Earth" },
+  { handle: "PBSNature",         label: "Nature on PBS" },
+  { handle: "DiscoveryUK",       label: "Discovery" },
 ];
 
-interface YtItem {
-  title?: string;
-  pubDate?: string;
-  isoDate?: string;
-  id?: string;
-  ["yt:videoId"]?: string;
-  ["media:group"]?: { ["media:thumbnail"]?: { $?: { url?: string; height?: string; width?: string } } | Array<{ $?: { url?: string; height?: string; width?: string } }> };
+interface Short { id: string; title: string; channel: string }
+
+async function getHtml(url: string): Promise<string | null> {
+  const tries = [
+    url,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+  ];
+  for (const u of tries) {
+    try {
+      const res = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(10000), cache: "no-store" });
+      if (!res.ok) continue;
+      const text = await res.text();
+      if (text && text.length > 1000) return text;
+    } catch {
+      // next proxy
+    }
+  }
+  return null;
 }
 
-const ytParser = new Parser<{ title?: string }, YtItem>({
-  timeout: 10000,
-  headers: HEADERS,
-  customFields: { item: [["yt:videoId", "yt:videoId"], ["media:group", "media:group"]] },
-});
+// Pull (videoId, title) pairs out of a /shorts page's ytInitialData. The
+// modern layout uses `shortsLockupViewModel`; we grab the videoId then the
+// next primaryText (the Short's title) before the following videoId so the
+// pairing stays aligned. Falls back to the older reelItemRenderer headline.
+function scrapeShorts(html: string, label: string): Short[] {
+  const out: Short[] = [];
+  const seen = new Set<string>();
 
-function thumbOf(item: YtItem, id: string): { url: string; w: number; h: number } {
-  const g = item["media:group"]?.["media:thumbnail"];
-  const first = Array.isArray(g) ? g[0] : g;
-  const url = first?.$?.url ?? `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-  return { url, w: Number(first?.$?.width ?? 0), h: Number(first?.$?.height ?? 0) };
+  const push = (id: string, title: string) => {
+    if (!id || seen.has(id)) return;
+    seen.add(id);
+    let t = "";
+    try { t = JSON.parse(`"${title}"`); } catch { t = title; }
+    out.push({ id, title: (t || "").trim(), channel: label });
+  };
+
+  // Modern: videoId → … → primaryText.content (no intervening videoId).
+  const re = /"videoId":"([\w-]{11})"(?:(?!"videoId").)*?"primaryText":\{"content":"((?:[^"\\]|\\.)*?)"/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(html)) && out.length < 60) push(m[1], m[2]);
+
+  // Older reelItemRenderer: videoId paired with a headline simpleText.
+  if (out.length === 0) {
+    const re2 = /"reelItemRenderer":\{"videoId":"([\w-]{11})"(?:(?!"reelItemRenderer").)*?"headline":\{"simpleText":"((?:[^"\\]|\\.)*?)"/g;
+    while ((m = re2.exec(html)) && out.length < 60) push(m[1], m[2]);
+  }
+
+  // Last resort — any bare videoIds on the page (titles unknown).
+  if (out.length === 0) {
+    const re3 = /"videoId":"([\w-]{11})"/g;
+    while ((m = re3.exec(html)) && out.length < 60) push(m[1], "");
+  }
+
+  return out;
 }
 
 function seedIdx(key: string, n: number): number {
@@ -52,34 +91,41 @@ export async function GET(req: Request) {
   const dateKey = new URL(req.url).searchParams.get("d") ?? new Date().toISOString().slice(0, 10);
   const refresh = new URL(req.url).searchParams.get("r") ?? "";
 
-  const lists = await Promise.all(CHANNELS.map(async (ch) => {
-    try {
-      const feed = await ytParser.parseURL(`https://www.youtube.com/feeds/videos.xml?channel_id=${ch.id}`);
-      return (feed.items ?? []).map((it) => {
-        const id = it["yt:videoId"] ?? (it.id ?? "").replace(/^yt:video:/, "");
-        const t = thumbOf(it, id);
-        return { id, title: (it.title ?? "").trim(), published: it.isoDate ?? it.pubDate ?? "",
-                 thumb: t.url, isPortrait: t.h > 0 && t.h > t.w, channel: ch.label };
-      });
-    } catch { return []; }
-  }));
-  const all = lists.flat().filter((v) => v.id && v.title);
-  if (all.length === 0) {
+  const lists = await Promise.all(
+    CHANNELS.map(async (ch) => {
+      const html = await getHtml(`https://www.youtube.com/@${ch.handle}/shorts`);
+      return html ? scrapeShorts(html, ch.label) : [];
+    }),
+  );
+
+  // Round-robin interleave so the pool isn't dominated by whichever channel
+  // returned the most.
+  const seen = new Set<string>();
+  const pool: Short[] = [];
+  for (let i = 0; ; i++) {
+    let advanced = false;
+    for (const list of lists) {
+      const v = list[i];
+      if (v) { advanced = true; if (!seen.has(v.id)) { seen.add(v.id); pool.push(v); } }
+    }
+    if (!advanced) break;
+  }
+
+  if (pool.length === 0) {
     return NextResponse.json({ error: "no_videos" }, { status: 502 });
   }
 
-  // Prefer portrait/short-aspect when available; otherwise fall back to any.
-  const portrait = all.filter((v) => v.isPortrait);
-  const pool = portrait.length > 0 ? portrait : all;
   const idx = seedIdx(dateKey + "-" + refresh + "-shorts", pool.length);
   const pick = pool[idx];
 
-  return NextResponse.json({
-    videoId: pick.id,
-    title: pick.title,
-    channel: pick.channel,
-    published: pick.published,
-    thumb: pick.thumb,
-    isPortrait: pick.isPortrait,
-  });
+  return NextResponse.json(
+    {
+      videoId: pick.id,
+      title: pick.title || pick.channel,
+      channel: pick.channel,
+      thumb: `https://i.ytimg.com/vi/${pick.id}/hqdefault.jpg`,
+      isPortrait: true,
+    },
+    { headers: { "Cache-Control": "s-maxage=3600, stale-while-revalidate=21600" } },
+  );
 }

@@ -409,6 +409,27 @@ main { position: relative; z-index: 1; }
 }
 .animate-fadeIn { animation: fadeIn .5s cubic-bezier(.16, .84, .34, 1) both; }
 
+/* ---------- Wordle tile motion ---------- */
+@keyframes wordleReveal {
+  0%   { transform: rotateX(-90deg); }
+  100% { transform: rotateX(0deg); }
+}
+@keyframes wordleShake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-5px); }
+  40%      { transform: translateX(5px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
+}
+@keyframes wordleBounce {
+  0%   { transform: translateY(0); }
+  35%  { transform: translateY(-14px); }
+  60%  { transform: translateY(0); }
+  80%  { transform: translateY(-5px); }
+  100% { transform: translateY(0); }
+}
+@keyframes pop2048 { 0% { transform: scale(0.7); } 100% { transform: scale(1); } }
+
 /* Equalizer bars for the radio button. Three offset breath rates so the
    group reads as music-reactive rather than a metronome. */
 @keyframes eq1 { 0%,100% { height: 30%; } 50% { height: 95%; } }
@@ -451,68 +472,11 @@ main { position: relative; z-index: 1; }
 
 /* =======================================================================
    THEME VARIANTS
-   `.theme-paper` and `.theme-terminal` are applied to <html> by the
-   ThemeVariantButton and override the curated palette + a few shape /
-   typography knobs. They stack on top of `.dark`, but each variant ships
-   with its own dark/light handling so the result reads as a different
-   product, not a recolor.
+   `.theme-*` classes are applied to <html> by the ThemeVariantButton and
+   override the curated palette + a few shape / typography knobs. They stack
+   on top of `.dark`, but each variant ships with its own dark/light handling
+   so the result reads as a different product, not a recolor.
 ======================================================================= */
-
-/* ============== PAPER ============== */
-:root.theme-paper {
-  color-scheme: light;
-  --bg:           #f4f0e6;
-  --paper:        #ffffff;
-  --paper-2:      #fbf8ef;
-  --ink:          #1a1814;
-  --ink-soft:     #423d33;
-  --muted:        #6e6657;
-  --muted-2:      #a89e88;
-  --rule:         rgba(26, 24, 20, 0.14);
-  --rule-soft:    rgba(26, 24, 20, 0.06);
-  --accent:       #a16207;
-  --accent-soft:  rgba(161, 98, 7, 0.10);
-  --accent-2:     #1f2937;
-  --hl:           rgba(161, 98, 7, 0.08);
-  --up:           #15803d;
-  --down:         #b91c1c;
-  --grad-from:    #1f2937;
-  --grad-via:     #a16207;
-  --grad-to:      #b45309;
-  --glass:        #ffffff;
-  --glass-border: rgba(26, 24, 20, 0.10);
-  --glow:         rgba(161, 98, 7, 0.20);
-  --shadow-card:  0 6px 24px -14px rgba(26, 24, 20, 0.22), 0 1px 2px rgba(26, 24, 20, 0.05);
-  --shadow-hover: 0 18px 44px -18px rgba(26, 24, 20, 0.30), 0 2px 6px rgba(26, 24, 20, 0.06);
-  --aurora-1: transparent;
-  --aurora-2: transparent;
-  --aurora-3: transparent;
-  --aurora-4: transparent;
-  --grain:    0.02;
-}
-.theme-paper body::before { background: none; animation: none; }
-.theme-paper body { background: var(--bg); }
-.theme-paper .card {
-  background: var(--paper);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-  border-radius: 4px;
-  border: 1px solid var(--rule);
-  box-shadow: var(--shadow-card);
-}
-.theme-paper .card::before { display: none; }
-.theme-paper .card::after { display: none; }
-.theme-paper .card:hover { transform: none; border-color: var(--ink-soft); }
-.theme-paper .card-bare { border-radius: 4px; }
-.theme-paper .btn-ghost { border-radius: 4px; background: transparent; border-color: var(--rule); }
-.theme-paper .chip { border-radius: 4px; }
-.theme-paper .dot { box-shadow: none; }
-.theme-paper .text-gradient {
-  background: linear-gradient(118deg, var(--ink) 0%, var(--accent) 60%, var(--accent) 100%);
-  animation: none;
-  -webkit-background-clip: text; background-clip: text;
-}
-.theme-paper .font-display { font-weight: 800; letter-spacing: -0.04em; }
 
 /* ============== TERMINAL ============== */
 :root.theme-terminal {
@@ -646,34 +610,52 @@ main { position: relative; z-index: 1; }
   --grain:        0.06;
 }
 .theme-galaxy body { background: var(--bg); }
-/* Starfield: two layered radial-gradient repeats with offset, sized 200vh
-   to feel infinite, scrolling very slowly. Sits under the aurora layer. */
+/* Starfield — a DENSE field of stars for dark mode. Two tiled layers (a fine
+   far layer + a coarser near layer) at different sizes drift at different
+   speeds for parallax, plus a slow twinkle. No lines anywhere — just stars. */
 .theme-galaxy body::after {
   background-image:
-    radial-gradient(1px 1px at 23% 12%, #fff 50%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 67% 38%, #fff 40%, transparent 100%),
-    radial-gradient(1px 1px at 88% 62%, rgba(255,255,255,0.8) 45%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 41% 81%, rgba(255,255,255,0.9) 45%, transparent 100%),
-    radial-gradient(1px 1px at 12% 49%, rgba(255,255,255,0.7) 50%, transparent 100%),
-    radial-gradient(2px 2px at 78% 9%, #fff 40%, transparent 100%),
-    radial-gradient(1px 1px at 56% 71%, rgba(255,255,255,0.6) 50%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 33% 28%, rgba(255,255,255,0.85) 50%, transparent 100%);
-  background-size: 800px 800px;
-  animation: starfield 180s linear infinite;
-  opacity: 0.9;
+    /* near, brighter stars (bigger tile) */
+    radial-gradient(1.6px 1.6px at 12% 18%, #fff 50%, transparent 100%),
+    radial-gradient(2px 2px at 78% 9%, #fff 45%, transparent 100%),
+    radial-gradient(1.6px 1.6px at 41% 81%, rgba(255,255,255,0.95) 50%, transparent 100%),
+    radial-gradient(1.4px 1.4px at 64% 54%, #fff 50%, transparent 100%),
+    radial-gradient(2px 2px at 27% 62%, rgba(214,224,255,0.95) 45%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 90% 72%, #fff 50%, transparent 100%),
+    /* far, fine star dust (smaller tile via second background-size) */
+    radial-gradient(1px 1px at 8% 42%, rgba(255,255,255,0.85) 50%, transparent 100%),
+    radial-gradient(1px 1px at 33% 12%, rgba(255,255,255,0.8) 50%, transparent 100%),
+    radial-gradient(1px 1px at 55% 28%, rgba(255,255,255,0.8) 50%, transparent 100%),
+    radial-gradient(1px 1px at 72% 38%, rgba(255,255,255,0.75) 50%, transparent 100%),
+    radial-gradient(1px 1px at 88% 22%, rgba(255,255,255,0.8) 50%, transparent 100%),
+    radial-gradient(1px 1px at 18% 73%, rgba(255,255,255,0.75) 50%, transparent 100%),
+    radial-gradient(1px 1px at 47% 67%, rgba(255,255,255,0.8) 50%, transparent 100%),
+    radial-gradient(1px 1px at 62% 88%, rgba(255,255,255,0.7) 50%, transparent 100%),
+    radial-gradient(1px 1px at 82% 92%, rgba(255,255,255,0.8) 50%, transparent 100%),
+    radial-gradient(1px 1px at 5% 90%, rgba(255,255,255,0.7) 50%, transparent 100%);
+  background-size:
+    520px 520px, 520px 520px, 520px 520px, 520px 520px, 520px 520px, 520px 520px,
+    260px 260px, 260px 260px, 260px 260px, 260px 260px, 260px 260px,
+    260px 260px, 260px 260px, 260px 260px, 260px 260px, 260px 260px;
+  animation: starfield 200s linear infinite, twinkle 5.5s ease-in-out infinite;
+  opacity: 0.95;
   mix-blend-mode: screen;
 }
 @keyframes starfield {
-  from { background-position: 0 0, 200px 100px, 400px 250px, 100px 400px, 600px 50px, 150px 600px, 350px 300px, 500px 700px; }
-  to   { background-position: 800px 800px, 1000px 900px, 1200px 1050px, 900px 1200px, 1400px 850px, 950px 1400px, 1150px 1100px, 1300px 1500px; }
+  from { background-position: 0 0; }
+  to   { background-position: 520px 900px; }
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.7; }
+  50%      { opacity: 1; }
 }
 .theme-galaxy .text-gradient {
   background: linear-gradient(118deg, #6366f1, #c084fc 45%, #22d3ee);
   -webkit-background-clip: text; background-clip: text;
 }
-/* Concept layer — Galaxy gets a slow nebula sweep on the body, every card
-   gets a faint orbital ring etched on it (a "planet card"), and the
-   header dot becomes a tiny ringed planet. */
+/* Concept layer — Galaxy gets a slow nebula sweep on the body and the header
+   dot becomes a tiny ringed planet. (No etched lines/rings on cards — the
+   atmosphere is carried entirely by the dense starfield + nebula.) */
 .theme-galaxy body::before {
   filter: blur(110px) saturate(170%);
   animation: nebulaDrift 70s ease-in-out infinite alternate;
@@ -682,23 +664,6 @@ main { position: relative; z-index: 1; }
   from { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
   to   { transform: translate3d(-3%, 2%, 0) scale(1.18) rotate(8deg); }
 }
-.theme-galaxy .card::before {
-  /* faint orbital ellipse across each card */
-  content: "";
-  display: block !important;
-  position: absolute;
-  inset: 14% -10%;
-  border: 1px solid rgba(192, 132, 252, 0.18);
-  border-radius: 50%;
-  transform: rotate(-12deg);
-  padding: 0 !important;
-  pointer-events: none;
-  background: none !important;
-  mask: none !important;
-  -webkit-mask: none !important;
-  z-index: 0;
-}
-.theme-galaxy .headrule, .theme-galaxy > * { position: relative; z-index: 1; }
 .theme-galaxy .dot {
   background: radial-gradient(circle at 30% 30%, #ffffff, #c084fc 60%, #4c1d95);
   box-shadow:
@@ -707,83 +672,6 @@ main { position: relative; z-index: 1; }
     0 0 12px rgba(192,132,252,0.45),
     0 0 24px rgba(34,211,238,0.30);
 }
-
-/* ============== MATTE DARK ============== */
-/* Default mode is dark — minimalist charcoal, low gloss, low saturation. */
-:root.theme-matte {
-  color-scheme: dark;
-  --bg:           #131316;
-  --paper:        rgba(255, 255, 255, 0.03);
-  --paper-2:      rgba(255, 255, 255, 0.06);
-  --ink:          #ebebee;
-  --ink-soft:     #b8b8c1;
-  --muted:        #7a7a85;
-  --muted-2:      #4d4d57;
-  --rule:         rgba(255, 255, 255, 0.085);
-  --rule-soft:    rgba(255, 255, 255, 0.04);
-  --accent:       #e6e6e8;
-  --accent-soft:  rgba(230, 230, 232, 0.10);
-  --accent-2:     #9aa0a6;
-  --hl:           rgba(230, 230, 232, 0.07);
-  --up:           #6ee7b7;
-  --down:         #fda4af;
-  --grad-from:    #9aa0a6;
-  --grad-via:     #e6e6e8;
-  --grad-to:      #6ee7b7;
-  --glass:        #1a1a1c;
-  --glass-border: rgba(255, 255, 255, 0.07);
-  --glow:         rgba(230, 230, 232, 0.10);
-  --shadow-card:  0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 8px 20px -16px rgba(0, 0, 0, 0.6);
-  --shadow-hover: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 14px 28px -16px rgba(0, 0, 0, 0.7);
-  --aurora-1: transparent; --aurora-2: transparent;
-  --aurora-3: transparent; --aurora-4: transparent;
-  --grain: 0.02;
-}
-/* Light variant — matte WHITE: pure flat off-white, no glass. */
-:root.theme-matte:not(.dark) {
-  color-scheme: light;
-  --bg:           #f4f4f5;
-  --paper:        #ffffff;
-  --paper-2:      #fafafa;
-  --ink:          #1a1a1c;
-  --ink-soft:     #45454a;
-  --muted:        #71717a;
-  --muted-2:      #a1a1aa;
-  --rule:         rgba(26, 26, 28, 0.10);
-  --rule-soft:    rgba(26, 26, 28, 0.04);
-  --accent:       #1a1a1c;
-  --accent-soft:  rgba(26, 26, 28, 0.06);
-  --accent-2:     #525258;
-  --hl:           rgba(26, 26, 28, 0.04);
-  --up:           #047857;
-  --down:         #b91c1c;
-  --grad-from:    #1a1a1c;
-  --grad-via:     #525258;
-  --grad-to:      #9ca3af;
-  --glass:        #ffffff;
-  --glass-border: rgba(26, 26, 28, 0.08);
-  --glow:         rgba(26, 26, 28, 0.06);
-  --shadow-card:  0 1px 2px rgba(26, 26, 28, 0.04), 0 4px 12px -10px rgba(26, 26, 28, 0.14);
-  --shadow-hover: 0 2px 4px rgba(26, 26, 28, 0.06), 0 10px 22px -12px rgba(26, 26, 28, 0.22);
-}
-.theme-matte body::before { background: none; animation: none; }
-.theme-matte body { background: var(--bg); }
-.theme-matte .card {
-  -webkit-backdrop-filter: none; backdrop-filter: none;
-  border-radius: 10px;
-}
-.theme-matte .card::before { display: none; }
-.theme-matte .card::after { display: none; }
-.theme-matte .card-bare { border-radius: 8px; }
-.theme-matte .btn-ghost { border-radius: 8px; }
-.theme-matte .chip { border-radius: 8px; }
-.theme-matte .dot { box-shadow: none; }
-.theme-matte .text-gradient {
-  background: linear-gradient(118deg, var(--grad-from), var(--grad-via) 50%, var(--grad-to));
-  -webkit-background-clip: text; background-clip: text;
-  animation: none;
-}
-.theme-matte .font-display { letter-spacing: -0.04em; font-weight: 700; }
 
 /* ============== ACCOUNTING ============== */
 :root.theme-accounting {
@@ -853,34 +741,6 @@ main { position: relative; z-index: 1; }
    has chosen. Themes whose base already matches the requested mode are
    untouched.
 ======================================================================= */
-
-/* ---------- PAPER · DARK (newspaper at night) ---------- */
-:root.theme-paper.dark {
-  color-scheme: dark;
-  --bg:           #15120c;
-  --paper:        #1c1812;
-  --paper-2:      #221d15;
-  --ink:          #f0e8d6;
-  --ink-soft:     #c3b9a1;
-  --muted:        #8a7d63;
-  --muted-2:      #5a503e;
-  --rule:         rgba(240, 232, 214, 0.10);
-  --rule-soft:    rgba(240, 232, 214, 0.04);
-  --accent:       #d4a857;
-  --accent-soft:  rgba(212, 168, 87, 0.12);
-  --accent-2:     #c3b9a1;
-  --hl:           rgba(212, 168, 87, 0.08);
-  --up:           #a3c585;
-  --down:         #e57373;
-  --grad-from:    #c3b9a1;
-  --grad-via:     #d4a857;
-  --grad-to:      #b85c2a;
-  --glass:        #1c1812;
-  --glass-border: rgba(240, 232, 214, 0.10);
-  --glow:         rgba(212, 168, 87, 0.20);
-  --shadow-card:  0 10px 26px -16px rgba(0, 0, 0, 0.7);
-  --shadow-hover: 0 22px 50px -22px rgba(0, 0, 0, 0.85);
-}
 
 /* ---------- TERMINAL · LIGHT (green phosphor on paper — stays green) ---------- */
 :root.theme-terminal:not(.dark) {
@@ -987,86 +847,10 @@ main { position: relative; z-index: 1; }
 }
 
 /* =======================================================================
-   FIVE MORE THEMES — Synthwave · Forest · Mono · Sakura · Nord
+   CONCEPT & PALETTE THEMES — Forest · Mono · Nord
    Each ships with a dark and a light counter-variant so the global
    ThemeToggle flips brightness within the family.
 ======================================================================= */
-
-/* ============== SYNTHWAVE (base dark) ============== */
-:root.theme-synthwave {
-  color-scheme: dark;
-  --bg:           #160d2e;
-  --paper:        rgba(255, 255, 255, 0.045);
-  --paper-2:      rgba(255, 90, 200, 0.08);
-  --ink:          #fdf0ff;
-  --ink-soft:     #d9bff0;
-  --muted:        #9a7fc4;
-  --muted-2:      #5e4a85;
-  --rule:         rgba(255, 90, 200, 0.20);
-  --rule-soft:    rgba(255, 90, 200, 0.09);
-  --accent:       #ff2e97;
-  --accent-soft:  rgba(255, 46, 151, 0.16);
-  --accent-2:     #2de2e6;
-  --hl:           rgba(255, 46, 151, 0.14);
-  --up:           #2de2e6;
-  --down:         #ff5c8a;
-  --grad-from:    #7a2bbf;
-  --grad-via:     #ff2e97;
-  --grad-to:      #2de2e6;
-  --glass:        rgba(30, 16, 56, 0.55);
-  --glass-border: rgba(255, 90, 200, 0.28);
-  --glow:         rgba(255, 46, 151, 0.45);
-  --shadow-card:  0 0 0 1px rgba(255, 46, 151, 0.10), 0 14px 40px -16px rgba(45, 226, 230, 0.30);
-  --shadow-hover: 0 0 0 1px rgba(255, 46, 151, 0.25), 0 24px 60px -20px rgba(255, 46, 151, 0.45);
-  --aurora-1: rgba(122, 43, 191, 0.55);
-  --aurora-2: rgba(255, 46, 151, 0.35);
-  --aurora-3: rgba(45, 226, 230, 0.30);
-  --aurora-4: rgba(0, 0, 0, 0.5);
-  --grain: 0.05;
-}
-.theme-synthwave .text-gradient {
-  background: linear-gradient(118deg, #ff2e97, #c084fc 45%, #2de2e6);
-  -webkit-background-clip: text; background-clip: text;
-}
-/* retro horizon grid at the bottom of the page */
-.theme-synthwave body::after {
-  background-image:
-    linear-gradient(rgba(255,46,151,0.18) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(45,226,230,0.14) 1px, transparent 1px);
-  background-size: 44px 44px;
-  background-position: bottom center;
-  -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 38%);
-          mask-image: linear-gradient(to top, #000 0%, transparent 38%);
-  opacity: 0.6;
-  mix-blend-mode: screen;
-}
-:root.theme-synthwave:not(.dark) {
-  color-scheme: light;
-  --bg:           #fdeef9;
-  --paper:        #ffffff;
-  --paper-2:      #fff5fc;
-  --ink:          #2a0f3f;
-  --ink-soft:     #6b2d7a;
-  --muted:        #9c5fae;
-  --muted-2:      #cf9fdb;
-  --rule:         rgba(192, 38, 132, 0.16);
-  --rule-soft:    rgba(192, 38, 132, 0.06);
-  --accent:       #d6228a;
-  --accent-soft:  rgba(214, 34, 138, 0.10);
-  --accent-2:     #0e9aa0;
-  --hl:           rgba(214, 34, 138, 0.08);
-  --up:           #0e9aa0;
-  --down:         #c2185b;
-  --grad-from:    #7a2bbf;
-  --grad-via:     #d6228a;
-  --grad-to:      #0e9aa0;
-  --glass:        #ffffff;
-  --glass-border: rgba(192, 38, 132, 0.12);
-  --glow:         rgba(214, 34, 138, 0.20);
-  --aurora-1: rgba(122,43,191,0.12); --aurora-2: rgba(214,34,138,0.12);
-  --aurora-3: rgba(14,154,160,0.10); --aurora-4: transparent;
-}
-.theme-synthwave:not(.dark) body::after { background-image: none; }
 
 /* ============== FOREST (base dark) ============== */
 :root.theme-forest {
@@ -1131,6 +915,39 @@ main { position: relative; z-index: 1; }
   --aurora-3: transparent; --aurora-4: transparent;
 }
 .theme-forest:not(.dark) body::before { background: none; animation: none; }
+
+/* Concept layer — Forest is a living woodland, not a green recolor: shafts of
+   sunlight rake down through an unseen canopy and drift, cards take on a faint
+   vertical bark grain with a moss-lit top edge, and corners soften organically. */
+.theme-forest body::after {
+  opacity: 1;
+  mix-blend-mode: screen;
+  background-image:
+    repeating-linear-gradient(105deg,
+      rgba(206,255,184,0.07) 0px, rgba(206,255,184,0.07) 2px,
+      transparent 2px, transparent 74px),
+    radial-gradient(130% 55% at 60% -8%, rgba(180,230,150,0.12), transparent 70%);
+  -webkit-mask-image: linear-gradient(165deg, #000 0%, rgba(0,0,0,0.45) 45%, transparent 82%);
+          mask-image: linear-gradient(165deg, #000 0%, rgba(0,0,0,0.45) 45%, transparent 82%);
+  animation: forestShafts 26s ease-in-out infinite alternate;
+}
+@keyframes forestShafts {
+  from { transform: translateX(-3.5%); opacity: 0.5; }
+  to   { transform: translateX(3.5%); opacity: 0.9; }
+}
+.theme-forest:not(.dark) body::after { opacity: 0.55; }
+.theme-forest .card {
+  border-radius: 16px;
+  background-image: repeating-linear-gradient(90deg, rgba(74,120,70,0.05) 0 1px, transparent 1px 7px);
+  box-shadow: var(--shadow-card), inset 0 1px 0 rgba(180,230,150,0.10);
+}
+.theme-forest .card:hover { box-shadow: var(--shadow-hover), inset 0 1px 0 rgba(180,230,150,0.16); }
+.theme-forest .card-bare { border-radius: 12px; }
+.theme-forest .btn-ghost, .theme-forest .chip { border-radius: 12px; }
+.theme-forest .dot {
+  background: radial-gradient(circle at 32% 30%, #d8f3c0, var(--accent) 65%, #14532d);
+  box-shadow: 0 0 10px var(--glow);
+}
 
 /* ============== MONO (base light — brutalist B/W) ============== */
 :root.theme-mono {
@@ -1208,71 +1025,6 @@ main { position: relative; z-index: 1; }
   background: none; -webkit-text-fill-color: var(--ink); color: var(--ink); animation: none;
 }
 
-/* ============== SAKURA (base light) ============== */
-:root.theme-sakura {
-  color-scheme: light;
-  --bg:           #fdf0f3;
-  --paper:        #ffffff;
-  --paper-2:      #fff6f9;
-  --ink:          #3b2230;
-  --ink-soft:     #6e4257;
-  --muted:        #a06b80;
-  --muted-2:      #d0a8b8;
-  --rule:         rgba(59, 34, 48, 0.12);
-  --rule-soft:    rgba(59, 34, 48, 0.05);
-  --accent:       #e0567a;
-  --accent-soft:  rgba(224, 86, 122, 0.10);
-  --accent-2:     #b98bd4;
-  --hl:           rgba(224, 86, 122, 0.07);
-  --up:           #5a9e7a;
-  --down:         #d6455f;
-  --grad-from:    #f9a8c4;
-  --grad-via:     #e0567a;
-  --grad-to:      #b98bd4;
-  --glass:        rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(224, 86, 122, 0.14);
-  --glow:         rgba(224, 86, 122, 0.22);
-  --shadow-card:  0 1px 2px rgba(59, 34, 48, 0.04), 0 10px 26px -16px rgba(224, 86, 122, 0.28);
-  --shadow-hover: 0 2px 4px rgba(59, 34, 48, 0.06), 0 20px 42px -20px rgba(224, 86, 122, 0.38);
-  --aurora-1: rgba(249, 168, 196, 0.40);
-  --aurora-2: rgba(224, 86, 122, 0.18);
-  --aurora-3: rgba(185, 139, 212, 0.22);
-  --aurora-4: transparent;
-  --grain: 0.03;
-}
-.theme-sakura .text-gradient {
-  background: linear-gradient(118deg, #e0567a, #f9a8c4 50%, #b98bd4);
-  -webkit-background-clip: text; background-clip: text;
-}
-:root.theme-sakura.dark {
-  color-scheme: dark;
-  --bg:           #1c0f17;
-  --paper:        rgba(255, 220, 235, 0.05);
-  --paper-2:      rgba(255, 220, 235, 0.08);
-  --ink:          #ffe6ef;
-  --ink-soft:     #e0b8cb;
-  --muted:        #b083a0;
-  --muted-2:      #6e4a5e;
-  --rule:         rgba(255, 200, 224, 0.12);
-  --rule-soft:    rgba(255, 200, 224, 0.05);
-  --accent:       #ff8fb3;
-  --accent-soft:  rgba(255, 143, 179, 0.14);
-  --accent-2:     #c9a4ec;
-  --hl:           rgba(255, 143, 179, 0.10);
-  --up:           #86d3a8;
-  --down:         #ff6f8a;
-  --grad-from:    #c9a4ec;
-  --grad-via:     #ff8fb3;
-  --grad-to:      #ffd1dc;
-  --glass:        rgba(40, 22, 33, 0.55);
-  --glass-border: rgba(255, 200, 224, 0.10);
-  --glow:         rgba(255, 143, 179, 0.30);
-  --aurora-1: rgba(201, 164, 236, 0.40);
-  --aurora-2: rgba(255, 143, 179, 0.28);
-  --aurora-3: rgba(120, 80, 110, 0.30);
-  --aurora-4: rgba(0, 0, 0, 0.4);
-}
-
 /* ============== NORD (base dark) ============== */
 :root.theme-nord {
   color-scheme: dark;
@@ -1334,6 +1086,194 @@ main { position: relative; z-index: 1; }
   --glow:         rgba(94, 129, 172, 0.16);
   --aurora-1: rgba(94,129,172,0.12); --aurora-2: rgba(129,161,193,0.10);
   --aurora-3: rgba(180,142,173,0.10); --aurora-4: transparent;
+}
+
+/* =======================================================================
+   WATER (concept) — underwater calm: caustic light, rising bubbles, aqua glass
+======================================================================= */
+:root.theme-water {
+  color-scheme: dark;
+  --bg:           #04212e;
+  --paper:        rgba(120, 220, 230, 0.05);
+  --paper-2:      rgba(120, 220, 230, 0.085);
+  --ink:          #e6fbff;
+  --ink-soft:     #b6e6ec;
+  --muted:        #6fa7b3;
+  --muted-2:      #3f6f7a;
+  --rule:         rgba(120, 220, 230, 0.16);
+  --rule-soft:    rgba(120, 220, 230, 0.07);
+  --accent:       #34d3e0;
+  --accent-soft:  rgba(52, 211, 224, 0.15);
+  --accent-2:     #7fe7d9;
+  --hl:           rgba(52, 211, 224, 0.12);
+  --up:           #4fd6b0;
+  --down:         #ff8aa0;
+  --grad-from:    #0a6e8c;
+  --grad-via:     #34d3e0;
+  --grad-to:      #7fe7d9;
+  --glass:        rgba(8, 40, 55, 0.55);
+  --glass-border: rgba(120, 220, 230, 0.18);
+  --glow:         rgba(52, 211, 224, 0.40);
+  --shadow-card:  0 14px 38px -16px rgba(0, 20, 30, 0.80), inset 0 1px 0 rgba(200, 250, 255, 0.06);
+  --shadow-hover: 0 26px 60px -22px rgba(0, 40, 60, 0.85), inset 0 1px 0 rgba(200, 250, 255, 0.10);
+  --aurora-1:     rgba(10, 110, 140, 0.55);
+  --aurora-2:     rgba(52, 211, 224, 0.30);
+  --aurora-3:     rgba(20, 80, 120, 0.35);
+  --aurora-4:     rgba(0, 10, 20, 0.60);
+  --grain:        0.04;
+}
+:root.theme-water:not(.dark) {
+  color-scheme: light;
+  --bg:           #e3f6fb;
+  --paper:        #ffffff;
+  --paper-2:      #f2fbfd;
+  --ink:          #06303d;
+  --ink-soft:     #2a5c69;
+  --muted:        #5f8893;
+  --muted-2:      #a3c4cc;
+  --rule:         rgba(6, 48, 61, 0.12);
+  --rule-soft:    rgba(6, 48, 61, 0.05);
+  --accent:       #0891b2;
+  --accent-soft:  rgba(8, 145, 178, 0.10);
+  --accent-2:     #0e9488;
+  --hl:           rgba(8, 145, 178, 0.07);
+  --up:           #0e9488;
+  --down:         #e11d6a;
+  --grad-from:    #0e7490;
+  --grad-via:     #06b6d4;
+  --grad-to:      #5eead4;
+  --glass:        rgba(255, 255, 255, 0.70);
+  --glass-border: rgba(6, 48, 61, 0.10);
+  --glow:         rgba(8, 145, 178, 0.20);
+  --shadow-card:  0 1px 2px rgba(6, 48, 61, 0.04), 0 10px 26px -16px rgba(8, 145, 178, 0.28);
+  --shadow-hover: 0 2px 4px rgba(6, 48, 61, 0.06), 0 20px 44px -20px rgba(8, 145, 178, 0.38);
+  --aurora-1: rgba(8,145,178,0.16); --aurora-2: rgba(94,234,212,0.16);
+  --aurora-3: rgba(14,116,144,0.12); --aurora-4: transparent;
+}
+.theme-water .text-gradient {
+  background: linear-gradient(118deg, #0a6e8c, #34d3e0 50%, #7fe7d9);
+  -webkit-background-clip: text; background-clip: text;
+}
+/* Caustic surface light + a column of bubbles rising from the depths. */
+.theme-water body::after {
+  opacity: 0.9;
+  mix-blend-mode: screen;
+  background-image:
+    radial-gradient(2px 2px at 20% 90%, rgba(220,255,255,0.55), transparent 60%),
+    radial-gradient(1.5px 1.5px at 50% 95%, rgba(220,255,255,0.45), transparent 60%),
+    radial-gradient(2px 2px at 76% 88%, rgba(220,255,255,0.50), transparent 60%),
+    radial-gradient(1.5px 1.5px at 36% 92%, rgba(220,255,255,0.42), transparent 60%),
+    radial-gradient(1.5px 1.5px at 88% 93%, rgba(220,255,255,0.42), transparent 60%),
+    radial-gradient(70% 32% at 50% -6%, rgba(150,240,255,0.12), transparent 70%);
+  background-size: 300px 600px, 380px 720px, 340px 660px, 420px 760px, 280px 700px, 100% 100%;
+  animation: bubbles 16s linear infinite;
+}
+@keyframes bubbles {
+  from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 50% 0; }
+  to   { background-position: 0 -600px, 0 -720px, 0 -660px, 0 -760px, 0 -700px, 50% 0; }
+}
+.theme-water:not(.dark) body::after { opacity: 0.5; }
+.theme-water .card { border-radius: 18px; }
+.theme-water .card-bare, .theme-water .btn-ghost, .theme-water .chip { border-radius: 13px; }
+.theme-water .dot {
+  background: radial-gradient(circle at 32% 30%, #e6ffff, var(--accent) 60%, #0a6e8c);
+  box-shadow: 0 0 0 3px rgba(52,211,224,0.12), 0 0 12px var(--glow);
+}
+
+/* =======================================================================
+   LUST (concept) — candlelit & intimate: deep crimson velvet, a slow
+   breathing glow, rose-gold warmth. Sensual, never explicit.
+======================================================================= */
+:root.theme-lust {
+  color-scheme: dark;
+  --bg:           #160206;
+  --paper:        rgba(255, 80, 90, 0.05);
+  --paper-2:      rgba(255, 80, 90, 0.085);
+  --ink:          #ffe7ea;
+  --ink-soft:     #e6b4bc;
+  --muted:        #b07882;
+  --muted-2:      #6e3a44;
+  --rule:         rgba(230, 120, 130, 0.18);
+  --rule-soft:    rgba(230, 120, 130, 0.08);
+  --accent:       #e0294a;
+  --accent-soft:  rgba(224, 41, 74, 0.16);
+  --accent-2:     #e8b06a;
+  --hl:           rgba(224, 41, 74, 0.14);
+  --up:           #e8b06a;
+  --down:         #ff5c7a;
+  --grad-from:    #7a0b22;
+  --grad-via:     #e0294a;
+  --grad-to:      #e8b06a;
+  --glass:        rgba(40, 8, 14, 0.60);
+  --glass-border: rgba(230, 120, 130, 0.20);
+  --glow:         rgba(224, 41, 74, 0.45);
+  --shadow-card:  0 16px 44px -18px rgba(0, 0, 0, 0.85), 0 0 40px -20px rgba(224, 41, 74, 0.40);
+  --shadow-hover: 0 26px 64px -22px rgba(0, 0, 0, 0.90), 0 0 60px -20px rgba(224, 41, 74, 0.55);
+  --aurora-1:     rgba(122, 11, 34, 0.60);
+  --aurora-2:     rgba(224, 41, 74, 0.35);
+  --aurora-3:     rgba(232, 176, 106, 0.22);
+  --aurora-4:     rgba(10, 0, 4, 0.60);
+  --grain:        0.05;
+}
+:root.theme-lust:not(.dark) {
+  color-scheme: light;
+  --bg:           #fbeef0;
+  --paper:        #fffafb;
+  --paper-2:      #fff3f5;
+  --ink:          #3a0f18;
+  --ink-soft:     #6e2733;
+  --muted:        #a06673;
+  --muted-2:      #d0a3ac;
+  --rule:         rgba(58, 15, 24, 0.12);
+  --rule-soft:    rgba(58, 15, 24, 0.05);
+  --accent:       #c81e43;
+  --accent-soft:  rgba(200, 30, 67, 0.10);
+  --accent-2:     #c08a3e;
+  --hl:           rgba(200, 30, 67, 0.07);
+  --up:           #b07d2a;
+  --down:         #c81e43;
+  --grad-from:    #8a1230;
+  --grad-via:     #c81e43;
+  --grad-to:      #d99a5a;
+  --glass:        rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(58, 15, 24, 0.10);
+  --glow:         rgba(200, 30, 67, 0.22);
+  --shadow-card:  0 1px 2px rgba(58, 15, 24, 0.04), 0 12px 30px -16px rgba(200, 30, 67, 0.30);
+  --shadow-hover: 0 2px 4px rgba(58, 15, 24, 0.06), 0 22px 48px -20px rgba(200, 30, 67, 0.40);
+  --aurora-1: rgba(200,30,67,0.14); --aurora-2: rgba(217,154,90,0.14);
+  --aurora-3: rgba(138,18,48,0.10); --aurora-4: transparent;
+}
+.theme-lust .font-display { font-family: "Playfair Display", Georgia, "Times New Roman", serif; font-weight: 600; letter-spacing: -0.01em; }
+.theme-lust .text-gradient {
+  background: linear-gradient(118deg, #e0294a, #ff7a9c 45%, #e8b06a);
+  -webkit-background-clip: text; background-clip: text;
+}
+/* The candle breathes; the room darkens at the edges into a soft vignette;
+   a faint diagonal sheen reads as velvet. */
+.theme-lust body::before {
+  filter: blur(95px) saturate(165%);
+  animation: aurora 36s ease-in-out infinite alternate, lustBreath 7s ease-in-out infinite;
+}
+@keyframes lustBreath {
+  0%, 100% { opacity: 0.7; }
+  50%      { opacity: 1; }
+}
+.theme-lust body::after {
+  opacity: 1;
+  mix-blend-mode: normal;
+  background-image:
+    radial-gradient(120% 95% at 50% 50%, transparent 42%, rgba(8, 0, 3, 0.55) 100%),
+    repeating-linear-gradient(135deg, rgba(255, 190, 160, 0.028) 0 3px, transparent 3px 9px);
+}
+.theme-lust:not(.dark) body::after {
+  background-image: repeating-linear-gradient(135deg, rgba(180, 60, 80, 0.03) 0 3px, transparent 3px 9px);
+}
+.theme-lust .card { border-radius: 18px; }
+.theme-lust .card-bare, .theme-lust .btn-ghost, .theme-lust .chip { border-radius: 13px; }
+.theme-lust .dot {
+  background: radial-gradient(circle at 32% 30%, #fff0f0, var(--accent) 55%, #7a0b22);
+  box-shadow: 0 0 12px var(--glow), 0 0 24px rgba(232, 176, 106, 0.30);
+  animation: lustBreath 5s ease-in-out infinite;
 }
 
 /* =======================================================================
