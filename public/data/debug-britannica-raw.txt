@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-06-05T12:26:36.174Z
+# generated: 2026-06-05T14:02:30.273Z
 # url:       https://www.britannica.com/on-this-day/june-5
 # fetcher:   Wayback Machine
 # kind:      html
