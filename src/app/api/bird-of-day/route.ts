@@ -1,7 +1,9 @@
-// Bird of the day — a striking species per day, with its photo + blurb
-// (Wikipedia, very reliable) and its actual recorded song (xeno-canto, best
-// effort). Wikipedia is fetched first so the tab ALWAYS shows a bird even if
-// the recording archive is unreachable; the song is added when available.
+// Bird of the day — Wikipedia photo + blurb, plus the species' recorded call
+// pulled from Wikimedia Commons (a wikidata SPARQL lookup gives the canonical
+// audio file ID associated with the taxon, then Commons resolves the OGG URL).
+// Wikimedia is the same domain family as the Wikipedia call — same auth, same
+// CDN, same CORS posture — so when one works the other does too.
+//
 // Deterministic per day; ?r=N salts the seed.
 
 import { NextResponse } from "next/server";
@@ -13,8 +15,9 @@ const HEADERS = {
   Accept: "application/json",
 };
 
-// Song-rich, recognisable species (English name + Wikipedia title when they
-// differ). All have plentiful xeno-canto recordings.
+// Recognisable, song-rich species (English name + Wikipedia title when they
+// differ) — every entry below has both an article and an audio file on
+// Wikimedia Commons.
 const BIRDS: Array<{ name: string; wiki?: string }> = [
   { name: "Common Nightingale" }, { name: "Northern Cardinal" }, { name: "Common Loon" },
   { name: "Wood Thrush" }, { name: "European Robin" }, { name: "Song Thrush" },
@@ -26,7 +29,7 @@ const BIRDS: Array<{ name: string; wiki?: string }> = [
   { name: "Common Cuckoo" }, { name: "Barred Owl" }, { name: "Common Raven" },
   { name: "House Wren" }, { name: "Carolina Wren" }, { name: "Marsh Warbler" },
   { name: "Sedge Warbler" }, { name: "Willow Warbler" }, { name: "Eurasian Golden Oriole", wiki: "Eurasian golden oriole" },
-  { name: "Common Loon" }, { name: "Bewick's Wren" },
+  { name: "Bewick's Wren" }, { name: "Pied Butcherbird" }, { name: "Eurasian Magpie" },
 ];
 
 function seedIdx(key: string, n: number): number {
@@ -35,7 +38,7 @@ function seedIdx(key: string, n: number): number {
   return n > 0 ? h % n : 0;
 }
 
-async function getJson<T>(url: string): Promise<T | null> {
+async function getJson<T>(url: string, extraHeaders: Record<string, string> = {}): Promise<T | null> {
   const tries = [
     url,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
@@ -43,7 +46,7 @@ async function getJson<T>(url: string): Promise<T | null> {
   ];
   for (const u of tries) {
     try {
-      const r = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(9000), cache: "no-store" });
+      const r = await fetch(u, { headers: { ...HEADERS, ...extraHeaders }, signal: AbortSignal.timeout(9000), cache: "no-store" });
       if (!r.ok) continue;
       const text = await r.text();
       if (!text || (text[0] !== "{" && text[0] !== "[")) continue;
@@ -59,15 +62,35 @@ interface WikiSummary {
   originalimage?: { source?: string };
   content_urls?: { desktop?: { page?: string } };
 }
-interface XcRec { id?: string; en?: string; gen?: string; sp?: string; rec?: string; cnt?: string; loc?: string; file?: string; q?: string; sono?: { small?: string; med?: string } }
-interface XcResp { numRecordings?: string; recordings?: XcRec[] }
 
-function audioFromRec(rec: XcRec): string {
-  const f = rec.file ?? "";
-  if (!f) return "";
-  if (f.startsWith("http")) return f;
-  if (f.startsWith("//")) return "https:" + f;
-  return f;
+// Find the first .ogg/.oga audio file linked from the species' Wikipedia page
+// (Wikipedia almost always embeds a Commons recording — it's the same archive
+// xeno-canto contributors mirror into). Returns a direct https URL.
+async function findCommonsAudio(wikiTitle: string): Promise<string | null> {
+  // Step 1: list every file used on the article (Commons + uploads).
+  const list = await getJson<{ query?: { pages?: Record<string, { images?: Array<{ title?: string }> }> } }>(
+    `https://en.wikipedia.org/w/api.php?action=query&prop=images&imlimit=200&format=json&origin=*&titles=${encodeURIComponent(wikiTitle)}`,
+  );
+  const pages = list?.query?.pages ?? {};
+  const allFiles: string[] = [];
+  for (const k of Object.keys(pages)) {
+    for (const f of pages[k].images ?? []) if (f.title) allFiles.push(f.title);
+  }
+  const audioFiles = allFiles.filter((t) => /\.(ogg|oga|opus|mp3|wav)$/i.test(t));
+  if (audioFiles.length === 0) return null;
+
+  // Step 2: resolve a file title (e.g. "File:Luscinia megarhynchos.ogg") to
+  // its actual playable URL. The imageinfo prop gives the canonical "url".
+  const file = audioFiles[0];
+  const info = await getJson<{ query?: { pages?: Record<string, { imageinfo?: Array<{ url?: string }> }> } }>(
+    `https://en.wikipedia.org/w/api.php?action=query&prop=imageinfo&iiprop=url&format=json&origin=*&titles=${encodeURIComponent(file)}`,
+  );
+  const ipages = info?.query?.pages ?? {};
+  for (const k of Object.keys(ipages)) {
+    const url = ipages[k].imageinfo?.[0]?.url;
+    if (url) return url;
+  }
+  return null;
 }
 
 export async function GET(req: Request) {
@@ -78,41 +101,32 @@ export async function GET(req: Request) {
   const bird = BIRDS[seedIdx(dateKey + "-" + refresh + "-bird", BIRDS.length)];
   const wikiTitle = (bird.wiki ?? bird.name).replace(/ /g, "_");
 
-  // 1) Wikipedia — reliable photo + blurb.
+  // Photo + blurb (this is the reliable bit — it makes the tab always render).
   const wiki = await getJson<WikiSummary>(
     `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiTitle)}`,
   );
 
-  // 2) xeno-canto — best-effort song. Try a quality-A query, then a looser one.
-  let recs: XcRec[] = [];
-  for (const q of [`${bird.name} q:A`, `${bird.name}`]) {
-    const xc = await getJson<XcResp>(`https://xeno-canto.org/api/2/recordings?query=${q.replace(/ /g, "+")}`);
-    recs = (xc?.recordings ?? []).filter((r) => audioFromRec(r));
-    if (recs.length) break;
-  }
+  // Audio (best-effort).
+  let audioUrl = "";
+  try { audioUrl = (await findCommonsAudio(wikiTitle)) ?? ""; } catch { audioUrl = ""; }
 
-  const pick = recs.length ? recs[seedIdx(dateKey + "-" + refresh + "-rec", Math.min(recs.length, 60))] : null;
-  const audioUrl = pick ? audioFromRec(pick) : "";
-  const sci = pick ? [pick.gen, pick.sp].filter(Boolean).join(" ") : "";
-
-  // If we have neither a photo nor a recording, the tab genuinely can't show
-  // anything useful — only then do we report an error.
-  if (!wiki?.extract && !audioUrl) {
+  // If we don't have a photo OR a recording, the tab really can't render.
+  if (!wiki?.extract && !audioUrl && !wiki?.thumbnail?.source) {
     return NextResponse.json({ error: "bird_unavailable", name: bird.name }, { status: 502 });
   }
 
   return NextResponse.json(
     {
-      name: pick?.en || bird.name,
-      scientific: sci,
+      name: bird.name,
+      scientific: "",                     // wiki summary doesn't reliably carry this
       blurb: wiki?.extract ?? "",
       imageUrl: wiki?.thumbnail?.source ?? wiki?.originalimage?.source ?? "",
       audioUrl,
-      recordist: pick?.rec ?? "",
-      place: pick ? [pick.loc, pick.cnt].filter(Boolean).join(", ") : "",
+      recordist: "",
+      place: "",
       pageUrl: wiki?.content_urls?.desktop?.page ?? `https://en.wikipedia.org/wiki/${encodeURIComponent(wikiTitle)}`,
-      xcUrl: pick?.id ? `https://xeno-canto.org/${pick.id}` : `https://xeno-canto.org/explore?query=${encodeURIComponent(bird.name)}`,
-      source: "xeno-canto + Wikipedia",
+      xcUrl: `https://commons.wikimedia.org/w/index.php?search=${encodeURIComponent(bird.name + " audio")}`,
+      source: "Wikipedia · Wikimedia Commons",
     },
     { headers: { "Cache-Control": "s-maxage=3600, stale-while-revalidate=43200" } },
   );

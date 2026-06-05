@@ -153,47 +153,57 @@ function BirdPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: b
   useEffect(() => { setPlaying(false); if (audioRef.current) audioRef.current.pause(); }, [data?.audioUrl]);
 
   if (isLoading && !data) return <Loading />;
-  if (data?.error || !data?.audioUrl) return <Failed what="the aviary" />;
+  // Render whenever we have ANYTHING (photo OR song) — never bail just
+  // because the audio archive didn't return a recording.
+  if (data?.error || (!data?.imageUrl && !data?.audioUrl && !data?.blurb)) return <Failed what="the aviary" />;
 
+  const hasAudio = !!data?.audioUrl;
   function toggle() {
+    if (!hasAudio) return;
     const a = audioRef.current; if (!a) return;
-    if (a.paused) { a.play(); setPlaying(true); } else { a.pause(); setPlaying(false); }
+    if (a.paused) { a.play().catch(() => {}); setPlaying(true); } else { a.pause(); setPlaying(false); }
   }
 
   return (
     <div className="flex flex-col gap-3 h-full min-h-0">
       <div className="relative flex-[3] min-h-0 rounded-xl overflow-hidden bg-[var(--rule-soft)] border border-[var(--rule)]">
-        {data.imageUrl ? (
-          <a href={data.pageUrl} target="_blank" rel="noreferrer" className="absolute inset-0">
-            <img src={data.imageUrl} alt={data.name ?? ""} className="h-full w-full object-cover transition hover:scale-[1.01]" loading="lazy" />
+        {data!.imageUrl ? (
+          <a href={data!.pageUrl} target="_blank" rel="noreferrer" className="absolute inset-0">
+            <img src={data!.imageUrl} alt={data!.name ?? ""} className="h-full w-full object-cover transition hover:scale-[1.01]" loading="lazy" />
           </a>
         ) : (
           <div className="absolute inset-0 grid place-items-center"><BirdIcon className="h-12 w-12 text-muted-2" /></div>
         )}
         <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 rounded-full bg-black/55 backdrop-blur px-2 py-0.5 text-[10px] font-semibold text-white"><BirdIcon className="h-3 w-3" /> Bird of the day</span>
-        {/* play overlay for the song */}
-        <button onClick={toggle} aria-label={playing ? "Pause song" : "Play song"} className="absolute inset-0 grid place-items-center group">
-          <span className="grid h-14 w-14 place-items-center rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-white shadow-2xl transition group-hover:scale-110 group-hover:bg-white/25">
-            {playing ? <Pause className="h-6 w-6" fill="currentColor" /> : <Play className="h-6 w-6 translate-x-[2px]" fill="currentColor" />}
-          </span>
-        </button>
+        {/* play overlay — only when an audio source actually exists */}
+        {hasAudio && (
+          <button onClick={toggle} aria-label={playing ? "Pause song" : "Play song"} className="absolute inset-0 grid place-items-center group">
+            <span className="grid h-14 w-14 place-items-center rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-white shadow-2xl transition group-hover:scale-110 group-hover:bg-white/25">
+              {playing ? <Pause className="h-6 w-6" fill="currentColor" /> : <Play className="h-6 w-6 translate-x-[2px]" fill="currentColor" />}
+            </span>
+          </button>
+        )}
         <RollButton onRefresh={onRefresh} />
-        <audio ref={audioRef} src={data.audioUrl} preload="none" onEnded={() => setPlaying(false)} />
+        {hasAudio && <audio ref={audioRef} src={data!.audioUrl} preload="none" onEnded={() => setPlaying(false)} crossOrigin="anonymous" />}
       </div>
       <div className="flex flex-col min-h-0 flex-[2]">
         <div className="flex items-start gap-2 shrink-0">
           <div className="min-w-0 flex-1">
-            <a href={data.pageUrl} target="_blank" rel="noreferrer" title={data.name} className="block text-[13.5px] font-medium text-ink-soft hover:text-accent transition leading-snug line-clamp-1">{data.name}</a>
-            <div className="text-[10.5px] text-muted-2 italic truncate mt-0.5">{data.scientific}</div>
+            <a href={data!.pageUrl} target="_blank" rel="noreferrer" title={data!.name} className="block text-[13.5px] font-medium text-ink-soft hover:text-accent transition leading-snug line-clamp-1">{data!.name}</a>
+            {data!.scientific && <div className="text-[10.5px] text-muted-2 italic truncate mt-0.5">{data!.scientific}</div>}
           </div>
           <InfoButton on={showInfo} set={setShowInfo} />
         </div>
         {showInfo && (
           <div className="mt-2.5 text-[12.5px] leading-relaxed text-ink-soft min-h-0 flex-1 overflow-y-auto pr-1">
-            {data.blurb ? <p>{data.blurb}</p> : <p className="italic text-muted-2">No notes on this species.</p>}
+            {data!.blurb ? <p>{data!.blurb}</p> : <p className="italic text-muted-2">No notes on this species.</p>}
             <div className="text-[10.5px] text-muted-2 mt-2">
-              Song: <a href={data.xcUrl} target="_blank" rel="noreferrer" className="hover:text-accent underline">{data.recordist || "xeno-canto"}</a>
-              {data.place ? ` · ${data.place}` : ""}
+              {hasAudio ? (
+                <>Song: <a href={data!.xcUrl} target="_blank" rel="noreferrer" className="hover:text-accent underline">Wikimedia Commons</a></>
+              ) : (
+                <>No recording archived for this species — <a href={data!.xcUrl} target="_blank" rel="noreferrer" className="hover:text-accent underline">search Commons</a>.</>
+              )}
+              {data!.place ? ` · ${data!.place}` : ""}
             </div>
           </div>
         )}

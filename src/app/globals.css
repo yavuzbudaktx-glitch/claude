@@ -1751,32 +1751,32 @@ main { position: relative; z-index: 1; }
 ======================================================================= */
 :root.theme-mosaic {
   color-scheme: light;
-  --bg:           #f4e7cf;
-  --paper:        #fffaf0;
-  --paper-2:      #fff3dc;
-  --ink:          #2b1a10;
-  --ink-soft:     #5b3d2a;
-  --muted:        #8a6748;
-  --muted-2:      #b8997b;
-  --rule:         rgba(43, 26, 16, 0.16);
-  --rule-soft:    rgba(43, 26, 16, 0.07);
-  --accent:       #c0392b;            /* terracotta red */
-  --accent-soft:  rgba(192, 57, 43, 0.10);
-  --accent-2:     #1e4a82;            /* cobalt blue */
-  --hl:           rgba(192, 57, 43, 0.08);
+  --bg:           #fff4dc;             /* sunlit limewash */
+  --paper:        #ffffff;             /* clean chalk-white tile face */
+  --paper-2:      #fffaef;
+  --ink:          #1e1812;
+  --ink-soft:     #4a3a28;
+  --muted:        #7a684c;
+  --muted-2:      #b0a07e;
+  --rule:         rgba(30, 24, 18, 0.14);
+  --rule-soft:    rgba(30, 24, 18, 0.06);
+  --accent:       #b8341f;             /* deeper terracotta */
+  --accent-soft:  rgba(184, 52, 31, 0.10);
+  --accent-2:     #1a5fa8;             /* warmer cobalt */
+  --hl:           rgba(184, 52, 31, 0.08);
   --up:           #2e7d4f;
   --down:         #b3261e;
-  --grad-from:    #1e4a82;
-  --grad-via:     #c0392b;
+  --grad-from:    #1a5fa8;
+  --grad-via:     #b8341f;
   --grad-to:      #e0a82e;
-  --glass:        #fffaf0;
-  --glass-border: rgba(43, 26, 16, 0.16);
-  --glow:         rgba(192, 57, 43, 0.22);
-  --shadow-card:  0 1px 0 rgba(0,0,0,0.04), 0 12px 30px -16px rgba(43,26,16,0.32);
-  --shadow-hover: 0 2px 0 rgba(0,0,0,0.05), 0 22px 50px -20px rgba(43,26,16,0.42);
+  --glass:        #ffffff;
+  --glass-border: rgba(30, 24, 18, 0.22);
+  --glow:         rgba(184, 52, 31, 0.22);
+  --shadow-card:  0 1px 0 rgba(0,0,0,0.05), 0 14px 32px -18px rgba(30, 24, 18, 0.32);
+  --shadow-hover: 0 2px 0 rgba(0,0,0,0.06), 0 22px 50px -20px rgba(30, 24, 18, 0.42);
   --aurora-1: transparent; --aurora-2: transparent;
   --aurora-3: transparent; --aurora-4: transparent;
-  --grain:        0.03;
+  --grain:        0.02;
 }
 :root.theme-mosaic.dark {
   color-scheme: dark;
@@ -1840,16 +1840,10 @@ main { position: relative; z-index: 1; }
   border-radius: 10px;
   background: var(--paper);
   -webkit-backdrop-filter: none; backdrop-filter: none;
+  /* A single clean tile face — a hand-cut bevelled edge, no painted corner
+     rosettes (those competed with the body tilework and read as noise). */
   border: 1.5px solid var(--rule);
-  /* The card surface gets its OWN small mosaic — a quarter-rosette in each
-     corner, a chalk-white centre, framed by the grout-line border. */
-  background-image:
-    radial-gradient(circle at 0% 0%, var(--accent-soft) 0 22%, transparent 22%),
-    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--accent-2) 14%, transparent) 0 22%, transparent 22%),
-    radial-gradient(circle at 0% 100%, color-mix(in srgb, var(--accent-2) 14%, transparent) 0 22%, transparent 22%),
-    radial-gradient(circle at 100% 100%, var(--accent-soft) 0 22%, transparent 22%);
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
+  box-shadow: var(--shadow-card), inset 0 0 0 1px rgba(255, 255, 255, 0.6);
 }
 .theme-mosaic .card::before { display: none; }
 .theme-mosaic .card::after { display: none; }
@@ -1893,30 +1887,35 @@ main { position: relative; z-index: 1; }
 :root.theme-stainedglass {
   color-scheme: dark;
   --bg:           #060614;
-  --paper:        rgba(255, 255, 255, 0.04);
-  --paper-2:      rgba(255, 255, 255, 0.07);
-  --ink:          #f1eaff;
+  /* paper/paper-2 are used for inner surfaces (rows, chips, list items);
+     bump opacity so text on them is readable against the ruby card bloom. */
+  --paper:        rgba(255, 255, 255, 0.10);
+  --paper-2:      rgba(255, 255, 255, 0.14);
+  --ink:          #ffffff;
   --ink-soft:     #cdc0e4;
   --muted:        #8e82a8;
   --muted-2:      #5a527a;
   --rule:         rgba(0, 0, 0, 0.85);     /* the lead cane */
-  --rule-soft:    rgba(255, 255, 255, 0.08);
-  --accent:       #b02038;                  /* ruby */
-  --accent-soft:  rgba(176, 32, 56, 0.20);
-  --accent-2:     #1452a8;                  /* sapphire */
-  --hl:           rgba(176, 32, 56, 0.16);
-  --up:           #2faa6a;
-  --down:         #ff5a7a;
-  --grad-from:    #1452a8;
-  --grad-via:     #b02038;
-  --grad-to:      #e0a82e;
-  --glass:        rgba(12, 8, 28, 0.62);
+  --rule-soft:    rgba(255, 255, 255, 0.10);
+  --accent:       #ff4f6a;                  /* ruby — lifted for contrast on dark glass */
+  --accent-soft:  rgba(255, 79, 106, 0.20);
+  --accent-2:     #5b9cff;                  /* sapphire — lifted */
+  --hl:           rgba(255, 79, 106, 0.16);
+  --up:           #5be09a;
+  --down:         #ff7a92;
+  --grad-from:    #5b9cff;
+  --grad-via:     #ff4f6a;
+  --grad-to:      #ffd47a;
+  /* Cards are darker + opaque-er so any text on them is readable; the
+     jewel-pane bloom moved to a much softer inset so it no longer washes
+     the type out. The leaded background stays exactly as it was. */
+  --glass:        rgba(8, 6, 22, 0.86);
   --glass-border: #000;
-  --glow:         rgba(220, 80, 110, 0.55);
+  --glow:         rgba(255, 79, 106, 0.55);
   --shadow-card:  0 18px 50px -16px rgba(0, 0, 0, 0.90),
-                  inset 0 0 60px -20px rgba(176, 32, 56, 0.55);
+                  inset 0 0 40px -28px rgba(255, 79, 106, 0.32);
   --shadow-hover: 0 30px 70px -20px rgba(0, 0, 0, 0.95),
-                  inset 0 0 80px -16px rgba(176, 32, 56, 0.70);
+                  inset 0 0 60px -28px rgba(255, 79, 106, 0.40);
   --aurora-1: rgba(20, 82, 168, 0.55);
   --aurora-2: rgba(176, 32, 56, 0.45);
   --aurora-3: rgba(224, 168, 46, 0.28);
@@ -1995,14 +1994,16 @@ main { position: relative; z-index: 1; }
 .theme-stainedglass .card {
   border-radius: 14px;
   border: 2px solid var(--glass-border);
-  /* gentle inner gradient — each card is a single jewel pane */
+  /* A jewel-pane HINT only — the tint is much lighter than before so type
+     stays readable. The actual stained-glass character is carried by the
+     leaded body background; the card just whispers along with it. */
   background:
     linear-gradient(140deg,
-      color-mix(in srgb, var(--accent) 18%, var(--glass)) 0%,
-      var(--glass) 40%,
-      color-mix(in srgb, var(--accent-2) 14%, var(--glass)) 100%);
-  -webkit-backdrop-filter: blur(18px) saturate(150%);
-  backdrop-filter: blur(18px) saturate(150%);
+      color-mix(in srgb, var(--accent) 6%, var(--glass)) 0%,
+      var(--glass) 50%,
+      color-mix(in srgb, var(--accent-2) 5%, var(--glass)) 100%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
 }
 .theme-stainedglass .card::before {
   /* the highlight that sells leaded glass — a soft sheen along the top-left */
@@ -2176,108 +2177,116 @@ main { position: relative; z-index: 1; }
 ======================================================================= */
 :root.theme-leather {
   color-scheme: dark;
-  --bg:           #241712;             /* dark cognac hide */
-  --paper:        rgba(214, 178, 122, 0.06);
-  --paper-2:      rgba(214, 178, 122, 0.10);
-  --ink:          #f1e4cc;             /* warm cream */
-  --ink-soft:     #d6c2a0;
-  --muted:        #a8916e;
-  --muted-2:      #6e5a42;
-  --rule:         rgba(201, 162, 74, 0.30);
-  --rule-soft:    rgba(201, 162, 74, 0.12);
-  --accent:       #c9a24a;             /* gold tooling */
-  --accent-soft:  rgba(201, 162, 74, 0.16);
-  --accent-2:     #b5673c;             /* tan / saddle */
-  --hl:           rgba(201, 162, 74, 0.12);
-  --up:           #9bb068;
-  --down:         #d9694e;
-  --grad-from:    #8a5a2a;
-  --grad-via:     #c9a24a;
-  --grad-to:      #efd99a;
-  --glass:        rgba(58, 38, 26, 0.72);   /* lifted leather panel */
-  --glass-border: rgba(201, 162, 74, 0.40);
-  --glow:         rgba(201, 162, 74, 0.30);
-  --shadow-card:  0 16px 40px -18px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 235, 200, 0.06);
-  --shadow-hover: 0 26px 60px -22px rgba(0, 0, 0, 0.92), inset 0 1px 0 rgba(255, 235, 200, 0.10);
-  --aurora-1: rgba(120, 70, 30, 0.50);
-  --aurora-2: rgba(80, 45, 22, 0.45);
-  --aurora-3: rgba(150, 100, 40, 0.30);
-  --aurora-4: rgba(20, 10, 6, 0.65);
-  --grain:        0.10;                /* leather grain */
+  --bg:           #2a1a10;             /* deep cognac hide */
+  --paper:        #3a2114;             /* opaque leather panel */
+  --paper-2:      #432515;
+  --ink:          #f5e8d0;             /* warm cream — full contrast */
+  --ink-soft:     #d8c29a;
+  --muted:        #a7906a;
+  --muted-2:      #74603f;
+  --rule:         rgba(212, 175, 90, 0.32);
+  --rule-soft:    rgba(212, 175, 90, 0.12);
+  --accent:       #d4af5a;             /* burnished gold tooling */
+  --accent-soft:  rgba(212, 175, 90, 0.16);
+  --accent-2:     #c9683c;             /* saddle tan */
+  --hl:           rgba(212, 175, 90, 0.12);
+  --up:           #a9bf6d;
+  --down:         #e07a55;
+  --grad-from:    #8a5a26;
+  --grad-via:     #d4af5a;
+  --grad-to:      #f3dc9c;
+  --glass:        #3a2114;
+  --glass-border: rgba(212, 175, 90, 0.55);
+  --glow:         rgba(212, 175, 90, 0.30);
+  --shadow-card:  0 16px 40px -18px rgba(0, 0, 0, 0.85),
+                  inset 0 1px 0 rgba(255, 235, 200, 0.08);
+  --shadow-hover: 0 26px 60px -22px rgba(0, 0, 0, 0.92),
+                  inset 0 1px 0 rgba(255, 235, 200, 0.12);
+  --aurora-1: transparent; --aurora-2: transparent;
+  --aurora-3: transparent; --aurora-4: transparent;
+  --grain:        0;                   /* the body grain handles texture */
 }
 :root.theme-leather:not(.dark) {
   color-scheme: light;
-  --bg:           #b98e63;             /* tan cognac desk */
-  --paper:        #f4e8d2;             /* cream-tan panel */
-  --paper-2:      #efe0c6;
-  --ink:          #3a2a1c;             /* espresso ink */
-  --ink-soft:     #5e4630;
-  --muted:        #856a4c;
-  --muted-2:      #b39a78;
-  --rule:         rgba(58, 42, 28, 0.22);
-  --rule-soft:    rgba(58, 42, 28, 0.10);
-  --accent:       #9a7b2e;             /* antique gold */
-  --accent-soft:  rgba(154, 123, 46, 0.12);
-  --accent-2:     #9a4a2a;             /* oxblood */
-  --hl:           rgba(154, 123, 46, 0.10);
+  --bg:           #c69a6a;              /* tan cognac desk */
+  --paper:        #f6ebd2;              /* cream parchment panel */
+  --paper-2:      #efe0c0;
+  --ink:          #2e1f12;
+  --ink-soft:     #574128;
+  --muted:        #7d6244;
+  --muted-2:      #ad9272;
+  --rule:         rgba(46, 31, 18, 0.24);
+  --rule-soft:    rgba(46, 31, 18, 0.10);
+  --accent:       #a07a26;              /* antique gold */
+  --accent-soft:  rgba(160, 122, 38, 0.12);
+  --accent-2:     #8a3324;              /* oxblood */
+  --hl:           rgba(160, 122, 38, 0.10);
   --up:           #5d7a2e;
   --down:         #a83b22;
   --grad-from:    #6e4a1e;
-  --grad-via:     #9a7b2e;
-  --grad-to:      #c8a23a;
-  --glass:        #f4e8d2;
-  --glass-border: rgba(58, 42, 28, 0.28);
-  --glow:         rgba(154, 123, 46, 0.20);
-  --shadow-card:  0 1px 2px rgba(40,26,12,0.10), 0 14px 34px -18px rgba(40, 26, 12, 0.40);
-  --shadow-hover: 0 2px 4px rgba(40,26,12,0.12), 0 24px 52px -20px rgba(40, 26, 12, 0.50);
-  --grain:        0.08;
+  --grad-via:     #a07a26;
+  --grad-to:      #d4af5a;
+  --glass:        #f6ebd2;
+  --glass-border: rgba(46, 31, 18, 0.28);
+  --glow:         rgba(160, 122, 38, 0.18);
+  --shadow-card:  0 1px 2px rgba(40, 26, 12, 0.10), 0 14px 30px -16px rgba(40, 26, 12, 0.40);
+  --shadow-hover: 0 2px 4px rgba(40, 26, 12, 0.12), 0 22px 48px -20px rgba(40, 26, 12, 0.48);
+  --grain:        0;
 }
 .theme-leather .font-display {
   font-family: "Playfair Display", "Times New Roman", serif;
-  font-weight: 800;
-  letter-spacing: -0.01em;
+  font-weight: 700;
+  letter-spacing: -0.005em;
 }
 .theme-leather body { background: transparent; }
-/* leather grain on the desk: layered mottling under the base noise */
-.theme-leather body::before {
-  filter: blur(60px) saturate(130%);
-  animation: aurora 60s ease-in-out infinite alternate;
-}
+.theme-leather body::before { animation: none; background: none; }
+/* The hide itself: two crossed pebble-pore noises + a soft uneven dye
+   gradient. Painted ONLY on the body, not over cards, so type stays clean. */
 .theme-leather body::after {
   opacity: 1;
-  mix-blend-mode: overlay;
+  mix-blend-mode: normal;
   transform: translateZ(0); will-change: transform; backface-visibility: hidden;
   background-image:
-    radial-gradient(60% 40% at 20% 15%, rgba(255,225,180,0.10), transparent 70%),
-    radial-gradient(50% 40% at 85% 80%, rgba(0,0,0,0.22), transparent 70%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 100% 100%, 100% 100%, 180px 180px;
+    radial-gradient(70% 50% at 30% 20%, rgba(255, 220, 170, 0.10), transparent 75%),
+    radial-gradient(60% 50% at 80% 85%, rgba(0, 0, 0, 0.28), transparent 75%),
+    radial-gradient(1.5px 1.5px at 20% 30%, rgba(255, 220, 170, 0.08) 50%, transparent 100%),
+    radial-gradient(1px 1px at 70% 60%, rgba(0, 0, 0, 0.18) 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 40% 80%, rgba(255, 220, 170, 0.06) 50%, transparent 100%),
+    radial-gradient(1px 1px at 85% 25%, rgba(0, 0, 0, 0.18) 50%, transparent 100%);
+  background-size: 100% 100%, 100% 100%, 9px 9px, 7px 7px, 11px 11px, 13px 13px;
+}
+.theme-leather:not(.dark) body::after {
+  background-image:
+    radial-gradient(70% 50% at 30% 20%, rgba(255, 235, 195, 0.20), transparent 75%),
+    radial-gradient(60% 50% at 80% 85%, rgba(60, 30, 10, 0.18), transparent 75%),
+    radial-gradient(1px 1px at 20% 30%, rgba(60, 30, 10, 0.10) 50%, transparent 100%),
+    radial-gradient(1px 1px at 70% 60%, rgba(60, 30, 10, 0.10) 50%, transparent 100%),
+    radial-gradient(1px 1px at 40% 80%, rgba(60, 30, 10, 0.08) 50%, transparent 100%),
+    radial-gradient(1px 1px at 85% 25%, rgba(60, 30, 10, 0.10) 50%, transparent 100%);
 }
 .theme-leather .card {
-  border-radius: 12px;
-  background: var(--glass);
-  -webkit-backdrop-filter: blur(8px) saturate(130%);
-  backdrop-filter: blur(8px) saturate(130%);
+  border-radius: 6px;
+  background: var(--paper);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  /* Two parallel gold rules — the unmistakable "tooled" book-binding edge —
+     stacked with the leather panel underneath. No noise on the card itself,
+     so type and rows stay crisp. */
   border: 1px solid var(--accent);
-  box-shadow: var(--shadow-card);
+  box-shadow:
+    inset 0 0 0 3px var(--paper),
+    inset 0 0 0 4px var(--accent),
+    var(--shadow-card);
 }
-/* inner saddle-stitch: a dashed gold line set in from the gold edge */
-.theme-leather .card::before {
-  content: ""; display: block !important;
-  position: absolute; inset: 6px;
-  border: 1.5px dashed rgba(201, 162, 74, 0.55);
-  border-radius: 8px;
-  background: none !important;
-  -webkit-mask: none !important; mask: none !important;
-  pointer-events: none; opacity: 1; padding: 0 !important;
-}
+.theme-leather .card::before { display: none; }
 .theme-leather .card::after { display: none; }
-.theme-leather .card > * { position: relative; z-index: 1; }
-.theme-leather .card:hover { transform: translateY(-1px); box-shadow: var(--shadow-hover); }
-.theme-leather .card-bare { border-radius: 9px; border: 1px solid var(--rule); background: var(--paper-2); }
-.theme-leather .btn-ghost { border-radius: 9px; border: 1px solid var(--accent); background: var(--paper); }
-.theme-leather .chip { border-radius: 8px; border: 1px solid var(--accent); background: var(--paper); font-weight: 600; }
-.theme-leather .chip-active { background: var(--accent); color: #2b1a0c; border-color: var(--accent); }
+.theme-leather .card:hover { transform: translateY(-1px); box-shadow:
+    inset 0 0 0 3px var(--paper),
+    inset 0 0 0 4px var(--accent),
+    var(--shadow-hover); }
+.theme-leather .card-bare { border-radius: 5px; border: 1px solid var(--rule); background: var(--paper-2); }
+.theme-leather .btn-ghost { border-radius: 5px; border: 1px solid var(--accent); background: var(--paper); }
+.theme-leather .chip { border-radius: 4px; border: 1px solid var(--accent); background: var(--paper); font-weight: 600; letter-spacing: 0.02em; }
+.theme-leather .chip-active { background: var(--accent); color: #2a1a0a; border-color: var(--accent); }
 .theme-leather .headrule { border-bottom: 1px solid var(--rule); padding-bottom: .55rem; }
 .theme-leather .dot {
   background: radial-gradient(circle at 32% 30%, #f4e3a1, var(--accent) 60%, #6e4a1e);
