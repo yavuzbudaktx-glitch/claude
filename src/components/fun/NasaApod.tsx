@@ -2,13 +2,14 @@
 
 /* eslint-disable @next/next/no-img-element */
 import useSWR from "swr";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   ExternalLink, Rocket, Info, Palette as PaletteIcon,
   Landmark, Bird as BirdIcon, BookOpen, Archive as ArchiveIcon,
   RotateCcw, Play, Pause,
 } from "lucide-react";
-import { useRef, useEffect } from "react";
+import { usePref } from "@/components/PrefsProvider";
+import { localDateKey } from "@/lib/local-date";
 
 const fetcher = (u: string) => fetch(u).then((r) => r.json());
 
@@ -296,12 +297,32 @@ const TABS: Array<{ id: Tab; label: string; icon: typeof Rocket }> = [
   { id: "archive", label: "Archive",  icon: ArchiveIcon },
 ];
 
+type RollState = Record<Tab, { date: string; n: number }>;
+const ZERO: RollState = {
+  art: { date: "", n: 0 }, cabinet: { date: "", n: 0 }, bird: { date: "", n: 0 },
+  nasa: { date: "", n: 0 }, wiki: { date: "", n: 0 }, archive: { date: "", n: 0 },
+};
+
 export function NasaApod() {
   const [tab, setTab] = useState<Tab>("art");
   const [showInfo, setShowInfo] = useState(true);
-  // One refresh counter per tab so "New" re-rolls only the active source.
-  const [rolls, setRolls] = useState<Record<Tab, number>>({ art: 0, cabinet: 0, bird: 0, nasa: 0, wiki: 0, archive: 0 });
-  const roll = (t: Tab) => setRolls((r) => ({ ...r, [t]: r[t] + 1 }));
+  const today = localDateKey();
+  // Per-tab reroll counter, PERSISTED (synced) so a "New" pick survives a page
+  // refresh until midnight; it resets to the daily pick on a new day.
+  const [rolls, setRolls] = usePref<RollState>("hub.frame.rolls", ZERO);
+  const rollsRef = useRef(rolls);
+  rollsRef.current = rolls;
+
+  const refreshFor = (t: Tab): number => {
+    const e = rolls[t];
+    return e && e.date === today ? e.n : 0;
+  };
+  const roll = (t: Tab) => {
+    const cur = rollsRef.current;
+    const e = cur[t];
+    const n = (e && e.date === today ? e.n : 0) + 1;
+    setRolls({ ...cur, [t]: { date: today, n } });
+  };
 
   return (
     <div className="flex flex-col gap-3 h-full min-h-0">
@@ -318,12 +339,12 @@ export function NasaApod() {
       </div>
 
       <div className="flex-1 min-h-0">
-        {tab === "art"     && <ArtPanel     showInfo={showInfo} setShowInfo={setShowInfo} refreshN={rolls.art}     onRefresh={() => roll("art")} />}
-        {tab === "cabinet" && <CabinetPanel showInfo={showInfo} setShowInfo={setShowInfo} refreshN={rolls.cabinet} onRefresh={() => roll("cabinet")} />}
-        {tab === "bird"    && <BirdPanel    showInfo={showInfo} setShowInfo={setShowInfo} refreshN={rolls.bird}    onRefresh={() => roll("bird")} />}
+        {tab === "art"     && <ArtPanel     showInfo={showInfo} setShowInfo={setShowInfo} refreshN={refreshFor("art")}     onRefresh={() => roll("art")} />}
+        {tab === "cabinet" && <CabinetPanel showInfo={showInfo} setShowInfo={setShowInfo} refreshN={refreshFor("cabinet")} onRefresh={() => roll("cabinet")} />}
+        {tab === "bird"    && <BirdPanel    showInfo={showInfo} setShowInfo={setShowInfo} refreshN={refreshFor("bird")}    onRefresh={() => roll("bird")} />}
         {tab === "nasa"    && <NasaPanel    showInfo={showInfo} setShowInfo={setShowInfo} />}
-        {tab === "wiki"    && <WikiPanel    showInfo={showInfo} setShowInfo={setShowInfo} refreshN={rolls.wiki}    onRefresh={() => roll("wiki")} />}
-        {tab === "archive" && <ArchivePanel showInfo={showInfo} setShowInfo={setShowInfo} refreshN={rolls.archive} onRefresh={() => roll("archive")} />}
+        {tab === "wiki"    && <WikiPanel    showInfo={showInfo} setShowInfo={setShowInfo} refreshN={refreshFor("wiki")}    onRefresh={() => roll("wiki")} />}
+        {tab === "archive" && <ArchivePanel showInfo={showInfo} setShowInfo={setShowInfo} refreshN={refreshFor("archive")} onRefresh={() => roll("archive")} />}
       </div>
     </div>
   );

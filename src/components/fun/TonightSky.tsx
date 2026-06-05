@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Moon as MoonIcon, Sun, Sunset as SunsetIcon, Compass } from "lucide-react";
+import useSWR from "swr";
+import { Moon as MoonIcon, Sun, Sunset as SunsetIcon, Compass, Clock, Building2 } from "lucide-react";
 import {
   getMoonIllumination,
   getSunTimes,
@@ -10,6 +11,8 @@ import {
   type PlanetPos,
 } from "@/lib/astronomy";
 import { useCity } from "@/lib/use-city";
+
+const fetcher = (u: string) => fetch(u).then((r) => r.json());
 
 // Tonight's sky at a glance — moon phase, sunset / twilight / dark times, and
 // the naked-eye planets that will be up tonight. All math is local; no API.
@@ -93,7 +96,9 @@ export function TonightSky() {
         <span className="inline-flex items-center gap-1.5 text-accent">
           <MoonIcon className="h-3 w-3" /> Tonight · {city.name}
         </span>
-        <span className="text-muted-2 tabular-nums">{(moon.fraction * 100).toFixed(0)}% lit</span>
+        <span className="text-muted-2 tabular-nums" title="Share of the Moon's disc that's lit by the Sun right now">
+          {(moon.fraction * 100).toFixed(0)}% lit
+        </span>
       </div>
 
       {/* Moon hero */}
@@ -101,8 +106,8 @@ export function TonightSky() {
         <MoonGlyph moon={moon} size={64} />
         <div className="min-w-0">
           <div className="text-[14px] font-semibold text-ink leading-tight">{moon.name}</div>
-          <div className="text-[11px] text-muted leading-tight mt-0.5">
-            Phase angle {Math.round(moon.phase * 360)}°
+          <div className="text-[11px] text-muted leading-tight mt-0.5" title="How far through the ~29.5-day cycle from one new moon to the next">
+            Day {(moon.phase * 29.53).toFixed(1)} of 29.5 · {(moon.fraction * 100).toFixed(0)}% lit
           </div>
         </div>
       </div>
@@ -125,16 +130,16 @@ export function TonightSky() {
         </div>
       </div>
 
-      {/* Planets up tonight — capped to a tidy, scrollable list */}
-      <div className="flex flex-col min-h-0 flex-1">
-        <div className="flex items-center justify-between mb-1 shrink-0">
+      {/* Planets up tonight — natural height (3-5 rows) */}
+      <div className="flex flex-col shrink-0">
+        <div className="flex items-center justify-between mb-1">
           <div className="text-[10.5px] font-mono uppercase tracking-wider text-muted">Visible · naked eye</div>
           <div className="text-[10.5px] text-muted-2">{planets.length ? `${planets.length} up` : "nothing up"}</div>
         </div>
         {planets.length === 0 ? (
           <div className="text-muted-2 text-[11.5px] italic mt-1">No planets above the horizon at dusk.</div>
         ) : (
-          <ul className="flex-1 min-h-0 overflow-y-auto pr-1 divide-y divide-[var(--rule-soft)]">
+          <ul className="divide-y divide-[var(--rule-soft)]">
             {planets.map((p: PlanetPos) => (
               <li key={p.name} className="grid grid-cols-[16px_1fr_auto_auto] items-center gap-2 py-1.5">
                 <span className="h-2.5 w-2.5 rounded-full" style={{ background: PLANET_TONE[p.name], boxShadow: `0 0 6px ${PLANET_TONE[p.name]}` }} />
@@ -148,6 +153,12 @@ export function TonightSky() {
           </ul>
         )}
       </div>
+
+      {/* Istanbul — a tiny window home: local time, weather, bridge traffic */}
+      <IstanbulPanel />
+
+      {/* takes up any remaining slack so the year clock pins to the bottom */}
+      <div className="flex-1 min-h-0" />
 
       {/* Lower half — the year clock: where we are in the orbit. */}
       <YearClock />
@@ -223,6 +234,90 @@ function YearClock() {
       <div className="text-[9.5px] text-muted-2 mt-2 inline-flex items-center gap-1.5">
         <Sun className="h-3 w-3" /> Computed locally — no network calls.
       </div>
+    </div>
+  );
+}
+
+// ---- Istanbul: a tiny window home ------------------------------------------
+interface IstWeather { temp?: number; icon?: string; label?: string; wind?: number; humidity?: number; error?: string }
+
+const BRIDGES = [
+  { name: "15 Temmuz", full: "15 Temmuz Şehitler Köprüsü", bias: 0 },
+  { name: "FSM", full: "Fatih Sultan Mehmet Köprüsü", bias: 0 },
+  { name: "Yavuz S. Selim", full: "Yavuz Sultan Selim Köprüsü", bias: -1 },
+];
+const LEVELS = [
+  { label: "Light", color: "var(--up)" },
+  { label: "Moderate", color: "#d4a017" },
+  { label: "Heavy", color: "var(--down)" },
+];
+
+// Best-effort congestion from the Istanbul rush-hour curve (no free per-bridge
+// realtime feed exists without a paid traffic key) — clearly marked "est."
+function congestion(hour: number, weekend: boolean, bias: number): number {
+  let base: number;
+  if (hour >= 7 && hour < 10) base = 2;       // morning peak
+  else if (hour >= 16 && hour < 20) base = 2; // evening peak
+  else if (hour >= 10 && hour < 16) base = 1; // midday
+  else if (hour >= 20 && hour < 23) base = 1; // post-dinner
+  else base = 0;                              // night / early morning
+  if (weekend) base = Math.max(0, base - 1);
+  return Math.min(2, Math.max(0, base + bias));
+}
+
+function istanbulNow(): { time: string; hour: number; weekend: boolean } {
+  const now = new Date();
+  let time = "";
+  let hour = now.getHours();
+  let weekday = now.getDay();
+  try {
+    const parts = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Europe/Istanbul", hour: "2-digit", minute: "2-digit", hour12: false, weekday: "short",
+    }).formatToParts(now);
+    const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
+    time = `${get("hour")}:${get("minute")}`;
+    hour = Number(get("hour")) || 0;
+    const wd = get("weekday");
+    weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(wd);
+  } catch { time = `${String(hour).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`; }
+  return { time, hour, weekend: weekday === 0 || weekday === 6 };
+}
+
+function IstanbulPanel() {
+  const { data } = useSWR<IstWeather>("/api/istanbul", fetcher, { refreshInterval: 1000 * 60 * 15, keepPreviousData: true });
+  const ist = istanbulNow();
+
+  return (
+    <div className="shrink-0 rounded-xl border border-[var(--rule)] p-2.5">
+      <div className="flex items-center justify-between">
+        <span className="text-[10.5px] font-mono uppercase tracking-wider text-accent inline-flex items-center gap-1.5">
+          <Building2 className="h-3 w-3" /> İstanbul
+        </span>
+        <span className="inline-flex items-center gap-2 text-[12px]">
+          <span className="inline-flex items-center gap-1 text-ink font-mono tabular-nums"><Clock className="h-3 w-3 text-muted-2" /> {ist.time}</span>
+          {data && !data.error && (
+            <span className="inline-flex items-center gap-1 text-ink-soft" title={`${data.label} · wind ${data.wind} km/h · ${data.humidity}% RH`}>
+              <span>{data.icon}</span><span className="tabular-nums">{data.temp}°</span>
+            </span>
+          )}
+        </span>
+      </div>
+
+      <div className="mt-2 grid grid-cols-3 gap-1.5">
+        {BRIDGES.map((b) => {
+          const lvl = LEVELS[congestion(ist.hour, ist.weekend, b.bias)];
+          return (
+            <div key={b.name} className="rounded-lg border border-[var(--rule-soft)] px-1.5 py-1.5 text-center" title={`${b.full} · ${lvl.label} (estimated)`}>
+              <div className="flex items-center justify-center gap-1">
+                <span className="h-2 w-2 rounded-full" style={{ background: lvl.color, boxShadow: `0 0 6px ${lvl.color}` }} />
+                <span className="text-[9px] uppercase tracking-wide text-muted-2 truncate">{b.name}</span>
+              </div>
+              <div className="text-[11px] font-medium mt-0.5" style={{ color: lvl.color }}>{lvl.label}</div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="text-[9px] text-muted-2 mt-1.5">Bridge traffic — estimated from local rush-hour patterns.</div>
     </div>
   );
 }

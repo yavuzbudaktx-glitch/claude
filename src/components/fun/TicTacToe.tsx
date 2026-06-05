@@ -3,11 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { RotateCcw, X as XIcon, Circle, Cpu, Users } from "lucide-react";
 
-// Tic-Tac-Toe — you're X. Play a friend (2-player) or the computer on Easy
-// (random) or Hard (minimax, unbeatable). Running tally of X / O / draws.
+// Tic-Tac-Toe — you're X. Play a friend (2-player), the computer on Moderate
+// (plays well but slips often enough that you can win), or Hard (minimax,
+// unbeatable — best you'll get is a draw). Running tally of X / O / draws.
 
 type Cell = "X" | "O" | null;
-type Mode = "cpu-hard" | "cpu-easy" | "two";
+type Mode = "cpu-moderate" | "cpu-hard" | "two";
 
 const LINES = [
   [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -56,9 +57,16 @@ function randomMove(b: Cell[]): number {
   const empty = b.map((v, i) => (v ? -1 : i)).filter((i) => i >= 0);
   return empty[Math.floor(Math.random() * empty.length)];
 }
+// Moderate: optimal most of the time, but with a real chance of a human-like
+// slip (a random legal move) so the game is genuinely winnable without being
+// trivial. ~45% slip lands between "too easy" (pure random) and "always a
+// draw" (pure minimax).
+function moderateMove(b: Cell[]): number {
+  return Math.random() < 0.45 ? randomMove(b) : bestMove(b.slice());
+}
 
 export function TicTacToe() {
-  const [mode, setMode] = useState<Mode>("cpu-hard");
+  const [mode, setMode] = useState<Mode>("cpu-moderate");
   const [board, setBoard] = useState<Cell[]>(Array(9).fill(null));
   const [turn, setTurn] = useState<"X" | "O">("X");
   const [tally, setTally] = useState({ x: 0, o: 0, d: 0 });
@@ -82,7 +90,7 @@ export function TicTacToe() {
     const t = setTimeout(() => {
       setBoard((b) => {
         if (winnerOf(b).who || isFull(b)) return b;
-        const idx = mode === "cpu-hard" ? bestMove(b.slice()) : randomMove(b);
+        const idx = mode === "cpu-hard" ? bestMove(b.slice()) : moderateMove(b);
         if (idx < 0) return b;
         const nb = b.slice(); nb[idx] = "O";
         return nb;
@@ -117,8 +125,8 @@ export function TicTacToe() {
     : turn === "X" ? "Your turn" : "Computer thinking…";
 
   const MODES: Array<{ id: Mode; label: string; icon: typeof Cpu }> = [
+    { id: "cpu-moderate", label: "Moderate", icon: Cpu },
     { id: "cpu-hard", label: "Hard", icon: Cpu },
-    { id: "cpu-easy", label: "Easy", icon: Cpu },
     { id: "two", label: "2P", icon: Users },
   ];
 

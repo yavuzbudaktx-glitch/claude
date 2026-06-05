@@ -46,7 +46,8 @@ export function TypingTest() {
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [finishedAt, setFinishedAt] = useState<number | null>(null);
   const [now, setNow] = useState(Date.now());
-  const [best, setBest] = usePref<Best | null>("hub.typing.best", null);
+  // v2 key intentionally resets the stored best from scratch.
+  const [best, setBest] = usePref<Best | null>("hub.typing.best.v2", null);
   const inputRef = useRef<HTMLInputElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [trackWidth, setTrackWidth] = useState(0);

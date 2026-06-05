@@ -22,6 +22,7 @@ const SOURCES: Record<string, Source> = {
   vlog:    { kind: "channel",  handle: "country_life_vlog",  label: "Country Life Vlog", url: "https://www.youtube.com/@country_life_vlog/videos" },
   bobross: { kind: "playlist", list: "PLaLOVNqqD-2HgiA-GZyzcfZN9n-YelhB5", label: "Bob Ross", url: "https://www.youtube.com/playlist?list=PLaLOVNqqD-2HgiA-GZyzcfZN9n-YelhB5" },
   elif:    { kind: "channel",  handle: "ElifinHecesi",       label: "Elif'in Hecesi",   url: "https://www.youtube.com/@ElifinHecesi/videos" },
+  turgut:  { kind: "channel",  handle: "TurgutBayraktarBelgeselleri", label: "Turgut Bayraktar Belgeselleri", url: "https://www.youtube.com/@TurgutBayraktarBelgeselleri/videos" },
 };
 
 export async function GET(req: Request) {

@@ -45,11 +45,9 @@ export default async function FunPage() {
         }
       />
 
-      {/* Row 0 — full-width ambient video (Country Life / Bob Ross / Elif).
-          Taller on laptop-class widths (lg/xl) where a fixed 540 letterboxes
-          the 16:9 video; mobile/portrait and very-large desktops are fine. */}
+      {/* Row 0 — full-width ambient video (Country Life / Bob Ross / Elif…) */}
       <Card id="fun.ambient" title="Long view">
-        <div className="h-[440px] lg:h-[640px] 2xl:h-[560px]"><AmbientVideo /></div>
+        <div className="h-[440px] md:h-[540px]"><AmbientVideo /></div>
       </Card>
 
       {/* Row 1 — Frame of the day · Unwind · Tonight (local-astronomy panel).

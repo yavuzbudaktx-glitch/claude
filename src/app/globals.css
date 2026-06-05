@@ -524,7 +524,7 @@ main { position: relative; z-index: 1; }
   --aurora-4:     rgba(0, 0, 0, 0.6);
   --grain:        0.08;
 }
-.theme-terminal body { background: var(--bg); }
+.theme-terminal body { background: transparent; }
 .theme-terminal { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; }
 .theme-terminal .font-display {
   font-family: "JetBrains Mono", ui-monospace, monospace !important;
@@ -623,7 +623,10 @@ main { position: relative; z-index: 1; }
   --aurora-4:     rgba(0, 0, 0, 0.55);
   --grain:        0.06;
 }
-.theme-galaxy body { background: var(--bg); }
+/* Body stays transparent so the fixed starfield (body::after, z-index:-1)
+   shows over the html background. An opaque body bg would paint in front of
+   the fixed layer and hide it — the "only see stars after I scroll" bug. */
+.theme-galaxy body { background: transparent; }
 /* Starfield — a DENSE, multi-layer field of stars for dark mode: three
    tiled depths (near bright, mid, and fine far dust). Each layer scrolls
    at a slightly different rate for real parallax, plus a slow twinkle.
@@ -726,61 +729,77 @@ main { position: relative; z-index: 1; }
 }
 
 /* ============== ACCOUNTING ============== */
+/* ============== ACCOUNTING (concept — green-bar ledger paper) ==============
+   The classic continuous-feed accountant's pad: every card is a sheet of
+   green-bar ledger paper (alternating pale-green / white rows) with a red
+   margin rule down the left, a double-rule header, and tabular figures. The
+   desk beneath is a sage blotter. */
 :root.theme-accounting {
   color-scheme: light;
-  --bg:           #f6f8fb;
-  --paper:        #ffffff;
-  --paper-2:      #fbfcfe;
-  --ink:          #0e1e34;
-  --ink-soft:     #364257;
-  --muted:        #6b7891;
-  --muted-2:      #a4adbf;
-  --rule:         rgba(14, 30, 52, 0.12);
-  --rule-soft:    rgba(14, 30, 52, 0.05);
-  --accent:       #1e3a5f;
-  --accent-soft:  rgba(30, 58, 95, 0.10);
-  --accent-2:     #15803d;
-  --hl:           rgba(30, 58, 95, 0.07);
-  --up:           #047857;
-  --down:         #b91c1c;
-  --grad-from:    #0e1e34;
-  --grad-via:     #1e3a5f;
-  --grad-to:      #15803d;
-  --glass:        #ffffff;
-  --glass-border: rgba(14, 30, 52, 0.10);
-  --glow:         rgba(30, 58, 95, 0.18);
-  --shadow-card:  0 1px 2px rgba(14, 30, 52, 0.04), 0 6px 18px -12px rgba(14, 30, 52, 0.16);
-  --shadow-hover: 0 2px 4px rgba(14, 30, 52, 0.06), 0 14px 32px -16px rgba(14, 30, 52, 0.24);
+  --bg:           #d7e0d2;             /* sage desk blotter */
+  --paper:        #fcfdfa;             /* ledger sheet */
+  --paper-2:      #f0f5ec;
+  --ink:          #14241b;
+  --ink-soft:     #3a4a3f;
+  --muted:        #6c7a6e;
+  --muted-2:      #a3b0a3;
+  --rule:         rgba(20, 36, 27, 0.18);
+  --rule-soft:    rgba(20, 36, 27, 0.07);
+  --accent:       #1b6e3c;             /* ledger green */
+  --accent-soft:  rgba(27, 110, 60, 0.10);
+  --accent-2:     #b3261e;             /* ledger red (margin / negatives) */
+  --hl:           rgba(27, 110, 60, 0.08);
+  --up:           #1b6e3c;
+  --down:         #b3261e;
+  --grad-from:    #14532d;
+  --grad-via:     #1b6e3c;
+  --grad-to:      #4a8a4a;
+  --glass:        #fcfdfa;
+  --glass-border: rgba(20, 36, 27, 0.16);
+  --glow:         rgba(27, 110, 60, 0.16);
+  --shadow-card:  0 1px 0 rgba(20,36,27,0.08), 0 10px 26px -16px rgba(20, 36, 27, 0.34);
+  --shadow-hover: 0 2px 0 rgba(20,36,27,0.10), 0 18px 40px -18px rgba(20, 36, 27, 0.44);
   --aurora-1: transparent; --aurora-2: transparent;
   --aurora-3: transparent; --aurora-4: transparent;
-  --grain:        0.015;
+  --grain:        0.02;
+  --ledger-band:  rgba(27, 110, 60, 0.10);
+  --ledger-red:   rgba(179, 38, 30, 0.55);
 }
 .theme-accounting body::before { background: none; animation: none; }
-.theme-accounting body {
-  background:
-    /* faint ledger ruling — horizontal lines every 28px */
-    linear-gradient(to bottom, rgba(14, 30, 52, 0.025) 1px, transparent 1px) 0 0/100% 28px,
-    var(--bg);
+.theme-accounting body { background: transparent; }
+/* desk blotter: a faint columnar grid on the sage surface */
+.theme-accounting body::after {
+  opacity: 1; mix-blend-mode: normal;
+  transform: translateZ(0); will-change: transform; backface-visibility: hidden;
+  background-image:
+    linear-gradient(90deg, rgba(20,36,27,0.05) 1px, transparent 1px);
+  background-size: 56px 100%;
 }
 .theme-accounting .card {
-  background: var(--paper);
   -webkit-backdrop-filter: none; backdrop-filter: none;
-  border-radius: 6px;
+  border-radius: 3px;
   border: 1px solid var(--rule);
-  /* a "header rule" with two crisp lines just below the title */
+  /* green-bar bands (every 27px) + a red margin rule near the left edge */
+  background-image:
+    repeating-linear-gradient(to bottom,
+      var(--ledger-band) 0, var(--ledger-band) 27px,
+      var(--paper) 27px, var(--paper) 54px),
+    linear-gradient(90deg, transparent 30px, var(--ledger-red) 30px, var(--ledger-red) 31px, transparent 31px),
+    linear-gradient(90deg, transparent 33px, var(--ledger-red) 33px, var(--ledger-red) 34px, transparent 34px);
+  background-color: var(--paper);
   box-shadow: var(--shadow-card);
 }
 .theme-accounting .card::before { display: none; }
 .theme-accounting .card::after { display: none; }
-.theme-accounting .card:hover { transform: none; border-color: var(--accent); }
-.theme-accounting .card-bare { border-radius: 4px; background: var(--paper-2); }
-.theme-accounting .btn-ghost { border-radius: 6px; background: var(--paper); }
-.theme-accounting .chip { border-radius: 6px; }
-.theme-accounting .headrule { border-bottom: 2px double var(--rule); padding-bottom: .55rem; }
-.theme-accounting .dot { box-shadow: none; }
-.theme-accounting .font-display { font-weight: 700; letter-spacing: -0.025em; }
+.theme-accounting .card:hover { transform: none; border-color: var(--accent); box-shadow: var(--shadow-hover); }
+.theme-accounting .card-bare { border-radius: 3px; background: var(--paper-2); border: 1px solid var(--rule); }
+.theme-accounting .btn-ghost { border-radius: 3px; background: var(--paper); border: 1px solid var(--rule); }
+.theme-accounting .chip { border-radius: 3px; border: 1px solid var(--rule); }
+.theme-accounting .headrule { border-bottom: 3px double var(--accent); padding-bottom: .55rem; }
+.theme-accounting .dot { box-shadow: none; border-radius: 2px; background: var(--accent); }
+.theme-accounting .font-display { font-weight: 800; letter-spacing: -0.02em; }
 .theme-accounting .text-gradient {
-  background: linear-gradient(118deg, var(--ink), var(--accent) 55%, var(--accent-2));
+  background: linear-gradient(118deg, var(--ink), var(--accent) 55%, #4a8a4a);
   -webkit-background-clip: text; background-clip: text;
   animation: none;
 }
@@ -822,7 +841,7 @@ main { position: relative; z-index: 1; }
   --shadow-hover: 0 2px 4px rgba(10, 46, 22, 0.06), 0 14px 30px -14px rgba(10, 46, 22, 0.28);
 }
 .theme-terminal:not(.dark) .text-ink { text-shadow: none; }
-.theme-terminal:not(.dark) body { background: var(--bg); }
+.theme-terminal:not(.dark) body { background: transparent; }
 
 /* ---------- GALAXY · LIGHT (daytime sky / iridescent) ---------- */
 :root.theme-galaxy:not(.dark) {
@@ -868,34 +887,31 @@ main { position: relative; z-index: 1; }
 /* ---------- ACCOUNTING · DARK (ledger at night) ---------- */
 :root.theme-accounting.dark {
   color-scheme: dark;
-  --bg:           #0b1220;
-  --paper:        #111a2c;
-  --paper-2:      #16223a;
-  --ink:          #e6edf7;
-  --ink-soft:     #b4c1d6;
-  --muted:        #7c8aa3;
-  --muted-2:      #50607d;
-  --rule:         rgba(230, 237, 247, 0.10);
-  --rule-soft:    rgba(230, 237, 247, 0.04);
-  --accent:       #60a5fa;
-  --accent-soft:  rgba(96, 165, 250, 0.13);
-  --accent-2:     #34d399;
-  --hl:           rgba(96, 165, 250, 0.08);
-  --up:           #34d399;
+  --bg:           #0c1410;             /* dark green felt desk */
+  --paper:        #13201a;             /* ledger sheet at night */
+  --paper-2:      #18271f;
+  --ink:          #e3efe6;
+  --ink-soft:     #b6c8bb;
+  --muted:        #7d917f;
+  --muted-2:      #4f5f53;
+  --rule:         rgba(227, 239, 230, 0.12);
+  --rule-soft:    rgba(227, 239, 230, 0.05);
+  --accent:       #4ade80;
+  --accent-soft:  rgba(74, 222, 128, 0.14);
+  --accent-2:     #f87171;
+  --hl:           rgba(74, 222, 128, 0.10);
+  --up:           #4ade80;
   --down:         #f87171;
-  --grad-from:    #1e3a5f;
-  --grad-via:     #60a5fa;
-  --grad-to:      #34d399;
-  --glass:        #111a2c;
-  --glass-border: rgba(230, 237, 247, 0.08);
-  --glow:         rgba(96, 165, 250, 0.22);
-  --shadow-card:  0 8px 22px -14px rgba(0, 0, 0, 0.75);
-  --shadow-hover: 0 20px 44px -20px rgba(0, 0, 0, 0.85);
-}
-.theme-accounting.dark body {
-  background:
-    linear-gradient(to bottom, rgba(230, 237, 247, 0.025) 1px, transparent 1px) 0 0/100% 28px,
-    var(--bg);
+  --grad-from:    #14532d;
+  --grad-via:     #4ade80;
+  --grad-to:      #a3e635;
+  --glass:        #13201a;
+  --glass-border: rgba(227, 239, 230, 0.10);
+  --glow:         rgba(74, 222, 128, 0.22);
+  --shadow-card:  0 8px 22px -14px rgba(0, 0, 0, 0.80);
+  --shadow-hover: 0 20px 44px -20px rgba(0, 0, 0, 0.88);
+  --ledger-band:  rgba(74, 222, 128, 0.06);
+  --ledger-red:   rgba(248, 113, 113, 0.40);
 }
 
 /* =======================================================================
@@ -1786,7 +1802,7 @@ main { position: relative; z-index: 1; }
   --glass-border: rgba(243, 231, 210, 0.16);
   --glow:         rgba(224, 86, 63, 0.35);
 }
-.theme-mosaic body { background: var(--bg); }
+.theme-mosaic body { background: transparent; }
 .theme-mosaic body::before { background: none; animation: none; }
 /* The grout grid + four tile-quadrant motif. Each 64×64 tile is built from
    conic-gradients that fan four pie-slices of color from the centre,
@@ -1941,7 +1957,7 @@ main { position: relative; z-index: 1; }
   font-weight: 700;
   letter-spacing: -0.01em;
 }
-.theme-stainedglass body { background: var(--bg); }
+.theme-stainedglass body { background: transparent; }
 .theme-stainedglass body::before { animation: aurora 50s ease-in-out infinite alternate; filter: blur(70px) saturate(170%); }
 /* The lead-came tessellation: hexagonal cells outlined in hard black, with a
    jewel-tone "glow" pulsing softly behind. */
@@ -2080,7 +2096,7 @@ main { position: relative; z-index: 1; }
   font-weight: 800;
   letter-spacing: 0.02em;
 }
-.theme-deco body { background: var(--bg); }
+.theme-deco body { background: transparent; }
 .theme-deco body::before { background: none; animation: none; }
 /* Background: a faint gold sunburst fanning from top-centre + a chevron field
    along the very bottom — the unmistakable Deco vocabulary. */
@@ -2149,6 +2165,126 @@ main { position: relative; z-index: 1; }
 }
 .theme-deco .text-gradient {
   background: linear-gradient(118deg, var(--accent-2), var(--accent) 50%, #f0d97a);
+  -webkit-background-clip: text; background-clip: text;
+  animation: none;
+}
+
+/* =======================================================================
+   LEATHER (concept) — a leather-bound journal
+   Grained cognac hide for the desk; each card is a leather panel framed by a
+   gold tooled edge and an inner saddle-stitch; warm cream ink; serif type.
+======================================================================= */
+:root.theme-leather {
+  color-scheme: dark;
+  --bg:           #241712;             /* dark cognac hide */
+  --paper:        rgba(214, 178, 122, 0.06);
+  --paper-2:      rgba(214, 178, 122, 0.10);
+  --ink:          #f1e4cc;             /* warm cream */
+  --ink-soft:     #d6c2a0;
+  --muted:        #a8916e;
+  --muted-2:      #6e5a42;
+  --rule:         rgba(201, 162, 74, 0.30);
+  --rule-soft:    rgba(201, 162, 74, 0.12);
+  --accent:       #c9a24a;             /* gold tooling */
+  --accent-soft:  rgba(201, 162, 74, 0.16);
+  --accent-2:     #b5673c;             /* tan / saddle */
+  --hl:           rgba(201, 162, 74, 0.12);
+  --up:           #9bb068;
+  --down:         #d9694e;
+  --grad-from:    #8a5a2a;
+  --grad-via:     #c9a24a;
+  --grad-to:      #efd99a;
+  --glass:        rgba(58, 38, 26, 0.72);   /* lifted leather panel */
+  --glass-border: rgba(201, 162, 74, 0.40);
+  --glow:         rgba(201, 162, 74, 0.30);
+  --shadow-card:  0 16px 40px -18px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 235, 200, 0.06);
+  --shadow-hover: 0 26px 60px -22px rgba(0, 0, 0, 0.92), inset 0 1px 0 rgba(255, 235, 200, 0.10);
+  --aurora-1: rgba(120, 70, 30, 0.50);
+  --aurora-2: rgba(80, 45, 22, 0.45);
+  --aurora-3: rgba(150, 100, 40, 0.30);
+  --aurora-4: rgba(20, 10, 6, 0.65);
+  --grain:        0.10;                /* leather grain */
+}
+:root.theme-leather:not(.dark) {
+  color-scheme: light;
+  --bg:           #b98e63;             /* tan cognac desk */
+  --paper:        #f4e8d2;             /* cream-tan panel */
+  --paper-2:      #efe0c6;
+  --ink:          #3a2a1c;             /* espresso ink */
+  --ink-soft:     #5e4630;
+  --muted:        #856a4c;
+  --muted-2:      #b39a78;
+  --rule:         rgba(58, 42, 28, 0.22);
+  --rule-soft:    rgba(58, 42, 28, 0.10);
+  --accent:       #9a7b2e;             /* antique gold */
+  --accent-soft:  rgba(154, 123, 46, 0.12);
+  --accent-2:     #9a4a2a;             /* oxblood */
+  --hl:           rgba(154, 123, 46, 0.10);
+  --up:           #5d7a2e;
+  --down:         #a83b22;
+  --grad-from:    #6e4a1e;
+  --grad-via:     #9a7b2e;
+  --grad-to:      #c8a23a;
+  --glass:        #f4e8d2;
+  --glass-border: rgba(58, 42, 28, 0.28);
+  --glow:         rgba(154, 123, 46, 0.20);
+  --shadow-card:  0 1px 2px rgba(40,26,12,0.10), 0 14px 34px -18px rgba(40, 26, 12, 0.40);
+  --shadow-hover: 0 2px 4px rgba(40,26,12,0.12), 0 24px 52px -20px rgba(40, 26, 12, 0.50);
+  --grain:        0.08;
+}
+.theme-leather .font-display {
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.theme-leather body { background: transparent; }
+/* leather grain on the desk: layered mottling under the base noise */
+.theme-leather body::before {
+  filter: blur(60px) saturate(130%);
+  animation: aurora 60s ease-in-out infinite alternate;
+}
+.theme-leather body::after {
+  opacity: 1;
+  mix-blend-mode: overlay;
+  transform: translateZ(0); will-change: transform; backface-visibility: hidden;
+  background-image:
+    radial-gradient(60% 40% at 20% 15%, rgba(255,225,180,0.10), transparent 70%),
+    radial-gradient(50% 40% at 85% 80%, rgba(0,0,0,0.22), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 100% 100%, 100% 100%, 180px 180px;
+}
+.theme-leather .card {
+  border-radius: 12px;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(8px) saturate(130%);
+  backdrop-filter: blur(8px) saturate(130%);
+  border: 1px solid var(--accent);
+  box-shadow: var(--shadow-card);
+}
+/* inner saddle-stitch: a dashed gold line set in from the gold edge */
+.theme-leather .card::before {
+  content: ""; display: block !important;
+  position: absolute; inset: 6px;
+  border: 1.5px dashed rgba(201, 162, 74, 0.55);
+  border-radius: 8px;
+  background: none !important;
+  -webkit-mask: none !important; mask: none !important;
+  pointer-events: none; opacity: 1; padding: 0 !important;
+}
+.theme-leather .card::after { display: none; }
+.theme-leather .card > * { position: relative; z-index: 1; }
+.theme-leather .card:hover { transform: translateY(-1px); box-shadow: var(--shadow-hover); }
+.theme-leather .card-bare { border-radius: 9px; border: 1px solid var(--rule); background: var(--paper-2); }
+.theme-leather .btn-ghost { border-radius: 9px; border: 1px solid var(--accent); background: var(--paper); }
+.theme-leather .chip { border-radius: 8px; border: 1px solid var(--accent); background: var(--paper); font-weight: 600; }
+.theme-leather .chip-active { background: var(--accent); color: #2b1a0c; border-color: var(--accent); }
+.theme-leather .headrule { border-bottom: 1px solid var(--rule); padding-bottom: .55rem; }
+.theme-leather .dot {
+  background: radial-gradient(circle at 32% 30%, #f4e3a1, var(--accent) 60%, #6e4a1e);
+  box-shadow: 0 0 0 1px rgba(201,162,74,0.5), 0 0 10px var(--glow);
+}
+.theme-leather .text-gradient {
+  background: linear-gradient(118deg, var(--accent-2), var(--accent) 50%, #efd99a);
   -webkit-background-clip: text; background-clip: text;
   animation: none;
 }

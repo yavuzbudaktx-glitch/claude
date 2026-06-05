@@ -1,9 +1,9 @@
-// Cabinet of curiosities — one object a day from The Met's Open Access
-// collection (no key). The Met API has no "random" endpoint, so we keep a
-// curated pool of department/era search terms, pick one per day, pull the
-// matching object IDs, then a deterministic object from that set. Each object
-// carries its own little story (the museum's own catalogue blurb / dimensions
-// / culture / date). ?r=N salts the seed.
+// Cabinet of curiosities — one genuinely interesting object a day from The
+// Met's Open Access collection (no key). We curate evocative themes (ancient
+// world, indigenous & tribal art, arms & armour, the truly old) rather than
+// pulling random accessions, and we PREFER the museum's own "highlight"
+// objects so what you get is something worth knowing about. ?r=N salts both
+// the theme and the object.
 
 import { NextResponse } from "next/server";
 
@@ -14,14 +14,16 @@ const HEADERS = {
   Accept: "application/json",
 };
 
-// Evocative search terms across the Met's stranger corners — armour, clocks,
-// instruments, masks, astrolabes… the things that actually feel like a
-// "cabinet of curiosities".
-const TERMS = [
-  "astrolabe", "armor", "mask", "automaton", "clock", "musical instrument",
-  "amulet", "scarab", "netsuke", "reliquary", "globe", "sundial",
-  "sword", "helmet", "vessel", "talisman", "telescope", "compass",
-  "lacquer", "ivory", "jade", "mosaic", "tapestry", "fresco",
+// Curated, high-interest themes — the corners of the Met that actually feel
+// like a cabinet of curiosities.
+const THEMES = [
+  "Paleolithic", "Neolithic", "Sumerian", "Babylonian", "ancient Egypt",
+  "Egyptian mummy", "ancient Greek", "Roman", "Etruscan", "Byzantine",
+  "Viking", "Celtic", "Aztec", "Maya", "Olmec", "Inca",
+  "Native American", "African mask", "Oceania", "samurai armor",
+  "illuminated manuscript", "astrolabe", "reliquary", "Mesopotamia",
+  "Anatolia", "Scythian gold", "Nazca", "Benin bronze", "Tang dynasty",
+  "Persian", "Phoenician", "Minoan",
 ];
 
 function seedIdx(key: string, n: number): number {
@@ -50,19 +52,11 @@ async function getJson<T>(url: string): Promise<T | null> {
 
 interface MetSearch { total?: number; objectIDs?: number[] | null }
 interface MetObject {
-  objectID: number;
-  title?: string;
-  artistDisplayName?: string;
-  objectDate?: string;
-  culture?: string;
-  medium?: string;
-  dimensions?: string;
-  department?: string;
-  creditLine?: string;
-  primaryImage?: string;
-  primaryImageSmall?: string;
-  objectURL?: string;
-  isPublicDomain?: boolean;
+  objectID: number; title?: string; artistDisplayName?: string;
+  objectDate?: string; culture?: string; period?: string; medium?: string;
+  dimensions?: string; department?: string; creditLine?: string;
+  primaryImage?: string; primaryImageSmall?: string; objectURL?: string;
+  isHighlight?: boolean; isPublicDomain?: boolean;
 }
 
 export async function GET(req: Request) {
@@ -70,39 +64,45 @@ export async function GET(req: Request) {
   const dateKey = url.searchParams.get("d") ?? new Date().toISOString().slice(0, 10);
   const refresh = url.searchParams.get("r") ?? "";
 
-  const term = TERMS[seedIdx(dateKey + "-" + refresh + "-term", TERMS.length)];
+  const theme = THEMES[seedIdx(dateKey + "-" + refresh + "-theme", THEMES.length)];
+  // hasImages + the curated theme keeps results visual and on-topic.
   const search = await getJson<MetSearch>(
-    `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${encodeURIComponent(term)}`,
+    `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${encodeURIComponent(theme)}`,
   );
-  const ids = (search?.objectIDs ?? []).slice(0, 500);
-  if (ids.length === 0) return NextResponse.json({ error: "no_objects" }, { status: 502 });
+  const ids = (search?.objectIDs ?? []).slice(0, 400);
+  if (ids.length === 0) return NextResponse.json({ error: "no_objects", theme }, { status: 502 });
 
-  // Try a few deterministic candidates until one has an image.
-  let obj: MetObject | null = null;
-  for (let attempt = 0; attempt < 8 && !obj; attempt++) {
-    const idx = seedIdx(dateKey + "-" + refresh + "-obj-" + attempt, ids.length);
-    const candidate = await getJson<MetObject>(
+  // Pull several deterministic candidates; keep the first HIGHLIGHT with an
+  // image, else the first imaged object — so it's both interesting and shown.
+  let firstImaged: MetObject | null = null;
+  let highlight: MetObject | null = null;
+  for (let i = 0; i < 12 && !highlight; i++) {
+    const idx = seedIdx(dateKey + "-" + refresh + "-obj-" + i, ids.length);
+    const obj = await getJson<MetObject>(
       `https://collectionapi.metmuseum.org/public/collection/v1/objects/${ids[idx]}`,
     );
-    if (candidate && (candidate.primaryImage || candidate.primaryImageSmall)) obj = candidate;
+    if (!obj || !(obj.primaryImage || obj.primaryImageSmall)) continue;
+    if (!firstImaged) firstImaged = obj;
+    if (obj.isHighlight) highlight = obj;
   }
-  if (!obj) return NextResponse.json({ error: "no_image" }, { status: 502 });
+  const obj = highlight ?? firstImaged;
+  if (!obj) return NextResponse.json({ error: "no_image", theme }, { status: 502 });
 
-  // A one-line "story" assembled from the catalogue facts.
-  const bits = [obj.culture, obj.objectDate].filter(Boolean).join(" · ");
+  const facts = [obj.culture, obj.period, obj.objectDate].filter(Boolean).join(" · ");
   return NextResponse.json(
     {
       id: obj.objectID,
       title: obj.title || "Untitled",
       artist: obj.artistDisplayName || obj.culture || obj.department || "",
-      date: obj.objectDate || "",
+      date: obj.objectDate || obj.period || "",
       medium: obj.medium || "",
       dimensions: obj.dimensions || "",
-      story: [bits, obj.creditLine].filter(Boolean).join(" — "),
+      story: [facts, obj.creditLine].filter(Boolean).join(" — "),
       imageUrl: obj.primaryImage || obj.primaryImageSmall || "",
       pageUrl: obj.objectURL || `https://www.metmuseum.org/art/collection/search/${obj.objectID}`,
       source: "The Met · Open Access",
-      term,
+      theme,
+      highlight: !!obj.isHighlight,
     },
     { headers: { "Cache-Control": "s-maxage=3600, stale-while-revalidate=43200" } },
   );

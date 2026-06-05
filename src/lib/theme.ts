@@ -12,7 +12,7 @@ export type ThemeId =
   | "aurora" | "galaxy" | "forest" | "water" | "sunset"
   | "terminal" | "accounting" | "mono"
   | "newspaper" | "blueprint" | "comic" | "sketch"
-  | "mosaic" | "stainedglass" | "deco";
+  | "mosaic" | "stainedglass" | "deco" | "leather";
 
 export const THEMES: Array<{
   id: ThemeId; label: string; description: string;
@@ -26,7 +26,8 @@ export const THEMES: Array<{
   { id: "stainedglass", label: "Stained Glass",description: "Leaded cathedral panes — jewel reds, sapphire, emerald, with light spilling through the glazing." },
   { id: "deco",         label: "Art Deco",     description: "1920s glamour — gold geometry on deep emerald & black, sunburst fans, symmetric chevrons, high-contrast serif." },
   { id: "terminal",     label: "Terminal",     description: "Mono-typography, sharp corners, green phosphor, CRT scanlines — day or night." },
-  { id: "accounting",   label: "Accounting",   description: "Crisp ledger paper, navy/forest accents — clean numbers-first interface." },
+  { id: "accounting",   label: "Accounting",   description: "Green-bar ledger paper — alternating rows, a red margin rule, double-rule headers, tabular figures on a sage desk." },
+  { id: "leather",      label: "Leather",      description: "A leather-bound journal — grained cognac hide, gold-tooled & saddle-stitched cards, warm cream ink, serif type." },
   { id: "mono",         label: "Mono",         description: "Pure black & white, hard edges, heavy rules — brutalist clarity." },
   { id: "newspaper",    label: "Newspaper",    description: "Times-style serif type, columns, drop-caps, hairline ruling — like reading a Sunday paper." },
   { id: "blueprint",    label: "Blueprint",    description: "Architect's drafting page — white technical strokes on cyan, corner brackets, drafting grid." },
@@ -36,7 +37,7 @@ export const THEMES: Array<{
 
 const KEY = "brief.theme.v1";
 
-const VALID: ThemeId[] = ["aurora", "galaxy", "forest", "water", "sunset", "mosaic", "stainedglass", "deco", "terminal", "accounting", "mono", "newspaper", "blueprint", "comic", "sketch"];
+const VALID: ThemeId[] = ["aurora", "galaxy", "forest", "water", "sunset", "mosaic", "stainedglass", "deco", "leather", "terminal", "accounting", "mono", "newspaper", "blueprint", "comic", "sketch"];
 const NON_DEFAULT = VALID.filter((v) => v !== "aurora");
 
 export function getTheme(): ThemeId {
@@ -70,7 +71,7 @@ export const THEME_BOOT_SCRIPT = `
   (function() {
     try {
       var v = localStorage.getItem(${JSON.stringify(KEY)});
-      var ok = ['galaxy','forest','water','sunset','mosaic','stainedglass','deco','terminal','accounting','mono','newspaper','blueprint','comic','sketch'];
+      var ok = ['galaxy','forest','water','sunset','mosaic','stainedglass','deco','leather','terminal','accounting','mono','newspaper','blueprint','comic','sketch'];
       var root = document.documentElement;
       if (v && ok.indexOf(v) >= 0) root.classList.add('theme-' + v);
       root.setAttribute('data-theme', v || 'aurora');

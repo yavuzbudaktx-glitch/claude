@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import useSWR from "swr";
-import { Shuffle, Tv, Paintbrush, Sprout } from "lucide-react";
+import { Shuffle, Tv, Paintbrush, Sprout, Film } from "lucide-react";
 import { YouTubePlayer } from "./YouTubePlayer";
 
 // Full-size ambient video at the top of the Fun page. Pick a channel via the
@@ -16,6 +16,7 @@ const TABS = [
   { id: "vlog",    label: "Country Life", icon: Sprout },
   { id: "bobross", label: "Bob Ross",     icon: Paintbrush },
   { id: "elif",    label: "Elif'in Hecesi", icon: Tv },
+  { id: "turgut",  label: "Belgesel",     icon: Film },
 ] as const;
 type TabId = (typeof TABS)[number]["id"];
 

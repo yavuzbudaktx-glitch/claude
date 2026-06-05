@@ -1,6 +1,8 @@
-// Random fun from the Internet Archive — a random item (film, image, audio,
-// or book) with a preview thumbnail. Uses the advancedsearch API's random
-// sort. No key. Each call rolls a fresh one.
+// Internet Archive — a random but GENUINELY interesting item: NASA imagery,
+// archival ephemeral films, playable arcade games, vintage travel posters,
+// old maps, classic cartoons, 78rpm music. Curated collections only (no
+// random junk), preferring items that actually have a usable preview image.
+// No key. Each call rolls a fresh one.
 
 import { NextResponse } from "next/server";
 
@@ -12,17 +14,20 @@ const HEADERS = {
   Accept: "application/json",
 };
 
-// Collections that reliably make for a fun, safe-for-anyone preview.
+// Hand-picked collections — each reliably interesting and visual.
 const QUERIES = [
-  "collection:prelinger",                 // ephemeral / educational films
-  "collection:feature_films",             // public-domain features
-  "collection:classic_tv",                // vintage TV
-  "collection:nasa",                      // NASA imagery & footage
-  "collection:metropolitanmuseumofart-gallery",
-  "collection:posters",                   // vintage posters
-  "collection:album_recordings",          // 78rpm & live music
-  "collection:vintage_cartoons",
-  "mediatype:image AND subject:vintage",
+  "collection:nasa",                  // space imagery & footage
+  "collection:prelinger",             // archival / educational films
+  "collection:internetarcade",        // playable classic arcade games
+  "collection:classic_tv",            // vintage television
+  "collection:vintage_cartoons",      // early animation
+  "collection:78rpm",                 // 78rpm records
+  "collection:maps_usgs",             // historical maps
+  "collection:nasaimages",
+  "collection:fav-vintage-posters",   // travel & film posters
+  "collection:computerchronicles",    // 80s/90s computing TV
+  "collection:moviesandfilms AND subject:documentary",
+  "collection:apkarchive",
 ];
 
 interface IADoc { identifier?: string; title?: string; mediatype?: string; year?: string; description?: string | string[] }
@@ -47,29 +52,32 @@ async function getJson(url: string): Promise<IAResp | null> {
 }
 
 export async function GET() {
-  const q = QUERIES[Math.floor(Math.random() * QUERIES.length)];
-  const fields = "identifier,title,mediatype,year,description";
-  const url =
-    `https://archive.org/advancedsearch.php?q=${encodeURIComponent(q)}` +
-    `&fl[]=${fields.split(",").join("&fl[]=")}&rows=50&output=json&sort[]=random`;
+  // Try a couple of collections so a single dud doesn't fail the tab.
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const q = QUERIES[Math.floor(Math.random() * QUERIES.length)];
+    const fields = "identifier,title,mediatype,year,description";
+    const url =
+      `https://archive.org/advancedsearch.php?q=${encodeURIComponent(q)}` +
+      `&fl[]=${fields.split(",").join("&fl[]=")}&rows=80&output=json&sort[]=random`;
+    const j = await getJson(url);
+    const docs = (j?.response?.docs ?? []).filter((d) => d.identifier);
+    if (docs.length === 0) continue;
 
-  const j = await getJson(url);
-  const docs = (j?.response?.docs ?? []).filter((d) => d.identifier);
-  if (docs.length === 0) return NextResponse.json({ error: "no_item" }, { status: 502 });
-
-  const d = docs[Math.floor(Math.random() * docs.length)];
-  const desc = Array.isArray(d.description) ? d.description[0] : d.description;
-  return NextResponse.json(
-    {
-      identifier: d.identifier,
-      title: d.title || d.identifier,
-      mediatype: d.mediatype || "",
-      year: d.year || "",
-      description: desc ? String(desc).replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim().slice(0, 320) : "",
-      imageUrl: `https://archive.org/services/img/${d.identifier}`,
-      pageUrl: `https://archive.org/details/${d.identifier}`,
-      source: "Internet Archive",
-    },
-    { headers: { "Cache-Control": "no-store" } },
-  );
+    const d = docs[Math.floor(Math.random() * docs.length)];
+    const desc = Array.isArray(d.description) ? d.description[0] : d.description;
+    return NextResponse.json(
+      {
+        identifier: d.identifier,
+        title: d.title || d.identifier,
+        mediatype: d.mediatype || "",
+        year: d.year || "",
+        description: desc ? String(desc).replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim().slice(0, 320) : "",
+        imageUrl: `https://archive.org/services/img/${d.identifier}`,
+        pageUrl: `https://archive.org/details/${d.identifier}`,
+        source: "Internet Archive",
+      },
+      { headers: { "Cache-Control": "no-store" } },
+    );
+  }
+  return NextResponse.json({ error: "no_item" }, { status: 502 });
 }
