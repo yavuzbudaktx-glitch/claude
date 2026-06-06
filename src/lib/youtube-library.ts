@@ -219,6 +219,12 @@ export async function fetchPlaylistVideos(playlistId: string): Promise<LibVideo[
   return items;
 }
 
+// Cache threshold for a CHANNEL specifically: don't pin a near-empty result
+// for 6 hours. If we only got the Atom feed's 15 videos, that's a sign the
+// uploads walk was throttled — retry on the next request instead of locking
+// the box to "only ever 15 random videos" until the cache expires.
+const CHANNEL_MIN_CACHE = 30;
+
 export async function fetchChannelVideos(handle: string): Promise<LibVideo[]> {
   const key = `ch:${handle}`;
   const hit = cached(key);
@@ -228,21 +234,27 @@ export async function fetchChannelVideos(handle: string): Promise<LibVideo[]> {
   const out: LibVideo[] = [];
   const seen = new Set<string>();
 
-  if (id) {
-    // 1) Walk the uploads playlist (UU…) — the whole history, newest first.
-    const uploads = "UU" + id.slice(2);
-    const uploadsHtml = await getText(`https://www.youtube.com/playlist?list=${uploads}&hl=en`);
-    mergeInto(out, seen, await walk(uploadsHtml, extractVideos));
-    // 2) Always fold in the Atom feed so we never collapse to near-empty.
-    mergeInto(out, seen, await fetchAtom(id));
-  }
-  // 3) If something starved the walk, fall back to the /videos tab HTML.
-  if (out.length < 20) {
-    const vidsHtml = await getText(`https://www.youtube.com/@${handle}/videos?hl=en`);
-    mergeInto(out, seen, await walk(vidsHtml, extractVideos));
-  }
+  // Hit ALL three sources in parallel and merge — the playlist walk gives us
+  // the whole history when it works, the /videos tab gives the most recent
+  // ~30 when the playlist gets blocked, and the Atom feed is the rock-solid
+  // backstop. The previous "fall back if <20" path skipped the /videos tab
+  // whenever the playlist walk returned just the 15 Atom items, which is
+  // exactly the case where /videos saves us — that's why Logan's box would
+  // sometimes collapse to 15.
+  const uploads = id ? "UU" + id.slice(2) : null;
+  const [uploadsHtml, vidsHtml, atom] = await Promise.all([
+    uploads ? getText(`https://www.youtube.com/playlist?list=${uploads}&hl=en`) : Promise.resolve(null),
+    getText(`https://www.youtube.com/@${handle}/videos?hl=en`),
+    id ? fetchAtom(id) : Promise.resolve([] as LibVideo[]),
+  ]);
 
-  if (out.length >= MIN_CACHEABLE) cache.set(key, { at: Date.now(), items: out });
+  if (uploadsHtml) mergeInto(out, seen, await walk(uploadsHtml, extractVideos));
+  if (vidsHtml) mergeInto(out, seen, await walk(vidsHtml, extractVideos));
+  mergeInto(out, seen, atom);
+
+  // Only cache once we're confident the result is real — otherwise next
+  // request retries and may catch a healthier upstream.
+  if (out.length >= CHANNEL_MIN_CACHE) cache.set(key, { at: Date.now(), items: out });
   return out;
 }
 

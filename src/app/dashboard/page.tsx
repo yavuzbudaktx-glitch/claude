@@ -21,6 +21,7 @@ import { Bookmarks } from "@/components/Bookmarks";
 import { RadioButton } from "@/components/RadioButton";
 import { ThemeVariantButton } from "@/components/ThemeVariantButton";
 import { FocusButton } from "@/components/FocusButton";
+import { ClaudeChat } from "@/components/ClaudeChat";
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +48,7 @@ export default async function Page() {
                 <Bookmarks />
                 <Calculator />
                 <FocusButton />
+                <ClaudeChat />
                 <ThemeVariantButton />
                 <ThemeToggle />
                 <FullscreenToggle />

@@ -11,8 +11,8 @@
 export type ThemeId =
   | "aurora" | "galaxy" | "forest" | "water" | "sunset"
   | "terminal" | "accounting" | "mono"
-  | "newspaper" | "blueprint" | "comic" | "sketch"
-  | "mosaic" | "stainedglass" | "deco" | "leather";
+  | "newspaper" | "blueprint" | "comic"
+  | "mosaic" | "stainedglass" | "deco";
 
 export const THEMES: Array<{
   id: ThemeId; label: string; description: string;
@@ -26,18 +26,16 @@ export const THEMES: Array<{
   { id: "stainedglass", label: "Stained Glass",description: "Leaded cathedral panes — jewel reds, sapphire, emerald, with light spilling through the glazing." },
   { id: "deco",         label: "Art Deco",     description: "1920s glamour — gold geometry on deep emerald & black, sunburst fans, symmetric chevrons, high-contrast serif." },
   { id: "terminal",     label: "Terminal",     description: "Mono-typography, sharp corners, green phosphor, CRT scanlines — day or night." },
-  { id: "accounting",   label: "Accounting",   description: "Green-bar ledger paper — alternating rows, a red margin rule, double-rule headers, tabular figures on a sage desk." },
-  { id: "leather",      label: "Leather",      description: "A leather-bound journal — grained cognac hide, gold-tooled & saddle-stitched cards, warm cream ink, serif type." },
+  { id: "accounting",   label: "Accounting",   description: "Green-bar ledger paper — alternating rows align to the band rhythm, a red margin rule down the left, double-rule headers, tabular figures." },
   { id: "mono",         label: "Mono",         description: "Pure black & white, hard edges, heavy rules — brutalist clarity." },
   { id: "newspaper",    label: "Newspaper",    description: "Times-style serif type, columns, drop-caps, hairline ruling — like reading a Sunday paper." },
   { id: "blueprint",    label: "Blueprint",    description: "Architect's drafting page — white technical strokes on cyan, corner brackets, drafting grid." },
   { id: "comic",        label: "Comic",        description: "Halftone dots, ink-line panels, KAPOW red, offset hard shadows — your dashboard as a comic book." },
-  { id: "sketch",       label: "Sketchbook",   description: "Pencil on grid paper, wobbly hand-drawn outlines, Caveat handwriting — work in your own margin notes." },
 ];
 
 const KEY = "brief.theme.v1";
 
-const VALID: ThemeId[] = ["aurora", "galaxy", "forest", "water", "sunset", "mosaic", "stainedglass", "deco", "leather", "terminal", "accounting", "mono", "newspaper", "blueprint", "comic", "sketch"];
+const VALID: ThemeId[] = ["aurora", "galaxy", "forest", "water", "sunset", "mosaic", "stainedglass", "deco", "terminal", "accounting", "mono", "newspaper", "blueprint", "comic"];
 const NON_DEFAULT = VALID.filter((v) => v !== "aurora");
 
 export function getTheme(): ThemeId {
@@ -71,7 +69,7 @@ export const THEME_BOOT_SCRIPT = `
   (function() {
     try {
       var v = localStorage.getItem(${JSON.stringify(KEY)});
-      var ok = ['galaxy','forest','water','sunset','mosaic','stainedglass','deco','leather','terminal','accounting','mono','newspaper','blueprint','comic','sketch'];
+      var ok = ['galaxy','forest','water','sunset','mosaic','stainedglass','deco','terminal','accounting','mono','newspaper','blueprint','comic'];
       var root = document.documentElement;
       if (v && ok.indexOf(v) >= 0) root.classList.add('theme-' + v);
       root.setAttribute('data-theme', v || 'aurora');

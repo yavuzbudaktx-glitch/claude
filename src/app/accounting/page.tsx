@@ -9,6 +9,7 @@ import { Bookmarks } from "@/components/Bookmarks";
 import { RadioButton } from "@/components/RadioButton";
 import { ThemeVariantButton } from "@/components/ThemeVariantButton";
 import { FocusButton } from "@/components/FocusButton";
+import { ClaudeChat } from "@/components/ClaudeChat";
 import { FullscreenToggle } from "@/components/FullscreenToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SignOutButton } from "@/components/SignOutButton";
@@ -42,6 +43,7 @@ export default async function AccountingPage() {
             <Bookmarks />
             <Calculator />
             <FocusButton />
+            <ClaudeChat />
             <ThemeVariantButton />
             <ThemeToggle />
             <FullscreenToggle />

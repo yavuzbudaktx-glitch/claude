@@ -15,12 +15,10 @@ const SWATCHES: Record<ThemeId, string[]> = {
   deco:       ["#0c2a23", "#d4af37", "#0b6e54"],
   terminal:   ["#000000", "#22ff77", "#ffb454"],
   accounting: ["#d7e0d2", "#1b6e3c", "#b3261e"],
-  leather:    ["#2b1a12", "#c9a24a", "#8a3324"],
   mono:       ["#ffffff", "#000000", "#737373"],
   newspaper:  ["#f7f3e8", "#111111", "#9a1010"],
   blueprint:  ["#0e3a64", "#ffffff", "#7fc6ff"],
   comic:      ["#fff8e6", "#ff2d2d", "#111111"],
-  sketch:     ["#fbfaf3", "#2b2b2b", "#b58a3a"],
 };
 
 export function ThemeVariantButton() {

@@ -106,12 +106,29 @@ export async function GET(req: Request) {
     `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiTitle)}`,
   );
 
+  // Prefer the FULL image over the 320px thumbnail (which was reading as
+  // pixelated on real screens). If the summary endpoint didn't include one,
+  // fall back to the PageImages action API for a larger original.
+  let imageUrl = wiki?.originalimage?.source ?? "";
+  if (!imageUrl) imageUrl = wiki?.thumbnail?.source ?? "";
+  if (!imageUrl) {
+    const pi = await getJson<{ query?: { pages?: Record<string, { original?: { source?: string }; thumbnail?: { source?: string } }> } }>(
+      `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&piprop=original%7Cthumbnail&pithumbsize=1200&format=json&origin=*&titles=${encodeURIComponent(wikiTitle)}`,
+    );
+    const pages = pi?.query?.pages ?? {};
+    for (const k of Object.keys(pages)) {
+      const p = pages[k];
+      const url = p.original?.source ?? p.thumbnail?.source;
+      if (url) { imageUrl = url; break; }
+    }
+  }
+
   // Audio (best-effort).
   let audioUrl = "";
   try { audioUrl = (await findCommonsAudio(wikiTitle)) ?? ""; } catch { audioUrl = ""; }
 
   // If we don't have a photo OR a recording, the tab really can't render.
-  if (!wiki?.extract && !audioUrl && !wiki?.thumbnail?.source) {
+  if (!wiki?.extract && !audioUrl && !imageUrl) {
     return NextResponse.json({ error: "bird_unavailable", name: bird.name }, { status: 502 });
   }
 
@@ -120,7 +137,7 @@ export async function GET(req: Request) {
       name: bird.name,
       scientific: "",                     // wiki summary doesn't reliably carry this
       blurb: wiki?.extract ?? "",
-      imageUrl: wiki?.thumbnail?.source ?? wiki?.originalimage?.source ?? "",
+      imageUrl,
       audioUrl,
       recordist: "",
       place: "",

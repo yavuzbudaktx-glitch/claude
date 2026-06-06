@@ -169,21 +169,44 @@ function BirdPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: b
       <div className="relative flex-[3] min-h-0 rounded-xl overflow-hidden bg-[var(--rule-soft)] border border-[var(--rule)]">
         {data!.imageUrl ? (
           <a href={data!.pageUrl} target="_blank" rel="noreferrer" className="absolute inset-0">
-            <img src={data!.imageUrl} alt={data!.name ?? ""} className="h-full w-full object-cover transition hover:scale-[1.01]" loading="lazy" />
+            {/* No object-cover scaling — `object-contain` keeps the original
+                pixels so a high-res bird never gets upsampled to fuzz. */}
+            <img
+              src={data!.imageUrl}
+              alt={data!.name ?? ""}
+              className="h-full w-full object-contain transition hover:scale-[1.01]"
+              loading="lazy"
+              decoding="async"
+            />
           </a>
         ) : (
           <div className="absolute inset-0 grid place-items-center"><BirdIcon className="h-12 w-12 text-muted-2" /></div>
         )}
         <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 rounded-full bg-black/55 backdrop-blur px-2 py-0.5 text-[10px] font-semibold text-white"><BirdIcon className="h-3 w-3" /> Bird of the day</span>
-        {/* play overlay — only when an audio source actually exists */}
-        {hasAudio && (
-          <button onClick={toggle} aria-label={playing ? "Pause song" : "Play song"} className="absolute inset-0 grid place-items-center group">
-            <span className="grid h-14 w-14 place-items-center rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-white shadow-2xl transition group-hover:scale-110 group-hover:bg-white/25">
-              {playing ? <Pause className="h-6 w-6" fill="currentColor" /> : <Play className="h-6 w-6 translate-x-[2px]" fill="currentColor" />}
-            </span>
-          </button>
-        )}
         <RollButton onRefresh={onRefresh} />
+      </div>
+      {/* Audio control — a small button UNDER the photo, not over it. */}
+      <div className="flex items-center gap-2 shrink-0">
+        {hasAudio ? (
+          <button
+            onClick={toggle}
+            aria-label={playing ? "Pause song" : "Play song"}
+            className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft border border-[var(--rule)] px-3 py-1 text-[11.5px] font-semibold text-accent hover:brightness-110 transition"
+          >
+            {playing ? <Pause className="h-3.5 w-3.5" fill="currentColor" /> : <Play className="h-3.5 w-3.5 translate-x-[1px]" fill="currentColor" />}
+            {playing ? "Pause song" : "Play song"}
+          </button>
+        ) : (
+          <a
+            href={data!.xcUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-full bg-[var(--rule-soft)] border border-[var(--rule)] px-3 py-1 text-[11.5px] font-medium text-muted hover:text-accent transition"
+            title="No recording archived for this species — search Commons"
+          >
+            <Play className="h-3.5 w-3.5" fill="currentColor" /> No song archived
+          </a>
+        )}
         {hasAudio && <audio ref={audioRef} src={data!.audioUrl} preload="none" onEnded={() => setPlaying(false)} crossOrigin="anonymous" />}
       </div>
       <div className="flex flex-col min-h-0 flex-[2]">
@@ -198,12 +221,7 @@ function BirdPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: b
           <div className="mt-2.5 text-[12.5px] leading-relaxed text-ink-soft min-h-0 flex-1 overflow-y-auto pr-1">
             {data!.blurb ? <p>{data!.blurb}</p> : <p className="italic text-muted-2">No notes on this species.</p>}
             <div className="text-[10.5px] text-muted-2 mt-2">
-              {hasAudio ? (
-                <>Song: <a href={data!.xcUrl} target="_blank" rel="noreferrer" className="hover:text-accent underline">Wikimedia Commons</a></>
-              ) : (
-                <>No recording archived for this species — <a href={data!.xcUrl} target="_blank" rel="noreferrer" className="hover:text-accent underline">search Commons</a>.</>
-              )}
-              {data!.place ? ` · ${data!.place}` : ""}
+              {data!.place ? data!.place : ""}
             </div>
           </div>
         )}
@@ -217,7 +235,8 @@ function BirdPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: b
 interface Wiki { title?: string; description?: string; extract?: string; imageUrl?: string; pageUrl?: string; source?: string; error?: string }
 
 function WikiPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: boolean; setShowInfo: (v: boolean) => void; refreshN: number; onRefresh: () => void }) {
-  const { data, isLoading } = useSWR<Wiki>(`/api/wiki-random?r=${refreshN}`, fetcher, { keepPreviousData: false, revalidateOnFocus: false });
+  const today = localDateKey();
+  const { data, isLoading } = useSWR<Wiki>(`/api/wiki-random?d=${today}&r=${refreshN}`, fetcher, { keepPreviousData: true, revalidateOnFocus: false });
   if (isLoading && !data) return <Loading />;
   if (data?.error) return <Failed what="Wikipedia" />;
   return (
@@ -254,7 +273,11 @@ function WikiPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: b
 interface Archive { title?: string; mediatype?: string; year?: string; description?: string; imageUrl?: string; pageUrl?: string; source?: string; error?: string }
 
 function ArchivePanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: boolean; setShowInfo: (v: boolean) => void; refreshN: number; onRefresh: () => void }) {
-  const { data, isLoading } = useSWR<Archive>(`/api/archive-random?r=${refreshN}`, fetcher, { keepPreviousData: false, revalidateOnFocus: false });
+  // Key on the date — that's what makes the pick DAILY. SWR caches per key, so
+  // opening this tab a second time on the same day returns the same archive
+  // item instead of rolling a new one.
+  const today = localDateKey();
+  const { data, isLoading } = useSWR<Archive>(`/api/archive-random?d=${today}&r=${refreshN}`, fetcher, { keepPreviousData: true, revalidateOnFocus: false });
   if (isLoading && !data) return <Loading />;
   if (data?.error) return <Failed what="the Archive" />;
   return (
@@ -296,11 +319,10 @@ function RollButton({ onRefresh, label }: { onRefresh: () => void; label?: strin
 
 // ---------- the box ---------------------------------------------------------
 
-type Tab = "art" | "cabinet" | "bird" | "nasa" | "wiki" | "archive";
+type Tab = "art" | "bird" | "nasa" | "wiki" | "archive";
 
 const TABS: Array<{ id: Tab; label: string; icon: typeof Rocket }> = [
   { id: "art",     label: "Art",      icon: PaletteIcon },
-  { id: "cabinet", label: "Cabinet",  icon: Landmark },
   { id: "bird",    label: "Bird",     icon: BirdIcon },
   { id: "nasa",    label: "NASA",     icon: Rocket },
   { id: "wiki",    label: "Wiki",     icon: BookOpen },
@@ -309,7 +331,7 @@ const TABS: Array<{ id: Tab; label: string; icon: typeof Rocket }> = [
 
 type RollState = Record<Tab, { date: string; n: number }>;
 const ZERO: RollState = {
-  art: { date: "", n: 0 }, cabinet: { date: "", n: 0 }, bird: { date: "", n: 0 },
+  art: { date: "", n: 0 }, bird: { date: "", n: 0 },
   nasa: { date: "", n: 0 }, wiki: { date: "", n: 0 }, archive: { date: "", n: 0 },
 };
 
@@ -350,7 +372,6 @@ export function NasaApod() {
 
       <div className="flex-1 min-h-0">
         {tab === "art"     && <ArtPanel     showInfo={showInfo} setShowInfo={setShowInfo} refreshN={refreshFor("art")}     onRefresh={() => roll("art")} />}
-        {tab === "cabinet" && <CabinetPanel showInfo={showInfo} setShowInfo={setShowInfo} refreshN={refreshFor("cabinet")} onRefresh={() => roll("cabinet")} />}
         {tab === "bird"    && <BirdPanel    showInfo={showInfo} setShowInfo={setShowInfo} refreshN={refreshFor("bird")}    onRefresh={() => roll("bird")} />}
         {tab === "nasa"    && <NasaPanel    showInfo={showInfo} setShowInfo={setShowInfo} />}
         {tab === "wiki"    && <WikiPanel    showInfo={showInfo} setShowInfo={setShowInfo} refreshN={refreshFor("wiki")}    onRefresh={() => roll("wiki")} />}

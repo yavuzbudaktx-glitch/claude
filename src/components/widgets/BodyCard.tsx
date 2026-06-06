@@ -44,25 +44,30 @@ function HabitTracker() {
   };
 
   function toggle(h: string, d: string) {
-    // Only past + present days are toggleable — clicking the future is a
-    // common source of "wait, why is tomorrow highlighted?" reports.
+    // Only past + present days are toggleable.
     if (d > todayKey) return;
-    // Prune to the current week so old marks clear every Monday.
-    const cur = (done[h] ?? []).filter((x) => weekSet.has(x));
-    const next = cur.includes(d) ? cur.filter((x) => x !== d) : [...cur, d];
-    setDone({ ...done, [h]: next });
+    // FUNCTIONAL update — `done` from the closure is stale within the same
+    // render if you toggle two days in a row.
+    setDone((cur) => {
+      const week = (cur[h] ?? []).filter((x) => weekSet.has(x));
+      const next = week.includes(d) ? week.filter((x) => x !== d) : [...week, d];
+      return { ...cur, [h]: next };
+    });
   }
   function addHabit(e: React.FormEvent) {
     e.preventDefault();
     const name = adding.trim();
-    if (name && !list.includes(name)) setList([...list, name]);
+    if (!name) return;
+    setList((cur) => (cur.includes(name) ? cur : [...cur, name]));
     setAdding("");
   }
   function removeHabit(h: string) {
-    setList(list.filter((x) => x !== h));
-    const rest = { ...done };
-    delete rest[h];
-    setDone(rest);
+    setList((cur) => cur.filter((x) => x !== h));
+    setDone((cur) => {
+      const rest = { ...cur };
+      delete rest[h];
+      return rest;
+    });
   }
 
   return (

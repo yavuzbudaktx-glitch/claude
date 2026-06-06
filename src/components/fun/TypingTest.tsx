@@ -34,14 +34,44 @@ const SAMPLES = [
 
 interface Best { wpm: number; acc: number; at: number }
 
-function pickSample(seed = Date.now()): string { return SAMPLES[seed % SAMPLES.length]; }
+// Accounting-flavoured prompts: a lot of numbers, tab/decimal-heavy phrasing,
+// the language of financial statements. They're designed to push the right
+// hand onto the numeric row and the symbol cluster ($ , . / % ( )) the way
+// real ledger work does.
+const ACCOUNTING_SAMPLES = [
+  "Cash and cash equivalents at January 1 were $1,248,310, comprised of operating checking accounts of $412,650, money market funds of $620,400, and certificates of deposit of $215,260. By December 31 the balance had grown to $1,612,985, a year-over-year increase of 29.2%, driven primarily by $384,000 in operating cash flow and partially offset by $20,325 of capital expenditures and $19,000 of debt principal repayments.",
+  "Accounts receivable aging at quarter-end stood at $362,450, with 78.4% current, 14.2% in the 31-60 day bucket, 5.1% in the 61-90 day bucket, and 2.3% over 90 days. We recorded an allowance for doubtful accounts of $11,420, equal to 3.15% of the gross receivable, consistent with the prior six quarters and slightly below the industry benchmark of 3.40%.",
+  "The straight-line depreciation schedule for the $84,000 asset, placed in service on 03/15/2024 with a salvage value of $4,000 and a useful life of 5 years, produces an annual depreciation expense of $16,000 and a monthly charge of $1,333.33. Year-one expense, prorated for 9.5 months of service, is $12,666.67, leaving an end-of-year carrying amount of $71,333.33.",
+  "The federal tax provision for the year is $48,720, calculated on taxable income of $232,000 at an effective rate of 21.0%, with a state add-on of $9,280 at 4.0% and zero remaining R&D credit after applying $12,500 of carryforward. Deferred tax assets are $18,610, deferred tax liabilities are $7,940, and the net deferred position of $10,670 is presented as non-current per ASC 740-10-45-4.",
+  "Revenue for Q3 was $4,827,140, up 11.6% from $4,326,800 in Q3 of the prior year, with the SaaS segment contributing $3,180,420 (65.9%) and the services segment contributing $1,646,720 (34.1%). Gross margin was 71.4%, operating margin was 18.2%, and net margin was 13.9%, producing diluted earnings per share of $0.42 on a weighted-average share count of 16,028,500.",
+  "The 36-month operating lease, signed 11/01/2025, has a base rent of $4,250.00 per month, escalating 3.0% annually on each anniversary. Total undiscounted payments over the lease are $158,196.45. Discounted at the company's incremental borrowing rate of 6.25%, the present value of $145,308.21 is recorded as a right-of-use asset and an offsetting lease liability under ASC 842-20-30-1.",
+  "Inventory at FIFO of $612,400 was tested for net realizable value at 12/31; on hand were 4,820 units of SKU A at an average cost of $48.50 (total $233,770), 6,140 units of SKU B at $32.10 (total $197,094), and 9,070 units of SKU C at $19.50 (total $176,865). A write-down of $7,290 was recorded for 184 SKU C units at $39.62 below carrying cost, reducing inventory to $605,110.",
+  "The bank reconciliation at month-end starts with a book balance of $84,612.45 and a bank balance of $89,178.20. Outstanding checks total $5,840.75, deposits in transit are $1,250.00, NSF returns are $420.00, the monthly service charge is $35.00, and interest credited is $40.00. Adjusted balances on both sides reconcile to $84,587.45.",
+  "Net working capital improved from $612,450 to $784,310, a $171,860 increase. Days sales outstanding fell from 58.2 to 49.7, days payable outstanding extended from 41.0 to 47.6, and days inventory on hand was steady at 32.4, shortening the cash conversion cycle by 15.1 days. Free cash flow conversion (FCF / Net Income) rose to 92.4%, the strongest reading since 2021.",
+  "Bond payable: $500,000 face, 5.000% coupon paid semi-annually 06/30 and 12/31, issued 01/01/2026 to yield 4.250%. Issue price is $522,182, producing an initial premium of $22,182 amortised on the effective-interest method. The 06/30/2026 interest expense is $11,096.37 (= $522,182 × 4.250% / 2), cash paid is $12,500.00, and premium amortised is $1,403.63.",
+  "Variance analysis on the Plant A volume of 18,400 units produced the following: materials usage variance $2,840 U, materials price variance $1,620 F, labor efficiency variance $4,210 U, labor rate variance $980 U, variable overhead spending variance $1,150 F, and variable overhead efficiency variance $2,360 U. Total flexible-budget variance was $7,640 U against a standard cost of $612,540.",
+  "Goodwill of $1,248,000 from the 2023 acquisition was tested for impairment at 09/30. The reporting unit's carrying amount was $4,820,000 versus an estimated fair value of $4,690,000, indicating impairment. The implied fair value of goodwill was $1,118,000, requiring an impairment charge of $130,000 to write goodwill down to its recoverable amount under ASC 350-20-35.",
+];
+
+const PROMPT_SETS: Record<"evergreen" | "accounting", string[]> = {
+  evergreen: SAMPLES,
+  accounting: ACCOUNTING_SAMPLES,
+};
+type PromptSet = keyof typeof PROMPT_SETS;
+
+function pickSample(set: PromptSet, seed = Date.now()): string {
+  const pool = PROMPT_SETS[set];
+  return pool[seed % pool.length];
+}
 
 const CHAR_W = 12;       // px per character — matches the mono font below
 const CONTAINER_H = 56;  // px
 
 export function TypingTest() {
+  // Which prompt pool the user is on — saved across devices.
+  const [promptSet, setPromptSet] = usePref<PromptSet>("hub.typing.set", "evergreen");
   const [seed, setSeed] = useState(() => Date.now());
-  const target = useMemo(() => pickSample(seed), [seed]);
+  const target = useMemo(() => pickSample(promptSet, seed), [promptSet, seed]);
   const [typed, setTyped] = useState("");
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [finishedAt, setFinishedAt] = useState<number | null>(null);
@@ -132,8 +162,30 @@ export function TypingTest() {
   const cursorIdx = typed.length;
   const offset = trackWidth ? trackWidth / 2 - cursorIdx * CHAR_W : 0;
 
+  function switchSet(s: PromptSet) {
+    setPromptSet(s);
+    // Roll a fresh prompt from the new pool so you don't see your last
+    // half-typed evergreen prompt under the new "accounting" tab.
+    setTyped(""); setMiss(0); setStartedAt(null); setFinishedAt(null);
+    setSeed(Date.now());
+    setTimeout(() => inputRef.current?.focus(), 30);
+  }
+
   return (
     <div className="flex flex-col gap-3">
+      {/* Prompt-pool tabs */}
+      <div className="flex items-center gap-1.5">
+        {(["evergreen", "accounting"] as PromptSet[]).map((s) => (
+          <button
+            key={s}
+            onClick={() => switchSet(s)}
+            className={`chip normal-case !px-2.5 !py-0.5 !text-[11px] ${promptSet === s ? "chip-active" : ""}`}
+          >
+            {s === "evergreen" ? "Evergreen" : "Accounting · numbers"}
+          </button>
+        ))}
+      </div>
+
       <div className="flex items-center gap-4 text-[11px] uppercase tracking-wider text-muted">
         <div className="inline-flex items-center gap-1.5">
           <Timer className="h-3 w-3" />

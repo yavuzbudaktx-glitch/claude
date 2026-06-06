@@ -729,72 +729,106 @@ main { position: relative; z-index: 1; }
 }
 
 /* ============== ACCOUNTING ============== */
-/* ============== ACCOUNTING (concept — green-bar ledger paper) ==============
-   The classic continuous-feed accountant's pad: every card is a sheet of
-   green-bar ledger paper (alternating pale-green / white rows) with a red
-   margin rule down the left, a double-rule header, and tabular figures. The
-   desk beneath is a sage blotter. */
+/* ============== ACCOUNTING (concept — green-bar ledger paper, v2) ==========
+   The classic continuous-feed accountant's pad. The whole theme runs on a
+   single rhythm — `--row` = 28px — so every visible band on a card aligns to
+   the same baseline as the kanban tiles, list rows, and form inputs inside
+   it. Bands snap to the rhythm; nested cards (the application tiles, the
+   subscription rows) are sized to exact multiples of `--row`, so the
+   pale-green stripes always end at a card edge, never mid-content. */
 :root.theme-accounting {
   color-scheme: light;
-  --bg:           #d7e0d2;             /* sage desk blotter */
-  --paper:        #fcfdfa;             /* ledger sheet */
-  --paper-2:      #f0f5ec;
-  --ink:          #14241b;
-  --ink-soft:     #3a4a3f;
-  --muted:        #6c7a6e;
+  --bg:           #c8d6c0;             /* sage desk blotter */
+  --paper:        #f6f8ef;             /* ledger sheet, slightly cooler */
+  --paper-2:      #e9efd7;             /* faded second tone for nested rows */
+  --ink:          #0f1f15;
+  --ink-soft:     #34453a;
+  --muted:        #6b7a6d;
   --muted-2:      #a3b0a3;
-  --rule:         rgba(20, 36, 27, 0.18);
-  --rule-soft:    rgba(20, 36, 27, 0.07);
+  --rule:         rgba(15, 31, 21, 0.22);
+  --rule-soft:    rgba(15, 31, 21, 0.10);
   --accent:       #1b6e3c;             /* ledger green */
   --accent-soft:  rgba(27, 110, 60, 0.10);
-  --accent-2:     #b3261e;             /* ledger red (margin / negatives) */
-  --hl:           rgba(27, 110, 60, 0.08);
+  --accent-2:     #b3261e;             /* ledger red */
+  --hl:           rgba(27, 110, 60, 0.10);
   --up:           #1b6e3c;
   --down:         #b3261e;
   --grad-from:    #14532d;
   --grad-via:     #1b6e3c;
   --grad-to:      #4a8a4a;
-  --glass:        #fcfdfa;
-  --glass-border: rgba(20, 36, 27, 0.16);
+  --glass:        #f6f8ef;
+  --glass-border: rgba(15, 31, 21, 0.30);
   --glow:         rgba(27, 110, 60, 0.16);
-  --shadow-card:  0 1px 0 rgba(20,36,27,0.08), 0 10px 26px -16px rgba(20, 36, 27, 0.34);
-  --shadow-hover: 0 2px 0 rgba(20,36,27,0.10), 0 18px 40px -18px rgba(20, 36, 27, 0.44);
+  --shadow-card:  0 1px 0 rgba(15,31,21,0.10), 0 10px 24px -16px rgba(15, 31, 21, 0.34);
+  --shadow-hover: 0 2px 0 rgba(15,31,21,0.14), 0 18px 38px -18px rgba(15, 31, 21, 0.42);
   --aurora-1: transparent; --aurora-2: transparent;
   --aurora-3: transparent; --aurora-4: transparent;
   --grain:        0.02;
-  --ledger-band:  rgba(27, 110, 60, 0.10);
-  --ledger-red:   rgba(179, 38, 30, 0.55);
+  /* Ledger rhythm. Everything in the theme is built off this single value so
+     bands and content always agree. */
+  --row:           28px;
+  --row-half:      14px;
+  --ledger-band:   #d9e6c8;             /* the unmistakable pale green */
+  --ledger-red:    rgba(179, 38, 30, 0.62);
+  --margin-left:   48px;                /* where the red rule lives */
 }
 .theme-accounting body::before { background: none; animation: none; }
 .theme-accounting body { background: transparent; }
-/* desk blotter: a faint columnar grid on the sage surface */
+/* The desk blotter: faint sage cross-grain so the sage colour reads as fabric
+   under the cards, not a flat fill. */
 .theme-accounting body::after {
   opacity: 1; mix-blend-mode: normal;
   transform: translateZ(0); will-change: transform; backface-visibility: hidden;
   background-image:
-    linear-gradient(90deg, rgba(20,36,27,0.05) 1px, transparent 1px);
-  background-size: 56px 100%;
+    repeating-linear-gradient(90deg, rgba(15,31,21,0.04) 0 1px, transparent 1px 56px),
+    repeating-linear-gradient(0deg,  rgba(15,31,21,0.03) 0 1px, transparent 1px 56px);
 }
+/* Card = a sheet of ledger paper. The bands run the full sheet, the red
+   margin rule sits one ledger-column in from the left, and the sheet has a
+   hard left binding edge so the pad feels glued together. */
 .theme-accounting .card {
   -webkit-backdrop-filter: none; backdrop-filter: none;
-  border-radius: 3px;
+  border-radius: 2px;
   border: 1px solid var(--rule);
-  /* green-bar bands (every 27px) + a red margin rule near the left edge */
-  background-image:
-    repeating-linear-gradient(to bottom,
-      var(--ledger-band) 0, var(--ledger-band) 27px,
-      var(--paper) 27px, var(--paper) 54px),
-    linear-gradient(90deg, transparent 30px, var(--ledger-red) 30px, var(--ledger-red) 31px, transparent 31px),
-    linear-gradient(90deg, transparent 33px, var(--ledger-red) 33px, var(--ledger-red) 34px, transparent 34px);
   background-color: var(--paper);
+  background-image:
+    /* alternating green / cream bands, anchored to the top edge */
+    repeating-linear-gradient(to bottom,
+      var(--ledger-band) 0, var(--ledger-band) var(--row),
+      var(--paper) var(--row), var(--paper) calc(var(--row) * 2)),
+    /* red margin rule */
+    linear-gradient(90deg, transparent calc(var(--margin-left) - 1px),
+      var(--ledger-red) calc(var(--margin-left) - 1px),
+      var(--ledger-red) var(--margin-left),
+      transparent var(--margin-left));
+  /* Reserve a narrow margin so card content NEVER overflows the red rule. */
+  padding-left: calc(var(--margin-left) + 12px);
   box-shadow: var(--shadow-card);
 }
 .theme-accounting .card::before { display: none; }
 .theme-accounting .card::after { display: none; }
 .theme-accounting .card:hover { transform: none; border-color: var(--accent); box-shadow: var(--shadow-hover); }
-.theme-accounting .card-bare { border-radius: 3px; background: var(--paper-2); border: 1px solid var(--rule); }
-.theme-accounting .btn-ghost { border-radius: 3px; background: var(--paper); border: 1px solid var(--rule); }
-.theme-accounting .chip { border-radius: 3px; border: 1px solid var(--rule); }
+/* Nested elements get a CLEAN paper background that covers the bands behind
+   them — so the green stripes appear ONLY in the empty gutters between
+   tiles, never crossing through content. */
+.theme-accounting .card-bare {
+  border-radius: 2px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  /* card-bare rests on the band rhythm: padding is half-row, total min
+     height is exactly two rows so the surrounding bands always meet a tile
+     edge cleanly. */
+  padding: var(--row-half);
+  min-height: calc(var(--row) * 2);
+  /* And subtle ledger lines INSIDE the tile so the rhythm survives */
+  background-image: repeating-linear-gradient(to bottom,
+    transparent 0, transparent calc(var(--row) - 1px),
+    rgba(15,31,21,0.06) calc(var(--row) - 1px), rgba(15,31,21,0.06) var(--row));
+  background-position: 0 calc(var(--row-half) - 1px);
+}
+.theme-accounting .btn-ghost { border-radius: 2px; background: var(--paper); border: 1px solid var(--rule); }
+.theme-accounting .chip { border-radius: 2px; border: 1px solid var(--rule); background: var(--paper); }
+.theme-accounting .chip-active { background: var(--accent); color: #fff; border-color: var(--accent); }
 .theme-accounting .headrule { border-bottom: 3px double var(--accent); padding-bottom: .55rem; }
 .theme-accounting .dot { box-shadow: none; border-radius: 2px; background: var(--accent); }
 .theme-accounting .font-display { font-weight: 800; letter-spacing: -0.02em; }
@@ -804,6 +838,17 @@ main { position: relative; z-index: 1; }
   animation: none;
 }
 .theme-accounting .font-mono { font-feature-settings: "tnum" on, "ss01" on; }
+/* Inputs match the band so the typed value sits on a line */
+.theme-accounting input, .theme-accounting textarea {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+}
+/* Date inputs in the application kanban: a single band tall */
+.theme-accounting input[type="date"] {
+  height: var(--row);
+  line-height: var(--row);
+}
 
 /* =======================================================================
    THEME × MODE — dark/light counter-variants
@@ -1540,7 +1585,7 @@ main { position: relative; z-index: 1; }
 }
 
 /* =======================================================================
-   TWO MORE CONCEPT THEMES — Comic · Sketchbook
+   CONCEPT THEME — Comic
 ======================================================================= */
 
 /* ============== COMIC (halftone + ink lines + Ben-Day) ============== */
@@ -1633,114 +1678,6 @@ main { position: relative; z-index: 1; }
 .theme-comic.dark .card-bare,
 .theme-comic.dark .btn-ghost,
 .theme-comic.dark .chip { border-color: var(--ink); }
-
-/* ============== SKETCHBOOK (pencil + grid paper) ============== */
-@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&display=swap");
-:root.theme-sketch {
-  color-scheme: light;
-  --bg:           #fbfaf3;
-  --paper:        #fffefa;
-  --paper-2:      #fcf9ee;
-  --ink:          #2b2b2b;
-  --ink-soft:     #4a4a4a;
-  --muted:        #7a7a7a;
-  --muted-2:      #b8b3a3;
-  --rule:         rgba(43, 43, 43, 0.35);
-  --rule-soft:    rgba(43, 43, 43, 0.12);
-  --accent:       #2b2b2b;
-  --accent-soft:  rgba(43, 43, 43, 0.08);
-  --accent-2:     #b58a3a;
-  --hl:           rgba(43, 43, 43, 0.06);
-  --up:           #4e8c4e;
-  --down:         #b34a4a;
-  --grad-from:    #2b2b2b;
-  --grad-via:     #6e6e6e;
-  --grad-to:      #b58a3a;
-  --glass:        #fffefa;
-  --glass-border: rgba(43, 43, 43, 0.35);
-  --glow:         rgba(43, 43, 43, 0.15);
-  --shadow-card:  1px 1px 0 rgba(43,43,43,0.12), 3px 3px 0 rgba(43,43,43,0.06);
-  --shadow-hover: 1px 1px 0 rgba(43,43,43,0.18), 5px 5px 0 rgba(43,43,43,0.08);
-  --grain:        0.06;
-}
-.theme-sketch body::before { background: none; animation: none; }
-.theme-sketch body {
-  background:
-    linear-gradient(rgba(43,43,43,0.06) 1px, transparent 1px) 0 0/100% 24px,
-    linear-gradient(90deg, rgba(43,43,43,0.04) 1px, transparent 1px) 0 0/24px 100%,
-    var(--bg);
-  font-family: "Patrick Hand", "Caveat", "Comic Sans MS", system-ui, sans-serif;
-}
-.theme-sketch .font-display {
-  font-family: "Caveat", "Patrick Hand", cursive !important;
-  font-weight: 700 !important;
-  letter-spacing: 0 !important;
-}
-.theme-sketch .label { font-family: "Patrick Hand", system-ui, sans-serif; letter-spacing: 0.08em; font-weight: 600; }
-.theme-sketch .card {
-  background: var(--paper);
-  -webkit-backdrop-filter: none; backdrop-filter: none;
-  border: 1.5px solid var(--rule);
-  border-radius: 22px 14px 26px 16px / 16px 22px 14px 24px; /* wobbly */
-  /* hand-drawn outline feel — a second offset edge */
-  position: relative;
-}
-.theme-sketch .card::before {
-  content: "";
-  position: absolute; inset: 4px;
-  border: 1px dashed rgba(43,43,43,0.20);
-  border-radius: inherit;
-  pointer-events: none;
-  padding: 0 !important; background: none !important;
-  mask: none !important; -webkit-mask: none !important;
-}
-.theme-sketch .card::after { display: none; }
-.theme-sketch .card:hover { transform: rotate(-0.2deg); }
-.theme-sketch .card-bare {
-  border: 1.5px solid var(--rule);
-  border-radius: 16px 22px 14px 20px / 20px 14px 22px 16px;
-  background: var(--paper-2);
-}
-.theme-sketch .btn-ghost {
-  border: 1.5px solid var(--rule);
-  background: var(--paper-2);
-  border-radius: 14px 10px 16px 12px / 12px 14px 10px 16px;
-}
-.theme-sketch .chip {
-  border: 1.5px solid var(--rule);
-  border-radius: 14px 18px 12px 16px / 16px 12px 18px 14px;
-  font-family: "Patrick Hand", system-ui;
-  font-weight: 700;
-}
-.theme-sketch .chip-active { background: var(--ink); color: #fff; border-color: var(--ink); }
-.theme-sketch .dot { background: var(--ink); box-shadow: 0 0 0 2px var(--bg); width: 9px; height: 9px; }
-.theme-sketch .text-gradient {
-  background: none !important;
-  -webkit-text-fill-color: var(--ink); color: var(--ink); animation: none;
-}
-:root.theme-sketch.dark {
-  color-scheme: dark;
-  --bg:           #0f0d09;
-  --paper:        #181510;
-  --paper-2:      #1f1b15;
-  --ink:          #f0e8d2;
-  --ink-soft:     #c8bea4;
-  --muted:        #8b8268;
-  --muted-2:      #5a5340;
-  --rule:         rgba(240, 232, 210, 0.42);
-  --rule-soft:    rgba(240, 232, 210, 0.16);
-  --accent:       #e0c98a;
-  --accent-2:     #ffffff;
-  --glass:        #181510;
-  --glass-border: rgba(240, 232, 210, 0.42);
-  --glow:         rgba(240, 232, 210, 0.16);
-}
-.theme-sketch.dark body {
-  background:
-    linear-gradient(rgba(240,232,210,0.07) 1px, transparent 1px) 0 0/100% 24px,
-    linear-gradient(90deg, rgba(240,232,210,0.05) 1px, transparent 1px) 0 0/24px 100%,
-    var(--bg);
-}
 
 /* =======================================================================
    MOSAIC (concept) — hand-laid Mediterranean azulejo
@@ -2166,134 +2103,6 @@ main { position: relative; z-index: 1; }
 }
 .theme-deco .text-gradient {
   background: linear-gradient(118deg, var(--accent-2), var(--accent) 50%, #f0d97a);
-  -webkit-background-clip: text; background-clip: text;
-  animation: none;
-}
-
-/* =======================================================================
-   LEATHER (concept) — a leather-bound journal
-   Grained cognac hide for the desk; each card is a leather panel framed by a
-   gold tooled edge and an inner saddle-stitch; warm cream ink; serif type.
-======================================================================= */
-:root.theme-leather {
-  color-scheme: dark;
-  --bg:           #2a1a10;             /* deep cognac hide */
-  --paper:        #3a2114;             /* opaque leather panel */
-  --paper-2:      #432515;
-  --ink:          #f5e8d0;             /* warm cream — full contrast */
-  --ink-soft:     #d8c29a;
-  --muted:        #a7906a;
-  --muted-2:      #74603f;
-  --rule:         rgba(212, 175, 90, 0.32);
-  --rule-soft:    rgba(212, 175, 90, 0.12);
-  --accent:       #d4af5a;             /* burnished gold tooling */
-  --accent-soft:  rgba(212, 175, 90, 0.16);
-  --accent-2:     #c9683c;             /* saddle tan */
-  --hl:           rgba(212, 175, 90, 0.12);
-  --up:           #a9bf6d;
-  --down:         #e07a55;
-  --grad-from:    #8a5a26;
-  --grad-via:     #d4af5a;
-  --grad-to:      #f3dc9c;
-  --glass:        #3a2114;
-  --glass-border: rgba(212, 175, 90, 0.55);
-  --glow:         rgba(212, 175, 90, 0.30);
-  --shadow-card:  0 16px 40px -18px rgba(0, 0, 0, 0.85),
-                  inset 0 1px 0 rgba(255, 235, 200, 0.08);
-  --shadow-hover: 0 26px 60px -22px rgba(0, 0, 0, 0.92),
-                  inset 0 1px 0 rgba(255, 235, 200, 0.12);
-  --aurora-1: transparent; --aurora-2: transparent;
-  --aurora-3: transparent; --aurora-4: transparent;
-  --grain:        0;                   /* the body grain handles texture */
-}
-:root.theme-leather:not(.dark) {
-  color-scheme: light;
-  --bg:           #c69a6a;              /* tan cognac desk */
-  --paper:        #f6ebd2;              /* cream parchment panel */
-  --paper-2:      #efe0c0;
-  --ink:          #2e1f12;
-  --ink-soft:     #574128;
-  --muted:        #7d6244;
-  --muted-2:      #ad9272;
-  --rule:         rgba(46, 31, 18, 0.24);
-  --rule-soft:    rgba(46, 31, 18, 0.10);
-  --accent:       #a07a26;              /* antique gold */
-  --accent-soft:  rgba(160, 122, 38, 0.12);
-  --accent-2:     #8a3324;              /* oxblood */
-  --hl:           rgba(160, 122, 38, 0.10);
-  --up:           #5d7a2e;
-  --down:         #a83b22;
-  --grad-from:    #6e4a1e;
-  --grad-via:     #a07a26;
-  --grad-to:      #d4af5a;
-  --glass:        #f6ebd2;
-  --glass-border: rgba(46, 31, 18, 0.28);
-  --glow:         rgba(160, 122, 38, 0.18);
-  --shadow-card:  0 1px 2px rgba(40, 26, 12, 0.10), 0 14px 30px -16px rgba(40, 26, 12, 0.40);
-  --shadow-hover: 0 2px 4px rgba(40, 26, 12, 0.12), 0 22px 48px -20px rgba(40, 26, 12, 0.48);
-  --grain:        0;
-}
-.theme-leather .font-display {
-  font-family: "Playfair Display", "Times New Roman", serif;
-  font-weight: 700;
-  letter-spacing: -0.005em;
-}
-.theme-leather body { background: transparent; }
-.theme-leather body::before { animation: none; background: none; }
-/* The hide itself: two crossed pebble-pore noises + a soft uneven dye
-   gradient. Painted ONLY on the body, not over cards, so type stays clean. */
-.theme-leather body::after {
-  opacity: 1;
-  mix-blend-mode: normal;
-  transform: translateZ(0); will-change: transform; backface-visibility: hidden;
-  background-image:
-    radial-gradient(70% 50% at 30% 20%, rgba(255, 220, 170, 0.10), transparent 75%),
-    radial-gradient(60% 50% at 80% 85%, rgba(0, 0, 0, 0.28), transparent 75%),
-    radial-gradient(1.5px 1.5px at 20% 30%, rgba(255, 220, 170, 0.08) 50%, transparent 100%),
-    radial-gradient(1px 1px at 70% 60%, rgba(0, 0, 0, 0.18) 50%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 40% 80%, rgba(255, 220, 170, 0.06) 50%, transparent 100%),
-    radial-gradient(1px 1px at 85% 25%, rgba(0, 0, 0, 0.18) 50%, transparent 100%);
-  background-size: 100% 100%, 100% 100%, 9px 9px, 7px 7px, 11px 11px, 13px 13px;
-}
-.theme-leather:not(.dark) body::after {
-  background-image:
-    radial-gradient(70% 50% at 30% 20%, rgba(255, 235, 195, 0.20), transparent 75%),
-    radial-gradient(60% 50% at 80% 85%, rgba(60, 30, 10, 0.18), transparent 75%),
-    radial-gradient(1px 1px at 20% 30%, rgba(60, 30, 10, 0.10) 50%, transparent 100%),
-    radial-gradient(1px 1px at 70% 60%, rgba(60, 30, 10, 0.10) 50%, transparent 100%),
-    radial-gradient(1px 1px at 40% 80%, rgba(60, 30, 10, 0.08) 50%, transparent 100%),
-    radial-gradient(1px 1px at 85% 25%, rgba(60, 30, 10, 0.10) 50%, transparent 100%);
-}
-.theme-leather .card {
-  border-radius: 6px;
-  background: var(--paper);
-  -webkit-backdrop-filter: none; backdrop-filter: none;
-  /* Two parallel gold rules — the unmistakable "tooled" book-binding edge —
-     stacked with the leather panel underneath. No noise on the card itself,
-     so type and rows stay crisp. */
-  border: 1px solid var(--accent);
-  box-shadow:
-    inset 0 0 0 3px var(--paper),
-    inset 0 0 0 4px var(--accent),
-    var(--shadow-card);
-}
-.theme-leather .card::before { display: none; }
-.theme-leather .card::after { display: none; }
-.theme-leather .card:hover { transform: translateY(-1px); box-shadow:
-    inset 0 0 0 3px var(--paper),
-    inset 0 0 0 4px var(--accent),
-    var(--shadow-hover); }
-.theme-leather .card-bare { border-radius: 5px; border: 1px solid var(--rule); background: var(--paper-2); }
-.theme-leather .btn-ghost { border-radius: 5px; border: 1px solid var(--accent); background: var(--paper); }
-.theme-leather .chip { border-radius: 4px; border: 1px solid var(--accent); background: var(--paper); font-weight: 600; letter-spacing: 0.02em; }
-.theme-leather .chip-active { background: var(--accent); color: #2a1a0a; border-color: var(--accent); }
-.theme-leather .headrule { border-bottom: 1px solid var(--rule); padding-bottom: .55rem; }
-.theme-leather .dot {
-  background: radial-gradient(circle at 32% 30%, #f4e3a1, var(--accent) 60%, #6e4a1e);
-  box-shadow: 0 0 0 1px rgba(201,162,74,0.5), 0 0 10px var(--glow);
-}
-.theme-leather .text-gradient {
-  background: linear-gradient(118deg, var(--accent-2), var(--accent) 50%, #efd99a);
   -webkit-background-clip: text; background-clip: text;
   animation: none;
 }

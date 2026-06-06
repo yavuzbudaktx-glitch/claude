@@ -147,10 +147,21 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function usePref<T>(key: string, fallback: T): [T, (v: T) => void] {
+export function usePref<T>(key: string, fallback: T): [T, (v: T | ((prev: T) => T)) => void] {
   const { prefs, setPref } = useContext(PrefsContext);
   const value = (prefs[key] === undefined ? fallback : (prefs[key] as T));
-  const set = useCallback((v: T) => setPref(key, v), [key, setPref]);
+  // Always-current ref so the FUNCTIONAL setter form sees the latest value
+  // even when called multiple times in the same render. Without this, two
+  // quick clicks (e.g. checking two habit days in a row) both read the SAME
+  // stale `value` from the closure and the second click overwrites the first.
+  const ref = useRef(value); ref.current = value;
+  const set = useCallback(
+    (v: T | ((prev: T) => T)) => {
+      const next = typeof v === "function" ? (v as (prev: T) => T)(ref.current) : v;
+      setPref(key, next);
+    },
+    [key, setPref],
+  );
   return [value, set];
 }
 
