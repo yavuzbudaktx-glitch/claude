@@ -57,12 +57,26 @@ function randomMove(b: Cell[]): number {
   const empty = b.map((v, i) => (v ? -1 : i)).filter((i) => i >= 0);
   return empty[Math.floor(Math.random() * empty.length)];
 }
-// Moderate: optimal most of the time, but with a real chance of a human-like
-// slip (a random legal move) so the game is genuinely winnable without being
-// trivial. ~45% slip lands between "too easy" (pure random) and "always a
-// draw" (pure minimax).
+// Moderate: ALWAYS optimal on critical moves (it'll block your three-in-a-row
+// and take a winning move when it has one), and otherwise optimal ~80% of the
+// time with the occasional human-like opening slip. That lands between "too
+// easy" (pure random) and "always a draw" (pure minimax) — a real player has
+// to play well to win, but a careful one will.
 function moderateMove(b: Cell[]): number {
-  return Math.random() < 0.45 ? randomMove(b) : bestMove(b.slice());
+  // 1) If we can win this turn, do it.
+  for (let i = 0; i < 9; i++) {
+    if (b[i]) continue;
+    const t = b.slice(); t[i] = "O";
+    if (winnerOf(t).who === "O") return i;
+  }
+  // 2) If the opponent can win next turn, block it.
+  for (let i = 0; i < 9; i++) {
+    if (b[i]) continue;
+    const t = b.slice(); t[i] = "X";
+    if (winnerOf(t).who === "X") return i;
+  }
+  // 3) Otherwise play optimally ~80% of the time.
+  return Math.random() < 0.20 ? randomMove(b) : bestMove(b.slice());
 }
 
 export function TicTacToe() {

@@ -92,7 +92,7 @@ function InboxTab({ limit }: { limit: number }) {
       {emails.map((m) => (
         <li key={m.id}>
           <a
-            href={`https://mail.google.com/mail/u/0/#all/${m.id}`}
+            href={`https://mail.google.com/mail/u/1/#all/${m.id}`}
             target="_blank"
             rel="noreferrer"
             className="group flex items-start gap-2.5 py-2.5"

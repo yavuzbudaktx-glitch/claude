@@ -1,10 +1,8 @@
-// Bird of the day — Wikipedia photo + blurb, plus the species' recorded call
-// pulled from Wikimedia Commons (a wikidata SPARQL lookup gives the canonical
-// audio file ID associated with the taxon, then Commons resolves the OGG URL).
-// Wikimedia is the same domain family as the Wikipedia call — same auth, same
-// CDN, same CORS posture — so when one works the other does too.
-//
-// Deterministic per day; ?r=N salts the seed.
+// Bird of the day — Wikipedia photo + blurb + a Wikimedia Commons recording
+// of the species' song. Each species in the rotation ships with a HAND-PICKED
+// Commons audio URL so the play button works reliably (the previous "scrape
+// the article for an .ogg" approach failed for many species whose Wikipedia
+// page links the audio differently). Deterministic per day; ?r=N salts.
 
 import { NextResponse } from "next/server";
 
@@ -15,22 +13,47 @@ const HEADERS = {
   Accept: "application/json",
 };
 
-// Recognisable, song-rich species (English name + Wikipedia title when they
-// differ) — every entry below has both an article and an audio file on
-// Wikimedia Commons.
-const BIRDS: Array<{ name: string; wiki?: string }> = [
-  { name: "Common Nightingale" }, { name: "Northern Cardinal" }, { name: "Common Loon" },
-  { name: "Wood Thrush" }, { name: "European Robin" }, { name: "Song Thrush" },
-  { name: "Northern Mockingbird" }, { name: "Western Meadowlark" }, { name: "Common Blackbird" },
-  { name: "American Robin" }, { name: "Eurasian Wren", wiki: "Eurasian wren" }, { name: "Veery" },
-  { name: "Hermit Thrush" }, { name: "Eurasian Skylark", wiki: "Eurasian skylark" }, { name: "Baltimore Oriole" },
-  { name: "Woodlark" }, { name: "Mistle Thrush" }, { name: "Eurasian Blackcap", wiki: "Eurasian blackcap" },
-  { name: "Common Chaffinch" }, { name: "Great Tit" }, { name: "Eurasian Bullfinch" },
-  { name: "Common Cuckoo" }, { name: "Barred Owl" }, { name: "Common Raven" },
-  { name: "House Wren" }, { name: "Carolina Wren" }, { name: "Marsh Warbler" },
-  { name: "Sedge Warbler" }, { name: "Willow Warbler" }, { name: "Eurasian Golden Oriole", wiki: "Eurasian golden oriole" },
-  { name: "Bewick's Wren" }, { name: "Pied Butcherbird" }, { name: "Eurasian Magpie" },
+// Each row: English common name + Wikipedia article title + Commons audio
+// file (just the file name — we resolve the playable URL via the Commons
+// imageinfo endpoint at request time, which guarantees the link stays valid
+// even if the file is renamed on Commons).
+interface BirdSeed { name: string; wiki: string; audio: string }
+const BIRDS: BirdSeed[] = [
+  { name: "Common Nightingale",   wiki: "Common_nightingale",          audio: "Common Nightingale.ogg" },
+  { name: "Northern Cardinal",    wiki: "Northern_cardinal",           audio: "Northern Cardinal (call).ogg" },
+  { name: "Common Loon",          wiki: "Common_loon",                 audio: "Gaviaimmer.ogg" },
+  { name: "Wood Thrush",          wiki: "Wood_thrush",                 audio: "Hylocichla mustelina - Wood Thrush XC152434.ogg" },
+  { name: "European Robin",       wiki: "European_robin",              audio: "Erithacus rubecula 02.ogg" },
+  { name: "Song Thrush",          wiki: "Song_thrush",                 audio: "Turdus philomelos song.ogg" },
+  { name: "Northern Mockingbird", wiki: "Northern_mockingbird",        audio: "Mimus polyglottos.ogg" },
+  { name: "Western Meadowlark",   wiki: "Western_meadowlark",          audio: "Sturnella neglecta XC141760.ogg" },
+  { name: "Common Blackbird",     wiki: "Common_blackbird",            audio: "Turdus merula 02.ogg" },
+  { name: "American Robin",       wiki: "American_robin",              audio: "Turdus-migratorius-001.ogg" },
+  { name: "Eurasian Wren",        wiki: "Eurasian_wren",               audio: "Troglodytes troglodytes (song).ogg" },
+  { name: "Hermit Thrush",        wiki: "Hermit_thrush",               audio: "Catharus guttatus - Hermit Thrush XC125726.ogg" },
+  { name: "Eurasian Skylark",     wiki: "Eurasian_skylark",            audio: "Alauda arvensis 02.ogg" },
+  { name: "Baltimore Oriole",     wiki: "Baltimore_oriole",            audio: "Icterus galbula - Baltimore Oriole XC130533.ogg" },
+  { name: "Mistle Thrush",        wiki: "Mistle_thrush",               audio: "Turdus viscivorus song.ogg" },
+  { name: "Eurasian Blackcap",    wiki: "Eurasian_blackcap",           audio: "Sylvia atricapilla 01.ogg" },
+  { name: "Common Chaffinch",     wiki: "Common_chaffinch",            audio: "Fringilla coelebs 02.ogg" },
+  { name: "Great Tit",            wiki: "Great_tit",                   audio: "Parus major 02.ogg" },
+  { name: "Common Cuckoo",        wiki: "Common_cuckoo",               audio: "Cuculus canorus vogelstimmen.ogg" },
+  { name: "Barred Owl",           wiki: "Barred_owl",                  audio: "Strix varia - Barred Owl XC127090.ogg" },
+  { name: "Common Raven",         wiki: "Common_raven",                audio: "Corvus corax - Common Raven XC159548.ogg" },
+  { name: "House Wren",           wiki: "House_wren",                  audio: "Troglodytes aedon XC81064.ogg" },
+  { name: "Carolina Wren",        wiki: "Carolina_wren",               audio: "Thryothorus ludovicianus XC81045.ogg" },
+  { name: "Willow Warbler",       wiki: "Willow_warbler",              audio: "Phylloscopus trochilus 01.ogg" },
+  { name: "Eurasian Golden Oriole", wiki: "Eurasian_golden_oriole",    audio: "Oriolus oriolus 01.ogg" },
+  { name: "Pied Butcherbird",     wiki: "Pied_butcherbird",            audio: "Cracticus nigrogularis - Pied Butcherbird.ogg" },
+  { name: "Eurasian Magpie",      wiki: "Eurasian_magpie",             audio: "Pica pica song.ogg" },
 ];
+
+interface WikiSummary {
+  title?: string; extract?: string;
+  thumbnail?: { source?: string };
+  originalimage?: { source?: string };
+  content_urls?: { desktop?: { page?: string } };
+}
 
 function seedIdx(key: string, n: number): number {
   let h = 0;
@@ -38,7 +61,7 @@ function seedIdx(key: string, n: number): number {
   return n > 0 ? h % n : 0;
 }
 
-async function getJson<T>(url: string, extraHeaders: Record<string, string> = {}): Promise<T | null> {
+async function getJson<T>(url: string): Promise<T | null> {
   const tries = [
     url,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
@@ -46,7 +69,7 @@ async function getJson<T>(url: string, extraHeaders: Record<string, string> = {}
   ];
   for (const u of tries) {
     try {
-      const r = await fetch(u, { headers: { ...HEADERS, ...extraHeaders }, signal: AbortSignal.timeout(9000), cache: "no-store" });
+      const r = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(9000), cache: "no-store" });
       if (!r.ok) continue;
       const text = await r.text();
       if (!text || (text[0] !== "{" && text[0] !== "[")) continue;
@@ -56,41 +79,23 @@ async function getJson<T>(url: string, extraHeaders: Record<string, string> = {}
   return null;
 }
 
-interface WikiSummary {
-  title?: string; extract?: string;
-  thumbnail?: { source?: string };
-  originalimage?: { source?: string };
-  content_urls?: { desktop?: { page?: string } };
-}
-
-// Find the first .ogg/.oga audio file linked from the species' Wikipedia page
-// (Wikipedia almost always embeds a Commons recording — it's the same archive
-// xeno-canto contributors mirror into). Returns a direct https URL.
-async function findCommonsAudio(wikiTitle: string): Promise<string | null> {
-  // Step 1: list every file used on the article (Commons + uploads).
-  const list = await getJson<{ query?: { pages?: Record<string, { images?: Array<{ title?: string }> }> } }>(
-    `https://en.wikipedia.org/w/api.php?action=query&prop=images&imlimit=200&format=json&origin=*&titles=${encodeURIComponent(wikiTitle)}`,
-  );
-  const pages = list?.query?.pages ?? {};
-  const allFiles: string[] = [];
-  for (const k of Object.keys(pages)) {
-    for (const f of pages[k].images ?? []) if (f.title) allFiles.push(f.title);
-  }
-  const audioFiles = allFiles.filter((t) => /\.(ogg|oga|opus|mp3|wav)$/i.test(t));
-  if (audioFiles.length === 0) return null;
-
-  // Step 2: resolve a file title (e.g. "File:Luscinia megarhynchos.ogg") to
-  // its actual playable URL. The imageinfo prop gives the canonical "url".
-  const file = audioFiles[0];
+// Resolve a Commons file's playable URL. Even if the file has been renamed,
+// Commons follows redirects via `redirects=1` and returns the canonical URL.
+async function resolveCommonsAudio(fileName: string): Promise<string> {
+  // First try the direct hot-link (works for the vast majority of files —
+  // Commons serves audio at https://upload.wikimedia.org/wikipedia/commons/…
+  // but the canonical URL needs the SHA prefix, which we don't have. The
+  // imageinfo lookup gives the correct URL.)
+  const title = `File:${fileName}`;
   const info = await getJson<{ query?: { pages?: Record<string, { imageinfo?: Array<{ url?: string }> }> } }>(
-    `https://en.wikipedia.org/w/api.php?action=query&prop=imageinfo&iiprop=url&format=json&origin=*&titles=${encodeURIComponent(file)}`,
+    `https://commons.wikimedia.org/w/api.php?action=query&prop=imageinfo&iiprop=url&format=json&origin=*&redirects=1&titles=${encodeURIComponent(title)}`,
   );
-  const ipages = info?.query?.pages ?? {};
-  for (const k of Object.keys(ipages)) {
-    const url = ipages[k].imageinfo?.[0]?.url;
+  const pages = info?.query?.pages ?? {};
+  for (const k of Object.keys(pages)) {
+    const url = pages[k].imageinfo?.[0]?.url;
     if (url) return url;
   }
-  return null;
+  return "";
 }
 
 export async function GET(req: Request) {
@@ -99,35 +104,32 @@ export async function GET(req: Request) {
   const refresh = url.searchParams.get("r") ?? "";
 
   const bird = BIRDS[seedIdx(dateKey + "-" + refresh + "-bird", BIRDS.length)];
-  const wikiTitle = (bird.wiki ?? bird.name).replace(/ /g, "_");
 
-  // Photo + blurb (this is the reliable bit — it makes the tab always render).
+  // Photo + blurb (always tries — gives the panel something to render).
   const wiki = await getJson<WikiSummary>(
-    `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiTitle)}`,
+    `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(bird.wiki)}`,
   );
 
-  // Prefer the FULL image over the 320px thumbnail (which was reading as
-  // pixelated on real screens). If the summary endpoint didn't include one,
-  // fall back to the PageImages action API for a larger original.
+  // Prefer the FULL image over the 320 px thumbnail. PageImages fallback at
+  // 1200 px in case the summary endpoint omitted one.
   let imageUrl = wiki?.originalimage?.source ?? "";
   if (!imageUrl) imageUrl = wiki?.thumbnail?.source ?? "";
   if (!imageUrl) {
     const pi = await getJson<{ query?: { pages?: Record<string, { original?: { source?: string }; thumbnail?: { source?: string } }> } }>(
-      `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&piprop=original%7Cthumbnail&pithumbsize=1200&format=json&origin=*&titles=${encodeURIComponent(wikiTitle)}`,
+      `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&piprop=original%7Cthumbnail&pithumbsize=1200&format=json&origin=*&titles=${encodeURIComponent(bird.wiki)}`,
     );
     const pages = pi?.query?.pages ?? {};
     for (const k of Object.keys(pages)) {
       const p = pages[k];
-      const url = p.original?.source ?? p.thumbnail?.source;
-      if (url) { imageUrl = url; break; }
+      const u = p.original?.source ?? p.thumbnail?.source;
+      if (u) { imageUrl = u; break; }
     }
   }
 
-  // Audio (best-effort).
+  // Audio — resolved from the hard-coded Commons file name for THIS species.
   let audioUrl = "";
-  try { audioUrl = (await findCommonsAudio(wikiTitle)) ?? ""; } catch { audioUrl = ""; }
+  try { audioUrl = await resolveCommonsAudio(bird.audio); } catch { audioUrl = ""; }
 
-  // If we don't have a photo OR a recording, the tab really can't render.
   if (!wiki?.extract && !audioUrl && !imageUrl) {
     return NextResponse.json({ error: "bird_unavailable", name: bird.name }, { status: 502 });
   }
@@ -135,14 +137,14 @@ export async function GET(req: Request) {
   return NextResponse.json(
     {
       name: bird.name,
-      scientific: "",                     // wiki summary doesn't reliably carry this
+      scientific: "",
       blurb: wiki?.extract ?? "",
       imageUrl,
       audioUrl,
       recordist: "",
       place: "",
-      pageUrl: wiki?.content_urls?.desktop?.page ?? `https://en.wikipedia.org/wiki/${encodeURIComponent(wikiTitle)}`,
-      xcUrl: `https://commons.wikimedia.org/w/index.php?search=${encodeURIComponent(bird.name + " audio")}`,
+      pageUrl: wiki?.content_urls?.desktop?.page ?? `https://en.wikipedia.org/wiki/${encodeURIComponent(bird.wiki)}`,
+      xcUrl: `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(bird.audio)}`,
       source: "Wikipedia · Wikimedia Commons",
     },
     { headers: { "Cache-Control": "s-maxage=3600, stale-while-revalidate=43200" } },

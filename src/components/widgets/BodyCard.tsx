@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronUp, ChevronDown, Plus, X } from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
 import { Card } from "@/components/Card";
 import { localDateKey } from "@/lib/local-date";
 import { createClient } from "@/lib/supabase/client";
@@ -24,6 +24,10 @@ function HabitTracker() {
   const [list, setList] = usePref<string[]>("habitList", ["Water", "Steps", "Reading"]);
   const [done, setDone] = usePref<Record<string, string[]>>("habits", {});
   const [adding, setAdding] = useState("");
+  // weekOffset: 0 = this week (Mon-Sun), -1 = last week, +1 = next week, etc.
+  // The arrows let you flip back to compare; +1 is disabled when you're
+  // already on the current week.
+  const [weekOffset, setWeekOffset] = useState(0);
   // Today is reactive: re-checked every minute (and when the tab regains
   // focus) so the "today" column never points at yesterday after a tab has
   // been sitting idle across local midnight.
@@ -36,8 +40,26 @@ function HabitTracker() {
     document.addEventListener("visibilitychange", onVis);
     return () => { clearInterval(id); document.removeEventListener("visibilitychange", onVis); };
   }, []);
-  const days = useMemo(() => weekDaysFor(todayKey), [todayKey]);
+  // The "anchor" date for the visible week — todayKey shifted by `weekOffset`
+  // weeks. weekDaysFor() builds Monday..Sunday around it.
+  const anchor = useMemo(() => {
+    const [y, m, d] = todayKey.split("-").map(Number);
+    const dd = new Date(y, m - 1, d + weekOffset * 7);
+    return localDateKey(dd);
+  }, [todayKey, weekOffset]);
+  const days = useMemo(() => weekDaysFor(anchor), [anchor]);
   const weekSet = useMemo(() => new Set(days), [days]);
+  const onCurrentWeek = weekOffset === 0;
+  const weekLabel = useMemo(() => {
+    if (onCurrentWeek) return "This week";
+    if (weekOffset === -1) return "Last week";
+    // Otherwise show "May 12 – May 18" so multiple weeks back is unambiguous.
+    const fmt = (key: string) => {
+      const [y, m, d] = key.split("-").map(Number);
+      return new Date(y, m - 1, d).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    };
+    return `${fmt(days[0])} – ${fmt(days[6])}`;
+  }, [weekOffset, onCurrentWeek, days]);
   const dayLabel = (key: string) => {
     const [y, m, dd] = key.split("-").map(Number);
     return new Date(y, m - 1, dd).toLocaleDateString(undefined, { weekday: "narrow" });
@@ -49,8 +71,10 @@ function HabitTracker() {
     // FUNCTIONAL update — `done` from the closure is stale within the same
     // render if you toggle two days in a row.
     setDone((cur) => {
-      const week = (cur[h] ?? []).filter((x) => weekSet.has(x));
-      const next = week.includes(d) ? week.filter((x) => x !== d) : [...week, d];
+      // PRESERVE history: only touch the toggled date — never prune older
+      // weeks (we need them so the previous-week view stays accurate).
+      const prev = cur[h] ?? [];
+      const next = prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d];
       return { ...cur, [h]: next };
     });
   }
@@ -72,7 +96,40 @@ function HabitTracker() {
 
   return (
     <div className="min-w-0">
-      <div className="label mb-2">Habits · this week</div>
+      <div className="flex items-center gap-2 mb-2">
+        <div className="label">Habits · <span className={onCurrentWeek ? "" : "text-accent"}>{weekLabel}</span></div>
+        <div className="ml-auto flex items-center gap-0.5 text-muted hover:text-ink transition">
+          <button
+            type="button"
+            onClick={() => setWeekOffset((n) => n - 1)}
+            className="h-6 w-6 grid place-items-center rounded hover:bg-[var(--rule-soft)]"
+            aria-label="Previous week"
+            title="Previous week"
+          >
+            <ChevronLeft className="h-3.5 w-3.5" />
+          </button>
+          {!onCurrentWeek && (
+            <button
+              type="button"
+              onClick={() => setWeekOffset(0)}
+              className="px-1.5 h-6 text-[10px] uppercase tracking-wider rounded hover:bg-[var(--rule-soft)]"
+              title="Back to this week"
+            >
+              today
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => setWeekOffset((n) => Math.min(0, n + 1))}
+            disabled={onCurrentWeek}
+            className="h-6 w-6 grid place-items-center rounded hover:bg-[var(--rule-soft)] disabled:opacity-30 disabled:cursor-not-allowed"
+            aria-label="Next week"
+            title="Next week"
+          >
+            <ChevronRight className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </div>
       <div className="flex items-center gap-1 mb-1 pl-[68px]">
         {days.map((d) => (
           <span key={d} className={`w-[18px] text-center text-[9px] uppercase ${d === todayKey ? "text-accent" : "text-muted-2"}`}>
@@ -151,14 +208,16 @@ interface WeightEntry { date: string; weight: number }
 interface BodyState {
   entries: WeightEntry[];
   calorieGoal: string;
+  proteinGoal: string;       // grams / day
   workoutA: string;
   workoutB: string;
-  calsDate: string;   // localDateKey the calsTotal applies to
-  calsTotal: number;  // calories logged "today"
+  calsDate: string;          // localDateKey the calsTotal + proteinTotal apply to
+  calsTotal: number;         // calories logged "today"
+  proteinTotal: number;      // protein (g) logged "today"
 }
 
 const KEY = "morning.body.v1";
-const DEFAULT: BodyState = { entries: [], calorieGoal: "", workoutA: "", workoutB: "", calsDate: "", calsTotal: 0 };
+const DEFAULT: BodyState = { entries: [], calorieGoal: "", proteinGoal: "", workoutA: "", workoutB: "", calsDate: "", calsTotal: 0, proteinTotal: 0 };
 const STEP = 0.2;
 const SEED_WEIGHT = 180;
 
@@ -172,10 +231,12 @@ function coerce(raw: unknown): BodyState {
   return {
     entries,
     calorieGoal: typeof o.calorieGoal === "string" ? o.calorieGoal : "",
+    proteinGoal: typeof o.proteinGoal === "string" ? o.proteinGoal : "",
     workoutA: typeof o.workoutA === "string" ? o.workoutA : "",
     workoutB: typeof o.workoutB === "string" ? o.workoutB : "",
     calsDate: typeof o.calsDate === "string" ? o.calsDate : "",
     calsTotal: typeof o.calsTotal === "number" ? o.calsTotal : 0,
+    proteinTotal: typeof o.proteinTotal === "number" ? o.proteinTotal : 0,
   };
 }
 
@@ -351,6 +412,7 @@ export function BodyCard() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [draft, setDraft] = useState("");
   const [calDraft, setCalDraft] = useState("");
+  const [proteinDraft, setProteinDraft] = useState("");
 
   // Load: prefer the signed-in Supabase row (cross-device), else localStorage.
   useEffect(() => {
@@ -420,9 +482,13 @@ export function BodyCard() {
 
   const today = localDateKey();
   const calsToday = state.calsDate === today ? state.calsTotal : 0;
+  const proteinToday = state.calsDate === today ? state.proteinTotal : 0;
   const goalNum = Number(state.calorieGoal);
   const hasGoal = Number.isFinite(goalNum) && goalNum > 0;
   const calPct = hasGoal ? Math.min(100, (calsToday / goalNum) * 100) : 0;
+  const proteinGoalNum = Number(state.proteinGoal);
+  const hasProteinGoal = Number.isFinite(proteinGoalNum) && proteinGoalNum > 0;
+  const proteinPct = hasProteinGoal ? Math.min(100, (proteinToday / proteinGoalNum) * 100) : 0;
 
   function addCals(e: React.FormEvent) {
     e.preventDefault();
@@ -433,10 +499,27 @@ export function BodyCard() {
     if (Number.isFinite(num) && num !== 0) {
       setState((prev) => {
         const base = prev.calsDate === today ? prev.calsTotal : 0;
-        return { ...prev, calsDate: today, calsTotal: Math.max(0, base + sign * num) };
+        // Carry today's protein forward when we roll the date; reset on roll-over.
+        const baseP = prev.calsDate === today ? prev.proteinTotal : 0;
+        return { ...prev, calsDate: today, calsTotal: Math.max(0, base + sign * num), proteinTotal: baseP };
       });
     }
     setCalDraft("");
+  }
+  function addProtein(e: React.FormEvent) {
+    e.preventDefault();
+    const raw = proteinDraft.trim();
+    if (!raw) return;
+    const sign = raw.startsWith("-") ? -1 : 1;
+    const num = Math.abs(parseInt(raw.replace(/[^0-9]/g, ""), 10));
+    if (Number.isFinite(num) && num !== 0) {
+      setState((prev) => {
+        const baseC = prev.calsDate === today ? prev.calsTotal : 0;
+        const baseP = prev.calsDate === today ? prev.proteinTotal : 0;
+        return { ...prev, calsDate: today, calsTotal: baseC, proteinTotal: Math.max(0, baseP + sign * num) };
+      });
+    }
+    setProteinDraft("");
   }
 
   const fieldClass =
@@ -490,10 +573,12 @@ export function BodyCard() {
         <HabitTracker />
       </div>
 
-      <div className="mt-5 pt-4 border-t rule grid grid-cols-1 md:grid-cols-3 gap-5">
-        {/* Calorie goal + today's intake */}
+      {/* Intake (calories + protein) takes the prominent two columns; the
+          two workout textareas share the third, tighter column. */}
+      <div className="mt-5 pt-4 border-t rule grid grid-cols-1 md:grid-cols-[1fr_1fr_220px] gap-5">
+        {/* Calories — goal, today's count, +input, progress bar */}
         <div>
-          <div className="label mb-2">Daily calorie goal</div>
+          <div className="label mb-2">Calorie goal</div>
           <div className="group/cal flex items-baseline gap-2 opacity-60 hover:opacity-100 focus-within:opacity-100 transition">
             <input
               type="number"
@@ -505,7 +590,6 @@ export function BodyCard() {
             />
             <span className="font-mono text-[11px] uppercase tracking-wider text-muted">kcal / day</span>
           </div>
-
           <div className="label mb-1.5 mt-4">Today&rsquo;s intake</div>
           <div className="flex items-center gap-3 flex-wrap">
             <div className="flex items-baseline gap-2">
@@ -541,26 +625,75 @@ export function BodyCard() {
           )}
         </div>
 
+        {/* Protein — same shape as calories so the eye reads them as a pair */}
         <div>
-          <div className="label mb-2">Workout · Day A</div>
-          <AutoTextarea
-            value={state.workoutA}
-            placeholder={"e.g.\nBench 4×8\nRows 4×10\nOHP 3×10"}
-            onChange={(e) => setState((s) => ({ ...s, workoutA: e.target.value }))}
-            rows={4}
-            className={fieldClass}
-          />
+          <div className="label mb-2">Protein goal</div>
+          <div className="group/p flex items-baseline gap-2 opacity-60 hover:opacity-100 focus-within:opacity-100 transition">
+            <input
+              type="number"
+              inputMode="numeric"
+              value={state.proteinGoal}
+              placeholder="160"
+              onChange={(e) => setState((s) => ({ ...s, proteinGoal: e.target.value }))}
+              className="w-20 bg-transparent border-b border-[var(--rule)] focus:border-[var(--accent)] focus:outline-none font-mono tabular-nums text-2xl text-ink pb-1 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+            />
+            <span className="font-mono text-[11px] uppercase tracking-wider text-muted">g / day</span>
+          </div>
+          <div className="label mb-1.5 mt-4">Today&rsquo;s protein</div>
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-baseline gap-2">
+              <span className="font-mono tabular-nums text-2xl text-ink">{proteinToday}</span>
+              <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
+                {hasProteinGoal ? `${Math.max(0, proteinGoalNum - proteinToday)} g left` : "grams"}
+              </span>
+            </div>
+            <form onSubmit={addProtein} className="flex items-center gap-1.5 ml-auto">
+              <input
+                value={proteinDraft}
+                onChange={(e) => setProteinDraft(e.target.value)}
+                placeholder="+ 30"
+                inputMode="numeric"
+                className="w-16 bg-[var(--rule-soft)] rounded-lg px-2.5 py-1.5 font-mono tabular-nums text-[13px] text-ink focus:outline-none focus:bg-[var(--paper)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-muted-2"
+                aria-label="Add protein"
+              />
+              <button type="submit" className="btn-ghost !h-8 !w-8" aria-label="Add to today's protein">
+                <Plus className="h-4 w-4" />
+              </button>
+            </form>
+          </div>
+          {hasProteinGoal && (
+            <div className="h-1.5 w-full rounded-full bg-[var(--rule)] overflow-hidden mt-2.5">
+              <div
+                className="h-full rounded-full transition-[width] duration-500"
+                style={{ width: `${proteinPct}%`, background: "linear-gradient(90deg, var(--up), var(--accent), var(--accent-2))" }}
+              />
+            </div>
+          )}
         </div>
 
-        <div>
-          <div className="label mb-2">Workout · Day B</div>
-          <AutoTextarea
-            value={state.workoutB}
-            placeholder={"e.g.\nSquat 4×6\nDeadlift 3×5\nCurls 3×12"}
-            onChange={(e) => setState((s) => ({ ...s, workoutB: e.target.value }))}
-            rows={4}
-            className={fieldClass}
-          />
+        {/* Workouts — narrower column, stacked compactly so the intake takes
+            the headline space. */}
+        <div className="space-y-3">
+          <div>
+            <div className="label mb-1.5">Workout · A</div>
+            <AutoTextarea
+              value={state.workoutA}
+              placeholder={"e.g.\nBench 4×8\nRows 4×10"}
+              onChange={(e) => setState((s) => ({ ...s, workoutA: e.target.value }))}
+              rows={3}
+              className={fieldClass + " !text-[12px] !py-1.5"}
+            />
+          </div>
+          <div>
+            <div className="label mb-1.5">Workout · B</div>
+            <AutoTextarea
+              value={state.workoutB}
+              placeholder={"e.g.\nSquat 4×6\nDeadlift 3×5"}
+              onChange={(e) => setState((s) => ({ ...s, workoutB: e.target.value }))}
+              rows={3}
+              className={fieldClass + " !text-[12px] !py-1.5"}
+            />
+          </div>
         </div>
       </div>
     </Card>
