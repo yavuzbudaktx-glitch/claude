@@ -1,4 +1,5 @@
-// Daily digest — fires at 8am local via Vercel Cron. Sends a short
+// Daily digest — fires once a day via Vercel Cron (see vercel.json,
+// "0 13 * * *" = 13:00 UTC = 8 AM CDT / 7 AM CST in Dallas). Sends a short
 // briefing: today's calendar, a small quote, tasks due in the next 3 days,
 // and any UFC/Beşiktaş matches in the next 3 days.
 //

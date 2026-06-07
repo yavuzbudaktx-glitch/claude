@@ -1,6 +1,7 @@
-// Sunday wrap-up — fires at 11 PM Sunday local via Vercel Cron. Sends a
-// snapshot of the week's habits, weight delta, and count of Eisenhower tasks
-// completed this week (calendar events excluded).
+// Sunday wrap-up — fires once a week via Vercel Cron (see vercel.json,
+// "0 4 * * 1" = Mon 04:00 UTC = 11 PM Sun CDT / 10 PM Sun CST in Dallas).
+// Sends a snapshot of the week's habits, weight delta, and count of
+// Eisenhower tasks completed this week (calendar events excluded).
 //
 // Trigger:
 //   GET /api/digest/weekly?send=1     — emails the digest

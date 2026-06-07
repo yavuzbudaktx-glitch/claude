@@ -1,12 +1,10 @@
 {
   "crons": [
     {
-      "_comment": "Daily briefing at 8 AM US Central (= 13:00 UTC during DST, 14:00 UTC in standard time). 13:00 → arrives 8 AM CDT / 7 AM CST.",
       "path": "/api/digest/daily?send=1",
       "schedule": "0 13 * * *"
     },
     {
-      "_comment": "Sunday wrap-up at 11 PM US Central Sunday (= Mon 04:00 UTC during DST, Mon 05:00 UTC in standard time). 04:00 → arrives 11 PM CDT / 10 PM CST Sunday.",
       "path": "/api/digest/weekly?send=1",
       "schedule": "0 4 * * 1"
     }
