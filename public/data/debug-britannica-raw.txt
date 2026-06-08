@@ -1,10 +1,10 @@
 # Britannica scrape debug dump
-# generated: 2026-06-08T17:31:41.906Z
+# generated: 2026-06-08T21:25:35.940Z
 # url:       https://www.britannica.com/on-this-day/june-8
-# fetcher:   Wayback Machine
+# fetcher:   CORS proxy
 # kind:      html
-# length:    76871
-# parsed:    YES (Wayback Machine)
+# length:    76974
+# parsed:    YES (CORS proxy)
 # -----------------------------------------------------------------
 
 
@@ -71,7 +71,7 @@
 
 <!doctype html>
 
-<html lang="en" class="todayinhistory-desktop ui-chrome148 ui-chrome">
+<html lang="en" class="todayinhistory-desktop ui-unknown0 ui-unknown">
 
 <head prefix="og: https://ogp.me/ns# fb: https://ogp.me/ns/fb#">
 
@@ -126,7 +126,7 @@
 
 
 <script   class="analytics-metadata" type="application/json">
-{"adLeg":"D","leg":"B","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+{"adLeg":"D","leg":"A","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
 </script>
 
 
@@ -160,14 +160,15 @@
         'analytics_storage': 'granted',
     });
 
-    window.geoCountry = 'US';
-    window.isGdprCountry = false;
-    window.isCcpaCountry = true;
-    window.geoRegion = 'CA';
+    window.geoCountry = 'FR';
+    window.isGdprCountry = true;
+    window.isCcpaCountry = false;
+    window.geoRegion = '75';
 
 </script>
 
-
+<script type="text/javascript" data-cmp-ab="1" src="https://cdn.consentmanager.net/delivery/autoblocking/f883f3936267c.js" data-cmp-host="d.delivery.consentmanager.net" data-cmp-cdn="cdn.consentmanager.net" data-cmp-codesrc="0"></script>
+    
 
     
 
@@ -278,15 +279,15 @@
 	    	"resourcesPrefixUrl": "https://cdn.britannica.com/mendel-resources/3-187/[url]?v=3.187.12",
 			"date": 20260608,
 			"userInfo": { "type": "ANONYMOUS"
-										,"currency": "USD"
-										,"country": "US"
-										,"state": "CA"
-										,"timezone": "America/Los_Angeles"
-										,"bcomId": "3355846922790482733"
+										,"currency": "EUR"
+										,"country": "FR"
+										,"state": "75"
+										,"timezone": "Europe/Paris"
+										,"bcomId": "1946408321492039217"
 										,"adProvider": "ay"
-										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":true,"showConsent":true}
+										,"privacyInfo": {"inGdprCountry":true,"inCcpaState":false,"showConsent":true}
 										,"hasAds": true
-										,"testVersion": "B"
+										,"testVersion": "A"
 										,"adsTestVersion": "D"
 										,"consumerId": ""
 										,"instId": ""
@@ -310,7 +311,7 @@
 
 			"autocompleteToSearchPage": false,"pagesInfo": [{"url":"June-8","title":"On This Day - What Happened on June 8"},{"url":"June-9","title":"On This Day - What Happened on June 9"},{"url":"June-10","title":"On This Day - What Happened on June 10"},{"url":"June-11","title":"On This Day - What Happened on June 11"},{"url":"June-12","title":"On This Day - What Happened on June 12"},{"url":"June-13","title":"On This Day - What Happened on June 13"},{"url":"June-14","title":"On This Day - What Happened on June 14"},{"url":"June-15","title":"On This Day - What Happened on June 15"},{"url":"June-16","title":"On This Day - What Happened on June 16"},{"url":"June-17","title":"On This Day - What Happened on June 17"}]
 		},
-        "GA": {"adLeg":"D","leg":"B","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+        "GA": {"adLeg":"D","leg":"A","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
     };
 
 	</script>
@@ -414,7 +415,7 @@ Mendel.openGraph = {
 
 </head>
 
-<body data-leg="B" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-b ">
+<body data-leg="A" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-a ">
 
 
 
@@ -679,8 +680,8 @@ Mendel.openGraph = {
         </div>
     </div>
 
-    <div class="d-none hamburger-menu-subscription-link"><div class="KUSTOM-MARKETING-HAMBURGER_MENU_CTA"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=bdpremium" class="subscribe-link btn btn-sm btn-blue py-5" target="_blank">
-  SUBSCRIBE TO PREMIUM
+    <div class="d-none hamburger-menu-subscription-link"><div class="KUSTOM-MARKETING-HAMBURGER_MENU_CTA"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=blue" class="subscribe-link btn btn-sm btn-blue py-5" target="_blank">
+  SUBSCRIBE
 </a></div></div>
     <div id="global-nav-react">
         <div class="d-none">
@@ -1181,7 +1182,7 @@ Ask the Chatbot</a>
 </a>
                         </div>
                         <div class="card-footer font-16">
-                            <dl data-label="born"><dt class="label">born</dt><dd>June 8, 1867<br>Richland Center<span>, </span><a href="https://www.britannica.com/place/Wisconsin">Wisconsin</a><br>(Birthday tomorrow)<br></dd></dl><dl data-label="died"><dt class="label">died</dt><dd>April 9, 1959 (aged 91)<br><a href="https://www.britannica.com/place/Phoenix-Arizona">Phoenix</a><span>, </span><a href="https://www.britannica.com/place/Arizona-state">Arizona</a><br></dd></dl><div class="credit mt-10">© Arnold Newman</div>
+                            <dl data-label="born"><dt class="label">born</dt><dd>June 8, 1867<br>Richland Center<span>, </span><a href="https://www.britannica.com/place/Wisconsin">Wisconsin</a><br>(Born on this day)<br></dd></dl><dl data-label="died"><dt class="label">died</dt><dd>April 9, 1959 (aged 91)<br><a href="https://www.britannica.com/place/Phoenix-Arizona">Phoenix</a><span>, </span><a href="https://www.britannica.com/place/Arizona-state">Arizona</a><br></dd></dl><div class="credit mt-10">© Arnold Newman</div>
                         </div>
                     </div>
                 </div>
@@ -2011,8 +2012,6 @@ Ask the Chatbot</a>
 
 
 
-
-    <script src="https://cdn.britannica.com/mendel-resources/3-187/js/ccpa.js?v=3.187.12" defer="defer"></script>
 
 
 
