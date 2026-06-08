@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-06-08T11:31:21.601Z
+# generated: 2026-06-08T12:41:33.762Z
 # url:       https://www.britannica.com/on-this-day/june-8
 # fetcher:   Wayback Machine
 # kind:      html
