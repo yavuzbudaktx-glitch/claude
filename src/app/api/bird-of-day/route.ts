@@ -1,52 +1,39 @@
-// Bird of the day — Wikipedia photo + blurb + a Wikimedia Commons recording
-// of the species' song. Each species in the rotation ships with a HAND-PICKED
-// Commons audio URL so the play button works reliably (the previous "scrape
-// the article for an .ogg" approach failed for many species whose Wikipedia
-// page links the audio differently). Deterministic per day; ?r=N salts.
+// Bird of the day — pulls a random recording from xeno-canto's library of
+// 800,000+ field recordings across thousands of species, then enriches it
+// with the species' Wikipedia photo + blurb. No hand-picked list: every day
+// you get something different from the full archive.
+//
+// Audio plays directly via <audio src={…}> with NO `crossOrigin` attribute
+// — that's the trick to making the recording work, because browsers don't
+// enforce CORS for media playback when there's no crossOrigin opt-in. The
+// previous "CORS-resolved via the Wikipedia file index" pipeline failed for
+// most species; this one just gives the browser the URL and plays it.
+//
+// Deterministic per day; ?r=N salts the seed so "another" reliably rolls a
+// fresh bird without hitting the same recording.
 
 import { NextResponse } from "next/server";
 
 export const revalidate = 3600;
+export const maxDuration = 30;
 
 const HEADERS = {
   "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
   Accept: "application/json",
 };
 
-// Each row: English common name + Wikipedia article title + Commons audio
-// file (just the file name — we resolve the playable URL via the Commons
-// imageinfo endpoint at request time, which guarantees the link stays valid
-// even if the file is renamed on Commons).
-interface BirdSeed { name: string; wiki: string; audio: string }
-const BIRDS: BirdSeed[] = [
-  { name: "Common Nightingale",   wiki: "Common_nightingale",          audio: "Common Nightingale.ogg" },
-  { name: "Northern Cardinal",    wiki: "Northern_cardinal",           audio: "Northern Cardinal (call).ogg" },
-  { name: "Common Loon",          wiki: "Common_loon",                 audio: "Gaviaimmer.ogg" },
-  { name: "Wood Thrush",          wiki: "Wood_thrush",                 audio: "Hylocichla mustelina - Wood Thrush XC152434.ogg" },
-  { name: "European Robin",       wiki: "European_robin",              audio: "Erithacus rubecula 02.ogg" },
-  { name: "Song Thrush",          wiki: "Song_thrush",                 audio: "Turdus philomelos song.ogg" },
-  { name: "Northern Mockingbird", wiki: "Northern_mockingbird",        audio: "Mimus polyglottos.ogg" },
-  { name: "Western Meadowlark",   wiki: "Western_meadowlark",          audio: "Sturnella neglecta XC141760.ogg" },
-  { name: "Common Blackbird",     wiki: "Common_blackbird",            audio: "Turdus merula 02.ogg" },
-  { name: "American Robin",       wiki: "American_robin",              audio: "Turdus-migratorius-001.ogg" },
-  { name: "Eurasian Wren",        wiki: "Eurasian_wren",               audio: "Troglodytes troglodytes (song).ogg" },
-  { name: "Hermit Thrush",        wiki: "Hermit_thrush",               audio: "Catharus guttatus - Hermit Thrush XC125726.ogg" },
-  { name: "Eurasian Skylark",     wiki: "Eurasian_skylark",            audio: "Alauda arvensis 02.ogg" },
-  { name: "Baltimore Oriole",     wiki: "Baltimore_oriole",            audio: "Icterus galbula - Baltimore Oriole XC130533.ogg" },
-  { name: "Mistle Thrush",        wiki: "Mistle_thrush",               audio: "Turdus viscivorus song.ogg" },
-  { name: "Eurasian Blackcap",    wiki: "Eurasian_blackcap",           audio: "Sylvia atricapilla 01.ogg" },
-  { name: "Common Chaffinch",     wiki: "Common_chaffinch",            audio: "Fringilla coelebs 02.ogg" },
-  { name: "Great Tit",            wiki: "Great_tit",                   audio: "Parus major 02.ogg" },
-  { name: "Common Cuckoo",        wiki: "Common_cuckoo",               audio: "Cuculus canorus vogelstimmen.ogg" },
-  { name: "Barred Owl",           wiki: "Barred_owl",                  audio: "Strix varia - Barred Owl XC127090.ogg" },
-  { name: "Common Raven",         wiki: "Common_raven",                audio: "Corvus corax - Common Raven XC159548.ogg" },
-  { name: "House Wren",           wiki: "House_wren",                  audio: "Troglodytes aedon XC81064.ogg" },
-  { name: "Carolina Wren",        wiki: "Carolina_wren",               audio: "Thryothorus ludovicianus XC81045.ogg" },
-  { name: "Willow Warbler",       wiki: "Willow_warbler",              audio: "Phylloscopus trochilus 01.ogg" },
-  { name: "Eurasian Golden Oriole", wiki: "Eurasian_golden_oriole",    audio: "Oriolus oriolus 01.ogg" },
-  { name: "Pied Butcherbird",     wiki: "Pied_butcherbird",            audio: "Cracticus nigrogularis - Pied Butcherbird.ogg" },
-  { name: "Eurasian Magpie",      wiki: "Eurasian_magpie",             audio: "Pica pica song.ogg" },
-];
+interface XcRec {
+  id?: string;
+  gen?: string; sp?: string;     // genus + species (latin)
+  en?: string;                    // English name
+  cnt?: string; loc?: string;     // country, location
+  rec?: string;                   // recordist
+  q?: string;                     // quality: A, B, C, D, no score
+  type?: string;                  // "song" / "call" etc
+  file?: string;                  // direct .mp3 URL
+  ["file-name"]?: string;
+}
+interface XcResp { numRecordings?: string; numSpecies?: string; recordings?: XcRec[]; numPages?: number }
 
 interface WikiSummary {
   title?: string; extract?: string;
@@ -66,10 +53,11 @@ async function getJson<T>(url: string): Promise<T | null> {
     url,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
     `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+    `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
   ];
   for (const u of tries) {
     try {
-      const r = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(9000), cache: "no-store" });
+      const r = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(10000), cache: "no-store" });
       if (!r.ok) continue;
       const text = await r.text();
       if (!text || (text[0] !== "{" && text[0] !== "[")) continue;
@@ -79,23 +67,12 @@ async function getJson<T>(url: string): Promise<T | null> {
   return null;
 }
 
-// Resolve a Commons file's playable URL. Even if the file has been renamed,
-// Commons follows redirects via `redirects=1` and returns the canonical URL.
-async function resolveCommonsAudio(fileName: string): Promise<string> {
-  // First try the direct hot-link (works for the vast majority of files —
-  // Commons serves audio at https://upload.wikimedia.org/wikipedia/commons/…
-  // but the canonical URL needs the SHA prefix, which we don't have. The
-  // imageinfo lookup gives the correct URL.)
-  const title = `File:${fileName}`;
-  const info = await getJson<{ query?: { pages?: Record<string, { imageinfo?: Array<{ url?: string }> }> } }>(
-    `https://commons.wikimedia.org/w/api.php?action=query&prop=imageinfo&iiprop=url&format=json&origin=*&redirects=1&titles=${encodeURIComponent(title)}`,
-  );
-  const pages = info?.query?.pages ?? {};
-  for (const k of Object.keys(pages)) {
-    const url = pages[k].imageinfo?.[0]?.url;
-    if (url) return url;
-  }
-  return "";
+function audioOf(rec: XcRec): string {
+  const f = rec.file ?? "";
+  if (!f) return "";
+  if (f.startsWith("http")) return f;
+  if (f.startsWith("//")) return "https:" + f;
+  return `https://xeno-canto.org${f.startsWith("/") ? f : "/" + f}`;
 }
 
 export async function GET(req: Request) {
@@ -103,20 +80,53 @@ export async function GET(req: Request) {
   const dateKey = url.searchParams.get("d") ?? new Date().toISOString().slice(0, 10);
   const refresh = url.searchParams.get("r") ?? "";
 
-  const bird = BIRDS[seedIdx(dateKey + "-" + refresh + "-bird", BIRDS.length)];
+  // Probe the catalogue to learn how many pages of quality-A song recordings
+  // exist (xeno-canto pages 500 results at a time). The total grows over
+  // time — using `numPages` straight from the API keeps "full library"
+  // honest as new recordings land.
+  const probeUrl = "https://xeno-canto.org/api/2/recordings?query=" + encodeURIComponent("q:A type:song");
+  const probe = await getJson<XcResp>(probeUrl);
+  const numPages = Math.max(1, probe?.numPages ?? 1);
 
-  // Photo + blurb (always tries — gives the panel something to render).
-  const wiki = await getJson<WikiSummary>(
-    `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(bird.wiki)}`,
-  );
+  // Pick a random page deterministically per day.
+  const page = (seedIdx(dateKey + ":pg:" + refresh, numPages)) + 1;
+  const pageUrl = `${probeUrl}&page=${page}`;
+  const data = page === 1 ? probe : await getJson<XcResp>(pageUrl);
 
-  // Prefer the FULL image over the 320 px thumbnail. PageImages fallback at
-  // 1200 px in case the summary endpoint omitted one.
-  let imageUrl = wiki?.originalimage?.source ?? "";
-  if (!imageUrl) imageUrl = wiki?.thumbnail?.source ?? "";
+  let candidates = (data?.recordings ?? []).filter((r) => audioOf(r) && r.en);
+  // Some species in xeno-canto come back with a blank English name when the
+  // entry hasn't been translated yet — skip those so the panel always has
+  // a title.
+
+  // If the chosen page came back empty (rare), fall back to page 1 which is
+  // dense and reliable.
+  if (candidates.length === 0 && page !== 1) {
+    const p1 = await getJson<XcResp>(probeUrl);
+    candidates = (p1?.recordings ?? []).filter((r) => audioOf(r) && r.en);
+  }
+  if (candidates.length === 0) {
+    return NextResponse.json({ error: "no_recording" }, { status: 502 });
+  }
+
+  const pick = candidates[seedIdx(dateKey + ":rec:" + refresh, candidates.length)];
+  const audioUrl = audioOf(pick);
+  const name = pick.en || `${pick.gen ?? ""} ${pick.sp ?? ""}`.trim() || "Unknown species";
+  const scientific = [pick.gen, pick.sp].filter(Boolean).join(" ");
+
+  // Wikipedia photo + blurb for the species. Try English common name first;
+  // fall back to the scientific name if the article isn't found.
+  async function summary(title: string): Promise<WikiSummary | null> {
+    return getJson<WikiSummary>(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title.replace(/ /g, "_"))}`);
+  }
+  let wiki = await summary(name);
+  if (!wiki?.extract && scientific) wiki = await summary(scientific);
+
+  // Prefer the FULL image; fall back to PageImages at 1200px width.
+  let imageUrl = wiki?.originalimage?.source ?? wiki?.thumbnail?.source ?? "";
   if (!imageUrl) {
+    const t = (wiki?.title ?? name).replace(/ /g, "_");
     const pi = await getJson<{ query?: { pages?: Record<string, { original?: { source?: string }; thumbnail?: { source?: string } }> } }>(
-      `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&piprop=original%7Cthumbnail&pithumbsize=1200&format=json&origin=*&titles=${encodeURIComponent(bird.wiki)}`,
+      `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&piprop=original%7Cthumbnail&pithumbsize=1200&format=json&origin=*&titles=${encodeURIComponent(t)}`,
     );
     const pages = pi?.query?.pages ?? {};
     for (const k of Object.keys(pages)) {
@@ -126,26 +136,18 @@ export async function GET(req: Request) {
     }
   }
 
-  // Audio — resolved from the hard-coded Commons file name for THIS species.
-  let audioUrl = "";
-  try { audioUrl = await resolveCommonsAudio(bird.audio); } catch { audioUrl = ""; }
-
-  if (!wiki?.extract && !audioUrl && !imageUrl) {
-    return NextResponse.json({ error: "bird_unavailable", name: bird.name }, { status: 502 });
-  }
-
   return NextResponse.json(
     {
-      name: bird.name,
-      scientific: "",
+      name,
+      scientific,
       blurb: wiki?.extract ?? "",
       imageUrl,
       audioUrl,
-      recordist: "",
-      place: "",
-      pageUrl: wiki?.content_urls?.desktop?.page ?? `https://en.wikipedia.org/wiki/${encodeURIComponent(bird.wiki)}`,
-      xcUrl: `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(bird.audio)}`,
-      source: "Wikipedia · Wikimedia Commons",
+      recordist: pick.rec ?? "",
+      place: [pick.loc, pick.cnt].filter(Boolean).join(", "),
+      pageUrl: wiki?.content_urls?.desktop?.page ?? `https://en.wikipedia.org/wiki/${encodeURIComponent(name.replace(/ /g, "_"))}`,
+      xcUrl: pick.id ? `https://xeno-canto.org/${pick.id}` : "https://xeno-canto.org/",
+      source: "xeno-canto · Wikipedia",
     },
     { headers: { "Cache-Control": "s-maxage=3600, stale-while-revalidate=43200" } },
   );

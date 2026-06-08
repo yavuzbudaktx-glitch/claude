@@ -28,18 +28,48 @@ function HabitTracker() {
   // The arrows let you flip back to compare; +1 is disabled when you're
   // already on the current week.
   const [weekOffset, setWeekOffset] = useState(0);
-  // Today is reactive: re-checked every minute (and when the tab regains
-  // focus) so the "today" column never points at yesterday after a tab has
-  // been sitting idle across local midnight.
+  // Today is reactive: re-checked every 15s, when the tab regains focus,
+  // when the window is shown, and when the page is first loaded. (Was
+  // every 60s — that left a window in which the tracker showed yesterday
+  // for up to a minute after midnight, and a saved click during that
+  // window would land on the wrong day. The auto-prune below also strips
+  // any future-dated marks defensively so stale data can't paint either.)
   const [todayKey, setTodayKey] = useState<string>(() => localDateKey());
   useEffect(() => {
-    const tick = () => setTodayKey(localDateKey());
+    const tick = () => {
+      const k = localDateKey();
+      setTodayKey((cur) => (cur === k ? cur : k));
+    };
     tick();
-    const id = setInterval(tick, 60_000);
+    const id = setInterval(tick, 15_000);
     const onVis = () => { if (!document.hidden) tick(); };
+    const onFocus = () => tick();
     document.addEventListener("visibilitychange", onVis);
-    return () => { clearInterval(id); document.removeEventListener("visibilitychange", onVis); };
+    window.addEventListener("focus", onFocus);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("focus", onFocus);
+    };
   }, []);
+  // Defensive prune — strip any future-dated marks from `done` on mount.
+  // Old versions of this file allowed clicking a future cell, and a stale
+  // entry like "2026-06-09" sitting in `done["Water"]` is what caused the
+  // first row to occasionally show tomorrow as "done" and refuse a click
+  // on today.
+  useEffect(() => {
+    setDone((cur) => {
+      let dirty = false;
+      const next: Record<string, string[]> = {};
+      for (const [h, arr] of Object.entries(cur)) {
+        const filtered = arr.filter((d) => d <= todayKey);
+        if (filtered.length !== arr.length) dirty = true;
+        next[h] = filtered;
+      }
+      return dirty ? next : cur;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [todayKey]);
   // The "anchor" date for the visible week — todayKey shifted by `weekOffset`
   // weeks. weekDaysFor() builds Monday..Sunday around it.
   const anchor = useMemo(() => {
@@ -573,9 +603,10 @@ export function BodyCard() {
         <HabitTracker />
       </div>
 
-      {/* Intake (calories + protein) takes the prominent two columns; the
-          two workout textareas share the third, tighter column. */}
-      <div className="mt-5 pt-4 border-t rule grid grid-cols-1 md:grid-cols-[1fr_1fr_220px] gap-5">
+      {/* Bottom strip — calories + protein sit tight on the left as the
+          intake pair, the two workout textareas share the right as a
+          side-by-side pair (no more vertical stack). */}
+      <div className="mt-5 pt-4 border-t rule grid grid-cols-1 md:grid-cols-[180px_180px_1fr] gap-x-5 gap-y-4">
         {/* Calories — goal, today's count, +input, progress bar */}
         <div>
           <div className="label mb-2">Calorie goal</div>
@@ -586,7 +617,7 @@ export function BodyCard() {
               value={state.calorieGoal}
               placeholder="2200"
               onChange={(e) => setState((s) => ({ ...s, calorieGoal: e.target.value }))}
-              className="w-24 bg-transparent border-b border-[var(--rule)] focus:border-[var(--accent)] focus:outline-none font-mono tabular-nums text-2xl text-ink pb-1 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-20 bg-transparent border-b border-[var(--rule)] focus:border-[var(--accent)] focus:outline-none font-mono tabular-nums text-2xl text-ink pb-1 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
             />
             <span className="font-mono text-[11px] uppercase tracking-wider text-muted">kcal / day</span>
           </div>
@@ -671,27 +702,26 @@ export function BodyCard() {
           )}
         </div>
 
-        {/* Workouts — narrower column, stacked compactly so the intake takes
-            the headline space. */}
-        <div className="space-y-3">
+        {/* Workouts — A and B side-by-side, sharing the remaining width. */}
+        <div className="grid grid-cols-2 gap-3">
           <div>
             <div className="label mb-1.5">Workout · A</div>
             <AutoTextarea
               value={state.workoutA}
-              placeholder={"e.g.\nBench 4×8\nRows 4×10"}
+              placeholder={"e.g.\nBench 4×8\nRows 4×10\nOHP 3×10"}
               onChange={(e) => setState((s) => ({ ...s, workoutA: e.target.value }))}
-              rows={3}
-              className={fieldClass + " !text-[12px] !py-1.5"}
+              rows={4}
+              className={fieldClass + " !text-[12.5px]"}
             />
           </div>
           <div>
             <div className="label mb-1.5">Workout · B</div>
             <AutoTextarea
               value={state.workoutB}
-              placeholder={"e.g.\nSquat 4×6\nDeadlift 3×5"}
+              placeholder={"e.g.\nSquat 4×6\nDeadlift 3×5\nCurls 3×12"}
               onChange={(e) => setState((s) => ({ ...s, workoutB: e.target.value }))}
-              rows={3}
-              className={fieldClass + " !text-[12px] !py-1.5"}
+              rows={4}
+              className={fieldClass + " !text-[12.5px]"}
             />
           </div>
         </div>

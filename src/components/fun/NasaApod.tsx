@@ -207,7 +207,10 @@ function BirdPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: b
             <Play className="h-3.5 w-3.5" fill="currentColor" /> No song archived
           </a>
         )}
-        {hasAudio && <audio ref={audioRef} src={data!.audioUrl} preload="none" onEnded={() => setPlaying(false)} crossOrigin="anonymous" />}
+        {/* No `crossOrigin` attribute — browsers don't enforce CORS for plain
+            media playback, and asking for `anonymous` actively breaks
+            cross-origin audio (xeno-canto's CDN doesn't send CORS headers). */}
+        {hasAudio && <audio ref={audioRef} src={data!.audioUrl} preload="none" onEnded={() => setPlaying(false)} />}
       </div>
       <div className="flex flex-col min-h-0 flex-[2]">
         <div className="flex items-start gap-2 shrink-0">

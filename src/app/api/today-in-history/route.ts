@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "node:fs/promises";
 import path from "node:path";
 import dailyEvents from "@/data/daily-events.json";
+import { extractFeaturedEvent, isPlausibleFeaturedEvent } from "@/lib/britannica-extract";
 
 // Daily "on this day" fact, in priority order:
 //   1. Britannica's actual Featured Event for today, scraped daily by a
@@ -37,6 +38,51 @@ async function readBritannicaFile(): Promise<BritannicaFile | null> {
   } catch {
     return null;
   }
+}
+
+// Server-side Britannica fetch — used when the committed file is stale
+// (GitHub Actions runs are best-effort and routinely delay 5-12 hours; the
+// scrape can also fail on heavy bot-detection days). Britannica blocks
+// Vercel's egress IPs, so we route through a small chain of public CORS
+// proxies that sit on residential / consumer IP ranges.
+const MONTH_SLUGS = ["january","february","march","april","may","june","july","august","september","october","november","december"];
+async function fetchBritannicaLive(mm: string, dd: string): Promise<BritannicaFile | null> {
+  const month = MONTH_SLUGS[Number(mm) - 1];
+  const day = String(Number(dd));
+  const url = `https://www.britannica.com/on-this-day/${month}-${day}`;
+  const tries = [
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+    `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+  ];
+  for (const u of tries) {
+    try {
+      const r = await fetch(u, {
+        signal: AbortSignal.timeout(9000),
+        cache: "no-store",
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+          Accept: "text/html",
+        },
+      });
+      if (!r.ok) continue;
+      const html = await r.text();
+      if (!html || html.length < 4000) continue;
+      const ev = extractFeaturedEvent(html);
+      if (ev && isPlausibleFeaturedEvent(ev) && ev.title && ev.summary) {
+        return {
+          date: `${mm}-${dd}`,
+          year: ev.year ?? null,
+          title: ev.title,
+          summary: ev.summary,
+          link: ev.link ?? url,
+          sourceUrl: url,
+          generatedAt: new Date().toISOString(),
+        };
+      }
+    } catch { /* next proxy */ }
+  }
+  return null;
 }
 
 interface RawPage {
@@ -126,11 +172,16 @@ export async function GET(req: Request) {
   const dd = pad(dateAt.getUTCDate());
   const yyyy = dateAt.getUTCFullYear();
 
-  // Primary: the actual Britannica Featured Event for today, scraped
-  // by a daily GitHub Action and committed to the repo. Only honoured
-  // when its `date` matches the date we're serving — stale entries
-  // (e.g. if the workflow hasn't run yet on a new day) fall through.
-  const britannica = await readBritannicaFile();
+  // Primary: the actual Britannica Featured Event for today.
+  // First try the file committed by the daily GitHub Action (fastest, no
+  // network); if the file is stale (workflow hasn't landed today's run
+  // yet — GitHub's cron is best-effort and routinely delays 5-12h),
+  // scrape Britannica live through a proxy chain.
+  let britannica = await readBritannicaFile();
+  if (!britannica || britannica.date !== `${mm}-${dd}`) {
+    const fresh = await fetchBritannicaLive(mm, dd);
+    if (fresh) britannica = fresh;
+  }
   if (britannica && britannica.date === `${mm}-${dd}` && britannica.title && britannica.summary) {
     return NextResponse.json({
       date: `${mm}-${dd}`,
