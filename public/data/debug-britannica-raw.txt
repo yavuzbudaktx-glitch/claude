@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-06-09T17:06:27.217Z
+# generated: 2026-06-09T21:22:48.232Z
 # url:       https://www.britannica.com/on-this-day/june-9
 # fetcher:   CORS proxy
 # kind:      html
@@ -282,7 +282,7 @@
 										,"country": "US"
 										,"state": "FL"
 										,"timezone": "America/New_York"
-										,"bcomId": "-2873197481055745753"
+										,"bcomId": "-7154334505665936856"
 										,"adProvider": "ay"
 										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":true,"showConsent":true}
 										,"hasAds": true
