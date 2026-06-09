@@ -12,17 +12,18 @@ import {
 import { createClient } from "@/lib/supabase/client";
 
 // One per-user JSON blob (city, tracked team, hidden events, saved news,
-// scratchpad, habits, …) that syncs across devices. The provider is the
-// single writer, so independent widgets never clobber each other's keys.
-// localStorage is the instant/offline cache; Supabase user_settings.prefs
-// is the cross-device source of truth.
+// scratchpad, habits, …) that syncs across devices in NEAR-REAL-TIME via a
+// Supabase Realtime subscription. localStorage is the instant/offline cache;
+// the user_settings.prefs row in Supabase is the cross-device source of truth.
 //
 // Conflict handling: every write bumps a monotonic `_v` timestamp. On load
-// we compare the local cache's `_v` to the cloud row's `_v` and let the
-// NEWER one win — so opening a stale device (or a slow cloud read) can never
-// roll your latest edits back to an empty/old state. We also flush
-// immediately on tab-hide / pagehide so a quick navigation never drops an
-// in-flight (debounced) save.
+// AND on every realtime change, we compare versions and let the newer blob
+// win, while preserving keys present only in the older one.
+//
+// Failure visibility: writes used to swallow errors silently — if RLS or a
+// dropped network call blocked a write, the user could see "saves locally
+// but not on my other devices" forever with no signal. The route now warns
+// in the console (PrefsProvider: sync failed: …) so this is debuggable.
 
 type Prefs = Record<string, unknown>;
 const KEY = "morning.prefs.v1";
@@ -32,8 +33,6 @@ function versionOf(p: Prefs): number {
   const v = p[VER];
   return typeof v === "number" ? v : 0;
 }
-// Merge two prefs blobs, letting the newer one win on key conflicts while
-// preserving keys that exist only in the older one.
 function mergeByVersion(a: Prefs, b: Prefs): Prefs {
   return versionOf(b) >= versionOf(a) ? { ...a, ...b } : { ...b, ...a };
 }
@@ -50,12 +49,11 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
   const [loaded, setLoaded] = useState(false);
   const userId = useRef<string | null>(null);
   const hydrated = useRef(false);
-  // Always-current snapshot of prefs for the flush handlers (which run
-  // outside React's render cycle).
   const prefsRef = useRef<Prefs>(prefs);
   prefsRef.current = prefs;
-  // Create the Supabase client lazily, client-side only, so this provider
-  // (which wraps every page) never instantiates it during SSR/prerender.
+  // Tracks the last `_v` we ourselves wrote — used to ignore realtime
+  // echoes of our own write coming back to us (Supabase will broadcast it).
+  const lastOwnV = useRef<number>(0);
   const sbRef = useRef<ReturnType<typeof createClient> | null>(null);
   const sb = () => (sbRef.current ??= createClient());
 
@@ -66,9 +64,13 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
     sb()
       .from("user_settings")
       .upsert({ user_id: uid, prefs: prefsRef.current }, { onConflict: "user_id" })
-      .then(() => {}, () => {});
+      .then(
+        ({ error }) => { if (error) console.warn("PrefsProvider: sync failed:", error.message); },
+        (err) => console.warn("PrefsProvider: sync failed:", err),
+      );
   }, []);
 
+  // -- Initial load ----------------------------------------------------------
   useEffect(() => {
     let cancelled = false;
     const supabase = sb();
@@ -77,10 +79,8 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
     try {
       const raw = localStorage.getItem(KEY);
       if (raw) local = JSON.parse(raw) as Prefs;
-    } catch {
-      local = {};
-    }
-    setPrefs(local); // instant paint from cache
+    } catch { local = {}; }
+    setPrefs(local);
 
     (async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -93,12 +93,12 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
           .select("prefs")
           .eq("user_id", uid)
           .maybeSingle();
-        if (!cancelled && !error && data?.prefs && typeof data.prefs === "object") {
-          const remote = data.prefs as Prefs;
-          // Newer-wins merge against whatever's currently in state (which may
-          // already include edits the user made while this request was in
-          // flight) — never blindly clobber with a stale cloud row.
-          setPrefs((cur) => mergeByVersion(cur, remote));
+        if (!cancelled) {
+          if (error) console.warn("PrefsProvider: initial load failed:", error.message);
+          if (!error && data?.prefs && typeof data.prefs === "object") {
+            const remote = data.prefs as Prefs;
+            setPrefs((cur) => mergeByVersion(cur, remote));
+          }
         }
       }
       hydrated.current = true;
@@ -108,24 +108,55 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
     return () => { cancelled = true; };
   }, []);
 
-  // Persist: localStorage immediately, debounced Supabase upsert.
+  // -- Realtime: subscribe to changes on OUR user_settings row -------------
+  // This is the actual cross-device sync. When Device A writes, Supabase
+  // pushes the new row to Device B over its websocket and we merge it in.
+  useEffect(() => {
+    if (!loaded) return;
+    const uid = userId.current;
+    if (!uid) return;
+    const supabase = sb();
+    const ch = supabase
+      .channel(`user_settings:${uid}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "user_settings", filter: `user_id=eq.${uid}` },
+        (payload: { new?: { prefs?: Prefs } }) => {
+          const remote = payload.new?.prefs;
+          if (!remote || typeof remote !== "object") return;
+          const remoteV = versionOf(remote);
+          // Drop echoes of our own writes (Supabase sends them back too).
+          if (remoteV === lastOwnV.current) return;
+          setPrefs((cur) => mergeByVersion(cur, remote));
+        },
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [loaded]);
+
+  // -- Persist: localStorage immediate, debounced Supabase upsert ----------
   useEffect(() => {
     if (!hydrated.current) return;
     try { localStorage.setItem(KEY, JSON.stringify(prefs)); } catch {}
     const uid = userId.current;
     if (!uid) return;
+    // 200ms debounce — fast enough that a rapid sequence of toggles still
+    // lands as ONE write, slow enough that you can't accidentally lose an
+    // edit by navigating away. Pagehide also force-flushes (below).
     const t = setTimeout(() => {
+      lastOwnV.current = versionOf(prefs);
       sb()
         .from("user_settings")
         .upsert({ user_id: uid, prefs }, { onConflict: "user_id" })
-        .then(() => {}, () => {});
-    }, 600);
+        .then(
+          ({ error }) => { if (error) console.warn("PrefsProvider: sync failed:", error.message); },
+          (err) => console.warn("PrefsProvider: sync failed:", err),
+        );
+    }, 200);
     return () => clearTimeout(t);
   }, [prefs]);
 
-  // Belt-and-suspenders: flush the moment the tab is hidden or unloaded, so a
-  // fast navigation away (e.g. accounting → dashboard) never loses the
-  // last <600ms of edits.
+  // Force-flush on tab hide / unload so a fast nav can never drop in-flight writes.
   useEffect(() => {
     const onHide = () => { if (document.visibilityState === "hidden") flush(); };
     window.addEventListener("pagehide", flush);
@@ -150,10 +181,6 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
 export function usePref<T>(key: string, fallback: T): [T, (v: T | ((prev: T) => T)) => void] {
   const { prefs, setPref } = useContext(PrefsContext);
   const value = (prefs[key] === undefined ? fallback : (prefs[key] as T));
-  // Always-current ref so the FUNCTIONAL setter form sees the latest value
-  // even when called multiple times in the same render. Without this, two
-  // quick clicks (e.g. checking two habit days in a row) both read the SAME
-  // stale `value` from the closure and the second click overwrites the first.
   const ref = useRef(value); ref.current = value;
   const set = useCallback(
     (v: T | ((prev: T) => T)) => {
@@ -165,9 +192,6 @@ export function usePref<T>(key: string, fallback: T): [T, (v: T | ((prev: T) => 
   return [value, set];
 }
 
-// True once the cross-device prefs blob has finished hydrating from Supabase.
-// Effects that *write* derived data (e.g. monthly net-worth snapshots) should
-// gate on this so they don't record values built from the empty fallback.
 export function usePrefsLoaded(): boolean {
   return useContext(PrefsContext).loaded;
 }

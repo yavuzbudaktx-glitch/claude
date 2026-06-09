@@ -439,6 +439,10 @@ export function BodyCard() {
   const [state, setState] = useState<BodyState>(DEFAULT);
   const [userId, setUserId] = useState<string | null>(null);
   const hydrated = useRef(false);
+  const stateRef = useRef(state); stateRef.current = state;
+  // Last `updated_at` value that came back from one of OUR writes — used to
+  // ignore the realtime echo so the row we just wrote doesn't loop-feed.
+  const lastOwnUpdate = useRef<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [draft, setDraft] = useState("");
   const [calDraft, setCalDraft] = useState("");
@@ -455,12 +459,17 @@ export function BodyCard() {
       if (uid) {
         const { data, error } = await supabase
           .from("body_profile")
-          .select("data")
+          .select("data,updated_at")
           .eq("user_id", uid)
           .maybeSingle();
         if (cancelled) return;
-        if (!error && data?.data) setState(coerce(data.data));
-        else setState(loadLocal());
+        if (error) console.warn("BodyCard: initial load failed:", error.message);
+        if (!error && data?.data) {
+          setState(coerce(data.data));
+          if (data.updated_at) lastOwnUpdate.current = data.updated_at;
+        } else {
+          setState(loadLocal());
+        }
       } else {
         setState(loadLocal());
       }
@@ -469,19 +478,64 @@ export function BodyCard() {
     return () => { cancelled = true; };
   }, [supabase]);
 
-  // Persist: mirror to localStorage immediately; debounce the Supabase upsert.
+  // Realtime: when Device A writes, B picks it up here without a refresh.
+  useEffect(() => {
+    if (!userId) return;
+    const ch = supabase
+      .channel(`body_profile:${userId}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "body_profile", filter: `user_id=eq.${userId}` },
+        (payload: { new?: { data?: unknown; updated_at?: string } }) => {
+          const incoming = payload.new;
+          if (!incoming?.data) return;
+          // Echo of our own write — skip.
+          if (incoming.updated_at && incoming.updated_at === lastOwnUpdate.current) return;
+          setState(coerce(incoming.data));
+        },
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [supabase, userId]);
+
+  // Persist: mirror to localStorage immediately; 200ms debounced upsert.
   useEffect(() => {
     if (!hydrated.current) return;
     try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {}
     if (!userId) return;
     const t = setTimeout(() => {
+      const stamp = new Date().toISOString();
+      lastOwnUpdate.current = stamp;
       supabase
         .from("body_profile")
-        .upsert({ user_id: userId, data: state, updated_at: new Date().toISOString() })
-        .then(() => {}, () => {});
-    }, 600);
+        .upsert({ user_id: userId, data: state, updated_at: stamp })
+        .then(
+          ({ error }) => { if (error) console.warn("BodyCard: sync failed:", error.message); },
+          (err) => console.warn("BodyCard: sync failed:", err),
+        );
+    }, 200);
     return () => clearTimeout(t);
   }, [state, userId, supabase]);
+
+  // Flush on tab hide so a fast navigation can't drop the last write.
+  useEffect(() => {
+    const flush = () => {
+      if (!hydrated.current || !userId) return;
+      const stamp = new Date().toISOString();
+      lastOwnUpdate.current = stamp;
+      supabase
+        .from("body_profile")
+        .upsert({ user_id: userId, data: stateRef.current, updated_at: stamp })
+        .then(() => {}, () => {});
+    };
+    const onHide = () => { if (document.visibilityState === "hidden") flush(); };
+    window.addEventListener("pagehide", flush);
+    document.addEventListener("visibilitychange", onHide);
+    return () => {
+      window.removeEventListener("pagehide", flush);
+      document.removeEventListener("visibilitychange", onHide);
+    };
+  }, [supabase, userId]);
 
   const entries = state.entries;
   const current = entries.length ? entries[entries.length - 1].weight : null;
@@ -617,14 +671,14 @@ export function BodyCard() {
               value={state.calorieGoal}
               placeholder="2200"
               onChange={(e) => setState((s) => ({ ...s, calorieGoal: e.target.value }))}
-              className="w-20 bg-transparent border-b border-[var(--rule)] focus:border-[var(--accent)] focus:outline-none font-mono tabular-nums text-2xl text-ink pb-1 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-20 bg-transparent border-b border-[var(--rule)] focus:border-[var(--accent)] focus:outline-none font-mono tabular-nums text-lg text-ink pb-1 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
             />
             <span className="font-mono text-[11px] uppercase tracking-wider text-muted">kcal / day</span>
           </div>
           <div className="label mb-1.5 mt-4">Today&rsquo;s intake</div>
           <div className="flex items-center gap-3 flex-wrap">
             <div className="flex items-baseline gap-2">
-              <span className="font-mono tabular-nums text-2xl text-ink">{calsToday.toLocaleString()}</span>
+              <span className="font-mono tabular-nums text-lg text-ink">{calsToday.toLocaleString()}</span>
               <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
                 {hasGoal ? `${Math.max(0, goalNum - calsToday).toLocaleString()} left` : "kcal"}
               </span>
@@ -666,14 +720,14 @@ export function BodyCard() {
               value={state.proteinGoal}
               placeholder="160"
               onChange={(e) => setState((s) => ({ ...s, proteinGoal: e.target.value }))}
-              className="w-20 bg-transparent border-b border-[var(--rule)] focus:border-[var(--accent)] focus:outline-none font-mono tabular-nums text-2xl text-ink pb-1 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-20 bg-transparent border-b border-[var(--rule)] focus:border-[var(--accent)] focus:outline-none font-mono tabular-nums text-lg text-ink pb-1 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
             />
             <span className="font-mono text-[11px] uppercase tracking-wider text-muted">g / day</span>
           </div>
           <div className="label mb-1.5 mt-4">Today&rsquo;s protein</div>
           <div className="flex items-center gap-3 flex-wrap">
             <div className="flex items-baseline gap-2">
-              <span className="font-mono tabular-nums text-2xl text-ink">{proteinToday}</span>
+              <span className="font-mono tabular-nums text-lg text-ink">{proteinToday}</span>
               <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
                 {hasProteinGoal ? `${Math.max(0, proteinGoalNum - proteinToday)} g left` : "grams"}
               </span>
@@ -702,26 +756,26 @@ export function BodyCard() {
           )}
         </div>
 
-        {/* Workouts — A and B side-by-side, sharing the remaining width. */}
-        <div className="grid grid-cols-2 gap-3">
+        {/* Workouts — A and B side-by-side, tight. */}
+        <div className="grid grid-cols-2 gap-2">
           <div>
-            <div className="label mb-1.5">Workout · A</div>
+            <div className="label mb-1">Workout · A</div>
             <AutoTextarea
               value={state.workoutA}
-              placeholder={"e.g.\nBench 4×8\nRows 4×10\nOHP 3×10"}
+              placeholder={"Bench 4×8\nRows 4×10"}
               onChange={(e) => setState((s) => ({ ...s, workoutA: e.target.value }))}
               rows={4}
-              className={fieldClass + " !text-[12.5px]"}
+              className={fieldClass + " !text-[11.5px] !px-2 !py-1.5 leading-tight"}
             />
           </div>
           <div>
-            <div className="label mb-1.5">Workout · B</div>
+            <div className="label mb-1">Workout · B</div>
             <AutoTextarea
               value={state.workoutB}
-              placeholder={"e.g.\nSquat 4×6\nDeadlift 3×5\nCurls 3×12"}
+              placeholder={"Squat 4×6\nDeadlift 3×5"}
               onChange={(e) => setState((s) => ({ ...s, workoutB: e.target.value }))}
               rows={4}
-              className={fieldClass + " !text-[12.5px]"}
+              className={fieldClass + " !text-[11.5px] !px-2 !py-1.5 leading-tight"}
             />
           </div>
         </div>

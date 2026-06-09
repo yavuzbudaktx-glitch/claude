@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import fs from "node:fs/promises";
 import path from "node:path";
 import dailyEvents from "@/data/daily-events.json";
-import { extractFeaturedEvent, isPlausibleFeaturedEvent } from "@/lib/britannica-extract";
 
 // Daily "on this day" fact, in priority order:
 //   1. Britannica's actual Featured Event for today, scraped daily by a
@@ -40,50 +39,12 @@ async function readBritannicaFile(): Promise<BritannicaFile | null> {
   }
 }
 
-// Server-side Britannica fetch — used when the committed file is stale
-// (GitHub Actions runs are best-effort and routinely delay 5-12 hours; the
-// scrape can also fail on heavy bot-detection days). Britannica blocks
-// Vercel's egress IPs, so we route through a small chain of public CORS
-// proxies that sit on residential / consumer IP ranges.
-const MONTH_SLUGS = ["january","february","march","april","may","june","july","august","september","october","november","december"];
-async function fetchBritannicaLive(mm: string, dd: string): Promise<BritannicaFile | null> {
-  const month = MONTH_SLUGS[Number(mm) - 1];
-  const day = String(Number(dd));
-  const url = `https://www.britannica.com/on-this-day/${month}-${day}`;
-  const tries = [
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-    `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-  ];
-  for (const u of tries) {
-    try {
-      const r = await fetch(u, {
-        signal: AbortSignal.timeout(9000),
-        cache: "no-store",
-        headers: {
-          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
-          Accept: "text/html",
-        },
-      });
-      if (!r.ok) continue;
-      const html = await r.text();
-      if (!html || html.length < 4000) continue;
-      const ev = extractFeaturedEvent(html);
-      if (ev && isPlausibleFeaturedEvent(ev) && ev.title && ev.summary) {
-        return {
-          date: `${mm}-${dd}`,
-          year: ev.year ?? null,
-          title: ev.title,
-          summary: ev.summary,
-          link: ev.link ?? url,
-          sourceUrl: url,
-          generatedAt: new Date().toISOString(),
-        };
-      }
-    } catch { /* next proxy */ }
-  }
-  return null;
-}
+// (The live Britannica scrape is gone — we'd been routing through public
+// CORS proxies because Britannica blocks Vercel egress IPs, and that path
+// was unreliable enough on busy days to feel broken. Today's "featured
+// event" is now sourced from Wikipedia's "onthisday" feed when the
+// GitHub-Action-committed Britannica file is missing/stale; see the
+// handler below.)
 
 interface RawPage {
   type?: string;
@@ -172,16 +133,17 @@ export async function GET(req: Request) {
   const dd = pad(dateAt.getUTCDate());
   const yyyy = dateAt.getUTCFullYear();
 
-  // Primary: the actual Britannica Featured Event for today.
-  // First try the file committed by the daily GitHub Action (fastest, no
-  // network); if the file is stale (workflow hasn't landed today's run
-  // yet — GitHub's cron is best-effort and routinely delays 5-12h),
-  // scrape Britannica live through a proxy chain.
-  let britannica = await readBritannicaFile();
-  if (!britannica || britannica.date !== `${mm}-${dd}`) {
-    const fresh = await fetchBritannicaLive(mm, dd);
-    if (fresh) britannica = fresh;
-  }
+  // Primary: today's "Featured Event" — when the GitHub-Action-committed
+  // Britannica file is current, we use it (richest copy, Britannica's
+  // hand-written summary). When it's stale (the cron is best-effort and
+  // routinely delays 5-12h, and the live scrape through public proxies is
+  // unreliable on busy days) we DON'T try to scrape Britannica at all —
+  // we go straight to Wikipedia's "onthisday/events" feed, which lists
+  // EVERY notable event for the day, and pick the highest-quality one
+  // (longest extract, most-prominent article). That feed is rock-solid
+  // from Vercel and routinely has 30-80 events per day, so the pick is
+  // almost always great.
+  const britannica = await readBritannicaFile();
   if (britannica && britannica.date === `${mm}-${dd}` && britannica.title && britannica.summary) {
     return NextResponse.json({
       date: `${mm}-${dd}`,
@@ -194,6 +156,55 @@ export async function GET(req: Request) {
       pageTitle: britannica.title,
       link: britannica.link ?? britannica.sourceUrl ?? null,
     });
+  }
+
+  // High-quality fallback: Wikipedia onthisday/events.
+  try {
+    interface OtdPage {
+      title?: string;
+      normalizedtitle?: string;
+      extract?: string;
+      description?: string;
+      content_urls?: { desktop?: { page?: string }; mobile?: { page?: string } };
+      thumbnail?: { source?: string };
+    }
+    interface OtdEvent { text?: string; year?: number; pages?: OtdPage[] }
+    interface OtdResp { events?: OtdEvent[]; selected?: OtdEvent[] }
+    const r = await fetch(
+      `https://en.wikipedia.org/api/rest_v1/feed/onthisday/events/${mm}/${dd}`,
+      { headers: { "User-Agent": "morning-dashboard/1.0", Accept: "application/json" }, next: { revalidate: 3600 } },
+    );
+    if (r.ok) {
+      const j = (await r.json()) as OtdResp;
+      const all = [...(j.events ?? []), ...(j.selected ?? [])];
+      // Score each event by the substance of its primary article (extract
+      // length is a strong proxy for "this article is well-developed").
+      let best: { ev: OtdEvent; page: OtdPage; score: number } | null = null;
+      for (const ev of all) {
+        if (!ev.year || !ev.pages || ev.pages.length === 0) continue;
+        for (const page of ev.pages) {
+          if (!page.extract || page.extract.length < 200) continue;
+          const score = page.extract.length + (page.thumbnail?.source ? 500 : 0);
+          if (!best || score > best.score) best = { ev, page, score };
+        }
+      }
+      if (best) {
+        const { ev, page } = best;
+        return NextResponse.json({
+          date: `${mm}-${dd}`,
+          year: ev.year ?? null,
+          text: ev.text ?? page.normalizedtitle ?? page.title ?? "",
+          summary: page.extract ?? page.description ?? null,
+          kind: "featured",
+          source: "wikipedia-onthisday",
+          thumbnail: page.thumbnail?.source ?? null,
+          pageTitle: page.normalizedtitle ?? page.title ?? null,
+          link: page.content_urls?.desktop?.page ?? page.content_urls?.mobile?.page ?? null,
+        });
+      }
+    }
+  } catch (e) {
+    console.warn("today-in-history: wikipedia onthisday fallback failed:", e);
   }
 
   // Secondary: Wikipedia's editor-curated daily feed.

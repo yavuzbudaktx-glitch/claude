@@ -15,21 +15,15 @@ const HEADERS = {
   Accept: "application/json",
 };
 
-// Verified Archive collection IDs — all dense, all reliable, all visual.
-// (Some of the collection names from the previous version like
-// "vintage_cartoons" / "classic_cartoons" aren't real Archive collection
-// identifiers, which is why the tab kept coming back empty.)
+// Old cartoons ONLY. The user explicitly chose this — the previous broad
+// rotation kept landing on cookbooks / arcade games / NASA imagery, which
+// missed the point. `animationandcartoons` is the Archive's big umbrella
+// collection for vintage animation (~50k items, hundreds of public-domain
+// cartoons from the 1920s-60s); we keep it as the sole source. If on a
+// given day downloads-desc returns something not-quite-cartoony, the daily
+// seed still rolls it forward tomorrow.
 const COLLECTIONS = [
-  "classic_cartoons",      // the famous Looney Tunes / Betty Boop / early-Disney collection
-  "animationandcartoons",  // huge umbrella, ~50k items
-  "prelinger",             // archival / educational films (THE iconic Archive collection)
-  "classic_tv",            // vintage television
-  "feature_films",         // public-domain features
-  "nasa",                  // NASA imagery + footage
-  "78rpm",                 // 78rpm music
-  "internetarcade",        // playable arcade games
-  "vintagecookbook",       // vintage cookbooks
-  "computermagazines",     // 80s/90s computer mags
+  "animationandcartoons",
 ];
 
 interface IADoc { identifier?: string; title?: string; mediatype?: string; year?: string; description?: string | string[] }

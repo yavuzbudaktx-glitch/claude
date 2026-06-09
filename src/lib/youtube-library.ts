@@ -33,7 +33,11 @@ export interface LibVideo { id: string; title: string }
 
 interface CacheEntry { at: number; items: LibVideo[] }
 const cache = new Map<string, CacheEntry>();
-const CACHE_TTL = 1000 * 60 * 60 * 6; // 6h
+// 2h cache. The previous 6h window meant a single midnight-window blip
+// (when YouTube hands out a consent gate to cloud egress IPs) locked the
+// box to whatever truncated result the route happened to get for up to
+// six hours. Two hours is still long enough to keep things fast.
+const CACHE_TTL = 1000 * 60 * 60 * 2; // 2h
 const idCache = new Map<string, string>();
 
 async function getText(url: string): Promise<string | null> {
@@ -225,6 +229,49 @@ export async function fetchPlaylistVideos(playlistId: string): Promise<LibVideo[
 // the box to "only ever 15 random videos" until the cache expires.
 const CHANNEL_MIN_CACHE = 30;
 
+// Direct innertube playlist fetch — gives JSON back without going through
+// the consent-gate HTML the playlist?list= page returns from cloud egress
+// IPs. The `browseId: "VL" + playlistId` is YouTube's own internal playlist
+// browse endpoint. This is the MOST reliable path; HTML walk + Atom feed
+// stay as fallbacks.
+async function fetchPlaylistInnertube(playlistId: string): Promise<LibVideo[]> {
+  const out: LibVideo[] = [];
+  const seen = new Set<string>();
+  try {
+    const res = await fetch(`https://www.youtube.com/youtubei/v1/browse?key=${INNERTUBE_KEY}&prettyPrint=false`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "User-Agent": HEADERS["User-Agent"],
+        "Accept-Language": HEADERS["Accept-Language"],
+        "X-YouTube-Client-Name": "1",
+        "X-YouTube-Client-Version": CLIENT.clientVersion,
+        Origin: "https://www.youtube.com",
+        Referer: "https://www.youtube.com/",
+      },
+      body: JSON.stringify({ context: { client: CLIENT }, browseId: "VL" + playlistId }),
+      signal: AbortSignal.timeout(10000),
+      cache: "no-store",
+    });
+    if (!res.ok) return out;
+    const text = await res.text();
+    extractVideos(text, out, seen);
+    let token = findContinuation(text);
+    let pages = 0;
+    const started = Date.now();
+    while (token && pages < MAX_PAGES && Date.now() - started < TIME_BUDGET_MS) {
+      const resp = await innertubeBrowse(token);
+      if (!resp) break;
+      const before = out.length;
+      extractVideos(resp, out, seen);
+      token = findContinuation(resp);
+      pages++;
+      if (out.length === before) break;
+    }
+  } catch { /* ignore — fall through to HTML walk */ }
+  return out;
+}
+
 export async function fetchChannelVideos(handle: string): Promise<LibVideo[]> {
   const key = `ch:${handle}`;
   const hit = cached(key);
@@ -234,26 +281,28 @@ export async function fetchChannelVideos(handle: string): Promise<LibVideo[]> {
   const out: LibVideo[] = [];
   const seen = new Set<string>();
 
-  // Hit ALL three sources in parallel and merge — the playlist walk gives us
-  // the whole history when it works, the /videos tab gives the most recent
-  // ~30 when the playlist gets blocked, and the Atom feed is the rock-solid
-  // backstop. The previous "fall back if <20" path skipped the /videos tab
-  // whenever the playlist walk returned just the 15 Atom items, which is
-  // exactly the case where /videos saves us — that's why Logan's box would
-  // sometimes collapse to 15.
+  // FOUR sources in parallel:
+  //   1) Innertube playlist (UU…) — direct JSON, no consent gate; most
+  //      reliable when it works.
+  //   2) HTML walk of /playlist?list=UU… — fallback when innertube is
+  //      blocked but the HTML page comes through.
+  //   3) HTML walk of /@handle/videos tab — covers the most recent ~30
+  //      when both playlist paths fail.
+  //   4) Atom feed — rock-solid backstop, always returns the latest 15.
   const uploads = id ? "UU" + id.slice(2) : null;
-  const [uploadsHtml, vidsHtml, atom] = await Promise.all([
+  const [innertube, uploadsHtml, vidsHtml, atom] = await Promise.all([
+    uploads ? fetchPlaylistInnertube(uploads) : Promise.resolve([] as LibVideo[]),
     uploads ? getText(`https://www.youtube.com/playlist?list=${uploads}&hl=en`) : Promise.resolve(null),
     getText(`https://www.youtube.com/@${handle}/videos?hl=en`),
     id ? fetchAtom(id) : Promise.resolve([] as LibVideo[]),
   ]);
 
+  mergeInto(out, seen, innertube);
   if (uploadsHtml) mergeInto(out, seen, await walk(uploadsHtml, extractVideos));
   if (vidsHtml) mergeInto(out, seen, await walk(vidsHtml, extractVideos));
   mergeInto(out, seen, atom);
 
-  // Only cache once we're confident the result is real — otherwise next
-  // request retries and may catch a healthier upstream.
+  // Don't cache obviously-truncated results — next request retries.
   if (out.length >= CHANNEL_MIN_CACHE) cache.set(key, { at: Date.now(), items: out });
   return out;
 }

@@ -75,38 +75,48 @@ function audioOf(rec: XcRec): string {
   return `https://xeno-canto.org${f.startsWith("/") ? f : "/" + f}`;
 }
 
+// Hard-coded recordings that ALWAYS play — used only when xeno-canto is
+// unreachable (the midnight cache window when their API gets edgy from
+// cloud IPs). These are direct Wikimedia Commons file URLs, which Vercel
+// can always fetch and the browser can always play.
+const FALLBACK: XcRec[] = [
+  { id: "f1", en: "Common Nightingale", gen: "Luscinia", sp: "megarhynchos", file: "https://upload.wikimedia.org/wikipedia/commons/e/e7/Common_Nightingale_song.ogg", rec: "Wikimedia Commons", q: "A", type: "song" },
+  { id: "f2", en: "Northern Cardinal", gen: "Cardinalis", sp: "cardinalis", file: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Cardinalis_cardinalis_-_Northern_Cardinal_XC114559.mp3", rec: "Wikimedia Commons", q: "A", type: "song" },
+  { id: "f3", en: "European Robin", gen: "Erithacus", sp: "rubecula", file: "https://upload.wikimedia.org/wikipedia/commons/3/30/Erithacus_rubecula_-_Erithacus_rubecula_song_-_Wagga_NSW.ogg", rec: "Wikimedia Commons", q: "A", type: "song" },
+  { id: "f4", en: "Song Thrush", gen: "Turdus", sp: "philomelos", file: "https://upload.wikimedia.org/wikipedia/commons/9/9e/Turdus-philomelos-song.ogg", rec: "Wikimedia Commons", q: "A", type: "song" },
+  { id: "f5", en: "Common Blackbird", gen: "Turdus", sp: "merula", file: "https://upload.wikimedia.org/wikipedia/commons/3/31/Turdus_merula_02.ogg", rec: "Wikimedia Commons", q: "A", type: "song" },
+  { id: "f6", en: "Northern Mockingbird", gen: "Mimus", sp: "polyglottos", file: "https://upload.wikimedia.org/wikipedia/commons/5/56/Mimus_polyglottos.ogg", rec: "Wikimedia Commons", q: "A", type: "song" },
+  { id: "f7", en: "American Robin", gen: "Turdus", sp: "migratorius", file: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Turdus-migratorius-001.ogg", rec: "Wikimedia Commons", q: "A", type: "song" },
+  { id: "f8", en: "Eurasian Skylark", gen: "Alauda", sp: "arvensis", file: "https://upload.wikimedia.org/wikipedia/commons/3/30/Alauda_arvensis_02.ogg", rec: "Wikimedia Commons", q: "A", type: "song" },
+];
+
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const dateKey = url.searchParams.get("d") ?? new Date().toISOString().slice(0, 10);
   const refresh = url.searchParams.get("r") ?? "";
 
-  // Probe the catalogue to learn how many pages of quality-A song recordings
-  // exist (xeno-canto pages 500 results at a time). The total grows over
-  // time — using `numPages` straight from the API keeps "full library"
-  // honest as new recordings land.
+  // Probe xeno-canto for a wide library of quality-A song recordings.
+  // numPages is honest about catalogue size — we sample a random page each
+  // day so the "library" really IS the whole archive over time.
   const probeUrl = "https://xeno-canto.org/api/2/recordings?query=" + encodeURIComponent("q:A type:song");
   const probe = await getJson<XcResp>(probeUrl);
-  const numPages = Math.max(1, probe?.numPages ?? 1);
 
-  // Pick a random page deterministically per day.
-  const page = (seedIdx(dateKey + ":pg:" + refresh, numPages)) + 1;
-  const pageUrl = `${probeUrl}&page=${page}`;
-  const data = page === 1 ? probe : await getJson<XcResp>(pageUrl);
-
-  let candidates = (data?.recordings ?? []).filter((r) => audioOf(r) && r.en);
-  // Some species in xeno-canto come back with a blank English name when the
-  // entry hasn't been translated yet — skip those so the panel always has
-  // a title.
-
-  // If the chosen page came back empty (rare), fall back to page 1 which is
-  // dense and reliable.
-  if (candidates.length === 0 && page !== 1) {
-    const p1 = await getJson<XcResp>(probeUrl);
-    candidates = (p1?.recordings ?? []).filter((r) => audioOf(r) && r.en);
+  let candidates: XcRec[] = [];
+  if (probe) {
+    const numPages = Math.max(1, probe.numPages ?? 1);
+    const page = seedIdx(dateKey + ":pg:" + refresh, numPages) + 1;
+    const pageUrl = `${probeUrl}&page=${page}`;
+    const data = page === 1 ? probe : await getJson<XcResp>(pageUrl);
+    candidates = (data?.recordings ?? []).filter((r) => audioOf(r) && r.en);
+    // If the chosen page is empty (rare), retry page 1.
+    if (candidates.length === 0 && page !== 1) {
+      candidates = (probe?.recordings ?? []).filter((r) => audioOf(r) && r.en);
+    }
   }
-  if (candidates.length === 0) {
-    return NextResponse.json({ error: "no_recording" }, { status: 502 });
-  }
+
+  // Whole-archive fetch failed (xeno-canto rate-limited / unreachable):
+  // fall through to the hardcoded fallback so the tab ALWAYS renders.
+  if (candidates.length === 0) candidates = FALLBACK;
 
   const pick = candidates[seedIdx(dateKey + ":rec:" + refresh, candidates.length)];
   const audioUrl = audioOf(pick);
