@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-06-09T12:25:34.337Z
+# generated: 2026-06-09T13:47:27.937Z
 # url:       https://www.britannica.com/on-this-day/june-9
 # fetcher:   Wayback Machine
 # kind:      html
