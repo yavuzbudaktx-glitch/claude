@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-06-10T09:04:11.261Z
+# generated: 2026-06-10T10:45:04.717Z
 # url:       https://www.britannica.com/on-this-day/june-10
 # fetcher:   Wayback Machine
 # kind:      html
