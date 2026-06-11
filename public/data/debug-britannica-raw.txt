@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-06-11T12:17:27.314Z
+# generated: 2026-06-11T13:04:37.307Z
 # url:       https://www.britannica.com/on-this-day/june-11
 # fetcher:   Wayback Machine
 # kind:      html
