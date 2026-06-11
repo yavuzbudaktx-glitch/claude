@@ -89,13 +89,17 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
   const sbRef = useRef<ReturnType<typeof createClient> | null>(null);
   const sb = () => (sbRef.current ??= createClient());
   const writing = useRef(false);
+  const pendingWrite = useRef(false);
 
   // READ-MERGE-WRITE: re-read the cloud row, merge our local edits on top
   // (per key), persist the merged result, and adopt it locally. This is the
   // operation that makes concurrent multi-device editing safe.
   const persist = useCallback(async () => {
     const uid = userId.current;
-    if (!uid || !hydrated.current || writing.current) return;
+    if (!uid || !hydrated.current) return;
+    // If a write is already running, mark that another is needed and bail —
+    // the in-flight write re-runs when it finishes, so no edit is dropped.
+    if (writing.current) { pendingWrite.current = true; return; }
     writing.current = true;
     try {
       const local = prefsRef.current;
@@ -118,6 +122,8 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
       setPrefs((cur) => mergePerKey(cur, merged));
     } finally {
       writing.current = false;
+      // An edit arrived while we were writing — flush it now.
+      if (pendingWrite.current) { pendingWrite.current = false; void persist(); }
     }
   }, []);
 

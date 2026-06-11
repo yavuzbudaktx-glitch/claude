@@ -150,7 +150,11 @@ function BirdPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: b
   const { data, isLoading } = useSWR<Bird>(`/api/bird-of-day?r=${refreshN}`, fetcher, { keepPreviousData: true });
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
-  useEffect(() => { setPlaying(false); if (audioRef.current) audioRef.current.pause(); }, [data?.audioUrl]);
+  const [audioState, setAudioState] = useState<"idle" | "loading" | "error">("idle");
+  useEffect(() => {
+    setPlaying(false); setAudioState("idle");
+    if (audioRef.current) audioRef.current.pause();
+  }, [data?.audioUrl]);
 
   if (isLoading && !data) return <Loading />;
   // Render whenever we have ANYTHING (photo OR song) — never bail just
@@ -158,10 +162,19 @@ function BirdPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: b
   if (data?.error || (!data?.imageUrl && !data?.audioUrl && !data?.blurb)) return <Failed what="the aviary" />;
 
   const hasAudio = !!data?.audioUrl;
-  function toggle() {
+  async function toggle() {
     if (!hasAudio) return;
     const a = audioRef.current; if (!a) return;
-    if (a.paused) { a.play().catch(() => {}); setPlaying(true); } else { a.pause(); setPlaying(false); }
+    if (!a.paused) { a.pause(); setPlaying(false); return; }
+    try {
+      setAudioState("loading");
+      await a.play();
+      setPlaying(true);
+      setAudioState("idle");
+    } catch {
+      setPlaying(false);
+      setAudioState("error");
+    }
   }
 
   return (
@@ -188,14 +201,23 @@ function BirdPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: b
       {/* Audio control — a small button UNDER the photo, not over it. */}
       <div className="flex items-center gap-2 shrink-0">
         {hasAudio ? (
-          <button
-            onClick={toggle}
-            aria-label={playing ? "Pause song" : "Play song"}
-            className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft border border-[var(--rule)] px-3 py-1 text-[11.5px] font-semibold text-accent hover:brightness-110 transition"
-          >
-            {playing ? <Pause className="h-3.5 w-3.5" fill="currentColor" /> : <Play className="h-3.5 w-3.5 translate-x-[1px]" fill="currentColor" />}
-            {playing ? "Pause song" : "Play song"}
-          </button>
+          <>
+            <button
+              onClick={toggle}
+              aria-label={playing ? "Pause song" : "Play song"}
+              className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft border border-[var(--rule)] px-3 py-1 text-[11.5px] font-semibold text-accent hover:brightness-110 transition"
+            >
+              {audioState === "loading"
+                ? <span className="h-3.5 w-3.5 rounded-full border-[1.5px] border-current border-t-transparent animate-spin" />
+                : playing ? <Pause className="h-3.5 w-3.5" fill="currentColor" /> : <Play className="h-3.5 w-3.5 translate-x-[1px]" fill="currentColor" />}
+              {audioState === "loading" ? "Loading…" : playing ? "Pause song" : "Play song"}
+            </button>
+            {audioState === "error" && (
+              <a href={data!.xcUrl} target="_blank" rel="noreferrer" className="text-[10.5px] text-down hover:underline">
+                playback failed — open on source ↗
+              </a>
+            )}
+          </>
         ) : (
           <a
             href={data!.xcUrl}
@@ -207,10 +229,17 @@ function BirdPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: b
             <Play className="h-3.5 w-3.5" fill="currentColor" /> No song archived
           </a>
         )}
-        {/* No `crossOrigin` attribute — browsers don't enforce CORS for plain
-            media playback, and asking for `anonymous` actively breaks
-            cross-origin audio (xeno-canto's CDN doesn't send CORS headers). */}
-        {hasAudio && <audio ref={audioRef} src={data!.audioUrl} preload="none" onEnded={() => setPlaying(false)} />}
+        {/* Served from our same-origin /api/bird-audio proxy, so no CORS /
+            mixed-content quirks. preload=auto so the first play is instant. */}
+        {hasAudio && (
+          <audio
+            ref={audioRef}
+            src={data!.audioUrl}
+            preload="auto"
+            onEnded={() => { setPlaying(false); setAudioState("idle"); }}
+            onError={() => { setPlaying(false); setAudioState("error"); }}
+          />
+        )}
       </div>
       <div className="flex flex-col min-h-0 flex-[2]">
         <div className="flex items-start gap-2 shrink-0">
