@@ -54,12 +54,19 @@ async function getJson(url: string): Promise<IAResp | null> {
 }
 
 async function search(collection: string, fields: string): Promise<IADoc[]> {
+  // Vintage only: restrict to items dated 1900-2003 (no post-2004 uploads).
   // sort by downloads so we never land on a totally obscure / broken item.
+  const q = `collection:${collection} AND year:[1900 TO 2003]`;
   const url =
-    `https://archive.org/advancedsearch.php?q=${encodeURIComponent(`collection:${collection}`)}` +
+    `https://archive.org/advancedsearch.php?q=${encodeURIComponent(q)}` +
     `&fl[]=${fields.split(",").join("&fl[]=")}&rows=500&output=json&sort[]=downloads+desc`;
   const j = await getJson(url);
-  return (j?.response?.docs ?? []).filter((d) => d.identifier);
+  // Belt-and-suspenders client-side filter in case the year field is a string.
+  return (j?.response?.docs ?? []).filter((d) => {
+    if (!d.identifier) return false;
+    const y = parseInt(String(d.year ?? ""), 10);
+    return !Number.isFinite(y) || y < 2004;
+  });
 }
 
 export async function GET(req: Request) {

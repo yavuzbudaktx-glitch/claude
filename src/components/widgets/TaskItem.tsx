@@ -147,8 +147,8 @@ export function TaskItem({
             </div>
             {due && (
               <div
-                className={`font-mono text-[10px] uppercase tracking-wider mt-0.5 ${
-                  urgent ? "text-accent" : "text-muted"
+                className={`metalabel mt-0.5 ${
+                  urgent ? "!text-accent" : ""
                 }`}
               >
                 {overdue ? "overdue · " : today ? "today · " : ""}

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "node:fs/promises";
 import path from "node:path";
 import dailyEvents from "@/data/daily-events.json";
+import { extractFeaturedEvent, isPlausibleFeaturedEvent } from "@/lib/britannica-extract";
 
 // Daily "on this day" fact, in priority order:
 //   1. Britannica's actual Featured Event for today, scraped daily by a
@@ -39,12 +40,58 @@ async function readBritannicaFile(): Promise<BritannicaFile | null> {
   }
 }
 
-// (The live Britannica scrape is gone — we'd been routing through public
-// CORS proxies because Britannica blocks Vercel egress IPs, and that path
-// was unreliable enough on busy days to feel broken. Today's "featured
-// event" is now sourced from Wikipedia's "onthisday" feed when the
-// GitHub-Action-committed Britannica file is missing/stale; see the
-// handler below.)
+// Live Britannica scrape — the GitHub-Action-committed file only updates on
+// the default branch's schedule, so on the deployed branch it goes stale.
+// When that happens we scrape Britannica's "On this day" page directly. We
+// can't hit it from Vercel egress (Britannica blocks those IPs), but the
+// public CORS proxies below sit on consumer ranges and DO reach it (this is
+// the exact same path the GitHub scraper falls through to, verified working
+// against a live page dump). Results are cached in-process for the day so we
+// proxy at most once per cold start.
+const MONTHS = ["january","february","march","april","may","june","july","august","september","october","november","december"];
+let liveCache: { key: string; value: BritannicaFile } | null = null;
+
+async function scrapeBritannicaLive(mm: string, dd: string): Promise<BritannicaFile | null> {
+  const cacheKey = `${mm}-${dd}`;
+  if (liveCache && liveCache.key === cacheKey) return liveCache.value;
+
+  const month = MONTHS[Number(mm) - 1];
+  const target = `https://www.britannica.com/on-this-day/${month}-${Number(dd)}`;
+  const ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15";
+  const proxies = [
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,
+    `https://corsproxy.io/?url=${encodeURIComponent(target)}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(target)}`,
+    `https://thingproxy.freeboard.io/fetch/${target}`,
+  ];
+  for (const u of proxies) {
+    try {
+      const r = await fetch(u, {
+        headers: { "User-Agent": ua, Accept: "text/html" },
+        signal: AbortSignal.timeout(12000),
+        cache: "no-store",
+      });
+      if (!r.ok) continue;
+      const html = await r.text();
+      if (!html || html.length < 5000) continue;
+      const ev = extractFeaturedEvent(html);
+      if (ev && isPlausibleFeaturedEvent(ev) && ev.title && ev.summary) {
+        const value: BritannicaFile = {
+          date: cacheKey,
+          year: ev.year ?? null,
+          title: ev.title,
+          summary: ev.summary,
+          link: ev.link ?? target,
+          sourceUrl: target,
+          generatedAt: new Date().toISOString(),
+        };
+        liveCache = { key: cacheKey, value };
+        return value;
+      }
+    } catch { /* try next proxy */ }
+  }
+  return null;
+}
 
 interface RawPage {
   type?: string;
@@ -143,7 +190,13 @@ export async function GET(req: Request) {
   // (longest extract, most-prominent article). That feed is rock-solid
   // from Vercel and routinely has 30-80 events per day, so the pick is
   // almost always great.
-  const britannica = await readBritannicaFile();
+  let britannica = await readBritannicaFile();
+  // When the committed file is missing or stale, scrape Britannica live
+  // through the proxy chain (cached per-day in-process).
+  if (!britannica || britannica.date !== `${mm}-${dd}`) {
+    const live = await scrapeBritannicaLive(mm, dd);
+    if (live) britannica = live;
+  }
   if (britannica && britannica.date === `${mm}-${dd}` && britannica.title && britannica.summary) {
     return NextResponse.json({
       date: `${mm}-${dd}`,

@@ -12,18 +12,27 @@ export const revalidate = 3600;
 export const maxDuration = 30;
 
 type Source =
-  | { kind: "channel"; handle: string; label: string; url: string }
-  | { kind: "shorts"; handle: string; label: string; url: string }
-  | { kind: "playlist"; list: string; label: string; url: string };
+  | { kind: "channel"; handle: string; label: string; url: string; min: number }
+  | { kind: "shorts"; handle: string; label: string; url: string; min: number }
+  | { kind: "playlist"; list: string; label: string; url: string; min: number };
 
+// `min` = the count below which we treat the fetch as a failure and DON'T
+// cache it (so the next request retries against a healthier upstream). These
+// match the real library sizes the user expects to see.
 const SOURCES: Record<string, Source> = {
-  logan:   { kind: "channel",  handle: "logangrafcpa",       label: "Logan Graf",       url: "https://www.youtube.com/@logangrafcpa/videos" },
-  bbc:     { kind: "shorts",   handle: "bbcearth",           label: "BBC Earth",        url: "https://www.youtube.com/@bbcearth/shorts" },
-  vlog:    { kind: "channel",  handle: "country_life_vlog",  label: "Country Life Vlog", url: "https://www.youtube.com/@country_life_vlog/videos" },
-  bobross: { kind: "playlist", list: "PLaLOVNqqD-2HgiA-GZyzcfZN9n-YelhB5", label: "Bob Ross", url: "https://www.youtube.com/playlist?list=PLaLOVNqqD-2HgiA-GZyzcfZN9n-YelhB5" },
-  elif:    { kind: "channel",  handle: "ElifinHecesi",       label: "Elif'in Hecesi",   url: "https://www.youtube.com/@ElifinHecesi/videos" },
-  turgut:  { kind: "channel",  handle: "TurgutBayraktarBelgeselleri", label: "Turgut Bayraktar Belgeselleri", url: "https://www.youtube.com/@TurgutBayraktarBelgeselleri/videos" },
+  logan:   { kind: "channel",  handle: "logangrafcpa",       label: "Logan Graf",       url: "https://www.youtube.com/@logangrafcpa/videos", min: 100 },
+  bbc:     { kind: "shorts",   handle: "bbcearth",           label: "BBC Earth",        url: "https://www.youtube.com/@bbcearth/shorts", min: 10 },
+  vlog:    { kind: "channel",  handle: "country_life_vlog",  label: "Country Life Vlog", url: "https://www.youtube.com/@country_life_vlog/videos", min: 500 },
+  bobross: { kind: "playlist", list: "PLaLOVNqqD-2HgiA-GZyzcfZN9n-YelhB5", label: "Bob Ross", url: "https://www.youtube.com/playlist?list=PLaLOVNqqD-2HgiA-GZyzcfZN9n-YelhB5", min: 300 },
+  elif:    { kind: "channel",  handle: "ElifinHecesi",       label: "Elif'in Hecesi",   url: "https://www.youtube.com/@ElifinHecesi/videos", min: 42 },
+  turgut:  { kind: "channel",  handle: "TurgutBayraktarBelgeselleri", label: "Turgut Bayraktar Belgeselleri", url: "https://www.youtube.com/@TurgutBayraktarBelgeselleri/videos", min: 200 },
 };
+
+async function fetchFor(src: Source): Promise<LibVideo[]> {
+  if (src.kind === "channel") return fetchChannelVideos(src.handle, src.min);
+  if (src.kind === "shorts") return fetchChannelShorts(src.handle);
+  return fetchPlaylistVideos(src.list, src.min);
+}
 
 export async function GET(req: Request) {
   const sourceKey = new URL(req.url).searchParams.get("source") ?? "";
@@ -32,9 +41,14 @@ export async function GET(req: Request) {
 
   let videos: LibVideo[] = [];
   try {
-    if (src.kind === "channel") videos = await fetchChannelVideos(src.handle);
-    else if (src.kind === "shorts") videos = await fetchChannelShorts(src.handle);
-    else videos = await fetchPlaylistVideos(src.list);
+    videos = await fetchFor(src);
+    // Below the expected size → the upstream throttled us. Because a
+    // sub-`min` result isn't cached, an immediate retry hits a fresh
+    // upstream and usually fills in the rest. Try up to twice more.
+    for (let attempt = 0; attempt < 2 && videos.length < src.min; attempt++) {
+      const retry = await fetchFor(src);
+      if (retry.length > videos.length) videos = retry;
+    }
   } catch {
     videos = [];
   }

@@ -121,12 +121,12 @@ export function EisenhowerMatrix({ userId }: { userId: string }) {
               >
                 <div className="flex items-baseline gap-2 mb-2">
                   <span className="font-mono text-[10px] text-accent tracking-widest">{q.number}</span>
-                  <h3 className="font-serif text-lg font-medium leading-none">{q.title}</h3>
-                  <span className="ml-auto font-mono text-[10px] text-muted uppercase tracking-wider">
+                  <h3 className="font-display text-lg font-semibold leading-none tracking-tight">{q.title}</h3>
+                  <span className="ml-auto metalabel">
                     {open}
                   </span>
                 </div>
-                <div className="font-mono text-[10px] text-muted uppercase tracking-wider mb-3">
+                <div className="metalabel mb-3">
                   {q.subtitle}
                 </div>
                 <ul className="divide-rule min-h-[80px]">

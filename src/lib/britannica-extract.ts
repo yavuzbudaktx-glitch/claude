@@ -217,8 +217,59 @@ export function isPlausibleFeaturedEvent(t: BritannicaTopic): boolean {
   return true;
 }
 
+// High-precision match against Britannica's actual "Featured Event" card
+// markup (verified against a live page dump). When this matches it's the
+// truth, so it runs first.
+//   <div class="otd-featured-event …"> … <h2>Featured Event</h2>
+//     <div class="featured-event-card card">
+//       <div class="card-media …"><div class="date-label …">YEAR</div> …
+//       <div class="card-body">
+//         <div class="title …">{TITLE}</div>
+//         <div class="description …">{DESCRIPTION}</div>
+function tryBritannicaFeaturedCard(html: string): BritannicaTopic | null {
+  const sectionM = html.match(
+    /<div[^>]+class="[^"]*otd-featured-event[^"]*"[^>]*>([\s\S]*?)<\/h2>([\s\S]*?)(?=<div[^>]+class="[^"]*otd-feature-biography|<\/section|<footer)/i,
+  );
+  const card = sectionM ? sectionM[2] : (() => {
+    const altM = html.match(/<div[^>]+class="[^"]*featured-event-card[^"]*"[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/i);
+    return altM ? altM[0] : null;
+  })();
+  if (!card) return null;
+
+  let year: number | null = null;
+  const yearM = card.match(/<div[^>]+class="[^"]*date-label[^"]*"[^>]*>\s*(\d{1,4})\s*<\/div>/i);
+  if (yearM) year = parseInt(yearM[1], 10);
+
+  let title = "";
+  const titleM = card.match(/<div[^>]+class="[^"]*\btitle\b[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
+  if (titleM) title = stripTags(titleM[1]);
+
+  let summary = "";
+  let descRaw = "";
+  const descM = card.match(/<div[^>]+class="[^"]*\bdescription\b[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
+  if (descM) {
+    descRaw = descM[1].replace(/<a[^>]+class="[^"]*\botd-he-link\b[^"]*"[\s\S]*?<\/a>/gi, "");
+    summary = stripTags(descRaw)
+      .replace(/\s*Read\s+(?:today'?s\s+edition\s+of\s+)?Today in History[\s\S]*$/i, "")
+      .replace(/\s*Test your knowledge[\s\S]*$/i, "")
+      .replace(/\s*Learn more[\s\S]*$/i, "")
+      .replace(/\s*[›>»]+\s*[›>»]*\s*$/, "")
+      .trim();
+  }
+
+  let link: string | null = null;
+  const linkM = (descRaw || card).match(
+    /<a[^>]+href="(?:https?:\/\/www\.britannica\.com)?(\/(?:event|biography|topic|place|story|art|science|technology|sports|animal)\/[^"]+)"/i,
+  );
+  if (linkM) link = `https://www.britannica.com${linkM[1]}`;
+
+  if (!title || !summary || summary.length < 30) return null;
+  return { year, title: decodeEntities(title), summary: clampSummary(summary), thumbnail: null, link };
+}
+
 export function extractFeaturedEvent(html: string): BritannicaTopic | null {
   const candidates = [
+    tryBritannicaFeaturedCard(html),
     tryJsonLd(html),
     tryFeaturedMarker(html),
     tryFeaturedClass(html),

@@ -2,10 +2,12 @@
 
 import useSWR from "swr";
 import { useEffect, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { Card } from "@/components/Card";
 import { PrayerTimes, PrayerChecklist } from "./PrayerTimes";
 import type { HadithPayload } from "@/lib/hadith";
 import { localDateKey, msUntilLocalMidnight } from "@/lib/local-date";
+import { usePref } from "@/components/PrefsProvider";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -25,21 +27,36 @@ export function PrayersVerseCard() {
     { refreshInterval: 1000 * 60 * 30, revalidateOnFocus: true, keepPreviousData: true },
   );
 
+  // Collapse the (sometimes very long) hadith so the card shrinks back to
+  // the height of the calendar / news cards beside it. Synced across devices.
+  const [collapsed, setCollapsed] = usePref<boolean>("hub.hadith.collapsed", false);
+
   return (
     <Card num="01" title="Prayer · Hadith">
       <PrayerTimes />
 
       <div className="mt-4 pt-4 border-t rule">
-        <div className="flex items-baseline justify-between mb-2">
-          <div className="label">Günün Hadisi</div>
-          {h && (
+        <div className="flex items-baseline justify-between mb-2 gap-2">
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="label inline-flex items-center gap-1 hover:text-accent transition"
+            title={collapsed ? "Show hadith" : "Hide hadith"}
+            aria-expanded={!collapsed}
+          >
+            <ChevronDown
+              className="h-3.5 w-3.5 transition-transform"
+              style={{ transform: collapsed ? "rotate(-90deg)" : "rotate(0deg)" }}
+            />
+            Günün Hadisi
+          </button>
+          {h && !collapsed && (
             <div className="font-mono text-[10px] tracking-wider text-muted uppercase">
               {h.bookName} · № {h.hadithNumber}
             </div>
           )}
         </div>
-        {isLoading && <p className="text-muted text-sm">Loading…</p>}
-        {h && (
+        {isLoading && !collapsed && <p className="text-muted text-sm">Loading…</p>}
+        {h && !collapsed && (
           <>
             {h.narrator && (
               <div className="font-mono text-[10px] tracking-wider text-muted mb-1 uppercase">

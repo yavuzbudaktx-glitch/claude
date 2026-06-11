@@ -210,11 +210,23 @@ main { position: relative; z-index: 1; }
 .label {
   font-family: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
   font-size: 10.5px;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--muted);
+  font-weight: 650;
+  font-feature-settings: "tnum" on, "ss01" on;
+}
+
+/* Editorial micro-label — a cleaner, less "terminal" treatment for the small
+   uppercase metadata that used to be monospace (quadrant subtitles, "last
+   match", "today's move", etc). Reads as a refined caption rather than code. */
+.metalabel {
+  font-family: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
   font-weight: 600;
-  font-feature-settings: "tnum" on;
+  color: var(--muted-2);
 }
 
 /* ---------- glass card surfaces ---------- */
@@ -2453,6 +2465,121 @@ main { position: relative; z-index: 1; }
 .theme-sage .text-gradient {
   background: linear-gradient(118deg, var(--accent-2), var(--accent) 60%, var(--grad-to));
   -webkit-background-clip: text; background-clip: text;
+}
+
+/* =======================================================================
+   CONCEPT UPGRADES — Pastel · Onyx · Sage · Vinyl get real atmospheres,
+   not just palettes. (Cyberpunk already had one.)
+======================================================================= */
+
+/* ----- PASTEL → "Dreamscape": drifting candy aurora + pillow-soft cards -- */
+.theme-pastel body { background: transparent; }
+.theme-pastel body::before {
+  /* large, soft, slowly drifting pastel blobs */
+  background:
+    radial-gradient(42% 42% at 18% 22%, rgba(255, 196, 177, 0.55), transparent 70%),
+    radial-gradient(40% 40% at 82% 16%, rgba(163, 213, 201, 0.50), transparent 70%),
+    radial-gradient(46% 46% at 80% 82%, rgba(198, 168, 212, 0.50), transparent 72%),
+    radial-gradient(40% 40% at 14% 84%, rgba(255, 222, 165, 0.45), transparent 70%);
+  filter: blur(90px) saturate(135%);
+  animation: aurora 42s ease-in-out infinite alternate;
+}
+.theme-pastel.dark body::before { filter: blur(100px) saturate(120%); opacity: 0.55; }
+.theme-pastel .card {
+  border-radius: 22px;                       /* extra-rounded, pillowy */
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255,255,255,0.65);
+}
+.theme-pastel.dark .card { box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255,255,255,0.06); }
+.theme-pastel .card-bare { border-radius: 18px; }
+.theme-pastel .btn-ghost { border-radius: 14px; }
+.theme-pastel .chip { border-radius: 999px; }
+.theme-pastel .dot {
+  background: linear-gradient(135deg, #ffc4b1, #a3d5c9 50%, #c6a8d4);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.theme-pastel .font-display { letter-spacing: -0.02em; }
+
+/* ----- ONYX → brushed obsidian + thin copper hairline ------------------- */
+.theme-onyx body { background: transparent; }
+.theme-onyx body::before { background: none; animation: none; }
+.theme-onyx body::after {
+  opacity: 1; mix-blend-mode: normal;
+  transform: translateZ(0); will-change: transform; backface-visibility: hidden;
+  /* very fine vertical brushed-metal striations + a top copper bloom */
+  background-image:
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.018) 0 1px, transparent 1px 3px),
+    radial-gradient(120% 60% at 50% 0%, rgba(200, 127, 58, 0.10), transparent 60%);
+}
+.theme-onyx:not(.dark) body::after {
+  background-image:
+    repeating-linear-gradient(90deg, rgba(26,22,18,0.025) 0 1px, transparent 1px 3px),
+    radial-gradient(120% 60% at 50% 0%, rgba(160, 85, 33, 0.08), transparent 60%);
+}
+.theme-onyx .card {
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  /* a single hairline of copper along the top edge — the only "shine" */
+  box-shadow: var(--shadow-card), inset 0 1px 0 rgba(200, 127, 58, 0.28);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+.theme-onyx .card:hover { border-color: rgba(200,127,58,0.4); }
+.theme-onyx .card-bare { border-radius: 8px; }
+.theme-onyx .btn-ghost { border-radius: 8px; }
+.theme-onyx .chip { border-radius: 6px; }
+.theme-onyx .dot { background: linear-gradient(135deg, #e9c293, var(--accent) 60%, #6e4a1e); box-shadow: 0 0 8px var(--glow); }
+.theme-onyx .headrule { border-bottom: 1px solid var(--rule); padding-bottom: .5rem; }
+.theme-onyx .font-display { letter-spacing: -0.01em; font-weight: 600; }
+
+/* ----- SAGE → herbarium reading room: laid-paper + pressed-leaf veins --- */
+.theme-sage body { background: transparent; }
+.theme-sage body::before { background: none; animation: none; }
+.theme-sage body::after {
+  opacity: 1; mix-blend-mode: normal;
+  transform: translateZ(0); will-change: transform; backface-visibility: hidden;
+  /* faint laid-paper horizontal lines + a soft sage wash from the corners */
+  background-image:
+    repeating-linear-gradient(0deg, rgba(30,42,28,0.035) 0 1px, transparent 1px 26px),
+    radial-gradient(50% 45% at 12% 10%, rgba(123,143,106,0.12), transparent 70%),
+    radial-gradient(48% 45% at 88% 90%, rgba(122,87,51,0.10), transparent 72%);
+}
+.theme-sage.dark body::after {
+  background-image:
+    repeating-linear-gradient(0deg, rgba(232,236,223,0.04) 0 1px, transparent 1px 26px),
+    radial-gradient(50% 45% at 12% 10%, rgba(155,176,135,0.10), transparent 70%),
+    radial-gradient(48% 45% at 88% 90%, rgba(197,168,117,0.08), transparent 72%);
+}
+.theme-sage .card {
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow-card);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+.theme-sage .card-bare { border-radius: 6px; }
+.theme-sage .btn-ghost { border-radius: 8px; }
+.theme-sage .chip { border-radius: 6px; }
+.theme-sage .headrule { border-bottom: 1px solid var(--accent-soft); padding-bottom: .5rem; }
+.theme-sage .dot { background: radial-gradient(circle at 35% 32%, #c5d8b4, var(--accent) 62%, #4a5e3c); box-shadow: 0 0 8px var(--glow); }
+.theme-sage .font-display { letter-spacing: -0.015em; }
+.theme-sage .text-gradient { animation: none; }
+
+/* ----- VINYL → richer: a real turntable platter behind everything ------- */
+.theme-vinyl body::after {
+  /* tighter, glossier grooves + a brass centre + a highlight sweep */
+  background-image:
+    repeating-radial-gradient(circle at 50% 46%,
+      rgba(0,0,0,0.22) 0px, rgba(0,0,0,0.22) 1px,
+      transparent 1px, transparent 4px),
+    radial-gradient(circle 60px at 50% 46%, rgba(201,146,58,0.55), rgba(201,146,58,0.0) 70%),
+    radial-gradient(70% 60% at 30% 18%, rgba(255,220,160,0.10), transparent 70%);
+}
+.theme-vinyl:not(.dark) body::after {
+  background-image:
+    repeating-radial-gradient(circle at 50% 46%,
+      rgba(45,29,14,0.12) 0px, rgba(45,29,14,0.12) 1px,
+      transparent 1px, transparent 4px),
+    radial-gradient(circle 60px at 50% 46%, rgba(160,114,33,0.45), rgba(160,114,33,0) 70%),
+    radial-gradient(70% 60% at 30% 18%, rgba(120,80,20,0.08), transparent 70%);
 }
 
 /* =======================================================================

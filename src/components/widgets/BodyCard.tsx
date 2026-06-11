@@ -270,6 +270,21 @@ function coerce(raw: unknown): BodyState {
   };
 }
 
+// Merge a remote body blob with our local one so a stale device can't wipe
+// weight history: weight ENTRIES are unioned by date (keeping the most recent
+// reading per day from whichever side has it), while the scalar fields take
+// the LOCAL value because the editing device is the source of truth for the
+// thing it just changed.
+function mergeBody(remote: BodyState, local: BodyState): BodyState {
+  const byDate = new Map<string, number>();
+  for (const e of remote.entries) byDate.set(e.date, e.weight);
+  for (const e of local.entries) byDate.set(e.date, e.weight); // local overrides same-day
+  const entries = Array.from(byDate.entries())
+    .map(([date, weight]) => ({ date, weight }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+  return { ...local, entries };
+}
+
 function loadLocal(): BodyState {
   if (typeof window === "undefined") return DEFAULT;
   try {
@@ -498,22 +513,27 @@ export function BodyCard() {
     return () => { supabase.removeChannel(ch); };
   }, [supabase, userId]);
 
-  // Persist: mirror to localStorage immediately; 200ms debounced upsert.
+  // Persist: localStorage immediately; debounced READ-MERGE-WRITE upsert so a
+  // stale device can never wipe weight history saved on another device.
   useEffect(() => {
     if (!hydrated.current) return;
     try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {}
     if (!userId) return;
-    const t = setTimeout(() => {
+    const t = setTimeout(async () => {
+      // Re-read remote and union weight entries before writing.
+      let merged = stateRef.current;
+      try {
+        const { data } = await supabase
+          .from("body_profile").select("data").eq("user_id", userId).maybeSingle();
+        if (data?.data) merged = mergeBody(coerce(data.data), stateRef.current);
+      } catch { /* fall back to local */ }
       const stamp = new Date().toISOString();
       lastOwnUpdate.current = stamp;
-      supabase
+      const { error } = await supabase
         .from("body_profile")
-        .upsert({ user_id: userId, data: state, updated_at: stamp })
-        .then(
-          ({ error }) => { if (error) console.warn("BodyCard: sync failed:", error.message); },
-          (err) => console.warn("BodyCard: sync failed:", err),
-        );
-    }, 200);
+        .upsert({ user_id: userId, data: merged, updated_at: stamp });
+      if (error) console.warn("BodyCard: sync failed:", error.message);
+    }, 250);
     return () => clearTimeout(t);
   }, [state, userId, supabase]);
 
@@ -660,7 +680,7 @@ export function BodyCard() {
       {/* Bottom strip — calories + protein sit tight on the left as the
           intake pair, the two workout textareas share the right as a
           side-by-side pair (no more vertical stack). */}
-      <div className="mt-5 pt-4 border-t rule grid grid-cols-1 md:grid-cols-[180px_180px_1fr] gap-x-5 gap-y-4">
+      <div className="mt-5 pt-4 border-t rule grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_248px] gap-x-5 gap-y-4">
         {/* Calories — goal, today's count, +input, progress bar */}
         <div>
           <div className="label mb-2">Calorie goal</div>

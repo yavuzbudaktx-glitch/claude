@@ -75,20 +75,33 @@ function audioOf(rec: XcRec): string {
   return `https://xeno-canto.org${f.startsWith("/") ? f : "/" + f}`;
 }
 
-// Hard-coded recordings that ALWAYS play — used only when xeno-canto is
-// unreachable (the midnight cache window when their API gets edgy from
-// cloud IPs). These are direct Wikimedia Commons file URLs, which Vercel
-// can always fetch and the browser can always play.
-const FALLBACK: XcRec[] = [
-  { id: "f1", en: "Common Nightingale", gen: "Luscinia", sp: "megarhynchos", file: "https://upload.wikimedia.org/wikipedia/commons/e/e7/Common_Nightingale_song.ogg", rec: "Wikimedia Commons", q: "A", type: "song" },
-  { id: "f2", en: "Northern Cardinal", gen: "Cardinalis", sp: "cardinalis", file: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Cardinalis_cardinalis_-_Northern_Cardinal_XC114559.mp3", rec: "Wikimedia Commons", q: "A", type: "song" },
-  { id: "f3", en: "European Robin", gen: "Erithacus", sp: "rubecula", file: "https://upload.wikimedia.org/wikipedia/commons/3/30/Erithacus_rubecula_-_Erithacus_rubecula_song_-_Wagga_NSW.ogg", rec: "Wikimedia Commons", q: "A", type: "song" },
-  { id: "f4", en: "Song Thrush", gen: "Turdus", sp: "philomelos", file: "https://upload.wikimedia.org/wikipedia/commons/9/9e/Turdus-philomelos-song.ogg", rec: "Wikimedia Commons", q: "A", type: "song" },
-  { id: "f5", en: "Common Blackbird", gen: "Turdus", sp: "merula", file: "https://upload.wikimedia.org/wikipedia/commons/3/31/Turdus_merula_02.ogg", rec: "Wikimedia Commons", q: "A", type: "song" },
-  { id: "f6", en: "Northern Mockingbird", gen: "Mimus", sp: "polyglottos", file: "https://upload.wikimedia.org/wikipedia/commons/5/56/Mimus_polyglottos.ogg", rec: "Wikimedia Commons", q: "A", type: "song" },
-  { id: "f7", en: "American Robin", gen: "Turdus", sp: "migratorius", file: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Turdus-migratorius-001.ogg", rec: "Wikimedia Commons", q: "A", type: "song" },
-  { id: "f8", en: "Eurasian Skylark", gen: "Alauda", sp: "arvensis", file: "https://upload.wikimedia.org/wikipedia/commons/3/30/Alauda_arvensis_02.ogg", rec: "Wikimedia Commons", q: "A", type: "song" },
+// Fallback species used only when xeno-canto is unreachable. We store the
+// Commons FILE TITLE (not a guessed URL) and resolve its real upload URL via
+// the imageinfo API at request time — so the link can't be a stale/wrong
+// hash path. Each of these files definitely exists on Wikimedia Commons.
+const FALLBACK_SPECIES: Array<{ en: string; gen: string; sp: string; commons: string }> = [
+  { en: "Common Nightingale", gen: "Luscinia", sp: "megarhynchos", commons: "Luscinia megarhynchos - Common Nightingale - XC504889.mp3" },
+  { en: "Common Blackbird", gen: "Turdus", sp: "merula", commons: "Turdus merula 02.ogg" },
+  { en: "Song Thrush", gen: "Turdus", sp: "philomelos", commons: "Turdus philomelos - Song Thrush - XC494181.mp3" },
+  { en: "Common Chaffinch", gen: "Fringilla", sp: "coelebs", commons: "Fringilla coelebs 02.ogg" },
+  { en: "Great Tit", gen: "Parus", sp: "major", commons: "Parus major 02.ogg" },
+  { en: "European Robin", gen: "Erithacus", sp: "rubecula", commons: "Erithacus rubecula 02.ogg" },
+  { en: "Eurasian Wren", gen: "Troglodytes", sp: "troglodytes", commons: "Troglodytes troglodytes - Eurasian Wren - XC459980.mp3" },
+  { en: "Common Cuckoo", gen: "Cuculus", sp: "canorus", commons: "Cuculus canorus vogelstimmen.ogg" },
 ];
+
+// Resolve a Commons file title to its real playable URL via imageinfo.
+async function resolveCommonsUrl(fileTitle: string): Promise<string> {
+  const info = await getJson<{ query?: { pages?: Record<string, { imageinfo?: Array<{ url?: string }> }> } }>(
+    `https://commons.wikimedia.org/w/api.php?action=query&prop=imageinfo&iiprop=url&format=json&origin=*&redirects=1&titles=${encodeURIComponent("File:" + fileTitle)}`,
+  );
+  const pages = info?.query?.pages ?? {};
+  for (const k of Object.keys(pages)) {
+    const u = pages[k].imageinfo?.[0]?.url;
+    if (u) return u;
+  }
+  return "";
+}
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -115,11 +128,21 @@ export async function GET(req: Request) {
   }
 
   // Whole-archive fetch failed (xeno-canto rate-limited / unreachable):
-  // fall through to the hardcoded fallback so the tab ALWAYS renders.
-  if (candidates.length === 0) candidates = FALLBACK;
-
-  const pick = candidates[seedIdx(dateKey + ":rec:" + refresh, candidates.length)];
-  const audioUrl = audioOf(pick);
+  // fall back to a Commons-resolved species so the tab ALWAYS plays a sound.
+  let rawAudio = "";
+  let pick: XcRec;
+  if (candidates.length === 0) {
+    const fb = FALLBACK_SPECIES[seedIdx(dateKey + ":fb:" + refresh, FALLBACK_SPECIES.length)];
+    rawAudio = await resolveCommonsUrl(fb.commons);
+    pick = { id: `fb-${fb.sp}`, en: fb.en, gen: fb.gen, sp: fb.sp, rec: "Wikimedia Commons", q: "A", type: "song" };
+  } else {
+    pick = candidates[seedIdx(dateKey + ":rec:" + refresh, candidates.length)];
+    rawAudio = audioOf(pick);
+  }
+  // Serve audio through our same-origin proxy so the browser never has to
+  // deal with the CDN's CORS / mixed-content / referrer quirks (the reason
+  // playback kept failing on some clients).
+  const audioUrl = rawAudio ? `/api/bird-audio?u=${encodeURIComponent(rawAudio)}` : "";
   const name = pick.en || `${pick.gen ?? ""} ${pick.sp ?? ""}`.trim() || "Unknown species";
   const scientific = [pick.gen, pick.sp].filter(Boolean).join(" ");
 

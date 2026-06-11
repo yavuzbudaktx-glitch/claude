@@ -213,14 +213,21 @@ function mergeInto(out: LibVideo[], seen: Set<string>, more: LibVideo[]) {
   for (const v of more) if (v.id && !seen.has(v.id)) { seen.add(v.id); out.push(v); }
 }
 
-export async function fetchPlaylistVideos(playlistId: string): Promise<LibVideo[]> {
+export async function fetchPlaylistVideos(playlistId: string, minCache = MIN_CACHEABLE): Promise<LibVideo[]> {
   const key = `pl:${playlistId}`;
   const hit = cached(key);
   if (hit) return hit;
-  const html = await getText(`https://www.youtube.com/playlist?list=${playlistId}&hl=en`);
-  const items = await walk(html, extractVideos);
-  if (items.length >= MIN_CACHEABLE) cache.set(key, { at: Date.now(), items });
-  return items;
+  // Innertube first (clean JSON, no consent gate), HTML walk as backstop.
+  const out: LibVideo[] = [];
+  const seen = new Set<string>();
+  const [inner, html] = await Promise.all([
+    fetchPlaylistInnertube(playlistId),
+    getText(`https://www.youtube.com/playlist?list=${playlistId}&hl=en`),
+  ]);
+  mergeInto(out, seen, inner);
+  if (html) mergeInto(out, seen, await walk(html, extractVideos));
+  if (out.length >= minCache) cache.set(key, { at: Date.now(), items: out });
+  return out;
 }
 
 // Cache threshold for a CHANNEL specifically: don't pin a near-empty result
@@ -272,7 +279,7 @@ async function fetchPlaylistInnertube(playlistId: string): Promise<LibVideo[]> {
   return out;
 }
 
-export async function fetchChannelVideos(handle: string): Promise<LibVideo[]> {
+export async function fetchChannelVideos(handle: string, minCache = CHANNEL_MIN_CACHE): Promise<LibVideo[]> {
   const key = `ch:${handle}`;
   const hit = cached(key);
   if (hit) return hit;
@@ -303,7 +310,7 @@ export async function fetchChannelVideos(handle: string): Promise<LibVideo[]> {
   mergeInto(out, seen, atom);
 
   // Don't cache obviously-truncated results — next request retries.
-  if (out.length >= CHANNEL_MIN_CACHE) cache.set(key, { at: Date.now(), items: out });
+  if (out.length >= minCache) cache.set(key, { at: Date.now(), items: out });
   return out;
 }
 
