@@ -677,10 +677,9 @@ export function BodyCard() {
         <HabitTracker />
       </div>
 
-      {/* Bottom strip — calories + protein sit tight on the left as the
-          intake pair, the two workout textareas share the right as a
-          side-by-side pair (no more vertical stack). */}
-      <div className="mt-5 pt-4 border-t rule grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_248px] gap-x-5 gap-y-4">
+      {/* Bottom strip — compact intake pair on the left (+ inputs hugging the
+          counts), the two workout textareas share the remaining width. */}
+      <div className="mt-5 pt-4 border-t rule grid grid-cols-1 md:grid-cols-[235px_235px_minmax(0,1fr)] gap-x-6 gap-y-4">
         {/* Calories — goal, today's count, +input, progress bar */}
         <div>
           <div className="label mb-2">Calorie goal</div>
@@ -703,13 +702,13 @@ export function BodyCard() {
                 {hasGoal ? `${Math.max(0, goalNum - calsToday).toLocaleString()} left` : "kcal"}
               </span>
             </div>
-            <form onSubmit={addCals} className="flex items-center gap-1.5 ml-auto">
+            <form onSubmit={addCals} className="flex items-center gap-1.5">
               <input
                 value={calDraft}
                 onChange={(e) => setCalDraft(e.target.value)}
                 placeholder="+ 250"
                 inputMode="numeric"
-                className="w-20 bg-[var(--rule-soft)] rounded-lg px-2.5 py-1.5 font-mono tabular-nums text-[13px] text-ink focus:outline-none focus:bg-[var(--paper)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-muted-2"
+                className="w-16 bg-[var(--rule-soft)] rounded-lg px-2 py-1.5 font-mono tabular-nums text-[12.5px] text-ink focus:outline-none focus:bg-[var(--paper)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-muted-2"
                 aria-label="Add calories"
               />
               <button type="submit" className="btn-ghost !h-8 !w-8" aria-label="Add to today's intake">
@@ -752,13 +751,13 @@ export function BodyCard() {
                 {hasProteinGoal ? `${Math.max(0, proteinGoalNum - proteinToday)} g left` : "grams"}
               </span>
             </div>
-            <form onSubmit={addProtein} className="flex items-center gap-1.5 ml-auto">
+            <form onSubmit={addProtein} className="flex items-center gap-1.5">
               <input
                 value={proteinDraft}
                 onChange={(e) => setProteinDraft(e.target.value)}
                 placeholder="+ 30"
                 inputMode="numeric"
-                className="w-16 bg-[var(--rule-soft)] rounded-lg px-2.5 py-1.5 font-mono tabular-nums text-[13px] text-ink focus:outline-none focus:bg-[var(--paper)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-muted-2"
+                className="w-14 bg-[var(--rule-soft)] rounded-lg px-2 py-1.5 font-mono tabular-nums text-[12.5px] text-ink focus:outline-none focus:bg-[var(--paper)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-muted-2"
                 aria-label="Add protein"
               />
               <button type="submit" className="btn-ghost !h-8 !w-8" aria-label="Add to today's protein">
@@ -776,26 +775,27 @@ export function BodyCard() {
           )}
         </div>
 
-        {/* Workouts — A and B side-by-side, tight. */}
-        <div className="grid grid-cols-2 gap-2">
+        {/* Workouts — A and B side-by-side with real breathing room (they take
+            all the width the compact intake columns free up). */}
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <div className="label mb-1">Workout · A</div>
+            <div className="label mb-1.5">Workout · A</div>
             <AutoTextarea
               value={state.workoutA}
-              placeholder={"Bench 4×8\nRows 4×10"}
+              placeholder={"e.g.\nBench 4×8\nRows 4×10\nOHP 3×10"}
               onChange={(e) => setState((s) => ({ ...s, workoutA: e.target.value }))}
               rows={4}
-              className={fieldClass + " !text-[11.5px] !px-2 !py-1.5 leading-tight"}
+              className={fieldClass + " !text-[13px]"}
             />
           </div>
           <div>
-            <div className="label mb-1">Workout · B</div>
+            <div className="label mb-1.5">Workout · B</div>
             <AutoTextarea
               value={state.workoutB}
-              placeholder={"Squat 4×6\nDeadlift 3×5"}
+              placeholder={"e.g.\nSquat 4×6\nDeadlift 3×5\nCurls 3×12"}
               onChange={(e) => setState((s) => ({ ...s, workoutB: e.target.value }))}
               rows={4}
-              className={fieldClass + " !text-[11.5px] !px-2 !py-1.5 leading-tight"}
+              className={fieldClass + " !text-[13px]"}
             />
           </div>
         </div>

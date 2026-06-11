@@ -1,29 +1,25 @@
-// Internet Archive — random but GENUINELY interesting items every day.
-// Pulls from a wide list of curated Archive collections (vintage cartoons,
-// classic TV, Prelinger archival films, NASA imagery, vintage posters,
-// historical maps, 78rpm music, playable arcade games, etc.) so what you
-// get is always something worth seeing — never an empty / boring search
-// result. Daily seeded so the same date returns the same pick (no
-// refresh-on-every-click); ?r=N salts the seed for "Another".
+// Internet Archive — one OLD CARTOON per day. Cartoon collections only,
+// hard-limited to items dated before 2004, restricted to actual film items
+// (mediatype:movies — the umbrella collection otherwise returns its own
+// sub-collection pages as the top "downloads" hits, which is why the tab
+// went blank/garbage). Daily seeded; ?r=N salts for "Another".
 
 import { NextResponse } from "next/server";
 
 export const revalidate = 3600;
+export const maxDuration = 30;
 
 const HEADERS = {
   "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
   Accept: "application/json",
 };
 
-// Old cartoons ONLY. The user explicitly chose this — the previous broad
-// rotation kept landing on cookbooks / arcade games / NASA imagery, which
-// missed the point. `animationandcartoons` is the Archive's big umbrella
-// collection for vintage animation (~50k items, hundreds of public-domain
-// cartoons from the 1920s-60s); we keep it as the sole source. If on a
-// given day downloads-desc returns something not-quite-cartoony, the daily
-// seed still rolls it forward tomorrow.
+// Cartoon shelves, most-specific first. We walk down the list if a query
+// returns nothing (a single collection can be throttled on a given day).
 const COLLECTIONS = [
-  "animationandcartoons",
+  "more_animation",          // the classic_cartoons successor shelf
+  "animationandcartoons",    // the big umbrella (~50k items)
+  "classic_cartoons",
 ];
 
 interface IADoc { identifier?: string; title?: string; mediatype?: string; year?: string; description?: string | string[] }
@@ -43,7 +39,7 @@ async function getJson(url: string): Promise<IAResp | null> {
   ];
   for (const u of tries) {
     try {
-      const r = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(10000), cache: "no-store" });
+      const r = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(12000), cache: "no-store" });
       if (!r.ok) continue;
       const text = await r.text();
       if (!text || text[0] !== "{") continue;
@@ -53,17 +49,23 @@ async function getJson(url: string): Promise<IAResp | null> {
   return null;
 }
 
-async function search(collection: string, fields: string): Promise<IADoc[]> {
-  // Vintage only: restrict to items dated 1900-2003 (no post-2004 uploads).
-  // sort by downloads so we never land on a totally obscure / broken item.
-  const q = `collection:${collection} AND year:[1900 TO 2003]`;
+async function search(collection: string, withYearFilter: boolean): Promise<IADoc[]> {
+  const fields = "identifier,title,mediatype,year";
+  // mediatype:movies keeps us on actual films (the umbrella collection's
+  // top-by-downloads docs are otherwise its own SUB-COLLECTIONS).
+  const q = withYearFilter
+    ? `collection:${collection} AND mediatype:movies AND year:[1900 TO 2003]`
+    : `collection:${collection} AND mediatype:movies`;
   const url =
     `https://archive.org/advancedsearch.php?q=${encodeURIComponent(q)}` +
-    `&fl[]=${fields.split(",").join("&fl[]=")}&rows=500&output=json&sort[]=downloads+desc`;
+    `&fl[]=${fields.split(",").join("&fl[]=")}&rows=300&output=json&sort[]=downloads+desc`;
   const j = await getJson(url);
-  // Belt-and-suspenders client-side filter in case the year field is a string.
   return (j?.response?.docs ?? []).filter((d) => {
     if (!d.identifier) return false;
+    if (d.mediatype && d.mediatype !== "movies") return false;
+    // HARD pre-2004 rule, even on the no-year-filter fallback: items without
+    // a year field at all are allowed (most early cartoons), anything 2004+
+    // is dropped.
     const y = parseInt(String(d.year ?? ""), 10);
     return !Number.isFinite(y) || y < 2004;
   });
@@ -73,27 +75,24 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const dateKey = url.searchParams.get("d") ?? new Date().toISOString().slice(0, 10);
   const refresh = url.searchParams.get("r") ?? "";
-  const fields = "identifier,title,mediatype,year,description";
 
-  // Pick today's collection from the list deterministically — but if it
-  // happens to come back empty (the Archive sometimes throttles individual
-  // collections), walk to the next one until we get docs.
-  for (let attempt = 0; attempt < COLLECTIONS.length; attempt++) {
-    const cIdx = (seedIdx(dateKey + ":c:" + refresh, COLLECTIONS.length) + attempt) % COLLECTIONS.length;
-    const collection = COLLECTIONS[cIdx];
-    const docs = await search(collection, fields);
+  for (const collection of COLLECTIONS) {
+    // Year-filtered query first; if the Archive chokes on the range query,
+    // retry the same collection without it (client filter still enforces
+    // pre-2004).
+    let docs = await search(collection, true);
+    if (docs.length === 0) docs = await search(collection, false);
     if (docs.length === 0) continue;
 
     const idx = seedIdx(dateKey + ":pick:" + refresh, docs.length);
     const d = docs[idx];
-    const desc = Array.isArray(d.description) ? d.description[0] : d.description;
     return NextResponse.json(
       {
         identifier: d.identifier,
         title: d.title || d.identifier,
         mediatype: d.mediatype || "",
         year: d.year || "",
-        description: desc ? String(desc).replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim().slice(0, 320) : "",
+        description: "",
         imageUrl: `https://archive.org/services/img/${d.identifier}`,
         pageUrl: `https://archive.org/details/${d.identifier}`,
         source: "Internet Archive",

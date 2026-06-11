@@ -74,8 +74,11 @@ function NasaPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: 
 
 interface Art { title?: string; artist?: string; date?: string; medium?: string; origin?: string; description?: string | null; alt?: string; imageUrl?: string; pageUrl?: string; source?: string; error?: string }
 
-function ArtPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: boolean; setShowInfo: (v: boolean) => void; refreshN: number; onRefresh: () => void }) {
-  const { data, isLoading } = useSWR<Art>(`/api/art-of-day?r=${refreshN}`, fetcher, { keepPreviousData: true });
+function ArtPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: (v: boolean) => void }) {
+  // Daily — keyed on the local date only. No reroll button: today's painting
+  // IS today's painting, like a real museum label.
+  const today = localDateKey();
+  const { data, isLoading } = useSWR<Art>(`/api/art-of-day?d=${today}`, fetcher, { keepPreviousData: true, revalidateOnFocus: false });
   if (isLoading && !data) return <Loading />;
   if (data?.error || !data?.imageUrl) return <Failed what="the museum" />;
   return (
@@ -85,7 +88,6 @@ function ArtPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: bo
           <img src={data.imageUrl} alt={data.alt ?? ""} className="h-full w-full object-contain bg-black/20 transition hover:scale-[1.01]" loading="lazy" />
           <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 rounded-full bg-black/55 backdrop-blur px-2 py-0.5 text-[10px] font-semibold text-white"><PaletteIcon className="h-3 w-3" /> {data.source}</span>
         </a>
-        <RollButton onRefresh={onRefresh} />
       </div>
       <div className="flex flex-col min-h-0 flex-[2]">
         <div className="flex items-start gap-2 shrink-0">
@@ -146,8 +148,11 @@ function CabinetPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo
 
 interface Bird { name?: string; scientific?: string; blurb?: string; imageUrl?: string; audioUrl?: string; sonogram?: string; recordist?: string; place?: string; pageUrl?: string; xcUrl?: string; source?: string; error?: string }
 
-function BirdPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: boolean; setShowInfo: (v: boolean) => void; refreshN: number; onRefresh: () => void }) {
-  const { data, isLoading } = useSWR<Bird>(`/api/bird-of-day?r=${refreshN}`, fetcher, { keepPreviousData: true });
+function BirdPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: (v: boolean) => void }) {
+  // Daily — keyed on the local date only, no reroll. Today's bird is
+  // today's bird.
+  const today = localDateKey();
+  const { data, isLoading } = useSWR<Bird>(`/api/bird-of-day?d=${today}`, fetcher, { keepPreviousData: true, revalidateOnFocus: false });
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [audioState, setAudioState] = useState<"idle" | "loading" | "error">("idle");
@@ -196,7 +201,6 @@ function BirdPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: b
           <div className="absolute inset-0 grid place-items-center"><BirdIcon className="h-12 w-12 text-muted-2" /></div>
         )}
         <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 rounded-full bg-black/55 backdrop-blur px-2 py-0.5 text-[10px] font-semibold text-white"><BirdIcon className="h-3 w-3" /> Bird of the day</span>
-        <RollButton onRefresh={onRefresh} />
       </div>
       {/* Audio control — a small button UNDER the photo, not over it. */}
       <div className="flex items-center gap-2 shrink-0">
@@ -403,8 +407,8 @@ export function NasaApod() {
       </div>
 
       <div className="flex-1 min-h-0">
-        {tab === "art"     && <ArtPanel     showInfo={showInfo} setShowInfo={setShowInfo} refreshN={refreshFor("art")}     onRefresh={() => roll("art")} />}
-        {tab === "bird"    && <BirdPanel    showInfo={showInfo} setShowInfo={setShowInfo} refreshN={refreshFor("bird")}    onRefresh={() => roll("bird")} />}
+        {tab === "art"     && <ArtPanel     showInfo={showInfo} setShowInfo={setShowInfo} />}
+        {tab === "bird"    && <BirdPanel    showInfo={showInfo} setShowInfo={setShowInfo} />}
         {tab === "nasa"    && <NasaPanel    showInfo={showInfo} setShowInfo={setShowInfo} />}
         {tab === "wiki"    && <WikiPanel    showInfo={showInfo} setShowInfo={setShowInfo} refreshN={refreshFor("wiki")}    onRefresh={() => roll("wiki")} />}
         {tab === "archive" && <ArchivePanel showInfo={showInfo} setShowInfo={setShowInfo} refreshN={refreshFor("archive")} onRefresh={() => roll("archive")} />}

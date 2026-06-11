@@ -659,7 +659,9 @@ export function ApplicationsSection() {
                 <span className="text-[12px] font-semibold text-ink">{stage}</span>
                 <span className="ml-auto font-mono text-[11px] text-muted">{col.length}</span>
               </div>
-              <ul className="space-y-2 min-h-[44px]">
+              {/* Capped column height — a long Applied list scrolls inside its
+                  own lane instead of stretching the whole card down the page. */}
+              <ul className="space-y-2 min-h-[44px] max-h-[340px] overflow-y-auto pr-0.5 [scrollbar-width:thin]">
                 {col.map((a) => {
                   const i = STAGES.indexOf(a.stage);
                   return (

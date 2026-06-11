@@ -4,46 +4,43 @@
 //
 // Themes are NOT the same as light/dark. Light/dark is the `.dark` class;
 // theme variants stack on top to change the entire visual character of the
-// site (palette + corner radius + density + display face + texture). The
-// strongest ones (Galaxy, Forest, Water, Lust, Terminal, the concept set)
-// carry a full atmosphere, not just a recolor.
+// site. `kind` splits the picker into two sections: "concept" themes carry a
+// full atmosphere (texture, motion, bespoke card chrome); "theme" entries
+// are clean palettes/looks.
 
 export type ThemeId =
   | "aurora" | "galaxy" | "forest" | "water" | "sunset"
   | "terminal" | "accounting" | "mono"
   | "newspaper" | "blueprint" | "comic"
-  | "mosaic" | "stainedglass" | "deco"
-  // Five new in this batch — Cyberpunk and Vinyl are full concept themes,
-  // Pastel / Onyx / Sage are palette themes.
-  | "cyberpunk" | "vinyl" | "pastel" | "onyx" | "sage";
+  | "mosaic" | "stainedglass" | "deco" | "cyberpunk";
+
+export type ThemeKind = "concept" | "theme";
 
 export const THEMES: Array<{
-  id: ThemeId; label: string; description: string;
+  id: ThemeId; label: string; description: string; kind: ThemeKind;
 }> = [
-  { id: "aurora",       label: "Aurora Glass", description: "Default — frosted cards, cyan accent, drifting aurora background." },
-  { id: "galaxy",       label: "Galaxy",       description: "Deep space — violet nebula, a dense drifting starfield behind everything." },
-  { id: "forest",       label: "Forest",       description: "A living woodland — sun shafts through the canopy, drifting leaves, bark-grain cards." },
-  { id: "water",        label: "Water",        description: "Submerged in a turquoise sea — flowing caustics, streaming bubbles, deep aqua glow." },
-  { id: "sunset",       label: "Sunset",       description: "Golden hour at the coast — peach sky, a slowly sinking sun, long horizon afterglow." },
-  { id: "mosaic",       label: "Mosaic",       description: "Mediterranean azulejo — terracotta + cobalt tiles, hand-laid grout, an unmistakably handmade surface." },
-  { id: "stainedglass", label: "Stained Glass",description: "Leaded cathedral panes — jewel reds, sapphire, emerald, with light spilling through the glazing." },
-  { id: "deco",         label: "Art Deco",     description: "1920s glamour — gold geometry on deep emerald & black, sunburst fans, symmetric chevrons, high-contrast serif." },
-  { id: "cyberpunk",    label: "Cyberpunk",    description: "Neon at midnight — hot pink + electric cyan over deep indigo, scanlines, holographic shimmer, pixel-perfect chrome." },
-  { id: "vinyl",        label: "Vinyl",        description: "A record store on a Sunday afternoon — warm cream + brass over walnut, rotating record-groove background, label-style cards." },
-  { id: "pastel",       label: "Pastel",       description: "Macaron palette — peach, mint, lavender on cream. Soft, airy, generous." },
-  { id: "onyx",         label: "Onyx",         description: "Deep matte black with copper accents. Quiet luxury, no shine." },
-  { id: "sage",         label: "Sage",         description: "Calm sage green, ivory paper, walnut accents. A reading room in a cabin." },
-  { id: "terminal",     label: "Terminal",     description: "Mono-typography, sharp corners, green phosphor, CRT scanlines — day or night." },
-  { id: "accounting",   label: "Accounting",   description: "Green-bar ledger paper — alternating rows align to the band rhythm, a red margin rule down the left, double-rule headers, tabular figures." },
-  { id: "mono",         label: "Mono",         description: "Pure black & white, hard edges, heavy rules — brutalist clarity." },
-  { id: "newspaper",    label: "Newspaper",    description: "Times-style serif type, columns, drop-caps, hairline ruling — like reading a Sunday paper." },
-  { id: "blueprint",    label: "Blueprint",    description: "Architect's drafting page — white technical strokes on cyan, corner brackets, drafting grid." },
-  { id: "comic",        label: "Comic",        description: "Halftone dots, ink-line panels, KAPOW red, offset hard shadows — your dashboard as a comic book." },
+  // ---- concepts: full atmospheres -----------------------------------------
+  { id: "galaxy",       label: "Galaxy",       kind: "concept", description: "Deep space — violet nebula, a dense drifting starfield behind everything." },
+  { id: "forest",       label: "Forest",       kind: "concept", description: "A living woodland — sun shafts through the canopy, drifting leaves, bark-grain cards." },
+  { id: "water",        label: "Water",        kind: "concept", description: "Submerged in a turquoise sea — flowing caustics, streaming bubbles, deep aqua glow." },
+  { id: "sunset",       label: "Sunset",       kind: "concept", description: "Golden hour at the coast — peach sky, a slowly sinking sun, long horizon afterglow." },
+  { id: "mosaic",       label: "Mosaic",       kind: "concept", description: "Mediterranean azulejo — terracotta + cobalt tiles, hand-laid grout, an unmistakably handmade surface." },
+  { id: "stainedglass", label: "Stained Glass",kind: "concept", description: "Leaded cathedral panes — jewel reds, sapphire, emerald, with light spilling through the glazing." },
+  { id: "deco",         label: "Art Deco",     kind: "concept", description: "1920s glamour — gold geometry on deep emerald & black, sunburst-crowned cards, high-contrast serif." },
+  { id: "cyberpunk",    label: "Cyberpunk",    kind: "concept", description: "Neon at midnight — hot pink + electric cyan over deep indigo, scanlines, holographic shimmer." },
+  { id: "terminal",     label: "Terminal",     kind: "concept", description: "Mono-typography, sharp corners, green phosphor, CRT scanlines — day or night." },
+  { id: "accounting",   label: "Accounting",   kind: "concept", description: "Green-bar ledger paper — banded rows, a red margin rule, double-rule headers, tabular figures." },
+  { id: "newspaper",    label: "Newspaper",    kind: "concept", description: "Times-style serif type, columns, drop-caps, hairline ruling — like reading a Sunday paper." },
+  { id: "blueprint",    label: "Blueprint",    kind: "concept", description: "Architect's drafting page — white technical strokes on cyan, corner brackets, drafting grid." },
+  { id: "comic",        label: "Comic",        kind: "concept", description: "Halftone dots, ink-line panels, KAPOW red, offset hard shadows — your dashboard as a comic book." },
+  // ---- themes: clean palettes ----------------------------------------------
+  { id: "aurora",       label: "Aurora Glass", kind: "theme",   description: "Default — frosted cards, cyan accent, drifting aurora background." },
+  { id: "mono",         label: "Mono",         kind: "theme",   description: "Pure black & white, hard edges, heavy rules — brutalist clarity." },
 ];
 
 const KEY = "brief.theme.v1";
 
-const VALID: ThemeId[] = ["aurora", "galaxy", "forest", "water", "sunset", "mosaic", "stainedglass", "deco", "cyberpunk", "vinyl", "pastel", "onyx", "sage", "terminal", "accounting", "mono", "newspaper", "blueprint", "comic"];
+const VALID: ThemeId[] = ["aurora", "galaxy", "forest", "water", "sunset", "mosaic", "stainedglass", "deco", "cyberpunk", "terminal", "accounting", "mono", "newspaper", "blueprint", "comic"];
 const NON_DEFAULT = VALID.filter((v) => v !== "aurora");
 
 export function getTheme(): ThemeId {
@@ -77,7 +74,7 @@ export const THEME_BOOT_SCRIPT = `
   (function() {
     try {
       var v = localStorage.getItem(${JSON.stringify(KEY)});
-      var ok = ['galaxy','forest','water','sunset','mosaic','stainedglass','deco','cyberpunk','vinyl','pastel','onyx','sage','terminal','accounting','mono','newspaper','blueprint','comic'];
+      var ok = ['galaxy','forest','water','sunset','mosaic','stainedglass','deco','cyberpunk','terminal','accounting','mono','newspaper','blueprint','comic'];
       var root = document.documentElement;
       if (v && ok.indexOf(v) >= 0) root.classList.add('theme-' + v);
       root.setAttribute('data-theme', v || 'aurora');

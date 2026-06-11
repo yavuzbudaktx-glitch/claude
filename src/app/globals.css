@@ -1873,15 +1873,19 @@ main { position: relative; z-index: 1; }
 }
 :root.theme-stainedglass:not(.dark) {
   color-scheme: light;
-  --bg:           #f1eee2;
-  --paper:        rgba(255, 255, 255, 0.78);
-  --paper-2:      #fbf8ea;
+  --bg:           #f3f0e6;
+  /* OPAQUE surfaces in light mode — the previous translucent cards let the
+     dark lead canes bleed through and made text unreadable. The leaded look
+     stays in the page background + card borders; the reading surface is
+     clean white. */
+  --paper:        #ffffff;
+  --paper-2:      #fbf8ee;
   --ink:          #1a1230;
   --ink-soft:     #3c2e54;
   --muted:        #6c5d80;
   --muted-2:      #a89aba;
-  --rule:         #1a1230;
-  --rule-soft:    rgba(26, 18, 48, 0.10);
+  --rule:         rgba(26, 18, 48, 0.35);
+  --rule-soft:    rgba(26, 18, 48, 0.08);
   --accent:       #8a1230;
   --accent-soft:  rgba(138, 18, 48, 0.10);
   --accent-2:     #1452a8;
@@ -1891,14 +1895,14 @@ main { position: relative; z-index: 1; }
   --grad-from:    #1452a8;
   --grad-via:     #8a1230;
   --grad-to:      #c08a3e;
-  --glass:        rgba(255, 255, 255, 0.78);
-  --glass-border: #1a1230;
-  --glow:         rgba(138, 18, 48, 0.25);
-  --shadow-card:  0 1px 2px rgba(26,18,48,0.06), 0 16px 36px -18px rgba(20,82,168,0.30);
-  --shadow-hover: 0 2px 4px rgba(26,18,48,0.08), 0 26px 52px -20px rgba(20,82,168,0.40);
-  --aurora-1: rgba(20,82,168,0.18); --aurora-2: rgba(138,18,48,0.18);
-  --aurora-3: rgba(192,138,62,0.16); --aurora-4: transparent;
-  --grain:        0.025;
+  --glass:        #ffffff;
+  --glass-border: rgba(26, 18, 48, 0.60);
+  --glow:         rgba(138, 18, 48, 0.18);
+  --shadow-card:  0 1px 2px rgba(26,18,48,0.06), 0 16px 36px -18px rgba(20,82,168,0.26);
+  --shadow-hover: 0 2px 4px rgba(26,18,48,0.08), 0 26px 52px -20px rgba(20,82,168,0.34);
+  --aurora-1: rgba(20,82,168,0.16); --aurora-2: rgba(138,18,48,0.14);
+  --aurora-3: rgba(192,138,62,0.14); --aurora-4: transparent;
+  --grain:        0.02;
 }
 .theme-stainedglass .font-display {
   font-family: "Playfair Display", "Times New Roman", serif;
@@ -1929,16 +1933,27 @@ main { position: relative; z-index: 1; }
   50%      { opacity: 1; }
 }
 .theme-stainedglass:not(.dark) body::after {
-  /* daylight through panes — lighter glow, same canes */
+  /* daylight through panes — soft glow + much gentler canes so the page
+     reads light, not gridded over */
   background-image:
-    radial-gradient(36% 36% at 25% 30%, rgba(176,32,56,0.20), transparent 72%),
-    radial-gradient(32% 32% at 70% 20%, rgba(20,82,168,0.22), transparent 72%),
-    radial-gradient(38% 38% at 75% 75%, rgba(224,168,46,0.18), transparent 72%),
-    radial-gradient(30% 30% at 22% 78%, rgba(48,150,90,0.18), transparent 72%),
-    repeating-linear-gradient( 60deg, transparent 0 38px, rgba(26,18,48,0.55) 38px 40px),
-    repeating-linear-gradient(-60deg, transparent 0 38px, rgba(26,18,48,0.55) 38px 40px),
-    repeating-linear-gradient(  0deg, transparent 0 68px, rgba(26,18,48,0.45) 68px 70px);
-  opacity: 0.78;
+    radial-gradient(36% 36% at 25% 30%, rgba(176,32,56,0.14), transparent 72%),
+    radial-gradient(32% 32% at 70% 20%, rgba(20,82,168,0.15), transparent 72%),
+    radial-gradient(38% 38% at 75% 75%, rgba(224,168,46,0.12), transparent 72%),
+    radial-gradient(30% 30% at 22% 78%, rgba(48,150,90,0.12), transparent 72%),
+    repeating-linear-gradient( 60deg, transparent 0 38px, rgba(26,18,48,0.22) 38px 39px),
+    repeating-linear-gradient(-60deg, transparent 0 38px, rgba(26,18,48,0.22) 38px 39px);
+  opacity: 0.7;
+}
+/* Light mode: cards are opaque, so kill the backdrop blur (nothing behind to
+   blur) and tone the jewel tint to a whisper — text first. */
+.theme-stainedglass:not(.dark) .card {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background:
+    linear-gradient(140deg,
+      color-mix(in srgb, var(--accent) 3%, #ffffff) 0%,
+      #ffffff 50%,
+      color-mix(in srgb, var(--accent-2) 3%, #ffffff) 100%);
 }
 .theme-stainedglass .card {
   border-radius: 14px;
@@ -2048,8 +2063,9 @@ main { position: relative; z-index: 1; }
 }
 .theme-deco body { background: transparent; }
 .theme-deco body::before { background: none; animation: none; }
-/* Background: a faint gold sunburst fanning from top-centre + a chevron field
-   along the very bottom — the unmistakable Deco vocabulary. */
+/* Background: a quiet gold chevron field only. (The big sunburst that fanned
+   from the top of the PAGE is gone by request — the sunbursts now live only
+   on the cards, where they crown each header.) */
 .theme-deco body::after {
   opacity: 1;
   mix-blend-mode: normal;
@@ -2057,19 +2073,15 @@ main { position: relative; z-index: 1; }
   will-change: transform;
   backface-visibility: hidden;
   background-image:
-    repeating-conic-gradient(from 0deg at 50% 0%,
-      rgba(212,175,55,0.05) 0deg 2deg, transparent 2deg 9deg),
     repeating-linear-gradient(135deg, rgba(212,175,55,0.05) 0 1px, transparent 1px 22px),
     repeating-linear-gradient(45deg,  rgba(212,175,55,0.05) 0 1px, transparent 1px 22px);
-  background-size: 100% 100%, 44px 44px, 44px 44px;
-  background-position: 50% 0, 0 100%, 0 100%;
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.25) 30%, rgba(0,0,0,0.25) 70%, #000 100%);
-          mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.25) 30%, rgba(0,0,0,0.25) 70%, #000 100%);
+  background-size: 44px 44px, 44px 44px;
+  background-position: 0 100%, 0 100%;
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.2) 50%, #000 100%);
+          mask-image: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.2) 50%, #000 100%);
 }
 .theme-deco:not(.dark) body::after {
   background-image:
-    repeating-conic-gradient(from 0deg at 50% 0%,
-      rgba(154,123,31,0.07) 0deg 2deg, transparent 2deg 9deg),
     repeating-linear-gradient(135deg, rgba(154,123,31,0.06) 0 1px, transparent 1px 22px),
     repeating-linear-gradient(45deg,  rgba(154,123,31,0.06) 0 1px, transparent 1px 22px);
   opacity: 0.8;
@@ -2158,6 +2170,52 @@ main { position: relative; z-index: 1; }
   --aurora-4:     rgba(0, 0, 0, 0.6);
   --grain:        0.04;
 }
+/* ---- Cyberpunk · LIGHT ("daylight lab"): white chrome, the same hot
+   pink + cyan signals, soft holographic wash instead of midnight neon. */
+:root.theme-cyberpunk:not(.dark) {
+  color-scheme: light;
+  --bg:           #f3f1fa;
+  --paper:        #ffffff;
+  --paper-2:      #f8f5ff;
+  --ink:          #1c1432;
+  --ink-soft:     #443a66;
+  --muted:        #786d9c;
+  --muted-2:      #aaa2c4;
+  --rule:         rgba(224, 24, 109, 0.28);
+  --rule-soft:    rgba(28, 20, 50, 0.07);
+  --accent:       #e0186d;        /* hot pink, deepened for contrast */
+  --accent-soft:  rgba(224, 24, 109, 0.10);
+  --accent-2:     #0891b2;        /* cyan, deepened */
+  --hl:           rgba(224, 24, 109, 0.08);
+  --up:           #0d9b6c;
+  --down:         #d53159;
+  --grad-from:    #0891b2;
+  --grad-via:     #e0186d;
+  --grad-to:      #d97706;
+  --glass:        #ffffff;
+  --glass-border: rgba(224, 24, 109, 0.40);
+  --glow:         rgba(224, 24, 109, 0.22);
+  --shadow-card:  0 1px 2px rgba(28,20,50,0.05), 0 14px 32px -18px rgba(224, 24, 109, 0.26);
+  --shadow-hover: 0 2px 4px rgba(28,20,50,0.07), 0 24px 50px -20px rgba(224, 24, 109, 0.36);
+  --aurora-1:     rgba(224, 24, 109, 0.14);
+  --aurora-2:     rgba(8, 145, 178, 0.14);
+  --aurora-3:     rgba(122, 41, 224, 0.10);
+  --aurora-4:     transparent;
+  --grain:        0.02;
+}
+.theme-cyberpunk:not(.dark) body::after {
+  background-image:
+    repeating-linear-gradient(to bottom,
+      rgba(8, 145, 178, 0.035) 0 1px,
+      transparent 1px 3px),
+    radial-gradient(70% 60% at 50% 100%, rgba(224, 24, 109, 0.07), transparent 70%);
+}
+.theme-cyberpunk:not(.dark) .card {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.theme-cyberpunk:not(.dark) .chip-active { color: #ffffff; }
+.theme-cyberpunk:not(.dark) .text-gradient { text-shadow: none; }
 .theme-cyberpunk body { background: transparent; }
 .theme-cyberpunk body::before { filter: blur(95px) saturate(180%); animation: aurora 40s ease-in-out infinite alternate; }
 /* Scanlines + a faint chromatic-aberration glow on the whole field. */
@@ -2196,391 +2254,6 @@ main { position: relative; z-index: 1; }
   text-shadow: 0 0 8px rgba(255, 42, 109, 0.25);
 }
 .theme-cyberpunk .font-display { letter-spacing: -0.01em; }
-
-/* =======================================================================
-   VINYL (concept) — record store, Sunday afternoon
-   Warm cream + brass over walnut. The body shows a slow-spinning record
-   groove pattern (concentric circles drifting). Cards take on a paper
-   label-style edge with double rules; the dot is a small spindle.
-======================================================================= */
-:root.theme-vinyl {
-  color-scheme: dark;
-  --bg:           #1c130a;             /* walnut */
-  --paper:        rgba(240, 220, 180, 0.07);
-  --paper-2:      rgba(240, 220, 180, 0.11);
-  --ink:          #f3e6c8;             /* aged cream */
-  --ink-soft:     #d4c094;
-  --muted:        #a48e62;
-  --muted-2:      #6f5d3d;
-  --rule:         rgba(201, 146, 58, 0.32);
-  --rule-soft:    rgba(201, 146, 58, 0.12);
-  --accent:       #c9923a;             /* brass */
-  --accent-soft:  rgba(201, 146, 58, 0.16);
-  --accent-2:     #b54f2c;             /* warm copper */
-  --hl:           rgba(201, 146, 58, 0.12);
-  --up:           #a8c168;
-  --down:         #cf6543;
-  --grad-from:    #8a5a2a;
-  --grad-via:     #c9923a;
-  --grad-to:      #f0e0c2;
-  --glass:        rgba(38, 22, 10, 0.78);
-  --glass-border: rgba(201, 146, 58, 0.45);
-  --glow:         rgba(201, 146, 58, 0.30);
-  --shadow-card:  0 14px 36px -16px rgba(0,0,0,0.85);
-  --shadow-hover: 0 24px 56px -20px rgba(0,0,0,0.92);
-  --aurora-1: transparent; --aurora-2: transparent;
-  --aurora-3: transparent; --aurora-4: transparent;
-  --grain: 0;
-}
-:root.theme-vinyl:not(.dark) {
-  color-scheme: light;
-  --bg:           #b58a4a;             /* lighter wood */
-  --paper:        #f4ead0;             /* sleeve cream */
-  --paper-2:      #ecdfc0;
-  --ink:          #2d1d0e;
-  --ink-soft:     #5a4220;
-  --muted:        #7e6539;
-  --muted-2:      #ad976a;
-  --rule:         rgba(45, 29, 14, 0.24);
-  --rule-soft:    rgba(45, 29, 14, 0.10);
-  --accent:       #a07221;
-  --accent-soft:  rgba(160, 114, 33, 0.12);
-  --accent-2:     #883724;
-  --hl:           rgba(160, 114, 33, 0.10);
-  --up:           #5c7a2e;
-  --down:         #a8401a;
-  --grad-from:    #6e4a1e;
-  --grad-via:     #a07221;
-  --grad-to:      #c8a23a;
-  --glass:        #f4ead0;
-  --glass-border: rgba(45, 29, 14, 0.30);
-}
-.theme-vinyl body { background: transparent; }
-/* The concentric record grooves — fixed, slow drift. */
-.theme-vinyl body::after {
-  opacity: 1; mix-blend-mode: normal;
-  transform: translateZ(0); will-change: transform; backface-visibility: hidden;
-  background-image:
-    repeating-radial-gradient(circle at 50% 50%,
-      rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 1px,
-      transparent 1px, transparent 5px),
-    radial-gradient(60% 50% at 50% 50%, rgba(201, 146, 58, 0.15), transparent 70%);
-  background-size: 100% 100%, 100% 100%;
-  animation: vinylSpin 240s linear infinite;
-}
-.theme-vinyl:not(.dark) body::after {
-  background-image:
-    repeating-radial-gradient(circle at 50% 50%,
-      rgba(45,29,14,0.10) 0px, rgba(45,29,14,0.10) 1px,
-      transparent 1px, transparent 5px),
-    radial-gradient(60% 50% at 50% 50%, rgba(160, 114, 33, 0.10), transparent 70%);
-}
-@keyframes vinylSpin {
-  from { transform: rotate(0deg) translateZ(0); }
-  to   { transform: rotate(360deg) translateZ(0); }
-}
-.theme-vinyl .card {
-  border-radius: 6px;
-  background: var(--paper);
-  border: 1px solid var(--accent);
-  box-shadow: var(--shadow-card), inset 0 0 0 4px var(--paper), inset 0 0 0 5px var(--accent-soft);
-  -webkit-backdrop-filter: none; backdrop-filter: none;
-}
-.theme-vinyl .card::before { display: none; }
-.theme-vinyl .card::after { display: none; }
-.theme-vinyl .card-bare { border-radius: 5px; border: 1px solid var(--rule); background: var(--paper-2); }
-.theme-vinyl .btn-ghost { border-radius: 5px; border: 1px solid var(--accent); background: var(--paper); }
-.theme-vinyl .chip { border-radius: 999px; border: 1px solid var(--accent); background: var(--paper); font-weight: 600; }
-.theme-vinyl .chip-active { background: var(--accent); color: #2a1a0a; border-color: var(--accent); }
-.theme-vinyl .headrule { border-bottom: 2px solid var(--accent); padding-bottom: .55rem; }
-.theme-vinyl .dot {
-  background: radial-gradient(circle at 50% 50%, var(--paper) 22%, var(--accent) 24%, var(--accent) 100%);
-  box-shadow: 0 0 0 1px var(--accent), 0 0 0 4px rgba(201,146,58,0.18);
-  width: 10px; height: 10px;
-}
-.theme-vinyl .text-gradient {
-  background: linear-gradient(118deg, var(--accent-2), var(--accent) 50%, #f0e0c2);
-  -webkit-background-clip: text; background-clip: text;
-}
-.theme-vinyl .font-display { letter-spacing: -0.005em; }
-
-/* =======================================================================
-   PASTEL (palette) — macarons. Soft and generous.
-======================================================================= */
-:root.theme-pastel {
-  color-scheme: light;
-  --bg:           #fdf6ec;
-  --paper:        #ffffff;
-  --paper-2:      #fcf3e6;
-  --ink:          #3a2e3a;
-  --ink-soft:     #6a5564;
-  --muted:        #9a8593;
-  --muted-2:      #c6b7c2;
-  --rule:         rgba(58, 46, 58, 0.10);
-  --rule-soft:    rgba(58, 46, 58, 0.04);
-  --accent:       #f08a7e;             /* peach */
-  --accent-soft:  rgba(240, 138, 126, 0.12);
-  --accent-2:     #82c4b6;             /* mint */
-  --hl:           rgba(240, 138, 126, 0.10);
-  --up:           #6db09f;
-  --down:         #db6464;
-  --grad-from:    #c6a8d4;             /* lavender */
-  --grad-via:     #f08a7e;
-  --grad-to:      #82c4b6;
-  --glass:        #ffffff;
-  --glass-border: rgba(58, 46, 58, 0.10);
-  --glow:         rgba(240, 138, 126, 0.18);
-  --shadow-card:  0 1px 2px rgba(58, 46, 58, 0.04), 0 12px 28px -16px rgba(58, 46, 58, 0.20);
-  --shadow-hover: 0 2px 4px rgba(58, 46, 58, 0.06), 0 22px 46px -20px rgba(58, 46, 58, 0.30);
-  --aurora-1: rgba(240,138,126,0.16); --aurora-2: rgba(130,196,182,0.16);
-  --aurora-3: rgba(198,168,212,0.16); --aurora-4: transparent;
-  --grain:        0.02;
-}
-:root.theme-pastel.dark {
-  color-scheme: dark;
-  --bg:           #1f1820;
-  --paper:        rgba(255, 224, 224, 0.04);
-  --paper-2:      rgba(255, 224, 224, 0.08);
-  --ink:          #f3e8ea;
-  --ink-soft:     #cebbc1;
-  --muted:        #8c7a83;
-  --muted-2:      #5b4f57;
-  --rule:         rgba(243, 232, 234, 0.12);
-  --rule-soft:    rgba(243, 232, 234, 0.05);
-  --accent:       #ff9a8e;
-  --accent-soft:  rgba(255, 154, 142, 0.16);
-  --accent-2:     #8ed5c5;
-  --hl:           rgba(255, 154, 142, 0.10);
-  --grad-from:    #d4b3df;
-  --grad-via:     #ff9a8e;
-  --grad-to:      #8ed5c5;
-}
-.theme-pastel .text-gradient {
-  background: linear-gradient(118deg, var(--grad-from), var(--grad-via) 50%, var(--grad-to));
-  -webkit-background-clip: text; background-clip: text;
-}
-
-/* =======================================================================
-   ONYX (palette) — deep matte black with copper accents. Quiet luxury.
-======================================================================= */
-:root.theme-onyx {
-  color-scheme: dark;
-  --bg:           #0a0a0a;
-  --paper:        #141414;
-  --paper-2:      #1c1c1c;
-  --ink:          #e9e3da;
-  --ink-soft:     #aea59a;
-  --muted:        #807769;
-  --muted-2:      #4c4639;
-  --rule:         rgba(233, 227, 218, 0.08);
-  --rule-soft:    rgba(233, 227, 218, 0.04);
-  --accent:       #c87f3a;        /* copper */
-  --accent-soft:  rgba(200, 127, 58, 0.12);
-  --accent-2:     #8a5a2a;
-  --hl:           rgba(200, 127, 58, 0.10);
-  --up:           #a8c168;
-  --down:         #cf6543;
-  --grad-from:    #6e4a1e;
-  --grad-via:     #c87f3a;
-  --grad-to:      #e9c293;
-  --glass:        #141414;
-  --glass-border: rgba(200, 127, 58, 0.20);
-  --glow:         rgba(200, 127, 58, 0.18);
-  --shadow-card:  0 14px 36px -18px rgba(0,0,0,0.9);
-  --shadow-hover: 0 22px 48px -20px rgba(0,0,0,0.95), 0 0 0 1px rgba(200, 127, 58, 0.25);
-  --aurora-1: transparent; --aurora-2: transparent;
-  --aurora-3: transparent; --aurora-4: transparent;
-  --grain:        0;
-}
-:root.theme-onyx:not(.dark) {
-  color-scheme: light;
-  --bg:           #efebe5;
-  --paper:        #ffffff;
-  --paper-2:      #f7f3eb;
-  --ink:          #1a1612;
-  --ink-soft:     #4a3f31;
-  --muted:        #7d7160;
-  --muted-2:      #b3a78f;
-  --rule:         rgba(26, 22, 18, 0.10);
-  --rule-soft:    rgba(26, 22, 18, 0.04);
-  --accent:       #a05521;
-  --accent-soft:  rgba(160, 85, 33, 0.10);
-  --accent-2:     #1a1612;
-  --hl:           rgba(160, 85, 33, 0.07);
-  --glass-border: rgba(26, 22, 18, 0.10);
-}
-.theme-onyx .text-gradient {
-  background: linear-gradient(118deg, var(--accent-2), var(--accent) 60%, #e9c293);
-  -webkit-background-clip: text; background-clip: text;
-}
-
-/* =======================================================================
-   SAGE (palette) — reading-room calm. Sage green, ivory, walnut accents.
-======================================================================= */
-:root.theme-sage {
-  color-scheme: light;
-  --bg:           #eef1e7;
-  --paper:        #fbfdf6;
-  --paper-2:      #f3f5ea;
-  --ink:          #1e2a1c;
-  --ink-soft:     #43523f;
-  --muted:        #6c7a68;
-  --muted-2:      #a4ad9d;
-  --rule:         rgba(30, 42, 28, 0.12);
-  --rule-soft:    rgba(30, 42, 28, 0.05);
-  --accent:       #7b8f6a;        /* sage */
-  --accent-soft:  rgba(123, 143, 106, 0.12);
-  --accent-2:     #7a5733;        /* walnut */
-  --hl:           rgba(123, 143, 106, 0.08);
-  --up:           #5b8050;
-  --down:         #a8401a;
-  --grad-from:    #5b8050;
-  --grad-via:     #7b8f6a;
-  --grad-to:      #c5a875;
-  --glass:        #fbfdf6;
-  --glass-border: rgba(30, 42, 28, 0.10);
-  --glow:         rgba(123, 143, 106, 0.16);
-  --shadow-card:  0 1px 2px rgba(30, 42, 28, 0.04), 0 10px 24px -14px rgba(30, 42, 28, 0.20);
-  --shadow-hover: 0 2px 4px rgba(30, 42, 28, 0.06), 0 18px 38px -16px rgba(30, 42, 28, 0.28);
-  --aurora-1: transparent; --aurora-2: transparent;
-  --aurora-3: transparent; --aurora-4: transparent;
-  --grain:        0.02;
-}
-:root.theme-sage.dark {
-  color-scheme: dark;
-  --bg:           #131a12;
-  --paper:        #1b231a;
-  --paper-2:      #212a1f;
-  --ink:          #e8ecdf;
-  --ink-soft:     #b8c1ad;
-  --muted:        #8a937e;
-  --muted-2:      #5e6753;
-  --rule:         rgba(232, 236, 223, 0.10);
-  --rule-soft:    rgba(232, 236, 223, 0.04);
-  --accent:       #9bb087;
-  --accent-soft:  rgba(155, 176, 135, 0.12);
-  --accent-2:     #c5a875;
-  --hl:           rgba(155, 176, 135, 0.08);
-}
-.theme-sage .text-gradient {
-  background: linear-gradient(118deg, var(--accent-2), var(--accent) 60%, var(--grad-to));
-  -webkit-background-clip: text; background-clip: text;
-}
-
-/* =======================================================================
-   CONCEPT UPGRADES — Pastel · Onyx · Sage · Vinyl get real atmospheres,
-   not just palettes. (Cyberpunk already had one.)
-======================================================================= */
-
-/* ----- PASTEL → "Dreamscape": drifting candy aurora + pillow-soft cards -- */
-.theme-pastel body { background: transparent; }
-.theme-pastel body::before {
-  /* large, soft, slowly drifting pastel blobs */
-  background:
-    radial-gradient(42% 42% at 18% 22%, rgba(255, 196, 177, 0.55), transparent 70%),
-    radial-gradient(40% 40% at 82% 16%, rgba(163, 213, 201, 0.50), transparent 70%),
-    radial-gradient(46% 46% at 80% 82%, rgba(198, 168, 212, 0.50), transparent 72%),
-    radial-gradient(40% 40% at 14% 84%, rgba(255, 222, 165, 0.45), transparent 70%);
-  filter: blur(90px) saturate(135%);
-  animation: aurora 42s ease-in-out infinite alternate;
-}
-.theme-pastel.dark body::before { filter: blur(100px) saturate(120%); opacity: 0.55; }
-.theme-pastel .card {
-  border-radius: 22px;                       /* extra-rounded, pillowy */
-  border: 1px solid var(--rule);
-  box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255,255,255,0.65);
-}
-.theme-pastel.dark .card { box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255,255,255,0.06); }
-.theme-pastel .card-bare { border-radius: 18px; }
-.theme-pastel .btn-ghost { border-radius: 14px; }
-.theme-pastel .chip { border-radius: 999px; }
-.theme-pastel .dot {
-  background: linear-gradient(135deg, #ffc4b1, #a3d5c9 50%, #c6a8d4);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
-}
-.theme-pastel .font-display { letter-spacing: -0.02em; }
-
-/* ----- ONYX → brushed obsidian + thin copper hairline ------------------- */
-.theme-onyx body { background: transparent; }
-.theme-onyx body::before { background: none; animation: none; }
-.theme-onyx body::after {
-  opacity: 1; mix-blend-mode: normal;
-  transform: translateZ(0); will-change: transform; backface-visibility: hidden;
-  /* very fine vertical brushed-metal striations + a top copper bloom */
-  background-image:
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.018) 0 1px, transparent 1px 3px),
-    radial-gradient(120% 60% at 50% 0%, rgba(200, 127, 58, 0.10), transparent 60%);
-}
-.theme-onyx:not(.dark) body::after {
-  background-image:
-    repeating-linear-gradient(90deg, rgba(26,22,18,0.025) 0 1px, transparent 1px 3px),
-    radial-gradient(120% 60% at 50% 0%, rgba(160, 85, 33, 0.08), transparent 60%);
-}
-.theme-onyx .card {
-  border-radius: 10px;
-  border: 1px solid var(--rule);
-  /* a single hairline of copper along the top edge — the only "shine" */
-  box-shadow: var(--shadow-card), inset 0 1px 0 rgba(200, 127, 58, 0.28);
-  -webkit-backdrop-filter: none; backdrop-filter: none;
-}
-.theme-onyx .card:hover { border-color: rgba(200,127,58,0.4); }
-.theme-onyx .card-bare { border-radius: 8px; }
-.theme-onyx .btn-ghost { border-radius: 8px; }
-.theme-onyx .chip { border-radius: 6px; }
-.theme-onyx .dot { background: linear-gradient(135deg, #e9c293, var(--accent) 60%, #6e4a1e); box-shadow: 0 0 8px var(--glow); }
-.theme-onyx .headrule { border-bottom: 1px solid var(--rule); padding-bottom: .5rem; }
-.theme-onyx .font-display { letter-spacing: -0.01em; font-weight: 600; }
-
-/* ----- SAGE → herbarium reading room: laid-paper + pressed-leaf veins --- */
-.theme-sage body { background: transparent; }
-.theme-sage body::before { background: none; animation: none; }
-.theme-sage body::after {
-  opacity: 1; mix-blend-mode: normal;
-  transform: translateZ(0); will-change: transform; backface-visibility: hidden;
-  /* faint laid-paper horizontal lines + a soft sage wash from the corners */
-  background-image:
-    repeating-linear-gradient(0deg, rgba(30,42,28,0.035) 0 1px, transparent 1px 26px),
-    radial-gradient(50% 45% at 12% 10%, rgba(123,143,106,0.12), transparent 70%),
-    radial-gradient(48% 45% at 88% 90%, rgba(122,87,51,0.10), transparent 72%);
-}
-.theme-sage.dark body::after {
-  background-image:
-    repeating-linear-gradient(0deg, rgba(232,236,223,0.04) 0 1px, transparent 1px 26px),
-    radial-gradient(50% 45% at 12% 10%, rgba(155,176,135,0.10), transparent 70%),
-    radial-gradient(48% 45% at 88% 90%, rgba(197,168,117,0.08), transparent 72%);
-}
-.theme-sage .card {
-  border-radius: 8px;
-  border: 1px solid var(--rule);
-  box-shadow: var(--shadow-card);
-  -webkit-backdrop-filter: none; backdrop-filter: none;
-}
-.theme-sage .card-bare { border-radius: 6px; }
-.theme-sage .btn-ghost { border-radius: 8px; }
-.theme-sage .chip { border-radius: 6px; }
-.theme-sage .headrule { border-bottom: 1px solid var(--accent-soft); padding-bottom: .5rem; }
-.theme-sage .dot { background: radial-gradient(circle at 35% 32%, #c5d8b4, var(--accent) 62%, #4a5e3c); box-shadow: 0 0 8px var(--glow); }
-.theme-sage .font-display { letter-spacing: -0.015em; }
-.theme-sage .text-gradient { animation: none; }
-
-/* ----- VINYL → richer: a real turntable platter behind everything ------- */
-.theme-vinyl body::after {
-  /* tighter, glossier grooves + a brass centre + a highlight sweep */
-  background-image:
-    repeating-radial-gradient(circle at 50% 46%,
-      rgba(0,0,0,0.22) 0px, rgba(0,0,0,0.22) 1px,
-      transparent 1px, transparent 4px),
-    radial-gradient(circle 60px at 50% 46%, rgba(201,146,58,0.55), rgba(201,146,58,0.0) 70%),
-    radial-gradient(70% 60% at 30% 18%, rgba(255,220,160,0.10), transparent 70%);
-}
-.theme-vinyl:not(.dark) body::after {
-  background-image:
-    repeating-radial-gradient(circle at 50% 46%,
-      rgba(45,29,14,0.12) 0px, rgba(45,29,14,0.12) 1px,
-      transparent 1px, transparent 4px),
-    radial-gradient(circle 60px at 50% 46%, rgba(160,114,33,0.45), rgba(160,114,33,0) 70%),
-    radial-gradient(70% 60% at 30% 18%, rgba(120,80,20,0.08), transparent 70%);
-}
 
 /* =======================================================================
    DOC ANYWHERE — "soft graphite" skin

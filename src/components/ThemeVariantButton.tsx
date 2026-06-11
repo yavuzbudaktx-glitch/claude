@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Palette, Check } from "lucide-react";
+import { Palette, Check, Sparkles, SwatchBook } from "lucide-react";
 import { applyTheme, applyThemeDom, getTheme, THEMES, type ThemeId } from "@/lib/theme";
 
 const SWATCHES: Record<ThemeId, string[]> = {
@@ -10,14 +10,10 @@ const SWATCHES: Record<ThemeId, string[]> = {
   forest:     ["#0e1a12", "#4ade80", "#a3c585"],
   water:      ["#04212e", "#34d3e0", "#7fe7d9"],
   sunset:     ["#3a0e22", "#ff7a59", "#ffd17a"],
-  mosaic:     ["#f5e9d4", "#c0392b", "#1e4a82"],
-  stainedglass: ["#0a0a18", "#b02038", "#1452a8"],
+  mosaic:     ["#fff4dc", "#b8341f", "#1a5fa8"],
+  stainedglass: ["#0a0a18", "#ff4f6a", "#5b9cff"],
   deco:       ["#0c2a23", "#d4af37", "#0b6e54"],
   cyberpunk:  ["#0a0014", "#ff2a6d", "#22d3ee"],
-  vinyl:      ["#2a1a0e", "#c9923a", "#f0e0c2"],
-  pastel:     ["#fdf6ec", "#ffc4b1", "#a3d5c9"],
-  onyx:       ["#0a0a0a", "#c87f3a", "#262626"],
-  sage:       ["#eef1e7", "#7b8f6a", "#7a5733"],
   terminal:   ["#000000", "#22ff77", "#ffb454"],
   accounting: ["#d7e0d2", "#1b6e3c", "#b3261e"],
   mono:       ["#ffffff", "#000000", "#737373"],
@@ -29,9 +25,7 @@ const SWATCHES: Record<ThemeId, string[]> = {
 export function ThemeVariantButton() {
   const [open, setOpen] = useState(false);
   // Lazy initial value reads the saved theme synchronously on first client
-  // render — important so a mouse-leave from a hover preview restores the
-  // SAVED theme, not the default. (The previous default of "aurora" was the
-  // real cause of "theme reverts to aurora on refresh after a hover-peek".)
+  // render — so a mouse-leave from a hover preview restores the SAVED theme.
   const [theme, setTheme] = useState<ThemeId>(() => (typeof window === "undefined" ? "aurora" : getTheme()));
   const wrapRef = useRef<HTMLDivElement>(null);
 
@@ -55,6 +49,36 @@ export function ThemeVariantButton() {
     setOpen(false);
   }
 
+  const concepts = THEMES.filter((t) => t.kind === "concept");
+  const palettes = THEMES.filter((t) => t.kind === "theme");
+
+  const renderEntry = (t: (typeof THEMES)[number]) => {
+    const on = theme === t.id;
+    return (
+      <li key={t.id}>
+        <button
+          onClick={() => choose(t.id)}
+          onMouseEnter={() => applyThemeDom(t.id)}      /* live preview only — never writes localStorage */
+          onMouseLeave={() => applyThemeDom(theme)}     /* restore the saved theme */
+          className={`group w-full text-left rounded-xl border p-2.5 transition ${
+            on ? "border-[var(--accent)] bg-[var(--accent-soft)]" : "border-transparent hover:bg-[var(--rule-soft)]"
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-0.5">
+              {SWATCHES[t.id].map((c, i) => (
+                <span key={i} className="h-3.5 w-3.5 rounded-full border border-[var(--rule)]" style={{ background: c }} />
+              ))}
+            </span>
+            <span className="text-[13px] font-semibold text-ink">{t.label}</span>
+            {on && <Check className="ml-auto h-3.5 w-3.5 text-accent" />}
+          </div>
+          <p className="text-[11px] text-muted leading-snug mt-1">{t.description}</p>
+        </button>
+      </li>
+    );
+  };
+
   return (
     <div className="relative inline-flex" ref={wrapRef}>
       <button
@@ -69,36 +93,15 @@ export function ThemeVariantButton() {
       {open && (
         <div className="fixed inset-x-2 top-[64px] md:absolute md:right-0 md:top-[calc(100%+8px)] z-[70] w-[280px] max-w-[calc(100vw-1rem)] max-h-[80vh] overflow-y-auto rounded-2xl border border-[var(--glass-border)] bg-[var(--paper-2)] backdrop-blur-xl shadow-[var(--shadow-hover)] p-2.5 animate-fadeIn origin-top-right">
           <div className="label px-1.5 pb-2 flex items-center gap-1.5">
-            <Palette className="h-3 w-3" /> Theme
+            <Sparkles className="h-3 w-3" /> Concepts
           </div>
-          <ul className="space-y-1">
-            {THEMES.map((t) => {
-              const on = theme === t.id;
-              return (
-                <li key={t.id}>
-                  <button
-                    onClick={() => choose(t.id)}
-                    onMouseEnter={() => applyThemeDom(t.id)}      /* live preview only — never writes localStorage */
-                    onMouseLeave={() => applyThemeDom(theme)}     /* restore the saved theme */
-                    className={`group w-full text-left rounded-xl border p-2.5 transition ${
-                      on ? "border-[var(--accent)] bg-[var(--accent-soft)]" : "border-transparent hover:bg-[var(--rule-soft)]"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center gap-0.5">
-                        {SWATCHES[t.id].map((c, i) => (
-                          <span key={i} className="h-3.5 w-3.5 rounded-full border border-[var(--rule)]" style={{ background: c }} />
-                        ))}
-                      </span>
-                      <span className="text-[13px] font-semibold text-ink">{t.label}</span>
-                      {on && <Check className="ml-auto h-3.5 w-3.5 text-accent" />}
-                    </div>
-                    <p className="text-[11px] text-muted leading-snug mt-1">{t.description}</p>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+          <ul className="space-y-1">{concepts.map(renderEntry)}</ul>
+
+          <div className="label px-1.5 pb-2 pt-3 mt-2 border-t border-[var(--rule-soft)] flex items-center gap-1.5">
+            <SwatchBook className="h-3 w-3" /> Themes
+          </div>
+          <ul className="space-y-1">{palettes.map(renderEntry)}</ul>
+
           <p className="px-1.5 pt-1.5 text-[10px] text-muted-2">Hover to preview · click to keep</p>
         </div>
       )}
