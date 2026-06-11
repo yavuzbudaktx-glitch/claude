@@ -24,10 +24,18 @@ const SWATCHES: Record<ThemeId, string[]> = {
 
 export function ThemeVariantButton() {
   const [open, setOpen] = useState(false);
+  const [section, setSection] = useState<"concept" | "theme">("concept");
   // Lazy initial value reads the saved theme synchronously on first client
   // render — so a mouse-leave from a hover preview restores the SAVED theme.
   const [theme, setTheme] = useState<ThemeId>(() => (typeof window === "undefined" ? "aurora" : getTheme()));
   const wrapRef = useRef<HTMLDivElement>(null);
+
+  // Open the picker into whichever section the saved theme belongs to.
+  useEffect(() => {
+    if (!open) return;
+    const t = THEMES.find((x) => x.id === theme);
+    if (t) setSection(t.kind);
+  }, [open, theme]);
 
   useEffect(() => {
     if (!open) return;
@@ -91,18 +99,38 @@ export function ThemeVariantButton() {
       </button>
 
       {open && (
-        <div className="fixed inset-x-2 top-[64px] md:absolute md:right-0 md:top-[calc(100%+8px)] z-[70] w-[280px] max-w-[calc(100vw-1rem)] max-h-[80vh] overflow-y-auto rounded-2xl border border-[var(--glass-border)] bg-[var(--paper-2)] backdrop-blur-xl shadow-[var(--shadow-hover)] p-2.5 animate-fadeIn origin-top-right">
-          <div className="label px-1.5 pb-2 flex items-center gap-1.5">
-            <Sparkles className="h-3 w-3" /> Concepts
+        <div className="fixed inset-x-2 top-[64px] md:absolute md:right-0 md:top-[calc(100%+8px)] z-[70] w-[300px] max-w-[calc(100vw-1rem)] max-h-[80vh] overflow-y-auto rounded-2xl border border-[var(--glass-border)] bg-[var(--paper-2)] backdrop-blur-xl shadow-[var(--shadow-hover)] p-2.5 animate-fadeIn origin-top-right">
+          {/* Section toggle — two real buttons, not stacked sections. */}
+          <div className="flex items-center gap-1 p-1 rounded-xl bg-[var(--rule-soft)] mb-2">
+            <button
+              onClick={() => setSection("concept")}
+              className={`flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg px-2 py-1.5 text-[11.5px] font-semibold transition ${
+                section === "concept"
+                  ? "bg-[var(--paper)] text-ink shadow-sm"
+                  : "text-muted hover:text-ink"
+              }`}
+            >
+              <Sparkles className="h-3 w-3" /> Concepts
+              <span className="text-[10px] text-muted-2 ml-0.5">{concepts.length}</span>
+            </button>
+            <button
+              onClick={() => setSection("theme")}
+              className={`flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg px-2 py-1.5 text-[11.5px] font-semibold transition ${
+                section === "theme"
+                  ? "bg-[var(--paper)] text-ink shadow-sm"
+                  : "text-muted hover:text-ink"
+              }`}
+            >
+              <SwatchBook className="h-3 w-3" /> Themes
+              <span className="text-[10px] text-muted-2 ml-0.5">{palettes.length}</span>
+            </button>
           </div>
-          <ul className="space-y-1">{concepts.map(renderEntry)}</ul>
 
-          <div className="label px-1.5 pb-2 pt-3 mt-2 border-t border-[var(--rule-soft)] flex items-center gap-1.5">
-            <SwatchBook className="h-3 w-3" /> Themes
-          </div>
-          <ul className="space-y-1">{palettes.map(renderEntry)}</ul>
+          <ul className="space-y-1">
+            {(section === "concept" ? concepts : palettes).map(renderEntry)}
+          </ul>
 
-          <p className="px-1.5 pt-1.5 text-[10px] text-muted-2">Hover to preview · click to keep</p>
+          <p className="px-1.5 pt-2 text-[10px] text-muted-2">Hover to preview · click to keep</p>
         </div>
       )}
     </div>

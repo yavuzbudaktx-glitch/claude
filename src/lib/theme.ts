@@ -19,23 +19,25 @@ export type ThemeKind = "concept" | "theme";
 export const THEMES: Array<{
   id: ThemeId; label: string; description: string; kind: ThemeKind;
 }> = [
-  // ---- concepts: full atmospheres -----------------------------------------
-  { id: "galaxy",       label: "Galaxy",       kind: "concept", description: "Deep space — violet nebula, a dense drifting starfield behind everything." },
-  { id: "forest",       label: "Forest",       kind: "concept", description: "A living woodland — sun shafts through the canopy, drifting leaves, bark-grain cards." },
-  { id: "water",        label: "Water",        kind: "concept", description: "Submerged in a turquoise sea — flowing caustics, streaming bubbles, deep aqua glow." },
-  { id: "sunset",       label: "Sunset",       kind: "concept", description: "Golden hour at the coast — peach sky, a slowly sinking sun, long horizon afterglow." },
+  // ---- CONCEPTS: themes that change the IDENTITY of the site (different
+  //                typography, card chrome, decorative chrome — you'd
+  //                recognise the look as "a newspaper" or "a comic book").
+  { id: "newspaper",    label: "Newspaper",    kind: "concept", description: "Times-style serif type, columns, drop-caps, hairline ruling — like reading a Sunday paper." },
+  { id: "comic",        label: "Comic",        kind: "concept", description: "Halftone dots, ink-line panels, KAPOW red, offset hard shadows — your dashboard as a comic book." },
+  { id: "blueprint",    label: "Blueprint",    kind: "concept", description: "Architect's drafting page — white technical strokes on cyan, corner brackets, drafting grid." },
+  { id: "terminal",     label: "Terminal",     kind: "concept", description: "Mono-typography, sharp corners, green phosphor, CRT scanlines — day or night." },
+  { id: "accounting",   label: "Accounting",   kind: "concept", description: "Green-bar ledger paper — banded rows, a red margin rule, double-rule headers, tabular figures." },
   { id: "mosaic",       label: "Mosaic",       kind: "concept", description: "Mediterranean azulejo — terracotta + cobalt tiles, hand-laid grout, an unmistakably handmade surface." },
   { id: "stainedglass", label: "Stained Glass",kind: "concept", description: "Leaded cathedral panes — jewel reds, sapphire, emerald, with light spilling through the glazing." },
   { id: "deco",         label: "Art Deco",     kind: "concept", description: "1920s glamour — gold geometry on deep emerald & black, sunburst-crowned cards, high-contrast serif." },
   { id: "cyberpunk",    label: "Cyberpunk",    kind: "concept", description: "Neon at midnight — hot pink + electric cyan over deep indigo, scanlines, holographic shimmer." },
-  { id: "terminal",     label: "Terminal",     kind: "concept", description: "Mono-typography, sharp corners, green phosphor, CRT scanlines — day or night." },
-  { id: "accounting",   label: "Accounting",   kind: "concept", description: "Green-bar ledger paper — banded rows, a red margin rule, double-rule headers, tabular figures." },
-  { id: "newspaper",    label: "Newspaper",    kind: "concept", description: "Times-style serif type, columns, drop-caps, hairline ruling — like reading a Sunday paper." },
-  { id: "blueprint",    label: "Blueprint",    kind: "concept", description: "Architect's drafting page — white technical strokes on cyan, corner brackets, drafting grid." },
-  { id: "comic",        label: "Comic",        kind: "concept", description: "Halftone dots, ink-line panels, KAPOW red, offset hard shadows — your dashboard as a comic book." },
-  // ---- themes: clean palettes ----------------------------------------------
+  { id: "mono",         label: "Mono",         kind: "concept", description: "Pure black & white, hard edges, heavy rules — brutalist clarity." },
+  // ---- THEMES: atmospheric palettes — same site, different mood/colour.
   { id: "aurora",       label: "Aurora Glass", kind: "theme",   description: "Default — frosted cards, cyan accent, drifting aurora background." },
-  { id: "mono",         label: "Mono",         kind: "theme",   description: "Pure black & white, hard edges, heavy rules — brutalist clarity." },
+  { id: "galaxy",       label: "Galaxy",       kind: "theme",   description: "Deep space — violet nebula, a dense drifting starfield behind everything." },
+  { id: "forest",       label: "Forest",       kind: "theme",   description: "A living woodland — sun shafts through the canopy, drifting leaves, bark-grain cards." },
+  { id: "water",        label: "Water",        kind: "theme",   description: "Submerged in a turquoise sea — flowing caustics, streaming bubbles, deep aqua glow." },
+  { id: "sunset",       label: "Sunset",       kind: "theme",   description: "Golden hour at the coast — peach sky, a slowly sinking sun, long horizon afterglow." },
 ];
 
 const KEY = "brief.theme.v1";

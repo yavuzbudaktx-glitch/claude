@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { usePref } from "@/components/PrefsProvider";
 import { localDateKey } from "@/lib/local-date";
+import { useDailyCached } from "@/lib/use-daily-cached";
 
 const fetcher = (u: string) => fetch(u).then((r) => r.json());
 
@@ -38,7 +39,8 @@ function Failed({ what }: { what: string }) {
 interface Apod { date?: string; title?: string; explanation?: string; url?: string; hdurl?: string; media_type?: string; copyright?: string; error?: string }
 
 function NasaPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: (v: boolean) => void }) {
-  const { data, isLoading } = useSWR<Apod>("/api/nasa-apod", fetcher, { refreshInterval: 1000 * 60 * 60 * 6, keepPreviousData: true });
+  // Daily cache — one fetch per local day, persists across reloads.
+  const { data, isLoading } = useDailyCached<Apod>("nasa", "/api/nasa-apod");
   if (isLoading && !data) return <Loading />;
   if (data?.error || !data?.url) return <Failed what="NASA" />;
   const isVideo = data.media_type === "video";
@@ -75,10 +77,9 @@ function NasaPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: 
 interface Art { title?: string; artist?: string; date?: string; medium?: string; origin?: string; description?: string | null; alt?: string; imageUrl?: string; pageUrl?: string; source?: string; error?: string }
 
 function ArtPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: (v: boolean) => void }) {
-  // Daily — keyed on the local date only. No reroll button: today's painting
-  // IS today's painting, like a real museum label.
+  // Daily — one fetch per local day, persists across reloads (synced).
   const today = localDateKey();
-  const { data, isLoading } = useSWR<Art>(`/api/art-of-day?d=${today}`, fetcher, { keepPreviousData: true, revalidateOnFocus: false });
+  const { data, isLoading } = useDailyCached<Art>("art", `/api/art-of-day?d=${today}`);
   if (isLoading && !data) return <Loading />;
   if (data?.error || !data?.imageUrl) return <Failed what="the museum" />;
   return (
@@ -149,10 +150,9 @@ function CabinetPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo
 interface Bird { name?: string; scientific?: string; blurb?: string; imageUrl?: string; audioUrl?: string; sonogram?: string; recordist?: string; place?: string; pageUrl?: string; xcUrl?: string; source?: string; error?: string }
 
 function BirdPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: (v: boolean) => void }) {
-  // Daily — keyed on the local date only, no reroll. Today's bird is
-  // today's bird.
+  // Daily — one fetch per local day, persists across reloads (synced).
   const today = localDateKey();
-  const { data, isLoading } = useSWR<Bird>(`/api/bird-of-day?d=${today}`, fetcher, { keepPreviousData: true, revalidateOnFocus: false });
+  const { data, isLoading } = useDailyCached<Bird>("bird", `/api/bird-of-day?d=${today}`);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [audioState, setAudioState] = useState<"idle" | "loading" | "error">("idle");
@@ -271,8 +271,10 @@ function BirdPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: 
 interface Wiki { title?: string; description?: string; extract?: string; imageUrl?: string; pageUrl?: string; source?: string; error?: string }
 
 function WikiPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: boolean; setShowInfo: (v: boolean) => void; refreshN: number; onRefresh: () => void }) {
+  // Daily — but a "New" click bumps refreshN, which gives us a different
+  // cache key so the user can roll for another article today if they want.
   const today = localDateKey();
-  const { data, isLoading } = useSWR<Wiki>(`/api/wiki-random?d=${today}&r=${refreshN}`, fetcher, { keepPreviousData: true, revalidateOnFocus: false });
+  const { data, isLoading } = useDailyCached<Wiki>(`wiki:${refreshN}`, `/api/wiki-random?d=${today}&r=${refreshN}`);
   if (isLoading && !data) return <Loading />;
   if (data?.error) return <Failed what="Wikipedia" />;
   return (
@@ -309,11 +311,10 @@ function WikiPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: b
 interface Archive { title?: string; mediatype?: string; year?: string; description?: string; imageUrl?: string; pageUrl?: string; source?: string; error?: string }
 
 function ArchivePanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: boolean; setShowInfo: (v: boolean) => void; refreshN: number; onRefresh: () => void }) {
-  // Key on the date — that's what makes the pick DAILY. SWR caches per key, so
-  // opening this tab a second time on the same day returns the same archive
-  // item instead of rolling a new one.
+  // Daily — persists across reloads. A "New" click bumps refreshN, which
+  // gives us a different cache slot if the user wants another cartoon today.
   const today = localDateKey();
-  const { data, isLoading } = useSWR<Archive>(`/api/archive-random?d=${today}&r=${refreshN}`, fetcher, { keepPreviousData: true, revalidateOnFocus: false });
+  const { data, isLoading } = useDailyCached<Archive>(`archive:${refreshN}`, `/api/archive-random?d=${today}&r=${refreshN}`);
   if (isLoading && !data) return <Loading />;
   if (data?.error) return <Failed what="the Archive" />;
   return (

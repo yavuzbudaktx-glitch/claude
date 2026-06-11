@@ -1,16 +1,18 @@
-// Wikipedia "rabbit hole" — a random article every day, drawn from the full
-// 6.8M-article corpus. The naive `/page/random/summary` endpoint is 90% stubs
-// and disambig pages, which is what made the previous "small curated list"
-// implementation necessary. This route fixes that by sampling MANY random
-// candidates in parallel and keeping the first that passes a real quality
-// bar: real thumbnail, ≥600-char extract, not a disambiguation page, not a
-// list or set-index article.
+// Wikipedia "rabbit hole" — Featured Articles only.
 //
-// `?d=` keys the seed to the day; `?r=N` walks within the day for "Another".
+// Random Wikipedia is 90% stubs. Wikipedia's *Featured Articles* are the
+// ~6,000 articles editors have explicitly vetted as the best on the site
+// (they get a tiny gold-star icon and went through formal review). Every
+// one of them is comprehensive, well-illustrated, and interesting — the
+// exact "rabbit hole" feeling without the noise.
+//
+// We pull the full list of Featured Article titles (paginated, ~500 per
+// page through the categorymembers API), cache it for a week, then pick
+// deterministically per day. `?r=N` bumps to a different one for "Another".
 
 import { NextResponse } from "next/server";
 
-export const revalidate = 1800;
+export const revalidate = 3600;
 export const maxDuration = 30;
 
 const HEADERS = {
@@ -18,19 +20,13 @@ const HEADERS = {
   Accept: "application/json",
 };
 
-interface WikiSummary {
-  type?: string;
-  title?: string;
-  titles?: { normalized?: string };
-  description?: string;
-  extract?: string;
-  thumbnail?: { source?: string };
-  originalimage?: { source?: string };
-  content_urls?: { desktop?: { page?: string } };
+function seedIdx(key: string, n: number): number {
+  let h = 0;
+  for (const c of key) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return n > 0 ? h % n : 0;
 }
 
 async function getJson<T>(url: string): Promise<T | null> {
-  // Hit Wikipedia direct first (fastest), with proxy fallbacks.
   const tries = [
     url,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
@@ -38,7 +34,7 @@ async function getJson<T>(url: string): Promise<T | null> {
   ];
   for (const u of tries) {
     try {
-      const r = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(8000), cache: "no-store" });
+      const r = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(9000), cache: "no-store" });
       if (!r.ok) continue;
       const text = await r.text();
       if (!text || text[0] !== "{") continue;
@@ -48,57 +44,80 @@ async function getJson<T>(url: string): Promise<T | null> {
   return null;
 }
 
-function looksInteresting(a: WikiSummary): boolean {
-  if (!a) return false;
-  if (a.type === "disambiguation") return false;
-  const title = a.titles?.normalized || a.title || "";
-  // List articles ("List of …") and set-index ("List of people named X") are
-  // never the rabbit-hole you want — skip them.
-  if (/^list of |^index of |^outline of |^timeline of /i.test(title)) return false;
-  if (!a.extract || a.extract.length < 600) return false;
-  if (!a.thumbnail?.source) return false;
-  return true;
+interface CmResp {
+  query?: { categorymembers?: Array<{ title?: string; ns?: number }> };
+  continue?: { cmcontinue?: string };
 }
 
-function shape(a: WikiSummary) {
-  return {
-    title: a.titles?.normalized || a.title || "",
-    description: a.description ?? "",
-    extract: a.extract ?? "",
-    imageUrl: a.originalimage?.source ?? a.thumbnail?.source ?? "",
-    pageUrl: a.content_urls?.desktop?.page ?? "",
-    source: "Wikipedia",
-  };
+let poolCache: { at: number; titles: string[] } | null = null;
+const POOL_TTL = 1000 * 60 * 60 * 24 * 7; // one week
+
+async function getFeaturedTitles(): Promise<string[]> {
+  if (poolCache && Date.now() - poolCache.at < POOL_TTL && poolCache.titles.length > 1000) {
+    return poolCache.titles;
+  }
+  const out: string[] = [];
+  let cmcontinue: string | undefined;
+  // Walk up to ~14 pages of 500 = 7000 titles (covers the entire category
+  // with a little headroom).
+  for (let i = 0; i < 14; i++) {
+    const url =
+      "https://en.wikipedia.org/w/api.php?action=query&list=categorymembers" +
+      "&cmtitle=Category%3AFeatured+articles&cmtype=page&cmlimit=500&format=json&origin=*" +
+      (cmcontinue ? `&cmcontinue=${encodeURIComponent(cmcontinue)}` : "");
+    const j = await getJson<CmResp>(url);
+    if (!j) break;
+    for (const m of j.query?.categorymembers ?? []) {
+      if (m.ns === 0 && m.title) out.push(m.title);
+    }
+    cmcontinue = j.continue?.cmcontinue;
+    if (!cmcontinue) break;
+  }
+  if (out.length > 1000) poolCache = { at: Date.now(), titles: out };
+  return out;
+}
+
+interface WikiSummary {
+  title?: string;
+  titles?: { normalized?: string };
+  description?: string;
+  extract?: string;
+  thumbnail?: { source?: string };
+  originalimage?: { source?: string };
+  content_urls?: { desktop?: { page?: string } };
 }
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const dateKey = url.searchParams.get("d") ?? new Date().toISOString().slice(0, 10);
   const refresh = url.searchParams.get("r") ?? "0";
-  // Vary the seed when ?r= changes; `dateKey + ":" + refresh` is enough to
-  // make Wikipedia hand us a different mix of candidates per refresh.
-  void dateKey; void refresh;
 
-  // Sample 18 candidates in parallel and keep the first that looks
-  // interesting (real photo + substantial extract + not a list/disambig).
-  // Wikipedia's random endpoint is non-cacheable so each call returns a
-  // genuinely different draw — across 18 we almost always find a great one.
-  const candidates = await Promise.all(
-    Array.from({ length: 18 }).map(() =>
-      getJson<WikiSummary>("https://en.wikipedia.org/api/rest_v1/page/random/summary"),
-    ),
-  );
-  const good = candidates.find((c): c is WikiSummary => !!c && looksInteresting(c));
-  if (good) {
-    return NextResponse.json(shape(good), {
-      headers: { "Cache-Control": "no-store" },
-    });
+  const titles = await getFeaturedTitles();
+  if (titles.length === 0) {
+    return NextResponse.json({ error: "no_pool" }, { status: 502 });
   }
 
-  // Last-resort softer bar so the tab still renders SOMETHING.
-  const passable = candidates.find((c): c is WikiSummary => !!c && !!c.extract && c.extract.length > 200 && c.type !== "disambiguation");
-  if (passable) {
-    return NextResponse.json(shape(passable), { headers: { "Cache-Control": "no-store" } });
+  // Walk a small window of candidates so a featured article whose summary
+  // endpoint blips doesn't break the tab.
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const idx = seedIdx(`${dateKey}:fa:${refresh}:${attempt}`, titles.length);
+    const title = titles[idx];
+    const s = await getJson<WikiSummary>(
+      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title.replace(/ /g, "_"))}`,
+    );
+    if (s && s.extract && s.extract.length > 200) {
+      return NextResponse.json(
+        {
+          title: s.titles?.normalized || s.title || title,
+          description: s.description ?? "",
+          extract: s.extract,
+          imageUrl: s.originalimage?.source ?? s.thumbnail?.source ?? "",
+          pageUrl: s.content_urls?.desktop?.page ?? `https://en.wikipedia.org/wiki/${encodeURIComponent(title.replace(/ /g, "_"))}`,
+          source: "Wikipedia · Featured Article",
+        },
+        { headers: { "Cache-Control": "s-maxage=3600, stale-while-revalidate=43200" } },
+      );
+    }
   }
   return NextResponse.json({ error: "no_article" }, { status: 502 });
 }
