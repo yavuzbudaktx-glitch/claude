@@ -1,9 +1,2079 @@
 # Britannica scrape debug dump
-# generated: 2026-06-12T17:18:48.052Z
+# generated: 2026-06-12T21:18:27.741Z
 # url:       https://www.britannica.com/on-this-day/june-12
-# fetcher:   CORS proxy
+# fetcher:   Wayback Machine
 # kind:      html
-# length:    5743
-# parsed:    NO
+# length:    80129
+# parsed:    YES (Wayback Machine)
 # -----------------------------------------------------------------
-<!DOCTYPE html><html lang="en-US"><head><title>Just a moment...</title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="content-security-policy" content="default-src &#39;none&#39;; script-src &#39;nonce-wG14mbnn1yBgGTAyjGKUwH&#39; &#39;unsafe-eval&#39; https://challenges.cloudflare.com; script-src-attr &#39;none&#39;; style-src &#39;unsafe-inline&#39;; img-src &#39;self&#39; https://challenges.cloudflare.com; connect-src &#39;self&#39; https://challenges.cloudflare.com; frame-src &#39;self&#39; https://challenges.cloudflare.com blob:; child-src &#39;self&#39; https://challenges.cloudflare.com blob:; worker-src blob:; form-action http: https:; base-uri &#39;self&#39;"><style>*{box-sizing:border-box;margin:0;padding:0}html{line-height:1.15;-webkit-text-size-adjust:100%;color:#313131;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"}body{display:flex;flex-direction:column;height:100vh;min-height:100vh}.main-content{margin:8rem auto;padding-left:1.5rem;max-width:60rem}@media (width <= 720px){.main-content{margin-top:4rem}}#challenge-error-text{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbD0iI0IyMEYwMyIgZD0iTTE2IDNhMTMgMTMgMCAxIDAgMTMgMTNBMTMuMDE1IDEzLjAxNSAwIDAgMCAxNiAzbTAgMjRhMTEgMTEgMCAxIDEgMTEtMTEgMTEuMDEgMTEuMDEgMCAwIDEtMTEgMTEiLz48cGF0aCBmaWxsPSIjQjIwRjAzIiBkPSJNMTcuMDM4IDE4LjYxNUgxNC44N0wxNC41NjMgOS41aDIuNzgzem0tMS4wODQgMS40MjdxLjY2IDAgMS4wNTcuMzg4LjQwNy4zODkuNDA3Ljk5NCAwIC41OTYtLjQwNy45ODQtLjM5Ny4zOS0xLjA1Ny4zODktLjY1IDAtMS4wNTYtLjM4OS0uMzk4LS4zODktLjM5OC0uOTg0IDAtLjU5Ny4zOTgtLjk4NS40MDYtLjM5NyAxLjA1Ni0uMzk3Ii8+PC9zdmc+");background-repeat:no-repeat;background-size:contain;padding-left:34px}</style><meta http-equiv="refresh" content="360"></head><body><div class="main-wrapper" role="main"><div class="main-content"><noscript><div class="h2"><span id="challenge-error-text">Enable JavaScript and cookies to continue</span></div></noscript></div></div><script nonce="wG14mbnn1yBgGTAyjGKUwH">(function(){window._cf_chl_opt = {cFPWv: 'g',cH: 'qEZUi9xOnICm.DWkM96fscehpBNVZGXz_oJy8kf3vcI-1781284702-1.2.1.1-6D1_EcmBLw8mXlEH4xaLkCRJM09Bu9hfq6YcLphhUjzlzkgK7G3B28tR3myukw2l',cITimeS: '1781284702',cN: 'wG14mbnn1yBgGTAyjGKUwH',cRay: 'a0aa83acbd87cb53',cTplB: '0',cTplC:0,cTplO:0,cTplV:5,cType: 'managed',cUPMDTk:"/on-this-day/june-12?__cf_chl_tk=P5kTKowFbmhRyxKwcoHv2eN2jf4SEZpBklEAue6ojtw-1781284702-1.0.1.1-QYBeTjy.WOB1w96I93vmXmkpegOaqtk4wlUSug7Ih3g",cvId: '3',cZone: 'www.britannica.com',fa:"/on-this-day/june-12?__cf_chl_f_tk=P5kTKowFbmhRyxKwcoHv2eN2jf4SEZpBklEAue6ojtw-1781284702-1.0.1.1-QYBeTjy.WOB1w96I93vmXmkpegOaqtk4wlUSug7Ih3g",md: 'f023lkTngx76xYYru4WQP8k.OXWGdbWAzqAzxszLhlM-1781284702-1.2.1.1-8NkfkUGuTKB6Yf6t2NAWwZCCIwb7RN.g8RDXqLOJpcZ.eOJEF9WS8S4Y3w2QFPkEYYQbEgZyDMUmuxDKrmSgRr7h51SyV3ocOUf9NHIP6vE3YNSaIvLQojbegLOkjJgHLceGd4H1HTgfSbSxPY8oiLAS1zOXacge0Sy4kRMpqdgaucegviKPXHxkAPiidk50VP2Gtpb_Ul33DCMkpOq_BJ23XWzcVMQ9KViWwuVtcqP55nRAhcWXUdVac9ndrsrRbRwxgs8b_ZHg4KjE2KvjP7yA4De4VtppLTlVNLHP6k8qdjmEJvUXtMTMZZcH2Zt_VDuoupvu5MM1f6.vxtKRkVLK2C01krMzIgKOrGPgD3nee2uvqSpg8Oe76KZ5wT.jtfbGrk2XJlYOzMPyeXACIq_.OveKLDHZGxOSGTo9BSvRcmw2NqrUR8MKov55ItG.RX_Le1jbtrVT6xpm1zHHQmdMHHME1d8z_NOLbduZZ8q5_pg146APcl9kB5f3GFNo2FZRK1_.lby8wjAyAHplP9CNOFWEcJqHnrhdMIGY5Fuuy1J3NRdX3zp6VPWPxoLEFipjeS_fFamJDd3bWi4YPKlT2o4y0FM5MPN6orujOc5HRwXlWF9MUM1QgW4Wubd2pXQBphE7yYLgRNGhxZr0__niS9.ST_RhBL7qvdY4wZVNcyrLiZYMkHzLy2oQlRakOHWIvbd5T93eKsrQAYvFdjhlz8AEw5tcjSUYlpj7w6FtNj9QXYBOBVPlFTj3nkRLRr5vcMhVNB3SHkuRDi0pS6YHrKUMbXj5Yrc.ayhz7T2R0f81YWKdS92NyeNadkpWtcK57HMquRAvga1fzcSrC505ZYHQ5brRCSN0Q.681cjQAMmQ9c7Un_bq..FHw_nkfXk2rmf7KOMLMwsymTMGWI3Jdpk2GxKrWxKIam8kPBLIxAuZXglOupu1Hjni6Jm6z2DrcFoqhBR5SPOMXdU2U7ejuTXCMYlWiY9ahrFK700hyeYqTLGAaY9JG.2jOlvw_k3uBnI93dFFbVaW30qLfHE77.opaxirLL3HHcYnJ2bp04yq45cveWZScDmq4Lop.XuMRuXR8ySi8OTkqBmcaeQmW1eLGqnptVDQ8ncRo0g',mdrd: 'hmPTxKvRmIQM1UWHX_ndSgcBBzR53oRn5FwkarspHx4-1781284702-1.2.1.1-PUZgJttRiz8hxp32Oe33lcr9UolusBE6bo0sbfvGhUSjlVLW7GH0sN2CpRSSO_icpyMo0mQ9_BgLONWpDjOxkgSk5UUy1n7dec1LYQSGa.Rc6inAKerfOrTopopLGVn2LEmprIf5gEnjgnp7qwimM.3o6QVCaoFBJAKw5rdfgf1SPyMl9YrJPmEujLsFjHQaoRbwkAivRvLwheQEaheI8xtE5oI4EWb34Gj8ByAjZkq7Za_VMOo41RQbQ9eXwvZ8sjIQHSA9zFodmq.FTBzUaRZM7PJykk20a_sl4lb2XVvm4U3S80P3dOMKyKvPyQN6so9_Hl8S87fWB4aTpeopxe5Otk0uTpWS3N3IP4i0L3c7iUMUk5oaTYm65jncne7NdUYvRvg7SINttdetbfNE1TYjvb6SwO1zEzIlGHbMWXnkGGvbCB0bqMSxcK.FVPzgxe0sIIupBXJm4wzNegBigxy2Zab96z7c19g1sa2ls5k',};var a = document.createElement('script');a.nonce = 'wG14mbnn1yBgGTAyjGKUwH';a.src = '/cdn-cgi/challenge-platform/h/g/orchestrate/chl_page/v1?ray=a0aa83acbd87cb53';window._cf_chl_opt.cOgUHash = location.hash === '' && location.href.indexOf('#') !== -1 ? '#' : location.hash;window._cf_chl_opt.cOgUQuery = location.search === '' && location.href.slice(0, location.href.length - window._cf_chl_opt.cOgUHash.length).indexOf('?') !== -1 ? '?' : location.search;if (window.history && window.history.replaceState) {var ogU = location.pathname + window._cf_chl_opt.cOgUQuery + window._cf_chl_opt.cOgUHash;history.replaceState(null, null,"/on-this-day/june-12?__cf_chl_rt_tk=P5kTKowFbmhRyxKwcoHv2eN2jf4SEZpBklEAue6ojtw-1781284702-1.0.1.1-QYBeTjy.WOB1w96I93vmXmkpegOaqtk4wlUSug7Ih3g"+ window._cf_chl_opt.cOgUHash);a.onload = function() {history.replaceState(null, null, ogU);}}document.getElementsByTagName('head')[0].appendChild(a);}());</script></body></html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!doctype html>
+
+<html lang="en" class="todayinhistory-desktop ui-chrome148 ui-chrome">
+
+<head prefix="og: https://ogp.me/ns# fb: https://ogp.me/ns/fb#">
+
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    
+
+    <link rel="dns-prefetch" href="https://cdn.britannica.com/mendel-resources/3-187">
+    <link rel="preconnect" href="https://cdn.britannica.com/mendel-resources/3-187">
+
+    
+
+    <link rel="preload" as="script" href="https://www.googletagservices.com/tag/js/gpt.js" />
+
+    
+
+    <link rel="icon" href="/favicon.png" />
+
+    
+
+    <meta name="description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences." />
+    <meta name="keywords" content="today in history, anniversary, daily events, today’s historical events, today’s birthdays, born today, on this date, this day in history" />
+    <link rel="canonical" href="https://www.britannica.com/on-this-day/june-12" />
+
+    
+
+    
+        
+        
+            <meta name="robots" content="max-image-preview:large" />
+        
+    
+
+    
+
+    
+
+    
+
+    <title>On This Day - What Happened Today In History | Britannica</title>
+
+    
+
+    
+
+
+
+
+
+
+
+<script   class="analytics-metadata" type="application/json">
+{"adLeg":"D","leg":"C","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+</script>
+
+
+    <script type="text/javascript">
+    window.EBStat={accountId:-1,hostnameOverride:'webstats.eb.com',domain:'www.britannica.com', json:''};
+    </script>
+
+
+
+    
+
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('consent', 'default', {
+        'ad_personalization': 'denied',
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'analytics_storage': 'denied',
+        'region': ["AT","BE","BG","GB","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT","LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE","IS","LI","NO"],
+        'wait_for_update': 500,
+    });
+
+    gtag('consent', 'default', {
+        'ad_personalization': 'granted',
+        'ad_storage': 'granted',
+        'ad_user_data': 'granted',
+        'analytics_storage': 'granted',
+    });
+
+    window.geoCountry = 'US';
+    window.isGdprCountry = false;
+    window.isCcpaCountry = true;
+    window.geoRegion = 'CA';
+
+</script>
+
+
+
+    
+
+    <link rel="preconnect" href="https://dev.visualwebsiteoptimizer.com" />
+<script type='text/javascript' id='vwoCode'>
+    window._vwo_code || (function() {
+        var account_id=698824,
+            version=2.1,
+            settings_tolerance=2000,
+            hide_element='body',
+            hide_element_style = 'opacity:0 !important;filter:alpha(opacity=0) !important;background:none !important;transition:none !important;',
+            f=false,w=window,d=document,v=d.querySelector('#vwoCode'),cK='_vwo_'+account_id+'_settings',cc={};try{var c=JSON.parse(localStorage.getItem('_vwo_'+account_id+'_config'));cc=c&&typeof c==='object'?c:{}}catch(e){}var stT=cc.stT==='session'?w.sessionStorage:w.localStorage;code={nonce:v&&v.nonce,library_tolerance:function(){return typeof library_tolerance!=='undefined'?library_tolerance:undefined},settings_tolerance:function(){return cc.sT||settings_tolerance},hide_element_style:function(){return'{'+(cc.hES||hide_element_style)+'}'},hide_element:function(){if(performance.getEntriesByName('first-contentful-paint')[0]){return''}return typeof cc.hE==='string'?cc.hE:hide_element},getVersion:function(){return version},finish:function(e){if(!f){f=true;var t=d.getElementById('_vis_opt_path_hides');if(t)t.parentNode.removeChild(t);if(e)(new Image).src='https://dev.visualwebsiteoptimizer.com/ee.gif?a='+account_id+e}},finished:function(){return f},addScript:function(e){var t=d.createElement('script');t.type='text/javascript';if(e.src){t.src=e.src}else{t.text=e.text}v&&t.setAttribute('nonce',v.nonce);d.getElementsByTagName('head')[0].appendChild(t)},load:function(e,t){var n=this.getSettings(),i=d.createElement('script'),r=this;t=t||{};if(n){i.textContent=n;d.getElementsByTagName('head')[0].appendChild(i);if(!w.VWO||VWO.caE){stT.removeItem(cK);r.load(e)}}else{var o=new XMLHttpRequest;o.open('GET',e,true);o.withCredentials=!t.dSC;o.responseType=t.responseType||'text';o.onload=function(){if(t.onloadCb){return t.onloadCb(o,e)}if(o.status===200||o.status===304){_vwo_code.addScript({text:o.responseText})}else{_vwo_code.finish('&e=loading_failure:'+e)}};o.onerror=function(){if(t.onerrorCb){return t.onerrorCb(e)}_vwo_code.finish('&e=loading_failure:'+e)};o.send()}},getSettings:function(){try{var e=stT.getItem(cK);if(!e){return}e=JSON.parse(e);if(Date.now()>e.e){stT.removeItem(cK);return}return e.s}catch(e){return}},init:function(){if(d.URL.indexOf('__vwo_disable__')>-1)return;var e=this.settings_tolerance();w._vwo_settings_timer=setTimeout(function(){_vwo_code.finish();stT.removeItem(cK)},e);var t;if(this.hide_element()!=='body'){t=d.createElement('style');var n=this.hide_element(),i=n?n+this.hide_element_style():'',r=d.getElementsByTagName('head')[0];t.setAttribute('id','_vis_opt_path_hides');v&&t.setAttribute('nonce',v.nonce);t.setAttribute('type','text/css');if(t.styleSheet)t.styleSheet.cssText=i;else t.appendChild(d.createTextNode(i));r.appendChild(t)}else{t=d.getElementsByTagName('head')[0];var i=d.createElement('div');i.style.cssText='z-index: 2147483647 !important;position: fixed !important;left: 0 !important;top: 0 !important;width: 100% !important;height: 100% !important;background: white !important;display: block !important;';i.setAttribute('id','_vis_opt_path_hides');i.classList.add('_vis_hide_layer');t.parentNode.insertBefore(i,t.nextSibling)}var o=window._vis_opt_url||d.URL,s='https://dev.visualwebsiteoptimizer.com/j.php?a='+account_id+'&u='+encodeURIComponent(o)+'&vn='+version;if(w.location.search.indexOf('_vwo_xhr')!==-1){this.addScript({src:s})}else{this.load(s+'&x=true')}}};w._vwo_code=code;code.init();})();
+</script>
+<script type="text/javascript" id="vwoConsent">
+  // VWO.init expects a 1 for opt-in, 3 for opt-out, 2 for pending
+  const setVWOConsentState = (state) => {
+    const currentConsentState = window.VWO?.consentState;
+    if (currentConsentState === state) {
+      return;
+    }
+    window.VWO = window.VWO || [];
+    window.VWO.init =
+      window.VWO.init ||
+      function (state) {
+        window.VWO.consentState = state;
+      };
+    window.VWO.init(state);
+    // write vwoConsentState to cookie
+    document.cookie = 'vwoConsentState=' + state + '; path=/;';
+  };
+  if (window.isGdprCountry) {
+    // set initial consent
+    const vwoConsentStateCookie = document.cookie.match(new RegExp('(^| )' + 'vwoConsentState' + '=([^;]+)'));
+    const initialConsent = vwoConsentStateCookie ? Number(vwoConsentStateCookie[2]) : 2;
+    setVWOConsentState(initialConsent);
+    const addCmpEventListener = () => {
+      window.__cmp(
+        'addEventListener',
+        [
+          'consent',
+          () => {
+            const cmpConsentStatus = window.__cmp('consentStatus');
+            const consentExists = cmpConsentStatus?.consentExists;
+            const cmpData = window.__cmp('getCMPData');
+            const vwoVendorId = 's31';
+            if (consentExists) {
+              if (cmpData?.vendorConsents?.[vwoVendorId]) {
+                setVWOConsentState(1);
+              } else {
+                setVWOConsentState(3);
+              }
+            } else {
+              setVWOConsentState(2);
+            }
+          },
+          false,
+        ],
+        null
+      );
+    };
+    // Check if __cmp is available, if not, set up a timer to wait for it
+    if (typeof window.__cmp === 'function') {
+      addCmpEventListener();
+    } else {
+      const cmpCheckInterval = setInterval(() => {
+        if (typeof window.__cmp === 'function') {
+          clearInterval(cmpCheckInterval);
+          addCmpEventListener();
+        }
+      }, 250);
+      // Clear the interval after 20 seconds if __cmp never becomes available
+      setTimeout(() => {
+        clearInterval(cmpCheckInterval);
+      }, 20000);
+    }
+  } else {
+    // if not in a GDPR country, set to opt-in
+    setVWOConsentState(1);
+  }
+</script>
+
+
+    
+
+    
+        
+    
+
+    
+
+    <script type="text/javascript" data-type="Init Mendel">
+
+    window.$UI = {};
+
+    window.Constants = {"LICENSE_URL":"/bps/license","AJAX_PREFIX_URL":"/ajax","QUIZ_URL":"/quiz","ARTICLE_TYPE_MONEY_JOURNEY":171,"MONEY_JOURNEY_PREFIX_URL":"/journey","MEDIA_OVERLAY_URL":"/media-overlay","CHATBOT_PAGE_URL":"/chatbot","LISTS_AND_STORIES_BROWSE_URL":"/lists-and-stories","PROCON_QUIZ_BROWSE_URL":"/procon-quiz/browse","TOPIC_FACTS_DATA_URL":"/facts","NEWSLETTER_PAGE_URL":"/newsletters","EXPLORE_URL":"/explore","QUIZ_BROWSE_IMAGE_QUIZZES":"images","MEDIA_URL":"/media","TOPIC_MEDIA_PATH":"/images-videos","TOPIC_TOP_QUESTION_URL":"/question","PORTAL_FINANCE_URL_PREFIX":"/money","PODCASTS_URL":"/podcasts","STAND_ALONE_VIDEO_URL":"/video","ONE_GOOD_FACT_URL":"/one-good-fact","MORE_ON_THIS_DAY_URL":"/more-on-this-day","ERROR_404_URL":"/error404","PROCON_CITED_IN_THE_NEWS_URL":"/procon/ProCon-in-the-News","TOPIC_QUOTES_URL":"/quotes","SEARCH_PAGE_URL":"/search","PROCON_URL":"/procon","TOPIC_CONTENT_AJAX_URL":"/topic-content/topic","ERROR_URL":"/error","TOPIC_PAGE_CONTENT_AJAX_URL":"/topic-content/page","TOPIC_COLLECTION_URL":"/summary","LOGINBOX_URL":"/auth/loginbox","MWU_LOGIN_URL":"https://cam.merriam-webster.com/login?redirect=https%3A%2F%2Funabridged.merriam-webster.com","PROCON_DEBATE_TOPICS_URL":"/procon/Debate-Topics","ONE_GOOD_FACT_BROWSE_URL":"/one-good-fact/all-good-facts","INFINITE_SCROLL_PREFIX_URL":"/scroll","TOPIC_TOP_QUESTION_BROWSE_URL":"/questions","QUIZ_BROWSE_URL":"/quiz/browse","domain":"britannica.com","BIO_BROWSE_URL":"/browse/biographies","CATEGORY_BROWSE_URL":"/browse","TIGHTROPE_QUIZ_URL":"/quiz/tightrope","ALPHA_BROWSE_URL":"/sitemap","DICTIONARY_URL":"/dictionary","COBRAND_IMAGE_URL":"/image/cobrand","PROCON_IN_THE_NEWS_URL":"/procon/pro-and-con-issues-in-the-news","PROCON_BROWSE_URL":"/procon","QUIZ_BROWSE_VOCAB_QUIZZES":"vocabulary-quizzes","SUBMISSION_URL":"/submission","EB_LOG_OUT":"/auth2/logout","MAINTENANCE_ERROR_URL":"https://maintenance.eb.com","NEWSLETTER_SUBSCRIBE_URL":"/newsletter-subscribe","PROFILE_EB_EDITOR_URL":"/editor","TOPIC_AJAX_URL":"/ajax/topic","AI_ABOUT_PAGE_URL":"/about-britannica-ai","TOPIC_SUMMARY_BROWSE_URL":"/summaries","TOPIC_ADDITIONAL_INFO_PATH":"/additional-info","VIDEO_CHANNEL_URL":"/videos","GALLERY_BROWSE_URL":"/gallery/browse","SUDOKU_GAME_URL":"/games/sudoku","PROCON_ABOUT_URL":"/procon/About-ProCon","ARTICLE_PRINT_URL":"/print/article","FIRST_EDITION_URL":"/subscriber/firstedition","WW1_PORTAL_URL":"/discover/World-War-I","TOPIC_REDIRECT_URL":"/redirect","MENDEL_COOKIE":"__mendel","PROCON_QUIZ_URL":"/procon-quiz","SHOW_ALL_CONTRIBUTORS":"/additional-info#contributors","PROFILE_EXPERT_URL":"/contributor","ASSEMBLY_IMAGE_URL":"/image/assembly","DAY_IN_HISTORY_URL":"/on-this-day","PORTAL_FINANCE_BROWSE_URL_PREFIX":"/money/browse","ERROR_400_URL":"/error400","CALCULATORS_BROWSE_URL":"/calculators","EB_LOGIN_URL":"/auth/eb-login","NEW_ARTICLES_URL":"/new-articles"};
+    window.CDN = "https://cdn.britannica.com";
+	window.CAM_SETTINGS_URL = "https://cam.britannica.com/settings";
+    window.CAM_LOGIN_URL = "https://cam.britannica.com/login";
+    window.CAM_SIGN_UP_URL = "https://cam.britannica.com/registration"
+
+    window.Mendel = {
+     	"config" : {
+            "videoPlayerId" : "UyMCoK2v",
+      		"domain": "britannica.com",
+			"page": "TodayInHistory",
+			"sharedUrl": "https://www.britannica.com/on-this-day/june-12",
+			"amuselabsUrl": "https://cdn3.amuselabs.com",
+	    	"resourcesPrefixUrl": "https://cdn.britannica.com/mendel-resources/3-187/[url]?v=3.187.12",
+			"date": 20260612,
+			"userInfo": { "type": "ANONYMOUS"
+										,"currency": "USD"
+										,"country": "US"
+										,"state": "CA"
+										,"timezone": "America/Los_Angeles"
+										,"bcomId": "-3803448246485308661"
+										,"adProvider": "ay"
+										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":true,"showConsent":true}
+										,"hasAds": true
+										,"testVersion": "C"
+										,"adsTestVersion": "D"
+										,"consumerId": ""
+										,"instId": ""
+										,"instUserName": ""
+										,"isMwuSubscriber": false
+										,"brazeExternalId": ""
+			},
+			"tvs":{ "r":[25,25,25,25], "a": [3,3,3,91]},
+			"isLoggedInAsUser": false,
+			"isPhone": false,
+			"isDesktop": true,
+			"logoutUrl": "/auth2/logout",
+			"selfServiceUrl": "https://myaccount.britannica.com",
+			"cdnUrl": "https://cdn.britannica.com",
+			"chatbotApi": "https://www.britannica.com/chat-api",
+	        "fetchOffset": 800,
+			
+			"mendelCookieName": "__mendel",
+			"mendelCookie": {"currentDate":20260612,"lti":0,"surveyShown":false,"ts":0},
+			
+
+			"autocompleteToSearchPage": false,"pagesInfo": [{"url":"June-12","title":"On This Day - What Happened on June 12"},{"url":"June-13","title":"On This Day - What Happened on June 13"},{"url":"June-14","title":"On This Day - What Happened on June 14"},{"url":"June-15","title":"On This Day - What Happened on June 15"},{"url":"June-16","title":"On This Day - What Happened on June 16"},{"url":"June-17","title":"On This Day - What Happened on June 17"},{"url":"June-18","title":"On This Day - What Happened on June 18"},{"url":"June-19","title":"On This Day - What Happened on June 19"},{"url":"June-20","title":"On This Day - What Happened on June 20"},{"url":"June-21","title":"On This Day - What Happened on June 21"}]
+		},
+        "GA": {"adLeg":"D","leg":"C","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+    };
+
+	</script>
+
+
+
+    
+
+    <meta property="fb:app_id" content="1887621861548296"/>
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@britannica" />
+<meta name="twitter:image" content="https://cdn.britannica.com/90/190090-050-8146AFCD/Nelson-Mandela-prison-Robben-Island-Cape-Town.jpg" />
+<meta name="twitter:description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
+
+<meta property="og:type"  content="WEBSITE"/>
+<meta property="og:title" content="On This Day - What Happened Today In History | Britannica"/>
+<meta property="og:description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
+<meta property="og:site_name" content="Encyclopedia Britannica" />
+<meta property="og:url" content="https://www.britannica.com/on-this-day/june-12"/>
+<meta property="og:image" content="https://cdn.britannica.com/90/190090-050-8146AFCD/Nelson-Mandela-prison-Robben-Island-Cape-Town.jpg" />
+
+<script type="text/javascript" data-type="init opengraph">
+Mendel.openGraph = {
+    "type": "WEBSITE",
+    "title": "On This Day - What Happened Today In History",
+    "description": "On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences.",
+    "imageUrl": "https://cdn.britannica.com/90/190090-050-8146AFCD/Nelson-Mandela-prison-Robben-Island-Cape-Town.jpg",
+    "pageUrl": "https://www.britannica.com/on-this-day/june-12"
+}
+</script>
+
+
+    
+
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="dns-prefetch" href="https://fonts.googleapis.com/" >
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+
+    
+
+    <link href="https://cdn.britannica.com/mendel-resources/3-187/dist/_tailwind.css?v=3.187.12" rel="stylesheet" />
+    <link href="https://cdn.britannica.com/mendel-resources/3-187/dist/vendor-bundle.css?v=3.187.12" rel="stylesheet" />
+    <link href="https://cdn.britannica.com/mendel-resources/3-187/dist/mendel-css.css?v=3.187.12" rel="stylesheet" />
+    
+    <link href="https://cdn.britannica.com/mendel-resources/3-187/dist/today-in-history-page.css?v=3.187.12" rel="stylesheet" />
+
+    <script type="text/javascript">
+        if ((!window.name || (window.name.indexOf('_vis_editor') === -1)) && self !== top) { top.location = self.location; }
+    </script>
+
+    
+
+    <script type="module">
+            window.dataLayer = window.dataLayer || [];
+
+            async function awaitPaint(fn) {
+                return new Promise((resolve) => {
+                    const fallbackTimeout = setTimeout(() => {
+                        if (typeof fn === 'function') { fn(); }
+                        resolve();
+                    }, 200);
+                    requestAnimationFrame(() => {
+                        setTimeout(() => {
+                            clearTimeout(fallbackTimeout);
+                            if (typeof fn === 'function') { fn(); }
+                            resolve();
+                        }, 50);
+                    });
+                });
+            }
+
+            if (window.dataLayer && typeof window.dataLayer.push === 'function') {
+                const originalDataLayerPush = window.dataLayer.push.bind(window.dataLayer);
+                window.dataLayer.push = function (...args) {
+                    (async () => {
+                        await awaitPaint(() => {
+                            originalDataLayerPush(...args);
+                        });
+                    })();
+                };
+            }
+        </script>
+
+    <script>
+	            window.dataLayer = window.dataLayer || [];
+				window.dataLayer.push( {
+				   'gtm.start': new Date().getTime(),
+				   event: 'gtm.js'
+			   	});
+            </script>
+			<script src="//www.googletagmanager.com/gtm.js?id=GTM-5W6NC8" async></script>
+			<script src="//www.googletagmanager.com/gtm.js?id=GTM-KRJ753NG" async></script>
+		
+
+    
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap">
+
+</head>
+
+<body data-leg="C" class="day-in-history user-ANONYMOUS  user-ads   md-desktop    leg-c ">
+
+
+
+
+    <!-- **** assertive yield ****-->
+
+<script async defer src="https://launchpad-wrapper.privacymanager.io/0ccc6fe8-1870-4ad8-b47b-6d029ac116fc/launchpad-liveramp.js"></script>
+<script>
+    Mendel.config.adProvider = 'ay';
+</script>
+<script src="https://JRyhoywLYXNLYMAhs.ay.delivery/manager/JRyhoywLYXNLYMAhs" type="text/javascript" referrerpolicy="no-referrer-when-downgrade"></script>
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        
+
+
+
+
+
+
+
+<script  id="json-navbar-info"  type="application/json">
+{"topSectionLinks":[{"url":"/chatbot","title":"Ask the Chatbot","navbarId":"CHATBOT"},{"url":"/quiz/browse","title":"Games & Quizzes","navbarId":"QUIZZES"},{"url":"/History-Society","title":"History & Society","navbarId":"HISTORY"},{"url":"/Science-Tech","title":"Science & Tech","navbarId":"SCIENCE"},{"url":"/Biographies","title":"Biographies","navbarId":"BIOS"},{"url":"/Animals-Nature","title":"Animals & Nature","navbarId":"ANIMALS"},{"url":"/Geography-Travel","title":"Geography & Travel","navbarId":"GEOGRAPHY"},{"url":"/Arts-Culture","title":"Arts & Culture","navbarId":"ART"},{"url":"/procon","title":"ProCon","navbarId":"PROCON"},{"url":"/money","title":"Money","navbarId":"MONEY"},{"url":"/videos","title":"Videos","navbarId":"VIDEOS"}]}
+</script>
+
+
+
+
+
+
+
+
+
+<script  id="json-hamburger-menu"  type="application/json">
+{"britannicaMenu1":[{"title":"Home","url":"/"},{"title":"History & Society","url":"/History-Society"},{"title":"Science & Tech","url":"/Science-Tech"},{"title":"Biographies","url":"/Biographies"},{"title":"Animals & Nature","url":"/Animals-Nature"},{"title":"Geography & Travel","url":"/Geography-Travel"},{"title":"Arts & Culture","url":"/Arts-Culture"},{"title":"ProCon","url":"/procon"},{"title":"Money","url":"/money"}],"britannicaMenu2":[{"title":"Games & Quizzes","url":"/quiz/browse"},{"title":"Videos","url":"/videos"},{"title":"On This Day","url":"/on-this-day"},{"title":"One Good Fact","url":"/one-good-fact"},{"title":"Dictionary","url":"/dictionary"},{"title":"New Articles","url":"/new-articles"}],"browseByCategory":[{"title":{"id":5,"title":"History & Society","url":"/History-Society"},"links":[{"title":"History","url":"/browse/World-History"},{"title":"Philosophy & Religion","url":"/browse/Philosophy-Religion"},{"title":"Politics, Law & Government","url":"/browse/Politics-Law-Government"},{"title":"Society & Social Issues","url":"/browse/Lifestyles-Social-Issues"}]},{"title":{"id":6,"title":"Science & Tech","url":"/Science-Tech"},"links":[{"title":"Health & Medicine","url":"/browse/Health-Medicine"},{"title":"Science","url":"/browse/Science"},{"title":"Technology","url":"/browse/Technology"}]},{"title":{"id":3,"title":"Biographies","url":"/Biographies"},"links":[{"title":"Browse Biographies","url":"/browse/biographies"}]},{"title":{"id":1,"title":"Animals & Nature","url":"/Animals-Nature"},"links":[{"title":"Birds, Reptiles & Other Vertebrates","url":"/browse/Birds-Reptiles-Vertebrates"},{"title":"Environment","url":"/browse/Environment"},{"title":"Fossils & Geologic Time","url":"/browse/Fossil-Geologic-Time"},{"title":"Insects & Other Invertebrates","url":"/browse/Bugs-Mollusks-Invertebrates"},{"title":"Mammals","url":"/browse/Mammals"},{"title":"Plants","url":"/browse/Plants"}]},{"title":{"id":4,"title":"Geography & Travel","url":"/Geography-Travel"},"links":[{"title":"Geography & Travel","url":"/browse/Geography-Travel"}]},{"title":{"id":2,"title":"Arts & Culture","url":"/Arts-Culture"},"links":[{"title":"Entertainment & Pop Culture","url":"/browse/Entertainment-Pop-Culture"},{"title":"Literature","url":"/browse/Literature"},{"title":"Sports & Recreation","url":"/browse/Sports-Recreation"},{"title":"Visual Arts","url":"/browse/Visual-Arts"}]}],"browseByFeature":[{"title":"Image Galleries","url":"/gallery/browse"},{"title":"Podcasts","url":"/podcasts"},{"title":"Summaries","url":"/summary"},{"title":"Top Questions","url":"/question"},{"title":"Lists and Stories","url":"/lists-and-stories"}],"moreFromBritannica":[{"newTab":true,"title":"Britannica Kids","url":"https://kids.britannica.com/"}],"menuType":"DEFAULT"}
+</script>
+
+<div class="KUSTOM-MARKETING-TOUPEE_BANNER"><a href="https://signup.britannica.com/thepitch?utm_source=premium&amp;utm_medium=toupee&amp;utm_campaign=mm-mobile" class="toupee-banner" style="text-decoration: none;">
+    
+    <div>
+       ⚽️ Get Our World Cup Newsletter:&nbsp;<strong>The Pitch</strong>&nbsp;⚽️
+        <span style="color: #BCDAF7; text-decoration: underline;">
+            Learn More
+        </span>
+    </div>
+
+</a></div><header id="header" class="bg-navy-dark">
+    <div class="global-nav-top-bar">
+        <div class="grid gx-0 h-100 justify-content-between align-items-center container-lg mx-auto p-0 position-relative">
+            <div class="d-flex align-items-center">
+                <button class="d-flex align-items-center justify-self-start js-toggle js-toggle-hamburger btn btn-link link-white btn-sm rounded-0 p-10"
+                        aria-label="Explore">
+                    <div class="hamburger-tooltip">
+                        <em class="material-icons d-inline-block font-24" id="nav-toggle" data-icon="menu"></em>
+                    </div>
+                    <em
+                            
+                                    class="material-icons d-inline-block font-24 global-nav-search-icon"
+                                
+                            id="nav-search-icon"
+                            data-icon="search"
+                    ></em>
+                    </button>
+                <a href="/" class="d-flex align-items-center justify-content-center ml-10">
+                            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<img loading="lazy" src="https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png" alt="Encyclopedia Britannica" class="global-nav-logo global-nav-logo-left"  />
+</a>
+                    <div class="global-nav-top-search-bar global-nav-top-search-container global-nav-search-container"
+                     id="global-nav-top-search-bar">
+                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<form method="get" action="/search" id="global-nav-search" class="md-search-form m-0 global-nav-search-bar-small">
+    <div class="search-box position-relative col-100">
+        <label class="sr-only" for="global-nav-search-query">Search Britannica</label>
+        <input name="query" id="global-nav-search-query" placeholder="Search Britannica..." class="form-control form-control-lg rounded-lg font-16 search-query pl-20 pr-70 shadow-sm"  maxlength="200" autocomplete="off"  aria-label="Search Britannica" />
+        <button class="search-reset-btn btn btn-link px-10 position-absolute top-0 h-100 d-none" type="reset">
+            <em class="material-icons" data-icon="close"></em>
+        </button>
+        <button class="search-submit btn btn-link text-blue px-10 position-absolute top-0 right-0 h-100" type="submit" disabled>
+            <span class="sr-only">Click here to search</span>
+            <em class="material-icons search-icon" data-icon="search"></em>
+        </button>
+    </div>
+</form></div>
+            </div>
+
+            <a href="/" aria-label="Home" class="d-flex align-items-center justify-content-center">
+                        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<img loading="lazy" src="https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png" alt="Encyclopedia Britannica" class="global-nav-center global-nav-logo non-homepage-logo"  />
+</a>
+                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<form method="get" action="/search" id="global-nav-search" class="md-search-form m-0 global-nav-search-bar-small global-nav-center search global-nav-center-search-container">
+    <div class="search-box position-relative col-100">
+        <label class="sr-only" for="global-nav-search-query">Search Britannica</label>
+        <input name="query" id="global-nav-search-query" placeholder="Search Britannica..." class="form-control form-control-lg rounded-lg font-16 search-query pl-20 pr-70 shadow-sm"  maxlength="200" autocomplete="off"  aria-label="Search Britannica" />
+        <button class="search-reset-btn btn btn-link px-10 position-absolute top-0 h-100 d-none" type="reset">
+            <em class="material-icons" data-icon="close"></em>
+        </button>
+        <button class="search-submit btn btn-link text-blue px-10 position-absolute top-0 right-0 h-100" type="submit" disabled>
+            <span class="sr-only">Click here to search</span>
+            <em class="material-icons search-icon" data-icon="search"></em>
+        </button>
+    </div>
+</form><div class="col-35 col-sm-auto text-right order-3 mr-lg-15 align-items-center d-flex justify-content-end">
+                <div class="d-none d-md-inline-block">
+                            <div class="KUSTOM-MARKETING-HEADER_SUBSCRIPTION_DESKTOP2"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=global-nav&utm_campaign=blue-evergreen" class="subscribe-link btn btn-sm btn-blue py-5 mr-10" target="_blank" rel="noopener">
+   SUBSCRIBE
+</a></div></div>
+                        <div class="d-inline-block d-md-none mr-5 mr-sm-10">
+                            <div class="KUSTOM-MARKETING-HEADER_SUBSCRIPTION_MOBILE"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=global-nav-mobile&utm_campaign=blue-evergreen" class="subscribe-link btn btn-xs btn-blue p-5" target="_blank" rel="noopener">
+   SUBSCRIBE
+</a></div></div>
+                        <button class="js-toggle-user-dropdown js-toggle btn btn-sm btn-link link-white rounded-0 px-md-15 pl-5 pr-5">
+                            <span class="d-none d-md-inline-block mr-5">Login</span>
+                            <em class="material-icons d-inline-block d-md-none font-16 font-sm-20"
+                                data-icon="account_circle"></em>
+                            <div class="d-none dropdown-menu-subscription-link">
+                                <a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=nav-login-box&utm_campaign=evergreent">Subscribe to Britannica Premium</a>
+                            </div>
+                            <em aria-label="" class="material-icons inactive-icon d-inline-block font-18" data-icon="keyboard_arrow_down"></em>
+	<em aria-label="" class="material-icons active-icon d-inline-block font-18" data-icon="keyboard_arrow_up"></em>
+	</button>
+                    </div>
+        </div>
+    </div>
+
+    <div class="d-none hamburger-menu-subscription-link"><div class="KUSTOM-MARKETING-HAMBURGER_MENU_CTA"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=blue" class="subscribe-link btn btn-sm btn-blue py-5" target="_blank">
+  SUBSCRIBE
+</a></div></div>
+    <div id="global-nav-react">
+        <div class="d-none">
+            <ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/History-Society">History & Society</a></li>
+    <li><a href="/Science-Tech">Science & Tech</a></li>
+    <li><a href="/Biographies">Biographies</a></li>
+    <li><a href="/Animals-Nature">Animals & Nature</a></li>
+    <li><a href="/Geography-Travel">Geography & Travel</a></li>
+    <li><a href="/Arts-Culture">Arts & Culture</a></li>
+    <li><a href="/procon">ProCon</a></li>
+    <li><a href="/money">Money</a></li>
+    </ul>
+
+<ul>
+    <li><a href="/quiz/browse">Games & Quizzes</a></li>
+    <li><a href="/videos">Videos</a></li>
+    <li><a href="/on-this-day">On This Day</a></li>
+    <li><a href="/one-good-fact">One Good Fact</a></li>
+    <li><a href="/dictionary">Dictionary</a></li>
+    <li><a href="/new-articles">New Articles</a></li>
+    </ul>
+
+
+<a href="/History-Society">History & Society</a>
+    <ul>
+        <li><a href="/browse/World-History">History</a></li>
+        <li><a href="/browse/Philosophy-Religion">Philosophy & Religion</a></li>
+        <li><a href="/browse/Politics-Law-Government">Politics, Law & Government</a></li>
+        <li><a href="/browse/Lifestyles-Social-Issues">Society & Social Issues</a></li>
+        </ul>
+<a href="/Science-Tech">Science & Tech</a>
+    <ul>
+        <li><a href="/browse/Health-Medicine">Health & Medicine</a></li>
+        <li><a href="/browse/Science">Science</a></li>
+        <li><a href="/browse/Technology">Technology</a></li>
+        </ul>
+<a href="/Biographies">Biographies</a>
+    <ul>
+        <li><a href="/browse/biographies">Browse Biographies</a></li>
+        </ul>
+<a href="/Animals-Nature">Animals & Nature</a>
+    <ul>
+        <li><a href="/browse/Birds-Reptiles-Vertebrates">Birds, Reptiles & Other Vertebrates</a></li>
+        <li><a href="/browse/Environment">Environment</a></li>
+        <li><a href="/browse/Fossil-Geologic-Time">Fossils & Geologic Time</a></li>
+        <li><a href="/browse/Bugs-Mollusks-Invertebrates">Insects & Other Invertebrates</a></li>
+        <li><a href="/browse/Mammals">Mammals</a></li>
+        <li><a href="/browse/Plants">Plants</a></li>
+        </ul>
+<a href="/Geography-Travel">Geography & Travel</a>
+    <ul>
+        <li><a href="/browse/Geography-Travel">Geography & Travel</a></li>
+        </ul>
+<a href="/Arts-Culture">Arts & Culture</a>
+    <ul>
+        <li><a href="/browse/Entertainment-Pop-Culture">Entertainment & Pop Culture</a></li>
+        <li><a href="/browse/Literature">Literature</a></li>
+        <li><a href="/browse/Sports-Recreation">Sports & Recreation</a></li>
+        <li><a href="/browse/Visual-Arts">Visual Arts</a></li>
+        </ul>
+<ul>
+    <li><a href="/gallery/browse">Image Galleries</a></li>
+    <li><a href="/podcasts">Podcasts</a></li>
+    <li><a href="/summary">Summaries</a></li>
+    <li><a href="/question">Top Questions</a></li>
+    <li><a href="/lists-and-stories">Lists and Stories</a></li>
+    </ul>
+
+<ul>
+    <li><a href="https://kids.britannica.com/">Britannica Kids</a></li>
+    </ul>
+</div>
+    </div>
+</header>
+<div class="bg-navy-dark">
+        <div class="container-lg p-0 d-flex justify-content-center global-nav-categories-bar overflow-hidden">
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="slider js-slider position-relative d-inline-flex align-items-center mw-100 global-nav-slider mb-5 category-snap-slider">
+    <div class="slider-container js-slider-container overflow-hidden font-14 overflow-hidden text-nowrap mx-5">
+        
+    <a class="nav-bar-category mx-5 category-link-CHATBOT  tw:relative tw:inline-block tw:rounded-xl tw:bg-blue-600 tw:px-3 tw:py-0.5 tw:text-white tw:font-semibold" href="/chatbot" > 
+
+
+
+
+
+
+
+<svg
+        class="tw:fill-white tw:inline-block tw:pb-0.5"
+        width="18"
+        height="18"
+        viewBox="0 0 61 60"
+        xmlns="http://www.w3.org/2000/svg"
+>
+  <path d="M30.9864 59.9999C30.1964 60.0039 29.424 59.7667 28.7724 59.32C28.1208 58.8734 27.621 58.2384 27.3399 57.5002L21.1156 41.3145C20.9895 40.9883 20.7967 40.6921 20.5494 40.4449C20.3022 40.1976 20.006 40.0048 19.6798 39.8787L3.48945 33.6497C2.75194 33.3666 2.1176 32.8666 1.67014 32.2156C1.22269 31.5646 0.983154 30.7932 0.983154 30.0032C0.983154 29.2133 1.22269 28.4419 1.67014 27.7909C2.1176 27.1399 2.75194 26.6398 3.48945 26.3568L19.6751 20.1325C20.0013 20.0064 20.2975 19.8136 20.5448 19.5663C20.792 19.319 20.9849 19.0228 21.1109 18.6967L27.3399 2.5063C27.623 1.76879 28.123 1.13445 28.774 0.686992C29.425 0.239536 30.1964 0 30.9864 0C31.7763 0 32.5477 0.239536 33.1987 0.686992C33.8498 1.13445 34.3498 1.76879 34.6328 2.5063L40.8572 18.692C40.9832 19.0182 41.1761 19.3144 41.4233 19.5616C41.6706 19.8089 41.9668 20.0017 42.2929 20.1278L58.3849 26.3193C59.1524 26.6038 59.8136 27.1179 60.2785 27.7916C60.7434 28.4653 60.9894 29.2659 60.983 30.0845C60.9711 30.8607 60.7265 31.6154 60.2808 32.2511C59.8352 32.8867 59.209 33.3739 58.4833 33.6497L42.2976 39.874C41.9715 40.0001 41.6753 40.1929 41.428 40.4402C41.1807 40.6874 40.9879 40.9836 40.8618 41.3098L34.6328 57.5002C34.3517 58.2384 33.852 58.8734 33.2004 59.32C32.5488 59.7667 31.7764 60.0039 30.9864 59.9999Z"></path>
+</svg>
+
+
+Ask the Chatbot</a>
+		<a class="nav-bar-category mx-5 category-link-QUIZZES " href="/quiz/browse" > Games & Quizzes</a>
+		<a class="nav-bar-category mx-5 category-link-HISTORY " href="/History-Society" > History & Society</a>
+		<a class="nav-bar-category mx-5 category-link-SCIENCE " href="/Science-Tech" > Science & Tech</a>
+		<a class="nav-bar-category mx-5 category-link-BIOS " href="/Biographies" > Biographies</a>
+		<a class="nav-bar-category mx-5 category-link-ANIMALS " href="/Animals-Nature" > Animals & Nature</a>
+		<a class="nav-bar-category mx-5 category-link-GEOGRAPHY " href="/Geography-Travel" > Geography & Travel</a>
+		<a class="nav-bar-category mx-5 category-link-ART " href="/Arts-Culture" > Arts & Culture</a>
+		<a class="nav-bar-category mx-5 category-link-PROCON " href="/procon" > ProCon</a>
+		<a class="nav-bar-category mx-5 category-link-MONEY " href="/money" > Money</a>
+		<a class="nav-bar-category mx-5 category-link-VIDEOS " href="/videos" > Videos</a>
+		
+
+    </div>
+
+    
+
+    
+
+    
+
+    <button disabled class="prev-button js-prev-button position-absolute btn btn-circle shadow  btn-blue " aria-label="Previous">
+        <span class="material-icons md-24" data-icon="keyboard_arrow_left"></span>
+    </button>
+    <button disabled class="next-button js-next-button position-absolute btn btn-circle shadow  btn-blue " aria-label="Next">
+        <span class="material-icons md-24" data-icon="keyboard_arrow_right"></span>
+    </button>
+</div>
+</div>
+    </div>
+
+    
+
+
+
+<main>
+
+    
+
+    <div class="md-page-wrapper">
+
+        
+
+        <div id="content" class="md-content">
+
+            
+                
+                    
+
+
+
+
+
+
+
+<script   class="otd-json-info" type="application/json">
+{
+        "calendarInfo": {"day":12,"month":6,"monthName":"June","nbDays":30,"nextMonth":7,"nextMonthName":"July","previousMonth":5,"previousMonthName":"May"},
+        "url": "/on-this-day/June/12",
+	    "title": "On This Day - What Happened Today In History"
+    }
+</script>
+
+<div class="d-flex flex-column">
+    <div class="tw:w-full tw:bg-[var(--tan-light-tih)] tw:min-h-78 tw:max-md:min-h-49 tw:px-5 tw:align-items-center" >
+            <div class="qa-tih-top-newsletter tw:max-lg:w-full tw:flex tw:flex-row tw:justify-between tw:mx-auto tw:w-275">
+                <div class="tw:max-md:w-full tw:max-md:max-w-full tw:max-[930px]:max-w-100 tw:max-md:items-center tw:max-md:text-center tw:max-w-131 tw:max-md:mt-6 tw:mt-11 tw:pb-6 tw:flex tw:flex-col">
+                <span class="tw:text-[var(--black-tih)] font-14 font-lora tw:text-[var(--gray-700-tih)]">A Britannica Newsletter</span>
+                    <img class="tw:max-md:pb-4 tw:max-md:pt-3 tw:pb-8 tw:pt-4 tw:max-md:w-53" src="https://cdn.britannica.com/mendel-resources/3-187/images/shared/tih-logo.png?v=3.187.12" alt="Today In History Logo" width="277px" height="35px"/>    
+
+                    <div class="font-lora font-14 tw:text-[var(--black-tih)]">
+                    Discover the fascinating events that shaped the world, straight from our editors.
+                    </div>
+                    <div class="newsletter-form-container tw:py-5 tw:max-md:py-4 tw:max-md:w-full">
+                        <form action="/newsletter-subscribe" method="post" class="tw:flex tw:flex-row tw:gap-2 tw:max-md:w-full">
+                            <input class="tw:max-md:w-full tw:bg-white tw:h-11 tw:w-75 tw:text-[var(--gray-600-tih)] tw:py-2 tw:px-4 tw:border tw:border-[var(--gray-100-tih)] tw:text-sm! font-lora tw:rounded-full" type="email" name="email" placeholder="Enter your email" required/>
+                            <input type="hidden" name="action" value="EB_ON_THIS_DAY"/>
+                            <input type="hidden" name="source" value="tih-lp-header"/>
+                            <input type="hidden" name="campaign" value="britannica"/>
+                            <input type="hidden" name="medium" value="internal"/>
+                            <button type="submit" class="tih-signup-button tw:rounded-full tw:text-white tw:text-uppercase font-oswald tw:tracking-[0.96px] tw:py-2 tw:px-6 tw:bg-[var(--orange-tih)]">
+                                <span class="tw:max-[930px]:block tw:hidden">
+                                    SIGN&nbsp;UP
+                                </span>
+
+                                <span class="tw:max-[930px]:hidden">ADD TO YOUR INBOX</span>
+                            </button>
+                        </form>
+                        <div class="md-subscribed hidden tw:h-11 tw:flex tw:justify-center tw:flex-col">
+                            <div class="font-lora font-14 tw:text-[var(--black-tih)] tw:italic">Thanks for signing up for Today in History. Your first newsletter will arrive soon!</div>
+                        </div>
+                    </div>
+                    <span class="font-lora tw:text-[var(--gray-600-tih)] tw:text-[11px]">
+                        By <span class="tw:max-md:hidden">clicking "Add To Your Inbox"</span><span class="tw:max-md:inline tw:hidden">tapping "Sign Up"</span> you are agreeing to our <a class="tw:underline! tw:text-[var(--gray-600-tih)]!" href="https://corporate.britannica.com/termsofuse.html" target="_blank">Terms&nbsp;of&nbsp;Use</a> and <a class="tw:underline! tw:text-[var(--gray-600-tih)]!" href="https://corporate.britannica.com/privacy-policy" target="_blank">Privacy&nbsp;Policy</a>.
+                    </span>
+                </div>
+                <div class="tw:max-md:hidden tw:self-end">
+                    <img src="https://cdn.britannica.com/mendel-resources/3-187/images/shared/tih-phone.png?v=3.187.12&w=800" alt="Today In History Image" width="402" height="296"/>
+                </div>
+            </div>
+        </div>
+    <div class="container otd-content">
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+			
+			
+
+			
+				<script type="application/ld+json">
+				{
+					"@context" : "https://schema.org",
+					"@type" : "BreadcrumbList",
+					"itemListElement" :
+					[
+						
+					
+					{
+					"@type" : "ListItem",
+					"position" : 1,
+					"item" :
+					{
+					"@id" : "https://www.britannica.com/on-this-day",
+					"name": "On This Day"
+					}
+					}
+				
+					]
+				}
+				</script>
+			
+
+			<nav class="breadcrumb mt-30 mb-20">
+				
+					<span class="breadcrumb-item ">
+						
+							<a href="/" class="">Home</a>
+							
+						
+					</span>
+				
+				
+					<span class="breadcrumb-item ">
+						
+							
+								On This Day
+							
+							
+						
+					</span>
+				
+			</nav>
+		
+		
+
+<div class="grid gx-0 gy-20 align-items-center position-relative">
+            <div class="col-100 col-sm d-flex align-items-center tw:gap-2">
+                <h1 class="font-oswald mb-0">TODAY IN HISTORY </h1>
+                <img src="https://cdn.britannica.com/mendel-resources/3-187/images/shared/tih-star.svg?v=3.187.12" alt="Today In History Star" width="24" height="24"/>
+                <span class="font-oswald text-uppercase cursor-pointer tih-transparent" data-popover=".md-history-calendar-popover">June&nbsp;12</span>
+            </div>
+            <div class="col-100 col-sm-auto text-center">
+                <button class="md-history-calendar-button btn btn-blue gtm-otd-b-day-button" data-popover=".md-history-calendar-popover">
+                    What Happened On Your Bday?
+                </button>
+                <div class="md-history-calendar-popover md-popover container d-flex flex-column">
+                    <em class="md-close material-icons d-flex justify-content-end" data-icon="close"></em>
+                    <div id="md-calendar-widget"></div>
+                    <div class="text-center mt-30">
+                        <a class="gtm-calendar-today-link md-lead" href="/on-this-day">
+                            Go to Today's Date
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-top mt-20 py-30">
+
+            <div class="mb-20">
+                    <iframe title="podcast" class="shadow art19player micro" src="https://art19.com/shows/32a01f7a-0923-497a-8c3a-be503ef2d8a4/episodes/b2f5219e-5337-47c4-b440-be5d145dabd9/embed?type=micro&theme=light-custom&primary_color=%2314599d" scrolling="no"></iframe>
+	</div>
+            <div class="grid gx-40">
+                <div class="otd-featured-event col-100 col-sm-50">
+                    <h2 class="mb-30">Featured Event</h2>
+                    <div class="featured-event-card card">
+                        <div class="card-media position-relative">
+                            <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">
+                                1964</div>
+                            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/90/190090-050-8146AFCD/Nelson-Mandela-prison-Robben-Island-Cape-Town.jpg?w=725&h=408&c=crop" alt="Nelson Mandela sits and works with his hands while imprisoned on Robben Island, wearing a jacket and looking down in a contemplative pose." class="w-100"   />
+    
+</div>
+                        <div class="card-body">
+                            <div class="title font-18 font-weight-bold mb-10"><a href="https://www.britannica.com/today-in-history/June-12-Nelson-Mandela-Receives-a-Life-Sentence" class="md-crosslink " data-show-preview="true">Nelson Mandela receives a life sentence</a></div>
+                            <div class="description font-serif">On this day in 1964 <a href="https://www.britannica.com/biography/Nelson-Mandela" class="md-crosslink " data-show-preview="true">Nelson Mandela</a> and seven others were sentenced to life imprisonment for <a href="https://www.britannica.com/topic/treason" class="md-crosslink " data-show-preview="true">treason</a>, <a href="https://www.britannica.com/topic/sabotage-subversive-tactic" class="md-crosslink " data-show-preview="true">sabotage</a>, and <a href="https://www.britannica.com/topic/conspiracy" class="md-crosslink " data-show-preview="true">conspiracy</a> against <a href="https://www.britannica.com/place/South-Africa" class="md-crosslink " data-show-preview="true">South Africa</a>'s <a href="https://www.britannica.com/topic/apartheid" class="md-crosslink " data-show-preview="true">apartheid</a> government. Mandela's long incarceration became a rallying point for the anti-apartheid movement and a powerful symbol of resistance. Released in 1990, he helped lead negotiations that ended apartheid and later became South Africa's first democratically elected president. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/today-in-history/June-12-Nelson-Mandela-Receives-a-Life-Sentence">Read today's edition of Today in History &gt; &gt;</a></div>
+                            <div class="credit mt-10">© Pictorial Press Ltd/Alamy</div></div>
+                    </div>
+                </div>
+                <div class="otd-feature-biography col border-left">
+                    <h2 class="mb-30 mt-30 mt-sm-0">Featured Biography</h2>
+                    <div class="bord-on-this-day-card card">
+                        <div class="card-body">
+                            <a class="title font-18 font-weight-bold" href="/biography/Anne-Frank">
+                                Anne Frank</a>
+                            <div class="font-serif">German diarist</div>
+                            </div>
+                        <div class="card-media">
+                            <a href="/biography/Anne-Frank">
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/06/160006-050-8A1AEBDB/Anne-Frank.jpg?w=300&h=169&c=crop" alt="Anne Frank" class="w-100"   />
+    
+</a>
+                        </div>
+                        <div class="card-footer font-16">
+                            <dl data-label="born"><dt class="label">born</dt><dd>June 12, 1929<br><a href="https://www.britannica.com/place/Frankfurt-am-Main">Frankfurt am Main</a><span>, </span><a href="https://www.britannica.com/place/Germany">Germany</a><br>(Birthday tomorrow)<br></dd></dl><dl data-label="died"><dt class="label">died</dt><dd>February 1945 or March 1945 (aged 15)<br><a href="https://www.britannica.com/place/Bergen-Belsen">Bergen-Belsen</a><a href="https://www.britannica.com/place/Hannover-Germany"> or near Hannover</a><span>, </span><a href="https://www.britannica.com/place/Germany">Germany</a><br></dd></dl><div class="credit mt-10">© AKG London/SuperStock</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-100 col-sm-50 col-sm-offset-25 col-md-offset-0 col-md mt-30 mt-md-0">
+                    <div class="md-history-born ">
+                            <div class="grid">
+                                <div class="col-30">
+                                        <div class="date-label px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold text-center">1941</div>
+                                    </div>
+                                <div class="col">
+                                    <a class="font-weight-bold" href="/biography/Chick-Corea">Chick Corea</a>
+                                    <div class="identifier font-serif">American musician</div>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="md-history-born my-20">
+                            <div class="grid">
+                                <div class="col-30">
+                                        <div class="date-label px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold text-center">1929</div>
+                                    </div>
+                                <div class="col">
+                                    <a class="font-weight-bold" href="/biography/Anne-Frank">Anne Frank</a>
+                                    <div class="identifier font-serif">German diarist</div>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="md-history-born my-20">
+                            <div class="grid">
+                                <div class="col-30">
+                                        <div class="date-label px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold text-center">1924</div>
+                                    </div>
+                                <div class="col">
+                                    <a class="font-weight-bold" href="/biography/George-H-W-Bush">George H.W. Bush</a>
+                                    <div class="identifier font-serif">president of United States</div>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="md-history-born my-20">
+                            <div class="grid">
+                                <div class="col-30">
+                                        <div class="date-label px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold text-center">1915</div>
+                                    </div>
+                                <div class="col">
+                                    <a class="font-weight-bold" href="/money/David-Rockefeller">David Rockefeller</a>
+                                    <div class="identifier font-serif">American banker</div>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="md-history-born my-20hidden-md">
+                            <div class="grid">
+                                <div class="col-30">
+                                        <div class="date-label px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold text-center">1897</div>
+                                    </div>
+                                <div class="col">
+                                    <a class="font-weight-bold" href="/biography/Anthony-Eden">Anthony Eden</a>
+                                    <div class="identifier font-serif">prime minister of United Kingdom</div>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="text-center mt-20">
+                        <a class="see-all-bios font-weight-bold" href="/more-on-this-day/June-12">
+                            See All Biographies On This Day
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="container otd-content">
+        <div class="border-top py-30">
+            <div class="grid">
+                <div class="col-100 col-sm">
+            <h2 class="mb-30">More Events <span class="d-none d-sm-inline">On This Day</span></h2>
+                    <div class="md-history-event card d-flex mb-20 flex-column flex-sm-row">
+                            <div class="card-media col-sm-25 position-relative">
+                                <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">2016</div>
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/27/193227-004-FE913F92/nightclub-friends-police-officers-relatives-patrons-crime-June-12-2016.jpg?w=400&h=200&c=crop" alt="Orlando shooting of 2016" class="fit-cover h-100 w-100"   />
+    
+</div>
+                            <div class="card-body font-serif">
+                                The deadliest <a href="https://www.britannica.com/topic/mass-shooting" class="md-crosslink " data-show-preview="true">mass shooting</a> in U.S. history up to that time occurred when a gunman <a href="https://www.britannica.com/event/Orlando-shooting-of-2016" class="md-crosslink " data-show-preview="true">opened fire</a> at Pulse, an LGBTQ+ nightclub in Orlando, Florida, killing 49 people and wounding more than 50. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/story/infographic-mass-shootings-in-the-united-states-1982-present">Find out about mass shootings in the U.S</a><div class="credit mt-10">Phelan M. Ebenhack/AP Images</div>
+                                </div>
+                        </div>
+                    <div class="md-history-event card d-flex mb-20 flex-column flex-sm-row">
+                            <div class="card-media col-sm-25 position-relative">
+                                <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">2003</div>
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/56/211156-004-D3F060CA/Gregory-Peck-in--To-Kill-a-Mockingbird---directed-by-Robert-Mulligan.jpg?w=400&h=200&c=crop" alt="Gregory Peck" class="fit-cover h-100 w-100"   />
+    
+</div>
+                            <div class="card-body font-serif">
+                                American actor <a href="https://www.britannica.com/biography/Gregory-Peck" class="md-crosslink " data-show-preview="true">Gregory Peck</a>—who often portrayed characters of honesty and integrity, most notably Atticus Finch in <a href="https://www.britannica.com/topic/To-Kill-a-Mockingbird-film-1962" class="md-crosslink " data-show-preview="true"><em>To Kill a Mockingbird</em></a> (1962)—died at age 87. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/quiz/to-kill-a-mockingbird">Test your knowledge of Harper Lee's beloved novel</a><div class="credit mt-10">© 1962 Universal Pictures Company, Inc.</div>
+                                </div>
+                        </div>
+                    <div class="md-history-event card d-flex mb-20 flex-column flex-sm-row">
+                            <div class="card-media col-sm-25 position-relative">
+                                <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">1991</div>
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/06/198706-004-A813DB68/Boris-Yeltsin-1994.jpg?w=400&h=200&c=crop" alt="Boris Yeltsin" class="fit-cover h-100 w-100"   />
+    
+</div>
+                            <div class="card-body font-serif">
+                                <a href="https://www.britannica.com/biography/Boris-Yeltsin" class="md-crosslink " data-show-preview="true">Boris Yeltsin</a> became the first popularly elected leader of <a href="https://www.britannica.com/place/Russia" class="md-crosslink " data-show-preview="true">Russia</a> (then part of the <a href="https://www.britannica.com/place/Soviet-Union" class="md-crosslink " data-show-preview="true">Soviet Union</a>). He remained president of Russia as it transitioned to an independent state until he resigned on the last day of 1999. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/story/why-did-the-soviet-union-collapse">Find out why the Soviet Union collapsed</a><div class="credit mt-10">© mark reinstein/Shutterstock.com</div>
+                                </div>
+                        </div>
+                    <div class="md-history-event card d-flex mb-20 flex-column flex-sm-row">
+                            <div class="card-media col-sm-25 position-relative">
+                                <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">1991</div>
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/02/118502-159-B35905A1/Mount-Pinatubo-ashfalls-eruption-area-people-deaths-June-1991.jpg?w=400&h=200&c=crop" alt="Mount Pinatubo" class="fit-cover h-100 w-100"   />
+    
+</div>
+                            <div class="card-body font-serif">
+                                A series of major explosions began inside <a href="https://www.britannica.com/place/Mount-Pinatubo" class="md-crosslink " data-show-preview="true">Mount Pinatubo</a>, a <a href="https://www.britannica.com/science/volcano" class="md-crosslink " data-show-preview="true">volcano</a> in western <a href="https://www.britannica.com/place/Luzon" class="md-crosslink " data-show-preview="true">Luzon</a>, Philippines—its first <a href="https://www.britannica.com/science/volcanic-eruption" class="md-crosslink " data-show-preview="true">eruption</a> in 600 years. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/quiz/volcanoes-quiz">Take our quiz about volcanoes</a><div class="credit mt-10">© T. J. Casadevall/U.S. Geological Survey</div>
+                                </div>
+                        </div>
+                    <div class="md-history-event card d-flex mb-20 flex-column flex-sm-row">
+                            <div class="card-media col-sm-25 position-relative">
+                                <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">1987</div>
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/93/178593-004-24639621/Ronald-Reagan-speech-Soviet-Union-Berlin-Wall-June-12-1987.jpg?w=400&h=200&c=crop" alt="Ronald Reagan" class="fit-cover h-100 w-100"   />
+    
+</div>
+                            <div class="card-body font-serif">
+                                Speaking about the <a href="https://www.britannica.com/topic/Berlin-Wall" class="md-crosslink " data-show-preview="true">Berlin Wall</a> as he stood at the <a href="https://www.britannica.com/topic/Brandenburg-Gate" class="md-crosslink " data-show-preview="true">Brandenburg Gate</a> in <a href="https://www.britannica.com/place/Berlin" class="md-crosslink " data-show-preview="true">Berlin</a>, U.S. President <a href="https://www.britannica.com/biography/Ronald-Reagan" class="md-crosslink " data-show-preview="true">Ronald Reagan</a> famously entreated the Soviet leader, “Mr. <a href="https://www.britannica.com/biography/Mikhail-Gorbachev" class="md-crosslink " data-show-preview="true">Gorbachev</a>, tear down this wall.” <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/video/23195/Ronald-W-Reagan-Berlin-Wall-June-12-1987">Watch a video of Reagan's speech</a><div class="credit mt-10">National Archives, Washington, D.C</div>
+                                </div>
+                        </div>
+                    <div class="md-history-event card d-flex mb-20 flex-column flex-sm-row">
+                            <div class="card-media col-sm-25 position-relative">
+                                <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">1981</div>
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/07/178807-004-231324C5/Harrison-Ford-Indiana-Jones-Raiders-of-the.jpg?w=400&h=200&c=crop" alt="Indiana Jones and the Raiders of the Lost Ark" class="fit-cover h-100 w-100"   />
+    
+</div>
+                            <div class="card-body font-serif">
+                                The action-adventure film <em><a href="https://www.britannica.com/topic/Raiders-of-the-Lost-Ark" class="md-crosslink " data-show-preview="true">Raiders of the Lost Ark</a></em>—directed by <a href="https://www.britannica.com/biography/Steven-Spielberg" class="md-crosslink " data-show-preview="true">Steven Spielberg</a> and starring <a href="https://www.britannica.com/biography/Harrison-Ford" class="md-crosslink " data-show-preview="true">Harrison Ford</a> as <a href="https://www.britannica.com/topic/Indiana-Jones-fictional-character" class="md-crosslink " data-show-preview="true">Indiana Jones</a>—was released in theaters; a huge success, it spawned numerous sequels.<div class="credit mt-10">© 1981 Lucasfilm with Paramount Pictures Corporation</div>
+                                </div>
+                        </div>
+                    <div class="md-history-event card d-flex mb-20 flex-column flex-sm-row">
+                            <div class="card-media col-sm-25 position-relative">
+                                <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">1967</div>
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/29/193929-004-C251AFDA/Mildred-and-Richard-Loving-1958.jpg?w=400&h=200&c=crop" alt="Mildred and Richard Loving" class="fit-cover h-100 w-100"   />
+    
+</div>
+                            <div class="card-body font-serif">
+                                In <a href="https://www.britannica.com/event/Loving-v-Virginia" class="md-crosslink " data-show-preview="true"><em>Loving</em> v. <em>Virginia</em></a> the <a href="https://www.britannica.com/topic/Supreme-Court-of-the-United-States" class="md-crosslink " data-show-preview="true">U.S. Supreme Court</a> unanimously struck down a state law that banned interracial marriage, ruling that it was unconstitutional under the <a href="https://www.britannica.com/topic/equal-protection" class="md-crosslink " data-show-preview="true">equal protection</a> and <a href="https://www.britannica.com/topic/due-process" class="md-crosslink " data-show-preview="true">due process</a> clauses of the <a href="https://www.britannica.com/topic/Fourteenth-Amendment" class="md-crosslink " data-show-preview="true">Fourteenth Amendment</a>. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/topic/Select-Decisions-of-the-United-States-Supreme-Court-1788872">Read about other notable decisions by the U.S. Supreme Court</a><div class="credit mt-10">AP Images</div>
+                                </div>
+                        </div>
+                    <div class="md-history-event card d-flex mb-20 flex-column flex-sm-row">
+                            <div class="card-media col-sm-25 position-relative">
+                                <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">1963</div>
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/88/388-004-A7AB719A/Medgar-Evers.jpg?w=400&h=200&c=crop" alt="Medgar Evers" class="fit-cover h-100 w-100"   />
+    
+</div>
+                            <div class="card-body font-serif">
+                                Activist <a href="https://www.britannica.com/biography/Medgar-Evers" class="md-crosslink " data-show-preview="true">Medgar Evers</a> was fatally shot outside his home in Jackson, Mississippi; his murder received national attention and helped galvanize the <a href="https://www.britannica.com/event/American-civil-rights-movement" class="md-crosslink " data-show-preview="true">American civil rights movement</a>. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/list/riding-freedom-10-milestones-in-us-civil-rights-history">Learn about 10 milestones in the civil rights movement</a><div class="credit mt-10">© Archive Photos</div>
+                                </div>
+                        </div>
+                    <div class="md-history-event card d-flex mb-20 flex-column flex-sm-row">
+                            <div class="card-media col-sm-25 position-relative">
+                                <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">1939</div>
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/99/12799-004-5E3BEDBC/Ty-Cobb.jpg?w=400&h=200&c=crop" alt="A baseball legend" class="fit-cover h-100 w-100"   />
+    
+</div>
+                            <div class="card-body font-serif">
+                                The <a href="https://www.britannica.com/topic/Baseball-Hall-of-Fame" class="md-crosslink " data-show-preview="true">Baseball Hall of Fame</a> in <a href="https://www.britannica.com/place/Cooperstown" class="md-crosslink " data-show-preview="true">Cooperstown</a>, New York, held its first induction ceremony; <a href="https://www.britannica.com/biography/Babe-Ruth" class="md-crosslink " data-show-preview="true">Babe Ruth</a>, <a href="https://www.britannica.com/biography/Ty-Cobb" class="md-crosslink " data-show-preview="true">Ty Cobb</a>, and <a href="https://www.britannica.com/biography/Honus-Wagner" class="md-crosslink " data-show-preview="true">Honus Wagner</a> were among the inaugural class, which had been elected three years earlier. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/list/10-greatest-baseball-players-of-all-time">Read our list of 10 of the greatest baseball players of all time</a><div class="credit mt-10">Pictorial Parade</div>
+                                </div>
+                        </div>
+                    <div class="md-history-event card d-flex mb-20 flex-column flex-sm-row">
+                            <div class="card-media col-sm-25 position-relative">
+                                <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">1924</div>
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/67/104767-004-69607AFF/George-Bush.jpg?w=400&h=200&c=crop" alt="George H.W. Bush" class="fit-cover h-100 w-100"   />
+    
+</div>
+                            <div class="card-body font-serif">
+                                <a href="https://www.britannica.com/biography/George-H-W-Bush" class="md-crosslink " data-show-preview="true">George H.W. Bush</a>, who served as vice president (1981–89) and president of the United States (1989–93), was born in Massachusetts. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/quiz/president-of-the-united-states-fact-or-fiction">Sort fact from fiction in our quiz about U.S. presidents</a><div class="credit mt-10">White House photo</div>
+                                </div>
+                        </div>
+                    <div class="md-history-event card d-flex mb-20 flex-column flex-sm-row">
+                            <div class="card-media col-sm-25 position-relative">
+                                <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">1898</div>
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/73/3473-004-6E573BFA/Flag-Philippines.jpg?w=400&h=200&c=crop" alt="Philippines" class="fit-cover h-100 w-100"   />
+    
+</div>
+                            <div class="card-body font-serif">
+                                The <a href="https://www.britannica.com/place/Philippines" class="md-crosslink " data-show-preview="true">Philippines</a>, under revolutionary leader <a href="https://www.britannica.com/biography/Emilio-Aguinaldo" class="md-crosslink " data-show-preview="true">Emilio Aguinaldo</a>, declared its <a href="https://www.britannica.com/topic/history-of-Philippines#ref360178" class="md-crosslink " data-show-preview="true">independence from Spain</a>. This day is celebrated as <a href="https://www.britannica.com/topic/Independence-Day-Philippines" class="md-crosslink " data-show-preview="true">Independence Day</a> in the Philippines and by the Filipino diaspora.<div class="credit mt-10">Encyclopædia Britannica, Inc.</div>
+                                </div>
+                        </div>
+                    <div class="md-history-event card d-flex mb-20 flex-column flex-sm-row">
+                            <div class="card-media col-sm-25 position-relative">
+                                <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">1776</div>
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/41/97341-159-D4DC7369/Bill-of-Rights-United-States-Constitution.jpg?w=400&h=200&c=crop" alt="Bill of Rights" class="fit-cover h-100 w-100"   />
+    
+</div>
+                            <div class="card-body font-serif">
+                                The constitutional convention of the colony of Virginia adopted the <a href="https://www.britannica.com/topic/Virginia-Declaration-of-Rights" class="md-crosslink " data-show-preview="true">Virginia Declaration of Rights</a>, a model for the <a href="https://www.britannica.com/topic/Bill-of-Rights-United-States-Constitution" class="md-crosslink " data-show-preview="true">Bill of Rights</a> that was later added to the <a href="https://www.britannica.com/topic/Constitution-of-the-United-States-of-America" class="md-crosslink " data-show-preview="true">U.S. Constitution</a>. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/quiz/us-constitutional-history-quiz">Take our U.S. constitutional history quiz</a><div class="credit mt-10">United States National Archives, Washington, D.C.</div>
+                                </div>
+                        </div>
+                    <div class="md-history-event card d-flex mb-20 flex-column flex-sm-row">
+                            <div class="card-media col-sm-25 position-relative">
+                                <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">1707</div>
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	<img   src="https://cdn.britannica.com/mendel-resources/3-187/images/shared/thistle-blue-half.svg?v=3.187.12" loading="lazy" alt="default image" />
+</div>
+                            <div class="card-body font-serif">
+                                <a href="https://www.britannica.com/biography/Bahadur-Shah-I" class="md-crosslink " data-show-preview="true">Bahādur Shah I</a> won the <a href="https://www.britannica.com/topic/Mughal-dynasty" class="md-crosslink " data-show-preview="true">Mughal</a> throne of India by defeating his brother ʿAẓam Shah at the <a href="https://www.britannica.com/event/Battle-of-Jajau" class="md-crosslink " data-show-preview="true">Battle of Jajau</a>. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/story/6-important-mughal-emperors">Read about six important Mughal emperors</a></div>
+                        </div>
+                    <div class="md-history-event card d-flex mb-20 flex-column flex-sm-row">
+                            <div class="card-media col-sm-25 position-relative">
+                                <div class="date-label position-absolute top-0 left-0 m-10 px-10 py-5 rounded tw:bg-[var(--orange-tih)] text-white font-weight-bold">1701</div>
+                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/09/99609-004-8106F47D/Big-Ben-Houses-of-Parliament-London.jpg?w=400&h=200&c=crop" alt="Big Ben and the Houses of Parliament" class="fit-cover h-100 w-100"   />
+    
+</div>
+                            <div class="card-body font-serif">
+                                The <a href="https://www.britannica.com/event/Act-of-Settlement-Great-Britain-1701" class="md-crosslink " data-show-preview="true">Act of Settlement</a>, the law that continues to regulate the succession to the throne of the United Kingdom, was passed by Parliament. <a class="otd-he-link font-weight-bold d-block mt-20 font-sans-serif" href="https://www.britannica.com/quiz/english-royalty-fact-or-fiction">Sort fact from fiction in our quiz about English royalty</a><div class="credit mt-10">© Goodshoot/Jupiterimages</div>
+                                </div>
+                        </div>
+                    </div>
+                <aside class="tw:w-74 tw:px-0! tw:ml-6">
+                        <div class="qa-tih-right-newsletter tw:w-full tw:flex tw:flex-col tw:items-center">
+  <div class="tw:bg-[var(--tan-light-tih)] tw:pt-4 tw:pb-6 tw:flex tw:flex-col tw:items-center tw:rounded-sm tw:w-full">
+      <div class="font-oswald tw:text-[var(--gray-600-tih)] tw:tracking-[1px] tw:text-center tw:mb-2 tw:font-semibold">SIGN UP FOR</div>
+      <img class="tw:mb-4" src="https://cdn.britannica.com/mendel-resources/3-187/images/shared/tih-logo.png?v=3.187.12" alt="Today In History Logo" width="156"/>
+      <img src="https://cdn.britannica.com/mendel-resources/3-187/images/shared/tih-subscribe-side.png?v=3.187.12&w=800" alt="Today In History" width="100%"/>
+      <div class="tw:flex tw:flex-col tw:items-center tw:px-6">
+          <div class="tw:mt-4 font-lora tw:text-[28px] tw:text-center tw:font-medium">History's Biggest Headlines</div>
+          <div class="font-lora tw:my-4 tw:text-sm tw:text-center">Discover the fascinating events that shaped the world, straight from our editors.</div>
+          <div class="newsletter-form-container tw:w-full">
+              <form action="/newsletter-subscribe" method="post" class="tw:flex tw:flex-col tw:items-center tw:w-full">
+                  <input class="tw:bg-white tw:h-10.5 tw:w-full tw:text-[var(--gray-600-tih)] tw:border tw:border-[var(--gray-100-tih)] tw:text-sm! font-lora tw:px-4 tw:rounded-full" type="email" name="email" placeholder="Enter your email" required/>
+                      <input type="hidden" name="action" value="EB_ON_THIS_DAY"/>
+                      <input type="hidden" name="source" value="tih-lp-sidebar"/>
+                      <input type="hidden" name="campaign" value="britannica"/>
+                      <input type="hidden" name="medium" value="internal"/>
+                      <button type="submit" class="tw:h-10.5 tih-signup-button tw:rounded-full tw:text-white tw:text-uppercase font-oswald tw:tracking-[0.96px] tw:py-2 tw:px-6 tw:bg-[var(--orange-tih)] tw:mt-4! tw:w-full">
+                          <span class="tw:font-semibold">SIGN UP</span>
+                      </button>
+              </form>
+              <div class="md-subscribed hidden tw:text-center">
+                  <div class="tw:flex tw:flex-col tw:items-center tw:w-full tw:h-10.5 tw:justify-center">
+                    <div class="font-lora tw:text-xs tw:italic">Thanks for signing up for Today in History.</div>
+                    <div class="font-lora tw:text-xs tw:italic">Your first newsletter will arrive soon!</div>
+                  </div>
+                  <button class="tw:h-10.5 tih-signup-button tw:rounded-full tw:text-white tw:text-uppercase font-oswald tw:tracking-[0.96px] tw:py-2 tw:px-6 tw:bg-[var(--orange-tih)] tw:mt-4! tw:w-full">
+                    <span class="tw:font-semibold">SIGN UP</span>
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
+  <div class="font-lora tw:text-[var(--gray-600-tih)] tw:text-[8.5px] tw:mt-2 tw:text-center tw:mb-4 tw:max-md:px-6">
+    By clicking "Sign Up" you are agreeing to our <a class="tw:underline! tw:text-[var(--gray-600-tih)]!" href="https://corporate.britannica.com/termsofuse.html" target="_blank">Terms&nbsp;of&nbsp;Use</a> and <a class="tw:underline! tw:text-[var(--gray-600-tih)]!" href="https://corporate.britannica.com/privacy-policy" target="_blank">Privacy&nbsp;Policy</a>.
+  </div>
+</div></aside>
+                </div>
+        </div>
+    </div>
+</div>
+
+
+                
+                
+            
+
+        </div>
+    </div>
+</main>
+
+
+
+
+
+
+
+<div id="md-footer"></div> 
+
+
+
+
+<script type="module">
+            window.dataLayer = window.dataLayer || [];
+
+            async function awaitPaint(fn) {
+                return new Promise((resolve) => {
+                    const fallbackTimeout = setTimeout(() => {
+                        if (typeof fn === 'function') { fn(); }
+                        resolve();
+                    }, 200);
+                    requestAnimationFrame(() => {
+                        setTimeout(() => {
+                            clearTimeout(fallbackTimeout);
+                            if (typeof fn === 'function') { fn(); }
+                            resolve();
+                        }, 50);
+                    });
+                });
+            }
+
+            if (window.dataLayer && typeof window.dataLayer.push === 'function') {
+                const originalDataLayerPush = window.dataLayer.push.bind(window.dataLayer);
+                window.dataLayer.push = function (...args) {
+                    (async () => {
+                        await awaitPaint(() => {
+                            originalDataLayerPush(...args);
+                        });
+                    })();
+                };
+            }
+        </script>
+
+    <noscript><iframe title="google-gtm" src="//www.googletagmanager.com/ns.html?id=GTM-5W6NC8" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+			<noscript><iframe title="google-gtm" src="//www.googletagmanager.com/ns.html?id=GTM-KRJ753NG" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+		
+
+
+
+
+
+
+
+<script src="https://cdn.britannica.com/mendel-resources/3-187/js/libs/jquery-3.5.0.min.js?v=3.187.12"></script>
+
+
+
+
+
+
+
+
+<script type="text/javascript" data-type="Init Mendel Code Splitting">
+              (function() {
+                $.ajax({
+                  dataType: 'script',
+                  cache: true,
+                  url: 'https://cdn.britannica.com/mendel-resources/3-187/dist/today-in-history-page.js?v=3.187.12'
+                });
+              })();
+            </script>
+		
+
+
+
+
+    <script src="https://cdn.britannica.com/mendel-resources/3-187/js/ccpa.js?v=3.187.12" defer="defer"></script>
+
+
+
+
+
+
+
+
+
+
+<div id="bc-fixed-dialogue"></div>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"5cc7d7124de641b181da990fc8c9a0b6","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true
