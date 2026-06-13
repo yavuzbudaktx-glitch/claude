@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-06-13T08:35:49.701Z
+# generated: 2026-06-13T09:47:35.480Z
 # url:       https://www.britannica.com/on-this-day/june-13
 # fetcher:   Wayback Machine
 # kind:      html
