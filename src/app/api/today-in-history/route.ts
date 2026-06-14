@@ -51,6 +51,46 @@ async function readBritannicaFile(): Promise<BritannicaFile | null> {
 const MONTHS = ["january","february","march","april","may","june","july","august","september","october","november","december"];
 let liveCache: { key: string; value: BritannicaFile } | null = null;
 
+// Parse Britannica's "On this day" markdown (Jina Reader output). Ported
+// from scripts/scrape-britannica.mjs::parseMarkdown — same logic.
+function extractFromJinaMarkdown(md: string): { year: number | null; title: string; summary: string; link: string | null } | null {
+  const idx = md.search(/(?:^|\n)#{1,4}\s+Featured\s+Event/i);
+  if (idx < 0) return null;
+  const chunk = md.slice(idx, idx + 6000);
+
+  const yearM = chunk.match(/\b(1[0-9]{3}|20[0-9]{2}|21[0-9]{2})\b/);
+  const year = yearM ? parseInt(yearM[1], 10) : null;
+
+  let title = "";
+  const headingM = chunk.match(/\n#{2,4}\s+([^\n#]+?)\n/);
+  if (headingM) title = headingM[1].trim();
+  if (!title) {
+    const linkM = chunk.match(/\n\s*(?:\*\*)?\[([^\]]+?)\]\(/);
+    if (linkM) title = linkM[1].trim();
+  }
+  title = title.replace(/^\*+|\*+$/g, "").trim();
+  if (title.length < 12 || title.split(/\s+/).length < 2) return null;
+  if (/^(featured event|on this day|today in history|britannica)/i.test(title)) return null;
+
+  const afterTitle = title ? chunk.slice(chunk.indexOf(title) + title.length) : chunk;
+  let summary = "";
+  const paraRe = /\n\n([^\n][\s\S]{40,}?)\n\n/g;
+  let pm: RegExpExecArray | null;
+  while ((pm = paraRe.exec(afterTitle)) !== null) {
+    const cleaned = pm[1]
+      .replace(/\[([^\]]+?)\]\([^)]+?\)/g, "$1")
+      .replace(/!\[[^\]]*?\]\([^)]+?\)/g, "")
+      .replace(/\*\*?([^*]+)\*\*?/g, "$1")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (cleaned.length >= 60 && !/^[#>*\-=]/.test(cleaned)) { summary = cleaned; break; }
+  }
+  if (!summary || summary.length < 50) return null;
+  if (summary.length > 320) summary = summary.slice(0, 317).trimEnd() + "…";
+
+  return { year, title, summary, link: null };
+}
+
 async function scrapeBritannicaLive(mm: string, dd: string): Promise<BritannicaFile | null> {
   const cacheKey = `${mm}-${dd}`;
   if (liveCache && liveCache.key === cacheKey) return liveCache.value;
@@ -58,24 +98,29 @@ async function scrapeBritannicaLive(mm: string, dd: string): Promise<BritannicaF
   const month = MONTHS[Number(mm) - 1];
   const target = `https://www.britannica.com/on-this-day/${month}-${Number(dd)}`;
   const ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15";
+  // Try Jina Reader FIRST — it runs on residential IPs, returns rendered
+  // page content, and (unlike public CORS reflectors) is purpose-built for
+  // exactly this case. The CORS proxies follow as fallback.
   const proxies = [
+    `https://r.jina.ai/${target}`,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,
     `https://corsproxy.io/?url=${encodeURIComponent(target)}`,
     `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(target)}`,
-    `https://thingproxy.freeboard.io/fetch/${target}`,
   ];
   for (const u of proxies) {
     try {
       const r = await fetch(u, {
-        headers: { "User-Agent": ua, Accept: "text/html" },
+        headers: { "User-Agent": ua, Accept: u.startsWith("https://r.jina.ai/") ? "text/plain" : "text/html" },
         signal: AbortSignal.timeout(12000),
         cache: "no-store",
       });
       if (!r.ok) continue;
-      const html = await r.text();
-      if (!html || html.length < 5000) continue;
-      const ev = extractFeaturedEvent(html);
-      if (ev && isPlausibleFeaturedEvent(ev) && ev.title && ev.summary) {
+      const body = await r.text();
+      if (!body || body.length < 800) continue;
+      const ev = u.startsWith("https://r.jina.ai/")
+        ? extractFromJinaMarkdown(body)
+        : extractFeaturedEvent(body);
+      if (ev && ev.title && ev.summary && (ev as { title: string }).title.length >= 8) {
         const value: BritannicaFile = {
           date: cacheKey,
           year: ev.year ?? null,

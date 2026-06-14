@@ -16,7 +16,12 @@ export interface RankChange {
   since: number; // epoch ms when the move was detected
 }
 
-const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+// Arrows expire after THREE days, not seven — a stale change indicator that
+// lingers all week feels broken (the user can no longer tell whether the
+// movement actually just happened or is days old). Three days hits the sweet
+// spot: long enough to catch a weekly UFC reshuffle once, short enough that
+// week-old arrows can't pile up.
+const CHANGE_TTL_MS = 3 * 24 * 60 * 60 * 1000;
 
 interface Stored {
   order: string[];
@@ -47,7 +52,7 @@ export function useRankChanges(
 
     // Carry forward any still-unexpired changes from before.
     for (const [id, c] of Object.entries(stored?.changes ?? {})) {
-      if (now - c.since < WEEK_MS) next[id] = c;
+      if (now - c.since < CHANGE_TTL_MS) next[id] = c;
     }
 
     // Compare against the previous snapshot and record fresh moves.
@@ -86,7 +91,7 @@ export function RankArrow({ change }: { change?: RankChange }) {
       className={`inline-flex items-center gap-px text-[10px] font-semibold tabular-nums ${
         up ? "text-up" : "text-down"
       }`}
-      title={`${up ? "Up" : "Down"} ${Math.abs(change.delta)} this week`}
+      title={`${up ? "Up" : "Down"} ${Math.abs(change.delta)} recently`}
     >
       {up ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
       {Math.abs(change.delta)}

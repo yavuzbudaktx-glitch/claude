@@ -15,6 +15,7 @@ import { SignOutButton } from "@/components/SignOutButton";
 import { NasaApod } from "@/components/fun/NasaApod";
 import { GamesCard } from "@/components/fun/GamesCard";
 import { TypingTest } from "@/components/fun/TypingTest";
+import { WorldCup } from "@/components/fun/WorldCup";
 import { NatureShort } from "@/components/fun/NatureShort";
 import { TRex } from "@/components/fun/TRex";
 import { AmbientVideo } from "@/components/fun/AmbientVideo";
@@ -62,6 +63,11 @@ export default async function FunPage() {
       </div>
 
       {/* Row 2 — typing tape */}
+      {/* World Cup live tracker — sits above Cadence, live-refreshing. */}
+      <Card id="fun.worldcup" title="World Cup">
+        <div className="h-[420px]"><WorldCup /></div>
+      </Card>
+
       <Card id="fun.typing" title="Cadence">
         <TypingTest />
       </Card>

@@ -103,6 +103,48 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "no_image" }, { status: 502 });
   }
 
+  // The Met collection API doesn't return the long description that's
+  // shown on the public artwork page. We scrape it from the page itself
+  // (the curator's "View more" copy that sits next to the image), going
+  // through the same proxy chain so it works from Vercel egress. Best
+  // effort — if it fails we just omit the description.
+  let description: string | null = null;
+  const pageUrl = obj.objectURL || `https://www.metmuseum.org/art/collection/search/${obj.objectID}`;
+  try {
+    const proxies = [
+      `https://r.jina.ai/${pageUrl}`,                                       // returns clean markdown
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(pageUrl)}`,
+      `https://corsproxy.io/?url=${encodeURIComponent(pageUrl)}`,
+    ];
+    for (const u of proxies) {
+      const r = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(8000), cache: "no-store" }).catch(() => null);
+      if (!r || !r.ok) continue;
+      const body = await r.text();
+      if (!body) continue;
+      if (u.startsWith("https://r.jina.ai/")) {
+        // Jina markdown: the curator description is the first long paragraph
+        // after the artist/date tombstone.
+        const para = body.match(/\n\n([^\n][\s\S]{160,1500}?)\n\n/);
+        if (para) {
+          description = para[1].replace(/\[([^\]]+?)\]\([^)]+?\)/g, "$1").replace(/\s+/g, " ").trim();
+          if (description.length > 700) description = description.slice(0, 697).trimEnd() + "…";
+          break;
+        }
+      } else {
+        // HTML — look for the artwork__intro__desc / artwork__intro__desc-text
+        // divs the Met uses on the artwork page.
+        const m = body.match(/<div[^>]+class="[^"]*artwork__intro__desc(?:-text)?[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
+        if (m) {
+          description = m[1].replace(/<[^>]+>/g, " ").replace(/&amp;/g, "&").replace(/&#x?\d+;/g, " ").replace(/\s+/g, " ").trim();
+          if (description.length >= 60) {
+            if (description.length > 700) description = description.slice(0, 697).trimEnd() + "…";
+            break;
+          } else { description = null; }
+        }
+      }
+    }
+  } catch { description = null; }
+
   return NextResponse.json(
     {
       id: obj.objectID,
@@ -111,10 +153,10 @@ export async function GET(req: Request) {
       date: obj.objectDate || "",
       medium: obj.medium || "",
       origin: obj.culture || "",
-      description: null,
+      description,
       alt: obj.title ?? "",
       imageUrl: obj.primaryImage || obj.primaryImageSmall || "",
-      pageUrl: obj.objectURL || `https://www.metmuseum.org/art/collection/search/${obj.objectID}`,
+      pageUrl,
       source: "The Met",
       highlight: !!obj.isHighlight,
     },

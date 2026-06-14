@@ -73,19 +73,23 @@ jobs:
             exit 0
           fi
           git commit -m "data: daily Britannica scrape (with debug dump)"
-          # The default branch is also the active dev branch, so origin
-          # very likely moved since checkout. Rebase our single data commit
-          # on top and retry the push instead of failing on non-fast-forward.
-          branch="${GITHUB_REF_NAME}"
-          for i in 1 2 3 4 5; do
-            if git push origin "HEAD:${branch}"; then
-              echo "pushed on attempt $i"
-              exit 0
-            fi
-            echo "push rejected — rebasing onto origin/${branch} (attempt $i)"
-            git fetch origin "$branch"
-            git rebase "origin/${branch}" || { git rebase --abort; exit 1; }
-            sleep $((i * 3))
+          # Push to the DEPLOYMENT branch explicitly. Scheduled GitHub Actions
+          # crons run from the default branch by default, so without this the
+          # data file would land on `main` and never reach the live
+          # `claude/morning-dashboard-ak4rc` deployment (which was exactly why
+          # the site kept reading a stale featured-event.json even though the
+          # workflow ran green every night).
+          branches="claude/morning-dashboard-ak4rc ${GITHUB_REF_NAME}"
+          for branch in $branches; do
+            echo "pushing to $branch"
+            for i in 1 2 3 4 5; do
+              if git push origin "HEAD:${branch}"; then
+                echo "  pushed on attempt $i"
+                break
+              fi
+              echo "  push rejected — rebasing onto origin/${branch} (attempt $i)"
+              git fetch origin "$branch" || true
+              git rebase "origin/${branch}" 2>/dev/null || { git rebase --abort 2>/dev/null || true; }
+              sleep $((i * 3))
+            done
           done
-          echo "push still failing after retries"
-          exit 1

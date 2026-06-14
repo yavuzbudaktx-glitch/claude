@@ -183,9 +183,16 @@ async function walk(
   return out;
 }
 
-function cached(key: string): LibVideo[] | null {
+function cached(key: string, min = 1): LibVideo[] | null {
   const e = cache.get(key);
-  if (e && Date.now() - e.at < CACHE_TTL && e.items.length) return e.items;
+  // CRITICAL: only return a cache hit when it meets the caller's minimum.
+  // The previous version returned ANY non-empty entry, so a transient
+  // throttled fetch that yielded e.g. 12 videos for Country Life Vlog
+  // (min 500) would lock the box to 12 videos for the full TTL, defeating
+  // every retry in the route. With this check, a sub-min cache hit is
+  // ignored exactly like a cache miss and the route's retry loop actually
+  // runs the upstream fetch again.
+  if (e && Date.now() - e.at < CACHE_TTL && e.items.length >= min) return e.items;
   return null;
 }
 
@@ -215,7 +222,7 @@ function mergeInto(out: LibVideo[], seen: Set<string>, more: LibVideo[]) {
 
 export async function fetchPlaylistVideos(playlistId: string, minCache = MIN_CACHEABLE): Promise<LibVideo[]> {
   const key = `pl:${playlistId}`;
-  const hit = cached(key);
+  const hit = cached(key, minCache);
   if (hit) return hit;
   // Innertube first (clean JSON, no consent gate), HTML walk as backstop.
   const out: LibVideo[] = [];
@@ -281,7 +288,7 @@ async function fetchPlaylistInnertube(playlistId: string): Promise<LibVideo[]> {
 
 export async function fetchChannelVideos(handle: string, minCache = CHANNEL_MIN_CACHE): Promise<LibVideo[]> {
   const key = `ch:${handle}`;
-  const hit = cached(key);
+  const hit = cached(key, minCache);
   if (hit) return hit;
 
   const id = await resolveChannelId(handle);

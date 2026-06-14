@@ -259,7 +259,13 @@ interface Payload { posts: Post[]; subs: string[]; sort: string; period: string 
 // memory and serve it instantly; the slow path only runs when the snapshot is
 // stale or the user explicitly forces a refresh (the client adds ?n=… then).
 let snapshot: { at: number; data: Payload } | null = null;
-const SNAP_TTL = 1000 * 60 * 20; // 20 minutes
+const SNAP_TTL = 1000 * 60 * 20;             // 20 min — fast path
+// HARD ceiling: never serve a snapshot older than this, even if every
+// upstream is failing. Without this, the "keep last good snapshot if
+// upstream returns 0 posts" branch (below) would serve days-old data
+// indefinitely whenever Reddit's API was flaky — exactly the "Reddit
+// hasn't updated in days" symptom.
+const SNAP_HARD_MAX = 1000 * 60 * 60 * 6;    // 6h hard expiry
 const CDN_CACHE = "public, s-maxage=1200, stale-while-revalidate=3600";
 
 async function buildPayload(): Promise<Payload> {
@@ -305,13 +311,15 @@ export async function GET(req: Request) {
     payload = { posts: [], subs: SUBS, sort: SORT, period: PERIOD };
   }
 
-  // Only adopt a fresh, non-empty result; otherwise keep the last good one so
-  // a transient upstream blip never wipes the feed.
+  // Only adopt a fresh, non-empty result; otherwise keep the last good one
+  // ONLY if it's still within the hard expiry window — so a multi-day Reddit
+  // outage can never serve week-old hot posts as if they were current.
   if (payload.posts.length > 0) {
     snapshot = { at: Date.now(), data: payload };
-  } else if (snapshot) {
+  } else if (snapshot && Date.now() - snapshot.at < SNAP_HARD_MAX) {
     return NextResponse.json(snapshot.data, { headers: { "Cache-Control": CDN_CACHE } });
   } else {
+    snapshot = null; // drop the stale one entirely
     return NextResponse.json({ posts: [], error: "no_posts" }, { status: 502 });
   }
 
