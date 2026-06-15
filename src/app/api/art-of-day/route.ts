@@ -171,16 +171,41 @@ export async function GET(req: Request) {
     } catch { /* next */ }
   }
 
-  // Wikipedia fallback — many famous Met works have Wikipedia pages.
-  if (!description && obj.title) {
-    const queryTitle = obj.artistDisplayName
-      ? `${obj.title} ${obj.artistDisplayName}`
-      : obj.title;
-    const wiki = await getJson<{ extract?: string }>(
-      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(queryTitle.replace(/ /g, "_"))}`,
+  // Wikipedia fallback (search-based, reachable from Vercel without proxies).
+  // The plain summary endpoint needs an EXACT page title, which a Met
+  // tombstone title almost never matches — so we SEARCH first and take the
+  // best hit's extract. We try the painting itself, then the artist (so even
+  // an obscure canvas by a known painter gets a real, substantive blurb).
+  async function wikiSearchExtract(query: string, minLen: number): Promise<string | null> {
+    const s = await getJson<{ query?: { search?: Array<{ title?: string }> } }>(
+      `https://en.wikipedia.org/w/api.php?action=query&list=search&srlimit=3&format=json&origin=*&srsearch=${encodeURIComponent(query)}`,
     );
-    if (wiki?.extract && wiki.extract.length >= 60) {
-      description = wiki.extract.length > 700 ? wiki.extract.slice(0, 697).trimEnd() + "…" : wiki.extract;
+    const hits = s?.query?.search ?? [];
+    for (const hit of hits) {
+      if (!hit.title) continue;
+      const sum = await getJson<{ extract?: string; type?: string }>(
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`,
+      );
+      if (sum?.type === "disambiguation") continue;
+      if (sum?.extract && sum.extract.length >= minLen) {
+        return sum.extract.length > 700 ? sum.extract.slice(0, 697).trimEnd() + "…" : sum.extract;
+      }
+    }
+    return null;
+  }
+
+  if (!description && obj.title) {
+    // 1) the painting itself
+    const byPainting = await wikiSearchExtract(
+      `${obj.title}${obj.artistDisplayName ? ` ${obj.artistDisplayName}` : ""} painting`,
+      80,
+    );
+    if (byPainting) {
+      description = byPainting;
+    } else if (obj.artistDisplayName) {
+      // 2) the artist — prefix so it's clear this is context, not a caption
+      const byArtist = await wikiSearchExtract(obj.artistDisplayName, 80);
+      if (byArtist) description = `About the artist — ${byArtist}`;
     }
   }
 

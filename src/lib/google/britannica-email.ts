@@ -44,20 +44,41 @@ function walkPartsForHtml(part: RawPart | undefined, out: string[]) {
   if (part.parts) for (const p of part.parts) walkPartsForHtml(p, out);
 }
 
-function stripHtml(html: string): string {
-  return html
-    .replace(/<style[\s\S]*?<\/style>/gi, "")
-    .replace(/<script[\s\S]*?<\/script>/gi, "")
-    .replace(/<[^>]+>/g, " ")
+function decodeEntities(s: string): string {
+  return s
     .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&quot;|&#34;/g, '"')
+    .replace(/&#0?39;|&apos;|&rsquo;|&lsquo;/g, "'")
+    .replace(/&ldquo;|&rdquo;/g, '"')
+    .replace(/&mdash;/g, "—")
+    .replace(/&ndash;/g, "–")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
-    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
-    .replace(/\s+/g, " ")
-    .trim();
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCharCode(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)));
+}
+
+// Turn an HTML body into an array of text BLOCKS, one per visual paragraph.
+// The key is to convert block-level tag boundaries into newlines BEFORE we
+// strip tags — otherwise everything collapses into a single line and the
+// paragraph structure (which is how we find the lede) is lost. This was the
+// bug that made the email parser silently return nothing.
+function htmlToBlocks(html: string): string[] {
+  const withBreaks = html
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<\/(p|div|td|tr|h[1-6]|li|blockquote|table)>/gi, "\n\n")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]+>/g, " ");
+  return decodeEntities(withBreaks)
+    .split(/\n{1,}/)
+    .map((line) => line.replace(/[ \t]+/g, " ").trim())
+    .filter(Boolean);
+}
+
+function stripHtml(html: string): string {
+  return htmlToBlocks(html).join(" ").replace(/\s+/g, " ").trim();
 }
 
 // Britannica's email subject lines look like:
@@ -78,23 +99,46 @@ function parseSubject(subject: string): { title: string; year: number | null } {
   return { title, year };
 }
 
-function extractParagraph(text: string, after: string | null): string {
-  // Drop everything up to and including the title from the plain body.
-  let body = text;
-  if (after) {
-    const idx = body.toLowerCase().indexOf(after.toLowerCase());
-    if (idx > 0) body = body.slice(idx + after.length);
+const NOISE = /^(view (this|in) (your )?browser|unsubscribe|manage (your )?(email )?(preferences|subscriptions?)|privacy policy|terms of (use|service)|on this day|today.?s featured event|britannica( logo)?|encyclop[æae]+dia britannica|subscribe|join britannica|sign up|advertisement|©|copyright|all rights reserved|follow us|share this|read more|learn more|see (all|more)|\d{1,4} [a-z]+ (st|ave|rd|blvd|street|avenue))/i;
+
+function looksLikeProse(s: string): boolean {
+  if (s.length < 60 || s.length > 1400) return false;
+  if (NOISE.test(s)) return false;
+  if (!/[a-z]/.test(s)) return false;           // not an ALL-CAPS banner
+  if (!/[.?!]/.test(s)) return false;           // a real sentence ends somewhere
+  const words = s.split(/\s+/);
+  if (words.length < 12) return false;          // ledes are at least a dozen words
+  // Reject link/footer lines that are mostly URLs or punctuation.
+  if (/https?:\/\//.test(s) && words.length < 25) return false;
+  return true;
+}
+
+// Find the lede paragraph from the email's text blocks. Britannica's "Today
+// in History" puts the event description as the first substantial prose block
+// after the masthead. We pick the first block that reads like prose AND comes
+// at/after the title block when we can find it.
+function extractParagraph(blocks: string[], title: string | null): string {
+  let startIdx = 0;
+  if (title) {
+    const want = title.toLowerCase().slice(0, 24);
+    const ti = blocks.findIndex((b) => b.toLowerCase().includes(want));
+    if (ti >= 0) startIdx = ti; // include the title block in case the lede shares it
   }
-  // Britannica's lede is usually the first 1-3 sentences. We look for a chunk
-  // that's substantive (>=80 chars) and not a navigation banner.
-  const noise = /^(view in browser|unsubscribe|on this day|today.s featured event|britannica logo|encyclop[æae]+dia britannica|subscribe|join britannica)/i;
-  const candidates = body.split(/(?:\s{2,}|\s\|\s)/).map((s) => s.trim()).filter(Boolean);
-  for (const c of candidates) {
-    if (c.length < 80 || c.length > 1200) continue;
-    if (noise.test(c)) continue;
-    if (!/[a-z]/.test(c) || !/[.?!]/.test(c)) continue;
-    // Cap at a friendly card-length.
-    return c.length > 700 ? c.slice(0, 697).trimEnd() + "…" : c;
+  for (let i = startIdx; i < blocks.length; i++) {
+    const b = blocks[i];
+    // If the title block also carries the lede ("Title. On this day in 1903…"),
+    // peel the title prefix off so we don't return it twice.
+    let candidate = b;
+    if (title && candidate.toLowerCase().startsWith(title.toLowerCase())) {
+      candidate = candidate.slice(title.length).replace(/^[\s.:—–-]+/, "");
+    }
+    if (looksLikeProse(candidate)) {
+      return candidate.length > 700 ? candidate.slice(0, 697).trimEnd() + "…" : candidate;
+    }
+  }
+  // Nothing matched after the title — fall back to the first prose block anywhere.
+  for (const b of blocks) {
+    if (looksLikeProse(b)) return b.length > 700 ? b.slice(0, 697).trimEnd() + "…" : b;
   }
   return "";
 }
@@ -132,8 +176,11 @@ export async function fetchTodaysBritannicaEmail(accessToken: string): Promise<B
     // Gmail occasionally puts the body on payload.body directly when there
     // are no parts (rare for marketing email but worth covering).
     if (chunks.length === 0 && m.payload?.body?.data) chunks.push(base64UrlDecode(m.payload.body.data));
-    const text = chunks.map(stripHtml).find((s) => s.length > 200) ?? "";
-    if (!text) continue;
+    // Prefer the HTML part (richest structure); turn it into paragraph blocks.
+    const htmlBody = chunks.find((c) => /<\/?[a-z][\s\S]*>/i.test(c)) ?? chunks[0] ?? "";
+    const blocks = htmlToBlocks(htmlBody);
+    const flat = blocks.join(" ");
+    if (blocks.length === 0) continue;
 
     const { title: subTitle, year: subYear } = parseSubject(subject);
     let title = subTitle;
@@ -141,17 +188,22 @@ export async function fetchTodaysBritannicaEmail(accessToken: string): Promise<B
 
     // If the subject was generic, try to find a more specific title in the body.
     if (!title || title.length < 8 || /^(today|on this day)$/i.test(title)) {
-      const bodyTitle = text.match(/(?:Featured event|Today's Featured Event|On this day)[:\s]+([^.!?]{8,140}?)(?:[.!?]|\s—|\s–)/i);
+      const bodyTitle = flat.match(/(?:Featured event|Today's Featured Event|On this day)[:\s]+([^.!?]{8,140}?)(?:[.!?]|\s—|\s–)/i);
       if (bodyTitle) title = bodyTitle[1].trim();
+      // Otherwise the title is often the first short, capitalized heading block.
+      if (!title || title.length < 8) {
+        const heading = blocks.find((b) => b.length >= 8 && b.length <= 120 && !NOISE.test(b) && /[A-Z]/.test(b[0]) && b.split(/\s+/).length <= 16 && !/[.?!]$/.test(b));
+        if (heading) title = heading.trim();
+      }
     }
 
     // If we still have no year, look for one near the start of the body.
     if (!year) {
-      const yM = text.slice(0, 1500).match(/\b(1[0-9]{3}|20[0-9]{2})\b/);
+      const yM = flat.slice(0, 2000).match(/\b(1[0-9]{3}|20[0-9]{2})\b/);
       if (yM) year = Number(yM[1]);
     }
 
-    const summary = extractParagraph(text, title);
+    const summary = extractParagraph(blocks, title);
     if (!title || !summary) continue;
 
     const epoch = m.internalDate ? Number(m.internalDate) : Date.now();

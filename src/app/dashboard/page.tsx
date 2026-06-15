@@ -12,7 +12,6 @@ import { SuperLigCard } from "@/components/widgets/SuperLigCard";
 import { TodayInHistoryCard } from "@/components/widgets/TodayInHistoryCard";
 import { UfcCard } from "@/components/widgets/UfcCard";
 import { BodyCard } from "@/components/widgets/BodyCard";
-import { YearStrip } from "@/components/widgets/YearStrip";
 import { SignOutButton } from "@/components/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { FullscreenToggle } from "@/components/FullscreenToggle";
@@ -66,8 +65,6 @@ export default async function Page() {
           <AnalogClock />
         </div>
       </section>
-
-      <YearStrip />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
         <div id="sec-calendar" className="scroll-mt-4 [&>*]:h-full"><CalendarCard /></div>

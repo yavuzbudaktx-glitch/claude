@@ -20,7 +20,7 @@ type Source =
 // cache it (so the next request retries against a healthier upstream). These
 // match the real library sizes the user expects to see.
 const SOURCES: Record<string, Source> = {
-  logan:   { kind: "channel",  handle: "logangrafcpa",       label: "Logan Graf",       url: "https://www.youtube.com/@logangrafcpa/videos", min: 100 },
+  logan:   { kind: "channel",  handle: "logangrafcpa",       label: "Logan Graf",       url: "https://www.youtube.com/@logangrafcpa/videos", min: 200 },
   bbc:     { kind: "shorts",   handle: "bbcearth",           label: "BBC Earth",        url: "https://www.youtube.com/@bbcearth/shorts", min: 10 },
   vlog:    { kind: "channel",  handle: "country_life_vlog",  label: "Country Life Vlog", url: "https://www.youtube.com/@country_life_vlog/videos", min: 500 },
   bobross: { kind: "playlist", list: "PLaLOVNqqD-2HgiA-GZyzcfZN9n-YelhB5", label: "Bob Ross", url: "https://www.youtube.com/playlist?list=PLaLOVNqqD-2HgiA-GZyzcfZN9n-YelhB5", min: 300 },

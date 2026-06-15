@@ -21,8 +21,19 @@ function seedIndex(dateKey: string, n: number): number {
 export async function GET(req: Request) {
   const dateKey = new URL(req.url).searchParams.get("d") ?? new Date().toISOString().slice(0, 10);
 
+  // Walk for at least 200 — Logan's library is well past that, and a smaller
+  // result means we were throttled. Retry up to twice against a fresh upstream
+  // before giving up (a sub-min walk isn't cached, so each retry is a real
+  // fetch). fetchChannelVideos itself adds Invidious + last-good fallbacks.
+  const MIN = 200;
   let lib: Array<{ id: string; title: string }> = [];
-  try { lib = await fetchChannelVideos(HANDLE); } catch { lib = []; }
+  try {
+    lib = await fetchChannelVideos(HANDLE, MIN);
+    for (let attempt = 0; attempt < 2 && lib.length < MIN; attempt++) {
+      const retry = await fetchChannelVideos(HANDLE, MIN);
+      if (retry.length > lib.length) lib = retry;
+    }
+  } catch { lib = []; }
 
   const videos = lib.map((v) => ({
     id: v.id,
