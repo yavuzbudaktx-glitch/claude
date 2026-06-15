@@ -18,10 +18,21 @@ import { localDateKey, msUntilLocalMidnight } from "@/lib/local-date";
 
 interface CacheEntry<T> { date: string; data: T }
 
+export interface DailyCachedOptions<T> {
+  // Return false to mark a response as "incomplete" — it's still RETURNED to
+  // the caller (so the UI renders) but NOT stored as today's cache, so the
+  // next page load (or focus) reruns the fetch and tries to get a complete
+  // record. Without this, a one-time API hiccup that returned an art piece
+  // with no description was getting pinned for the whole day.
+  validate?: (data: T) => boolean;
+}
+
 export function useDailyCached<T>(
   storageKey: string,
   fetchUrl: string | null,
+  options: DailyCachedOptions<T> = {},
 ): { data: T | undefined; isLoading: boolean; error: boolean } {
+  const { validate } = options;
   const [today, setToday] = useState(() => localDateKey());
 
   // Re-key the cache at local midnight so the boxes self-refresh without
@@ -37,6 +48,7 @@ export function useDailyCached<T>(
 
   const [entry, setEntry] = usePref<CacheEntry<T> | null>(`hub.daily.${storageKey}`, null);
   const fresh = !!entry && entry.date === today;
+  const [transient, setTransient] = useState<T | undefined>(undefined);
   const [loading, setLoading] = useState(!fresh && !!fetchUrl);
   const [error, setError] = useState(false);
 
@@ -51,7 +63,15 @@ export function useDailyCached<T>(
         if (cancelled) return;
         // Don't cache obvious failures so we'll retry tomorrow's midnight
         // (or next page load if today's fetch was a transient blip).
-        if (d && !d.error) setEntry({ date: today, data: d as T });
+        const hasError = !d || (d as { error?: string }).error;
+        const passes = !hasError && (!validate || validate(d as T));
+        if (!hasError && passes) {
+          setEntry({ date: today, data: d as T });
+          setTransient(undefined);
+        } else if (!hasError) {
+          // Show what we got, but don't persist it — next reload retries.
+          setTransient(d as T);
+        }
         setLoading(false);
       })
       .catch(() => { if (!cancelled) { setError(true); setLoading(false); } });
@@ -59,5 +79,5 @@ export function useDailyCached<T>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [today, fetchUrl, fresh]);
 
-  return { data: fresh ? entry!.data : undefined, isLoading: loading, error };
+  return { data: fresh ? entry!.data : transient, isLoading: loading, error };
 }

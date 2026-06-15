@@ -38,6 +38,15 @@ const cache = new Map<string, CacheEntry>();
 // box to whatever truncated result the route happened to get for up to
 // six hours. Two hours is still long enough to keep things fast.
 const CACHE_TTL = 1000 * 60 * 60 * 2; // 2h
+// "Last-good" cache: per-source biggest result we've ever seen that met the
+// caller's minimum. This persists for a long time and is used ONLY as a
+// fallback when the fresh fetch can't meet the minimum (e.g. YouTube
+// throttled us through the consent gate). This is the fix for "the long
+// view shrinks back to a tiny library after midnight" — when a fresh walk
+// returns 80 instead of the user's expected 500, we serve the last 500-strong
+// result instead of the truncated one.
+const lastGood = new Map<string, CacheEntry>();
+const LAST_GOOD_TTL = 1000 * 60 * 60 * 24 * 14; // 14 days
 const idCache = new Map<string, string>();
 
 async function getText(url: string): Promise<string | null> {
@@ -196,6 +205,25 @@ function cached(key: string, min = 1): LibVideo[] | null {
   return null;
 }
 
+// Return the biggest "last-good" result we've ever cached for this key, ONLY
+// when it meets the minimum and isn't more than 14 days old. Used as a
+// fallback when the live walk + retries collectively fail to meet `min`.
+function lastGoodFor(key: string, min: number): LibVideo[] | null {
+  const e = lastGood.get(key);
+  if (!e) return null;
+  if (Date.now() - e.at > LAST_GOOD_TTL) return null;
+  if (e.items.length < min) return null;
+  return e.items;
+}
+
+function rememberIfGood(key: string, items: LibVideo[], min: number) {
+  if (items.length < min) return;
+  const cur = lastGood.get(key);
+  // Keep the better of (existing, new) — never trade down to a smaller result.
+  if (cur && cur.items.length > items.length) return;
+  lastGood.set(key, { at: Date.now(), items });
+}
+
 // The Atom upload feed — always exactly the latest 15, but rock-solid (it's a
 // plain XML endpoint that isn't behind the consent gate). We merge it in so a
 // channel can never collapse to a near-empty list even if the HTML walk fails.
@@ -233,7 +261,15 @@ export async function fetchPlaylistVideos(playlistId: string, minCache = MIN_CAC
   ]);
   mergeInto(out, seen, inner);
   if (html) mergeInto(out, seen, await walk(html, extractVideos));
-  if (out.length >= minCache) cache.set(key, { at: Date.now(), items: out });
+  if (out.length >= minCache) {
+    cache.set(key, { at: Date.now(), items: out });
+    rememberIfGood(key, out, minCache);
+    return out;
+  }
+  // Live walk fell short of the minimum — fall back to the last good walk
+  // we ever saw for this key, if any is still within its TTL.
+  const fallback = lastGoodFor(key, minCache);
+  if (fallback) return fallback;
   return out;
 }
 
@@ -317,8 +353,83 @@ export async function fetchChannelVideos(handle: string, minCache = CHANNEL_MIN_
   mergeInto(out, seen, atom);
 
   // Don't cache obviously-truncated results — next request retries.
-  if (out.length >= minCache) cache.set(key, { at: Date.now(), items: out });
+  if (out.length >= minCache) {
+    cache.set(key, { at: Date.now(), items: out });
+    rememberIfGood(key, out, minCache);
+    return out;
+  }
+  // Live walk fell short — try Invidious (independent public mirror).
+  // If even that comes up short, fall back to the last good walk we ever
+  // saw. This is the fix for "minimums revert after midnight": when the
+  // cache TTL elapses but a fresh walk gets throttled, we serve the
+  // last 500-strong list instead of the truncated one.
+  const invid = id ? await fetchChannelInvidious(id) : [];
+  if (invid.length > out.length) {
+    out.length = 0;
+    seen.clear();
+    mergeInto(out, seen, invid);
+  }
+  if (out.length >= minCache) {
+    cache.set(key, { at: Date.now(), items: out });
+    rememberIfGood(key, out, minCache);
+    return out;
+  }
+  const fallback = lastGoodFor(key, minCache);
+  if (fallback) return fallback;
   return out;
+}
+
+// Public Invidious instances — independent mirrors of YouTube's API that DO
+// expose a channel's full library (with pagination) and aren't behind the
+// consent gate. We try a handful of well-known instances in order; failures
+// are silent so the caller's normal fallbacks still kick in.
+const INVIDIOUS_INSTANCES = [
+  "https://invidious.privacyredirect.com",
+  "https://yewtu.be",
+  "https://inv.nadeko.net",
+  "https://invidious.nerdvpn.de",
+];
+
+interface InvidVideo { videoId?: string; title?: string }
+interface InvidChannelVideos { videos?: InvidVideo[]; continuation?: string }
+
+async function fetchChannelInvidious(channelId: string): Promise<LibVideo[]> {
+  for (const base of INVIDIOUS_INSTANCES) {
+    try {
+      const out: LibVideo[] = [];
+      const seen = new Set<string>();
+      let continuation: string | undefined;
+      let pages = 0;
+      const started = Date.now();
+      while (pages < MAX_PAGES && Date.now() - started < TIME_BUDGET_MS) {
+        const url = continuation
+          ? `${base}/api/v1/channels/${channelId}/videos?continuation=${encodeURIComponent(continuation)}`
+          : `${base}/api/v1/channels/${channelId}/videos?sort_by=newest`;
+        const res = await fetch(url, {
+          headers: { "User-Agent": HEADERS["User-Agent"], Accept: "application/json" },
+          signal: AbortSignal.timeout(8000),
+          cache: "no-store",
+        });
+        if (!res.ok) break;
+        const j = (await res.json()) as InvidChannelVideos;
+        const items = j?.videos ?? [];
+        if (items.length === 0) break;
+        const before = out.length;
+        for (const v of items) {
+          if (v.videoId && !seen.has(v.videoId)) {
+            seen.add(v.videoId);
+            out.push({ id: v.videoId, title: v.title ?? "" });
+          }
+        }
+        if (out.length === before) break;
+        continuation = j.continuation;
+        pages++;
+        if (!continuation) break;
+      }
+      if (out.length > 0) return out;
+    } catch { /* try next instance */ }
+  }
+  return [];
 }
 
 export async function fetchChannelShorts(handle: string): Promise<LibVideo[]> {
@@ -327,6 +438,12 @@ export async function fetchChannelShorts(handle: string): Promise<LibVideo[]> {
   if (hit) return hit;
   const html = await getText(`https://www.youtube.com/@${handle}/shorts?hl=en`);
   const items = await walk(html, extractShorts);
-  if (items.length >= MIN_CACHEABLE) cache.set(key, { at: Date.now(), items });
+  if (items.length >= MIN_CACHEABLE) {
+    cache.set(key, { at: Date.now(), items });
+    rememberIfGood(key, items, MIN_CACHEABLE);
+    return items;
+  }
+  const fallback = lastGoodFor(key, MIN_CACHEABLE);
+  if (fallback) return fallback;
   return items;
 }

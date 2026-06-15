@@ -13,8 +13,7 @@ export type ThemeId =
   | "terminal" | "accounting" | "mono"
   | "newspaper" | "blueprint" | "comic"
   | "mosaic" | "stainedglass" | "deco" | "cyberpunk"
-  // Five new "extraordinary" concepts:
-  | "renaissance" | "aquarium" | "marble" | "tokyoneon" | "subway";
+  | "renaissance" | "marble" | "subway";
 
 export type ThemeKind = "concept" | "theme";
 
@@ -35,9 +34,7 @@ export const THEMES: Array<{
   { id: "cyberpunk",    label: "Cyberpunk",    kind: "concept", description: "Neon at midnight — hot pink + electric cyan over deep indigo, scanlines, holographic shimmer." },
   { id: "mono",         label: "Mono",         kind: "concept", description: "Pure black & white, hard edges, heavy rules — brutalist clarity." },
   { id: "renaissance",  label: "Renaissance",  kind: "concept", description: "Oil paintings in gold-leaf frames. Burnt umber, cream, gilt; Trajan-ish serif type; brushed-canvas card grain." },
-  { id: "aquarium",     label: "Aquarium",     kind: "concept", description: "Submerged in a saltwater tank — refracted caustic light, drifting kelp silhouettes, glass walls with bubble streams." },
   { id: "marble",       label: "Marble",       kind: "concept", description: "Carrara on white — veined slab surfaces, gold-leaf accents, columnar dividers, classical serif." },
-  { id: "tokyoneon",    label: "Tokyo Neon",   kind: "concept", description: "Shinjuku at midnight — dense vertical katakana edges, hot red + glacial cyan signage glow over deep indigo." },
   { id: "subway",       label: "Subway",       kind: "concept", description: "NYC vintage station — white subway tile, mosaic borders, brass numerals, hand-painted enamel signs." },
   // ---- THEMES: atmospheric palettes — same site, different mood/colour.
   { id: "aurora",       label: "Aurora Glass", kind: "theme",   description: "Default — frosted cards, cyan accent, drifting aurora background." },
@@ -52,7 +49,7 @@ const KEY = "brief.theme.v1";
 const VALID: ThemeId[] = [
   "aurora", "galaxy", "forest", "water", "sunset",
   "mosaic", "stainedglass", "deco", "cyberpunk",
-  "renaissance", "aquarium", "marble", "tokyoneon", "subway",
+  "renaissance", "marble", "subway",
   "terminal", "accounting", "mono",
   "newspaper", "blueprint", "comic",
 ];
@@ -89,10 +86,11 @@ export const THEME_BOOT_SCRIPT = `
   (function() {
     try {
       var v = localStorage.getItem(${JSON.stringify(KEY)});
-      var ok = ['galaxy','forest','water','sunset','mosaic','stainedglass','deco','cyberpunk','renaissance','aquarium','marble','tokyoneon','subway','terminal','accounting','mono','newspaper','blueprint','comic'];
+      var ok = ['galaxy','forest','water','sunset','mosaic','stainedglass','deco','cyberpunk','renaissance','marble','subway','terminal','accounting','mono','newspaper','blueprint','comic'];
       var root = document.documentElement;
-      if (v && ok.indexOf(v) >= 0) root.classList.add('theme-' + v);
-      root.setAttribute('data-theme', v || 'aurora');
+      var saved = v && ok.indexOf(v) >= 0 ? v : null;
+      if (saved) root.classList.add('theme-' + saved);
+      root.setAttribute('data-theme', saved || 'aurora');
     } catch (e) {}
   })();
 `;

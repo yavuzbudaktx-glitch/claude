@@ -78,8 +78,13 @@ interface Art { title?: string; artist?: string; date?: string; medium?: string;
 
 function ArtPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: (v: boolean) => void }) {
   // Daily — one fetch per local day, persists across reloads (synced).
+  // v3 cache: don't pin a partial-record entry for the whole day; if the
+  // Met page scrape failed to produce a description, render what we have
+  // but skip caching so the next reload retries.
   const today = localDateKey();
-  const { data, isLoading } = useDailyCached<Art>("art", `/api/art-of-day?d=${today}`);
+  const { data, isLoading } = useDailyCached<Art>("art.v3", `/api/art-of-day?d=${today}`, {
+    validate: (d) => !!d.imageUrl && !!d.description && d.description.trim().length >= 60,
+  });
   if (isLoading && !data) return <Loading />;
   if (data?.error || !data?.imageUrl) return <Failed what="the museum" />;
   return (
@@ -151,8 +156,13 @@ interface Bird { name?: string; scientific?: string; blurb?: string; imageUrl?: 
 
 function BirdPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: (v: boolean) => void }) {
   // Daily — one fetch per local day, persists across reloads (synced).
+  // v3 cache + validator: a bird without a photo or blurb is a partial
+  // result (Wikipedia rest_v1 cold-cache hiccup); render it but don't
+  // pin it for the day.
   const today = localDateKey();
-  const { data, isLoading } = useDailyCached<Bird>("bird", `/api/bird-of-day?d=${today}`);
+  const { data, isLoading } = useDailyCached<Bird>("bird.v3", `/api/bird-of-day?d=${today}`, {
+    validate: (d) => !!d.imageUrl && !!d.blurb && d.blurb.trim().length > 40,
+  });
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [audioState, setAudioState] = useState<"idle" | "loading" | "error">("idle");

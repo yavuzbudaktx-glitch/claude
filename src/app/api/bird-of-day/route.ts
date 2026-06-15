@@ -145,10 +145,13 @@ export async function GET(req: Request) {
 
   // Walk deterministic candidates until one has BOTH a photo and a song
   // (keep the first photo-only bird as a fallback so the tab always renders).
+  // Up to 10 attempts so a string of unlucky picks (rare birds with no
+  // Commons audio) doesn't leave the user with the "Couldn't reach the
+  // aviary" state for the whole day.
   let best: { title: string; wiki: WikiSummary; audio: string } | null = null;
   let photoOnly: { title: string; wiki: WikiSummary } | null = null;
 
-  for (let attempt = 0; attempt < 6 && !best; attempt++) {
+  for (let attempt = 0; attempt < 10 && !best; attempt++) {
     const title = pool[seedIdx(`${dateKey}:bird:${attempt}`, pool.length)];
     const wiki = await fetchSummary(title);
     if (!wiki?.extract) continue;

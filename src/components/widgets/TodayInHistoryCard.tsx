@@ -10,7 +10,7 @@ interface TodayResp {
   text?: string;
   summary?: string | null;
   kind?: "featured" | "selected" | "events" | "births" | "deaths";
-  source?: "curated" | "britannica" | "wikipedia" | "wikipedia-featured";
+  source?: "curated" | "britannica" | "britannica-email" | "wikipedia" | "wikipedia-featured" | "wikipedia-onthisday";
   thumbnail?: string | null;
   pageTitle?: string | null;
   link?: string | null;
@@ -83,18 +83,7 @@ export function TodayInHistoryCard() {
             {displayed.year}
           </span>
         )}
-        {displayed.source === "britannica" ? (
-          // When the entry was scraped from Britannica, always point
-          // the user at the landing page (not the deep event article).
-          <a
-            href="https://www.britannica.com/on-this-day"
-            target="_blank"
-            rel="noreferrer"
-            className="font-serif text-[14px] leading-snug min-w-0 hover:underline underline-offset-4 decoration-[var(--rule)]"
-          >
-            {displayed.text}
-          </a>
-        ) : displayed.link ? (
+        {displayed.link ? (
           <a
             href={displayed.link}
             target="_blank"

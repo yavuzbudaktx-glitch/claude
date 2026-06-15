@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import { ArrowUp, ArrowDown, X, Plus } from "lucide-react";
+import { ArrowUp, ArrowDown, X, Plus, RotateCw } from "lucide-react";
 import { Card } from "@/components/Card";
 import { Sparkline } from "@/components/Sparkline";
 import { createClient } from "@/lib/supabase/client";
@@ -162,7 +162,7 @@ function fetchYahooQuote(symbol: string): Promise<Quote | null> {
   return p;
 }
 
-function useTickerData(symbol: string): { quote: Quote | null; loading: boolean } {
+function useTickerData(symbol: string): { quote: Quote | null; loading: boolean; refetch: () => void } {
   // Stale-while-revalidate: show cached data immediately (even when
   // older than 5min) so the row never goes blank, then refresh in the
   // background. Concurrency limiter in fetchYahooQuote ensures large
@@ -170,21 +170,28 @@ function useTickerData(symbol: string): { quote: Quote | null; loading: boolean 
   const initial = typeof window !== "undefined" ? readQuoteCache(symbol) : null;
   const [quote, setQuote] = useState<Quote | null>(initial?.data ?? null);
   const [loading, setLoading] = useState(!initial);
+  const [nonce, setNonce] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
-    const cached = readQuoteCache(symbol);
-    // Cached + fresh → trust it, no fetch.
-    if (cached && cached.fresh && cached.data.symbol === symbol) {
-      setQuote(cached.data);
-      setLoading(false);
-      return;
-    }
-    // Cached + stale → show stale data immediately, refresh below.
-    if (cached) {
-      setQuote(cached.data);
-      setLoading(false);
+    if (nonce === 0) {
+      const cached = readQuoteCache(symbol);
+      // Cached + fresh → trust it, no fetch.
+      if (cached && cached.fresh && cached.data.symbol === symbol) {
+        setQuote(cached.data);
+        setLoading(false);
+        return;
+      }
+      // Cached + stale → show stale data immediately, refresh below.
+      if (cached) {
+        setQuote(cached.data);
+        setLoading(false);
+      } else {
+        setLoading(true);
+      }
     } else {
+      // Manual refetch — force a network round-trip even when something
+      // is on screen so the user sees their reload actually do work.
       setLoading(true);
     }
 
@@ -209,9 +216,9 @@ function useTickerData(symbol: string): { quote: Quote | null; loading: boolean 
     run(0);
 
     return () => { cancelled = true; };
-  }, [symbol]);
+  }, [symbol, nonce]);
 
-  return { quote, loading };
+  return { quote, loading, refetch: () => setNonce((n) => n + 1) };
 }
 
 function fmtPrice(p: number | null): string {
@@ -223,10 +230,11 @@ function fmtPrice(p: number | null): string {
 }
 
 function WatchlistTile({ symbol, onRemove }: { symbol: string; onRemove: (s: string) => void }) {
-  const { quote, loading } = useTickerData(symbol);
+  const { quote, loading, refetch } = useTickerData(symbol);
   const up = quote ? quote.changePct >= 0 : true;
   const big = quote ? Math.abs(quote.changePct) >= 5 : false;
   const changeClass = quote ? (up ? "text-up" : "text-down") : "text-muted";
+  const failed = !loading && !quote;
   // Big-mover highlight: a subtle tinted background + ring in the move's
   // direction so 5%+ jumps catch the eye without screaming.
   const tileStyle: React.CSSProperties = big
@@ -241,9 +249,19 @@ function WatchlistTile({ symbol, onRemove }: { symbol: string; onRemove: (s: str
       className={`group relative rounded-md p-3 transition ${big ? "" : "border rule-soft hover:border-[var(--rule)]"}`}
       style={tileStyle}
     >
+      {failed && (
+        <button
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); refetch(); }}
+          className="absolute top-1.5 right-6 text-muted hover:text-accent transition"
+          aria-label={`Reload ${symbol}`}
+          title="Reload"
+        >
+          <RotateCw className="h-3.5 w-3.5" />
+        </button>
+      )}
       <button
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); onRemove(symbol); }}
-        className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition text-muted hover:text-accent"
+        className={`absolute top-1.5 right-1.5 transition text-muted hover:text-accent ${failed ? "" : "opacity-0 group-hover:opacity-100"}`}
         aria-label={`Remove ${symbol}`}
       >
         <X className="h-3.5 w-3.5" />
@@ -274,7 +292,7 @@ function WatchlistTile({ symbol, onRemove }: { symbol: string; onRemove: (s: str
       </div>
 
       <div className="text-[10.5px] text-muted truncate mb-2">
-        {quote?.name ?? (loading ? "Loading…" : symbol)}
+        {quote?.name ?? (loading ? "Loading…" : failed ? "Couldn't load — click ↻ to retry" : symbol)}
       </div>
 
       <div className="flex items-end justify-between gap-2">

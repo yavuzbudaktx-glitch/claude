@@ -268,13 +268,28 @@ const SNAP_TTL = 1000 * 60 * 20;             // 20 min — fast path
 const SNAP_HARD_MAX = 1000 * 60 * 60 * 6;    // 6h hard expiry
 const CDN_CACHE = "public, s-maxage=1200, stale-while-revalidate=3600";
 
+// Per-sub fetch with retries: JSON → RSS → JSON-after-pause → RSS-after-pause.
+// Without retries, transient proxy throttles / Reddit 429s leave entire subs
+// empty for the whole snapshot window, which is the "only 1-2 subs return
+// content" symptom the user kept hitting.
+async function fetchSubResilient(sub: string): Promise<Post[]> {
+  const tryOnce = async (): Promise<Post[]> => {
+    const j = await fetchSubJson(sub);
+    if (j && j.length) return j;
+    const r = await fetchSubRss(sub);
+    return r;
+  };
+  const first = await tryOnce();
+  if (first.length) return first;
+  // brief pause before second attempt — proxies recover quickly
+  await new Promise((res) => setTimeout(res, 600));
+  const second = await tryOnce();
+  if (second.length) return second;
+  return [];
+}
+
 async function buildPayload(): Promise<Payload> {
-  const perSub = await Promise.all(
-    SUBS.map(async (sub) => {
-      const json = await fetchSubJson(sub);
-      return json ?? (await fetchSubRss(sub));
-    }),
-  );
+  const perSub = await Promise.all(SUBS.map(fetchSubResilient));
 
   // Round-robin interleave, preserving each sub's hot order.
   const seen = new Set<string>();

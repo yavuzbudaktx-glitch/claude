@@ -106,44 +106,96 @@ export async function GET(req: Request) {
   // The Met collection API doesn't return the long description that's
   // shown on the public artwork page. We scrape it from the page itself
   // (the curator's "View more" copy that sits next to the image), going
-  // through the same proxy chain so it works from Vercel egress. Best
-  // effort — if it fails we just omit the description.
+  // through the same proxy chain so it works from Vercel egress.
+  //
+  // Fallback chain (each independent — first one to yield ≥60 chars wins):
+  //   1) Jina Reader (clean markdown)
+  //   2) Met's own headless render via allorigins
+  //   3) Met page via corsproxy
+  //   4) Wikipedia summary keyed on title + artist (covers the most
+  //      famous works that DO have Wikipedia pages — Van Gogh, etc.)
+  //   5) The tombstone fields themselves as a last resort, so users
+  //      always see SOMETHING in the description area.
   let description: string | null = null;
   const pageUrl = obj.objectURL || `https://www.metmuseum.org/art/collection/search/${obj.objectID}`;
-  try {
-    const proxies = [
-      `https://r.jina.ai/${pageUrl}`,                                       // returns clean markdown
-      `https://api.allorigins.win/raw?url=${encodeURIComponent(pageUrl)}`,
-      `https://corsproxy.io/?url=${encodeURIComponent(pageUrl)}`,
-    ];
-    for (const u of proxies) {
-      const r = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(8000), cache: "no-store" }).catch(() => null);
-      if (!r || !r.ok) continue;
+  const proxies = [
+    `https://r.jina.ai/${pageUrl}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(pageUrl)}`,
+    `https://corsproxy.io/?url=${encodeURIComponent(pageUrl)}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(pageUrl)}`,
+  ];
+  for (const u of proxies) {
+    if (description) break;
+    try {
+      const r = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(8000), cache: "no-store" });
+      if (!r.ok) continue;
       const body = await r.text();
       if (!body) continue;
       if (u.startsWith("https://r.jina.ai/")) {
-        // Jina markdown: the curator description is the first long paragraph
-        // after the artist/date tombstone.
-        const para = body.match(/\n\n([^\n][\s\S]{160,1500}?)\n\n/);
-        if (para) {
-          description = para[1].replace(/\[([^\]]+?)\]\([^)]+?\)/g, "$1").replace(/\s+/g, " ").trim();
-          if (description.length > 700) description = description.slice(0, 697).trimEnd() + "…";
-          break;
+        // Jina markdown: scan paragraphs, pick the first that reads like
+        // curator copy (long, no leading "skip to" / "share" / etc).
+        const paras = body.split(/\n{2,}/).map((p) => p.trim());
+        for (const p of paras) {
+          if (p.length < 160 || p.length > 2000) continue;
+          if (/^(skip to|share|public domain|the met|metropolitan museum|on view|object number|accession)/i.test(p)) continue;
+          if (/^[#*\-_=]+/.test(p)) continue;
+          const cleaned = p.replace(/\[([^\]]+?)\]\([^)]+?\)/g, "$1").replace(/!\[[^\]]*?\]\([^)]+?\)/g, "").replace(/\s+/g, " ").trim();
+          if (cleaned.length >= 100) {
+            description = cleaned.length > 700 ? cleaned.slice(0, 697).trimEnd() + "…" : cleaned;
+            break;
+          }
         }
       } else {
-        // HTML — look for the artwork__intro__desc / artwork__intro__desc-text
-        // divs the Met uses on the artwork page.
-        const m = body.match(/<div[^>]+class="[^"]*artwork__intro__desc(?:-text)?[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
-        if (m) {
-          description = m[1].replace(/<[^>]+>/g, " ").replace(/&amp;/g, "&").replace(/&#x?\d+;/g, " ").replace(/\s+/g, " ").trim();
-          if (description.length >= 60) {
-            if (description.length > 700) description = description.slice(0, 697).trimEnd() + "…";
+        const decode = (s: string) =>
+          s.replace(/<[^>]+>/g, " ")
+           .replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+           .replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+           .replace(/&#x?\d+;/g, " ").replace(/\s+/g, " ").trim();
+        const candidates: string[] = [];
+        const re1 = /<div[^>]+class="[^"]*artwork__intro__desc(?:-text)?[^"]*"[^>]*>([\s\S]*?)<\/div>/gi;
+        let m: RegExpExecArray | null;
+        while ((m = re1.exec(body))) candidates.push(decode(m[1]));
+        // og:description meta tag — short but usually present.
+        const og = body.match(/<meta[^>]+property=["']og:description["'][^>]+content=["']([^"']+)["']/i);
+        if (og) candidates.push(decode(og[1]));
+        // any long paragraph inside <p> tags
+        const reP = /<p[^>]*>([\s\S]{160,1500}?)<\/p>/gi;
+        while ((m = reP.exec(body))) candidates.push(decode(m[1]));
+        for (const c of candidates) {
+          if (c.length >= 60 && !/^skip to|^share|^accept all/i.test(c)) {
+            description = c.length > 700 ? c.slice(0, 697).trimEnd() + "…" : c;
             break;
-          } else { description = null; }
+          }
         }
       }
+    } catch { /* next */ }
+  }
+
+  // Wikipedia fallback — many famous Met works have Wikipedia pages.
+  if (!description && obj.title) {
+    const queryTitle = obj.artistDisplayName
+      ? `${obj.title} ${obj.artistDisplayName}`
+      : obj.title;
+    const wiki = await getJson<{ extract?: string }>(
+      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(queryTitle.replace(/ /g, "_"))}`,
+    );
+    if (wiki?.extract && wiki.extract.length >= 60) {
+      description = wiki.extract.length > 700 ? wiki.extract.slice(0, 697).trimEnd() + "…" : wiki.extract;
     }
-  } catch { description = null; }
+  }
+
+  // Last resort: synthesize a short description from the tombstone so the
+  // info pane always renders SOMETHING, never a blank "No description on file."
+  if (!description) {
+    const parts: string[] = [];
+    if (obj.medium) parts.push(obj.medium);
+    if (obj.culture) parts.push(obj.culture);
+    if (obj.objectDate) parts.push(obj.objectDate);
+    if (parts.length) {
+      const tomb = `${obj.title || "Untitled"}${obj.artistDisplayName ? `, by ${obj.artistDisplayName}` : ""}. ${parts.join(", ")}.`;
+      description = tomb;
+    }
+  }
 
   return NextResponse.json(
     {
