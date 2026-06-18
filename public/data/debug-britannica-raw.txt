@@ -1,9 +1,9 @@
 # Britannica scrape debug dump
-# generated: 2026-06-18T16:03:44.925Z
+# generated: 2026-06-18T17:32:45.372Z
 # url:       https://www.britannica.com/on-this-day/june-18
 # fetcher:   Jina Reader
 # kind:      markdown
-# length:    12546
+# length:    14474
 # parsed:    YES (Wayback Machine)
 # -----------------------------------------------------------------
 Title: On This Day - What Happened Today In History | Britannica
@@ -29,7 +29,63 @@ Login
 
 [Subscribe to Britannica Premium](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=nav-login-box&utm_campaign=evergreent)
 
-[SUBSCRIBE](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=blue)
+[SUBSCRIBE TO PREMIUM](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=bdpremium)
+
+*   [Home](https://www.britannica.com/)
+*   [History & Society](https://www.britannica.com/History-Society)
+*   [Science & Tech](https://www.britannica.com/Science-Tech)
+*   [Biographies](https://www.britannica.com/Biographies)
+*   [Animals & Nature](https://www.britannica.com/Animals-Nature)
+*   [Geography & Travel](https://www.britannica.com/Geography-Travel)
+*   [Arts & Culture](https://www.britannica.com/Arts-Culture)
+*   [ProCon](https://www.britannica.com/procon)
+*   [Money](https://www.britannica.com/money)
+
+*   [Games & Quizzes](https://www.britannica.com/quiz/browse)
+*   [Videos](https://www.britannica.com/videos)
+*   [On This Day](https://www.britannica.com/on-this-day)
+*   [One Good Fact](https://www.britannica.com/one-good-fact)
+*   [Dictionary](https://www.britannica.com/dictionary)
+*   [New Articles](https://www.britannica.com/new-articles)
+
+[History & Society](https://www.britannica.com/History-Society)
+*   [History](https://www.britannica.com/browse/World-History)
+*   [Philosophy & Religion](https://www.britannica.com/browse/Philosophy-Religion)
+*   [Politics, Law & Government](https://www.britannica.com/browse/Politics-Law-Government)
+*   [Society & Social Issues](https://www.britannica.com/browse/Lifestyles-Social-Issues)
+
+[Science & Tech](https://www.britannica.com/Science-Tech)
+*   [Health & Medicine](https://www.britannica.com/browse/Health-Medicine)
+*   [Science](https://www.britannica.com/browse/Science)
+*   [Technology](https://www.britannica.com/browse/Technology)
+
+[Biographies](https://www.britannica.com/Biographies)
+*   [Browse Biographies](https://www.britannica.com/browse/biographies)
+
+[Animals & Nature](https://www.britannica.com/Animals-Nature)
+*   [Birds, Reptiles & Other Vertebrates](https://www.britannica.com/browse/Birds-Reptiles-Vertebrates)
+*   [Environment](https://www.britannica.com/browse/Environment)
+*   [Fossils & Geologic Time](https://www.britannica.com/browse/Fossil-Geologic-Time)
+*   [Insects & Other Invertebrates](https://www.britannica.com/browse/Bugs-Mollusks-Invertebrates)
+*   [Mammals](https://www.britannica.com/browse/Mammals)
+*   [Plants](https://www.britannica.com/browse/Plants)
+
+[Geography & Travel](https://www.britannica.com/Geography-Travel)
+*   [Geography & Travel](https://www.britannica.com/browse/Geography-Travel)
+
+[Arts & Culture](https://www.britannica.com/Arts-Culture)
+*   [Entertainment & Pop Culture](https://www.britannica.com/browse/Entertainment-Pop-Culture)
+*   [Literature](https://www.britannica.com/browse/Literature)
+*   [Sports & Recreation](https://www.britannica.com/browse/Sports-Recreation)
+*   [Visual Arts](https://www.britannica.com/browse/Visual-Arts)
+
+*   [Image Galleries](https://www.britannica.com/gallery/browse)
+*   [Podcasts](https://www.britannica.com/podcasts)
+*   [Summaries](https://www.britannica.com/summary)
+*   [Top Questions](https://www.britannica.com/question)
+*   [Lists and Stories](https://www.britannica.com/lists-and-stories)
+
+*   [Britannica Kids](https://kids.britannica.com/)
 
 [Ask the Chatbot](https://www.britannica.com/chatbot)[Games & Quizzes](https://www.britannica.com/quiz/browse)[History & Society](https://www.britannica.com/History-Society)[Science & Tech](https://www.britannica.com/Science-Tech)[Biographies](https://www.britannica.com/Biographies)[Animals & Nature](https://www.britannica.com/Animals-Nature)[Geography & Travel](https://www.britannica.com/Geography-Travel)[Arts & Culture](https://www.britannica.com/Arts-Culture)[ProCon](https://www.britannica.com/procon)[Money](https://www.britannica.com/money)[Videos](https://www.britannica.com/videos)
 
@@ -205,23 +261,4 @@ Your first newsletter will arrive soon!
 
 SIGN UP
 
- By clicking "Sign Up" you are agreeing to our [Terms of Use](https://corporate.britannica.com/termsofuse.html) and [Privacy Policy](https://corporate.britannica.com/privacy-policy). 
-
-![Image 20](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=68&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2FJune-18&s=E20821B4-06AA-46F5-A2B8-5379CA19FAFE&json=%20)
-
-✕
-## Do not sell or share my personal information.
-
-You have chosen to opt-out of the sale or sharing of your information from this site and any of its affiliates. To opt back in please click the "Reenable Personalization" link.
-
-This site collects information through the use of cookies and other tracking tools. Cookies and these tools do not contain any information that personally identifies a user, but personal information that would be stored about you may be linked to the information stored in and obtained from them. This information would be used and shared for Analytics, Ad Serving, Interest Based Advertising, among other purposes.
-
-For more information please visit this site's Privacy Policy.
-
-CANCEL
-
-CONTINUE
-
-Information from your device can be used to personalize your ad experience. 
-
-[Do not sell or share my personal information.](https://www.britannica.com/)
+ By clicking "Sign Up" you are agreeing to our [Terms of Use](https://corporate.britannica.com/termsofuse.html) and [Privacy Policy](https://corporate.britannica.com/privacy-policy).
