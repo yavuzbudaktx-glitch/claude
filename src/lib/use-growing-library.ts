@@ -33,24 +33,39 @@ interface Stored {
 // channels. 2500 is far above every box's minimum.
 const MAX_STORE = 2500;
 
+// Merge two video lists by id, preserving order (a first, then b's new ones).
+function unionById(a: LibVideo[], b: LibVideo[]): LibVideo[] {
+  const seen = new Set<string>();
+  const out: LibVideo[] = [];
+  for (const v of [...a, ...b]) {
+    if (v?.id && !seen.has(v.id)) { seen.add(v.id); out.push(v); }
+  }
+  return out;
+}
+
 export function useGrowingLibrary(
   source: string,
   fetchUrl: string,
 ): { videos: LibVideo[]; count: number; label?: string; url?: string; isLoading: boolean } {
   const prefsLoaded = usePrefsLoaded();
   const [stored, setStored] = usePref<Stored | null>(`hub.lib.${source}.v1`, null);
-  const [live, setLive] = useState<Stored | null>(null);
+  // `live` is tagged with the source it belongs to so a slow/empty fetch on a
+  // newly-selected tab can NEVER show the previous tab's videos (that was the
+  // "all tabs show Country Life" bug — the failed Bob Ross fetch left the old
+  // Country Life `live` on screen).
+  const [live, setLive] = useState<{ source: string; data: Stored } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // CRITICAL: wait until PrefsProvider has finished loading from Supabase
-    // before we even consider persisting anything. Without this, the first
-    // fetch on a fresh mount would write a small (server-throttled) library
-    // into prefs with a "now" timestamp BEFORE the saved 500-video version
-    // from Supabase arrives — and because mergePerKey takes the newer
-    // timestamp, our small one would win and wipe the big saved one.
+    // Wait until PrefsProvider has finished loading from Supabase before we
+    // persist anything, or a small cold-start fetch would overwrite the big
+    // saved library with a newer timestamp and win the per-key merge.
     if (!prefsLoaded) return;
     let cancelled = false;
+    // Drop any stale `live` from the previously-selected source immediately,
+    // so during the switch we fall back to THIS source's `stored` (or the
+    // loading state), never the other channel's videos.
+    setLive(null);
     setLoading(!stored);
     fetch(fetchUrl)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
@@ -58,11 +73,14 @@ export function useGrowingLibrary(
         if (cancelled) return;
         const vids = (d?.videos ?? []).slice(0, MAX_STORE);
         if (vids.length > 0) {
-          const fresh: Stored = { videos: vids, count: vids.length, at: Date.now(), label: d.label, url: d.url };
-          setLive(fresh);
-          // Persist ONLY when this fetch is at least as big as what we have —
-          // never shrink the saved library.
-          setStored((prev) => (!prev || vids.length >= prev.count ? fresh : prev));
+          // UNION with what we already have so the library only ever grows
+          // toward the full catalogue, even if a given day's walk is partial.
+          setStored((prev) => {
+            const merged = unionById(prev?.videos ?? [], vids).slice(0, MAX_STORE);
+            const fresh: Stored = { videos: merged, count: merged.length, at: Date.now(), label: d.label, url: d.url };
+            setLive({ source, data: fresh });
+            return fresh;
+          });
         }
         setLoading(false);
       })
@@ -71,9 +89,12 @@ export function useGrowingLibrary(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchUrl, prefsLoaded]);
 
-  // Serve the LARGER of (live, stored) so a throttled fetch this session never
-  // collapses the box below what we've previously cached.
-  const best = live && stored ? (live.count >= stored.count ? live : stored) : live ?? stored;
+  // Use live only when it's for THIS source; otherwise fall back to stored.
+  const liveData = live && live.source === source ? live.data : null;
+  const best =
+    liveData && stored
+      ? (liveData.count >= stored.count ? liveData : stored)
+      : liveData ?? stored;
   return {
     videos: best?.videos ?? [],
     count: best?.count ?? 0,

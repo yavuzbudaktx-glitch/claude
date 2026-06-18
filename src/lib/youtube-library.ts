@@ -194,32 +194,33 @@ async function walk(
   return out;
 }
 
-function cached(key: string, min = 1): LibVideo[] | null {
+// Floor for caching: anything at/above this is worth keeping for the TTL.
+// We DON'T gate on the caller's high per-source minimum here — doing that was
+// a self-defeating bug: when a walk returned (say) 250 for a min-300 channel,
+// nothing got cached, so EVERY request re-walked the whole library, which got
+// the Vercel egress IP rate-limited by YouTube until walks returned 0 and the
+// box went empty. Caching the 250 and serving it for the TTL (walk once, serve
+// many) is exactly what the older, working version did. The client-side
+// growing library then unions toward the full count over time.
+const HARD_MIN_CACHE = 20;
+
+function cached(key: string): LibVideo[] | null {
   const e = cache.get(key);
-  // CRITICAL: only return a cache hit when it meets the caller's minimum.
-  // The previous version returned ANY non-empty entry, so a transient
-  // throttled fetch that yielded e.g. 12 videos for Country Life Vlog
-  // (min 500) would lock the box to 12 videos for the full TTL, defeating
-  // every retry in the route. With this check, a sub-min cache hit is
-  // ignored exactly like a cache miss and the route's retry loop actually
-  // runs the upstream fetch again.
-  if (e && Date.now() - e.at < CACHE_TTL && e.items.length >= min) return e.items;
+  if (e && Date.now() - e.at < CACHE_TTL && e.items.length > 0) return e.items;
   return null;
 }
 
-// Return the biggest "last-good" result we've ever cached for this key, ONLY
-// when it meets the minimum and isn't more than 14 days old. Used as a
-// fallback when the live walk + retries collectively fail to meet `min`.
-function lastGoodFor(key: string, min: number): LibVideo[] | null {
+// The biggest result we've ever seen for this key (within 14 days). Used as a
+// floor so a throttled walk never collapses the box below a known-good size.
+function lastGoodFor(key: string): LibVideo[] | null {
   const e = lastGood.get(key);
   if (!e) return null;
   if (Date.now() - e.at > LAST_GOOD_TTL) return null;
-  if (e.items.length < min) return null;
   return e.items;
 }
 
-function rememberIfGood(key: string, items: LibVideo[], min: number) {
-  if (items.length < min) return;
+function rememberIfGood(key: string, items: LibVideo[]) {
+  if (items.length < HARD_MIN_CACHE) return;
   const cur = lastGood.get(key);
   // Keep the better of (existing, new) — never trade down to a smaller result.
   if (cur && cur.items.length > items.length) return;
@@ -259,13 +260,16 @@ function mergeInto(out: LibVideo[], seen: Set<string>, more: LibVideo[]) {
 
 const PIPED_INSTANCES = [
   "https://pipedapi.kavin.rocks",
-  "https://pipedapi.r4fo.com",
-  "https://pipedapi-libre.kavin.rocks",
   "https://pipedapi.adminforge.de",
-  "https://pipedapi.darkness.services",
-  "https://pipedapi.smnz.de",
   "https://pipedapi.reallyaweso.me",
+  "https://pipedapi.darkness.services",
+  "https://api.piped.private.coffee",
 ];
+// Bound the time spent probing Piped so a fully-down Piped network can't
+// blow the route's wall-clock budget. Each instance gets a short timeout
+// and we stop probing once the cumulative time crosses the cap.
+const PIPED_PROBE_TIMEOUT = 6000;
+const PIPED_PROBE_BUDGET = 14000;
 
 interface PipedStream { url?: string; title?: string; uploadedDate?: string; type?: string }
 interface PipedChannelResp { relatedStreams?: PipedStream[]; nextpage?: string | null; name?: string; id?: string }
@@ -278,11 +282,13 @@ function videoIdFromUrl(url: string | undefined): string {
 }
 
 async function pipedJsonAny<T>(pathBuilder: (base: string) => string): Promise<{ base: string; data: T } | null> {
+  const started = Date.now();
   for (const base of PIPED_INSTANCES) {
+    if (Date.now() - started > PIPED_PROBE_BUDGET) break;
     try {
       const r = await fetch(pathBuilder(base), {
         headers: { "User-Agent": HEADERS["User-Agent"], Accept: "application/json" },
-        signal: AbortSignal.timeout(8000),
+        signal: AbortSignal.timeout(PIPED_PROBE_TIMEOUT),
         cache: "no-store",
       });
       if (!r.ok) continue;
@@ -375,7 +381,7 @@ async function fetchPlaylistPiped(playlistId: string, minCount: number): Promise
 
 export async function fetchPlaylistVideos(playlistId: string, minCache = MIN_CACHEABLE): Promise<LibVideo[]> {
   const key = `pl:${playlistId}`;
-  const hit = cached(key, minCache);
+  const hit = cached(key);
   if (hit) return hit;
   const out: LibVideo[] = [];
   const seen = new Set<string>();
@@ -391,15 +397,15 @@ export async function fetchPlaylistVideos(playlistId: string, minCache = MIN_CAC
     mergeInto(out, seen, inner);
     if (html) mergeInto(out, seen, await walk(html, extractVideos));
   }
-  if (out.length >= minCache) {
+  // Cache ANY reasonable result (≥ floor) for the TTL so we walk once, not on
+  // every request. Then remember the biggest-ever as a regression floor.
+  if (out.length >= HARD_MIN_CACHE) {
     cache.set(key, { at: Date.now(), items: out });
-    rememberIfGood(key, out, minCache);
-    return out;
+    rememberIfGood(key, out);
   }
-  // Live walk fell short of the minimum — fall back to the last good walk
-  // we ever saw for this key, if any is still within its TTL.
-  const fallback = lastGoodFor(key, minCache);
-  if (fallback) return fallback;
+  // If this walk came back smaller than a previous good one, serve the bigger.
+  const fallback = lastGoodFor(key);
+  if (fallback && fallback.length > out.length) return fallback;
   return out;
 }
 
@@ -454,7 +460,7 @@ async function fetchPlaylistInnertube(playlistId: string): Promise<LibVideo[]> {
 
 export async function fetchChannelVideos(handle: string, minCache = CHANNEL_MIN_CACHE): Promise<LibVideo[]> {
   const key = `ch:${handle}`;
-  const hit = cached(key, minCache);
+  const hit = cached(key);
   if (hit) return hit;
 
   const id = await resolveChannelId(handle);
@@ -484,25 +490,22 @@ export async function fetchChannelVideos(handle: string, minCache = CHANNEL_MIN_
     mergeInto(out, seen, atom);
   }
 
-  if (out.length >= minCache) {
-    cache.set(key, { at: Date.now(), items: out });
-    rememberIfGood(key, out, minCache);
-    return out;
-  }
-  // Last try: Invidious (independent public mirror).
-  const invid = id ? await fetchChannelInvidious(id) : [];
-  if (invid.length > out.length) {
-    out.length = 0;
-    seen.clear();
+  // Still thin? Try Invidious (independent public mirror) as a last upstream.
+  if (out.length < minCache) {
+    const invid = id ? await fetchChannelInvidious(id) : [];
     mergeInto(out, seen, invid);
   }
-  if (out.length >= minCache) {
+
+  // Cache ANY reasonable result (≥ floor) so we walk once per TTL, not on every
+  // request — this is what stops the re-walk storm that was getting us
+  // rate-limited to zero. Remember the biggest-ever as a regression floor.
+  if (out.length >= HARD_MIN_CACHE) {
     cache.set(key, { at: Date.now(), items: out });
-    rememberIfGood(key, out, minCache);
-    return out;
+    rememberIfGood(key, out);
   }
-  const fallback = lastGoodFor(key, minCache);
-  if (fallback) return fallback;
+  // If a previous walk got more, serve that instead of this thin one.
+  const fallback = lastGoodFor(key);
+  if (fallback && fallback.length > out.length) return fallback;
   return out;
 }
 
@@ -567,10 +570,10 @@ export async function fetchChannelShorts(handle: string): Promise<LibVideo[]> {
   const items = await walk(html, extractShorts);
   if (items.length >= MIN_CACHEABLE) {
     cache.set(key, { at: Date.now(), items });
-    rememberIfGood(key, items, MIN_CACHEABLE);
+    rememberIfGood(key, items);
     return items;
   }
-  const fallback = lastGoodFor(key, MIN_CACHEABLE);
-  if (fallback) return fallback;
+  const fallback = lastGoodFor(key);
+  if (fallback && fallback.length > items.length) return fallback;
   return items;
 }
