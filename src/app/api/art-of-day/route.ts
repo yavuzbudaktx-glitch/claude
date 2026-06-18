@@ -103,75 +103,15 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "no_image" }, { status: 502 });
   }
 
-  // The Met collection API doesn't return the long description that's
-  // shown on the public artwork page. We scrape it from the page itself
-  // (the curator's "View more" copy that sits next to the image), going
-  // through the same proxy chain so it works from Vercel egress.
-  //
-  // Jina Reader is intentionally LAST in the chain (and is the new "skip if
-  // the body is the Vercel anti-bot wall" filter): when the Met rate-limits
-  // Vercel egress, Jina returns its 200 wrapper body containing the literal
-  // text "Vercel Security Checkpoint" with no description — which the
-  // previous code happily accepted, leaving a broken card. The CORS proxies
-  // hit Met directly from consumer IPs and don't have that problem.
+  // Description path: Wikipedia search ONLY. The Met scrape used to work
+  // when we could go through public CORS proxies; today Vercel egress
+  // (and any proxy that ultimately exits via cloud IP space) gets the
+  // "Vercel Security Checkpoint" 429 wall instead of the real page —
+  // which is what was leaking into the description field.
+  // Wikipedia is reachable from Vercel, returns clean prose, and covers
+  // most Met paintings (or their artists) very well.
   let description: string | null = null;
   const pageUrl = obj.objectURL || `https://www.metmuseum.org/art/collection/search/${obj.objectID}`;
-
-  // Reject any body that's an anti-bot wall instead of the real page.
-  function isBlockedBody(body: string): boolean {
-    return /vercel\s+security\s+checkpoint|attention required|just a moment\.\.\.|cloudflare|access denied|too many requests/i.test(body.slice(0, 3000));
-  }
-
-  const proxies = [
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(pageUrl)}`,
-    `https://corsproxy.io/?url=${encodeURIComponent(pageUrl)}`,
-    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(pageUrl)}`,
-    `https://r.jina.ai/${pageUrl}`,
-  ];
-  for (const u of proxies) {
-    if (description) break;
-    try {
-      const r = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(8000), cache: "no-store" });
-      if (!r.ok) continue;
-      const body = await r.text();
-      if (!body || isBlockedBody(body)) continue;
-      if (u.startsWith("https://r.jina.ai/")) {
-        const paras = body.split(/\n{2,}/).map((p) => p.trim());
-        for (const p of paras) {
-          if (p.length < 160 || p.length > 2000) continue;
-          if (/^(skip to|share|public domain|the met|metropolitan museum|on view|object number|accession|vercel security)/i.test(p)) continue;
-          if (/^[#*\-_=]+/.test(p)) continue;
-          const cleaned = p.replace(/\[([^\]]+?)\]\([^)]+?\)/g, "$1").replace(/!\[[^\]]*?\]\([^)]+?\)/g, "").replace(/\s+/g, " ").trim();
-          if (cleaned.length >= 100) {
-            description = cleaned.length > 700 ? cleaned.slice(0, 697).trimEnd() + "…" : cleaned;
-            break;
-          }
-        }
-      } else {
-        const decode = (s: string) =>
-          s.replace(/<[^>]+>/g, " ")
-           .replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'")
-           .replace(/&lt;/g, "<").replace(/&gt;/g, ">")
-           .replace(/&#x?\d+;/g, " ").replace(/\s+/g, " ").trim();
-        const candidates: string[] = [];
-        const re1 = /<div[^>]+class="[^"]*artwork__intro__desc(?:-text)?[^"]*"[^>]*>([\s\S]*?)<\/div>/gi;
-        let m: RegExpExecArray | null;
-        while ((m = re1.exec(body))) candidates.push(decode(m[1]));
-        // og:description meta tag — short but usually present.
-        const og = body.match(/<meta[^>]+property=["']og:description["'][^>]+content=["']([^"']+)["']/i);
-        if (og) candidates.push(decode(og[1]));
-        // any long paragraph inside <p> tags
-        const reP = /<p[^>]*>([\s\S]{160,1500}?)<\/p>/gi;
-        while ((m = reP.exec(body))) candidates.push(decode(m[1]));
-        for (const c of candidates) {
-          if (c.length >= 60 && !/^skip to|^share|^accept all|^vercel/i.test(c)) {
-            description = c.length > 700 ? c.slice(0, 697).trimEnd() + "…" : c;
-            break;
-          }
-        }
-      }
-    } catch { /* next */ }
-  }
 
   // Wikipedia fallback (search-based, reachable from Vercel without proxies).
   // The plain summary endpoint needs an EXACT page title, which a Met

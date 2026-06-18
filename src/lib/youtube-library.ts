@@ -250,19 +250,147 @@ function mergeInto(out: LibVideo[], seen: Set<string>, more: LibVideo[]) {
   for (const v of more) if (v.id && !seen.has(v.id)) { seen.add(v.id); out.push(v); }
 }
 
+// ===========================================================================
+// Piped — public mirrors of YouTube's API operated as real servers, so they
+// don't get the consent-gate / bot wall that cloud IPs hit on youtube.com
+// directly. This is the most reliable upstream we have. We rotate through
+// instances until one answers, then page through `nextpage` continuations.
+// ===========================================================================
+
+const PIPED_INSTANCES = [
+  "https://pipedapi.kavin.rocks",
+  "https://pipedapi.r4fo.com",
+  "https://pipedapi-libre.kavin.rocks",
+  "https://pipedapi.adminforge.de",
+  "https://pipedapi.darkness.services",
+  "https://pipedapi.smnz.de",
+  "https://pipedapi.reallyaweso.me",
+];
+
+interface PipedStream { url?: string; title?: string; uploadedDate?: string; type?: string }
+interface PipedChannelResp { relatedStreams?: PipedStream[]; nextpage?: string | null; name?: string; id?: string }
+interface PipedPlaylistResp { relatedStreams?: PipedStream[]; nextpage?: string | null; name?: string }
+
+function videoIdFromUrl(url: string | undefined): string {
+  if (!url) return "";
+  const m = url.match(/[?&]v=([\w-]{11})/) || url.match(/^\/?watch\?v=([\w-]{11})/);
+  return m ? m[1] : "";
+}
+
+async function pipedJsonAny<T>(pathBuilder: (base: string) => string): Promise<{ base: string; data: T } | null> {
+  for (const base of PIPED_INSTANCES) {
+    try {
+      const r = await fetch(pathBuilder(base), {
+        headers: { "User-Agent": HEADERS["User-Agent"], Accept: "application/json" },
+        signal: AbortSignal.timeout(8000),
+        cache: "no-store",
+      });
+      if (!r.ok) continue;
+      const data = (await r.json()) as T;
+      return { base, data };
+    } catch { /* try next instance */ }
+  }
+  return null;
+}
+
+async function fetchChannelPiped(channelId: string, minCount: number): Promise<LibVideo[]> {
+  const first = await pipedJsonAny<PipedChannelResp>((b) => `${b}/channel/${channelId}`);
+  if (!first) return [];
+  const out: LibVideo[] = [];
+  const seen = new Set<string>();
+  const pushAll = (streams: PipedStream[] | undefined) => {
+    for (const s of streams ?? []) {
+      const id = videoIdFromUrl(s.url);
+      if (id && !seen.has(id)) {
+        seen.add(id);
+        out.push({ id, title: s.title ?? "" });
+      }
+    }
+  };
+  pushAll(first.data.relatedStreams);
+  let next = first.data.nextpage;
+  const base = first.base;
+  const started = Date.now();
+  let pages = 0;
+  while (next && pages < 60 && Date.now() - started < 20_000) {
+    // nextpage is a JSON-encoded string; we send it as a query param.
+    try {
+      const r = await fetch(`${base}/nextpage/channel/${channelId}?nextpage=${encodeURIComponent(next)}`, {
+        headers: { "User-Agent": HEADERS["User-Agent"], Accept: "application/json" },
+        signal: AbortSignal.timeout(8000),
+        cache: "no-store",
+      });
+      if (!r.ok) break;
+      const j = (await r.json()) as PipedChannelResp;
+      const before = out.length;
+      pushAll(j.relatedStreams);
+      next = j.nextpage ?? null;
+      pages++;
+      if (out.length === before) break;
+      if (out.length >= minCount * 1.5) break; // we have plenty
+    } catch { break; }
+  }
+  return out;
+}
+
+async function fetchPlaylistPiped(playlistId: string, minCount: number): Promise<LibVideo[]> {
+  // Piped's playlist endpoint is `/playlists/<id>`.
+  const first = await pipedJsonAny<PipedPlaylistResp>((b) => `${b}/playlists/${playlistId}`);
+  if (!first) return [];
+  const out: LibVideo[] = [];
+  const seen = new Set<string>();
+  const pushAll = (streams: PipedStream[] | undefined) => {
+    for (const s of streams ?? []) {
+      const id = videoIdFromUrl(s.url);
+      if (id && !seen.has(id)) {
+        seen.add(id);
+        out.push({ id, title: s.title ?? "" });
+      }
+    }
+  };
+  pushAll(first.data.relatedStreams);
+  let next = first.data.nextpage;
+  const base = first.base;
+  const started = Date.now();
+  let pages = 0;
+  while (next && pages < 60 && Date.now() - started < 20_000) {
+    try {
+      const r = await fetch(`${base}/nextpage/playlists/${playlistId}?nextpage=${encodeURIComponent(next)}`, {
+        headers: { "User-Agent": HEADERS["User-Agent"], Accept: "application/json" },
+        signal: AbortSignal.timeout(8000),
+        cache: "no-store",
+      });
+      if (!r.ok) break;
+      const j = (await r.json()) as PipedPlaylistResp;
+      const before = out.length;
+      pushAll(j.relatedStreams);
+      next = j.nextpage ?? null;
+      pages++;
+      if (out.length === before) break;
+      if (out.length >= minCount * 1.5) break;
+    } catch { break; }
+  }
+  return out;
+}
+
 export async function fetchPlaylistVideos(playlistId: string, minCache = MIN_CACHEABLE): Promise<LibVideo[]> {
   const key = `pl:${playlistId}`;
   const hit = cached(key, minCache);
   if (hit) return hit;
-  // Innertube first (clean JSON, no consent gate), HTML walk as backstop.
   const out: LibVideo[] = [];
   const seen = new Set<string>();
-  const [inner, html] = await Promise.all([
-    fetchPlaylistInnertube(playlistId),
-    getText(`https://www.youtube.com/playlist?list=${playlistId}&hl=en`),
-  ]);
-  mergeInto(out, seen, inner);
-  if (html) mergeInto(out, seen, await walk(html, extractVideos));
+  // Piped FIRST — by far the most reliable upstream, no consent gate.
+  const piped = await fetchPlaylistPiped(playlistId, minCache);
+  mergeInto(out, seen, piped);
+  // If Piped didn't satisfy the minimum, layer in innertube + HTML walk.
+  if (out.length < minCache) {
+    const [inner, html] = await Promise.all([
+      fetchPlaylistInnertube(playlistId),
+      getText(`https://www.youtube.com/playlist?list=${playlistId}&hl=en`),
+    ]);
+    mergeInto(out, seen, inner);
+    if (html) mergeInto(out, seen, await walk(html, extractVideos));
+  }
   if (out.length >= minCache) {
     cache.set(key, { at: Date.now(), items: out });
     rememberIfGood(key, out, minCache);
@@ -333,38 +461,35 @@ export async function fetchChannelVideos(handle: string, minCache = CHANNEL_MIN_
   const out: LibVideo[] = [];
   const seen = new Set<string>();
 
-  // FOUR sources in parallel:
-  //   1) Innertube playlist (UU…) — direct JSON, no consent gate; most
-  //      reliable when it works.
-  //   2) HTML walk of /playlist?list=UU… — fallback when innertube is
-  //      blocked but the HTML page comes through.
-  //   3) HTML walk of /@handle/videos tab — covers the most recent ~30
-  //      when both playlist paths fail.
-  //   4) Atom feed — rock-solid backstop, always returns the latest 15.
-  const uploads = id ? "UU" + id.slice(2) : null;
-  const [innertube, uploadsHtml, vidsHtml, atom] = await Promise.all([
-    uploads ? fetchPlaylistInnertube(uploads) : Promise.resolve([] as LibVideo[]),
-    uploads ? getText(`https://www.youtube.com/playlist?list=${uploads}&hl=en`) : Promise.resolve(null),
-    getText(`https://www.youtube.com/@${handle}/videos?hl=en`),
-    id ? fetchAtom(id) : Promise.resolve([] as LibVideo[]),
-  ]);
+  // PIPED FIRST — pumps full catalogues reliably via real-server mirrors
+  // that don't get the YouTube consent gate. We try Piped before any other
+  // upstream because when it works it works completely (300+ in one shot).
+  if (id) {
+    const piped = await fetchChannelPiped(id, minCache);
+    mergeInto(out, seen, piped);
+  }
+  // If we already have what the caller needs, stop early. Otherwise layer
+  // in YouTube's own sources for resilience.
+  if (out.length < minCache) {
+    const uploads = id ? "UU" + id.slice(2) : null;
+    const [innertube, uploadsHtml, vidsHtml, atom] = await Promise.all([
+      uploads ? fetchPlaylistInnertube(uploads) : Promise.resolve([] as LibVideo[]),
+      uploads ? getText(`https://www.youtube.com/playlist?list=${uploads}&hl=en`) : Promise.resolve(null),
+      getText(`https://www.youtube.com/@${handle}/videos?hl=en`),
+      id ? fetchAtom(id) : Promise.resolve([] as LibVideo[]),
+    ]);
+    mergeInto(out, seen, innertube);
+    if (uploadsHtml) mergeInto(out, seen, await walk(uploadsHtml, extractVideos));
+    if (vidsHtml) mergeInto(out, seen, await walk(vidsHtml, extractVideos));
+    mergeInto(out, seen, atom);
+  }
 
-  mergeInto(out, seen, innertube);
-  if (uploadsHtml) mergeInto(out, seen, await walk(uploadsHtml, extractVideos));
-  if (vidsHtml) mergeInto(out, seen, await walk(vidsHtml, extractVideos));
-  mergeInto(out, seen, atom);
-
-  // Don't cache obviously-truncated results — next request retries.
   if (out.length >= minCache) {
     cache.set(key, { at: Date.now(), items: out });
     rememberIfGood(key, out, minCache);
     return out;
   }
-  // Live walk fell short — try Invidious (independent public mirror).
-  // If even that comes up short, fall back to the last good walk we ever
-  // saw. This is the fix for "minimums revert after midnight": when the
-  // cache TTL elapses but a fresh walk gets throttled, we serve the
-  // last 500-strong list instead of the truncated one.
+  // Last try: Invidious (independent public mirror).
   const invid = id ? await fetchChannelInvidious(id) : [];
   if (invid.length > out.length) {
     out.length = 0;

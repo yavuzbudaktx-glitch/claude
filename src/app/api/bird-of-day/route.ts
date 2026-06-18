@@ -86,7 +86,52 @@ async function resolveFileUrl(fileTitle: string): Promise<string> {
   return "";
 }
 
-// 0) xeno-canto — the dedicated bird-song archive. ~700k recordings keyed
+// 0a) The recordings xeno-canto links the Wikipedia article EXPLICITLY
+//     points at — the editors' chosen reference recordings. Wikipedia bird
+//     articles ALWAYS cite xeno-canto for the Voice/Calls section, so this
+//     is the most reliable way to get a recording that's actually labelled
+//     to the species. We parse the article HTML, scan for xeno-canto URLs
+//     (recording pages like /123456 or refs like XC123456), and resolve
+//     the first one through xeno-canto's API to a direct audio URL.
+interface XcLookupResp { recordings?: Array<{ id?: string; file?: string }> }
+
+async function audioFromWikiXc(title: string): Promise<string> {
+  // action=parse gives us the rendered article HTML (with external links
+  // expanded), which is where the xeno-canto refs live.
+  const j = await getJson<{ parse?: { text?: { ["*"]?: string } } }>(
+    `https://en.wikipedia.org/w/api.php?action=parse&format=json&origin=*&prop=text&page=${encodeURIComponent(title.replace(/ /g, "_"))}`,
+  );
+  const html = j?.parse?.text?.["*"];
+  if (!html) return "";
+  // Candidate IDs: pull from explicit recording-page links, XC reference
+  // labels, and any bare numeric xeno-canto URL on the page.
+  const ids = new Set<string>();
+  for (const m of html.matchAll(/xeno-canto\.org\/(\d{3,8})\b/g)) ids.add(m[1]);
+  for (const m of html.matchAll(/\bXC(\d{3,8})\b/g)) ids.add(m[1]);
+  // species page → use the species slug to query xeno-canto by genus+species.
+  let speciesSlug = "";
+  const sp = html.match(/xeno-canto\.org\/species\/([A-Za-z][A-Za-z-]+)/);
+  if (sp) speciesSlug = sp[1];
+
+  for (const id of ids) {
+    const r = await getJson<XcLookupResp>(`https://www.xeno-canto.org/api/2/recordings?query=nr:${id}`);
+    const rec = r?.recordings?.[0];
+    const file = rec?.file && rec.file.startsWith("//") ? `https:${rec.file}` : rec?.file;
+    if (file && /^https?:\/\//.test(file)) return file;
+  }
+  if (speciesSlug) {
+    const [gen, ...rest] = speciesSlug.split("-");
+    const species = rest.join("-");
+    const q = encodeURIComponent(`gen:"${gen}" sp:"${species}"`);
+    const r = await getJson<XcLookupResp>(`https://www.xeno-canto.org/api/2/recordings?query=${q}`);
+    const rec = r?.recordings?.[0];
+    const file = rec?.file && rec.file.startsWith("//") ? `https:${rec.file}` : rec?.file;
+    if (file && /^https?:\/\//.test(file)) return file;
+  }
+  return "";
+}
+
+// 0b) xeno-canto — the dedicated bird-song archive. ~700k recordings keyed
 //    by common name or genus+species. We pick the highest-quality A-grade
 //    recording when one's available (xc's `q` field; "A" = best).
 interface XcRecording {
@@ -193,10 +238,12 @@ export async function GET(req: Request) {
     if (!hasPhoto) continue;
     if (!photoOnly) photoOnly = { title, wiki };
 
-    // xeno-canto is the dedicated bird-song archive — way more reliable
-    // than Commons, and the recordings are properly labelled by species.
-    // Falls back to Wikipedia's article media + Commons file search.
-    let audio = await audioFromXenoCanto(title);
+    // Order: (a) the xeno-canto link Wikipedia itself cites in the article
+    // — most reliable, and lines up with what the user sees on the page.
+    // (b) xeno-canto species search. (c) audio embedded in the article
+    // itself. (d) Commons file search by name.
+    let audio = await audioFromWikiXc(title);
+    if (!audio) audio = await audioFromXenoCanto(title);
     if (!audio) audio = await audioFromArticle(title);
     if (!audio) audio = await audioFromCommonsSearch(title);
     if (audio) best = { title, wiki, audio };
