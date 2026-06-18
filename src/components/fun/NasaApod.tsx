@@ -82,13 +82,14 @@ function ArtPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: (
   // Met page scrape failed to produce a description, render what we have
   // but skip caching so the next reload retries.
   const today = localDateKey();
-  // v4 cache: invalidates any entry stored while the Met scrape was leaking
-  // the "Vercel Security Checkpoint" anti-bot text into the description.
-  const { data, isLoading } = useDailyCached<Art>("art.v4", `/api/art-of-day?d=${today}`, {
+  // v5 cache: validator rejects anti-bot wall leakage (in case a future
+  // description path adds proxy scraping) but accepts the tombstone floor
+  // so we stop refetching every minute when Wikipedia has no match.
+  const { data, isLoading } = useDailyCached<Art>("art.v5", `/api/art-of-day?d=${today}`, {
     validate: (d) =>
       !!d.imageUrl &&
       !!d.description &&
-      d.description.trim().length >= 60 &&
+      d.description.trim().length >= 20 &&
       !/vercel security|just a moment|attention required|too many requests|checkpoint/i.test(d.description),
   });
   if (isLoading && !data) return <Loading />;
@@ -162,12 +163,12 @@ interface Bird { name?: string; scientific?: string; blurb?: string; imageUrl?: 
 
 function BirdPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: (v: boolean) => void }) {
   // Daily — one fetch per local day, persists across reloads (synced).
-  // v4 cache + validator: require a working audioUrl too, so a bird that
-  // got cached WITHOUT a song (the old behaviour) is treated as a partial
-  // result and refetched until xeno-canto returns a recording.
+  // v5: only require image + blurb. We previously also required audioUrl,
+  // which meant a bird with no archived recording never cached, leaving
+  // the panel in a permanent transient state.
   const today = localDateKey();
-  const { data, isLoading } = useDailyCached<Bird>("bird.v4", `/api/bird-of-day?d=${today}`, {
-    validate: (d) => !!d.imageUrl && !!d.blurb && d.blurb.trim().length > 40 && !!d.audioUrl,
+  const { data, isLoading } = useDailyCached<Bird>("bird.v5", `/api/bird-of-day?d=${today}`, {
+    validate: (d) => !!d.imageUrl && !!d.blurb && d.blurb.trim().length > 40,
   });
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);

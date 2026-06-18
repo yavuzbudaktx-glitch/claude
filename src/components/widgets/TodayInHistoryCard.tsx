@@ -69,6 +69,15 @@ export function TodayInHistoryCard() {
     );
   }
 
+  // The link ALWAYS goes to today's britannica.com/on-this-day landing
+  // page, regardless of what the upstream returned. The data may be a day
+  // behind (Britannica's email lags, scrape may be from yesterday), but
+  // the user clicking the title should always land on TODAY's page so the
+  // link feels current.
+  const MONTHS = ["january","february","march","april","may","june","july","august","september","october","november","december"];
+  const now = new Date();
+  const britannicaLink = `https://www.britannica.com/on-this-day/${MONTHS[now.getMonth()]}-${now.getDate()}`;
+
   return (
     <div className="animate-fadeIn">
       <div className="flex items-baseline justify-between mb-1.5">
@@ -83,20 +92,14 @@ export function TodayInHistoryCard() {
             {displayed.year}
           </span>
         )}
-        {displayed.link ? (
-          <a
-            href={displayed.link}
-            target="_blank"
-            rel="noreferrer"
-            className="font-serif text-[14px] leading-snug min-w-0 hover:underline underline-offset-4 decoration-[var(--rule)]"
-          >
-            {displayed.text}
-          </a>
-        ) : (
-          <span className="font-serif text-[14px] leading-snug min-w-0">
-            {displayed.text}
-          </span>
-        )}
+        <a
+          href={britannicaLink}
+          target="_blank"
+          rel="noreferrer"
+          className="font-serif text-[14px] leading-snug min-w-0 hover:underline underline-offset-4 decoration-[var(--rule)]"
+        >
+          {displayed.text}
+        </a>
       </div>
       {displayed.summary && (
         <p className="font-serif text-[12.5px] leading-snug text-muted mt-1.5">

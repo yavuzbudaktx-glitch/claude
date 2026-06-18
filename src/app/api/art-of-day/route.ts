@@ -113,55 +113,72 @@ export async function GET(req: Request) {
   let description: string | null = null;
   const pageUrl = obj.objectURL || `https://www.metmuseum.org/art/collection/search/${obj.objectID}`;
 
-  // Wikipedia fallback (search-based, reachable from Vercel without proxies).
-  // The plain summary endpoint needs an EXACT page title, which a Met
-  // tombstone title almost never matches — so we SEARCH first and take the
-  // best hit's extract. We try the painting itself, then the artist (so even
-  // an obscure canvas by a known painter gets a real, substantive blurb).
-  async function wikiSearchExtract(query: string, minLen: number): Promise<string | null> {
+  // Wikipedia fetch — pull the article extract that best matches a query.
+  // We restrict to namespace 0 (articles only, no Categories / Files) and
+  // verify the chosen hit isn't a disambiguation page or a list. The Met
+  // tombstone title almost never matches an exact Wikipedia page title, so
+  // we SEARCH and rank the candidates.
+  async function wikiBestExtract(
+    query: string,
+    accept: (title: string, extract: string) => boolean,
+  ): Promise<string | null> {
     const s = await getJson<{ query?: { search?: Array<{ title?: string }> } }>(
-      `https://en.wikipedia.org/w/api.php?action=query&list=search&srlimit=3&format=json&origin=*&srsearch=${encodeURIComponent(query)}`,
+      `https://en.wikipedia.org/w/api.php?action=query&list=search&srlimit=5&srnamespace=0&format=json&origin=*&srsearch=${encodeURIComponent(query)}`,
     );
     const hits = s?.query?.search ?? [];
     for (const hit of hits) {
       if (!hit.title) continue;
-      const sum = await getJson<{ extract?: string; type?: string }>(
+      if (/^(list of|disambiguation|category:|file:)/i.test(hit.title)) continue;
+      const sum = await getJson<{ extract?: string; type?: string; title?: string }>(
         `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`,
       );
       if (sum?.type === "disambiguation") continue;
-      if (sum?.extract && sum.extract.length >= minLen) {
+      if (sum?.extract && accept(sum.title ?? hit.title, sum.extract)) {
         return sum.extract.length > 700 ? sum.extract.slice(0, 697).trimEnd() + "…" : sum.extract;
       }
     }
     return null;
   }
 
-  if (!description && obj.title) {
-    // 1) the painting itself
-    const byPainting = await wikiSearchExtract(
-      `${obj.title}${obj.artistDisplayName ? ` ${obj.artistDisplayName}` : ""} painting`,
-      80,
+  // 1) Try the painting itself. Accept only when the page mentions painting,
+  //    work, or the artist's surname — otherwise we'd pin unrelated articles.
+  if (obj.title) {
+    const artistSurname = obj.artistDisplayName?.split(/\s+/).slice(-1)[0] ?? "";
+    const byPainting = await wikiBestExtract(
+      `${obj.title}${obj.artistDisplayName ? ` ${obj.artistDisplayName}` : ""}`,
+      (title, extract) => {
+        if (extract.length < 80) return false;
+        const t = (title + " " + extract).toLowerCase();
+        return /(painting|portrait|canvas|oil|tempera|watercolor|fresco|panel)/.test(t) ||
+               (artistSurname.length > 2 && t.includes(artistSurname.toLowerCase()));
+      },
     );
-    if (byPainting) {
-      description = byPainting;
-    } else if (obj.artistDisplayName) {
-      // 2) the artist — prefix so it's clear this is context, not a caption
-      const byArtist = await wikiSearchExtract(obj.artistDisplayName, 80);
-      if (byArtist) description = `About the artist — ${byArtist}`;
-    }
+    if (byPainting) description = byPainting;
   }
 
-  // Last resort: synthesize a short description from the tombstone so the
-  // info pane always renders SOMETHING, never a blank "No description on file."
+  // 2) Fall back to the artist's Wikipedia bio — the most reliable single
+  //    source for context, and almost every Met-collected artist has one.
+  //    Accept only when the article looks like a biography of THIS person
+  //    (page title contains the surname or "painter/artist" appears in extract).
+  if (!description && obj.artistDisplayName) {
+    const artistSurname = obj.artistDisplayName.split(/\s+/).slice(-1)[0] ?? "";
+    const byArtist = await wikiBestExtract(obj.artistDisplayName, (title, extract) => {
+      if (extract.length < 80) return false;
+      const surnameOK = artistSurname.length > 2 && title.toLowerCase().includes(artistSurname.toLowerCase());
+      const biokeys = /(painter|artist|sculptor|engraver|printmaker|draftsman|illustrator)/i.test(extract.slice(0, 400));
+      return surnameOK || biokeys;
+    });
+    if (byArtist) description = `About the artist — ${byArtist}`;
+  }
+
+  // 3) Floor: synthesize from the tombstone so the info pane is never blank.
   if (!description) {
     const parts: string[] = [];
     if (obj.medium) parts.push(obj.medium);
     if (obj.culture) parts.push(obj.culture);
     if (obj.objectDate) parts.push(obj.objectDate);
-    if (parts.length) {
-      const tomb = `${obj.title || "Untitled"}${obj.artistDisplayName ? `, by ${obj.artistDisplayName}` : ""}. ${parts.join(", ")}.`;
-      description = tomb;
-    }
+    const tomb = `${obj.title || "Untitled"}${obj.artistDisplayName ? `, by ${obj.artistDisplayName}` : ""}.${parts.length ? " " + parts.join(", ") + "." : ""}`;
+    description = tomb;
   }
 
   return NextResponse.json(

@@ -271,7 +271,7 @@ const PIPED_INSTANCES = [
 const PIPED_PROBE_TIMEOUT = 6000;
 const PIPED_PROBE_BUDGET = 14000;
 
-interface PipedStream { url?: string; title?: string; uploadedDate?: string; type?: string }
+interface PipedStream { url?: string; title?: string; uploadedDate?: string; type?: string; duration?: number; isShort?: boolean }
 interface PipedChannelResp { relatedStreams?: PipedStream[]; nextpage?: string | null; name?: string; id?: string }
 interface PipedPlaylistResp { relatedStreams?: PipedStream[]; nextpage?: string | null; name?: string }
 
@@ -279,6 +279,17 @@ function videoIdFromUrl(url: string | undefined): string {
   if (!url) return "";
   const m = url.match(/[?&]v=([\w-]{11})/) || url.match(/^\/?watch\?v=([\w-]{11})/);
   return m ? m[1] : "";
+}
+
+// True when a Piped stream is a Short (vertical, <=60s). Piped's `/channel/<id>`
+// returns the HOME tab which mixes regular videos AND Shorts — that's why
+// Belgesel and others were showing shorts now. We exclude anything that
+// either says it's a Short or has a duration of 60 seconds or less.
+function isShort(s: PipedStream): boolean {
+  if (s.isShort === true) return true;
+  if (typeof s.duration === "number" && s.duration > 0 && s.duration <= 60) return true;
+  if (s.url && /\/shorts\//.test(s.url)) return true;
+  return false;
 }
 
 async function pipedJsonAny<T>(pathBuilder: (base: string) => string): Promise<{ base: string; data: T } | null> {
@@ -306,6 +317,7 @@ async function fetchChannelPiped(channelId: string, minCount: number): Promise<L
   const seen = new Set<string>();
   const pushAll = (streams: PipedStream[] | undefined) => {
     for (const s of streams ?? []) {
+      if (isShort(s)) continue;        // exclude Shorts from regular video libs
       const id = videoIdFromUrl(s.url);
       if (id && !seen.has(id)) {
         seen.add(id);
@@ -318,8 +330,9 @@ async function fetchChannelPiped(channelId: string, minCount: number): Promise<L
   const base = first.base;
   const started = Date.now();
   let pages = 0;
-  while (next && pages < 60 && Date.now() - started < 20_000) {
-    // nextpage is a JSON-encoded string; we send it as a query param.
+  // Keep paging hard. Some channels need 5-10 pages to clear the minimum,
+  // and there's no penalty to overshooting since we use what we get.
+  while (next && pages < 80 && Date.now() - started < 22_000) {
     try {
       const r = await fetch(`${base}/nextpage/channel/${channelId}?nextpage=${encodeURIComponent(next)}`, {
         headers: { "User-Agent": HEADERS["User-Agent"], Accept: "application/json" },
@@ -332,8 +345,8 @@ async function fetchChannelPiped(channelId: string, minCount: number): Promise<L
       pushAll(j.relatedStreams);
       next = j.nextpage ?? null;
       pages++;
-      if (out.length === before) break;
-      if (out.length >= minCount * 1.5) break; // we have plenty
+      if (out.length === before && (j.relatedStreams?.length ?? 0) === 0) break;
+      if (out.length >= minCount * 2) break; // we have plenty
     } catch { break; }
   }
   return out;
@@ -347,6 +360,8 @@ async function fetchPlaylistPiped(playlistId: string, minCount: number): Promise
   const seen = new Set<string>();
   const pushAll = (streams: PipedStream[] | undefined) => {
     for (const s of streams ?? []) {
+      // Playlists never contain Shorts but we filter defensively.
+      if (isShort(s)) continue;
       const id = videoIdFromUrl(s.url);
       if (id && !seen.has(id)) {
         seen.add(id);
@@ -359,7 +374,7 @@ async function fetchPlaylistPiped(playlistId: string, minCount: number): Promise
   const base = first.base;
   const started = Date.now();
   let pages = 0;
-  while (next && pages < 60 && Date.now() - started < 20_000) {
+  while (next && pages < 80 && Date.now() - started < 22_000) {
     try {
       const r = await fetch(`${base}/nextpage/playlists/${playlistId}?nextpage=${encodeURIComponent(next)}`, {
         headers: { "User-Agent": HEADERS["User-Agent"], Accept: "application/json" },
@@ -372,8 +387,8 @@ async function fetchPlaylistPiped(playlistId: string, minCount: number): Promise
       pushAll(j.relatedStreams);
       next = j.nextpage ?? null;
       pages++;
-      if (out.length === before) break;
-      if (out.length >= minCount * 1.5) break;
+      if (out.length === before && (j.relatedStreams?.length ?? 0) === 0) break;
+      if (out.length >= minCount * 2) break;
     } catch { break; }
   }
   return out;
@@ -385,18 +400,15 @@ export async function fetchPlaylistVideos(playlistId: string, minCache = MIN_CAC
   if (hit) return hit;
   const out: LibVideo[] = [];
   const seen = new Set<string>();
-  // Piped FIRST — by far the most reliable upstream, no consent gate.
-  const piped = await fetchPlaylistPiped(playlistId, minCache);
+  // Race all sources in parallel; union the results.
+  const [piped, inner, html] = await Promise.all([
+    fetchPlaylistPiped(playlistId, minCache),
+    fetchPlaylistInnertube(playlistId),
+    getText(`https://www.youtube.com/playlist?list=${playlistId}&hl=en`),
+  ]);
   mergeInto(out, seen, piped);
-  // If Piped didn't satisfy the minimum, layer in innertube + HTML walk.
-  if (out.length < minCache) {
-    const [inner, html] = await Promise.all([
-      fetchPlaylistInnertube(playlistId),
-      getText(`https://www.youtube.com/playlist?list=${playlistId}&hl=en`),
-    ]);
-    mergeInto(out, seen, inner);
-    if (html) mergeInto(out, seen, await walk(html, extractVideos));
-  }
+  mergeInto(out, seen, inner);
+  if (html) mergeInto(out, seen, await walk(html, extractVideos));
   // Cache ANY reasonable result (≥ floor) for the TTL so we walk once, not on
   // every request. Then remember the biggest-ever as a regression floor.
   if (out.length >= HARD_MIN_CACHE) {
@@ -467,34 +479,27 @@ export async function fetchChannelVideos(handle: string, minCache = CHANNEL_MIN_
   const out: LibVideo[] = [];
   const seen = new Set<string>();
 
-  // PIPED FIRST — pumps full catalogues reliably via real-server mirrors
-  // that don't get the YouTube consent gate. We try Piped before any other
-  // upstream because when it works it works completely (300+ in one shot).
-  if (id) {
-    const piped = await fetchChannelPiped(id, minCache);
-    mergeInto(out, seen, piped);
-  }
-  // If we already have what the caller needs, stop early. Otherwise layer
-  // in YouTube's own sources for resilience.
-  if (out.length < minCache) {
-    const uploads = id ? "UU" + id.slice(2) : null;
-    const [innertube, uploadsHtml, vidsHtml, atom] = await Promise.all([
-      uploads ? fetchPlaylistInnertube(uploads) : Promise.resolve([] as LibVideo[]),
-      uploads ? getText(`https://www.youtube.com/playlist?list=${uploads}&hl=en`) : Promise.resolve(null),
-      getText(`https://www.youtube.com/@${handle}/videos?hl=en`),
-      id ? fetchAtom(id) : Promise.resolve([] as LibVideo[]),
-    ]);
-    mergeInto(out, seen, innertube);
-    if (uploadsHtml) mergeInto(out, seen, await walk(uploadsHtml, extractVideos));
-    if (vidsHtml) mergeInto(out, seen, await walk(vidsHtml, extractVideos));
-    mergeInto(out, seen, atom);
-  }
-
-  // Still thin? Try Invidious (independent public mirror) as a last upstream.
-  if (out.length < minCache) {
-    const invid = id ? await fetchChannelInvidious(id) : [];
-    mergeInto(out, seen, invid);
-  }
+  // Race ALL sources in parallel and union them. Piped + Invidious are the
+  // reliable real-server mirrors; YouTube's own innertube + HTML walks fill
+  // in anything the mirrors miss. Doing them in parallel (not sequentially
+  // with early-exit) is what gets us to the high minimums — no single source
+  // is reliable enough to hit 300+ on a cold-start Vercel egress, but the
+  // UNION across sources clears it.
+  const uploads = id ? "UU" + id.slice(2) : null;
+  const [piped, innertube, uploadsHtml, vidsHtml, atom, invid] = await Promise.all([
+    id ? fetchChannelPiped(id, minCache) : Promise.resolve([] as LibVideo[]),
+    uploads ? fetchPlaylistInnertube(uploads) : Promise.resolve([] as LibVideo[]),
+    uploads ? getText(`https://www.youtube.com/playlist?list=${uploads}&hl=en`) : Promise.resolve(null),
+    getText(`https://www.youtube.com/@${handle}/videos?hl=en`),
+    id ? fetchAtom(id) : Promise.resolve([] as LibVideo[]),
+    id ? fetchChannelInvidious(id) : Promise.resolve([] as LibVideo[]),
+  ]);
+  mergeInto(out, seen, piped);
+  mergeInto(out, seen, innertube);
+  if (uploadsHtml) mergeInto(out, seen, await walk(uploadsHtml, extractVideos));
+  if (vidsHtml) mergeInto(out, seen, await walk(vidsHtml, extractVideos));
+  mergeInto(out, seen, atom);
+  mergeInto(out, seen, invid);
 
   // Cache ANY reasonable result (≥ floor) so we walk once per TTL, not on every
   // request — this is what stops the re-walk storm that was getting us

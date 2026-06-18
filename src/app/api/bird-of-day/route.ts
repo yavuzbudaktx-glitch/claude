@@ -96,22 +96,23 @@ async function resolveFileUrl(fileTitle: string): Promise<string> {
 interface XcLookupResp { recordings?: Array<{ id?: string; file?: string }> }
 
 async function audioFromWikiXc(title: string): Promise<string> {
-  // action=parse gives us the rendered article HTML (with external links
-  // expanded), which is where the xeno-canto refs live.
-  const j = await getJson<{ parse?: { text?: { ["*"]?: string } } }>(
-    `https://en.wikipedia.org/w/api.php?action=parse&format=json&origin=*&prop=text&page=${encodeURIComponent(title.replace(/ /g, "_"))}`,
+  // Use Wikipedia's `externallinks` prop — a clean JSON array of every
+  // external URL the article cites. Way more reliable than regex'ing
+  // article HTML and picks up xc links wherever they appear (citations,
+  // External links section, infobox refs).
+  const j = await getJson<{ parse?: { externallinks?: string[] } }>(
+    `https://en.wikipedia.org/w/api.php?action=parse&format=json&origin=*&prop=externallinks&page=${encodeURIComponent(title.replace(/ /g, "_"))}`,
   );
-  const html = j?.parse?.text?.["*"];
-  if (!html) return "";
-  // Candidate IDs: pull from explicit recording-page links, XC reference
-  // labels, and any bare numeric xeno-canto URL on the page.
+  const links = j?.parse?.externallinks ?? [];
   const ids = new Set<string>();
-  for (const m of html.matchAll(/xeno-canto\.org\/(\d{3,8})\b/g)) ids.add(m[1]);
-  for (const m of html.matchAll(/\bXC(\d{3,8})\b/g)) ids.add(m[1]);
-  // species page → use the species slug to query xeno-canto by genus+species.
   let speciesSlug = "";
-  const sp = html.match(/xeno-canto\.org\/species\/([A-Za-z][A-Za-z-]+)/);
-  if (sp) speciesSlug = sp[1];
+  for (const url of links) {
+    if (!/xeno-canto\.org/i.test(url)) continue;
+    const mRec = url.match(/xeno-canto\.org\/(\d{3,8})(?:[/?#]|$)/);
+    if (mRec) ids.add(mRec[1]);
+    const mSp = url.match(/xeno-canto\.org\/species\/([A-Za-z][A-Za-z-]+)/);
+    if (mSp && !speciesSlug) speciesSlug = mSp[1];
+  }
 
   for (const id of ids) {
     const r = await getJson<XcLookupResp>(`https://www.xeno-canto.org/api/2/recordings?query=nr:${id}`);
