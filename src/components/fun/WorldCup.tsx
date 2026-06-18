@@ -131,7 +131,7 @@ function GroupTable({ g }: { g: Group }) {
             <div key={t.id} className={`grid grid-cols-[18px_22px_1fr_auto] items-center gap-2 px-3 py-1.5 ${top2 ? "bg-[color-mix(in_srgb,var(--accent)_4%,transparent)]" : ""}`}>
               <span className={`text-[10.5px] font-mono tabular-nums text-right ${top2 ? "text-accent font-bold" : "text-muted-2"}`}>{i + 1}</span>
               <TeamFlag logo={t.logo} alt={t.name} size={18} />
-              <span className={`text-[12.5px] truncate ${t.qualified ? "font-semibold text-ink" : t.eliminated ? "text-muted-2 line-through" : "text-ink-soft"}`}>{t.name || t.abbr}</span>
+              <span className={`text-[12.5px] truncate ${t.qualified ? "font-semibold text-ink" : "text-ink-soft"}`}>{t.name || t.abbr}</span>
               <span className="font-mono tabular-nums text-[11px] text-muted">
                 <span className="text-ink-soft">{t.gp}</span>
                 <span className="text-muted-2 mx-1">·</span>

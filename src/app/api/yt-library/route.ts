@@ -7,9 +7,10 @@ import { NextResponse } from "next/server";
 import { fetchChannelVideos, fetchChannelShorts, fetchPlaylistVideos, type LibVideo } from "@/lib/youtube-library";
 
 export const revalidate = 3600;
-// Walking a whole library is several round-trips; give the function headroom
-// (Vercel caps this to the plan max — 10s hobby / up to 60s pro).
-export const maxDuration = 30;
+// Walking a whole library is several round-trips; give the function the full
+// 60s headroom we get on Pro so a single cold start can pull the entire
+// 500-video Country Life library without timing out partway through.
+export const maxDuration = 60;
 
 type Source =
   | { kind: "channel"; handle: string; label: string; url: string; min: number }

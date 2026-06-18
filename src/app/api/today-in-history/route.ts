@@ -228,10 +228,12 @@ export async function GET(req: Request) {
   const dd = pad(dateAt.getUTCDate());
   const yyyy = dateAt.getUTCFullYear();
 
-  // Highest priority: Britannica's own daily "Today in History" newsletter
-  // delivered to the user's Gmail every morning between 02:00–07:00. When
-  // available it gives us Britannica's hand-written hook (the exact same
-  // copy the user reads in their inbox) with no scraping at all.
+  // Try to enrich with Britannica's own daily "Today in History" newsletter
+  // from the user's Gmail. The email path is best-effort: it only wins when
+  // it returns a SUBSTANTIVE lede (title + ≥120-char paragraph). Anything
+  // shorter is treated as a parse miss and we fall through to the scrape +
+  // Wikipedia path that was reliable before.
+  let emailEnriched: { title: string; summary: string; year: number | null; link: string } | null = null;
   try {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -245,24 +247,32 @@ export async function GET(req: Request) {
       if (refreshToken) {
         const accessToken = await refreshAccessToken(refreshToken);
         const email = await fetchTodaysBritannicaEmail(accessToken);
-        if (email && email.title && email.summary) {
-          return NextResponse.json({
-            date: `${mm}-${dd}`,
-            year: email.year ?? null,
-            text: email.title,
+        if (email && email.title && email.summary && email.summary.length >= 120) {
+          emailEnriched = {
+            title: email.title,
             summary: email.summary,
-            kind: "featured",
-            source: "britannica-email",
-            thumbnail: null,
-            pageTitle: email.title,
+            year: email.year ?? null,
             link: email.link,
-          });
+          };
         }
       }
     }
   } catch (e) {
     // Quietly fall through — Gmail OAuth issues shouldn't break the card.
     console.warn("today-in-history: britannica email path failed:", e);
+  }
+  if (emailEnriched) {
+    return NextResponse.json({
+      date: `${mm}-${dd}`,
+      year: emailEnriched.year,
+      text: emailEnriched.title,
+      summary: emailEnriched.summary,
+      kind: "featured",
+      source: "britannica-email",
+      thumbnail: null,
+      pageTitle: emailEnriched.title,
+      link: emailEnriched.link,
+    });
   }
 
   // Primary: today's "Featured Event" — when the GitHub-Action-committed

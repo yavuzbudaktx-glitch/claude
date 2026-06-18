@@ -65,14 +65,19 @@ function shapeTeam(e: EspnEntry): OutTeam | null {
   const gd = statVal(e.stats, ["pointDifferential", "GD"]) || gf - ga;
   const pts = statVal(e.stats, ["points", "PTS"]) || w * 3 + d;
   const noteDesc = (e.note?.description ?? "").toLowerCase();
+  // ESPN only emits these note flags during/after group stage when a slot is
+  // mathematically locked. Pre-tournament they're empty; mid-tournament they
+  // carry strings like "advanced to round of 32" or "clinched".
+  const advanced = /(advanc|clinched|qualif|^q(?:\b|ualif))/i.test(noteDesc);
+  const eliminated = /(\beliminated\b|knocked out)/i.test(noteDesc);
   return {
     id,
     name: t.displayName ?? "",
     abbr: t.abbreviation ?? "",
     logo,
     gp, w, d, l, gf, ga, gd, pts,
-    qualified: /advance|qualif|clinched/.test(noteDesc),
-    eliminated: /eliminated/.test(noteDesc),
+    qualified: advanced,
+    eliminated,
   };
 }
 

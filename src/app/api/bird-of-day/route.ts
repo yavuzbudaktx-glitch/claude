@@ -86,6 +86,40 @@ async function resolveFileUrl(fileTitle: string): Promise<string> {
   return "";
 }
 
+// 0) xeno-canto — the dedicated bird-song archive. ~700k recordings keyed
+//    by common name or genus+species. We pick the highest-quality A-grade
+//    recording when one's available (xc's `q` field; "A" = best).
+interface XcRecording {
+  id?: string;
+  gen?: string; sp?: string; en?: string;
+  q?: string;          // A/B/C/D/E quality
+  type?: string;       // "song", "call", etc.
+  file?: string;
+  ["file-name"]?: string;
+  rec?: string;
+  cnt?: string; loc?: string;
+}
+interface XcResp { recordings?: XcRecording[] }
+
+async function audioFromXenoCanto(commonName: string): Promise<string> {
+  // xeno-canto's search API supports `en:"name"` for English/common name.
+  const q = encodeURIComponent(`en:"${commonName}" q:A type:song`);
+  const j = await getJson<XcResp>(`https://www.xeno-canto.org/api/2/recordings?query=${q}`);
+  const list = j?.recordings ?? [];
+  // Pick the first A-quality song with a real file URL.
+  for (const r of list) {
+    const url = r.file && r.file.startsWith("//") ? `https:${r.file}` : r.file;
+    if (url && /^https?:\/\//.test(url)) return url;
+  }
+  // Loosen: any quality, any vocalisation type.
+  const j2 = await getJson<XcResp>(`https://www.xeno-canto.org/api/2/recordings?query=${encodeURIComponent(`en:"${commonName}"`)}`);
+  for (const r of j2?.recordings ?? []) {
+    const url = r.file && r.file.startsWith("//") ? `https:${r.file}` : r.file;
+    if (url && /^https?:\/\//.test(url)) return url;
+  }
+  return "";
+}
+
 // 1) Audio embedded on the article itself — the recording Wikipedia's editors
 //    chose for this species.
 async function audioFromArticle(title: string): Promise<string> {
@@ -159,7 +193,11 @@ export async function GET(req: Request) {
     if (!hasPhoto) continue;
     if (!photoOnly) photoOnly = { title, wiki };
 
-    let audio = await audioFromArticle(title);
+    // xeno-canto is the dedicated bird-song archive — way more reliable
+    // than Commons, and the recordings are properly labelled by species.
+    // Falls back to Wikipedia's article media + Commons file search.
+    let audio = await audioFromXenoCanto(title);
+    if (!audio) audio = await audioFromArticle(title);
     if (!audio) audio = await audioFromCommonsSearch(title);
     if (audio) best = { title, wiki, audio };
   }

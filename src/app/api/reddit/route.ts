@@ -52,11 +52,22 @@ function decodeAmp(u: string): string {
 // -------- proxy fetch -------------------------------------------------------
 
 function proxies(url: string): string[] {
+  // We also rotate through old.reddit.com (which lives on its own rate-limit
+  // bucket from www.reddit.com — so when www is throttling cloud egress,
+  // old.* often still answers) and through Reddit's `.json` endpoint on the
+  // safe-search subdomain.
+  const oldUrl = url.replace("://www.reddit.com", "://old.reddit.com");
+  const npUrl  = url.replace("://www.reddit.com", "://np.reddit.com");
   return [
     url,
+    oldUrl,
+    npUrl,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(oldUrl)}`,
     `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+    `https://corsproxy.io/?url=${encodeURIComponent(oldUrl)}`,
     `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(oldUrl)}`,
   ];
 }
 async function fetchText(url: string, headers: Record<string, string>): Promise<string | null> {
@@ -279,17 +290,25 @@ async function fetchSubResilient(sub: string): Promise<Post[]> {
     const r = await fetchSubRss(sub);
     return r;
   };
-  const first = await tryOnce();
-  if (first.length) return first;
-  // brief pause before second attempt — proxies recover quickly
-  await new Promise((res) => setTimeout(res, 600));
-  const second = await tryOnce();
-  if (second.length) return second;
+  // Up to 3 attempts per sub with backoff. The proxy pool above is big
+  // enough that two consecutive total failures is rare; three is virtually
+  // never (and even when it happens we still want SOMETHING in the
+  // payload from the other subs).
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const got = await tryOnce();
+    if (got.length) return got;
+    if (attempt < 2) await new Promise((res) => setTimeout(res, 600 * (attempt + 1)));
+  }
   return [];
 }
 
 async function buildPayload(): Promise<Payload> {
   const perSub = await Promise.all(SUBS.map(fetchSubResilient));
+  const subsHit = perSub.filter((arr) => arr.length > 0).length;
+  // Carry the per-build count so the handler can decide whether the result
+  // is "good enough" to cache as the warm snapshot. A single-sub payload
+  // would otherwise serve for 20 minutes and look broken.
+  (globalThis as { __redditSubsHit?: number }).__redditSubsHit = subsHit;
 
   // Round-robin interleave, preserving each sub's hot order.
   const seen = new Set<string>();
@@ -326,19 +345,27 @@ export async function GET(req: Request) {
     payload = { posts: [], subs: SUBS, sort: SORT, period: PERIOD };
   }
 
-  // Only adopt a fresh, non-empty result; otherwise keep the last good one
-  // ONLY if it's still within the hard expiry window — so a multi-day Reddit
-  // outage can never serve week-old hot posts as if they were current.
-  if (payload.posts.length > 0) {
+  // Adopt a fresh result as the warm snapshot ONLY when it includes posts
+  // from at least 3 of the 5 subs. A single-sub payload (which is what the
+  // user kept seeing) shouldn't pin the box for 20 minutes — let the next
+  // hit retry the slow path. If we already have a recent snapshot with more
+  // sub coverage, prefer that until the hard expiry kicks in.
+  const subsHit = (globalThis as { __redditSubsHit?: number }).__redditSubsHit ?? 0;
+  if (payload.posts.length > 0 && subsHit >= 3) {
+    // Strong fresh result — cache it and serve it.
     snapshot = { at: Date.now(), data: payload };
-  } else if (snapshot && Date.now() - snapshot.at < SNAP_HARD_MAX) {
-    return NextResponse.json(snapshot.data, { headers: { "Cache-Control": CDN_CACHE } });
-  } else {
-    snapshot = null; // drop the stale one entirely
-    return NextResponse.json({ posts: [], error: "no_posts" }, { status: 502 });
+    return NextResponse.json(payload, { headers: { "Cache-Control": force ? "no-store" : CDN_CACHE } });
   }
-
-  return NextResponse.json(payload, {
-    headers: { "Cache-Control": force ? "no-store" : CDN_CACHE },
-  });
+  if (snapshot && Date.now() - snapshot.at < SNAP_HARD_MAX) {
+    // Fresh result is thin but we have a broader recent snapshot — prefer it.
+    return NextResponse.json(snapshot.data, { headers: { "Cache-Control": CDN_CACHE } });
+  }
+  if (payload.posts.length > 0) {
+    // Last resort: serve the thin fresh result WITHOUT caching it, so the
+    // next request retries the slow path. Better to show 1-sub content than
+    // an empty card.
+    return NextResponse.json(payload, { headers: { "Cache-Control": "no-store" } });
+  }
+  snapshot = null;
+  return NextResponse.json({ posts: [], error: "no_posts" }, { status: 502 });
 }

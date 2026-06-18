@@ -23,11 +23,13 @@ const HEADERS = {
 const INNERTUBE_KEY = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
 const CLIENT = { clientName: "WEB", clientVersion: "2.20240101.00.00", hl: "en", gl: "US" };
 
-// Kept modest so a single request stays well inside a serverless function's
-// wall-clock limit (we merge in the Atom feed for resilience anyway).
-const MAX_PAGES = 40;        // up to ~40 * 100 videos
-const TIME_BUDGET_MS = 8000; // soft cap on the total walk
-const MIN_CACHEABLE = 8;     // never cache an obviously-truncated result
+// Generous budgets so a single request can actually pull the WHOLE library
+// (Country Life is 500+ videos, Bob Ross 300+, Logan 200+). The route's
+// maxDuration is 30s so 25s of budget gives plenty of headroom for the
+// downstream Promise.all sources plus a couple of retries.
+const MAX_PAGES = 80;          // up to ~80 * 100 ≈ 8k videos per walk
+const TIME_BUDGET_MS = 25_000; // soft cap on the total walk
+const MIN_CACHEABLE = 8;       // never cache an obviously-truncated result
 
 export interface LibVideo { id: string; title: string }
 

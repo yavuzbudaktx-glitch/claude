@@ -108,21 +108,25 @@ export async function GET(req: Request) {
   // (the curator's "View more" copy that sits next to the image), going
   // through the same proxy chain so it works from Vercel egress.
   //
-  // Fallback chain (each independent — first one to yield ≥60 chars wins):
-  //   1) Jina Reader (clean markdown)
-  //   2) Met's own headless render via allorigins
-  //   3) Met page via corsproxy
-  //   4) Wikipedia summary keyed on title + artist (covers the most
-  //      famous works that DO have Wikipedia pages — Van Gogh, etc.)
-  //   5) The tombstone fields themselves as a last resort, so users
-  //      always see SOMETHING in the description area.
+  // Jina Reader is intentionally LAST in the chain (and is the new "skip if
+  // the body is the Vercel anti-bot wall" filter): when the Met rate-limits
+  // Vercel egress, Jina returns its 200 wrapper body containing the literal
+  // text "Vercel Security Checkpoint" with no description — which the
+  // previous code happily accepted, leaving a broken card. The CORS proxies
+  // hit Met directly from consumer IPs and don't have that problem.
   let description: string | null = null;
   const pageUrl = obj.objectURL || `https://www.metmuseum.org/art/collection/search/${obj.objectID}`;
+
+  // Reject any body that's an anti-bot wall instead of the real page.
+  function isBlockedBody(body: string): boolean {
+    return /vercel\s+security\s+checkpoint|attention required|just a moment\.\.\.|cloudflare|access denied|too many requests/i.test(body.slice(0, 3000));
+  }
+
   const proxies = [
-    `https://r.jina.ai/${pageUrl}`,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(pageUrl)}`,
     `https://corsproxy.io/?url=${encodeURIComponent(pageUrl)}`,
     `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(pageUrl)}`,
+    `https://r.jina.ai/${pageUrl}`,
   ];
   for (const u of proxies) {
     if (description) break;
@@ -130,14 +134,12 @@ export async function GET(req: Request) {
       const r = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(8000), cache: "no-store" });
       if (!r.ok) continue;
       const body = await r.text();
-      if (!body) continue;
+      if (!body || isBlockedBody(body)) continue;
       if (u.startsWith("https://r.jina.ai/")) {
-        // Jina markdown: scan paragraphs, pick the first that reads like
-        // curator copy (long, no leading "skip to" / "share" / etc).
         const paras = body.split(/\n{2,}/).map((p) => p.trim());
         for (const p of paras) {
           if (p.length < 160 || p.length > 2000) continue;
-          if (/^(skip to|share|public domain|the met|metropolitan museum|on view|object number|accession)/i.test(p)) continue;
+          if (/^(skip to|share|public domain|the met|metropolitan museum|on view|object number|accession|vercel security)/i.test(p)) continue;
           if (/^[#*\-_=]+/.test(p)) continue;
           const cleaned = p.replace(/\[([^\]]+?)\]\([^)]+?\)/g, "$1").replace(/!\[[^\]]*?\]\([^)]+?\)/g, "").replace(/\s+/g, " ").trim();
           if (cleaned.length >= 100) {
@@ -162,7 +164,7 @@ export async function GET(req: Request) {
         const reP = /<p[^>]*>([\s\S]{160,1500}?)<\/p>/gi;
         while ((m = reP.exec(body))) candidates.push(decode(m[1]));
         for (const c of candidates) {
-          if (c.length >= 60 && !/^skip to|^share|^accept all/i.test(c)) {
+          if (c.length >= 60 && !/^skip to|^share|^accept all|^vercel/i.test(c)) {
             description = c.length > 700 ? c.slice(0, 697).trimEnd() + "…" : c;
             break;
           }

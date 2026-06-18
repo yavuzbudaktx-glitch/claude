@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePref } from "@/components/PrefsProvider";
+import { usePref, usePrefsLoaded } from "@/components/PrefsProvider";
 
 // A library that only ever GROWS. The "long view" boxes pull a channel's whole
 // catalogue from a serverless route, but that route's in-memory cache dies on
@@ -37,13 +37,21 @@ export function useGrowingLibrary(
   source: string,
   fetchUrl: string,
 ): { videos: LibVideo[]; count: number; label?: string; url?: string; isLoading: boolean } {
+  const prefsLoaded = usePrefsLoaded();
   const [stored, setStored] = usePref<Stored | null>(`hub.lib.${source}.v1`, null);
   const [live, setLive] = useState<Stored | null>(null);
-  const [loading, setLoading] = useState(!stored);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // CRITICAL: wait until PrefsProvider has finished loading from Supabase
+    // before we even consider persisting anything. Without this, the first
+    // fetch on a fresh mount would write a small (server-throttled) library
+    // into prefs with a "now" timestamp BEFORE the saved 500-video version
+    // from Supabase arrives — and because mergePerKey takes the newer
+    // timestamp, our small one would win and wipe the big saved one.
+    if (!prefsLoaded) return;
     let cancelled = false;
-    if (!stored) setLoading(true);
+    setLoading(!stored);
     fetch(fetchUrl)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       .then((d: { videos?: LibVideo[]; label?: string; url?: string; error?: string }) => {
@@ -61,7 +69,7 @@ export function useGrowingLibrary(
       .catch(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchUrl]);
+  }, [fetchUrl, prefsLoaded]);
 
   // Serve the LARGER of (live, stored) so a throttled fetch this session never
   // collapses the box below what we've previously cached.
