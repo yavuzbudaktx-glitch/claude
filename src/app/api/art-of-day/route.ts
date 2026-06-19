@@ -89,16 +89,21 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "art_unavailable" }, { status: 502 });
   }
 
-  // Walk a small window of deterministic candidates until one has an image.
-  // Some Met records claim hasImages but the object endpoint returns "".
-  let obj: MetObject | null = null;
-  for (let i = 0; i < 12 && !obj; i++) {
-    const idx = seedIdx(dateKey + ":pick:" + refresh + ":" + i, ids.length);
-    const candidate = await getJson<MetObject>(
-      `https://collectionapi.metmuseum.org/public/collection/v1/objects/${ids[idx]}`,
-    );
-    if (candidate && (candidate.primaryImage || candidate.primaryImageSmall)) obj = candidate;
-  }
+  // Fetch a window of deterministic candidates IN PARALLEL and take the first
+  // (by seed order) that actually has an image. Some Met records claim
+  // hasImages but the object endpoint returns "". Doing these 8 lookups in
+  // parallel instead of sequentially keeps us well under the function's time
+  // limit — the old sequential 12-deep walk could take long enough that the
+  // function was killed and the tab showed nothing.
+  const candidateIdxs = Array.from({ length: 8 }, (_, i) =>
+    ids[seedIdx(dateKey + ":pick:" + refresh + ":" + i, ids.length)],
+  );
+  const candidates = await Promise.all(
+    candidateIdxs.map((cid) =>
+      getJson<MetObject>(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${cid}`),
+    ),
+  );
+  const obj = candidates.find((c) => c && (c.primaryImage || c.primaryImageSmall)) ?? null;
   if (!obj) {
     return NextResponse.json({ error: "no_image" }, { status: 502 });
   }

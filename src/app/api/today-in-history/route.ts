@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import fs from "node:fs/promises";
 import path from "node:path";
 import dailyEvents from "@/data/daily-events.json";
-import { extractFeaturedEvent, isPlausibleFeaturedEvent } from "@/lib/britannica-extract";
 
 // Daily "on this day" fact, in priority order:
 //   1. Britannica's actual Featured Event for today, scraped daily by a
@@ -38,104 +37,6 @@ async function readBritannicaFile(): Promise<BritannicaFile | null> {
   } catch {
     return null;
   }
-}
-
-// Live Britannica scrape — the GitHub-Action-committed file only updates on
-// the default branch's schedule, so on the deployed branch it goes stale.
-// When that happens we scrape Britannica's "On this day" page directly. We
-// can't hit it from Vercel egress (Britannica blocks those IPs), but the
-// public CORS proxies below sit on consumer ranges and DO reach it (this is
-// the exact same path the GitHub scraper falls through to, verified working
-// against a live page dump). Results are cached in-process for the day so we
-// proxy at most once per cold start.
-const MONTHS = ["january","february","march","april","may","june","july","august","september","october","november","december"];
-let liveCache: { key: string; value: BritannicaFile } | null = null;
-
-// Parse Britannica's "On this day" markdown (Jina Reader output). Ported
-// from scripts/scrape-britannica.mjs::parseMarkdown — same logic.
-function extractFromJinaMarkdown(md: string): { year: number | null; title: string; summary: string; link: string | null } | null {
-  const idx = md.search(/(?:^|\n)#{1,4}\s+Featured\s+Event/i);
-  if (idx < 0) return null;
-  const chunk = md.slice(idx, idx + 6000);
-
-  const yearM = chunk.match(/\b(1[0-9]{3}|20[0-9]{2}|21[0-9]{2})\b/);
-  const year = yearM ? parseInt(yearM[1], 10) : null;
-
-  let title = "";
-  const headingM = chunk.match(/\n#{2,4}\s+([^\n#]+?)\n/);
-  if (headingM) title = headingM[1].trim();
-  if (!title) {
-    const linkM = chunk.match(/\n\s*(?:\*\*)?\[([^\]]+?)\]\(/);
-    if (linkM) title = linkM[1].trim();
-  }
-  title = title.replace(/^\*+|\*+$/g, "").trim();
-  if (title.length < 12 || title.split(/\s+/).length < 2) return null;
-  if (/^(featured event|on this day|today in history|britannica)/i.test(title)) return null;
-
-  const afterTitle = title ? chunk.slice(chunk.indexOf(title) + title.length) : chunk;
-  let summary = "";
-  const paraRe = /\n\n([^\n][\s\S]{40,}?)\n\n/g;
-  let pm: RegExpExecArray | null;
-  while ((pm = paraRe.exec(afterTitle)) !== null) {
-    const cleaned = pm[1]
-      .replace(/\[([^\]]+?)\]\([^)]+?\)/g, "$1")
-      .replace(/!\[[^\]]*?\]\([^)]+?\)/g, "")
-      .replace(/\*\*?([^*]+)\*\*?/g, "$1")
-      .replace(/\s+/g, " ")
-      .trim();
-    if (cleaned.length >= 60 && !/^[#>*\-=]/.test(cleaned)) { summary = cleaned; break; }
-  }
-  if (!summary || summary.length < 50) return null;
-  if (summary.length > 320) summary = summary.slice(0, 317).trimEnd() + "…";
-
-  return { year, title, summary, link: null };
-}
-
-async function scrapeBritannicaLive(mm: string, dd: string): Promise<BritannicaFile | null> {
-  const cacheKey = `${mm}-${dd}`;
-  if (liveCache && liveCache.key === cacheKey) return liveCache.value;
-
-  const month = MONTHS[Number(mm) - 1];
-  const target = `https://www.britannica.com/on-this-day/${month}-${Number(dd)}`;
-  const ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15";
-  // Try Jina Reader FIRST — it runs on residential IPs, returns rendered
-  // page content, and (unlike public CORS reflectors) is purpose-built for
-  // exactly this case. The CORS proxies follow as fallback.
-  const proxies = [
-    `https://r.jina.ai/${target}`,
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,
-    `https://corsproxy.io/?url=${encodeURIComponent(target)}`,
-    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(target)}`,
-  ];
-  for (const u of proxies) {
-    try {
-      const r = await fetch(u, {
-        headers: { "User-Agent": ua, Accept: u.startsWith("https://r.jina.ai/") ? "text/plain" : "text/html" },
-        signal: AbortSignal.timeout(12000),
-        cache: "no-store",
-      });
-      if (!r.ok) continue;
-      const body = await r.text();
-      if (!body || body.length < 800) continue;
-      const ev = u.startsWith("https://r.jina.ai/")
-        ? extractFromJinaMarkdown(body)
-        : extractFeaturedEvent(body);
-      if (ev && ev.title && ev.summary && (ev as { title: string }).title.length >= 8) {
-        const value: BritannicaFile = {
-          date: cacheKey,
-          year: ev.year ?? null,
-          title: ev.title,
-          summary: ev.summary,
-          link: ev.link ?? target,
-          sourceUrl: target,
-          generatedAt: new Date().toISOString(),
-        };
-        liveCache = { key: cacheKey, value };
-        return value;
-      }
-    } catch { /* try next proxy */ }
-  }
-  return null;
 }
 
 interface RawPage {
@@ -226,22 +127,17 @@ export async function GET(req: Request) {
   const yyyy = dateAt.getUTCFullYear();
 
   // Primary: today's "Featured Event" — when the GitHub-Action-committed
-  // Britannica file is current, we use it (richest copy, Britannica's
-  // hand-written summary). When it's stale (the cron is best-effort and
-  // routinely delays 5-12h, and the live scrape through public proxies is
-  // unreliable on busy days) we DON'T try to scrape Britannica at all —
-  // we go straight to Wikipedia's "onthisday/events" feed, which lists
-  // EVERY notable event for the day, and pick the highest-quality one
-  // (longest extract, most-prominent article). That feed is rock-solid
-  // from Vercel and routinely has 30-80 events per day, so the pick is
-  // almost always great.
-  let britannica = await readBritannicaFile();
-  // When the committed file is missing or stale, scrape Britannica live
-  // through the proxy chain (cached per-day in-process).
-  if (!britannica || britannica.date !== `${mm}-${dd}`) {
-    const live = await scrapeBritannicaLive(mm, dd);
-    if (live) britannica = live;
-  }
+  // Britannica file is current, use it (Britannica's hand-written summary).
+  //
+  // We do NOT live-scrape Britannica here anymore. Britannica blocks cloud
+  // egress (same Vercel-Security-Checkpoint wall as the Met), so the scrape
+  // would try four proxies at 12s each — up to ~48s — and on a 10s function
+  // limit the route would be KILLED before responding. The client then kept
+  // showing yesterday's cached data, which is exactly the "a day behind"
+  // symptom. When the committed file is stale we fall straight through to
+  // Wikipedia's onthisday feed, which is keyed by month/day (no timezone
+  // drift), reachable from Vercel, and returns within ~1s.
+  const britannica = await readBritannicaFile();
   if (britannica && britannica.date === `${mm}-${dd}` && britannica.title && britannica.summary) {
     return NextResponse.json({
       date: `${mm}-${dd}`,

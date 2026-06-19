@@ -23,6 +23,102 @@ const HEADERS = {
 const INNERTUBE_KEY = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
 const CLIENT = { clientName: "WEB", clientVersion: "2.20240101.00.00", hl: "en", gl: "US" };
 
+// ===========================================================================
+// Official YouTube Data API v3 — the ONLY upstream that's 100% reliable from
+// a datacenter IP. Scraping youtube.com from Vercel egress gets the consent /
+// bot wall, and the Piped/Invidious public mirrors are routinely down. With a
+// (free) API key set in YOUTUBE_API_KEY this becomes the primary source and
+// everything else is just a no-key fallback.
+//   - quota: playlistItems.list = 1 unit/page (50 videos), videos.list = 1
+//     unit/50 ids. A 500-video channel ≈ 20 units; the daily free quota is
+//     10,000. Effectively free.
+// ===========================================================================
+const YT_API_KEY = process.env.YOUTUBE_API_KEY || process.env.YT_API_KEY || "";
+
+function isoDurationSeconds(iso: string): number {
+  const m = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.exec(iso || "");
+  if (!m) return 0;
+  return (+(m[1] || 0)) * 3600 + (+(m[2] || 0)) * 60 + (+(m[3] || 0));
+}
+
+async function ytApiGet<T>(path: string): Promise<T | null> {
+  if (!YT_API_KEY) return null;
+  try {
+    const r = await fetch(`https://www.googleapis.com/youtube/v3/${path}&key=${YT_API_KEY}`, {
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(6000),
+      cache: "no-store",
+    });
+    if (!r.ok) return null;
+    return (await r.json()) as T;
+  } catch {
+    return null;
+  }
+}
+
+interface YtPlaylistItemsResp {
+  items?: Array<{
+    snippet?: { title?: string; resourceId?: { videoId?: string } };
+    contentDetails?: { videoId?: string };
+  }>;
+  nextPageToken?: string;
+}
+interface YtVideosResp {
+  items?: Array<{ id?: string; contentDetails?: { duration?: string } }>;
+}
+
+// Resolve @handle → UC… channel id via the official API.
+async function resolveChannelIdApi(handle: string): Promise<string | null> {
+  const j = await ytApiGet<{ items?: Array<{ id?: string }> }>(
+    `channels?part=id&forHandle=${encodeURIComponent(handle.replace(/^@/, ""))}`,
+  );
+  return j?.items?.[0]?.id ?? null;
+}
+
+// Page through a playlist (an uploads playlist UU… or a regular playlist) via
+// the official API, optionally dropping Shorts (duration ≤ 60s) — the uploads
+// playlist mixes Shorts in with regular videos, which is why Belgesel showed
+// Shorts. We resolve durations in a second batched pass.
+async function fetchPlaylistViaApi(playlistId: string, target: number, excludeShorts: boolean): Promise<LibVideo[]> {
+  if (!YT_API_KEY) return [];
+  const items: LibVideo[] = [];
+  let pageToken = "";
+  for (let i = 0; i < 30 && items.length < target * 1.5; i++) {
+    const j = await ytApiGet<YtPlaylistItemsResp>(
+      `playlistItems?part=snippet,contentDetails&maxResults=50&playlistId=${encodeURIComponent(playlistId)}${pageToken ? `&pageToken=${pageToken}` : ""}`,
+    );
+    if (!j?.items?.length) break;
+    for (const it of j.items) {
+      const id = it.contentDetails?.videoId || it.snippet?.resourceId?.videoId;
+      const title = it.snippet?.title ?? "";
+      if (id && title && title !== "Private video" && title !== "Deleted video") {
+        items.push({ id, title });
+      }
+    }
+    if (!j.nextPageToken) break;
+    pageToken = j.nextPageToken;
+  }
+  if (!excludeShorts || items.length === 0) return items;
+
+  // Drop Shorts: look up durations 50 at a time, keep anything over 60s
+  // (and keep anything whose duration we couldn't resolve, to be safe).
+  const keep: LibVideo[] = [];
+  for (let i = 0; i < items.length; i += 50) {
+    const batch = items.slice(i, i + 50);
+    const j = await ytApiGet<YtVideosResp>(
+      `videos?part=contentDetails&maxResults=50&id=${batch.map((b) => b.id).join(",")}`,
+    );
+    const durById = new Map<string, number>();
+    for (const v of j?.items ?? []) if (v.id) durById.set(v.id, isoDurationSeconds(v.contentDetails?.duration ?? ""));
+    for (const b of batch) {
+      const d = durById.get(b.id);
+      if (d === undefined || d > 60) keep.push(b);
+    }
+  }
+  return keep;
+}
+
+
 // Budgets sized to fit inside a Vercel HOBBY function's 10s hard kill (which
 // caps regardless of `maxDuration`). All upstreams run in PARALLEL, so the
 // route's wall-clock ≈ the slowest single source, not their sum. Keeping each
@@ -116,6 +212,11 @@ async function innertubeBrowse(continuation: string): Promise<string | null> {
 export async function resolveChannelId(handle: string): Promise<string | null> {
   const hit = idCache.get(handle);
   if (hit) return hit;
+  // Official API first (reliable from any IP), then HTML scrape fallback.
+  if (YT_API_KEY) {
+    const viaApi = await resolveChannelIdApi(handle);
+    if (viaApi) { idCache.set(handle, viaApi); return viaApi; }
+  }
   const html = await getText(`https://www.youtube.com/@${handle}`);
   if (!html) return null;
   const m =
@@ -405,15 +506,23 @@ export async function fetchPlaylistVideos(playlistId: string, minCache = MIN_CAC
   if (hit) return hit;
   const out: LibVideo[] = [];
   const seen = new Set<string>();
-  // Race all sources in parallel; union the results.
-  const [piped, inner, html] = await Promise.all([
-    fetchPlaylistPiped(playlistId, minCache),
-    fetchPlaylistInnertube(playlistId),
-    getText(`https://www.youtube.com/playlist?list=${playlistId}&hl=en`),
-  ]);
-  mergeInto(out, seen, piped);
-  mergeInto(out, seen, inner);
-  if (html) mergeInto(out, seen, await walk(html, extractVideos));
+  // Official API first when a key is set — reliable and complete.
+  if (YT_API_KEY) {
+    const api = await fetchPlaylistViaApi(playlistId, minCache, false);
+    mergeInto(out, seen, api);
+  }
+  // If the API got us there, skip the flaky scrapers. Otherwise race the
+  // fallback sources in parallel and union them.
+  if (out.length < minCache) {
+    const [piped, inner, html] = await Promise.all([
+      fetchPlaylistPiped(playlistId, minCache),
+      fetchPlaylistInnertube(playlistId),
+      getText(`https://www.youtube.com/playlist?list=${playlistId}&hl=en`),
+    ]);
+    mergeInto(out, seen, piped);
+    mergeInto(out, seen, inner);
+    if (html) mergeInto(out, seen, await walk(html, extractVideos));
+  }
   // Cache ANY reasonable result (≥ floor) for the TTL so we walk once, not on
   // every request. Then remember the biggest-ever as a regression floor.
   if (out.length >= HARD_MIN_CACHE) {
@@ -483,28 +592,33 @@ export async function fetchChannelVideos(handle: string, minCache = CHANNEL_MIN_
   const id = await resolveChannelId(handle);
   const out: LibVideo[] = [];
   const seen = new Set<string>();
-
-  // Race ALL sources in parallel and union them. Piped + Invidious are the
-  // reliable real-server mirrors; YouTube's own innertube + HTML walks fill
-  // in anything the mirrors miss. Doing them in parallel (not sequentially
-  // with early-exit) is what gets us to the high minimums — no single source
-  // is reliable enough to hit 300+ on a cold-start Vercel egress, but the
-  // UNION across sources clears it.
   const uploads = id ? "UU" + id.slice(2) : null;
-  const [piped, innertube, uploadsHtml, vidsHtml, atom, invid] = await Promise.all([
-    id ? fetchChannelPiped(id, minCache) : Promise.resolve([] as LibVideo[]),
-    uploads ? fetchPlaylistInnertube(uploads) : Promise.resolve([] as LibVideo[]),
-    uploads ? getText(`https://www.youtube.com/playlist?list=${uploads}&hl=en`) : Promise.resolve(null),
-    getText(`https://www.youtube.com/@${handle}/videos?hl=en`),
-    id ? fetchAtom(id) : Promise.resolve([] as LibVideo[]),
-    id ? fetchChannelInvidious(id) : Promise.resolve([] as LibVideo[]),
-  ]);
-  mergeInto(out, seen, piped);
-  mergeInto(out, seen, innertube);
-  if (uploadsHtml) mergeInto(out, seen, await walk(uploadsHtml, extractVideos));
-  if (vidsHtml) mergeInto(out, seen, await walk(vidsHtml, extractVideos));
-  mergeInto(out, seen, atom);
-  mergeInto(out, seen, invid);
+
+  // Official API first when a key is set — reliable from any IP, complete,
+  // and drops Shorts via the duration pass (the fix for Belgesel-shows-Shorts).
+  if (YT_API_KEY && uploads) {
+    const api = await fetchPlaylistViaApi(uploads, minCache, true);
+    mergeInto(out, seen, api);
+  }
+
+  // If the API already cleared the bar, skip the flaky scrapers entirely.
+  // Otherwise race ALL fallback sources in parallel and union them.
+  if (out.length < minCache) {
+    const [piped, innertube, uploadsHtml, vidsHtml, atom, invid] = await Promise.all([
+      id ? fetchChannelPiped(id, minCache) : Promise.resolve([] as LibVideo[]),
+      uploads ? fetchPlaylistInnertube(uploads) : Promise.resolve([] as LibVideo[]),
+      uploads ? getText(`https://www.youtube.com/playlist?list=${uploads}&hl=en`) : Promise.resolve(null),
+      getText(`https://www.youtube.com/@${handle}/videos?hl=en`),
+      id ? fetchAtom(id) : Promise.resolve([] as LibVideo[]),
+      id ? fetchChannelInvidious(id) : Promise.resolve([] as LibVideo[]),
+    ]);
+    mergeInto(out, seen, piped);
+    mergeInto(out, seen, innertube);
+    if (uploadsHtml) mergeInto(out, seen, await walk(uploadsHtml, extractVideos));
+    if (vidsHtml) mergeInto(out, seen, await walk(vidsHtml, extractVideos));
+    mergeInto(out, seen, atom);
+    mergeInto(out, seen, invid);
+  }
 
   // Cache ANY reasonable result (≥ floor) so we walk once per TTL, not on every
   // request — this is what stops the re-walk storm that was getting us
