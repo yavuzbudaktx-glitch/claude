@@ -1,10 +1,10 @@
 # Britannica scrape debug dump
-# generated: 2026-06-19T15:52:12.536Z
+# generated: 2026-06-19T16:43:05.442Z
 # url:       https://www.britannica.com/on-this-day/june-19
 # fetcher:   Wayback Machine
 # kind:      html
 # length:    75365
-# parsed:    YES (Wayback Machine)
+# parsed:    NO
 # -----------------------------------------------------------------
 
 
