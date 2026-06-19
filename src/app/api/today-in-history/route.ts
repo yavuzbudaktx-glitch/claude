@@ -3,9 +3,6 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import dailyEvents from "@/data/daily-events.json";
 import { extractFeaturedEvent, isPlausibleFeaturedEvent } from "@/lib/britannica-extract";
-import { createClient } from "@/lib/supabase/server";
-import { refreshAccessToken } from "@/lib/google/refresh";
-import { fetchTodaysBritannicaEmail } from "@/lib/google/britannica-email";
 
 // Daily "on this day" fact, in priority order:
 //   1. Britannica's actual Featured Event for today, scraped daily by a
@@ -227,53 +224,6 @@ export async function GET(req: Request) {
   const mm = pad(dateAt.getUTCMonth() + 1);
   const dd = pad(dateAt.getUTCDate());
   const yyyy = dateAt.getUTCFullYear();
-
-  // Try to enrich with Britannica's own daily "Today in History" newsletter
-  // from the user's Gmail. The email path is best-effort: it only wins when
-  // it returns a SUBSTANTIVE lede (title + ≥120-char paragraph). Anything
-  // shorter is treated as a parse miss and we fall through to the scrape +
-  // Wikipedia path that was reliable before.
-  let emailEnriched: { title: string; summary: string; year: number | null; link: string } | null = null;
-  try {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const { data: settings } = await supabase
-        .from("user_settings")
-        .select("google_refresh_token")
-        .eq("user_id", user.id)
-        .maybeSingle();
-      const refreshToken = settings?.google_refresh_token;
-      if (refreshToken) {
-        const accessToken = await refreshAccessToken(refreshToken);
-        const email = await fetchTodaysBritannicaEmail(accessToken);
-        if (email && email.title && email.summary && email.summary.length >= 120) {
-          emailEnriched = {
-            title: email.title,
-            summary: email.summary,
-            year: email.year ?? null,
-            link: email.link,
-          };
-        }
-      }
-    }
-  } catch (e) {
-    // Quietly fall through — Gmail OAuth issues shouldn't break the card.
-    console.warn("today-in-history: britannica email path failed:", e);
-  }
-  if (emailEnriched) {
-    return NextResponse.json({
-      date: `${mm}-${dd}`,
-      year: emailEnriched.year,
-      text: emailEnriched.title,
-      summary: emailEnriched.summary,
-      kind: "featured",
-      source: "britannica-email",
-      thumbnail: null,
-      pageTitle: emailEnriched.title,
-      link: emailEnriched.link,
-    });
-  }
 
   // Primary: today's "Featured Event" — when the GitHub-Action-committed
   // Britannica file is current, we use it (richest copy, Britannica's

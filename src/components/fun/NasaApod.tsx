@@ -85,7 +85,7 @@ function ArtPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: (
   // v5 cache: validator rejects anti-bot wall leakage (in case a future
   // description path adds proxy scraping) but accepts the tombstone floor
   // so we stop refetching every minute when Wikipedia has no match.
-  const { data, isLoading } = useDailyCached<Art>("art.v5", `/api/art-of-day?d=${today}`, {
+  const { data, isLoading } = useDailyCached<Art>("art.v6", `/api/art-of-day?d=${today}`, {
     validate: (d) =>
       !!d.imageUrl &&
       !!d.description &&
@@ -167,7 +167,7 @@ function BirdPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: 
   // which meant a bird with no archived recording never cached, leaving
   // the panel in a permanent transient state.
   const today = localDateKey();
-  const { data, isLoading } = useDailyCached<Bird>("bird.v5", `/api/bird-of-day?d=${today}`, {
+  const { data, isLoading } = useDailyCached<Bird>("bird.v6", `/api/bird-of-day?d=${today}`, {
     validate: (d) => !!d.imageUrl && !!d.blurb && d.blurb.trim().length > 40,
   });
   const audioRef = useRef<HTMLAudioElement>(null);

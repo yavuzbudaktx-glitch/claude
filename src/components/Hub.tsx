@@ -14,7 +14,6 @@ import { usePref, usePrefsLoaded } from "@/components/PrefsProvider";
 import { localDateKey } from "@/lib/local-date";
 import { useFreshAt } from "@/lib/use-fresh";
 import { useCountUp } from "@/lib/use-count-up";
-import { useGrowingLibrary } from "@/lib/use-growing-library";
 
 // =============================================================================
 //   Accounting toolkit — focused widgets the user opens on their own
@@ -942,6 +941,12 @@ interface CpaVideo {
   id: string; title: string; published: string; thumb: string;
   channel: string; channelLabel: string; channelUrl: string;
 }
+interface CpaVideoResp {
+  videos?: CpaVideo[];
+  seed?: number;
+  channels?: Array<{ handle: string; label: string }>;
+  error?: string;
+}
 interface YtComment { author: string; text: string; likes: number; time: string }
 interface YtCommentsResp { comments?: YtComment[] }
 
@@ -1035,11 +1040,13 @@ function VideoComments({ videoId }: { videoId: string }) {
 
 export function CpaVideoSection() {
   const dateKey = useDailyKey();
-  // Growing library — persisted (synced) and never shrinks, so Logan's full
-  // catalogue sticks across cold starts / midnight instead of collapsing to
-  // whatever a throttled serverless fetch happened to return.
-  const { videos: rawVideos, isLoading } = useGrowingLibrary("cpa.logan", `/api/cpa-video?d=${dateKey}`);
-  const videos = rawVideos as CpaVideo[];
+  const { data, isLoading } = useSWR<CpaVideoResp>(
+    `/api/cpa-video?d=${dateKey}`,
+    jsonFetcher,
+    { refreshInterval: 1000 * 60 * 60 * 6, keepPreviousData: true },
+  );
+
+  const videos = useMemo(() => data?.videos ?? [], [data]);
 
   // A shuffled choice persists (synced) for the rest of the day, so a page
   // refresh or SWR revalidation keeps the video you picked instead of
@@ -1048,21 +1055,14 @@ export function CpaVideoSection() {
   const [pick, setPick] = usePref<{ date: string; id: string } | null>("hub.cpaVideo.pick", null);
   const [playing, setPlaying] = useState(false);
 
-  // Stable per-day seed computed client-side (the route used to return one).
-  const daySeed = useMemo(() => {
-    let h = 0;
-    for (const c of dateKey) h = (h * 31 + c.charCodeAt(0)) >>> 0;
-    return h;
-  }, [dateKey]);
-
   const idx = useMemo(() => {
     if (!videos.length) return 0;
     if (pick && pick.date === dateKey) {
       const i = videos.findIndex((v) => v.id === pick.id);
       if (i >= 0) return i;
     }
-    return ((daySeed % videos.length) + videos.length) % videos.length;
-  }, [videos, pick, dateKey, daySeed]);
+    return ((data?.seed ?? 0) % videos.length + videos.length) % videos.length;
+  }, [videos, pick, dateKey, data?.seed]);
 
   const cur = videos[idx];
   const thumb = cur ? cur.thumb || `https://i.ytimg.com/vi/${cur.id}/hqdefault.jpg` : "";

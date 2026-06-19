@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import useSWR from "swr";
 import { Shuffle, Tv, Paintbrush, Sprout, Film } from "lucide-react";
 import { YouTubePlayer } from "./YouTubePlayer";
-import { useGrowingLibrary } from "@/lib/use-growing-library";
 
 // Full-size ambient video at the top of the Fun page. Pick a channel via the
 // tabs; each plays a RANDOM video drawn from that source's entire library
-// (server walks the whole catalogue). Shuffle for another. The library is
-// persisted (synced) and only ever grows, so the minimum count sticks across
-// cold starts / midnight even when YouTube throttles the serverless fetch.
+// (the server walks the whole catalogue and caches it). Shuffle for another.
+
+interface LibResp { label?: string; url?: string; count?: number; videos?: Array<{ id: string; title: string }>; error?: string }
+const fetcher = (u: string) => fetch(u).then((r) => r.json());
 
 const TABS = [
   { id: "vlog",    label: "Country Life", icon: Sprout },
@@ -21,17 +22,18 @@ type TabId = (typeof TABS)[number]["id"];
 
 export function AmbientVideo() {
   const [tab, setTab] = useState<TabId>("vlog");
-  const { videos, isLoading } = useGrowingLibrary(tab, `/api/yt-library?source=${tab}`);
+  const { data, isLoading } = useSWR<LibResp>(`/api/yt-library?source=${tab}`, fetcher, {
+    keepPreviousData: false,
+    revalidateOnFocus: false,
+  });
+  const videos = useMemo(() => data?.videos ?? [], [data]);
   const [idx, setIdx] = useState(0);
   const recent = useRef<number[]>([]);
 
-  // New random pick whenever the tab changes or the library count grows.
-  // Keyed on length (not array identity) so a background refresh that returns
-  // the same library doesn't re-randomize the current video.
+  // New random pick whenever the library (tab) changes.
   useEffect(() => {
     if (videos.length) { setIdx(Math.floor(Math.random() * videos.length)); recent.current = []; }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tab, videos.length]);
+  }, [videos]);
 
   function shuffle() {
     if (videos.length < 2) return;

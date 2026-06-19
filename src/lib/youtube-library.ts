@@ -23,13 +23,16 @@ const HEADERS = {
 const INNERTUBE_KEY = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
 const CLIENT = { clientName: "WEB", clientVersion: "2.20240101.00.00", hl: "en", gl: "US" };
 
-// Generous budgets so a single request can actually pull the WHOLE library
-// (Country Life is 500+ videos, Bob Ross 300+, Logan 200+). The route's
-// maxDuration is 30s so 25s of budget gives plenty of headroom for the
-// downstream Promise.all sources plus a couple of retries.
-const MAX_PAGES = 80;          // up to ~80 * 100 ≈ 8k videos per walk
-const TIME_BUDGET_MS = 25_000; // soft cap on the total walk
-const MIN_CACHEABLE = 8;       // never cache an obviously-truncated result
+// Budgets sized to fit inside a Vercel HOBBY function's 10s hard kill (which
+// caps regardless of `maxDuration`). All upstreams run in PARALLEL, so the
+// route's wall-clock ≈ the slowest single source, not their sum. Keeping each
+// source under ~8s is what makes the whole thing return in time — the earlier
+// 25s budget was getting the function killed before it returned anything,
+// which is exactly why the boxes went empty. 8s of innertube paging still
+// pulls hundreds of videos.
+const MAX_PAGES = 40;         // up to ~40 * 100 videos per walk
+const TIME_BUDGET_MS = 8000;  // soft cap on a single source's walk
+const MIN_CACHEABLE = 8;      // never cache an obviously-truncated result
 
 export interface LibVideo { id: string; title: string }
 
@@ -265,11 +268,13 @@ const PIPED_INSTANCES = [
   "https://pipedapi.darkness.services",
   "https://api.piped.private.coffee",
 ];
-// Bound the time spent probing Piped so a fully-down Piped network can't
-// blow the route's wall-clock budget. Each instance gets a short timeout
-// and we stop probing once the cumulative time crosses the cap.
-const PIPED_PROBE_TIMEOUT = 6000;
-const PIPED_PROBE_BUDGET = 14000;
+// Bound the time spent probing Piped HARD so a slow/down Piped network can't
+// blow the 10s function limit. Short per-instance timeout, small total budget;
+// if Piped doesn't answer fast we just rely on the parallel YouTube sources.
+const PIPED_PROBE_TIMEOUT = 3500;
+const PIPED_PROBE_BUDGET = 5000;
+// Total wall-clock for a Piped channel/playlist pull (probe + pagination).
+const PIPED_TOTAL_BUDGET = 8000;
 
 interface PipedStream { url?: string; title?: string; uploadedDate?: string; type?: string; duration?: number; isShort?: boolean }
 interface PipedChannelResp { relatedStreams?: PipedStream[]; nextpage?: string | null; name?: string; id?: string }
@@ -311,6 +316,7 @@ async function pipedJsonAny<T>(pathBuilder: (base: string) => string): Promise<{
 }
 
 async function fetchChannelPiped(channelId: string, minCount: number): Promise<LibVideo[]> {
+  const started = Date.now();
   const first = await pipedJsonAny<PipedChannelResp>((b) => `${b}/channel/${channelId}`);
   if (!first) return [];
   const out: LibVideo[] = [];
@@ -328,15 +334,14 @@ async function fetchChannelPiped(channelId: string, minCount: number): Promise<L
   pushAll(first.data.relatedStreams);
   let next = first.data.nextpage;
   const base = first.base;
-  const started = Date.now();
   let pages = 0;
-  // Keep paging hard. Some channels need 5-10 pages to clear the minimum,
-  // and there's no penalty to overshooting since we use what we get.
-  while (next && pages < 80 && Date.now() - started < 22_000) {
+  // Page until the total Piped budget runs out (must leave room under the
+  // 10s function limit — this runs in parallel with the YouTube sources).
+  while (next && pages < 40 && Date.now() - started < PIPED_TOTAL_BUDGET) {
     try {
       const r = await fetch(`${base}/nextpage/channel/${channelId}?nextpage=${encodeURIComponent(next)}`, {
         headers: { "User-Agent": HEADERS["User-Agent"], Accept: "application/json" },
-        signal: AbortSignal.timeout(8000),
+        signal: AbortSignal.timeout(3500),
         cache: "no-store",
       });
       if (!r.ok) break;
@@ -374,11 +379,11 @@ async function fetchPlaylistPiped(playlistId: string, minCount: number): Promise
   const base = first.base;
   const started = Date.now();
   let pages = 0;
-  while (next && pages < 80 && Date.now() - started < 22_000) {
+  while (next && pages < 40 && Date.now() - started < PIPED_TOTAL_BUDGET) {
     try {
       const r = await fetch(`${base}/nextpage/playlists/${playlistId}?nextpage=${encodeURIComponent(next)}`, {
         headers: { "User-Agent": HEADERS["User-Agent"], Accept: "application/json" },
-        signal: AbortSignal.timeout(8000),
+        signal: AbortSignal.timeout(3500),
         cache: "no-store",
       });
       if (!r.ok) break;

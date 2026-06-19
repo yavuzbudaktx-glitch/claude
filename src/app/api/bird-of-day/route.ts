@@ -86,82 +86,27 @@ async function resolveFileUrl(fileTitle: string): Promise<string> {
   return "";
 }
 
-// 0a) The recordings xeno-canto links the Wikipedia article EXPLICITLY
-//     points at — the editors' chosen reference recordings. Wikipedia bird
-//     articles ALWAYS cite xeno-canto for the Voice/Calls section, so this
-//     is the most reliable way to get a recording that's actually labelled
-//     to the species. We parse the article HTML, scan for xeno-canto URLs
-//     (recording pages like /123456 or refs like XC123456), and resolve
-//     the first one through xeno-canto's API to a direct audio URL.
-interface XcLookupResp { recordings?: Array<{ id?: string; file?: string }> }
+// 0) The xeno-canto recording the Wikipedia article EXPLICITLY links to.
+//    Wikipedia bird articles cite xeno-canto for the Voice/Calls section, so
+//    this is the recording a reader would actually click. We read the
+//    article's external links (clean JSON via prop=externallinks), find the
+//    first xeno-canto recording id, and return its PUBLIC DOWNLOAD URL
+//    (xeno-canto.org/<id>/download) — a stable endpoint that streams the mp3
+//    with NO API key. (xeno-canto's JSON API was gated behind registration in
+//    2024, which is why the old api/2 calls silently stopped returning files.)
+function xcDownloadUrl(id: string): string {
+  return `https://xeno-canto.org/${id}/download`;
+}
 
 async function audioFromWikiXc(title: string): Promise<string> {
-  // Use Wikipedia's `externallinks` prop — a clean JSON array of every
-  // external URL the article cites. Way more reliable than regex'ing
-  // article HTML and picks up xc links wherever they appear (citations,
-  // External links section, infobox refs).
   const j = await getJson<{ parse?: { externallinks?: string[] } }>(
     `https://en.wikipedia.org/w/api.php?action=parse&format=json&origin=*&prop=externallinks&page=${encodeURIComponent(title.replace(/ /g, "_"))}`,
   );
   const links = j?.parse?.externallinks ?? [];
-  const ids = new Set<string>();
-  let speciesSlug = "";
   for (const url of links) {
     if (!/xeno-canto\.org/i.test(url)) continue;
     const mRec = url.match(/xeno-canto\.org\/(\d{3,8})(?:[/?#]|$)/);
-    if (mRec) ids.add(mRec[1]);
-    const mSp = url.match(/xeno-canto\.org\/species\/([A-Za-z][A-Za-z-]+)/);
-    if (mSp && !speciesSlug) speciesSlug = mSp[1];
-  }
-
-  for (const id of ids) {
-    const r = await getJson<XcLookupResp>(`https://www.xeno-canto.org/api/2/recordings?query=nr:${id}`);
-    const rec = r?.recordings?.[0];
-    const file = rec?.file && rec.file.startsWith("//") ? `https:${rec.file}` : rec?.file;
-    if (file && /^https?:\/\//.test(file)) return file;
-  }
-  if (speciesSlug) {
-    const [gen, ...rest] = speciesSlug.split("-");
-    const species = rest.join("-");
-    const q = encodeURIComponent(`gen:"${gen}" sp:"${species}"`);
-    const r = await getJson<XcLookupResp>(`https://www.xeno-canto.org/api/2/recordings?query=${q}`);
-    const rec = r?.recordings?.[0];
-    const file = rec?.file && rec.file.startsWith("//") ? `https:${rec.file}` : rec?.file;
-    if (file && /^https?:\/\//.test(file)) return file;
-  }
-  return "";
-}
-
-// 0b) xeno-canto — the dedicated bird-song archive. ~700k recordings keyed
-//    by common name or genus+species. We pick the highest-quality A-grade
-//    recording when one's available (xc's `q` field; "A" = best).
-interface XcRecording {
-  id?: string;
-  gen?: string; sp?: string; en?: string;
-  q?: string;          // A/B/C/D/E quality
-  type?: string;       // "song", "call", etc.
-  file?: string;
-  ["file-name"]?: string;
-  rec?: string;
-  cnt?: string; loc?: string;
-}
-interface XcResp { recordings?: XcRecording[] }
-
-async function audioFromXenoCanto(commonName: string): Promise<string> {
-  // xeno-canto's search API supports `en:"name"` for English/common name.
-  const q = encodeURIComponent(`en:"${commonName}" q:A type:song`);
-  const j = await getJson<XcResp>(`https://www.xeno-canto.org/api/2/recordings?query=${q}`);
-  const list = j?.recordings ?? [];
-  // Pick the first A-quality song with a real file URL.
-  for (const r of list) {
-    const url = r.file && r.file.startsWith("//") ? `https:${r.file}` : r.file;
-    if (url && /^https?:\/\//.test(url)) return url;
-  }
-  // Loosen: any quality, any vocalisation type.
-  const j2 = await getJson<XcResp>(`https://www.xeno-canto.org/api/2/recordings?query=${encodeURIComponent(`en:"${commonName}"`)}`);
-  for (const r of j2?.recordings ?? []) {
-    const url = r.file && r.file.startsWith("//") ? `https:${r.file}` : r.file;
-    if (url && /^https?:\/\//.test(url)) return url;
+    if (mRec) return xcDownloadUrl(mRec[1]);
   }
   return "";
 }
@@ -239,12 +184,11 @@ export async function GET(req: Request) {
     if (!hasPhoto) continue;
     if (!photoOnly) photoOnly = { title, wiki };
 
-    // Order: (a) the xeno-canto link Wikipedia itself cites in the article
-    // — most reliable, and lines up with what the user sees on the page.
-    // (b) xeno-canto species search. (c) audio embedded in the article
-    // itself. (d) Commons file search by name.
+    // Order, exactly as the user asked:
+    // (a) the xeno-canto recording the Wikipedia article links to;
+    // (b) else the "default sound" embedded in the Wikipedia article;
+    // (c) else a Commons audio-file search by species name.
     let audio = await audioFromWikiXc(title);
-    if (!audio) audio = await audioFromXenoCanto(title);
     if (!audio) audio = await audioFromArticle(title);
     if (!audio) audio = await audioFromCommonsSearch(title);
     if (audio) best = { title, wiki, audio };

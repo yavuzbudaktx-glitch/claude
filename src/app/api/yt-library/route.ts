@@ -17,8 +17,8 @@ type Source =
   | { kind: "shorts"; handle: string; label: string; url: string; min: number }
   | { kind: "playlist"; list: string; label: string; url: string; min: number };
 
-// `min` = the count below which we treat the fetch as a failure and DON'T
-// cache it (so the next request retries against a healthier upstream). These
+// `min` = the target library size we page Piped/innertube toward (the walker
+// keeps pulling pages until it has at least this many, then a bit more). These
 // match the real library sizes the user expects to see.
 const SOURCES: Record<string, Source> = {
   logan:   { kind: "channel",  handle: "logangrafcpa",       label: "Logan Graf",       url: "https://www.youtube.com/@logangrafcpa/videos", min: 200 },
@@ -40,16 +40,12 @@ export async function GET(req: Request) {
   const src = SOURCES[sourceKey];
   if (!src) return NextResponse.json({ error: "unknown_source" }, { status: 400 });
 
+  // fetchFor races every upstream in parallel, unions them, filters Shorts,
+  // caches the result for the TTL, and keeps the biggest-ever as a floor —
+  // so a single call is enough (a second would just hit the same cache).
   let videos: LibVideo[] = [];
   try {
     videos = await fetchFor(src);
-    // Below the expected size → the upstream throttled us. Because a
-    // sub-`min` result isn't cached, an immediate retry hits a fresh
-    // upstream and usually fills in the rest. Try up to twice more.
-    for (let attempt = 0; attempt < 2 && videos.length < src.min; attempt++) {
-      const retry = await fetchFor(src);
-      if (retry.length > videos.length) videos = retry;
-    }
   } catch {
     videos = [];
   }

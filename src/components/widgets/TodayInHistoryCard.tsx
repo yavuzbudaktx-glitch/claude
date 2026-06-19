@@ -69,14 +69,12 @@ export function TodayInHistoryCard() {
     );
   }
 
-  // The link ALWAYS goes to today's britannica.com/on-this-day landing
-  // page, regardless of what the upstream returned. The data may be a day
-  // behind (Britannica's email lags, scrape may be from yesterday), but
-  // the user clicking the title should always land on TODAY's page so the
-  // link feels current.
-  const MONTHS = ["january","february","march","april","may","june","july","august","september","october","november","december"];
-  const now = new Date();
-  const britannicaLink = `https://www.britannica.com/on-this-day/${MONTHS[now.getMonth()]}-${now.getDate()}`;
+  // The link ALWAYS goes to Britannica's bare On This Day landing page.
+  // That page renders TODAY in the user's own browser — no date in the URL
+  // means no timezone math to get wrong (a dated /on-this-day/june-19 URL
+  // was rendering a day ahead when computed during server-side render in
+  // UTC while the user was still on the previous day in Dallas).
+  const britannicaLink = "https://www.britannica.com/on-this-day";
 
   return (
     <div className="animate-fadeIn">
