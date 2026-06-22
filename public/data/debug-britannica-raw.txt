@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-06-22T18:29:24.477Z
+# generated: 2026-06-22T21:40:35.930Z
 # url:       https://www.britannica.com/on-this-day/june-22
 # fetcher:   Wayback Machine
 # kind:      html
