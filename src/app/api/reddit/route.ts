@@ -287,6 +287,44 @@ const SNAP_TTL = 1000 * 60 * 20;             // 20 min — fast path
 const SNAP_HARD_MAX = 1000 * 60 * 60 * 6;    // 6h hard expiry
 const CDN_CACHE = "public, s-maxage=1200, stale-while-revalidate=3600";
 
+// Multi-sub fetch — Reddit lets you query `r/sub1+sub2+sub3/top.json` for
+// posts from all of them in ONE call. This is the primary path because it
+// avoids the rate-limit problem we hit when 5 parallel proxy fetches landed
+// on Reddit at the same time (and that's exactly what was leaving the box
+// with only 1-2 subs' content). The OAuth path is preferred when configured;
+// the public-json-via-proxy is the fallback.
+async function fetchMultiSub(subs: string[]): Promise<Post[]> {
+  const multi = subs.join("+");
+  const t = await getToken();
+  // 1) OAuth path (fast, reliable, no proxy needed).
+  if (t) {
+    try {
+      const res = await fetch(`https://oauth.reddit.com/r/${multi}/${SORT}?t=${PERIOD}&limit=100&raw_json=1`, {
+        headers: { Authorization: `Bearer ${t}`, "User-Agent": UA },
+        signal: AbortSignal.timeout(8000),
+        cache: "no-store",
+      });
+      if (res.ok) {
+        const j = (await res.json()) as RedditListing;
+        const posts = mapJson(j, "");
+        if (posts.length) return posts;
+      }
+    } catch { /* fall through */ }
+  }
+  // 2) Public JSON via proxy chain.
+  const url = `https://www.reddit.com/r/${multi}/${SORT}.json?t=${PERIOD}&limit=100&raw_json=1`;
+  const text =
+    (await fetchText(url, { "User-Agent": UA, Accept: "application/json" })) ??
+    (await fetchText(url, { "User-Agent": BROWSER_UA, Accept: "application/json" }));
+  if (!text || text[0] !== "{") return [];
+  try {
+    const posts = mapJson(JSON.parse(text) as RedditListing, "");
+    return posts;
+  } catch {
+    return [];
+  }
+}
+
 // Per-sub fetch: JSON first (faster), RSS as backup. fetchText races all
 // proxies in parallel, so a single attempt is enough — three serial retries
 // only wasted time and got the function killed before all subs finished.
@@ -298,11 +336,31 @@ async function fetchSubResilient(sub: string): Promise<Post[]> {
 }
 
 async function buildPayload(): Promise<Payload> {
-  const perSub = await Promise.all(SUBS.map(fetchSubResilient));
+  // PRIMARY: one multi-sub call. When it succeeds we already have posts from
+  // every sub that has content; the per-sub path below only fills gaps.
+  const multi = await fetchMultiSub(SUBS);
+  const bySub = new Map<string, Post[]>();
+  for (const p of multi) {
+    const arr = bySub.get(p.subreddit.toLowerCase()) ?? [];
+    arr.push(p);
+    bySub.set(p.subreddit.toLowerCase(), arr);
+  }
+
+  // SECONDARY: for any sub that came back empty from the multi call, try a
+  // direct per-sub fetch. This catches the case where one sub is private,
+  // banned, or Reddit silently drops it from the combined listing.
+  const missing = SUBS.filter((s) => !(bySub.get(s.toLowerCase()) ?? []).length);
+  if (missing.length > 0) {
+    const got = await Promise.all(missing.map(fetchSubResilient));
+    missing.forEach((s, i) => {
+      if (got[i].length) bySub.set(s.toLowerCase(), got[i]);
+    });
+  }
+
+  // Build perSub in declared SUBS order so the round-robin interleave below
+  // gives every sub representation.
+  const perSub: Post[][] = SUBS.map((s) => bySub.get(s.toLowerCase()) ?? []);
   const subsHit = perSub.filter((arr) => arr.length > 0).length;
-  // Carry the per-build count so the handler can decide whether the result
-  // is "good enough" to cache as the warm snapshot. A single-sub payload
-  // would otherwise serve for 20 minutes and look broken.
   (globalThis as { __redditSubsHit?: number }).__redditSubsHit = subsHit;
 
   // Round-robin interleave, preserving each sub's hot order.

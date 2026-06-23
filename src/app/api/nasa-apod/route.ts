@@ -86,12 +86,6 @@ function abs(src: string): string {
 }
 
 function parseApodHtml(html: string): ApodResp | null {
-  // Image day: an <a href="image/..."><img src="image/..."></a>.
-  const imgM = html.match(/<img[^>]+src=["']?(image\/[^"'\s>]+)["']?/i);
-  const aHrefM = html.match(/<a[^>]+href=["']?(image\/[^"'\s>]+)["']?/i);
-  // Video day: an iframe (YouTube/Vimeo embed).
-  const iframeM = html.match(/<iframe[^>]+src=["']([^"']+)["']/i);
-
   // Title: the first <b> after the picture that isn't the page heading.
   let title = "";
   const bMatches = [...html.matchAll(/<b>\s*([^<][\s\S]*?)<\/b>/gi)].map((m) =>
@@ -99,13 +93,13 @@ function parseApodHtml(html: string): ApodResp | null {
   );
   for (const b of bMatches) {
     if (!b) continue;
-    if (/^(astronomy picture of the day|image credit|illustration credit|video credit|explanation|credit)/i.test(b)) continue;
+    if (/^(astronomy picture of the day|image credit|illustration credit|video credit|explanation|credit|tomorrow|today)/i.test(b)) continue;
+    if (b.length < 4) continue;
     title = b;
     break;
   }
 
-  // Explanation: text after "Explanation:" up to the next "Tomorrow's picture"
-  // marker or a horizontal rule.
+  // Explanation.
   let explanation = "";
   const explM = html.match(/Explanation:\s*<\/b>\s*([\s\S]*?)(?:<p>\s*<center>|Tomorrow's picture|<hr)/i);
   if (explM) {
@@ -118,8 +112,21 @@ function parseApodHtml(html: string): ApodResp | null {
       .trim();
   }
 
+  // Try every possible media source NASA uses:
+  // - image days: <a href="image/.."><img src="image/.."></a>
+  // - YouTube/Vimeo embed days: <iframe src="...">
+  // - rare: direct <img src="https://..."> from an external host
+  // - APIOD video days where the image is a thumbnail with .gif/.mp4 link
+  const imgM = html.match(/<img[^>]+src=["']?(image\/[^"'\s>]+)["']?/i);
+  const aHrefM = html.match(/<a[^>]+href=["']?(image\/[^"'\s>]+)["']?/i);
+  const iframeM = html.match(/<iframe[^>]+src=["']([^"']+)["']/i);
+  const extImgM = html.match(/<img[^>]+src=["'](https?:\/\/[^"']+\.(?:jpg|jpeg|png|webp|gif))["']/i);
+
   if (iframeM) {
-    return { title: title || "Astronomy Picture of the Day", explanation, url: iframeM[1], media_type: "video" };
+    let videoUrl = iframeM[1];
+    // Force YouTube embed URLs to https so we don't trip mixed-content blocks.
+    if (videoUrl.startsWith("http://")) videoUrl = videoUrl.replace(/^http:/, "https:");
+    return { title: title || "Astronomy Picture of the Day", explanation, url: videoUrl, media_type: "video" };
   }
   if (imgM) {
     return {
@@ -127,6 +134,15 @@ function parseApodHtml(html: string): ApodResp | null {
       explanation,
       url: abs(imgM[1]),
       hdurl: aHrefM ? abs(aHrefM[1]) : abs(imgM[1]),
+      media_type: "image",
+    };
+  }
+  if (extImgM) {
+    return {
+      title: title || "Astronomy Picture of the Day",
+      explanation,
+      url: extImgM[1],
+      hdurl: extImgM[1],
       media_type: "image",
     };
   }
