@@ -1,9 +1,196 @@
 # Britannica scrape debug dump
-# generated: 2026-06-23T12:25:17.355Z
+# generated: 2026-06-23T13:47:10.426Z
 # url:       https://www.britannica.com/on-this-day/june-23
-# fetcher:   CORS proxy
-# kind:      html
-# length:    5743
+# fetcher:   Jina Reader
+# kind:      markdown
+# length:    13546
 # parsed:    NO
 # -----------------------------------------------------------------
-<!DOCTYPE html><html lang="en-US"><head><title>Just a moment...</title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="content-security-policy" content="default-src &#39;none&#39;; script-src &#39;nonce-KYjwzKzhFP6uOpgVRsJ6C5&#39; &#39;unsafe-eval&#39; https://challenges.cloudflare.com; script-src-attr &#39;none&#39;; style-src &#39;unsafe-inline&#39;; img-src &#39;self&#39; https://challenges.cloudflare.com; connect-src &#39;self&#39; https://challenges.cloudflare.com; frame-src &#39;self&#39; https://challenges.cloudflare.com blob:; child-src &#39;self&#39; https://challenges.cloudflare.com blob:; worker-src blob:; form-action http: https:; base-uri &#39;self&#39;"><style>*{box-sizing:border-box;margin:0;padding:0}html{line-height:1.15;-webkit-text-size-adjust:100%;color:#313131;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"}body{display:flex;flex-direction:column;height:100vh;min-height:100vh}.main-content{margin:8rem auto;padding-left:1.5rem;max-width:60rem}@media (width <= 720px){.main-content{margin-top:4rem}}#challenge-error-text{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbD0iI0IyMEYwMyIgZD0iTTE2IDNhMTMgMTMgMCAxIDAgMTMgMTNBMTMuMDE1IDEzLjAxNSAwIDAgMCAxNiAzbTAgMjRhMTEgMTEgMCAxIDEgMTEtMTEgMTEuMDEgMTEuMDEgMCAwIDEtMTEgMTEiLz48cGF0aCBmaWxsPSIjQjIwRjAzIiBkPSJNMTcuMDM4IDE4LjYxNUgxNC44N0wxNC41NjMgOS41aDIuNzgzem0tMS4wODQgMS40MjdxLjY2IDAgMS4wNTcuMzg4LjQwNy4zODkuNDA3Ljk5NCAwIC41OTYtLjQwNy45ODQtLjM5Ny4zOS0xLjA1Ny4zODktLjY1IDAtMS4wNTYtLjM4OS0uMzk4LS4zODktLjM5OC0uOTg0IDAtLjU5Ny4zOTgtLjk4NS40MDYtLjM5NyAxLjA1Ni0uMzk3Ii8+PC9zdmc+");background-repeat:no-repeat;background-size:contain;padding-left:34px}</style><meta http-equiv="refresh" content="360"></head><body><div class="main-wrapper" role="main"><div class="main-content"><noscript><div class="h2"><span id="challenge-error-text">Enable JavaScript and cookies to continue</span></div></noscript></div></div><script nonce="KYjwzKzhFP6uOpgVRsJ6C5">(function(){window._cf_chl_opt = {cFPWv: 'g',cH: 'oc0qKOK8rS9_xxV9l71g6fgLe0bVeNjd3zZJ9HnLzw8-1782217490-1.2.1.1-BVQiyfNLVEzawXkssgUWAU_QSv2oNg1TfbinldiH3xfh1tYSVa0oq9MO_tGtQfZ5',cITimeS: '1782217490',cN: 'KYjwzKzhFP6uOpgVRsJ6C5',cRay: 'a10378d4199f2887',cTplB: '0',cTplC:0,cTplO:0,cTplV:5,cType: 'managed',cUPMDTk:"/on-this-day/june-23?__cf_chl_tk=gENq2cSpBHLDkjj5i0k603XlAO5Y52M2pr.xHVCfY18-1782217490-1.0.1.1-NAcLUtE7BmWbc168zUQ5k9vdcTMqcm4MC0S7yA2G.64",cvId: '3',cZone: 'www.britannica.com',fa:"/on-this-day/june-23?__cf_chl_f_tk=gENq2cSpBHLDkjj5i0k603XlAO5Y52M2pr.xHVCfY18-1782217490-1.0.1.1-NAcLUtE7BmWbc168zUQ5k9vdcTMqcm4MC0S7yA2G.64",md: 'ieCi_Pcs6.xOo1q2baTvaWfr9plcALW3.wRxh.vONUw-1782217490-1.2.1.1-MJcyxO5hwtgYYwu82YOOh5uEzHHdmYtwFGm4YKExh9.aKFeKlwIQTsr1WqfPxRdQWAwp.zz72UuaQTBg.ZD4AzkFoeDbI77jQDDUrbBDlsikhCkiXPhMr1pC9G9vCktW3nnJqtXbL7dmEcCOGeyAV5zrtsbaVHNv3qFz3yffVwNWTBl63_kiNb.UW5rls183zGvE_J6TChOF0lsvFE5tbpkVApd4.0TF7MimX70Rwl3pByTUvZRge1N4Unwp4xnRk0djeNAmzUhe7P.iCsB3CKz.rIvQ08vJC6YUcjhhI8b2cpPmmtMv6Ytj6EQgaf8NmCbPsxL6IOTsgqzuV9MSQauZSJmGIL5wbvAOwB4AKtPFuObR8sY7PxcsTmLHTk2XtL9LojVBgJCvfA5MgmpQAMW70BxO4HLXz2baDIHaWDgHUVOaKQRzN.E3E3rL5MgB7SnCrxQZn0Q3X9bwMscugHivmbQePJzdC4l2V3ZGSmP02bPhi7M2TD9klTT2vIWwpgroIFxlfPHZrfS1JRkZNvAHsy67MUfhzRfzRmj0KPnyrGxXfk5ohJ3zQ3.r.mS2P3q.wajHvZOdHmVX5ximoSaYm0W_N8OgUEN6219p0bNb1_m__MtSULVVVmMWr5ezlMsBUdewRihdShQZA4DhlWGJSKQjrVcpxwv5Z6KrzRqqvPUqiuQSAA1BchX.Mclp7ej2MrAVBbSy_TJblwZIBz3yMzkI3gdxMbktvASvNRq5dURc6rk.fjm4LoUQVjqwsOALKX.AvXZYbFKAfBqcCu.7JVJGLn_a61EXAy1DWHO6ZzhiWfOEFSBXKVzZPG4Ik2Eo8gPnf.nzV8sDFu0mMn3EESOrUjwukUyMjOJuAgORfwnBx87al0IE.Zq.sSAVSAifXHEzYcLroDuejRVOvzOYVQr_hmE8eIuLcTg_2FpPPiFel0Zs33gLSSUtoculxXi2dSwgFqRR9CoYfrhlIxUOMqbFnLnbEOgV87fgH46loroYU9WYSPdZHGd.U1nsb.k3n.mZbtwiwPZbP9zZ5xO_bSl9gR9ozCZlkLyVlwYCzy8IglSobk.COLEsO3SFkkwrk1XL_cZyg4QueBuDgawXLfMGYKHgefJBekn1vYQ',mdrd: '7r26zBZPPkxDR_3LpoYqUY8IDNSlPtSmLOJsdTdGr5o-1782217490-1.2.1.1-DZSr02vqTix41NthBL7Ma4llQWMGQi.Ol3CFoLOCoE1L0uLjTajbZdeZJEDSpm24YnslkwEBEOlnXn_By1PFchAn.XqIORiNW3V_0e5UDWxuBq6XBKKaCs.LjTnZ8_TwtyPNmFj92PRXpAvxF6aIhZ6cCocvzm75fEkf9d6YWI.CPegfco67lChlAsbn49WoycA6VswLVTx2HlU1l4O.Y3zhurMUqMzCFCpaIQv2Z8bUhPN4mYf2pxboKV7IIjvuFeGQ0fl7l9wAQpWlaziWQeo0i8BE66IBJyQZw9YRgKLs1PoaJEhnVgPOL9BGUzYomn0atmCFCrNKWiS1tHaGJcB0u9n54zW0wr6iNkrBE9_5u1XAN3ht9Mt9zDvpUqNWBzM0tKQjh8ia8iGke9d.q1Fwr2yOn_OMhViZj.4c3KRvCBMVq3Qha6QEKKRVvduFini4jQ0HwnFpQmBxt8SFeYvwo0flUHV0UfOuyoXU0ao',};var a = document.createElement('script');a.nonce = 'KYjwzKzhFP6uOpgVRsJ6C5';a.src = '/cdn-cgi/challenge-platform/h/g/orchestrate/chl_page/v1?ray=a10378d4199f2887';window._cf_chl_opt.cOgUHash = location.hash === '' && location.href.indexOf('#') !== -1 ? '#' : location.hash;window._cf_chl_opt.cOgUQuery = location.search === '' && location.href.slice(0, location.href.length - window._cf_chl_opt.cOgUHash.length).indexOf('?') !== -1 ? '?' : location.search;if (window.history && window.history.replaceState) {var ogU = location.pathname + window._cf_chl_opt.cOgUQuery + window._cf_chl_opt.cOgUHash;history.replaceState(null, null,"/on-this-day/june-23?__cf_chl_rt_tk=gENq2cSpBHLDkjj5i0k603XlAO5Y52M2pr.xHVCfY18-1782217490-1.0.1.1-NAcLUtE7BmWbc168zUQ5k9vdcTMqcm4MC0S7yA2G.64"+ window._cf_chl_opt.cOgUHash);a.onload = function() {history.replaceState(null, null, ogU);}}document.getElementsByTagName('head')[0].appendChild(a);}());</script></body></html>
+Title: On This Day - What Happened Today In History | Britannica
+
+URL Source: https://www.britannica.com/on-this-day/june-23
+
+Markdown Content:
+[![Image 1: Encyclopedia Britannica](https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png)](https://www.britannica.com/)
+
+Search Britannica Click here to search
+
+[![Image 2: Encyclopedia Britannica](https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png)](https://www.britannica.com/)
+
+Search Britannica Click here to search
+
+[SUBSCRIBE](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=global-nav&utm_campaign=blue-evergreen)
+
+[SUBSCRIBE](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=global-nav-mobile&utm_campaign=blue-evergreen)
+
+Login
+
+[Subscribe to Britannica Premium](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=nav-login-box&utm_campaign=evergreent)
+
+[SUBSCRIBE](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=blue)
+
+[Ask the Chatbot](https://www.britannica.com/chatbot)[Games & Quizzes](https://www.britannica.com/quiz/browse)[History & Society](https://www.britannica.com/History-Society)[Science & Tech](https://www.britannica.com/Science-Tech)[Biographies](https://www.britannica.com/Biographies)[Animals & Nature](https://www.britannica.com/Animals-Nature)[Geography & Travel](https://www.britannica.com/Geography-Travel)[Arts & Culture](https://www.britannica.com/Arts-Culture)[ProCon](https://www.britannica.com/procon)[Money](https://www.britannica.com/money)[Videos](https://www.britannica.com/videos)
+
+[Home](https://www.britannica.com/) Today in History ![Image 3: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-188/images/shared/tih-logo.png?v=3.188.11)
+
+![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-188/images/shared/tih-star.svg?v=3.188.11)June 23
+
+![Image 5: Today In History Phone](https://cdn.britannica.com/mendel-resources/3-188/images/shared/tih-phone.png?v=3.188.11)
+
+Get Our Newsletter in your Inbox 📩
+
+ SIGN UP 
+
+Thanks for signing up for Today in History. Your first newsletter will arrive soon!
+
+ Subject to Britannica's [Privacy Policy](https://corporate.britannica.com/privacy-policy) and [Terms of Use](https://corporate.britannica.com/termsofuse.html)
+
+ What Happened On Your Birthday? 
+
+[Go to Today's Date](https://www.britannica.com/on-this-day)
+
+ Featured Event 
+
+![Image 6: June 23, 1868: The typewriter's first draft](https://cdn.britannica.com/98/289298-050-51B4E821/today-in-history-The-first-typewriter-is-patented.jpg?w=356&h=200&c=crop)
+
+ © SSPL/Getty Images; Photo Illustration Encyclopædia Britannica, Inc.
+
+[Introducing the first typewriter](https://www.britannica.com/today-in-history/June-23-1868-Patent-for-First-Typewriter)
+
+ On this day in 1868 American inventors [Christopher Latham Sholes](https://www.britannica.com/biography/Christopher-Latham-Sholes), Samuel W. Soulé, and Carlos Glidden were granted a [patent](https://www.britannica.com/topic/patent) for the first [typewriter](https://www.britannica.com/technology/typewriter). The concept was revolutionary, and within a few years the typewriter—and its efficient QWERTY keyboard—had become an indispensable office tool and a fixture in the literary world. _[[Read today’s edition of Today in History >>](https://www.britannica.com/today-in-history/June-23-1868-Patent-for-First-Typewriter)]_
+
+Featured Biography
+
+ What Happened On Your Birthday? 
+
+ Featured Biography 
+
+[![Image 7: Clarence Thomas](https://cdn.britannica.com/11/163211-050-F16F046C/Clarence-Thomas-2007.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Clarence-Thomas?utm_source=otd)
+
+ Steve Petteway/Collection of the Supreme Court of the United States
+
+Clarence Thomas
+
+Born this day in 1948 was [Clarence Thomas](https://www.britannica.com/biography/Clarence-Thomas), associate justice of the [U.S. Supreme Court](https://www.britannica.com/topic/Supreme-Court-of-the-United-States) from 1991, whose appointment to replace [Thurgood Marshall](https://www.britannica.com/biography/Thurgood-Marshall) (the court’s first African American justice) gave the court a conservative cast.
+
+Famous Birthdays
+
+1940
+
+[Wilma Rudolph](https://www.britannica.com/biography/Wilma-Rudolph?utm_source=otd)
+
+American sprinter
+
+1911
+
+[David Ogilvy](https://www.britannica.com/biography/David-Ogilvy?utm_source=otd)
+
+British advertising executive
+
+1894
+
+[Alfred Kinsey](https://www.britannica.com/biography/Alfred-Charles-Kinsey?utm_source=otd)
+
+American scientist
+
+1889
+
+[Anna Akhmatova](https://www.britannica.com/biography/Anna-Akhmatova?utm_source=otd)
+
+Russian poet
+
+[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/June-23)
+
+## More on June 23
+
+![Image 8: United Kingdom](https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg?w=260&h=196&c=crop)
+
+ Encyclopædia Britannica, Inc.
+
+2016
+
+ The [United Kingdom](https://www.britannica.com/place/United-Kingdom) voted in a referendum to withdraw from the [European Union](https://www.britannica.com/topic/European-Union), with 51.9 percent supporting Britain’s exit (“[Brexit](https://www.britannica.com/)”) and 48.1 percent opposing the move; it marked the first time a country had decided to leave the organization. _[[Test your knowledge of British culture and politics](https://www.britannica.com/quiz/british-culture-and-politics).]_
+
+![Image 9: default image](https://cdn.britannica.com/mendel-resources/3-188/images/shared/thistle-blue-half.svg?v=3.188.11)
+
+ Image: Encyclopædia Britannica, Inc.
+
+2006
+
+ American television producer Aaron Spelling—whose credits included a number of hugely successful shows, including The Mod Squad, Family, Charlie’s Angels, The Love Boat, Fantasy Island, and Beverly Hills 90210—died in Los Angeles. _[[Take our pop culture quiz](https://www.britannica.com/quiz/pop-culture-quiz).]_
+
+![Image 10: Antarctica: Paradise Bay](https://cdn.britannica.com/08/135708-050-2346C1CF/Paradise-Bay-Antarctica.jpg?w=260&h=196&c=crop)
+
+ © Jupiterimages—Photos.com/Getty Images
+
+1961
+
+ The [Antarctic Treaty](https://www.britannica.com/place/Antarctica/The-Antarctic-Treaty#ref24734) was enacted, reserving the entire continent for free and nonpolitical scientific investigation. _[[Sort fact from fiction in our Antarctica quiz](https://www.britannica.com/quiz/exploring-antarctica-fact-or-fiction).]_
+
+![Image 11: Wilma Rudolph](https://cdn.britannica.com/30/3830-004-56B8333B/Wilma-Rudolph-1961.jpg?w=260&h=196&c=crop)
+
+ AP
+
+1940
+
+ Sprinter [Wilma Rudolph](https://www.britannica.com/biography/Wilma-Rudolph), the first American woman to win three track-and-field gold medals in a single [Olympics](https://www.britannica.com/sports/Olympic-Games), was born. _[[Take our quiz about the Olympics](https://www.britannica.com/quiz/the-olympics-fact-or-fiction).]_
+
+![Image 12: Mount Logan](https://cdn.britannica.com/26/117126-050-1C1250FB/Mount-Logan-Yukon-Canada.jpg?w=260&h=196&c=crop)
+
+ Gerald Holdsworth/NOAA
+
+1925
+
+ An expedition under A.H. MacCarthy and H.F. Lambert became the first to reach the summit of [Mount Logan](https://www.britannica.com/place/Mount-Logan-mountain-Yukon), the second highest mountain in [North America](https://www.britannica.com/place/North-America). _[[Sort fact from fiction in our mountains quiz](https://www.britannica.com/quiz/mountains-fact-or-fiction).]_
+
+![Image 13: Stand Watie](https://cdn.britannica.com/15/5015-004-E4F7FABC/Stand-Watie.jpg?w=260&h=196&c=crop)
+
+ United States Postal Service
+
+1865
+
+ The [Cherokee](https://www.britannica.com/topic/Cherokee-people) chief and Confederate general [Stand Watie](https://www.britannica.com/biography/Stand-Watie) surrendered at the close of the [American Civil War](https://www.britannica.com/event/American-Civil-War)—one of the last Confederate commanders to do so. _[[How much do you know about the American Civil War?](https://www.britannica.com/quiz/american-civil-war-quiz)]_
+
+![Image 14: John Philip Kemble](https://cdn.britannica.com/94/1894-050-D1F47946/John-Philip-Kemble-Timon-of-Athens.jpg?w=260&h=196&c=crop)
+
+ Mary Evans Picture Library
+
+1817
+
+ Popular English actor [John Philip Kemble](https://www.britannica.com/biography/John-Philip-Kemble) retired after his last performance, in which he played [Coriolanus](https://www.britannica.com/topic/Coriolanus-by-Shakespeare). _[[Take our quiz about actors and acting](https://www.britannica.com/quiz/actors-and-acting-quiz).]_
+
+![Image 15: Robert the Bruce](https://cdn.britannica.com/58/123858-050-614808FC/statue-entrance-Robert-the-Bruce-Edinburgh-Castle.jpg?w=260&h=196&c=crop)
+
+ Vishnumukundan
+
+1314
+
+ The [Battle of Bannockburn](https://www.britannica.com/event/Battle-of-Bannockburn), a decisive engagement in [Scottish history](https://www.britannica.com/place/Scotland/The-Wars-of-Independence#ref44589) whereby the Scots defeated the [English](https://www.britannica.com/place/England), regained their independence, took place, establishing Robert the Bruce as [Robert I](https://www.britannica.com/biography/Robert-the-Bruce).
+
+![Image 16: Adolf of Nassau](https://cdn.britannica.com/30/13630-004-D542AAA4/Adolf-Nassau-ivory-carving-Germanic-National-Museum.jpg?w=260&h=196&c=crop)
+
+ Archiv für Kunst und Geschichte, Berlin
+
+1298
+
+ German King [Adolf of Nassau](https://www.britannica.com/biography/Adolf-German-king) was deposed in favor of [Albert I](https://www.britannica.com/biography/Albert-I-king-of-Germany-and-duke-of-Austria). _[[Test your knowledge of German history](https://www.britannica.com/quiz/germany-across-history-quiz).]_
+
+SIGN UP FOR
+
+![Image 17: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-188/images/shared/tih-logo.png?v=3.188.11)![Image 18: Today In History](https://cdn.britannica.com/mendel-resources/3-188/images/shared/tih-subscribe-side.png?v=3.188.11&w=800)
+
+History's Biggest Headlines
+
+Discover the fascinating events that shaped the world, straight from our editors.
+
+SIGN UP
+
+Thanks for signing up for Today in History.
+
+Your first newsletter will arrive soon!
+
+SIGN UP
+
+ By clicking "Sign Up" you are agreeing to our [Terms of Use](https://corporate.britannica.com/termsofuse.html) and [Privacy Policy](https://corporate.britannica.com/privacy-policy). 
+
+![Image 20](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=122&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjune-23&s=BD5F8E9A-D909-4342-AAB5-21938136B1FE&json=%20)![Image 21: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=38ee5824-4839-65d2-f49d-3dd714a30b4a&iiqpciddate=1782222381004&tsrnd=307_1782222381010&jsver=6.253&testPercentage=95&testGroup=B&uh=%7B%220%22%3A%22%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22149%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22149%5C%22%2C%20%5C%22Not)A%3BBrand%5C%22%3Bv%3D%5C%2224%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22macOS%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%226%22%3A%22%5C%2210_15_7%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22149.0.7827.155%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22149.0.7827.155%5C%22%2C%20%5C%22Not)A%3BBrand%5C%22%3Bv%3D%5C%2224.0.0.0%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 22](https://ids.ad.gt/api/v1/halo_match?id=AU1D-0100-001782222382-5U8JP7LA-ZQW0&halo_id=060ixfbjsgld59c9a969766666666666666uoogweq0ky6i6e6062000000001000)![Image 23](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001782222382-5U8JP7LA-ZQW0)![Image 24](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001782222382-5U8JP7LA-ZQW0&adnxs_id=$UID&gdpr=0)![Image 25](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001782222382-5U8JP7LA-ZQW0%26auid%3DAU1D-0100-001782222382-5U8JP7LA-ZQW0&gdpr=0)![Image 26](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001782222382-5U8JP7LA-ZQW0&gdpr=0)![Image 27](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001782222382-5U8JP7LA-ZQW0&gdpr=0)![Image 28](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001782222382-5U8JP7LA-ZQW0&gdpr=0)![Image 29](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001782222382-5U8JP7LA-ZQW0&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001782222382-5U8JP7LA-ZQW0%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 30](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4MjIyMjM4Mi01VThKUDdMQS1aUVcw&id=AU1D-0100-001782222382-5U8JP7LA-ZQW0&gdpr=0)![Image 31](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001782222382-5U8JP7LA-ZQW0)![Image 32](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001782222382-5U8JP7LA-ZQW0&uid=[UID]&gdpr=0)![Image 33](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001782222382-5U8JP7LA-ZQW0%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
