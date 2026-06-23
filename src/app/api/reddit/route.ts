@@ -52,36 +52,44 @@ function decodeAmp(u: string): string {
 // -------- proxy fetch -------------------------------------------------------
 
 function proxies(url: string): string[] {
-  // We also rotate through old.reddit.com (which lives on its own rate-limit
-  // bucket from www.reddit.com — so when www is throttling cloud egress,
-  // old.* often still answers) and through Reddit's `.json` endpoint on the
-  // safe-search subdomain.
+  // Old.reddit lives on its own rate-limit bucket so it often answers when
+  // www is throttling cloud egress. We RACE these candidates instead of
+  // walking them serially — with 5 subs and a hard 10s function limit, the
+  // old "9 proxies × 10s timeout serially" path was guaranteed to time out
+  // and that's exactly why only 1-2 subs were coming back.
   const oldUrl = url.replace("://www.reddit.com", "://old.reddit.com");
-  const npUrl  = url.replace("://www.reddit.com", "://np.reddit.com");
   return [
     url,
     oldUrl,
-    npUrl,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(oldUrl)}`,
-    `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
     `https://corsproxy.io/?url=${encodeURIComponent(oldUrl)}`,
-    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(oldUrl)}`,
   ];
 }
 async function fetchText(url: string, headers: Record<string, string>): Promise<string | null> {
-  for (const c of proxies(url)) {
-    try {
-      const res = await fetch(c, { headers, signal: AbortSignal.timeout(10000), cache: "no-store" });
-      if (!res.ok) continue;
-      const text = await res.text();
-      if (text && text.length > 80) return text;
-    } catch {
-      // next
+  // Race all proxies in parallel; first non-empty body wins. 4s per proxy is
+  // plenty (Reddit usually responds in under a second when it's going to
+  // respond at all). This fixes "only 1-2 subs return" — the function used
+  // to be killed before all subs finished their serial proxy walks.
+  const candidates = proxies(url);
+  return new Promise<string | null>((resolve) => {
+    let pending = candidates.length;
+    let resolved = false;
+    const done = (v: string | null) => {
+      if (resolved) return;
+      if (v) { resolved = true; resolve(v); return; }
+      if (--pending === 0) { resolved = true; resolve(null); }
+    };
+    for (const c of candidates) {
+      (async () => {
+        try {
+          const res = await fetch(c, { headers, signal: AbortSignal.timeout(4000), cache: "no-store" });
+          if (!res.ok) return done(null);
+          const text = await res.text();
+          done(text && text.length > 80 ? text : null);
+        } catch { done(null); }
+      })();
     }
-  }
-  return null;
+  });
 }
 
 // -------- OAuth (optional) --------------------------------------------------
@@ -279,27 +287,14 @@ const SNAP_TTL = 1000 * 60 * 20;             // 20 min — fast path
 const SNAP_HARD_MAX = 1000 * 60 * 60 * 6;    // 6h hard expiry
 const CDN_CACHE = "public, s-maxage=1200, stale-while-revalidate=3600";
 
-// Per-sub fetch with retries: JSON → RSS → JSON-after-pause → RSS-after-pause.
-// Without retries, transient proxy throttles / Reddit 429s leave entire subs
-// empty for the whole snapshot window, which is the "only 1-2 subs return
-// content" symptom the user kept hitting.
+// Per-sub fetch: JSON first (faster), RSS as backup. fetchText races all
+// proxies in parallel, so a single attempt is enough — three serial retries
+// only wasted time and got the function killed before all subs finished.
 async function fetchSubResilient(sub: string): Promise<Post[]> {
-  const tryOnce = async (): Promise<Post[]> => {
-    const j = await fetchSubJson(sub);
-    if (j && j.length) return j;
-    const r = await fetchSubRss(sub);
-    return r;
-  };
-  // Up to 3 attempts per sub with backoff. The proxy pool above is big
-  // enough that two consecutive total failures is rare; three is virtually
-  // never (and even when it happens we still want SOMETHING in the
-  // payload from the other subs).
-  for (let attempt = 0; attempt < 3; attempt++) {
-    const got = await tryOnce();
-    if (got.length) return got;
-    if (attempt < 2) await new Promise((res) => setTimeout(res, 600 * (attempt + 1)));
-  }
-  return [];
+  const j = await fetchSubJson(sub);
+  if (j && j.length) return j;
+  const r = await fetchSubRss(sub);
+  return r;
 }
 
 async function buildPayload(): Promise<Payload> {

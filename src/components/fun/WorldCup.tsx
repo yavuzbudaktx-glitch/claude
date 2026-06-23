@@ -1,7 +1,7 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element */
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import useSWR from "swr";
 import { Trophy, Flag, Clock, BarChart3, ListChecks } from "lucide-react";
 
@@ -167,6 +167,25 @@ export function WorldCup() {
     { keepPreviousData: true, revalidateOnFocus: false },
   );
 
+  // Bucket today/upcoming/finished in the USER'S local time (browser TZ),
+  // not whatever the server's UTC clock thinks "today" is. This is the fix
+  // for "World Cup matches don't show correctly today/tomorrow — thinks I'm
+  // in Turkey": the server lives in UTC, so once UTC rolled over, tonight's
+  // Dallas-time matches were getting classified as tomorrow.
+  // Hook must run above the early returns to satisfy rules-of-hooks.
+  const { todayBucket, upcomingBucket, finishedBucket } = useMemo(() => {
+    const localKey = (iso: string) => {
+      const d = new Date(iso);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    };
+    const todayLocal = localKey(new Date().toISOString());
+    const upc = data?.upcoming ?? [];
+    const todayB = upc.filter((m) => localKey(m.date) === todayLocal);
+    const upcomingB = upc.filter((m) => localKey(m.date) !== todayLocal).slice(0, 6);
+    const finishedB = (data?.finished ?? []).filter((m) => localKey(m.date) !== todayLocal).slice(0, 6);
+    return { todayBucket: todayB, upcomingBucket: upcomingB, finishedBucket: finishedB };
+  }, [data?.upcoming, data?.finished]);
+
   if (isLoading && !data) {
     return <div className="grid place-items-center h-full text-muted text-sm">Loading World Cup…</div>;
   }
@@ -231,22 +250,22 @@ export function WorldCup() {
                 {data.live.map((m) => <LiveHero key={m.id} m={m} />)}
               </div>
             )}
-            {data.today.length > 0 && (
+            {todayBucket.length > 0 && (
               <Section title="Today" icon={<Clock className="h-3 w-3 text-muted-2" />}>
-                {data.today.map((m) => <MatchRow key={m.id} m={m} />)}
+                {todayBucket.map((m) => <MatchRow key={m.id} m={m} />)}
               </Section>
             )}
-            {data.upcoming.length > 0 && (
+            {upcomingBucket.length > 0 && (
               <Section title="Coming up">
-                {data.upcoming.map((m) => <MatchRow key={m.id} m={m} />)}
+                {upcomingBucket.map((m) => <MatchRow key={m.id} m={m} />)}
               </Section>
             )}
-            {data.finished.length > 0 && (
+            {finishedBucket.length > 0 && (
               <Section title="Recent">
-                {data.finished.map((m) => <MatchRow key={m.id} m={m} dim />)}
+                {finishedBucket.map((m) => <MatchRow key={m.id} m={m} dim />)}
               </Section>
             )}
-            {!hasLive && data.today.length === 0 && data.upcoming.length === 0 && data.finished.length === 0 && (
+            {!hasLive && todayBucket.length === 0 && upcomingBucket.length === 0 && finishedBucket.length === 0 && (
               <div className="text-muted-2 text-[12.5px] italic text-center py-8">
                 No World Cup matches in the next few days.
               </div>

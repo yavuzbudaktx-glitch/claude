@@ -86,7 +86,11 @@ function shape(e: EspnEvent): OutMatch | null {
   };
 }
 
-function ymd(d: Date): string {
+function ymdUtc(d: Date): string {
+  // ESPN's `dates=YYYYMMDD-YYYYMMDD` range only needs to span the matches we
+  // care about — exact day boundaries here don't matter (the CLIENT does the
+  // today/tomorrow bucketing in the user's own timezone, which is what fixes
+  // the "thinks I'm in Turkey" wrong-bucket problem).
   return `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, "0")}${String(d.getUTCDate()).padStart(2, "0")}`;
 }
 
@@ -108,18 +112,19 @@ export async function GET() {
   const now = new Date();
   const start = new Date(now.getTime() - 1 * 86400 * 1000);
   const end = new Date(now.getTime() + 4 * 86400 * 1000);
-  const range = `${ymd(start)}-${ymd(end)}`;
+  const range = `${ymdUtc(start)}-${ymdUtc(end)}`;
   const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${range}`;
   const j = await getJson(url);
   const events = (j?.events ?? []).map(shape).filter((m): m is OutMatch => !!m);
 
-  const todayKey = ymd(now);
-  const isSameDay = (iso: string) => ymd(new Date(iso)) === todayKey;
-
+  // We DON'T bucket today/tomorrow/finished here anymore — the server has
+  // no idea what timezone the viewer is in (Vercel functions run in UTC and
+  // ESPN was treating UTC midnight as the day flip, which was the actual
+  // "thinks I'm in Turkey" symptom). The client now buckets in its own
+  // timezone using the ISO `date` field on each match.
   const live = events.filter((m) => m.status === "live").sort((a, b) => a.date.localeCompare(b.date));
-  const today = events.filter((m) => m.status !== "live" && isSameDay(m.date)).sort((a, b) => a.date.localeCompare(b.date));
-  const upcoming = events.filter((m) => m.status === "upcoming" && !isSameDay(m.date)).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 6);
-  const finished = events.filter((m) => m.status === "final" && !isSameDay(m.date)).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
+  const upcoming = events.filter((m) => m.status === "upcoming").sort((a, b) => a.date.localeCompare(b.date));
+  const finished = events.filter((m) => m.status === "final").sort((a, b) => b.date.localeCompare(a.date));
 
   // Türkiye watch — her next match across the whole window.
   const TURKEY = /turkey|türkiye/i;
@@ -130,7 +135,10 @@ export async function GET() {
   return NextResponse.json(
     {
       tournament: j?.leagues?.[0]?.name ?? "FIFA World Cup",
-      live, today, upcoming, finished, turkiye,
+      // `today` left as an empty array for back-compat with any cached
+      // client; the new client computes today/upcoming itself from the
+      // combined upcoming list below.
+      live, today: [], upcoming, finished, turkiye,
     },
     { headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" } },
   );

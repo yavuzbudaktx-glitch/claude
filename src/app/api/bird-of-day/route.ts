@@ -168,30 +168,33 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "no_pool" }, { status: 502 });
   }
 
-  // Walk deterministic candidates until one has BOTH a photo and a song
-  // (keep the first photo-only bird as a fallback so the tab always renders).
-  // Up to 10 attempts so a string of unlucky picks (rare birds with no
-  // Commons audio) doesn't leave the user with the "Couldn't reach the
-  // aviary" state for the whole day.
+  // Fetch 8 candidate summaries IN PARALLEL — doing this sequentially was
+  // blowing the 10s function limit on the route (10 attempts * ~9s each),
+  // which is exactly why the bird tab kept "going back to previous code":
+  // the function was getting killed before returning anything.
+  const candidateTitles = Array.from({ length: 8 }, (_, i) =>
+    pool[seedIdx(`${dateKey}:bird:${i}`, pool.length)],
+  );
+  const summaries = await Promise.all(
+    candidateTitles.map(async (t) => ({ title: t, wiki: await fetchSummary(t) })),
+  );
+  const usable = summaries
+    .map(({ title, wiki }) =>
+      wiki?.extract && (wiki.originalimage?.source || wiki.thumbnail?.source)
+        ? { title, wiki }
+        : null,
+    )
+    .filter((x): x is { title: string; wiki: WikiSummary } => !!x);
+  const photoOnly = usable[0] ?? null;
+
+  // Try audio for the FIRST usable bird only (sequential calls within one
+  // candidate are fine; sequential across 10 candidates was the killer).
   let best: { title: string; wiki: WikiSummary; audio: string } | null = null;
-  let photoOnly: { title: string; wiki: WikiSummary } | null = null;
-
-  for (let attempt = 0; attempt < 10 && !best; attempt++) {
-    const title = pool[seedIdx(`${dateKey}:bird:${attempt}`, pool.length)];
-    const wiki = await fetchSummary(title);
-    if (!wiki?.extract) continue;
-    const hasPhoto = !!(wiki.originalimage?.source || wiki.thumbnail?.source);
-    if (!hasPhoto) continue;
-    if (!photoOnly) photoOnly = { title, wiki };
-
-    // Order, exactly as the user asked:
-    // (a) the xeno-canto recording the Wikipedia article links to;
-    // (b) else the "default sound" embedded in the Wikipedia article;
-    // (c) else a Commons audio-file search by species name.
-    let audio = await audioFromWikiXc(title);
-    if (!audio) audio = await audioFromArticle(title);
-    if (!audio) audio = await audioFromCommonsSearch(title);
-    if (audio) best = { title, wiki, audio };
+  if (photoOnly) {
+    let audio = await audioFromWikiXc(photoOnly.title);
+    if (!audio) audio = await audioFromArticle(photoOnly.title);
+    if (!audio) audio = await audioFromCommonsSearch(photoOnly.title);
+    if (audio) best = { title: photoOnly.title, wiki: photoOnly.wiki, audio };
   }
 
   const chosen = best ?? (photoOnly ? { ...photoOnly, audio: "" } : null);

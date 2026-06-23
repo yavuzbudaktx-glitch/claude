@@ -40,7 +40,10 @@ interface Apod { date?: string; title?: string; explanation?: string; url?: stri
 
 function NasaPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: (v: boolean) => void }) {
   // Daily cache — one fetch per local day, persists across reloads.
-  const { data, isLoading } = useDailyCached<Apod>("nasa", "/api/nasa-apod");
+  // v2 cache key flushes any stale entry from before the validator below.
+  const { data, isLoading } = useDailyCached<Apod>("nasa.v2", "/api/nasa-apod", {
+    validate: (d) => !!d.url && !!d.title,
+  });
   if (isLoading && !data) return <Loading />;
   if (data?.error || !data?.url) return <Failed what="NASA" />;
   const isVideo = data.media_type === "video";

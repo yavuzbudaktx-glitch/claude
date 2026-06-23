@@ -252,6 +252,18 @@ function pushVideo(out: LibVideo[], seen: Set<string>, id: string, rawTitle: str
   out.push({ id, title: (title || "").trim() });
 }
 
+// Heuristic Shorts filter for paths that DON'T have duration info (the
+// innertube + HTML walks). Logan in particular tags every Short with
+// "#shorts" / "#Shorts" / "#short" in the title, and most creators do the
+// same. This keeps the channel libraries free of Shorts even without the
+// YouTube Data API key.
+function looksLikeShortByTitle(title: string): boolean {
+  return /#shorts?\b/i.test(title);
+}
+function dropShortsByTitle(items: LibVideo[]): LibVideo[] {
+  return items.filter((v) => !looksLikeShortByTitle(v.title));
+}
+
 // Works for playlistVideoRenderer / videoRenderer / gridVideoRenderer — all
 // carry "videoId":"…" shortly followed by a title (runs[].text or simpleText).
 function extractVideos(blob: string, out: LibVideo[], seen: Set<string>) {
@@ -501,35 +513,37 @@ async function fetchPlaylistPiped(playlistId: string, minCount: number): Promise
 }
 
 export async function fetchPlaylistVideos(playlistId: string, minCache = MIN_CACHEABLE): Promise<LibVideo[]> {
-  const key = `pl:${playlistId}`;
+  // v2 key prefix flushes any cached library that contained Shorts from
+  // before the title-heuristic filter landed.
+  const key = `pl2:${playlistId}`;
   const hit = cached(key);
   if (hit) return hit;
-  const out: LibVideo[] = [];
+  const collected: LibVideo[] = [];
   const seen = new Set<string>();
   // Official API first when a key is set — reliable and complete.
   if (YT_API_KEY) {
     const api = await fetchPlaylistViaApi(playlistId, minCache, false);
-    mergeInto(out, seen, api);
+    mergeInto(collected, seen, api);
   }
   // If the API got us there, skip the flaky scrapers. Otherwise race the
   // fallback sources in parallel and union them.
-  if (out.length < minCache) {
+  if (collected.length < minCache) {
     const [piped, inner, html] = await Promise.all([
       fetchPlaylistPiped(playlistId, minCache),
       fetchPlaylistInnertube(playlistId),
       getText(`https://www.youtube.com/playlist?list=${playlistId}&hl=en`),
     ]);
-    mergeInto(out, seen, piped);
-    mergeInto(out, seen, inner);
-    if (html) mergeInto(out, seen, await walk(html, extractVideos));
+    mergeInto(collected, seen, piped);
+    mergeInto(collected, seen, inner);
+    if (html) mergeInto(collected, seen, await walk(html, extractVideos));
   }
-  // Cache ANY reasonable result (≥ floor) for the TTL so we walk once, not on
-  // every request. Then remember the biggest-ever as a regression floor.
+  // Drop anything tagged as a Short in its title (covers innertube/HTML
+  // sources that don't expose duration).
+  const out = dropShortsByTitle(collected);
   if (out.length >= HARD_MIN_CACHE) {
     cache.set(key, { at: Date.now(), items: out });
     rememberIfGood(key, out);
   }
-  // If this walk came back smaller than a previous good one, serve the bigger.
   const fallback = lastGoodFor(key);
   if (fallback && fallback.length > out.length) return fallback;
   return out;
@@ -585,25 +599,24 @@ async function fetchPlaylistInnertube(playlistId: string): Promise<LibVideo[]> {
 }
 
 export async function fetchChannelVideos(handle: string, minCache = CHANNEL_MIN_CACHE): Promise<LibVideo[]> {
-  const key = `ch:${handle}`;
+  // v2 prefix flushes anything cached from before the Shorts title filter.
+  const key = `ch2:${handle}`;
   const hit = cached(key);
   if (hit) return hit;
 
   const id = await resolveChannelId(handle);
-  const out: LibVideo[] = [];
+  const collected: LibVideo[] = [];
   const seen = new Set<string>();
   const uploads = id ? "UU" + id.slice(2) : null;
 
   // Official API first when a key is set — reliable from any IP, complete,
-  // and drops Shorts via the duration pass (the fix for Belgesel-shows-Shorts).
+  // and drops Shorts via the duration pass.
   if (YT_API_KEY && uploads) {
     const api = await fetchPlaylistViaApi(uploads, minCache, true);
-    mergeInto(out, seen, api);
+    mergeInto(collected, seen, api);
   }
 
-  // If the API already cleared the bar, skip the flaky scrapers entirely.
-  // Otherwise race ALL fallback sources in parallel and union them.
-  if (out.length < minCache) {
+  if (collected.length < minCache) {
     const [piped, innertube, uploadsHtml, vidsHtml, atom, invid] = await Promise.all([
       id ? fetchChannelPiped(id, minCache) : Promise.resolve([] as LibVideo[]),
       uploads ? fetchPlaylistInnertube(uploads) : Promise.resolve([] as LibVideo[]),
@@ -612,22 +625,24 @@ export async function fetchChannelVideos(handle: string, minCache = CHANNEL_MIN_
       id ? fetchAtom(id) : Promise.resolve([] as LibVideo[]),
       id ? fetchChannelInvidious(id) : Promise.resolve([] as LibVideo[]),
     ]);
-    mergeInto(out, seen, piped);
-    mergeInto(out, seen, innertube);
-    if (uploadsHtml) mergeInto(out, seen, await walk(uploadsHtml, extractVideos));
-    if (vidsHtml) mergeInto(out, seen, await walk(vidsHtml, extractVideos));
-    mergeInto(out, seen, atom);
-    mergeInto(out, seen, invid);
+    mergeInto(collected, seen, piped);
+    mergeInto(collected, seen, innertube);
+    if (uploadsHtml) mergeInto(collected, seen, await walk(uploadsHtml, extractVideos));
+    if (vidsHtml) mergeInto(collected, seen, await walk(vidsHtml, extractVideos));
+    mergeInto(collected, seen, atom);
+    mergeInto(collected, seen, invid);
   }
 
-  // Cache ANY reasonable result (≥ floor) so we walk once per TTL, not on every
-  // request — this is what stops the re-walk storm that was getting us
-  // rate-limited to zero. Remember the biggest-ever as a regression floor.
+  // Final defensive filter: drop anything whose TITLE marks it a Short
+  // (Logan tags every Short with "#shorts"). This covers every source that
+  // doesn't expose duration metadata, so Shorts never leak in regardless
+  // of whether the API key path is configured.
+  const out = dropShortsByTitle(collected);
+
   if (out.length >= HARD_MIN_CACHE) {
     cache.set(key, { at: Date.now(), items: out });
     rememberIfGood(key, out);
   }
-  // If a previous walk got more, serve that instead of this thin one.
   const fallback = lastGoodFor(key);
   if (fallback && fallback.length > out.length) return fallback;
   return out;

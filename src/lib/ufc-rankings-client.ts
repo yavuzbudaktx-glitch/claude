@@ -110,10 +110,13 @@ async function fromOctagon(): Promise<DivisionRanking[]> {
 // ---- Source 2: ufc.com/rankings HTML scrape --------------------------------
 
 function parseUfcRankingsHtml(html: string): DivisionRanking[] {
-  const out: DivisionRanking[] = [];
+  const byDivision = new Map<string, DivisionRanking>();
 
   // Locate each weight-class grouping by its header, then slice the chunk
-  // up to the next header.
+  // up to the next header. The page repeats each division name twice (in
+  // the side nav AND in the actual ranking block), so we DEDUPE by division
+  // — keeping the first block that yielded contenders. Without this dedupe
+  // every division was rendering twice in the card.
   const headerRe = /view-grouping-header"[^>]*>\s*([^<]+?)\s*</gi;
   const headers: { name: string; index: number }[] = [];
   let hm: RegExpExecArray | null;
@@ -124,6 +127,7 @@ function parseUfcRankingsHtml(html: string): DivisionRanking[] {
   for (let i = 0; i < headers.length; i++) {
     const wanted = WANTED.find((w) => w.toLowerCase() === headers[i].name.toLowerCase());
     if (!wanted) continue;
+    if (byDivision.has(wanted)) continue; // already filled from an earlier header
     const chunk = html.slice(headers[i].index, headers[i + 1]?.index ?? html.length);
 
     // Champion: name link inside the champion block.
@@ -147,9 +151,9 @@ function parseUfcRankingsHtml(html: string): DivisionRanking[] {
       contenders.push({ rank, name, id });
     }
     contenders.sort((a, b) => a.rank - b.rank);
-    if (contenders.length) out.push({ division: wanted, champion, contenders });
+    if (contenders.length) byDivision.set(wanted, { division: wanted, champion, contenders });
   }
-  return out;
+  return WANTED.map((w) => byDivision.get(w)).filter((d): d is DivisionRanking => !!d);
 }
 
 async function fromUfcCom(): Promise<DivisionRanking[]> {
@@ -162,8 +166,17 @@ async function fromUfcCom(): Promise<DivisionRanking[]> {
   }
 }
 
+function dedupe(divisions: DivisionRanking[]): DivisionRanking[] {
+  // Guard against any source returning duplicate division entries — pick the
+  // first occurrence per division name. Without this the card was rendering
+  // each weight class twice in the grid.
+  const seen = new Map<string, DivisionRanking>();
+  for (const d of divisions) if (!seen.has(d.division)) seen.set(d.division, d);
+  return WANTED.map((w) => seen.get(w)).filter((d): d is DivisionRanking => !!d);
+}
+
 export async function fetchUfcRankings(): Promise<DivisionRanking[]> {
   const fromApi = await fromOctagon();
-  if (fromApi.length) return fromApi;
-  return fromUfcCom();
+  if (fromApi.length) return dedupe(fromApi);
+  return dedupe(await fromUfcCom());
 }

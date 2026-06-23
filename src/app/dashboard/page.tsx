@@ -9,7 +9,7 @@ import { NewsCard } from "@/components/widgets/NewsCard";
 import { EisenhowerMatrix } from "@/components/widgets/EisenhowerMatrix";
 import { MoversCard } from "@/components/widgets/MoversCard";
 import { SuperLigCard } from "@/components/widgets/SuperLigCard";
-import { TodayInHistoryCard } from "@/components/widgets/TodayInHistoryCard";
+import { TodaySummaryCard } from "@/components/widgets/TodaySummaryCard";
 import { UfcCard } from "@/components/widgets/UfcCard";
 import { BodyCard } from "@/components/widgets/BodyCard";
 import { SignOutButton } from "@/components/SignOutButton";
@@ -58,7 +58,7 @@ export default async function Page() {
           />
           <div className="flex flex-col justify-center gap-3 flex-1">
             <Masthead name={name} />
-            <TodayInHistoryCard />
+            <TodaySummaryCard />
           </div>
         </div>
         <div className="flex items-center justify-center lg:justify-end">
