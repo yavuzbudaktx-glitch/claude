@@ -2,6 +2,7 @@
 
 import useSWR from "swr";
 import { useEffect, useState } from "react";
+import { Dumbbell } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { CalendarEvent } from "@/lib/google/calendar";
 
@@ -86,6 +87,11 @@ export function TodaySummaryCard() {
   const part = partOfDay(new Date());
   const greeting = part === "morning" ? "Good morning" : part === "afternoon" ? "Good afternoon" : "Good evening";
 
+  // Gym days: Mon, Tue, Thu, Sat (getDay → 1, 2, 4, 6).
+  const weekday = new Date().getDay();
+  const isGymDay = [1, 2, 4, 6].includes(weekday);
+  const dayName = new Date().toLocaleDateString(undefined, { weekday: "long" });
+
   const pieces: string[] = [];
   if (weather?.current?.temp != null) {
     const t = Math.round(weather.current.temp);
@@ -95,24 +101,37 @@ export function TodaySummaryCard() {
   }
   if (todayEvents.length > 0) {
     if (nextEvent) {
-      pieces.push(`${todayEvents.length} event${todayEvents.length === 1 ? "" : "s"} today (next ${fmtTime(nextEvent.start)} · ${nextEvent.summary || "(no title)"})`);
+      pieces.push(`${todayEvents.length} event${todayEvents.length === 1 ? "" : "s"} (next ${fmtTime(nextEvent.start)} · ${nextEvent.summary || "untitled"})`);
     } else {
       pieces.push(`${todayEvents.length} event${todayEvents.length === 1 ? "" : "s"} today`);
     }
   } else {
-    pieces.push("no events on the calendar");
+    pieces.push("nothing on the calendar");
   }
   if (openTasks != null) {
-    pieces.push(openTasks === 0 ? "tasks clear" : `${openTasks} open task${openTasks === 1 ? "" : "s"}`);
+    pieces.push(openTasks === 0 ? "tasks all clear" : `${openTasks} open task${openTasks === 1 ? "" : "s"}`);
   }
+
+  // A short closing nudge that varies with how the day looks.
+  let nudge = "";
+  if (isGymDay) nudge = "";
+  else if (openTasks != null && openTasks === 0 && todayEvents.length === 0) nudge = " Light day — make it count.";
+  else if (openTasks != null && openTasks >= 5) nudge = " Busy one — knock out the big rocks first.";
 
   return (
     <div className="animate-fadeIn">
-      <div className="label mb-1.5">Today</div>
+      <div className="label mb-1.5">Today · {dayName}</div>
       <div className="font-serif text-[14px] leading-snug text-ink-soft">
         <span className="font-medium text-ink">{greeting}.</span>{" "}
         {pieces.length > 0 ? pieces.join(" · ") + "." : "Setting up your day…"}
+        {nudge}
       </div>
+      {isGymDay && (
+        <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-accent-soft border border-[var(--rule)] px-2.5 py-1 text-[11.5px] font-semibold text-accent">
+          <Dumbbell className="h-3.5 w-3.5" />
+          Gym day — don&rsquo;t skip it.
+        </div>
+      )}
     </div>
   );
 }
