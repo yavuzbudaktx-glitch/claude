@@ -31,9 +31,12 @@ export function useDailyCached<T>(
   storageKey: string,
   fetchUrl: string | null,
   options: DailyCachedOptions<T> = {},
-): { data: T | undefined; isLoading: boolean; error: boolean } {
+): { data: T | undefined; isLoading: boolean; error: boolean; refetch: () => void } {
   const { validate } = options;
   const [today, setToday] = useState(() => localDateKey());
+  // Bumping this forces the fetch effect to rerun even when today's entry is
+  // "fresh" — used by manual retry buttons (e.g. the NASA tab).
+  const [nonce, setNonce] = useState(0);
 
   // Re-key the cache at local midnight so the boxes self-refresh without
   // the user having to reload. We also recheck on tab focus to catch the
@@ -47,7 +50,7 @@ export function useDailyCached<T>(
   }, [today]);
 
   const [entry, setEntry] = usePref<CacheEntry<T> | null>(`hub.daily.${storageKey}`, null);
-  const fresh = !!entry && entry.date === today;
+  const fresh = !!entry && entry.date === today && nonce === 0;
   const [transient, setTransient] = useState<T | undefined>(undefined);
   const [loading, setLoading] = useState(!fresh && !!fetchUrl);
   const [error, setError] = useState(false);
@@ -57,7 +60,9 @@ export function useDailyCached<T>(
     if (fresh) { setLoading(false); return; }
     let cancelled = false;
     setLoading(true); setError(false);
-    fetch(fetchUrl)
+    // Cache-bust on a manual retry so we don't get the CDN's cached failure.
+    const url = nonce > 0 ? `${fetchUrl}${fetchUrl.includes("?") ? "&" : "?"}_r=${nonce}` : fetchUrl;
+    fetch(url)
       .then((r) => r.ok ? r.json() : Promise.reject(new Error(String(r.status))))
       .then((d) => {
         if (cancelled) return;
@@ -71,13 +76,20 @@ export function useDailyCached<T>(
         } else if (!hasError) {
           // Show what we got, but don't persist it — next reload retries.
           setTransient(d as T);
+        } else {
+          setError(true);
         }
         setLoading(false);
       })
       .catch(() => { if (!cancelled) { setError(true); setLoading(false); } });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [today, fetchUrl, fresh]);
+  }, [today, fetchUrl, fresh, nonce]);
 
-  return { data: fresh ? entry!.data : transient, isLoading: loading, error };
+  return {
+    data: fresh ? entry!.data : transient,
+    isLoading: loading,
+    error,
+    refetch: () => setNonce((n) => n + 1),
+  };
 }

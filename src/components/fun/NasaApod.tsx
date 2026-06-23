@@ -30,8 +30,22 @@ function InfoButton({ on, set }: { on: boolean; set: (v: boolean) => void }) {
 }
 
 function Loading() { return <div className="grid place-items-center h-full text-muted text-sm">Loading…</div>; }
-function Failed({ what }: { what: string }) {
-  return <div className="grid place-items-center h-full text-down text-sm px-4 text-center">Couldn&rsquo;t reach {what}.</div>;
+function Failed({ what, onRetry }: { what: string; onRetry?: () => void }) {
+  return (
+    <div className="grid place-items-center h-full px-4 text-center">
+      <div className="flex flex-col items-center gap-3">
+        <span className="text-down text-sm">Couldn&rsquo;t reach {what}.</span>
+        {onRetry && (
+          <button
+            onClick={onRetry}
+            className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft border border-[var(--rule)] px-3 py-1.5 text-[12px] font-semibold text-accent hover:brightness-110 transition"
+          >
+            <RotateCcw className="h-3.5 w-3.5" /> Try again
+          </button>
+        )}
+      </div>
+    </div>
+  );
 }
 
 // ---------- NASA APOD -------------------------------------------------------
@@ -41,11 +55,11 @@ interface Apod { date?: string; title?: string; explanation?: string; url?: stri
 function NasaPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: (v: boolean) => void }) {
   // Daily cache — one fetch per local day, persists across reloads.
   // v2 cache key flushes any stale entry from before the validator below.
-  const { data, isLoading } = useDailyCached<Apod>("nasa.v2", "/api/nasa-apod", {
+  const { data, isLoading, refetch } = useDailyCached<Apod>("nasa.v2", "/api/nasa-apod", {
     validate: (d) => !!d.url && !!d.title,
   });
   if (isLoading && !data) return <Loading />;
-  if (data?.error || !data?.url) return <Failed what="NASA" />;
+  if (data?.error || !data?.url) return <Failed what="NASA" onRetry={refetch} />;
   const isVideo = data.media_type === "video";
   return (
     <div className="flex flex-col gap-3 h-full min-h-0">
@@ -60,6 +74,15 @@ function NasaPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: 
             </span>
           </a>
         )}
+        {/* Manual refresh — re-tries the fetch (cache-busted) without a reload. */}
+        <button
+          onClick={refetch}
+          className="absolute top-2.5 right-2.5 inline-flex items-center gap-1 rounded-full bg-black/55 backdrop-blur px-2 py-1 text-[10px] font-semibold text-white hover:bg-black/75 transition"
+          title="Reload picture of the day"
+          aria-label="Reload"
+        >
+          <RotateCcw className="h-3 w-3" /> Reload
+        </button>
       </div>
       <div className="flex flex-col min-h-0 flex-[2]">
         <div className="flex items-start gap-2 shrink-0">
