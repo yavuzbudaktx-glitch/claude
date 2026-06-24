@@ -1,9 +1,220 @@
 # Britannica scrape debug dump
-# generated: 2026-06-24T12:10:24.659Z
+# generated: 2026-06-24T13:29:03.370Z
 # url:       https://www.britannica.com/on-this-day/june-24
-# fetcher:   CORS proxy
-# kind:      html
-# length:    5743
+# fetcher:   Jina Reader
+# kind:      markdown
+# length:    15747
 # parsed:    NO
 # -----------------------------------------------------------------
-<!DOCTYPE html><html lang="en-US"><head><title>Just a moment...</title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="content-security-policy" content="default-src &#39;none&#39;; script-src &#39;nonce-YhWH2PJrmYNkAl0lcZisdG&#39; &#39;unsafe-eval&#39; https://challenges.cloudflare.com; script-src-attr &#39;none&#39;; style-src &#39;unsafe-inline&#39;; img-src &#39;self&#39; https://challenges.cloudflare.com; connect-src &#39;self&#39; https://challenges.cloudflare.com; frame-src &#39;self&#39; https://challenges.cloudflare.com blob:; child-src &#39;self&#39; https://challenges.cloudflare.com blob:; worker-src blob:; form-action http: https:; base-uri &#39;self&#39;"><style>*{box-sizing:border-box;margin:0;padding:0}html{line-height:1.15;-webkit-text-size-adjust:100%;color:#313131;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"}body{display:flex;flex-direction:column;height:100vh;min-height:100vh}.main-content{margin:8rem auto;padding-left:1.5rem;max-width:60rem}@media (width <= 720px){.main-content{margin-top:4rem}}#challenge-error-text{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbD0iI0IyMEYwMyIgZD0iTTE2IDNhMTMgMTMgMCAxIDAgMTMgMTNBMTMuMDE1IDEzLjAxNSAwIDAgMCAxNiAzbTAgMjRhMTEgMTEgMCAxIDEgMTEtMTEgMTEuMDEgMTEuMDEgMCAwIDEtMTEgMTEiLz48cGF0aCBmaWxsPSIjQjIwRjAzIiBkPSJNMTcuMDM4IDE4LjYxNUgxNC44N0wxNC41NjMgOS41aDIuNzgzem0tMS4wODQgMS40MjdxLjY2IDAgMS4wNTcuMzg4LjQwNy4zODkuNDA3Ljk5NCAwIC41OTYtLjQwNy45ODQtLjM5Ny4zOS0xLjA1Ny4zODktLjY1IDAtMS4wNTYtLjM4OS0uMzk4LS4zODktLjM5OC0uOTg0IDAtLjU5Ny4zOTgtLjk4NS40MDYtLjM5NyAxLjA1Ni0uMzk3Ii8+PC9zdmc+");background-repeat:no-repeat;background-size:contain;padding-left:34px}</style><meta http-equiv="refresh" content="360"></head><body><div class="main-wrapper" role="main"><div class="main-content"><noscript><div class="h2"><span id="challenge-error-text">Enable JavaScript and cookies to continue</span></div></noscript></div></div><script nonce="YhWH2PJrmYNkAl0lcZisdG">(function(){window._cf_chl_opt = {cFPWv: 'b',cH: 'e._tVhG4oc2YshTip0u1xraqT85QWxMynAVfCg7d92g-1782302992-1.2.1.1-WjEa779wZ_YeOs6axuijrFxwe6m6y8dxOuJad3E44gKW7Z40mmC.mbynYGI9eNfQ',cITimeS: '1782302992',cN: 'YhWH2PJrmYNkAl0lcZisdG',cRay: 'a10ba045cc11ea47',cTplB: '0',cTplC:0,cTplO:0,cTplV:5,cType: 'managed',cUPMDTk:"/on-this-day/june-24?__cf_chl_tk=YvWnZBG5zvxfQrY02G1d5p0fF9e3qAaGMn_qJ6uO1Mw-1782302992-1.0.1.1-VntaZK3ku72ePnvK9PZos62Y1.ES6zkBRR1I_gYEhxk",cvId: '3',cZone: 'www.britannica.com',fa:"/on-this-day/june-24?__cf_chl_f_tk=YvWnZBG5zvxfQrY02G1d5p0fF9e3qAaGMn_qJ6uO1Mw-1782302992-1.0.1.1-VntaZK3ku72ePnvK9PZos62Y1.ES6zkBRR1I_gYEhxk",md: 'mtXTNZUBiY1WWUaYSOhopBV32q_vx2XUegXirEU1B1k-1782302992-1.2.1.1-v9ChHQhfjetKii2qDWK0ICZVyI55s29vKZGZVOx4YjF7W0cGEdWblvQQ3_eLGLcUbKggVxe7.YwRFLn2XIdC8E72SmRkFffZm3UlA18FTYGbG2PiGedyzIjZshdGDBZQGa4hgR5FEY702kO36ErfOxV4DREl0qaeMuaFFWTUmO0vLDg.b_Eq_FlkT.w_t7BNyHk2LjierzEu8tDen_I5iC96hCr9bx8Ny5XL6_DZPjvYGBcogBd9rCdMUMN79OAGCMGxHhE7zwKGjm4wlwGZ9vEgGZvVNGLFtg23kI5Ep9NPc1wVj1HjkO9Qr.TdVlzOFKjdMN4XPXtUfj_RXKlHEYXwxuYqy3RSCobC3W2sJKKA2RbNxCvKkiVSL.WOJcaetImqO7BBvGEaYpqPpWEXFolJBfTo0ZDVTS7mc1R5JVuRzCfyP3pUQTJCkO_tpWwQpmwUcNEUU9rd6252zjQFd34_dBR7O6Fl.GVsC99k8Q1k9DsgbKZo_0NZE54oy5sUvnpBIOxH4TBujF1BVQzJ7KgmuQXnizQjf4lRbYREoCqUOaknbWhCwUeV0Rx.MKEBvUfwRZH66LDP3AnFYKw7G.rEQtoSXUIm1ln3addj8VC190U8c61RmOrKDkTwE5zG38CiqrsjjKKqYC6raGnQfgTzAFKtx7rKA2PVFonX931VZHBXANYWByiMsloKvGukRUZc8CZqwWLZsUqf9k.nnpVjxeSaVuv_wiee9OD_bD5H4YBliuFPhhZi_a8j.MDxhvZnM9llKO9upzpijs2ta1MqIytY2iDSBMNm5pOghIRZvQDOHRCcZnqRDXl5mD5eHdhH5.JcSu.bxGMDvYppfPEoYAL659HUYtlznG8NBa.A983ijYSWK0WHj1dsqw88of_CSYlfSS6JDqX.OHvR1KyfziosV1ORE0C1PAZ54M9yfLCkDz0_ita.VEPz6QMSLUDbHjS1Tjf0CExEmziw8oLqDwuUhSwICZWSAnBh_Fa2j6ugVvJraLX4xxKQzYzBL5fyDkcl_IYy44DPxPjF8aKrrkIxuuqaf1H1srE11StXqrVaRs5XscRo49UZ.MdfPYQZa_JOKwXlfDGYL_4sNVUEldZ3GC7Lm1aYddxNVC0',mdrd: 'yqnzCyySV2GutCegjvGeYxDc8cwjzgbzgGv7uos5qus-1782302992-1.2.1.1-ezv8ShZRYgcO8TAaeOL0ivJtvfPgD10hxhL1YAuj64JCYvx3T4y5AgWp.Ja_RQb00OWlWQhb7EASZcROoQSZgd9agybAKX.VogRL_m5v8T.B3MBSW0eShvSiy6QvX8ggpZRDueTjdEt_BvDzmtGRGUEU4.W782krjFPopm8EoESHxcHsAwPNsyFMJBZTXF0nu5AZa0zl7Bk_cw.sHhTiEx6DdX1W_vf.tV9AFW1INZO6HPwWbWGYbrgi3POgVCXkPyU0xgNZMTNr9gbegJGAFCzcIcyXhOF.9CEqnc7Ayi2kwwkyX_J099bxFPNQ7YPm7YBCs7E36zkMDxXM6WePBcyiHwvA36z8BK.wAANxILu9HVTloq8wej2BRA9ejsj5QNiPpgso6uid_kqIUTMFYLQ3tWgiuqf0bY._wDNSbd7nbBiWuXOwFo0SM3wHmCZF042fS09c9avWsw4JnyZ7dtnzdy3gSW_V_9i_l99umAc',};var a = document.createElement('script');a.nonce = 'YhWH2PJrmYNkAl0lcZisdG';a.src = '/cdn-cgi/challenge-platform/h/b/orchestrate/chl_page/v1?ray=a10ba045cc11ea47';window._cf_chl_opt.cOgUHash = location.hash === '' && location.href.indexOf('#') !== -1 ? '#' : location.hash;window._cf_chl_opt.cOgUQuery = location.search === '' && location.href.slice(0, location.href.length - window._cf_chl_opt.cOgUHash.length).indexOf('?') !== -1 ? '?' : location.search;if (window.history && window.history.replaceState) {var ogU = location.pathname + window._cf_chl_opt.cOgUQuery + window._cf_chl_opt.cOgUHash;history.replaceState(null, null,"/on-this-day/june-24?__cf_chl_rt_tk=YvWnZBG5zvxfQrY02G1d5p0fF9e3qAaGMn_qJ6uO1Mw-1782302992-1.0.1.1-VntaZK3ku72ePnvK9PZos62Y1.ES6zkBRR1I_gYEhxk"+ window._cf_chl_opt.cOgUHash);a.onload = function() {history.replaceState(null, null, ogU);}}document.getElementsByTagName('head')[0].appendChild(a);}());</script></body></html>
+Title: On This Day - What Happened Today In History | Britannica
+
+URL Source: https://www.britannica.com/on-this-day/june-24
+
+Markdown Content:
+[![Image 1: Encyclopedia Britannica](https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png)](https://www.britannica.com/)
+
+Search Britannica Click here to search
+
+[![Image 2: Encyclopedia Britannica](https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png)](https://www.britannica.com/)
+
+Search Britannica Click here to search
+
+[SUBSCRIBE](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=global-nav&utm_campaign=blue-evergreen)
+
+[SUBSCRIBE](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=global-nav-mobile&utm_campaign=blue-evergreen)
+
+Login
+
+[Subscribe to Britannica Premium](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=nav-login-box&utm_campaign=evergreent)
+
+[SUBSCRIBE TO PREMIUM](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=bdpremium)
+
+[Ask the Chatbot](https://www.britannica.com/chatbot)[Games & Quizzes](https://www.britannica.com/quiz/browse)[History & Society](https://www.britannica.com/History-Society)[Science & Tech](https://www.britannica.com/Science-Tech)[Biographies](https://www.britannica.com/Biographies)[Animals & Nature](https://www.britannica.com/Animals-Nature)[Geography & Travel](https://www.britannica.com/Geography-Travel)[Arts & Culture](https://www.britannica.com/Arts-Culture)[ProCon](https://www.britannica.com/procon)[Money](https://www.britannica.com/money)[Videos](https://www.britannica.com/videos)
+
+[Home](https://www.britannica.com/) Today in History ![Image 3: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-188/images/shared/tih-logo.png?v=3.188.11)
+
+![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-188/images/shared/tih-star.svg?v=3.188.11)June 24
+
+![Image 5: Today In History Phone](https://cdn.britannica.com/mendel-resources/3-188/images/shared/tih-phone.png?v=3.188.11)
+
+Get Our Newsletter in your Inbox 📩
+
+ SIGN UP 
+
+Thanks for signing up for Today in History. Your first newsletter will arrive soon!
+
+ Subject to Britannica's [Privacy Policy](https://corporate.britannica.com/privacy-policy) and [Terms of Use](https://corporate.britannica.com/termsofuse.html)
+
+ What Happened On Your Birthday? 
+
+[Go to Today's Date](https://www.britannica.com/on-this-day)
+
+ Featured Event 
+
+![Image 6: June 24, 1374: This medieval mystery still has no clear answer](https://cdn.britannica.com/99/289299-050-A352A398/today-in-history-Dance-mania-outbreak.jpg?w=356&h=200&c=crop)
+
+ © The Picture Art Collection/Alamy; Photo Illustration Encyclopædia Britannica, Inc.
+
+[The outbreak of the dancing plague](https://www.britannica.com/today-in-history/June-24-1374-Dancing-Plague-of-Aachen)
+
+ On this day in 1374, men, women, and children gathered in the streets of [Aachen](https://www.britannica.com/place/Aachen), [Germany](https://www.britannica.com/place/Germany), and danced as if in a trance. They continued for hours—even days—moving until they collapsed from exhaustion. This was earliest widely documented (and worst) major outbreak of choreomania, the dancing plague, a form of mass psychogenic illness. Other outbreaks occurred elsewhere in Europe in later decades and centuries, but no other major cases of choreomania have been reported since the mid-1600s._[[Read today’s edition of Today in History >>](https://www.britannica.com/today-in-history/June-24-1374-Dancing-Plague-of-Aachen)]_
+
+Featured Biography
+
+ What Happened On Your Birthday? 
+
+ Featured Biography 
+
+[![Image 7: Jack Dempsey](https://cdn.britannica.com/29/33629-050-3246D7BA/Jack-Dempsey.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Jack-Dempsey?utm_source=otd)
+
+ UPI/Bettmann Archive
+
+Jack Dempsey
+
+Born this day in 1895 was American heavyweight [boxing](https://www.britannica.com/sports/boxing) champion [Jack Dempsey](https://www.britannica.com/biography/Jack-Dempsey), who held the world title from 1919, when he knocked out [Jess Willard](https://www.britannica.com/biography/Jess-Willard), until 1926, when he lost a 10-round decision to [Gene Tunney](https://www.britannica.com/biography/Gene-Tunney).
+
+Famous Birthdays
+
+1941
+
+[Julia Kristeva](https://www.britannica.com/biography/Julia-Kristeva?utm_source=otd)
+
+French author
+
+1937
+
+[Anita Desai](https://www.britannica.com/biography/Anita-Desai?utm_source=otd)
+
+Indian author
+
+1915
+
+[Sir Fred Hoyle](https://www.britannica.com/biography/Fred-Hoyle?utm_source=otd)
+
+British mathematician and astronomer
+
+1831
+
+[Henry Howard Molyneux Herbert, 4th earl of Carnarvon](https://www.britannica.com/biography/Henry-Howard-Molyneux-Herbert-4th-earl-of-Carnarvon?utm_source=otd)
+
+British statesman
+
+[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/June-24)
+
+## More on June 24
+
+![Image 8: supporters and opponents of abortion bans outside the U.S. Supreme Court](https://cdn.britannica.com/72/204572-050-4708CA63/Abortion-demonstration-United-States-Supreme-Court-building-Washington-DC-1989.jpg?w=260&h=196&c=crop)
+
+ © mark reinstein/Shutterstock.com
+
+2022
+
+ In [_Dobbs_ v. _Jackson Women’s Health Organization_](https://www.britannica.com/event/Dobbs-v-Jackson-Womens-Health-Organization), the [U.S. Supreme Court](https://www.britannica.com/topic/Supreme-Court-of-the-United-States) overturned [_Roe_ v. _Wade_](https://www.britannica.com/event/Roe-v-Wade) (1973), ending the constitutional right to an [abortion](https://www.britannica.com/science/abortion-pregnancy). _[[Why are there nine justices on the U.S. Supreme Court?](https://www.britannica.com/story/why-are-there-nine-justices-on-the-us-supreme-court)]_
+
+![Image 9: The first female prime minister of Australia](https://cdn.britannica.com/58/204158-050-7E1A6244/Julia-Gillard-2012.jpg?w=260&h=196&c=crop)
+
+ Shutterstock.com
+
+2010
+
+ Australian politician [Julia Gillard](https://www.britannica.com/biography/Julia-Gillard) was sworn in as [Australia](https://www.britannica.com/place/Australia)’s first female prime minister. _[[Sort fact from fiction in our quiz about Australia](https://www.britannica.com/quiz/australia-fact-or-fiction).]_
+
+![Image 10: The greatest football player of all time?](https://cdn.britannica.com/34/212134-050-A7289400/Lionel-Messi-2018.jpg?w=260&h=196&c=crop)
+
+ David Ramos/Getty Images
+
+1987
+
+[Football](https://www.britannica.com/sports/football-soccer) (soccer) player [Lionel Messi](https://www.britannica.com/biography/Lionel-Messi), one of the game’s premier players, was born in Argentina. _[[Take our quiz about all things football](https://www.britannica.com/quiz/all-things-football).]_
+
+![Image 11: Berlin blockade and airlift](https://cdn.britannica.com/06/187806-050-05A89FB7/Children-cargo-plane-landing-Tempelhof-Airfield-Berlin-1948.jpg?w=260&h=196&c=crop)
+
+ Air Force Historical Research Agency
+
+1948
+
+ The [Berlin blockade](https://www.britannica.com/event/Berlin-blockade) intensified when the [Soviet Union](https://www.britannica.com/place/Soviet-Union) announced that the Western [Allied powers](https://www.britannica.com/topic/Allied-Powers-international-alliance) no longer had any rights in [Berlin](https://www.britannica.com/place/Berlin). _[[Watch an overview of the Soviet Union’s blockade of West Berlin](https://www.britannica.com/event/Berlin-blockade/images-videos#/media/1/62154/194399).]_
+
+![Image 12: The Flying Saucer as I Saw It](https://cdn.britannica.com/46/111346-050-942D9105/cover-Kenneth-Arnold-The-Flying-Saucer.jpg?w=260&h=196&c=crop)
+
+ © Chronicle/Alamy
+
+1947
+
+ American businessman Kenneth Arnold saw a number of objects “flying like saucers” while piloting a small plane over Mount Rainier in Washington; it was considered the first modern sighting of [UFOs](https://www.britannica.com/topic/unidentified-flying-object) and gave rise to the term _flying saucer_.
+
+![Image 13: Bangkok: Grand Palace](https://cdn.britannica.com/59/252559-050-F959E5DC/Grand-palace-and-Wat-Phra-Keaw-Bangkok.jpg?w=260&h=196&c=crop)
+
+ © seksan94/stock.adobe.com
+
+1932
+
+ The [Promoters Revolution](https://www.britannica.com/event/Promoters-Revolution), a bloodless coup, overthrew [Prajadhipok](https://www.britannica.com/biography/Prajadhipok), the king of [Thailand](https://www.britannica.com/place/Thailand), ending the absolute monarchy in that country and initiating the so-called Constitutional Era. _[[Sort fact from fiction in our quiz about Thailand](https://www.britannica.com/quiz/exploring-thailand-fact-or-fiction).]_
+
+![Image 14: default image](https://cdn.britannica.com/mendel-resources/3-188/images/shared/thistle-blue-half.svg?v=3.188.11)
+
+ Image: Encyclopædia Britannica, Inc.
+
+1859
+
+ The [Battle of Solferino](https://www.britannica.com/event/Battle-of-Solferino), the last engagement of the second [War of Italian Independence](https://www.britannica.com/place/Italy/The-war-of-1859#ref27739), was fought in Lombardy. _[[Match the battle with the war in our quiz](https://www.britannica.com/quiz/match-the-battle-with-the-war).]_
+
+![Image 15: Simón Bolívar](https://cdn.britannica.com/55/92955-050-DE2D4E1E/Simon-Bolivar-English-stipple-engraving.jpg?w=260&h=196&c=crop)
+
+ North Wind Picture Archives
+
+1821
+
+ South American patriots under [Simón Bolívar](https://www.britannica.com/biography/Simon-Bolivar) defeated Spanish royalists on the plains near Caracas, Venezuela, in the [Battle of Carabobo](https://www.britannica.com/event/Battle-of-Carabobo). _[[Test your knowledge of Latin American history](https://www.britannica.com/quiz/exploring-latin-american-history).]_
+
+![Image 16: Jacques-Louis David: Napoleon in His Study](https://cdn.britannica.com/54/65154-050-0891EC38/Napoleon-in-His-Study-Jacques-Louis-David-Washington-1812.jpg?w=260&h=196&c=crop)
+
+ Courtesy National Gallery of Art, Washington, D.C. Samuel H. Kress Collection, 1961.9.15
+
+1812
+
+ French Emperor [Napoleon](https://www.britannica.com/biography/Napoleon-I)—who had massed his troops in Poland in the spring to intimidate Russian Tsar [Alexander I](https://www.britannica.com/biography/Alexander-I-emperor-of-Russia)—and 600,000 troops of his Grand Army launched an ill-fated invasion of Russia. _[[How much do you know about Napoleon?](https://www.britannica.com/quiz/all-about-napoleon-bonaparte)]_
+
+![Image 17: William Smellie](https://cdn.britannica.com/97/26197-004-C8940049/William-Smellie-detail-portrait-artist.jpg?w=260&h=196&c=crop)
+
+ Encyclopædia Britannica, Inc.
+
+1795
+
+[William Smellie](https://www.britannica.com/biography/William-Smellie-Scottish-publisher-and-scientist), the Scottish compiler of the first edition of the [Encyclopædia Britannica](https://www.britannica.com/topic/Encyclopaedia-Britannica-English-language-reference-work), died at age 55.
+
+![Image 18: Theodore Beza](https://cdn.britannica.com/74/6474-004-664F34B6/Theodore-Beza-portrait-master-school-French-1605.jpg?w=260&h=196&c=crop)
+
+ Archiv für Kunst und Geschichte, Berlin
+
+1519
+
+[Theodore Beza](https://www.britannica.com/biography/Theodore-Beza), an author, translator, educator, and theologian who assisted and later succeeded [John Calvin](https://www.britannica.com/biography/John-Calvin) as a leader of the Protestant [Reformation](https://www.britannica.com/event/Reformation) centered at Geneva, was born. _[[Take our quiz about Christianity](https://www.britannica.com/quiz/christianity-quiz).]_
+
+![Image 19: John Cabot landing at Labrador](https://cdn.britannica.com/24/92824-050-922C506C/John-Cabot-shores-engraving-Labrador-artist.jpg?w=260&h=196&c=crop)
+
+ © North Wind Picture Archives
+
+1497
+
+[John Cabot](https://www.britannica.com/biography/John-Cabot) became the first European to set foot in [North America](https://www.britannica.com/place/North-America) since the [Vikings](https://www.britannica.com/topic/Viking-people). _[[Take our quiz about exploration and discovery](https://www.britannica.com/quiz/exploration-and-discovery).]_
+
+SIGN UP FOR
+
+![Image 20: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-188/images/shared/tih-logo.png?v=3.188.11)![Image 21: Today In History](https://cdn.britannica.com/mendel-resources/3-188/images/shared/tih-subscribe-side.png?v=3.188.11&w=800)
+
+History's Biggest Headlines
+
+Discover the fascinating events that shaped the world, straight from our editors.
+
+SIGN UP
+
+Thanks for signing up for Today in History.
+
+Your first newsletter will arrive soon!
+
+SIGN UP
+
+ By clicking "Sign Up" you are agreeing to our [Terms of Use](https://corporate.britannica.com/termsofuse.html) and [Privacy Policy](https://corporate.britannica.com/privacy-policy). 
+
+![Image 23](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=125&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjune-24&s=5EB075E4-FBB6-4D56-A4DB-7EF49B95289F&json=%20)![Image 24: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=dd908539-ac62-cfe4-667c-15277383e63b&iiqpciddate=1782307651177&tsrnd=979_1782307651186&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22149%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22149%5C%22%2C%20%5C%22Not)A%3BBrand%5C%22%3Bv%3D%5C%2224%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22macOS%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%226%22%3A%22%5C%2210_15_7%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22149.0.7827.155%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22149.0.7827.155%5C%22%2C%20%5C%22Not)A%3BBrand%5C%22%3Bv%3D%5C%2224.0.0.0%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 25](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001782307652-STV5CCG7-NIDQ)![Image 26](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001782307652-STV5CCG7-NIDQ&adnxs_id=$UID&gdpr=0)![Image 27](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001782307652-STV5CCG7-NIDQ%26auid%3DAU1D-0100-001782307652-STV5CCG7-NIDQ&gdpr=0)![Image 28](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001782307652-STV5CCG7-NIDQ&gdpr=0)![Image 29](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001782307652-STV5CCG7-NIDQ&gdpr=0)![Image 30](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001782307652-STV5CCG7-NIDQ&gdpr=0)![Image 31](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001782307652-STV5CCG7-NIDQ&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001782307652-STV5CCG7-NIDQ%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 32](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4MjMwNzY1Mi1TVFY1Q0NHNy1OSURR&id=AU1D-0100-001782307652-STV5CCG7-NIDQ&gdpr=0)![Image 33](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001782307652-STV5CCG7-NIDQ)![Image 34](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001782307652-STV5CCG7-NIDQ&uid=[UID]&gdpr=0)![Image 35](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001782307652-STV5CCG7-NIDQ%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
