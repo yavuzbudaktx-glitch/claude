@@ -53,11 +53,12 @@ function Failed({ what, onRetry }: { what: string; onRetry?: () => void }) {
 interface Apod { date?: string; title?: string; explanation?: string; url?: string; hdurl?: string; media_type?: string; copyright?: string; error?: string }
 
 function NasaPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: (v: boolean) => void }) {
-  // Daily cache — one fetch per local day, persists across reloads.
-  // v2 cache key flushes any stale entry from before the validator below.
-  const { data, isLoading, refetch } = useDailyCached<Apod>("nasa.v2", "/api/nasa-apod", {
+  // v3 cache key flushes any stale entry from before the broader parser
+  // landed (the old key still had today's empty/broken result pinned).
+  const { data, isLoading, refetch } = useDailyCached<Apod>("nasa.v3", "/api/nasa-apod", {
     validate: (d) => !!d.url && !!d.title,
   });
+  const [imgFailed, setImgFailed] = useState(false);
   if (isLoading && !data) return <Loading />;
   if (data?.error || !data?.url) return <Failed what="NASA" onRetry={refetch} />;
   const isVideo = data.media_type === "video";
@@ -68,9 +69,34 @@ function NasaPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: 
           <iframe src={data.url} title={data.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen className="absolute inset-0 h-full w-full" />
         ) : (
           <a href={data.hdurl || data.url} target="_blank" rel="noreferrer" className="absolute inset-0">
-            <img src={data.url} alt={data.title} className="h-full w-full object-cover transition hover:scale-[1.01]" loading="lazy" />
+            {/* referrerPolicy=no-referrer because some NASA mirror image hosts
+                return 403 when the Referer doesn't match apod.nasa.gov. The
+                onError handler shows a graceful fallback if the URL truly
+                can't load (rather than a broken-image icon). */}
+            <img
+              src={data.url}
+              alt={data.title}
+              className="h-full w-full object-cover transition hover:scale-[1.01]"
+              loading="eager"
+              referrerPolicy="no-referrer"
+              onError={() => setImgFailed(true)}
+              onLoad={() => setImgFailed(false)}
+            />
+            {imgFailed && (
+              <div className="absolute inset-0 grid place-items-center bg-black/55 backdrop-blur-sm text-white text-[12px] px-4 text-center">
+                <div className="flex flex-col items-center gap-2">
+                  <span>Image host blocked — open the original →</span>
+                  <button
+                    onClick={(e) => { e.preventDefault(); refetch(); }}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-white/20 hover:bg-white/30 px-3 py-1 text-[11.5px] font-semibold"
+                  >
+                    <RotateCcw className="h-3 w-3" /> Try again
+                  </button>
+                </div>
+              </div>
+            )}
             <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 rounded-full bg-black/55 backdrop-blur px-2 py-0.5 text-[10px] font-semibold text-white">
-              <Rocket className="h-3 w-3" /> NASA · {data.date}
+              <Rocket className="h-3 w-3" /> NASA{data.date ? ` · ${data.date}` : ""}
             </span>
           </a>
         )}
