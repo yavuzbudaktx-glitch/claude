@@ -1,9 +1,44 @@
 # Britannica scrape debug dump
-# generated: 2026-06-25T15:32:18.387Z
+# generated: 2026-06-25T16:37:54.260Z
 # url:       https://www.britannica.com/on-this-day/june-25
-# fetcher:   CORS proxy
-# kind:      html
-# length:    5743
-# parsed:    NO
+# fetcher:   Jina Reader
+# kind:      markdown
+# length:    1882
+# parsed:    YES (Wayback Machine)
 # -----------------------------------------------------------------
-<!DOCTYPE html><html lang="en-US"><head><title>Just a moment...</title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="content-security-policy" content="default-src &#39;none&#39;; script-src &#39;nonce-LGGrZh7beg6Odf2k2iPEyy&#39; &#39;unsafe-eval&#39; https://challenges.cloudflare.com; script-src-attr &#39;none&#39;; style-src &#39;unsafe-inline&#39;; img-src &#39;self&#39; https://challenges.cloudflare.com; connect-src &#39;self&#39; https://challenges.cloudflare.com; frame-src &#39;self&#39; https://challenges.cloudflare.com blob:; child-src &#39;self&#39; https://challenges.cloudflare.com blob:; worker-src blob:; form-action http: https:; base-uri &#39;self&#39;"><style>*{box-sizing:border-box;margin:0;padding:0}html{line-height:1.15;-webkit-text-size-adjust:100%;color:#313131;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"}body{display:flex;flex-direction:column;height:100vh;min-height:100vh}.main-content{margin:8rem auto;padding-left:1.5rem;max-width:60rem}@media (width <= 720px){.main-content{margin-top:4rem}}#challenge-error-text{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbD0iI0IyMEYwMyIgZD0iTTE2IDNhMTMgMTMgMCAxIDAgMTMgMTNBMTMuMDE1IDEzLjAxNSAwIDAgMCAxNiAzbTAgMjRhMTEgMTEgMCAxIDEgMTEtMTEgMTEuMDEgMTEuMDEgMCAwIDEtMTEgMTEiLz48cGF0aCBmaWxsPSIjQjIwRjAzIiBkPSJNMTcuMDM4IDE4LjYxNUgxNC44N0wxNC41NjMgOS41aDIuNzgzem0tMS4wODQgMS40MjdxLjY2IDAgMS4wNTcuMzg4LjQwNy4zODkuNDA3Ljk5NCAwIC41OTYtLjQwNy45ODQtLjM5Ny4zOS0xLjA1Ny4zODktLjY1IDAtMS4wNTYtLjM4OS0uMzk4LS4zODktLjM5OC0uOTg0IDAtLjU5Ny4zOTgtLjk4NS40MDYtLjM5NyAxLjA1Ni0uMzk3Ii8+PC9zdmc+");background-repeat:no-repeat;background-size:contain;padding-left:34px}</style><meta http-equiv="refresh" content="360"></head><body><div class="main-wrapper" role="main"><div class="main-content"><noscript><div class="h2"><span id="challenge-error-text">Enable JavaScript and cookies to continue</span></div></noscript></div></div><script nonce="LGGrZh7beg6Odf2k2iPEyy">(function(){window._cf_chl_opt = {cFPWv: 'b',cH: 'PE8Q2Z8CPpNaVDbsbEUytcZBYth3ifAi3SDAwdxob7g-1782401506-1.2.1.1-ghKx2vdFxzjy.8ZNDIWthoY3v2X5bQ5_9PmmhEddV.YDhI..E9VqFD9jPIgU752w',cITimeS: '1782401506',cN: 'LGGrZh7beg6Odf2k2iPEyy',cRay: 'a11505685c0bbd88',cTplB: '0',cTplC:0,cTplO:0,cTplV:5,cType: 'managed',cUPMDTk:"/on-this-day/june-25?__cf_chl_tk=bfXUs5wRSKU0.4iq2Ua5rC_4lXqTHmWXKCrVyvEneWg-1782401506-1.0.1.1-wtHZ_5laM0bqFEup6LWeE43V145y8Vv3qhQTuYdCsk8",cvId: '3',cZone: 'www.britannica.com',fa:"/on-this-day/june-25?__cf_chl_f_tk=bfXUs5wRSKU0.4iq2Ua5rC_4lXqTHmWXKCrVyvEneWg-1782401506-1.0.1.1-wtHZ_5laM0bqFEup6LWeE43V145y8Vv3qhQTuYdCsk8",md: 'RS6x4OQTOOStGku8FhtaU3D__.9.FyAoYFNmdGCqIN4-1782401506-1.2.1.1-Ify_C83gnenTTEsiuxPWhV23Npn0Qsj5ZaFxSd3eX6IXk1wGSrfwUlUVO9uigT7qcITTbQf9m.k7MHBLOMzysHc39OIiZnJQ4KN.RRd4P7BUb0xKXWy9PgwG9ewggFMqs9bdEiePN3qOe4CMa_G0jFtmBRdcUfXmhZNdWgLtD2CSk69msimzo4z7czZJBv0r.4bMAiuSAEFuoYF9Db.FbNGjkB0VgRpMorcebiygN.D9dwBSWGJuySHZtLJ9N9qLc5RExgfuP8s3e3dDGWgshh0LH6dAB3tOaQLetbeQp6BmfbPuYReBKIYKeaShl4a_68d1sBEwQbYdrdawUjxWUDGTY8Ew_iUlj2HLF0yD9dsxSG6byKldGJLiW8K_2GU9oE64Ejlf5CUm6lcDyxIntx7b8Y9JucblqNBcaN371k_w_gWbZWrYlGxWNa6fRFzMVMbbhmnEIQ3rgLHl0vbS_wW5mVRbkhvlK37_WMn6E75urNvNS.4O3E7wwgOmeu6VCgGKrMxx4gJ8UbG1unYN0CQjPgKkMNFWNJmNqfStluqIRVbRxKgZpmVymfaCrUx1RMMZ7eRw2DQg6v156CXf5bdK8u0cL0gqRtlOCtdYAikG6HwTD3kopAS2E09iJbWsucI0s.NRn4.7cHZ2LdcV2V0qLS8yzPOcSzd9yGGEobMMeOYg4SMakahxzmNMgHNYU5fRFQICU60A7Rp0YOt4tpeC880Kx3FeEXw_jrkGOurnyXok9OyrjlJmyeWd5tYUAWRSAHWhLG6EYG8jKpamjroo40xzOsPudd_1p8noTR_SwpZA_i749u89TulgJGXnoMY1Is.pAfS4AURC7KpMIqsEgtfMLXg8ZLHWyNNUhz2uUtq.ZXCSyJJ2J.1nLuU8W8_4.1invl_l.EGym6kQpaO82ZkHuFtZtPxtRgZFWaCgkNiBphPdQkdx1STOakI4lixhMQTQtDa3tJGmcgbGPqEBjY.MAZl6Y498tSf.DtZYXf_JbOLC6WuOzvIOaKnWE3HH532r8bAZ0Ec_ND9oGQma5_4XFtzSHXcHF8x3iUiuL8myDBwQkFcbo3kikSHNkiETjlaWx6XQosjZP0nDcAPQfqczEmPfYXLKr1gpEoQ',mdrd: 'Tfkw4BM3Dcqc4OTo.RGQrVcWEbcwU7PyOWHsBiOTFNM-1782401506-1.2.1.1-lwhaDYBpJPQHAclAS4sozjPOagOmpWrfH4XJFXP9ASJ.RH7LlaZ7IakXHyaUHwotuiUG3pav5VdCkfLg1b_Cil3wdCKocqVeGbojiWp4u.hw_ZpOkYrt1rEuLriKoFqNriqxmh_FAcO.X_wsqNpImRtEo49pbtG1XaSRRpMBG0IQXBjiH_mGFe8wqaISQHsvSBlQmjJ_b0DcnMCpyM6jxrYTRm75qZPLHiAz2RPMOWkxwNHVFc09d5rbJaZ3VDTODxYHdpmVQlFjtec6kwTsT94NQWT1efpQjysis9AdL9aJZrFxTZ_QSuvn4ETI6e_n6Ckasgv9088tKbjfpxrHIvb0EuXnL7.bc9kFhufYAvyfGHvVjicmNRAhQJWsRviQBL5DjvXy0LBrXxDg_jF64ppyBFetW8LLq8R1ArFm032UMN15d7wuAJJNN9UuZAHz5dNbuHYfR5uORzQGOiP4Cts51zn5.6uW9HIusxQUUiE',};var a = document.createElement('script');a.nonce = 'LGGrZh7beg6Odf2k2iPEyy';a.src = '/cdn-cgi/challenge-platform/h/b/orchestrate/chl_page/v1?ray=a11505685c0bbd88';window._cf_chl_opt.cOgUHash = location.hash === '' && location.href.indexOf('#') !== -1 ? '#' : location.hash;window._cf_chl_opt.cOgUQuery = location.search === '' && location.href.slice(0, location.href.length - window._cf_chl_opt.cOgUHash.length).indexOf('?') !== -1 ? '?' : location.search;if (window.history && window.history.replaceState) {var ogU = location.pathname + window._cf_chl_opt.cOgUQuery + window._cf_chl_opt.cOgUHash;history.replaceState(null, null,"/on-this-day/june-25?__cf_chl_rt_tk=bfXUs5wRSKU0.4iq2Ua5rC_4lXqTHmWXKCrVyvEneWg-1782401506-1.0.1.1-wtHZ_5laM0bqFEup6LWeE43V145y8Vv3qhQTuYdCsk8"+ window._cf_chl_opt.cOgUHash);a.onload = function() {history.replaceState(null, null, ogU);}}document.getElementsByTagName('head')[0].appendChild(a);}());</script></body></html>
+Title: Just a moment...
+
+URL Source: https://www.britannica.com/on-this-day/june-25
+
+Warning: Target URL returned error 403: Forbidden
+
+Markdown Content:
+![Image 1: Icon for www.britannica.com](https://www.britannica.com/favicon.ico)
+# www.britannica.com
+
+## Performing security verification
+
+This website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.
+
+## Incompatible browser extension or network configuration
+
+Your browser extensions or network settings have blocked the security verification process required by www.britannica.com. To resolve this, try the following steps:
+
+Temporarily disable browser extensions:
+
+1.   Go to your browser settings.
+2.   Locate your browser extensions and temporarily disable them.
+3.   Once browser extensions are disabled, [refresh this page](https://www.britannica.com/on-this-day/june-25#).
+
+Check your network settings:
+
+1.   Verify if your internet or firewall settings have blocked your device from reaching “challenges.cloudflare.com”. You may need to consult your operating system's help documentation or your network administrator for guidance on adjusting firewall settings.
+2.   If you do not have permission to adjust network settings, try connecting to a different network.
+
+If these steps do not resolve the issue, refer to Cloudflare's [troubleshooting documentation](https://www.britannica.com/cdn-cgi/challenge-platform/help) for more help. For detailed guidance on how to disable your browser extensions or check your network settings, refer to your browser or device’s documentation.
+
+## Verification successful. Waiting for www.britannica.com to respond
+
+Ray ID: `a11566040f397547`
+
+Performance and Security by [Cloudflare](https://www.cloudflare.com/?utm_source=challenge&utm_campaign=m)[Privacy](https://www.cloudflare.com/privacypolicy/)
