@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-06-27T10:22:03.062Z
+# generated: 2026-06-27T11:14:24.079Z
 # url:       https://www.britannica.com/on-this-day/june-27
 # fetcher:   Jina Reader
 # kind:      markdown
