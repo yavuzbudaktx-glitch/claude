@@ -1,9 +1,9 @@
 # Britannica scrape debug dump
-# generated: 2026-06-30T11:20:30.854Z
-# url:       https://www.britannica.com/on-this-day
+# generated: 2026-06-30T12:00:17.540Z
+# url:       https://www.britannica.com/on-this-day/june-30
 # fetcher:   Wayback Machine
 # kind:      html
-# length:    75799
+# length:    74684
 # parsed:    NO
 # -----------------------------------------------------------------
 
@@ -71,7 +71,7 @@
 
 <!doctype html>
 
-<html lang="en" class="todayinhistory-desktop ui-unknown0 ui-unknown">
+<html lang="en" class="todayinhistory-desktop ui-chrome148 ui-chrome">
 
 <head prefix="og: https://ogp.me/ns# fb: https://ogp.me/ns/fb#">
 
@@ -96,7 +96,7 @@
 
     <meta name="description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences." />
     <meta name="keywords" content="today in history, anniversary, daily events, today’s historical events, today’s birthdays, born today, on this date, this day in history" />
-    <link rel="canonical" href="https://www.britannica.com/on-this-day" />
+    <link rel="canonical" href="https://www.britannica.com/on-this-day/june-30" />
 
     
 
@@ -126,7 +126,7 @@
 
 
 <script   class="analytics-metadata" type="application/json">
-{"adLeg":"D","leg":"A","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+{"adLeg":"D","leg":"C","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
 </script>
 
 
@@ -163,7 +163,7 @@
     window.geoCountry = 'US';
     window.isGdprCountry = false;
     window.isCcpaCountry = true;
-    window.geoRegion = 'CA';
+    window.geoRegion = 'XX';
 
 </script>
 
@@ -273,20 +273,20 @@
             "videoPlayerId" : "UyMCoK2v",
       		"domain": "britannica.com",
 			"page": "TodayInHistory",
-			"sharedUrl": "https://www.britannica.com/on-this-day",
+			"sharedUrl": "https://www.britannica.com/on-this-day/june-30",
 			"amuselabsUrl": "https://cdn3.amuselabs.com",
 	    	"resourcesPrefixUrl": "https://cdn.britannica.com/mendel-resources/3-189/[url]?v=3.189.7",
-			"date": 20260629,
+			"date": 20260630,
 			"userInfo": { "type": "ANONYMOUS"
 										,"currency": "USD"
 										,"country": "US"
-										,"state": "CA"
-										,"timezone": "America/Los_Angeles"
-										,"bcomId": "8188105192533825320"
+										,"state": "XX"
+										,"timezone": "America/Chicago"
+										,"bcomId": "-3472694509709565765"
 										,"adProvider": "ay"
 										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":true,"showConsent":true}
 										,"hasAds": true
-										,"testVersion": "A"
+										,"testVersion": "C"
 										,"adsTestVersion": "D"
 										,"consumerId": ""
 										,"instId": ""
@@ -305,12 +305,12 @@
 	        "fetchOffset": 800,
 			
 			"mendelCookieName": "__mendel",
-			"mendelCookie": {"currentDate":20260629,"lti":0,"surveyShown":false,"ts":0},
+			"mendelCookie": {"currentDate":20260630,"lti":0,"surveyShown":false,"ts":0},
 			
 
-			"autocompleteToSearchPage": false,"pagesInfo": [{"url":"June-29","title":"On This Day - What Happened on June 29"},{"url":"June-30","title":"On This Day - What Happened on June 30"},{"url":"July-1","title":"On This Day - What Happened on July 1"},{"url":"July-2","title":"On This Day - What Happened on July 2"},{"url":"July-3","title":"On This Day - What Happened on July 3"},{"url":"July-4","title":"On This Day - What Happened on July 4"},{"url":"July-5","title":"On This Day - What Happened on July 5"},{"url":"July-6","title":"On This Day - What Happened on July 6"},{"url":"July-7","title":"On This Day - What Happened on July 7"},{"url":"July-8","title":"On This Day - What Happened on July 8"}]
+			"autocompleteToSearchPage": false,"pagesInfo": [{"url":"June-30","title":"On This Day - What Happened on June 30"},{"url":"July-1","title":"On This Day - What Happened on July 1"},{"url":"July-2","title":"On This Day - What Happened on July 2"},{"url":"July-3","title":"On This Day - What Happened on July 3"},{"url":"July-4","title":"On This Day - What Happened on July 4"},{"url":"July-5","title":"On This Day - What Happened on July 5"},{"url":"July-6","title":"On This Day - What Happened on July 6"},{"url":"July-7","title":"On This Day - What Happened on July 7"},{"url":"July-8","title":"On This Day - What Happened on July 8"},{"url":"July-9","title":"On This Day - What Happened on July 9"}]
 		},
-        "GA": {"adLeg":"D","leg":"A","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+        "GA": {"adLeg":"D","leg":"C","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
     };
 
 	</script>
@@ -323,23 +323,23 @@
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:site" content="@britannica" />
-<meta name="twitter:image" content="https://cdn.britannica.com/28/138628-050-0C853838/Globe-Theatre-London.jpg" />
+<meta name="twitter:image" content="https://cdn.britannica.com/56/70056-050-8DD89416/Adolf-Hitler-troops-Eastern-Front-1939.jpg" />
 <meta name="twitter:description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
 
 <meta property="og:type"  content="WEBSITE"/>
 <meta property="og:title" content="On This Day - What Happened Today In History | Britannica"/>
 <meta property="og:description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
 <meta property="og:site_name" content="Encyclopedia Britannica" />
-<meta property="og:url" content="https://www.britannica.com/on-this-day"/>
-<meta property="og:image" content="https://cdn.britannica.com/28/138628-050-0C853838/Globe-Theatre-London.jpg" />
+<meta property="og:url" content="https://www.britannica.com/on-this-day/june-30"/>
+<meta property="og:image" content="https://cdn.britannica.com/56/70056-050-8DD89416/Adolf-Hitler-troops-Eastern-Front-1939.jpg" />
 
 <script type="text/javascript" data-type="init opengraph">
 Mendel.openGraph = {
     "type": "WEBSITE",
     "title": "On This Day - What Happened Today In History",
     "description": "On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences.",
-    "imageUrl": "https://cdn.britannica.com/28/138628-050-0C853838/Globe-Theatre-London.jpg",
-    "pageUrl": "https://www.britannica.com/on-this-day"
+    "imageUrl": "https://cdn.britannica.com/56/70056-050-8DD89416/Adolf-Hitler-troops-Eastern-Front-1939.jpg",
+    "pageUrl": "https://www.britannica.com/on-this-day/june-30"
 }
 </script>
 
@@ -415,7 +415,7 @@ Mendel.openGraph = {
 
 </head>
 
-<body data-leg="A" class="today-in-history user-ANONYMOUS  user-ads   md-desktop    leg-a ">
+<body data-leg="C" class="today-in-history user-ANONYMOUS  user-ads   md-desktop    leg-c ">
 
 
 
@@ -907,8 +907,8 @@ Ask the Chatbot</a>
 
 <script   class="otd-json-info" type="application/json">
 {
-        "calendarInfo": {"day":29,"month":6,"monthName":"June","nbDays":30,"nextMonth":7,"nextMonthName":"July","previousMonth":5,"previousMonthName":"May"},
-        "url": "/on-this-day/June/29",
+        "calendarInfo": {"day":30,"month":6,"monthName":"June","nbDays":30,"nextMonth":7,"nextMonthName":"July","previousMonth":5,"previousMonthName":"May"},
+        "url": "/on-this-day/June/30",
 	    "title": "On This Day - What Happened Today In History"
     }
 </script>
@@ -1010,7 +1010,7 @@ Ask the Chatbot</a>
 <img class="tw:pb-2 tw:max-md:pb-4" src="https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7" alt="Today In History Logo" width="397px" height="52px"/>    
           <div class="d-flex align-items-center tw:gap-2 tw:max-md:mb-0 tw:mb-3">
             <img src="https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-star.svg?v=3.189.7" alt="Today In History Star" width="24" height="24"/>
-            <span class="font-oswald tw:text-[var(--tan-date-text-tih)] tw:text-lg text-uppercase cursor-pointer tih-transparent" data-popover=".md-history-calendar-popover">June&nbsp;29</span>
+            <span class="font-oswald tw:text-[var(--tan-date-text-tih)] tw:text-lg text-uppercase cursor-pointer tih-transparent" data-popover=".md-history-calendar-popover">June&nbsp;30</span>
         </div>
         </div>
 
@@ -1059,10 +1059,10 @@ Ask the Chatbot</a>
         <div class="tw:flex tw:flex-row tw:max-md:flex-col-reverse tw:gap-10 tw:max-md:gap-9 tw:max-md:gap-6 tw:my-14 tw:max-md:my-11">
   <div class="tw:basis-1/2 tw:flex tw:flex-col tw:max-md:basis-full">
     <div class="font-lora tw:text-3xl tw:mb-6 tw:max-md:mb-2 tw:font-[28px] tw:leading-[35px]">
-      1958: Brazil’s first World Cup title</div>
+      1859: Daredevil crosses Niagara on a tightrope</div>
     <div class="font-newsreader tw:text-lg tw:mb-8 tw:max-md:mb-4 tw:leading-[29px]">
-      On this day in 1958, <a href="https://www.britannica.com/place/Brazil" class="md-crosslink " data-show-preview="true">Brazil</a> defeated <a href="https://www.britannica.com/place/Sweden" class="md-crosslink " data-show-preview="true">Sweden</a>, 5–2, to win the country’s first <a href="https://www.britannica.com/sports/World-Cup-football" class="md-crosslink " data-show-preview="true">World Cup</a>. The star was 17-year-old <a href="https://www.britannica.com/biography/Pele-Brazilian-football-player" class="md-crosslink " data-show-preview="true">Pelé</a>, who scored twice during the match, becoming the youngest player to score in a World Cup final. Brazil defended its title in 1962 and went on to win three more World Cups (1970, 1994, and 2002), making it the most&nbsp;successful country&nbsp;in the history of the tournament.</div>
-    <a href="/today-in-history/June-29-Brazils-First-World-Cup-Title?utm_source=otd" class="tw:rounded-full tw:max-md:mb-6! tw:max-md:w-full tw:w-fit tw:py-2 tw:px-4 font-oswald tw:text-base tw:bg-[var(--tan-lighter-tih)] tw:border-[1px] tw:border-[var(--tan-dark-tih)] tw:no-underline! tw:text-[var(--black-tih)]! tw:text-center">
+      On this day in 1859, Jean-François Gravelet crossed from the U.S. to Canada on a 1,100-foot&nbsp;tightrope, suspended about 170 feet above the raging waters of <a href="https://www.britannica.com/place/Niagara-Falls-waterfall-North-America" class="md-crosslink " data-show-preview="true">Niagara Falls</a>.&nbsp;Along the way, the French acrobat, better known by the stage name “Blondin”&nbsp;&nbsp;(a reference to his bright blond hair), performed various tricks (lying down, drinking wine) to thousands of cheering spectators. He repeated the feat an estimated 300 times, with new gimmicks added for each crossing—at one point he even cooked an omelet.</div>
+    <a href="/today-in-history/June-30-1859-Blondin-Crosses-Niagara-on-a-Tightrope?utm_source=otd" class="tw:rounded-full tw:max-md:mb-6! tw:max-md:w-full tw:w-fit tw:py-2 tw:px-4 font-oswald tw:text-base tw:bg-[var(--tan-lighter-tih)] tw:border-[1px] tw:border-[var(--tan-dark-tih)] tw:no-underline! tw:text-[var(--black-tih)]! tw:text-center">
       READ&nbsp;MORE
     </a>
   </div>
@@ -1106,10 +1106,10 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/04/289304-050-EF8F7656/today-in-history-Pele-stars-in-Brazils-first-World-Cup-title.jpg?w=530&h=300&c=crop" alt="June 29, 1958: The birth of a Brazilian legend" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/05/289305-050-9C58CB1D/today-in-history-Daredevil-Crosses-Niagara-Falls-on-Tightrope.jpg?w=530&h=300&c=crop" alt="French acrobat and tightrope-walker Charles Blondin (Jean Francois Gravelet) balances on a tightrope stretched high above the water at Niagara Falls, using a long pole for stability, with the river and distant shoreline visible below." class="tw:object-cover tw:w-full tw:h-full"   />
     
 <div class="tw:text-xs tw:italic tw:mt-2 tw:text-black/40 font-newsreader">
-      @ TT News Agency/Alamy; Photo Illustration Encyclopædia Britannica, Inc.</div>
+      © William England—Hulton Archive/Getty Images; Photo Illustration Encyclopædia Britannica, Inc.</div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:gap-9 tw:max-md:gap-2 tw:max-md:flex-col">
             <div class="tw:basis-1/3 tw:pb-4 tw:flex tw:flex-col tw:max-md:basis-full">
@@ -1157,15 +1157,15 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/28/138628-050-0C853838/Globe-Theatre-London.jpg?w=356&h=200&c=crop" alt="Globe Theatre" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/56/70056-050-8DD89416/Adolf-Hitler-troops-Eastern-Front-1939.jpg?w=356&h=200&c=crop" alt="Adolf Hitler" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:mb-3 tw:mt-2 tw:text-black/40 font-newsreader">
-        Photos.com/Thinkstock</div>
+        Heinrich Hoffmann, Munich</div>
 
-    <div class="tw:text-2xl! tw:mb-2 tw:text-[var(--black-tih)] font-lora"><a href="https://www.britannica.com/topic/Globe-Theatre" class="md-crosslink " data-show-preview="true">London’s Globe Theatre destroyed by fire</a></div>
+    <div class="tw:text-2xl! tw:mb-2 tw:text-[var(--black-tih)] font-lora">Night of the Long Knives</div>
     <div class="tw:text-base/6! font-newsreader tw:[&_blockquote]:hidden tw:[&_p.topic-paragraph]:text-base! tw:[&_p.topic-paragraph]:leading-6!">
-    During a performance of <a href="https://www.britannica.com/biography/William-Shakespeare" class="md-crosslink " data-show-preview="true">William Shakespeare</a>’s <a href="https://www.britannica.com/topic/Henry-VIII-by-Shakespeare" class="md-crosslink " data-show-preview="true">Henry VIII</a> on this day in 1613, the <a href="https://www.britannica.com/topic/Globe-Theatre" class="md-crosslink " data-show-preview="true">Globe Theatre</a> was destroyed within an hour after its thatch was accidentally set aflame by a cannon marking the king’s entrance onstage. <em>[<a href="https://www.britannica.com/quiz/a-history-of-theatre-quiz" class="md-crosslink " data-show-preview="true">Take our history of theatre quiz</a>.]</em></div>
+    On this date in 1934 occurred the “<a href="https://www.britannica.com/event/Night-of-the-Long-Knives" class="md-crosslink " data-show-preview="true">Night of the Long Knives</a>,” in which <a href="https://www.britannica.com/biography/Adolf-Hitler" class="md-crosslink " data-show-preview="true">Adolf Hitler</a> had his <a href="https://www.britannica.com/topic/SS" class="md-crosslink " data-show-preview="true">SS</a> guards summarily execute many leading officials of the <a href="https://www.britannica.com/topic/SA-Nazi-organization" class="md-crosslink " data-show-preview="true">SA</a>, a <a href="https://www.britannica.com/topic/Nazi-Party" class="md-crosslink " data-show-preview="true">Nazi</a> paramilitary group, and hundreds of other perceived enemies.</div>
 </div></div>
             <div class="tw:basis-2/3 tw:flex tw:flex-col tw:pb-4 tw:max-md:basis-full">
                 <div class="tw:flex tw:flex-row tw:justify-between tw:mb-4 tw:border-b-[1px] tw:border-[var(--gray-300-tih)] tw:pb-4">
@@ -1185,7 +1185,7 @@ Ask the Chatbot</a>
                         </div>
                         <div class="day-in-history-card tw:flex tw:flex-col tw:flex-1"> 
     <div class="tw:w-89 tw:h-50 tw:max-md:w-full tw:flex tw:flex-col tw:items-center tw:justify-center">
-        <a href="/biography/Chandrika-Bandaranaike-Kumaratunga?utm_source=otd" class="tw:w-full tw:h-full">
+        <a href="/biography/Lena-Horne?utm_source=otd" class="tw:w-full tw:h-full">
                     
 
 
@@ -1225,16 +1225,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/72/156172-050-195000AF/Chandrika-Bandaranaike-Kumaratunga-1999.jpg?w=356&h=200&c=crop" alt="Chandrika Bandaranaike Kumaratunga" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/79/1279-004-23A30D6E/Lena-Horne-1965.jpg?w=356&h=200&c=crop" alt="Lena Horne" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </a>
             </div>
     <div class="tw:text-xs tw:italic tw:mb-3 tw:mt-2 tw:text-black/40 font-newsreader">
-        John McConnico/AP Images</div>
+        Popperfoto/© Archive Photos</div>
 
-    <div class="tw:text-2xl! tw:mb-2 tw:text-[var(--black-tih)] font-lora">Chandrika Bandaranaike Kumaratunga</div>
+    <div class="tw:text-2xl! tw:mb-2 tw:text-[var(--black-tih)] font-lora">Lena Horne</div>
     <div class="tw:text-base/6! font-newsreader tw:[&_blockquote]:hidden tw:[&_p.topic-paragraph]:text-base! tw:[&_p.topic-paragraph]:leading-6!">
-      <p class="topic-paragraph">Born this day in 1945 was <a href="https://www.britannica.com/biography/Chandrika-Bandaranaike-Kumaratunga" class="md-crosslink " data-show-preview="true">Chandrika Bandaranaike Kumaratunga</a>, a member of a prominent <a href="https://www.britannica.com/place/Sri-Lanka" class="md-crosslink " data-show-preview="true">Sri Lankan</a> political family who became prime minister and then president in 1994—the first woman to serve as the country’s president.</p> </div>
+       <blockquote> <p>My identity is very clear to me now, I am a black woman, I’m not alone, I’m free…I don’t have to be an imitation of a white woman that Hollywood sort of hoped I’d become. I’m me, and I’m like nobody else.</p> <footer>Lena Horne</footer> </blockquote> <p class="topic-paragraph"><a href="https://www.britannica.com/biography/Lena-Horne" class="md-crosslink " data-show-preview="true">Lena Horne</a>, an American actress and civil rights activist who first came to fame in the 1940s and starred in such films as Cabin in the Sky (1942) and Stormy Weather (1943), was born in Brooklyn, New York, this day in 1917.</p> </div>
 </div></div>
                     <div class="tw:flex tw:flex-col tw:flex-1">
                         <div class="tw:flex tw:min-md:hidden tw:flex-row tw:justify-between tw:mb-4 tw:border-b-[1px] tw:border-[var(--gray-300-tih)] tw:pb-4">
@@ -1243,27 +1243,27 @@ Ask the Chatbot</a>
                         <div class="tw:w-full tw:flex tw:flex-col tw:items-center tw:bg-[var(--tan-light-tih)] tw:border-[var(--tan-default-tih)] tw:border-[1px] tw:py-8 tw:px-6">
                             <div class="tw:grid tw:grid-cols-2 tw:gap-4 tw:max-md:gap-2">
                                 <div class="tw:flex tw:flex-col tw:items-center tw:mb-2">
-                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1963</div>
-                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Anne-Sophie-Mutter?utm_source=otd">Anne-Sophie Mutter</a>
-                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">German musician</div>
+                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1901</div>
+                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Willie-Sutton?utm_source=otd">Willie Sutton</a>
+                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">American criminal</div>
                                     </div>
                                 <div class="tw:flex tw:flex-col tw:items-center tw:mb-2">
-                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1910</div>
-                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Frank-Loesser?utm_source=otd">Frank Loesser</a>
-                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">American composer and lyricist</div>
+                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1893</div>
+                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Walter-Ulbricht?utm_source=otd">Walter Ulbricht</a>
+                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">German communist leader</div>
                                     </div>
                                 <div class="tw:flex tw:flex-col tw:items-center tw:mb-2">
-                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1908</div>
-                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Leroy-Anderson?utm_source=otd">Leroy Anderson</a>
-                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">American musician</div>
-                                    </div>
-                                <div class="tw:flex tw:flex-col tw:items-center tw:mb-2">
-                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1880</div>
-                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Ludwig-Beck?utm_source=otd">Ludwig Beck</a>
+                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1884</div>
+                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Franz-Halder?utm_source=otd">Franz Halder</a>
                                         <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">German general</div>
                                     </div>
+                                <div class="tw:flex tw:flex-col tw:items-center tw:mb-2">
+                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1685</div>
+                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/John-Gay-British-author?utm_source=otd">John Gay</a>
+                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">British author</div>
+                                    </div>
                                 </div>
-                            <a href="/more-on-this-day/June-29" class="tw:rounded-full tw:mt-6 tw:py-3 tw:px-15 font-oswald tw:text-base tw:bg-[var(--tan-lighter-tih)] tw:border-[1px] tw:border-[var(--tan-dark-tih)] tw:no-underline! tw:text-[var(--black-tih)]!">MORE&nbsp;BIRTHDAYS</a>
+                            <a href="/more-on-this-day/June-30" class="tw:rounded-full tw:mt-6 tw:py-3 tw:px-15 font-oswald tw:text-base tw:bg-[var(--tan-lighter-tih)] tw:border-[1px] tw:border-[var(--tan-dark-tih)] tw:no-underline! tw:text-[var(--black-tih)]!">MORE&nbsp;BIRTHDAYS</a>
                         </div>
                     </div>
                 </div>
@@ -1274,7 +1274,7 @@ Ask the Chatbot</a>
             <div class="py-30">
                 <div class="grid">
                     <div class="tw:flex tw:flex-col col-100 col-sm">
-                        <h2 class="tw:uppercase font-oswald font-2xl tw:text-[var(--black-tih)] tw:pb-4 tw:border-b-[1px] tw:border-[var(--gray-300-tih)]">More on June&nbsp;29</h2>
+                        <h2 class="tw:uppercase font-oswald font-2xl tw:text-[var(--black-tih)] tw:pb-4 tw:border-b-[1px] tw:border-[var(--gray-300-tih)]">More on June&nbsp;30</h2>
                         <div class="tw:w-full tw:gap-8 tw:flex tw:flex-col">
                             <div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1318,16 +1318,122 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/27/97027-050-38451747/west-facade-building-US-Supreme-Court.jpg?w=260&h=196&c=crop" alt="U.S. Supreme Court building" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/68/216668-050-DD3A9D0A/United-States-President-Donald-Trump-2017.jpg?w=260&h=196&c=crop" alt="Donald Trump" class="tw:object-cover tw:w-full tw:h-full"   />
+    
+</div>
+    <div class="tw:text-xs tw:italic tw:text-black/40">
+        White House photograph by Shealah Craighead/Library of Congress, Washington, D.C. (reproduction no. LC-DIG-ppbd-00608)</div>
+  </div>
+  <div class="tw:flex tw:flex-col tw:gap-2">
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">2019</div>
+      <div class="tw:text-base/6 font-newsreader">
+      While at the <a href="https://www.britannica.com/place/demilitarized-zone-Korean-peninsula" class="md-crosslink " data-show-preview="true">DMZ</a>, President <a href="https://www.britannica.com/biography/Donald-Trump" class="md-crosslink " data-show-preview="true">Donald Trump</a> walked into <a href="https://www.britannica.com/place/North-Korea" class="md-crosslink " data-show-preview="true">North Korea</a> to greet its leader, <a href="https://www.britannica.com/biography/Kim-Jong-Eun" class="md-crosslink " data-show-preview="true">Kim Jong-Un</a>, thus becoming the first sitting U.S. president to visit that country. <em>[<a href="https://www.britannica.com/quiz/us-presidential-firsts" class="md-crosslink " data-show-preview="true">Test your knowledge of presidential firsts</a>.]</em></div>
+  </div>
+</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
+  <div class="tw:flex tw:flex-col tw:gap-2">
+  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/75/274175-050-5B37FF36/Danyang-Kunshan-grand-bridge-the-worlds-longest-bridge-Shanghai-China.jpg?w=260&h=196&c=crop" alt="Danyang-Kunshan Grand Bridge in China" class="tw:object-cover tw:w-full tw:h-full"   />
+    
+</div>
+    <div class="tw:text-xs tw:italic tw:text-black/40">
+        Encyclopædia Britannica, Inc./Refugio Mariscal</div>
+  </div>
+  <div class="tw:flex tw:flex-col tw:gap-2">
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">2011</div>
+      <div class="tw:text-base/6 font-newsreader">
+      The <a href="https://www.britannica.com/topic/Danyang-Kunshan-Grand-Bridge" class="md-crosslink " data-show-preview="true">Danyang-Kunshan Grand Bridge</a> opened, becoming the longest bridge in the world. Extending 102.4 miles (164.8 km), it connects <a href="https://www.britannica.com/place/Nanjing-China" class="md-crosslink " data-show-preview="true">Nanjing</a> and <a href="https://www.britannica.com/place/Shanghai" class="md-crosslink " data-show-preview="true">Shanghai</a>, the largest city in China.</div>
+  </div>
+</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
+  <div class="tw:flex tw:flex-col tw:gap-2">
+  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/27/97027-050-38451747/west-facade-building-US-Supreme-Court.jpg?w=260&h=196&c=crop" alt="United States Supreme Court" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
         © Orhan Çam/stock.adobe.com</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">2023</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1986</div>
       <div class="tw:text-base/6 font-newsreader">
-      The <a href="https://www.britannica.com/topic/Supreme-Court-of-the-United-States" class="md-crosslink " data-show-preview="true">U.S. Supreme Court</a> ruling in <a href="https://www.britannica.com/topic/Students-for-Fair-Admissions-Inc-v-President-and-Fellows-of-Harvard-College" class="md-crosslink " data-show-preview="true"><em>Students for Fair Admissions, Inc.</em> v. <em>President and Fellows of Harvard College</em></a> effectively ended race-based <a href="https://www.britannica.com/topic/affirmative-action" class="md-crosslink " data-show-preview="true">affirmative action</a> in college admissions in the United States. <em>[<a href="https://www.britannica.com/" class="md-crosslink " data-show-preview="true">Learn about the Supreme Court’s other notable decisions</a>.]</em></div>
+      In <a href="https://www.britannica.com/event/Bowers-v-Hardwick" class="md-crosslink " data-show-preview="true"><em>Bowers</em> v. <em>Hardwick</em></a>, the <a href="https://www.britannica.com/topic/Supreme-Court-of-the-United-States" class="md-crosslink " data-show-preview="true">U.S. Supreme Court</a> ruled that states could criminalize gay sex between consenting adults; the decision was overturned by <a href="https://www.britannica.com/topic/Lawrence-v-Texas" class="md-crosslink " data-show-preview="true"><em>Lawrence</em> v. <em>Texas</em></a> in 2003. <em>[<a href="https://www.britannica.com/story/why-are-there-nine-justices-on-the-us-supreme-court" class="md-crosslink " data-show-preview="true">Why are there nine justices on the U.S. Supreme Court?</a>]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1371,16 +1477,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/96/206696-050-8D5D3ABF/Carl-Reiner-2013.jpg?w=260&h=196&c=crop" alt="Carl Reiner" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/40/245640-050-28964DCE/Michael-Phelps-2004-ESPYs-awards.jpg?w=260&h=196&c=crop" alt="Michael Phelps" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        Picture Perfect/Shutterstock.com</div>
+        Jeffrey Mayer—WireImage/Getty Images</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">2020</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1985</div>
       <div class="tw:text-base/6 font-newsreader">
-      American actor, writer, and director <a href="https://www.britannica.com/biography/Carl-Reiner" class="md-crosslink " data-show-preview="true">Carl Reiner</a>, who created the landmark TV series <a href="https://www.britannica.com/topic/The-Dick-Van-Dyke-Show" class="md-crosslink " data-show-preview="true">The Dick Van Dyke Show</a> (1961–66) and later directed such popular comedies as The Jerk (1979), died at age 98. <em>[<a href="https://www.britannica.com/topic/The-Dick-Van-Dyke-Show/images-videos#/media/1/680925/128370" class="md-crosslink " data-show-preview="true">Watch an episode of The Dick Van Dyke Show</a>.]</em></div>
+      Swimmer <a href="https://www.britannica.com/biography/Michael-Phelps" class="md-crosslink " data-show-preview="true">Michael Phelps</a>, the most-decorated Olympic athlete with 28 medals, was born in Baltimore, Maryland. <em>[<a href="https://www.britannica.com/topic/list-of-athletes-with-the-most-Olympic-medals" class="md-crosslink " data-show-preview="true">Who is the second-most-decorated Olympic athlete?</a>]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1424,16 +1530,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/59/131459-050-B6F11857/Bernie-Madoff-court-New-York-2009.jpg?w=260&h=196&c=crop" alt="Bernie Madoff" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/67/204567-050-B1508C7C/Protestor-sign-Womens-Asbury-Park-New-Jersey-January-21-2017.jpg?w=260&h=196&c=crop" alt="Women's March" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        Hiroko Masuike/Getty Images</div>
+        © Benjamin Clapp/Shutterstock.com</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">2009</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1966</div>
       <div class="tw:text-base/6 font-newsreader">
-      American hedge-fund investment manager <a href="https://www.britannica.com/biography/Bernie-Madoff" class="md-crosslink " data-show-preview="true">Bernie Madoff</a> received a sentence of up to 150 years in prison for operating the largest <a href="https://www.britannica.com/money/Ponzi-scheme" class="md-crosslink " data-show-preview="true">Ponzi scheme</a> in history.</div>
+      The <a href="https://www.britannica.com/topic/National-Organization-for-Women" class="md-crosslink " data-show-preview="true">National Organization for Women</a> (NOW) was founded with the mission of promoting <a href="https://www.britannica.com/topic/gender-equality" class="md-crosslink " data-show-preview="true">equal rights</a> for women; <a href="https://www.britannica.com/biography/Betty-Friedan" class="md-crosslink " data-show-preview="true">Betty Friedan</a> served as its first president.</div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1477,69 +1583,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/94/102994-050-184833AC/telephone-addition-iPhone-Web-browser-Internet-content-2007.jpg?w=260&h=196&c=crop" alt="iPhone" class="tw:object-cover tw:w-full tw:h-full"   />
-    
-</div>
-    <div class="tw:text-xs tw:italic tw:text-black/40">
-        Courtesy of Apple</div>
-  </div>
-  <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">2007</div>
-      <div class="tw:text-base/6 font-newsreader">
-      <a href="https://www.britannica.com/money/Apple-Inc" class="md-crosslink " data-show-preview="true">Apple Inc.</a>’s first mobile “smartphone,” the <a href="https://www.britannica.com/technology/iPhone" class="md-crosslink " data-show-preview="true">iPhone</a>, went on sale, and it revolutionized the industry. <em>[<a href="https://www.britannica.com/quiz/computers-and-technology" class="md-crosslink " data-show-preview="true">Take our computers and technology quiz</a>.]</em></div>
-  </div>
-</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
-  <div class="tw:flex tw:flex-col tw:gap-2">
-  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-        <img loading="lazy" src="https://cdn.britannica.com/96/76296-050-9B1AF196/Katharine-Hepburn.jpg?w=260&h=196&c=crop" alt="The young Katharine Hepburn" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/94/7194-050-B789AB29/Flag-Democratic-Republic-of-the-Congo.jpg?w=260&h=196&c=crop" alt="Democratic Republic of the Congo" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
         Encyclopædia Britannica, Inc.</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">2003</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1960</div>
       <div class="tw:text-base/6 font-newsreader">
-      American actress <a href="https://www.britannica.com/biography/Katharine-Hepburn" class="md-crosslink " data-show-preview="true">Katharine Hepburn</a>—a spirited performer with a touch of eccentricity who introduced into her roles a strength of character previously considered to be undesirable in Hollywood leading ladies—died at age 96. <em>[<a href="https://www.britannica.com/quiz/a-list-of-actors-fact-or-fiction" class="md-crosslink " data-show-preview="true">Test your knowledge of A-list actors</a>.]</em></div>
+      Zaire, formerly <a href="https://www.britannica.com/place/Belgian-Congo" class="md-crosslink " data-show-preview="true">Belgian Congo</a> and now the <a href="https://www.britannica.com/place/Democratic-Republic-of-the-Congo" class="md-crosslink " data-show-preview="true">Democratic Republic of the Congo</a>, declared its independence from <a href="https://www.britannica.com/place/Belgium" class="md-crosslink " data-show-preview="true">Belgium</a>. <em>[<a href="https://www.britannica.com/event/Decolonization-of-Africa" class="md-crosslink " data-show-preview="true">What’s the history of the decolonization of Africa?</a>]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1583,16 +1636,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/05/59005-050-362BE15F/Le-Jeune-Homme-et-la-mort-Mikhail.jpg?w=260&h=196&c=crop" alt="Mikhail Baryshnikov" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/12/175912-050-BF3F1F64/Telephone-Phone-Communication-Vintage-Retro-Rotary-dial-Black-rotary-phone.jpg?w=260&h=196&c=crop" alt="rotary telephone" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        Martha Swope</div>
+        AdstockRF</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1974</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1937</div>
       <div class="tw:text-base/6 font-newsreader">
-      While on tour with the Kirov (now <a href="https://www.britannica.com/topic/Mariinsky-Ballet" class="md-crosslink " data-show-preview="true">Mariinsky</a>) Ballet in Toronto, <a href="https://www.britannica.com/biography/Mikhail-Baryshnikov" class="md-crosslink " data-show-preview="true">Mikhail Baryshnikov</a> defected from the Soviet Union, citing artistic reasons, and he later settled in the United States. <em>[<a href="https://www.britannica.com/quiz/ballet-fact-or-fiction" class="md-crosslink " data-show-preview="true">Sort fact from fiction in our ballet quiz</a>.]</em></div>
+      The world’s first emergency <a href="https://www.britannica.com/technology/telephone" class="md-crosslink " data-show-preview="true">telephone</a> number (999) was launched in London.</div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1636,16 +1689,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/25/197925-050-C58C999B/Stokely-Carmichael-1968.jpg?w=260&h=196&c=crop" alt="Stokely Carmichael" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/13/153113-050-24BD3BAD/Margaret-Mitchell-1938.jpg?w=260&h=196&c=crop" alt="Margaret Mitchell" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        CSU Archive/age fotostock</div>
+        William F. WarneckeNew—York World-Telegram & Sun Collection/Library of Congress, Washington, D.C. (neg. no. LC-USZ62-109613)</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1941</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1936</div>
       <div class="tw:text-base/6 font-newsreader">
-      <a href="https://www.britannica.com/biography/Stokely-Carmichael" class="md-crosslink " data-show-preview="true">Stokely Carmichael</a>, a <a href="https://www.britannica.com/event/American-civil-rights-movement" class="md-crosslink " data-show-preview="true">civil rights</a> activist and a leader of <a href="https://www.britannica.com/event/Black-nationalism" class="md-crosslink " data-show-preview="true">Black nationalism</a> in the United States in the 1960s, was born in Port of Spain, Trinidad. <em>[<a href="https://www.britannica.com/list/riding-freedom-10-milestones-in-us-civil-rights-history" class="md-crosslink " data-show-preview="true">Read about 10 milestones in U.S. civil rights history</a>.]</em></div>
+      American author <a href="https://www.britannica.com/biography/Margaret-Mitchell" class="md-crosslink " data-show-preview="true">Margaret Mitchell</a> published <a href="https://www.britannica.com/topic/Gone-with-the-Wind-novel" class="md-crosslink " data-show-preview="true">Gone with the Wind</a>, a sweeping romance set during the <a href="https://www.britannica.com/event/American-Civil-War" class="md-crosslink " data-show-preview="true">Civil War</a>; the novel later won a <a href="https://www.britannica.com/topic/Pulitzer-Prize" class="md-crosslink " data-show-preview="true">Pulitzer Prize</a> and was adapted into a <a href="https://www.britannica.com/topic/Gone-with-the-Wind-film-by-Fleming" class="md-crosslink " data-show-preview="true">hugely successful film</a>. <em>[<a href="https://www.britannica.com/quiz/famous-authors" class="md-crosslink " data-show-preview="true">Take our quiz about famous authors</a>.]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1689,16 +1742,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/49/64949-004-CBD9E994/map-Balkan-Wars.jpg?w=260&h=196&c=crop" alt="Balkan Wars" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/60/116560-050-A5F4AAFA/countryside-Siberian-explosion-atmosphere-Podkamennaya-Tunguska-River-June-30-1908.jpg?w=260&h=196&c=crop" alt="Aftermath of the Tunguska event" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        Encyclopædia Britannica, Inc.</div>
+        AP/REX/Shutterstock.com</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1913</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1908</div>
       <div class="tw:text-base/6 font-newsreader">
-      Following a year of war with the <a href="https://www.britannica.com/place/Ottoman-Empire" class="md-crosslink " data-show-preview="true">Ottoman Empire</a>, members of the victorious <a href="https://www.britannica.com/topic/Balkan-League-1912-1913" class="md-crosslink " data-show-preview="true">Balkan League</a> quarreled over the division of the conquered territories, resulting in the <a href="https://www.britannica.com/topic/Balkan-Wars" class="md-crosslink " data-show-preview="true">Second Balkan War</a> when <a href="https://www.britannica.com/place/Bulgaria" class="md-crosslink " data-show-preview="true">Bulgaria</a> attacked Greek and Serbian forces in <a href="https://www.britannica.com/place/Macedonia-region-Europe" class="md-crosslink " data-show-preview="true">Macedonia</a> this night. <em>[<a href="https://www.britannica.com/quiz/a-history-of-war" class="md-crosslink " data-show-preview="true">Take our history of war quiz</a>.]</em></div>
+      An <a href="https://www.britannica.com/event/Tunguska-event" class="md-crosslink " data-show-preview="true">enormous aerial explosion</a> flattened approximately 2,000 square km (500,000 acres) of pine forest near the Podkamennaya Tunguska River in central <a href="https://www.britannica.com/place/Siberia" class="md-crosslink " data-show-preview="true">Siberia</a>. <em>[<a href="https://www.britannica.com/list/7-strange-disasters" class="md-crosslink " data-show-preview="true">Read more about this and six other strange disasters</a>.]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1737,127 +1790,16 @@ Ask the Chatbot</a>
 
 
 
-
-
-    
-    
-    
-        <img loading="lazy" src="https://cdn.britannica.com/49/154649-050-20BC487B/Elizabeth-Barrett-Browning.jpg?w=260&h=196&c=crop" alt="Poet Elizabeth Barrett Browning" class="tw:object-cover tw:w-full tw:h-full"   />
-    
+	
+	<img   src="https://cdn.britannica.com/mendel-resources/3-189/images/shared/thistle-blue-half.svg?v=3.189.7" loading="lazy" alt="default image" />
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        George Grantham Bain Collection/Library of Congress, Washington, D.C. (LC-DIG-ggbain-03571)</div>
+        Image: Encyclopædia Britannica, Inc.</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1861</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1893</div>
       <div class="tw:text-base/6 font-newsreader">
-      English poet <a href="https://www.britannica.com/biography/Elizabeth-Barrett-Browning" class="md-crosslink " data-show-preview="true">Elizabeth Barrett Browning</a>, famous for her Sonnets from the Portuguese, died at age 55 from a severe chill. <em>[<a href="https://www.britannica.com/quiz/famous-poets-and-poetic-form" class="md-crosslink " data-show-preview="true">Take our quiz about famous poets and poetic form</a>.]</em></div>
-  </div>
-</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
-  <div class="tw:flex tw:flex-col tw:gap-2">
-  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-        <img loading="lazy" src="https://cdn.britannica.com/22/130922-050-BD1506FD/colonist-American-concern-colonies-tea-tax-proclamation-1767.jpg?w=260&h=196&c=crop" alt="Townshend Acts" class="tw:object-cover tw:w-full tw:h-full"   />
-    
-</div>
-    <div class="tw:text-xs tw:italic tw:text-black/40">
-        © Hulton Archive—Hulton Royals Collection/Getty Images</div>
-  </div>
-  <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1767</div>
-      <div class="tw:text-base/6 font-newsreader">
-      Parliament passed the <a href="https://www.britannica.com/event/Townshend-Acts" class="md-crosslink " data-show-preview="true">Townshend Revenue Act</a>, sponsored by British Chancellor of the Exchequer <a href="https://www.britannica.com/biography/Charles-Townshend-British-statesman" class="md-crosslink " data-show-preview="true">Charles Townshend</a>, which imposed on colonists in British America an import tax on tea and other goods and thus brought some colonists one step closer to revolution. <em>[<a href="https://www.britannica.com/quiz/early-america" class="md-crosslink " data-show-preview="true">Test your knowledge of early American history</a>.]</em></div>
-  </div>
-</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
-  <div class="tw:flex tw:flex-col tw:gap-2">
-  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-        <img loading="lazy" src="https://cdn.britannica.com/00/13700-050-C22F001D/Jacques-Cartier.jpg?w=260&h=196&c=crop" alt="Jacques Cartier" class="tw:object-cover tw:w-full tw:h-full"   />
-    
-</div>
-    <div class="tw:text-xs tw:italic tw:text-black/40">
-        Library and Archives Canada (Acc. No. 1997-218-1)</div>
-  </div>
-  <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1534</div>
-      <div class="tw:text-base/6 font-newsreader">
-      French mariner <a href="https://www.britannica.com/biography/Jacques-Cartier" class="md-crosslink " data-show-preview="true">Jacques Cartier</a> “discovered” <a href="https://www.britannica.com/place/Prince-Edward-Island" class="md-crosslink " data-show-preview="true">Prince Edward Island</a> off the coast of what is now <a href="https://www.britannica.com/place/Canada" class="md-crosslink " data-show-preview="true">Canada</a>. <em>[<a href="https://www.britannica.com/quiz/european-exploration-fact-or-fiction" class="md-crosslink " data-show-preview="true">Sort fact from fiction in our quiz about European exploration</a>.]</em></div>
+      The <a href="https://www.britannica.com/topic/Excelsior-Diamond" class="md-crosslink " data-show-preview="true">Excelsior diamond</a>—which, weighing 995 carats, was the largest uncut <a href="https://www.britannica.com/topic/diamond-gemstone" class="md-crosslink " data-show-preview="true">diamond</a> ever found to that time—was discovered in the <a href="https://www.britannica.com/money/De-Beers-SA" class="md-crosslink " data-show-preview="true">De Beers</a> mine at <a href="https://www.britannica.com/place/Jagersfontein" class="md-crosslink " data-show-preview="true">Jagersfontein</a> in South Africa. <em>[<a href="https://www.britannica.com/quiz/precious-metals-and-stones-fact-or-fiction" class="md-crosslink " data-show-preview="true">Sort fact from fiction in our quiz about precious metals and stones</a>.]</em></div>
   </div>
 </div></div>
                     </div>
@@ -1999,6 +1941,6 @@ Ask the Chatbot</a>
 
 
 <div id="bc-fixed-dialogue"></div>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"5cc7d7124de641b181da990fc8c9a0b6","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"5cc7d7124de641b181da990fc8c9a0b6","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
