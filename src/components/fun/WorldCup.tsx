@@ -26,14 +26,10 @@ interface WCResp {
   finished: Match[];
   turkiye: Match | null;
 }
-interface StandingTeam {
-  id: string; name: string; abbr: string; logo: string;
-  gp: number; w: number; d: number; l: number;
-  gf: number; ga: number; gd: number; pts: number;
-  qualified: boolean; eliminated: boolean;
-}
-interface Group { name: string; teams: StandingTeam[] }
-interface StandingsResp { tournament: string; groups: Group[] }
+interface BracketTeam { name: string; abbr: string; logo: string; score: number | null; winner: boolean; placeholder: boolean }
+interface BracketMatch { id: string; status: "live" | "upcoming" | "final"; state: string; date: string; home: BracketTeam; away: BracketTeam; round: string }
+interface BracketRound { name: string; matches: BracketMatch[] }
+interface BracketResp { tournament: string; rounds: BracketRound[] }
 
 const fetcher = (u: string) => fetch(u).then((r) => r.json());
 
@@ -117,54 +113,77 @@ function Section({ title, icon, children }: { title: string; icon?: React.ReactN
   );
 }
 
-function GroupTable({ g }: { g: Group }) {
+function BracketTeamRow({ t, live }: { t: BracketTeam; live: boolean }) {
   return (
-    <div className="rounded-xl border border-[var(--rule)] bg-[var(--paper)]/30 overflow-hidden">
-      <div className="px-3 py-2 border-b border-[var(--rule)] bg-[var(--rule-soft)]/40 flex items-center justify-between">
-        <span className="text-[12px] font-semibold text-ink">{g.name}</span>
-        <span className="text-[9.5px] uppercase tracking-wider text-muted-2">P · W · D · L · GD · PTS</span>
-      </div>
+    <div className={`flex items-center justify-between gap-2 px-2 py-1 ${t.winner ? "bg-[color-mix(in_srgb,var(--accent)_10%,transparent)]" : ""}`}>
+      <span className="flex items-center gap-1.5 min-w-0">
+        <TeamFlag logo={t.logo} alt={t.name} size={15} />
+        <span className={`text-[11.5px] truncate ${t.placeholder ? "text-muted-2 italic" : t.winner ? "font-bold text-ink" : "text-ink-soft"}`}>
+          {t.name || t.abbr || "TBD"}
+        </span>
+      </span>
+      {t.score != null && (
+        <span className={`font-mono tabular-nums text-[11.5px] shrink-0 ${live ? "text-down font-bold" : t.winner ? "text-ink font-bold" : "text-muted"}`}>{t.score}</span>
+      )}
+    </div>
+  );
+}
+
+function BracketMatchCard({ m }: { m: BracketMatch }) {
+  const live = m.status === "live";
+  return (
+    <div className={`rounded-lg border overflow-hidden ${live ? "border-[var(--down)]/50" : "border-[var(--rule)]"} bg-[var(--paper)]/30`}>
       <div className="divide-y divide-[var(--rule-soft)]">
-        {g.teams.map((t, i) => {
-          const top2 = i < 2;
-          return (
-            <div key={t.id} className={`grid grid-cols-[18px_22px_1fr_auto] items-center gap-2 px-3 py-1.5 ${top2 ? "bg-[color-mix(in_srgb,var(--accent)_4%,transparent)]" : ""}`}>
-              <span className={`text-[10.5px] font-mono tabular-nums text-right ${top2 ? "text-accent font-bold" : "text-muted-2"}`}>{i + 1}</span>
-              <TeamFlag logo={t.logo} alt={t.name} size={18} />
-              <span className={`text-[12.5px] truncate ${t.qualified ? "font-semibold text-ink" : "text-ink-soft"}`}>{t.name || t.abbr}</span>
-              <span className="font-mono tabular-nums text-[11px] text-muted">
-                <span className="text-ink-soft">{t.gp}</span>
-                <span className="text-muted-2 mx-1">·</span>
-                <span className="text-ink-soft">{t.w}</span>
-                <span className="text-muted-2 mx-1">·</span>
-                <span className="text-ink-soft">{t.d}</span>
-                <span className="text-muted-2 mx-1">·</span>
-                <span className="text-ink-soft">{t.l}</span>
-                <span className="text-muted-2 mx-1">·</span>
-                <span className={t.gd > 0 ? "text-up" : t.gd < 0 ? "text-down" : "text-ink-soft"}>{t.gd > 0 ? `+${t.gd}` : t.gd}</span>
-                <span className="text-muted-2 mx-1">·</span>
-                <span className="font-bold text-ink">{t.pts}</span>
-              </span>
+        <BracketTeamRow t={m.home} live={live} />
+        <BracketTeamRow t={m.away} live={live} />
+      </div>
+      <div className={`px-2 py-0.5 text-[8.5px] uppercase tracking-wider text-center ${live ? "text-down font-bold animate-pulse" : "text-muted-2"}`}>
+        {live ? `Live · ${m.state}` : m.status === "final" ? "FT" : fmtKickoff(m.date)}
+      </div>
+    </div>
+  );
+}
+
+function Bracket({ rounds }: { rounds: BracketRound[] }) {
+  // Third-place match rides in the same column as the Final.
+  const columns = rounds.filter((r) => r.name !== "Third Place");
+  const thirdPlace = rounds.find((r) => r.name === "Third Place");
+  return (
+    <div className="overflow-x-auto -mx-1 px-1 pb-1">
+      <div className="flex gap-3 min-w-max items-stretch">
+        {columns.map((r) => (
+          <div key={r.name} className="flex flex-col min-w-[150px]">
+            <div className="text-[10px] font-mono uppercase tracking-wider text-muted mb-1.5 text-center">{r.name}</div>
+            {/* Evenly space matches down the column so later rounds read like a
+                bracket funnelling inward. */}
+            <div className="flex flex-col justify-around gap-2 flex-1">
+              {r.matches.map((m) => <BracketMatchCard key={m.id} m={m} />)}
+              {r.name === "Final" && thirdPlace?.matches[0] && (
+                <div className="mt-1">
+                  <div className="text-[9px] font-mono uppercase tracking-wider text-muted-2 mb-1 text-center">Third place</div>
+                  <BracketMatchCard m={thirdPlace.matches[0]} />
+                </div>
+              )}
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
 export function WorldCup() {
-  const [tab, setTab] = useState<"matches" | "standings">("matches");
+  const [tab, setTab] = useState<"matches" | "bracket">("matches");
 
   const { data, error, isLoading } = useSWR<WCResp>("/api/worldcup", fetcher, {
     refreshInterval: 60_000,
     keepPreviousData: true,
     revalidateOnFocus: true,
   });
-  const { data: standings, isLoading: loadingS } = useSWR<StandingsResp>(
-    tab === "standings" ? "/api/worldcup/standings" : null,
+  const { data: bracket, isLoading: loadingB } = useSWR<BracketResp>(
+    tab === "bracket" ? "/api/worldcup/bracket" : null,
     fetcher,
-    { keepPreviousData: true, revalidateOnFocus: false },
+    { keepPreviousData: true, revalidateOnFocus: false, refreshInterval: 60_000 },
   );
 
   // Bucket today/upcoming/finished in the USER'S local time (browser TZ),
@@ -216,10 +235,10 @@ export function WorldCup() {
             <ListChecks className="h-3 w-3" /> Matches
           </button>
           <button
-            onClick={() => setTab("standings")}
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold transition ${tab === "standings" ? "bg-[var(--paper)] text-ink shadow-sm" : "text-muted hover:text-ink"}`}
+            onClick={() => setTab("bracket")}
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold transition ${tab === "bracket" ? "bg-[var(--paper)] text-ink shadow-sm" : "text-muted hover:text-ink"}`}
           >
-            <BarChart3 className="h-3 w-3" /> Standings
+            <BarChart3 className="h-3 w-3" /> Bracket
           </button>
         </div>
 
@@ -273,16 +292,14 @@ export function WorldCup() {
           </>
         ) : (
           <>
-            {loadingS && !standings && (
-              <div className="text-muted text-sm py-6 text-center">Loading standings…</div>
+            {loadingB && !bracket && (
+              <div className="text-muted text-sm py-6 text-center">Loading bracket…</div>
             )}
-            {standings?.groups && standings.groups.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {standings.groups.map((g) => <GroupTable key={g.name} g={g} />)}
-              </div>
-            ) : !loadingS && (
+            {bracket?.rounds && bracket.rounds.length > 0 ? (
+              <Bracket rounds={bracket.rounds} />
+            ) : !loadingB && (
               <div className="text-muted-2 text-[12.5px] italic text-center py-8">
-                Group standings aren&rsquo;t published yet — check back closer to the tournament.
+                The bracket fills in once the group stage ends — check back after the knockout draw.
               </div>
             )}
           </>
