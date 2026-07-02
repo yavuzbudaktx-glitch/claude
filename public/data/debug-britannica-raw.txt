@@ -1,9 +1,318 @@
 # Britannica scrape debug dump
-# generated: 2026-07-02T10:51:44.010Z
+# generated: 2026-07-02T11:58:42.555Z
 # url:       https://www.britannica.com/on-this-day/july-2
-# fetcher:   CORS proxy
-# kind:      html
-# length:    5740
+# fetcher:   Jina Reader
+# kind:      markdown
+# length:    25503
 # parsed:    NO
 # -----------------------------------------------------------------
-<!DOCTYPE html><html lang="en-US"><head><title>Just a moment...</title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="content-security-policy" content="default-src &#39;none&#39;; script-src &#39;nonce-HyYEXzYLgKHsod5kWqqsBO&#39; &#39;unsafe-eval&#39; https://challenges.cloudflare.com; script-src-attr &#39;none&#39;; style-src &#39;unsafe-inline&#39;; img-src &#39;self&#39; https://challenges.cloudflare.com; connect-src &#39;self&#39; https://challenges.cloudflare.com; frame-src &#39;self&#39; https://challenges.cloudflare.com blob:; child-src &#39;self&#39; https://challenges.cloudflare.com blob:; worker-src blob:; form-action http: https:; base-uri &#39;self&#39;"><style>*{box-sizing:border-box;margin:0;padding:0}html{line-height:1.15;-webkit-text-size-adjust:100%;color:#313131;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"}body{display:flex;flex-direction:column;height:100vh;min-height:100vh}.main-content{margin:8rem auto;padding-left:1.5rem;max-width:60rem}@media (width <= 720px){.main-content{margin-top:4rem}}#challenge-error-text{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbD0iI0IyMEYwMyIgZD0iTTE2IDNhMTMgMTMgMCAxIDAgMTMgMTNBMTMuMDE1IDEzLjAxNSAwIDAgMCAxNiAzbTAgMjRhMTEgMTEgMCAxIDEgMTEtMTEgMTEuMDEgMTEuMDEgMCAwIDEtMTEgMTEiLz48cGF0aCBmaWxsPSIjQjIwRjAzIiBkPSJNMTcuMDM4IDE4LjYxNUgxNC44N0wxNC41NjMgOS41aDIuNzgzem0tMS4wODQgMS40MjdxLjY2IDAgMS4wNTcuMzg4LjQwNy4zODkuNDA3Ljk5NCAwIC41OTYtLjQwNy45ODQtLjM5Ny4zOS0xLjA1Ny4zODktLjY1IDAtMS4wNTYtLjM4OS0uMzk4LS4zODktLjM5OC0uOTg0IDAtLjU5Ny4zOTgtLjk4NS40MDYtLjM5NyAxLjA1Ni0uMzk3Ii8+PC9zdmc+");background-repeat:no-repeat;background-size:contain;padding-left:34px}</style><meta http-equiv="refresh" content="360"></head><body><div class="main-wrapper" role="main"><div class="main-content"><noscript><div class="h2"><span id="challenge-error-text">Enable JavaScript and cookies to continue</span></div></noscript></div></div><script nonce="HyYEXzYLgKHsod5kWqqsBO">(function(){window._cf_chl_opt = {cFPWv: 'g',cH: '5_439u62k1W8MIm5M41MFq96kL0VdP9Rf06pQDGdcIo-1782989473-1.2.1.1-dTpeYp1xgle6.DWtxeT6TvG7gruRzwJiMU_rCNPPXNjXazly8nsuacmGAovCcHCU',cITimeS: '1782989473',cN: 'HyYEXzYLgKHsod5kWqqsBO',cRay: 'a14d18131abccf39',cTplB: '0',cTplC:0,cTplO:0,cTplV:5,cType: 'managed',cUPMDTk:"/on-this-day/july-2?__cf_chl_tk=47w1Ny_tp1sOhDuSIOlrqfryMxjDCGB9JGH7jd8tPgo-1782989473-1.0.1.1-wsdAFXuauEolBiaTwWTmrF6oRuJFIb3TCCaFfxr4ITI",cvId: '3',cZone: 'www.britannica.com',fa:"/on-this-day/july-2?__cf_chl_f_tk=47w1Ny_tp1sOhDuSIOlrqfryMxjDCGB9JGH7jd8tPgo-1782989473-1.0.1.1-wsdAFXuauEolBiaTwWTmrF6oRuJFIb3TCCaFfxr4ITI",md: '4r3aplCUKt.13CXr9BAiLJumNrXX8S.TI2vhcgjQy.8-1782989473-1.2.1.1-6PKVahYNQ.zJO6AcJXEn5vZXP_rizdn3agxHqj7BlJprwQT_PXxTZg.qQJBAgGmb4R4HRc07u4w9WHTP9IwjBTT3EIj1OWnQK.EomViu_hfwPsaydWzeYCnMz_Un8yFLjL_Zy7TwN0moDog89KhK_aWb6oFPPTVHguF_OGz7HNyemlX6.nnYDODnpmNSmVkv4U1OPA7eLDL66nlIZ5TDQSzmfpV_TnVwXS05iB20UOCpA.ZxrB63rAJDbfNgNyR9YQVd2j4ypqxShwY7qmg6f10jSsljayycVINYtzL4UT6eQ5g4g67Ae.n9oTn_BHZF3BkTJsSD6eW_wG3c4eEBedJXksA2_8MNE18cxhCc0s5t7EbmPEU4kP6HJso5B5NvqjZguejm2H9GWEuwl3.CxXe2S_Kri_1BkTGX_k9ZgCPp7DLyEwLOqscvY_7GNtNfdfbpFVYbM2rBfVtsvKbapwFzoa7pbbQhz7Sk7.AZHXAkdWlPMfG6HWBqo.QSlO4Hj1exhM2yK2xsw_CNT488KpKv9F5qMjpIoFYpmL2r_77tKv2kA4OmLLyP_mJqk7bfyt96TZ.PzxTzzUxgKifAfBkJs3akoq7Hd2_0cOtlwC.kJOi7IcpLKRGW3x4WLxK6qntJ6T7oHZVt4K3FM662eo7p7ZdJy7A09JU9vXcxpH7EIb_Ow_61hX8FIqjjV7dt8eVabKFKEtDHaei55exB_NxJNwuA1dcvu3XGotScylbdq0ZvIYfO6fA5WgrU785HYSK0roJDeiBspMPsVjNsrmYzDRNxBF74RFCxiQ_yHeH7Xiz3BDWbOhWCNmDGpE9G2_TwGG3IUxiyVugrCk674ziHVE5qJpNDRfN_UV1iDQfK5beLGmQTxGxCEHvDX_5K4An6tIDBGLvnM7TBw_667GKNDnSYg0nRD4XQ8GE9dnpq9SqiA4f7JnrcisGdq3c3UYID.tz_ZftQ48GwB8wLfYeToQrSAPy7Nt04bZWOwm1QuRFDqKJcTc9q5flYqk8BHXh0y3J8DvXncCnBwtJsxIEj2MM1cj7LclNxlhTqOh6k5bkFAPzrA72YvwPCRYI_Dpn3.vcE5VWmXQCBD3qizQAj3KMV5lUe4Y1CgQgMWT0',mdrd: 'RY561w57bYSNl0y249DsObQUcxeIMvMctdlOV29qTaY-1782989473-1.2.1.1-F8rdHBTLe2p3Yg6Tj1CbpCs3ijchNOd2tzcYzAXNhZovUJD66plxk1RYtMrMbMqqQ3aCGpVpZNzZlufW43korsdEJiHxPLnlBnELndKQcChtIGD92kFgQYIVwt.PfG3qjvLcKxE5pj20_Shxi8pVHKN1ubz3h0EJRN7HdtXQfEOKEojJYyFp2D2653bPx7CpRs3dcb5Q4_mfMEyG67_SXYKieBlrSPTAb1fwgQaTTYNVIjn.svaNCQ3qwuQv6LgOLZBUSb7WT4o.C9RgW2Qksy8_UG68i5MXdyTZ_e4cXPdSuRqoxDHCX86mM4se45nyc59WH8cz3cX.IlDsOYRNevAmhkEJWkT.OrrLFCduZ3RQj7mzvh5BYB1nzRDI9Dr5QA_yp_cLp5hQAhoMfOyYxBatpgJPmQKyjoJuNDpGtC2omEa9M0yk51jU.WYrs6I5uJtj2neAuNbOWn7wt0UK4O8.dXrqGQgoeX8qwG7jB9o',};var a = document.createElement('script');a.nonce = 'HyYEXzYLgKHsod5kWqqsBO';a.src = '/cdn-cgi/challenge-platform/h/g/orchestrate/chl_page/v1?ray=a14d18131abccf39';window._cf_chl_opt.cOgUHash = location.hash === '' && location.href.indexOf('#') !== -1 ? '#' : location.hash;window._cf_chl_opt.cOgUQuery = location.search === '' && location.href.slice(0, location.href.length - window._cf_chl_opt.cOgUHash.length).indexOf('?') !== -1 ? '?' : location.search;if (window.history && window.history.replaceState) {var ogU = location.pathname + window._cf_chl_opt.cOgUQuery + window._cf_chl_opt.cOgUHash;history.replaceState(null, null,"/on-this-day/july-2?__cf_chl_rt_tk=47w1Ny_tp1sOhDuSIOlrqfryMxjDCGB9JGH7jd8tPgo-1782989473-1.0.1.1-wsdAFXuauEolBiaTwWTmrF6oRuJFIb3TCCaFfxr4ITI"+ window._cf_chl_opt.cOgUHash);a.onload = function() {history.replaceState(null, null, ogU);}}document.getElementsByTagName('head')[0].appendChild(a);}());</script></body></html>
+Title: On This Day - What Happened Today In History | Britannica
+
+URL Source: https://www.britannica.com/on-this-day/july-2
+
+Markdown Content:
+[🎆 Save 30% Off A Britannica Subscription! 🎆 Subscribe Now](https://cam.britannica.com/subscribe/bp-july-fourth-2026?utm_source=premium&utm_medium=toupee&utm_campaign=july-fourth-2026)
+
+[![Image 1: Encyclopedia Britannica](https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png)](https://www.britannica.com/)
+
+Search Britannica Click here to search
+
+[![Image 2: Encyclopedia Britannica](https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png)](https://www.britannica.com/)
+
+Search Britannica Click here to search
+
+[SUBSCRIBE](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=global-nav&utm_campaign=july-fourth-2026)
+
+[SUBSCRIBE](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=global-nav-mobile&utm_campaign=july-fourth-2026)
+
+Login
+
+[Subscribe to Britannica Premium](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=nav-login-box&utm_campaign=july-fourth-2026)
+
+[SUBSCRIBE TO PREMIUM](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=july-fourth-2026)
+
+[Ask the Chatbot](https://www.britannica.com/chatbot)[Games & Quizzes](https://www.britannica.com/quiz/browse)[History & Society](https://www.britannica.com/History-Society)[Science & Tech](https://www.britannica.com/Science-Tech)[Biographies](https://www.britannica.com/Biographies)[Animals & Nature](https://www.britannica.com/Animals-Nature)[Geography & Travel](https://www.britannica.com/Geography-Travel)[Arts & Culture](https://www.britannica.com/Arts-Culture)[ProCon](https://www.britannica.com/procon)[Money](https://www.britannica.com/money)[Videos](https://www.britannica.com/videos)
+
+[Home](https://www.britannica.com/) Today in History ![Image 3: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-logo.png?v=3.190.3)
+
+![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-star.svg?v=3.190.3)July 2
+
+![Image 5: Today In History Phone](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-phone.png?v=3.189.7)
+
+Get Our Newsletter in your Inbox 📩
+
+SIGN UP
+
+### Thank you for signing up!
+
+ Subject to Britannica's [Privacy Policy](https://corporate.britannica.com/privacy-policy) and [Terms of Use](https://corporate.britannica.com/termsofuse.html)
+
+ What Happened On Your Birthday? 
+
+June
+
+June
+
+[1](https://www.britannica.com/on-this-day/June-1)[2](https://www.britannica.com/on-this-day/June-2)[3](https://www.britannica.com/on-this-day/June-3)[4](https://www.britannica.com/on-this-day/June-4)[5](https://www.britannica.com/on-this-day/June-5)[6](https://www.britannica.com/on-this-day/June-6)[7](https://www.britannica.com/on-this-day/June-7)
+
+[8](https://www.britannica.com/on-this-day/June-8)[9](https://www.britannica.com/on-this-day/June-9)[10](https://www.britannica.com/on-this-day/June-10)[11](https://www.britannica.com/on-this-day/June-11)[12](https://www.britannica.com/on-this-day/June-12)[13](https://www.britannica.com/on-this-day/June-13)[14](https://www.britannica.com/on-this-day/June-14)
+
+[15](https://www.britannica.com/on-this-day/June-15)[16](https://www.britannica.com/on-this-day/June-16)[17](https://www.britannica.com/on-this-day/June-17)[18](https://www.britannica.com/on-this-day/June-18)[19](https://www.britannica.com/on-this-day/June-19)[20](https://www.britannica.com/on-this-day/June-20)[21](https://www.britannica.com/on-this-day/June-21)
+
+[22](https://www.britannica.com/on-this-day/June-22)[23](https://www.britannica.com/on-this-day/June-23)[24](https://www.britannica.com/on-this-day/June-24)[25](https://www.britannica.com/on-this-day/June-25)[26](https://www.britannica.com/on-this-day/June-26)[27](https://www.britannica.com/on-this-day/June-27)[28](https://www.britannica.com/on-this-day/June-28)
+
+[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-2)[](https://www.britannica.com/on-this-day/july-2)[](https://www.britannica.com/on-this-day/july-2)[](https://www.britannica.com/on-this-day/july-2)[](https://www.britannica.com/on-this-day/july-2)
+
+July
+
+[1](https://www.britannica.com/on-this-day/July-1)[2](https://www.britannica.com/on-this-day/July-2)[3](https://www.britannica.com/on-this-day/July-3)[4](https://www.britannica.com/on-this-day/July-4)[5](https://www.britannica.com/on-this-day/July-5)[6](https://www.britannica.com/on-this-day/July-6)[7](https://www.britannica.com/on-this-day/July-7)
+
+[8](https://www.britannica.com/on-this-day/July-8)[9](https://www.britannica.com/on-this-day/July-9)[10](https://www.britannica.com/on-this-day/July-10)[11](https://www.britannica.com/on-this-day/July-11)[12](https://www.britannica.com/on-this-day/July-12)[13](https://www.britannica.com/on-this-day/July-13)[14](https://www.britannica.com/on-this-day/July-14)
+
+[15](https://www.britannica.com/on-this-day/July-15)[16](https://www.britannica.com/on-this-day/July-16)[17](https://www.britannica.com/on-this-day/July-17)[18](https://www.britannica.com/on-this-day/July-18)[19](https://www.britannica.com/on-this-day/July-19)[20](https://www.britannica.com/on-this-day/July-20)[21](https://www.britannica.com/on-this-day/July-21)
+
+[22](https://www.britannica.com/on-this-day/July-22)[23](https://www.britannica.com/on-this-day/July-23)[24](https://www.britannica.com/on-this-day/July-24)[25](https://www.britannica.com/on-this-day/July-25)[26](https://www.britannica.com/on-this-day/July-26)[27](https://www.britannica.com/on-this-day/July-27)[28](https://www.britannica.com/on-this-day/July-28)
+
+[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-2)[](https://www.britannica.com/on-this-day/july-2)[](https://www.britannica.com/on-this-day/july-2)[](https://www.britannica.com/on-this-day/july-2)
+
+August
+
+[1](https://www.britannica.com/on-this-day/August-1)[2](https://www.britannica.com/on-this-day/August-2)[3](https://www.britannica.com/on-this-day/August-3)[4](https://www.britannica.com/on-this-day/August-4)[5](https://www.britannica.com/on-this-day/August-5)[6](https://www.britannica.com/on-this-day/August-6)[7](https://www.britannica.com/on-this-day/August-7)
+
+[8](https://www.britannica.com/on-this-day/August-8)[9](https://www.britannica.com/on-this-day/August-9)[10](https://www.britannica.com/on-this-day/August-10)[11](https://www.britannica.com/on-this-day/August-11)[12](https://www.britannica.com/on-this-day/August-12)[13](https://www.britannica.com/on-this-day/August-13)[14](https://www.britannica.com/on-this-day/August-14)
+
+[15](https://www.britannica.com/on-this-day/August-15)[16](https://www.britannica.com/on-this-day/August-16)[17](https://www.britannica.com/on-this-day/August-17)[18](https://www.britannica.com/on-this-day/August-18)[19](https://www.britannica.com/on-this-day/August-19)[20](https://www.britannica.com/on-this-day/August-20)[21](https://www.britannica.com/on-this-day/August-21)
+
+[22](https://www.britannica.com/on-this-day/August-22)[23](https://www.britannica.com/on-this-day/August-23)[24](https://www.britannica.com/on-this-day/August-24)[25](https://www.britannica.com/on-this-day/August-25)[26](https://www.britannica.com/on-this-day/August-26)[27](https://www.britannica.com/on-this-day/August-27)[28](https://www.britannica.com/on-this-day/August-28)
+
+[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-2)[](https://www.britannica.com/on-this-day/july-2)[](https://www.britannica.com/on-this-day/july-2)[](https://www.britannica.com/on-this-day/july-2)
+
+August
+
+June
+
+August
+
+[Go to Today's Date](https://www.britannica.com/on-this-day)
+
+ 1992: The Canadian cod fishery collapse
+
+ On this day in 1992, the [Canadian](https://www.britannica.com/place/Canada) government confirmed what thousands of people in[Newfoundland and Labrador](https://www.britannica.com/place/Newfoundland-and-Labrador)already knew:[Cod](https://www.britannica.com/animal/cod-fish-Gadus-species)fishing—and life as they knew it—was over. Officials announced a two-year moratorium on cod fishing to give the population stocks time to recover. The [collapse](https://www.britannica.com/event/cod-fishery-collapse-of-1992) had been decades in the making, thanks in large part to industrial fishing, poor management, and destructive and indiscriminate bottom trawling. The moratorium was repeatedly renewed until 2024, when a cautiously managed commercial cod fishery reopened.
+
+[READ MORE](https://www.britannica.com/today-in-history/July-2-The-Canadian-Cod-Fishery-Collapse?utm_source=otd)
+
+![Image 6: July 2, 1992: The day cod fishing ended](https://cdn.britannica.com/07/289307-050-2550108E/today-in-history-Cod-moratorium.jpg?w=530&h=300&c=crop)
+
+ Miroslav Halama/Shutterstock.com; Photo Illustration Encyclopædia Britannica, Inc.
+
+ Featured Event 
+
+![Image 7: President Lyndon B. Johnson signs the 1964 Civil Rights Act at a desk in the White House, surrounded by Martin Luther King, Jr. and a group of witnesses.](https://cdn.britannica.com/88/136088-050-17171BF5/Pres-Lyndon-B-Johnson-others-Martin-Luther-July-2-1964.jpg?w=356&h=200&c=crop)
+
+ Lyndon B. Johnson Library and Museum; photograph, Cecil Stoughton
+
+Civil Rights Act signed
+
+ On this day in 1964, U.S. President [Lyndon B. Johnson](https://www.britannica.com/biography/Lyndon-B-Johnson) signed the [Civil Rights Act](https://www.britannica.com/event/Civil-Rights-Act-United-States-1964), perhaps the most important U.S. law on [civil rights](https://www.britannica.com/topic/civil-rights) since [Reconstruction](https://www.britannica.com/event/Reconstruction-United-States-history) (1865–77) and a hallmark of the [American civil rights movement](https://www.britannica.com/event/American-civil-rights-movement). _[[Read about 10 milestones in U.S. civil rights history](https://www.britannica.com/list/riding-freedom-10-milestones-in-us-civil-rights-history).]_
+
+Featured Biography
+
+ What Happened On Your Birthday? 
+
+ Featured Biography 
+
+[![Image 8: Thurgood Marshall](https://cdn.britannica.com/38/166638-050-31000288/Thurgood-Marshall.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Thurgood-Marshall?utm_source=otd)
+
+ National Archives, Washington, D.C. (2803441)
+
+Thurgood Marshall
+
+American judge [Thurgood Marshall](https://www.britannica.com/biography/Thurgood-Marshall), born this day in 1908, greatly influenced [civil rights](https://www.britannica.com/event/American-civil-rights-movement) legislation, first as a lawyer and chief counsel for the [NAACP](https://www.britannica.com/topic/National-Association-for-the-Advancement-of-Colored-People) and then as the first African American member of the [U.S. Supreme Court](https://www.britannica.com/topic/Supreme-Court-of-the-United-States).
+
+Famous Birthdays
+
+1940
+
+[Kenneth Harry Clarke](https://www.britannica.com/biography/Kenneth-Harry-Clarke?utm_source=otd)
+
+British politician
+
+1904
+
+[René Lacoste](https://www.britannica.com/biography/Rene-Lacoste?utm_source=otd)
+
+French tennis player
+
+1714
+
+[Christoph Willibald Gluck](https://www.britannica.com/biography/Christoph-Willibald-Gluck?utm_source=otd)
+
+German composer
+
+419
+
+[Valentinian III](https://www.britannica.com/biography/Valentinian-III?utm_source=otd)
+
+Roman emperor
+
+[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-2)
+
+## More on July 2
+
+![Image 9: Elie Wiesel stands holding an open book in front of shelves filled with books, wearing a suit and looking at the camera.](https://cdn.britannica.com/43/193543-050-41B7AED2/Elie-Wiesel-Holocaust.jpg?w=260&h=196&c=crop)
+
+ © Allan Tannenbaum—Archive Photos/Getty Images
+
+2016
+
+ Romanian-born [Jewish](https://www.britannica.com/topic/Judaism) writer [Elie Wiesel](https://www.britannica.com/biography/Elie-Wiesel), who won the 1986 [Nobel Peace Prize](https://www.britannica.com/topic/Winners-of-the-Nobel-Prize-for-Peace-1856940) for his works that provide a sober yet passionate testament of the nearly complete extermination of European Jews by Nazi Germany, died at age 87. _[[Test your knowledge of the Nobel Prize](https://www.britannica.com/quiz/nobel-prize).]_
+
+![Image 10: Najib Razak](https://cdn.britannica.com/96/135996-050-0D6E8FC6/Najib-Abdul-Razak-2002.jpg?w=260&h=196&c=crop)
+
+ Helene C. Stikkel/U.S. Department of Defense
+
+2015
+
+ The [1Malaysia Development Berhad scandal](https://www.britannica.com/event/1Malaysia-Development-Berhad-scandal) was first exposed by journalist Clare Rewcastle Brown, founder of the blog _Sarawak Report_. One of the largest corruption scandals in modern history, it helped topple Malaysian Prime Minister[Najib Razak](https://www.britannica.com/biography/Najib-Razak).
+
+![Image 11: Ingrid Betancourt's release in 2008](https://cdn.britannica.com/73/279173-050-64EFE328/Former-hostage-Ingrid-Betancourt-released-in-Bogota-Colombia-July-2-2008.jpg?w=260&h=196&c=crop)
+
+ © Sipa/Shutterstock.com
+
+2008
+
+ More than six years after being taken hostage by [FARC](https://www.britannica.com/topic/FARC) guerrillas, Colombian politician [Ingrid Betancourt](https://www.britannica.com/biography/Ingrid-Betancourt) was freed during a rescue mission in which army soldiers posed as international aid workers. _[[Take our quiz about Latin American history](https://www.britannica.com/quiz/exploring-latin-american-history).]_
+
+![Image 12: Steve Fossett](https://cdn.britannica.com/07/189007-050-3C721A42/Steve-Fossett-flight-2005.jpg?w=260&h=196&c=crop)
+
+ NASA
+
+2002
+
+ American adventurer [Steve Fossett](https://www.britannica.com/biography/Steve-Fossett) became the first [balloonist](https://www.britannica.com/topic/ballooning-aviation) to circumnavigate the world alone. _[[Test your knowledge of aircraft and aviation](https://www.britannica.com/quiz/man-made-birds-in-the-sky).]_
+
+![Image 13: James Stewart in It's a Wonderful Life](https://cdn.britannica.com/53/9253-004-19562198/James-Stewart-Its-a-Wonderful-Life.jpg?w=260&h=196&c=crop)
+
+ Culver Pictures
+
+1997
+
+ American actor [James Stewart](https://www.britannica.com/biography/James-Stewart)—who came to personify a decent everyman struggling to overcome difficult circumstances while rising to heroic stature in the process—died at age 89. _[[Sort fact from fiction in our quiz about A-list actors](https://www.britannica.com/quiz/a-list-of-actors-fact-or-fiction).]_
+
+![Image 14: Susan B. Anthony dollar coin](https://cdn.britannica.com/04/164504-050-873C8E04/Susan-B-Anthony-dollar-coin.jpg?w=260&h=196&c=crop)
+
+ © Stanley Marquardt/Fotolia
+
+1979
+
+ The United States first issued the [Susan B. Anthony](https://www.britannica.com/biography/Susan-B-Anthony) dollar coin, making Anthony the first woman to be depicted on U.S. currency. _[[Take our quiz about famous firsts for women](https://www.britannica.com/quiz/womens-history-famous-firsts).]_
+
+![Image 15: Walmart](https://cdn.britannica.com/16/204716-050-8BB76BE8/Walmart-store-Mountain-View-California.jpg?w=260&h=196&c=crop)
+
+ © Andrei Stanescu—iStock/Getty Images
+
+1962
+
+ American businessman [Sam Walton](https://www.britannica.com/money/Sam-Walton) opened the first [Walmart](https://www.britannica.com/money/Walmart) (then known as Wal-Mart) store, in Rogers, Arkansas; it was the start of what would become the largest retail sales chain in the United States.
+
+![Image 16: Amelia Earhart](https://cdn.britannica.com/68/12168-050-A90FFD15/Amelia-Earhart.jpg?w=260&h=196&c=crop)
+
+ Culver Pictures
+
+1937
+
+ The airplane piloted by American aviator [Amelia Earhart](https://www.britannica.com/biography/Amelia-Earhart) disappeared over the central [Pacific Ocean](https://www.britannica.com/place/Pacific-Ocean) during her attempt to fly around the world. _[[Find out more about seven puzzling plane disappearances](https://www.britannica.com/list/7-puzzling-plane-disappearances).]_
+
+![Image 17: Franklin D. Roosevelt, 1937](https://cdn.britannica.com/06/3806-050-7952A19D/Franklin-D-Roosevelt-1937.jpg?w=260&h=196&c=crop)
+
+ UPI/Bettmann Archive
+
+1932
+
+ U.S. President [Franklin D. Roosevelt](https://www.britannica.com/biography/Franklin-D-Roosevelt) coined the term [“New Deal”](https://www.britannica.com/event/New-Deal) in his acceptance speech for the Democratic presidential nomination. _[[How much do you know about U.S. presidents?](https://www.britannica.com/quiz/presidents-of-the-united-states-quiz)]_
+
+![Image 18: Medgar Evers](https://cdn.britannica.com/88/388-004-A7AB719A/Medgar-Evers.jpg?w=260&h=196&c=crop)
+
+ © Archive Photos
+
+1925
+
+[Medgar Evers](https://www.britannica.com/biography/Medgar-Evers), the Black civil rights activist whose murder in 1963 received national attention and made him a martyr to the cause of the [civil rights movement](https://www.britannica.com/event/American-civil-rights-movement), was born in Decatur, Mississippi. _[[Read a timeline of the American civil rights movement](https://www.britannica.com/list/timeline-of-the-american-civil-rights-movement).]_
+
+![Image 19: Patrice Lumumba](https://cdn.britannica.com/35/146735-050-A6730CA1/lawyers-Belgian-officials-war-crimes-charges-military-officers-January-1961.jpg?w=260&h=196&c=crop)
+
+ AP Images
+
+1925
+
+[Patrice Lumumba](https://www.britannica.com/biography/Patrice-Lumumba), the first prime minister of the [Democratic Republic of the Congo](https://www.britannica.com/place/Democratic-Republic-of-the-Congo) (1960), was born in Onalua, Belgian Congo. _[[Why was Patrice Lumumba’s death so controversial?](https://www.britannica.com/story/how-did-patrice-lumumba-die)]_
+
+![Image 20: Wisława Szymborska](https://cdn.britannica.com/65/199765-050-260E7D62/Wislawa-Szymborska-1996.jpg?w=260&h=196&c=crop)
+
+ Czarek Sokolowski—AP/REX/Shutterstock.com
+
+1923
+
+ Poet [Wisława Szymborska](https://www.britannica.com/biography/Wislawa-Szymborska)—who rejected [Socialist Realism](https://www.britannica.com/art/Socialist-Realism) to pen intelligent and empathetic verse that explored philosophical and moral issues, for which she won the 1996 [Nobel Prize for Literature](https://www.britannica.com/art/Winners-of-the-Nobel-Prize-for-Literature-1856938)—was born in Poland. _[[Test your knowledge of Nobel laureates in literature](https://www.britannica.com/quiz/nobel-laureates-in-literature).]_
+
+![Image 21: zeppelin](https://cdn.britannica.com/62/204962-050-9451FD9F/German-zeppelin-ca-1914-1918-World-War-I.jpg?w=260&h=196&c=crop)
+
+ Encyclopædia Britannica, Inc.
+
+1900
+
+ The first flight of a [zeppelin](https://www.britannica.com/technology/zeppelin) took place as the airship departed a floating hangar on [Lake Constance](https://www.britannica.com/place/Lake-Constance) near [Friedrichshafen](https://www.britannica.com/place/Friedrichshafen), Germany. _[[Take our quiz about the history of flight](https://www.britannica.com/quiz/history-of-flight-quiz).]_
+
+![Image 22: James A. Garfield, 1880](https://cdn.britannica.com/61/761-004-66555BB6/James-A-Garfield-1880.jpg?w=260&h=196&c=crop)
+
+ Library of Congress, Washington, D.C.
+
+1881
+
+[Shot on this day](https://www.britannica.com/topic/Assassinations-and-assassination-attempts-involving-U-S-presidents-and-presidential-candidates#ref383816), U.S. President [James A. Garfield](https://www.britannica.com/biography/James-A-Garfield) died several weeks later, on September 19.
+
+![Image 23: Amistad mutiny](https://cdn.britannica.com/14/182414-050-778D07AC/Woodcut-Death-Ferrer-Capt-Amistad-John-Warner-July-1839.jpg?w=260&h=196&c=crop)
+
+ Yale University Art Gallery
+
+1839
+
+ Enslaved people carried out [a rebellion on the ship Amistad](https://www.britannica.com/event/Amistad-mutiny) near the coast of Cuba. In their trial the following year, they were acquitted—a victory for American [abolitionism](https://www.britannica.com/topic/abolitionism-European-and-American-social-movement).
+
+![Image 24: Denmark Vesey](https://cdn.britannica.com/91/218791-050-F410C254/Denmark-Vesey-statue-Hampton-Park-Charleston-South-Carolina.jpg?w=260&h=196&c=crop)
+
+ © Andy Murphy/Alamy
+
+1822
+
+[Denmark Vesey](https://www.britannica.com/biography/Denmark-Vesey) was hanged in Charleston, South Carolina, for planning the most extensive [slave revolt](https://www.britannica.com/topic/slave-rebellions) in U.S. history. _[[Take our quiz about slavery and resistance through history](https://www.britannica.com/quiz/slavery-and-resistance-through-history-quiz).]_
+
+![Image 25: Declaration of Independence](https://cdn.britannica.com/42/97342-050-81F61CC3/Image-William-J-Stone-engraving-Declaration-of-1823.jpg?w=260&h=196&c=crop)
+
+ National Archives, Washington, D.C.
+
+1776
+
+ After a dramatic all-night ride, Delaware delegate [Caesar Rodney](https://www.britannica.com/biography/Caesar-Rodney) arrived just in time to cast the decisive vote approving the [Declaration of Independence](https://www.britannica.com/topic/Declaration-of-Independence). _[[Take our quiz about famous documents](https://www.britannica.com/quiz/famous-documents).]_
+
+![Image 26: Battle of Marston Moor](https://cdn.britannica.com/75/102075-050-B666AACA/Oliver-Cromwell-Battle-of-Marston-Moor.jpg?w=260&h=196&c=crop)
+
+ Photos.com/Jupiterimages
+
+1644
+
+ At the [Battle of Marston Moor](https://www.britannica.com/event/Battle-of-Marston-Moor), Parliamentary forces handed the Royalists their first major defeat in the [English Civil Wars](https://www.britannica.com/event/English-Civil-Wars). _[[Match the battle with the war in our quiz](https://www.britannica.com/quiz/match-the-battle-with-the-war).]_
+
+SIGN UP FOR
+
+![Image 27: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 28: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
+
+History's Biggest Headlines
+
+Discover the fascinating events that shaped the world, straight from our editors.
+
+SIGN UP
+
+### Thank you for signing up!
+
+![Image 30: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=51c4aa80-4b02-2c0c-7384-59159679bfa5&iiqpciddate=1782993337741&tsrnd=721_1782993337747&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.46%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.46%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 31](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=151&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-2&s=DB8BECB5-2EFF-41A8-9144-B815B59D6E98&json=%20)![Image 32](https://ids.ad.gt/api/v1/halo_match?id=AU1D-0100-001782993339-9D3ITM84-RZRE&halo_id=060ixfcju6a659b9e9e9f66666666666666uooiwi0e0y6g6m6m6o000000001000)![Image 33](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001782993339-9D3ITM84-RZRE)![Image 34](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001782993339-9D3ITM84-RZRE&adnxs_id=$UID&gdpr=0)![Image 35](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001782993339-9D3ITM84-RZRE%26auid%3DAU1D-0100-001782993339-9D3ITM84-RZRE&gdpr=0)![Image 36](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001782993339-9D3ITM84-RZRE&gdpr=0)![Image 37](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001782993339-9D3ITM84-RZRE&gdpr=0)![Image 38](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001782993339-9D3ITM84-RZRE&gdpr=0)![Image 39](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001782993339-9D3ITM84-RZRE&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001782993339-9D3ITM84-RZRE%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 40](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4Mjk5MzMzOS05RDNJVE04NC1SWlJF&id=AU1D-0100-001782993339-9D3ITM84-RZRE&gdpr=0)![Image 41](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001782993339-9D3ITM84-RZRE)![Image 42](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001782993339-9D3ITM84-RZRE&uid=[UID]&gdpr=0)![Image 43](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001782993339-9D3ITM84-RZRE%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
