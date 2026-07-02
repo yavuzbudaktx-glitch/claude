@@ -6,14 +6,10 @@
 // in rotation, vs the 40-theme hand-list before. ?r=N salts the seed.
 
 import { NextResponse } from "next/server";
+import { raceJson } from "@/lib/race-json";
 
 export const revalidate = 3600;
 export const maxDuration = 30;
-
-const HEADERS = {
-  "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
-  Accept: "application/json",
-};
 
 interface MetSearch { total?: number; objectIDs?: number[] | null }
 interface MetObject {
@@ -36,23 +32,9 @@ function seedIdx(key: string, n: number): number {
   return n > 0 ? h % n : 0;
 }
 
-async function getJson<T>(url: string): Promise<T | null> {
-  const tries = [
-    url,
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-  ];
-  for (const u of tries) {
-    try {
-      const r = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(10000), cache: "no-store" });
-      if (!r.ok) continue;
-      const text = await r.text();
-      if (!text || (text[0] !== "{" && text[0] !== "[")) continue;
-      return JSON.parse(text) as T;
-    } catch { /* next */ }
-  }
-  return null;
-}
+// Racing fetch (direct + proxies in parallel, 4s per try, honest tool UA) —
+// see src/lib/race-json.ts for why both properties are load-bearing.
+const getJson = raceJson;
 
 // Cache the (large) full-library object-ID list for a day so we don't have
 // to re-fetch all ~5k IDs on every request. Module-level cache lives for
@@ -80,6 +62,7 @@ async function fetchAllPaintingIds(): Promise<number[]> {
 }
 
 export async function GET(req: Request) {
+  const startedAt = Date.now();
   const url = new URL(req.url);
   const dateKey = url.searchParams.get("d") ?? new Date().toISOString().slice(0, 10);
   const refresh = url.searchParams.get("r") ?? "";
@@ -123,22 +106,30 @@ export async function GET(req: Request) {
   // verify the chosen hit isn't a disambiguation page or a list. The Met
   // tombstone title almost never matches an exact Wikipedia page title, so
   // we SEARCH and rank the candidates.
+  // Hard deadline for the (optional) description enrichment: the tombstone
+  // floor below guarantees the pane is never blank, so past ~6.5s of total
+  // route time we skip enrichment entirely rather than risk the 10s kill.
+  const outOfTime = () => Date.now() - startedAt > 6500;
+
   async function wikiBestExtract(
     query: string,
     accept: (title: string, extract: string) => boolean,
   ): Promise<string | null> {
+    if (outOfTime()) return null;
     const s = await getJson<{ query?: { search?: Array<{ title?: string }> } }>(
-      `https://en.wikipedia.org/w/api.php?action=query&list=search&srlimit=5&srnamespace=0&format=json&origin=*&srsearch=${encodeURIComponent(query)}`,
+      `https://en.wikipedia.org/w/api.php?action=query&list=search&srlimit=4&srnamespace=0&format=json&origin=*&srsearch=${encodeURIComponent(query)}`,
     );
-    const hits = s?.query?.search ?? [];
+    // Only chase the top 2 plausible hits — each summary is a network call.
+    const hits = (s?.query?.search ?? [])
+      .filter((h) => h.title && !/^(list of|disambiguation|category:|file:)/i.test(h.title))
+      .slice(0, 2);
     for (const hit of hits) {
-      if (!hit.title) continue;
-      if (/^(list of|disambiguation|category:|file:)/i.test(hit.title)) continue;
+      if (outOfTime()) return null;
       const sum = await getJson<{ extract?: string; type?: string; title?: string }>(
-        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(hit.title.replace(/ /g, "_"))}`,
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(hit.title!.replace(/ /g, "_"))}`,
       );
       if (sum?.type === "disambiguation") continue;
-      if (sum?.extract && accept(sum.title ?? hit.title, sum.extract)) {
+      if (sum?.extract && accept(sum.title ?? hit.title!, sum.extract)) {
         return sum.extract.length > 700 ? sum.extract.slice(0, 697).trimEnd() + "…" : sum.extract;
       }
     }

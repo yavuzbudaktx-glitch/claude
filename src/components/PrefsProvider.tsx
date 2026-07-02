@@ -159,6 +159,30 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
     return () => { cancelled = true; };
   }, []);
 
+  // -- One-time hygiene: tombstone dead keys -------------------------------
+  // The retired growing-library experiment left `hub.lib.*` entries holding
+  // up to 2500 videos EACH in the synced blob, and old daily-cache versions
+  // (art.v3–v5, bird.v3–v5, nasa, nasa.v2, …) pinned stale data. That dead
+  // weight rides along on every read-merge-write and can push Supabase
+  // Realtime payloads past the size where change events get dropped. True
+  // deletion can't survive the per-key merge (the other side would just
+  // merge the key back), so we tombstone with `null` at a fresh version —
+  // nulls win the merge and shrink the blob to almost nothing.
+  useEffect(() => {
+    if (!loaded) return;
+    const DEAD = [
+      /^hub\.lib\./,
+      /^hub\.daily\.(art|bird)(\.v[1-5])?$/,
+      /^hub\.daily\.nasa(\.v[1-2])?$/,
+    ];
+    const cur = prefsRef.current;
+    for (const k of Object.keys(cur)) {
+      if (k === META || cur[k] === null || cur[k] === undefined) continue;
+      if (DEAD.some((re) => re.test(k))) setPref(k, null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loaded]);
+
   // -- Realtime: other devices' writes arrive here and merge in live -------
   useEffect(() => {
     if (!loaded) return;

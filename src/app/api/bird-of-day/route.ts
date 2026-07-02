@@ -13,14 +13,10 @@
 // sings.
 
 import { NextResponse } from "next/server";
+import { raceJson } from "@/lib/race-json";
 
 export const revalidate = 3600;
 export const maxDuration = 30;
-
-const HEADERS = {
-  "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
-  Accept: "application/json",
-};
 
 function seedIdx(key: string, n: number): number {
   let h = 0;
@@ -28,23 +24,10 @@ function seedIdx(key: string, n: number): number {
   return n > 0 ? h % n : 0;
 }
 
-async function getJson<T>(url: string): Promise<T | null> {
-  const tries = [
-    url,
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-  ];
-  for (const u of tries) {
-    try {
-      const r = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(9000), cache: "no-store" });
-      if (!r.ok) continue;
-      const text = await r.text();
-      if (!text || (text[0] !== "{" && text[0] !== "[")) continue;
-      return JSON.parse(text) as T;
-    } catch { /* next */ }
-  }
-  return null;
-}
+// Racing fetch (direct + proxies in parallel, 4s per try, honest tool UA) —
+// see src/lib/race-json.ts. The old sequential 9s-per-proxy walk with a fake
+// browser UA is what got all the Wikipedia-backed tabs killed at once.
+const getJson = raceJson;
 
 // ---- species pool: every bird on the master list --------------------------
 let poolCache: { at: number; titles: string[] } | null = null;
@@ -160,6 +143,8 @@ async function fetchSummary(title: string): Promise<WikiSummary | null> {
 }
 
 export async function GET(req: Request) {
+  const startedAt = Date.now();
+  const outOfTime = () => Date.now() - startedAt > 6500;
   const url = new URL(req.url);
   const dateKey = url.searchParams.get("d") ?? new Date().toISOString().slice(0, 10);
 
@@ -189,11 +174,13 @@ export async function GET(req: Request) {
 
   // Try audio for the FIRST usable bird only (sequential calls within one
   // candidate are fine; sequential across 10 candidates was the killer).
+  // Each step checks the deadline — a photo-only bird with "No song
+  // archived" beats a dead tab every time.
   let best: { title: string; wiki: WikiSummary; audio: string } | null = null;
   if (photoOnly) {
     let audio = await audioFromWikiXc(photoOnly.title);
-    if (!audio) audio = await audioFromArticle(photoOnly.title);
-    if (!audio) audio = await audioFromCommonsSearch(photoOnly.title);
+    if (!audio && !outOfTime()) audio = await audioFromArticle(photoOnly.title);
+    if (!audio && !outOfTime()) audio = await audioFromCommonsSearch(photoOnly.title);
     if (audio) best = { title: photoOnly.title, wiki: photoOnly.wiki, audio };
   }
 

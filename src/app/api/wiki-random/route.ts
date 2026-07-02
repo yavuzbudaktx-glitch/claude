@@ -14,14 +14,10 @@
 // keeping today's curated pick for the no-r case.
 
 import { NextResponse } from "next/server";
+import { raceJson } from "@/lib/race-json";
 
 export const revalidate = 3600;
 export const maxDuration = 30;
-
-const HEADERS = {
-  "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
-  Accept: "application/json",
-};
 
 function seedIdx(key: string, n: number): number {
   let h = 0;
@@ -29,23 +25,10 @@ function seedIdx(key: string, n: number): number {
   return n > 0 ? h % n : 0;
 }
 
-async function getJson<T>(url: string): Promise<T | null> {
-  const tries = [
-    url,
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-  ];
-  for (const u of tries) {
-    try {
-      const r = await fetch(u, { headers: HEADERS, signal: AbortSignal.timeout(9000), cache: "no-store" });
-      if (!r.ok) continue;
-      const text = await r.text();
-      if (!text || text[0] !== "{") continue;
-      return JSON.parse(text) as T;
-    } catch { /* next */ }
-  }
-  return null;
-}
+// Racing fetch (direct + proxies in parallel, 4s per try, honest tool UA) —
+// see src/lib/race-json.ts. The old sequential 9s-per-proxy walk with a fake
+// browser UA is what got all the Wikipedia-backed tabs killed at once.
+const getJson = raceJson;
 
 interface WikiSummary {
   type?: string;
@@ -99,7 +82,11 @@ async function getFeaturedTitles(): Promise<string[]> {
   }
   const out: string[] = [];
   let cmcontinue: string | undefined;
-  for (let i = 0; i < 14; i++) {
+  // Time-budgeted: the walk stops after ~5s no matter how many pages remain.
+  // A partial pool of a few thousand titles is plenty for a random pick; a
+  // complete pool isn't worth getting killed at the 10s function cap for.
+  const started = Date.now();
+  for (let i = 0; i < 14 && Date.now() - started < 5000; i++) {
     const url =
       "https://en.wikipedia.org/w/api.php?action=query&list=categorymembers" +
       "&cmtitle=Category%3AFeatured+articles&cmtype=page&cmlimit=500&format=json&origin=*" +
@@ -146,23 +133,29 @@ export async function GET(req: Request) {
     }
   }
 
-  // (3) "Another" or feed unavailable — random Featured Article.
+  // (3) "Another" or feed unavailable — random Featured Article. Candidates
+  //     are fetched in PARALLEL (6 summaries at once) and we take the first
+  //     worthwhile one in seed order — sequential attempts here could stack
+  //     to 24s+ against the 10s function cap.
   const titles = await getFeaturedTitles();
   if (titles.length === 0) {
     return NextResponse.json({ error: "no_pool" }, { status: 502 });
   }
-  for (let attempt = 0; attempt < 6; attempt++) {
-    const idx = seedIdx(`${dateKey}:fa:${refresh}:${attempt}`, titles.length);
-    const t = titles[idx];
-    if (BORING_PATTERN.test(t)) continue;
-    const s = await getJson<WikiSummary>(
-      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(t.replace(/ /g, "_"))}`,
-    );
-    if (isWorthwhile(s)) {
-      return NextResponse.json(shape(s!, "Wikipedia · Featured Article"), {
-        headers: { "Cache-Control": "s-maxage=3600, stale-while-revalidate=43200" },
-      });
-    }
+  const picks = Array.from({ length: 6 }, (_, attempt) =>
+    titles[seedIdx(`${dateKey}:fa:${refresh}:${attempt}`, titles.length)],
+  ).filter((t) => !BORING_PATTERN.test(t));
+  const sums = await Promise.all(
+    picks.map((t) =>
+      getJson<WikiSummary>(
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(t.replace(/ /g, "_"))}`,
+      ),
+    ),
+  );
+  const good = sums.find((s) => isWorthwhile(s));
+  if (good) {
+    return NextResponse.json(shape(good, "Wikipedia · Featured Article"), {
+      headers: { "Cache-Control": "s-maxage=3600, stale-while-revalidate=43200" },
+    });
   }
   return NextResponse.json({ error: "no_article" }, { status: 502 });
 }
