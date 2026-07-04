@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createServiceClient } from "@/lib/supabase/service";
 import { getZuyaMember } from "@/lib/zuya/server";
-import { zuyaGoogleRedirectUri } from "@/lib/zuya/google";
+import { zuyaGoogleRedirectUri, zuyaGoogleClientId, zuyaGoogleClientSecret } from "@/lib/zuya/google";
 
 export const dynamic = "force-dynamic";
 
@@ -29,8 +29,8 @@ export async function GET(req: Request) {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
-      client_id: process.env.GOOGLE_CLIENT_ID!,
-      client_secret: process.env.GOOGLE_CLIENT_SECRET!,
+      client_id: zuyaGoogleClientId(),
+      client_secret: zuyaGoogleClientSecret(),
       grant_type: "authorization_code",
       code,
       redirect_uri: zuyaGoogleRedirectUri(req.url),
