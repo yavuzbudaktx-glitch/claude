@@ -150,9 +150,13 @@ export function ZuyaProvider({
 
   // -- The single multiplexed realtime channel -------------------------------
   useEffect(() => {
-    let channel = supabase.channel("zuya");
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let cancelled = false;
+
+    const build = () => {
+    let ch = supabase.channel("zuya");
     for (const table of LIVE_TABLES) {
-      channel = channel.on(
+      ch = ch.on(
         "postgres_changes",
         { event: "*", schema: "public", table },
         (payload) => {
@@ -178,9 +182,30 @@ export function ZuyaProvider({
         },
       );
     }
-    channel.subscribe();
+      ch.subscribe();
+      return ch;
+    };
+
+    // Realtime with RLS only delivers rows the subscriber is authorized to
+    // read — so the connection MUST carry the user's access token before we
+    // subscribe, otherwise every change is silently dropped (the classic
+    // "updates only appear after reload"). Set it, subscribe, and re-auth on
+    // token refresh.
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (cancelled) return;
+      if (session?.access_token) supabase.realtime.setAuth(session.access_token);
+      channel = build();
+    })();
+
+    const { data: authSub } = supabase.auth.onAuthStateChange((_e, session) => {
+      if (session?.access_token) supabase.realtime.setAuth(session.access_token);
+    });
+
     return () => {
-      void supabase.removeChannel(channel);
+      cancelled = true;
+      authSub.subscription.unsubscribe();
+      if (channel) void supabase.removeChannel(channel);
     };
   }, [supabase, loadAvatar, recountUnread]);
 
