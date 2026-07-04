@@ -79,7 +79,7 @@ export function DailyQuestionCard() {
   const isToday = day === today;
 
   return (
-    <Card id="zuya-question-card" title="Question of the day" meta="günün sorusu" collapsible={false}>
+    <Card id="zuya-question-card" title="Question of the day" collapsible={false}>
       <div className="flex items-center justify-between mb-3">
         <button
           onClick={() => setDay(shiftDay(day, -1))}

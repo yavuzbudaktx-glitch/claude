@@ -106,14 +106,14 @@ export function MessagesCard() {
   let lastDay = "";
 
   return (
-    <Card id="zuya-messages" title="Between us" meta="mesajlaşma" collapsible={false} className="flex flex-col">
+    <Card id="zuya-messages" title="Messages" collapsible={false} className="flex flex-col">
       <div
         ref={listRef}
         className="flex-1 min-h-[260px] max-h-[380px] overflow-y-auto pr-1 space-y-1.5"
       >
         {messages.length === 0 && (
           <p className="text-muted text-[13px] text-center pt-10">
-            No messages yet — say something sweet 💌
+            No messages yet.
           </p>
         )}
         {messages.map((m) => {

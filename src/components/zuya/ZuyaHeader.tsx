@@ -22,7 +22,6 @@ export function ZuyaHeader() {
         {/* Both of us, statuses live. */}
         <div className="flex items-center gap-1 min-w-0">
           <MemberChip member={me} isMe />
-          <span className="text-accent text-sm px-0.5 select-none" aria-hidden>♥</span>
           <MemberChip member={partner} isMe={false} />
         </div>
 

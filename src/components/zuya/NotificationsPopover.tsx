@@ -8,7 +8,7 @@ import type { ZuyaNotificationKind, ZuyaNotificationRow } from "@/types/zuya";
 const KIND_META: Record<ZuyaNotificationKind, { icon: typeof Bell; text: (p: Record<string, unknown>) => string }> = {
   date_suggested: { icon: CalendarHeart, text: (p) => `New date idea: "${p.title}"` },
   date_countered: { icon: Pencil, text: (p) => `Suggested changes to "${p.title}"` },
-  date_accepted: { icon: Check, text: (p) => `Said YES to "${p.title}" ♥` },
+  date_accepted: { icon: Check, text: (p) => `Accepted "${p.title}"` },
   date_rejected: { icon: X, text: (p) => `Can't make "${p.title}"` },
   date_cancelled: { icon: X, text: (p) => `Called off "${p.title}"` },
 };

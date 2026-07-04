@@ -42,7 +42,6 @@ export default function ZuyaDashboard() {
         </div>
       </div>
 
-      <p className="label text-center pt-2 pb-4">Zuya · bizim köşemiz ♥</p>
     </main>
   );
 }
