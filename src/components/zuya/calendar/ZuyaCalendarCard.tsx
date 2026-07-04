@@ -5,7 +5,8 @@ import useSWR from "swr";
 import { CalendarDays, CalendarHeart, Sparkles } from "lucide-react";
 import { Card } from "@/components/Card";
 import { useZuya, useZuyaTableEvent } from "@/components/zuya/ZuyaProvider";
-import { MonthGrid, OWNER_COLORS } from "@/components/zuya/calendar/MonthGrid";
+import { OWNER_COLORS } from "@/components/zuya/calendar/MonthGrid";
+import { WeekView } from "@/components/zuya/calendar/WeekView";
 import {
   SuggestDateForm,
   payloadFromValues,
@@ -32,11 +33,11 @@ interface CalResp {
 
 const fetcher = (u: string) => fetch(u).then((r) => r.json());
 
-function eventDayKey(iso: string): string {
-  // All-day events come as YYYY-MM-DD already; timed ones get local-day keyed.
-  if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso;
-  const d = new Date(iso);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+// Monday of the week containing `d`, at local midnight.
+function mondayOf(d: Date): Date {
+  const m = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  m.setDate(m.getDate() - ((m.getDay() + 6) % 7));
+  return m;
 }
 
 type Tab = "calendar" | "suggest" | "plans";
@@ -44,10 +45,7 @@ type Tab = "calendar" | "suggest" | "plans";
 export function ZuyaCalendarCard() {
   const { supabase, me, partner } = useZuya();
   const [tab, setTab] = useState<Tab>("calendar");
-  const [month, setMonth] = useState(() => {
-    const n = new Date();
-    return new Date(n.getFullYear(), n.getMonth(), 1);
-  });
+  const [weekStart, setWeekStart] = useState(() => mondayOf(new Date()));
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<ZuyaDateSuggestionRow[]>([]);
   const [creating, setCreating] = useState(false);
@@ -65,9 +63,9 @@ export function ZuyaCalendarCard() {
     return () => window.removeEventListener("zuya:plan-date", onPlan);
   }, []);
 
-  // Window: previous month start → 2 months out, refreshed as the user pages.
-  const from = new Date(month.getFullYear(), month.getMonth() - 1, 1).toISOString();
-  const to = new Date(month.getFullYear(), month.getMonth() + 2, 1).toISOString();
+  // Window: the visible week plus a week of context either side.
+  const from = new Date(weekStart.getTime() - 7 * 86400_000).toISOString();
+  const to = new Date(weekStart.getTime() + 21 * 86400_000).toISOString();
   const { data, error, isLoading, mutate } = useSWR<CalResp>(
     `/api/zuya/calendar?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`,
     fetcher,
@@ -89,15 +87,6 @@ export function ZuyaCalendarCard() {
 
   useZuyaTableEvent("zuya_date_suggestions", () => void loadSuggestions());
 
-  const busyByDay = useMemo(() => {
-    const map: Record<string, Set<ZuyaUsername>> = {};
-    for (const e of data?.events ?? []) {
-      const key = eventDayKey(e.start);
-      (map[key] ??= new Set()).add(e.owner);
-    }
-    return map;
-  }, [data?.events]);
-
   const acceptedDays = useMemo(
     () => new Set(suggestions.filter((s) => s.status === "accepted").map((s) => s.day)),
     [suggestions],
@@ -105,16 +94,6 @@ export function ZuyaCalendarCard() {
 
   const pending = suggestions.filter((s) => s.status === "pending");
   const myTurnCount = pending.filter((s) => s.pending_from === me.user_id).length;
-
-  // Agenda: selected day's events, or the next 14 days.
-  const agenda = useMemo(() => {
-    const evs = (data?.events ?? []).filter((e) => {
-      if (selectedDay) return eventDayKey(e.start) === selectedDay;
-      const t = new Date(e.start).getTime();
-      return t >= Date.now() - 3600_000 && t <= Date.now() + 14 * 86400_000;
-    });
-    return evs.slice(0, 12);
-  }, [data?.events, selectedDay]);
 
   async function createSuggestion(values: DateFormValues) {
     setCreating(true);
@@ -203,84 +182,35 @@ export function ZuyaCalendarCard() {
       </div>
 
       {tab === "calendar" && (
-        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-5">
-          <div>
-            <MonthGrid
-              month={month}
-              onMonthChange={setMonth}
-              busyByDay={busyByDay}
-              acceptedDays={acceptedDays}
-              selectedDay={selectedDay}
-              onSelectDay={(d) => setSelectedDay(d === selectedDay ? null : d)}
-            />
-            <div className="flex items-center gap-4 mt-3">
-              {(["yavuz", "zuleyha"] as ZuyaUsername[]).map((u) => (
-                <span key={u} className="inline-flex items-center gap-1.5 text-[11px] text-muted">
-                  <span className="h-2 w-2 rounded-full" style={{ background: OWNER_COLORS[u] }} />
-                  {u === me.username ? me.display_name : partner.display_name}
-                </span>
-              ))}
-              <span className="inline-flex items-center gap-1.5 text-[11px] text-muted">
-                <CalendarHeart className="h-3 w-3 text-accent" /> our date
-              </span>
-            </div>
-          </div>
+        <div className="space-y-3">
+          {connChip("yavuz")}
+          {connChip("zuleyha")}
 
-          <div className="space-y-2">
-            {connChip("yavuz")}
-            {connChip("zuleyha")}
-            <p className="label pt-1">
-              {selectedDay
-                ? new Date(`${selectedDay}T12:00`).toLocaleDateString(undefined, {
-                    weekday: "long",
-                    month: "long",
-                    day: "numeric",
-                  })
-                : "Next two weeks"}
-            </p>
-            {agenda.length === 0 && (
-              <p className="text-[13px] text-muted">
-                {selectedDay ? "Nothing planned." : "A quiet stretch ahead."}
-              </p>
-            )}
-            <div className="divide-rule">
-              {agenda.map((e) => (
-                <div key={`${e.owner}-${e.id}`} className="flex items-start gap-2.5 py-2">
-                  <span
-                    className="h-2 w-2 rounded-full mt-1.5 shrink-0"
-                    style={{ background: OWNER_COLORS[e.owner] }}
-                  />
-                  <span className="min-w-0">
-                    <span className="block text-[13px] text-ink leading-snug truncate">
-                      {e.summary}
-                    </span>
-                    <span className="block text-[11px] text-muted-2">
-                      {e.allDay
-                        ? new Date(`${e.start}T12:00`).toLocaleDateString(undefined, {
-                            month: "short",
-                            day: "numeric",
-                          }) + " · all day"
-                        : new Date(e.start).toLocaleDateString(undefined, {
-                            month: "short",
-                            day: "numeric",
-                          }) +
-                          " · " +
-                          new Date(e.start).toLocaleTimeString(undefined, {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                      {e.location ? ` · ${e.location}` : ""}
-                    </span>
-                  </span>
-                </div>
-              ))}
-            </div>
+          <WeekView
+            weekStart={weekStart}
+            onWeekChange={(d) => setWeekStart(mondayOf(d))}
+            events={data?.events ?? []}
+            acceptedDays={acceptedDays}
+            selectedDay={selectedDay}
+            onSelectDay={(d) => setSelectedDay(d === selectedDay ? null : d)}
+          />
+
+          <div className="flex items-center flex-wrap gap-x-4 gap-y-1">
+            {(["yavuz", "zuleyha"] as ZuyaUsername[]).map((u) => (
+              <span key={u} className="inline-flex items-center gap-1.5 text-[11px] text-muted">
+                <span className="h-2 w-2 rounded-full" style={{ background: OWNER_COLORS[u] }} />
+                {u === me.username ? me.display_name : partner.display_name}
+              </span>
+            ))}
+            <span className="inline-flex items-center gap-1.5 text-[11px] text-muted">
+              <CalendarHeart className="h-3 w-3 text-accent" /> buluşma
+            </span>
             {selectedDay && (
               <button
                 onClick={() => setTab("suggest")}
-                className="mt-1 inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-accent hover:brightness-110"
+                className="ml-auto inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-accent hover:brightness-110"
               >
-                <Sparkles className="h-3.5 w-3.5" /> Suggest a date this day →
+                <Sparkles className="h-3.5 w-3.5" /> Bu güne teklif et →
               </button>
             )}
           </div>
