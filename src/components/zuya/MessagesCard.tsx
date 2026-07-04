@@ -6,7 +6,7 @@ import { Card } from "@/components/Card";
 import { useZuya, useZuyaTableEvent } from "@/components/zuya/ZuyaProvider";
 import type { ZuyaMessageRow } from "@/types/zuya";
 
-const QUICK_EMOJI = ["❤️", "😘", "🥺", "😂", "💭", "🥰"];
+const QUICK_EMOJI = ["❤️", "😘", "🔥", "😂", "🥺", "😍", "😉", "🙄"];
 const PAGE = 120;
 
 function dayLabel(iso: string): string {
@@ -169,9 +169,10 @@ export function MessagesCard() {
           {QUICK_EMOJI.map((e) => (
             <button
               key={e}
-              onClick={() => void send(e)}
-              className="h-8 w-8 grid place-items-center rounded-full hover:bg-[var(--hl)] transition text-[16px]"
-              aria-label={`Send ${e}`}
+              type="button"
+              onClick={() => setDraft((d) => (d + e).slice(0, 2000))}
+              className="h-8 w-8 grid place-items-center rounded-full hover:bg-[var(--hl)] transition text-[18px]"
+              aria-label={`Add ${e}`}
             >
               {e}
             </button>

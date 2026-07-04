@@ -4,7 +4,7 @@ import { DailyPhotoCard } from "@/components/zuya/DailyPhotoCard";
 import { MessagesCard } from "@/components/zuya/MessagesCard";
 import { DailyQuestionCard } from "@/components/zuya/DailyQuestionCard";
 import { BucketListCard } from "@/components/zuya/BucketListCard";
-import { WordleRaceCard } from "@/components/zuya/WordleRaceCard";
+import { KelimelikRaceCard } from "@/components/zuya/KelimelikRaceCard";
 
 export const dynamic = "force-dynamic";
 
@@ -37,8 +37,8 @@ export default function ZuyaDashboard() {
         <div id="zuya-bucket" className="scroll-mt-20 [&>*]:h-full">
           <BucketListCard />
         </div>
-        <div id="zuya-wordle" className="scroll-mt-20 md:col-span-2 xl:col-span-1 [&>*]:h-full">
-          <WordleRaceCard />
+        <div id="zuya-kelimelik" className="scroll-mt-20 md:col-span-2 xl:col-span-1 [&>*]:h-full">
+          <KelimelikRaceCard />
         </div>
       </div>
 
