@@ -1,0 +1,15 @@
+{
+  "name": "Zuya",
+  "short_name": "Zuya",
+  "description": "Yavuz & Züleyha — our little corner of the internet.",
+  "start_url": "/zuya",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#3d1f33",
+  "theme_color": "#3d1f33",
+  "icons": [
+    { "src": "/icons/zuya-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/zuya-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/zuya-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
