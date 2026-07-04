@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-07-04T10:23:08.216Z
+# generated: 2026-07-04T11:11:00.980Z
 # url:       https://www.britannica.com/on-this-day/july-4
 # fetcher:   Jina Reader
 # kind:      markdown
