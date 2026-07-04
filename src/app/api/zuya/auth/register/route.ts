@@ -28,11 +28,8 @@ export async function POST(req: Request) {
   if (!ZUYA_USERNAMES.includes(username)) {
     return NextResponse.json({ error: "unknown user" }, { status: 400 });
   }
-  if (typeof password !== "string" || password.length < 8 || password.length > 200) {
-    return NextResponse.json(
-      { error: "password must be at least 8 characters" },
-      { status: 400 },
-    );
+  if (typeof password !== "string" || password.length < 1 || password.length > 200) {
+    return NextResponse.json({ error: "enter a password" }, { status: 400 });
   }
 
   let service: ReturnType<typeof createServiceClient>;
