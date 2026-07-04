@@ -1,14 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Heart, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Heart, ArrowLeft, Eye, EyeOff, RotateCcw, AlertTriangle } from "lucide-react";
 import { createZuyaClient } from "@/lib/supabase/zuya-client";
 import { ZUYA_DISPLAY_NAMES, ZUYA_USERNAMES, zuyaEmail, type ZuyaUsername } from "@/lib/zuya/config";
 
-type Registered = Record<ZuyaUsername, boolean>;
+type Status =
+  | { state: "loading" }
+  | { state: "ready"; registered: Record<ZuyaUsername, boolean> }
+  | { state: "error"; problem: string; detail?: string };
+
+// Human explanations for every way the backend can be not-ready, so a setup
+// problem shows up here in plain words instead of dead buttons.
+function problemText(problem: string, detail?: string): string {
+  switch (problem) {
+    case "migration_missing":
+      return "The database isn't set up yet. Yavuz: open Supabase → SQL Editor, paste supabase/migrations/0013_zuya.sql from the repo, and press Run. Then retry here.";
+    case "missing_service_key":
+      return "The server is missing its Supabase key. Yavuz: Vercel → project “brief” → Settings → Environment Variables → add SUPABASE_SERVICE_ROLE_KEY (copy it from Supabase → Settings → API), then redeploy.";
+    case "fetch_failed":
+      return "Couldn't reach the server. Check your connection and retry.";
+    default:
+      return `Something's off on the server${detail ? `: ${detail}` : "."} Retry in a moment.`;
+  }
+}
 
 export default function ZuyaLoginPage() {
-  const [registered, setRegistered] = useState<Registered | null>(null);
+  const [status, setStatus] = useState<Status>({ state: "loading" });
   const [who, setWho] = useState<ZuyaUsername | null>(null);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -16,14 +34,31 @@ export default function ZuyaLoginPage() {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetch("/api/zuya/auth/status")
-      .then((r) => r.json())
-      .then((d) => setRegistered(d))
-      .catch(() => setMsg("Couldn't reach the server. Try again in a moment."));
+  const loadStatus = useCallback(async () => {
+    setStatus({ state: "loading" });
+    try {
+      const res = await fetch("/api/zuya/auth/status", { cache: "no-store" });
+      const d = await res.json().catch(() => null);
+      if (d && d.ready === true) {
+        setStatus({
+          state: "ready",
+          registered: { yavuz: !!d.yavuz, zuleyha: !!d.zuleyha },
+        });
+      } else if (d && d.ready === false) {
+        setStatus({ state: "error", problem: d.problem ?? "server_error", detail: d.detail });
+      } else {
+        setStatus({ state: "error", problem: "server_error", detail: `HTTP ${res.status}` });
+      }
+    } catch {
+      setStatus({ state: "error", problem: "fetch_failed" });
+    }
   }, []);
 
-  const isFirstTime = who !== null && registered !== null && !registered[who];
+  useEffect(() => {
+    void loadStatus();
+  }, [loadStatus]);
+
+  const isFirstTime = who !== null && status.state === "ready" && !status.registered[who];
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -47,7 +82,7 @@ export default function ZuyaLoginPage() {
         });
         if (!res.ok) {
           const d = await res.json().catch(() => ({}));
-          setMsg(d.error ?? "Registration failed.");
+          setMsg(d.error ?? `Registration failed (HTTP ${res.status}).`);
           return;
         }
       }
@@ -61,6 +96,8 @@ export default function ZuyaLoginPage() {
         return;
       }
       window.location.href = "/zuya";
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : "Something went wrong — try again.");
     } finally {
       setBusy(false);
     }
@@ -76,7 +113,29 @@ export default function ZuyaLoginPage() {
         <h1 className="font-display text-5xl tracking-tight mt-4 text-gradient leading-[1.1] pb-1">Zuya</h1>
         <p className="label mt-1">Yavuz ♥ Züleyha</p>
 
-        {!who && (
+        {status.state === "error" && (
+          <div className="mt-6 rounded-2xl border border-[var(--down)] bg-[color-mix(in_srgb,var(--down)_8%,transparent)] p-4 text-left">
+            <p className="text-[13px] text-ink-soft leading-relaxed inline-flex items-start gap-2">
+              <AlertTriangle className="h-4 w-4 text-down shrink-0 mt-0.5" />
+              <span>{problemText(status.problem, status.detail)}</span>
+            </p>
+            <button
+              onClick={() => void loadStatus()}
+              className="mt-3 inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-accent hover:brightness-110"
+            >
+              <RotateCcw className="h-3.5 w-3.5" /> Retry
+            </button>
+          </div>
+        )}
+
+        {status.state === "loading" && (
+          <p className="text-muted text-sm mt-6 inline-flex items-center gap-2">
+            <span className="h-3 w-3 rounded-full border border-current border-t-transparent animate-spin" />
+            waking up…
+          </p>
+        )}
+
+        {status.state === "ready" && !who && (
           <>
             <p className="text-muted text-sm mt-6">Who are you?</p>
             <div className="mt-4 grid grid-cols-2 gap-3">
@@ -84,13 +143,12 @@ export default function ZuyaLoginPage() {
                 <button
                   key={u}
                   onClick={() => { setWho(u); setMsg(null); }}
-                  disabled={!registered}
-                  className="rounded-2xl px-4 py-6 border border-[var(--rule)] bg-[var(--paper)] hover:border-[var(--accent)] hover:bg-[var(--paper-2)] transition disabled:opacity-50"
+                  className="rounded-2xl px-4 py-6 border border-[var(--rule)] bg-[var(--paper)] hover:border-[var(--accent)] hover:bg-[var(--paper-2)] transition"
                 >
                   <span className="block text-2xl font-display text-ink">
                     {ZUYA_DISPLAY_NAMES[u]}
                   </span>
-                  {registered && !registered[u] && (
+                  {!status.registered[u] && (
                     <span className="label mt-1 block text-accent">first visit</span>
                   )}
                 </button>
@@ -99,7 +157,7 @@ export default function ZuyaLoginPage() {
           </>
         )}
 
-        {who && (
+        {status.state === "ready" && who && (
           <form onSubmit={submit} className="mt-6 space-y-3 text-left">
             <button
               type="button"
@@ -161,10 +219,10 @@ export default function ZuyaLoginPage() {
             >
               {busy ? "…" : isFirstTime ? "Set password & come in" : "Come in"}
             </button>
-
-            {msg && <p className="text-[13px] text-down">{msg}</p>}
           </form>
         )}
+
+        {msg && <p className="text-[13px] text-down mt-4 text-left">{msg}</p>}
 
         <div className="label mt-8">seni seviyorum, her gün</div>
       </div>
