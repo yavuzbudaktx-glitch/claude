@@ -35,13 +35,33 @@ export async function POST(req: Request) {
     );
   }
 
-  const service = createServiceClient();
+  let service: ReturnType<typeof createServiceClient>;
+  try {
+    service = createServiceClient();
+  } catch {
+    return NextResponse.json(
+      { error: "Server isn't configured yet — SUPABASE_SERVICE_ROLE_KEY is missing on Vercel." },
+      { status: 500 },
+    );
+  }
 
-  const { data: existing } = await service
+  const { data: existing, error: lookupErr } = await service
     .from("zuya_members")
     .select("user_id")
     .eq("username", username)
     .maybeSingle();
+  if (lookupErr) {
+    const migrationMissing =
+      lookupErr.code === "42P01" || /does not exist/i.test(lookupErr.message);
+    return NextResponse.json(
+      {
+        error: migrationMissing
+          ? "The database isn't set up yet — run the Zuya migration in Supabase first."
+          : lookupErr.message,
+      },
+      { status: 500 },
+    );
+  }
   if (existing) {
     return NextResponse.json({ error: "already registered" }, { status: 409 });
   }
