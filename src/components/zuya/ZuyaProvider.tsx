@@ -81,6 +81,7 @@ export function ZuyaProvider({
   const [avatars, setAvatars] = useState<Record<string, string | null>>({});
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [nudge, setNudge] = useState<{ at: number } | null>(null);
 
   const meId = initialMe.user_id;
   const partnerId = initialPartner.user_id;
@@ -138,6 +139,7 @@ export function ZuyaProvider({
         .from("zuya_notifications")
         .select("id", { count: "exact", head: true })
         .eq("user_id", meId)
+        .neq("kind", "nudge") // nudges buzz live; they don't sit in the bell
         .is("read_at", null),
     ]);
     setUnreadMessages(msgs ?? 0);
@@ -172,6 +174,14 @@ export function ZuyaProvider({
                 }
                 return next;
               });
+            }
+          }
+          if (table === "zuya_notifications") {
+            const row = payload.new as { user_id?: string; kind?: string } | undefined;
+            if (row?.user_id === meId && row.kind === "nudge") {
+              // A nudge: buzz the phone (foreground only) + show a toast.
+              try { navigator.vibrate?.([90, 60, 120]); } catch {}
+              setNudge({ at: Date.now() });
             }
           }
           if (table === "zuya_messages" || table === "zuya_notifications") {
@@ -212,6 +222,13 @@ export function ZuyaProvider({
   const me = members[meId] ?? initialMe;
   const partner = members[partnerId] ?? initialPartner;
 
+  // Auto-dismiss the nudge toast.
+  useEffect(() => {
+    if (!nudge) return;
+    const t = setTimeout(() => setNudge(null), 2600);
+    return () => clearTimeout(t);
+  }, [nudge]);
+
   const value = useMemo<ZuyaCtx>(
     () => ({
       supabase,
@@ -226,5 +243,18 @@ export function ZuyaProvider({
     [supabase, me, partner, avatars, refreshAvatar, unreadMessages, unreadNotifications, subscribe],
   );
 
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+  return (
+    <Ctx.Provider value={value}>
+      {children}
+      {nudge && (
+        <div
+          className="fixed left-1/2 -translate-x-1/2 bottom-[max(1.5rem,env(safe-area-inset-bottom))] z-[100] px-5 py-3 rounded-full text-white text-[14px] font-semibold shadow-lg animate-fadeIn"
+          style={{ background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" }}
+          role="status"
+        >
+          👉 {partner.display_name} seni dürttü
+        </div>
+      )}
+    </Ctx.Provider>
+  );
 }

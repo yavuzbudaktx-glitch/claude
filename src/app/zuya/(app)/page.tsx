@@ -1,4 +1,4 @@
-import { ThoughtStrip } from "@/components/zuya/ThoughtStrip";
+import { NudgeStrip } from "@/components/zuya/NudgeStrip";
 import { ZuyaCalendarCard } from "@/components/zuya/calendar/ZuyaCalendarCard";
 import { DailyPhotoCard } from "@/components/zuya/DailyPhotoCard";
 import { MessagesCard } from "@/components/zuya/MessagesCard";
@@ -11,8 +11,8 @@ export const dynamic = "force-dynamic";
 export default function ZuyaDashboard() {
   return (
     <main className="space-y-5 pt-5">
-      {/* "Thought about you N times today" — front and center. */}
-      <ThoughtStrip />
+      {/* Both of us + a quick nudge. */}
+      <NudgeStrip />
 
       {/* Our calendars, merged + date suggestions. */}
       <div id="zuya-calendar" className="scroll-mt-20 [&>*]:h-full">

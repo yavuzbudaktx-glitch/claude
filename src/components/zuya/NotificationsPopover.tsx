@@ -33,6 +33,7 @@ export function NotificationsPopover() {
       .from("zuya_notifications")
       .select("*")
       .eq("user_id", me.user_id)
+      .neq("kind", "nudge") // nudges buzz live; they don't live in the bell
       .order("created_at", { ascending: false })
       .limit(20);
     setItems((data as ZuyaNotificationRow[]) ?? []);
