@@ -4,7 +4,7 @@ import { DailyPhotoCard } from "@/components/zuya/DailyPhotoCard";
 import { MessagesCard } from "@/components/zuya/MessagesCard";
 import { DailyQuestionCard } from "@/components/zuya/DailyQuestionCard";
 import { BucketListCard } from "@/components/zuya/BucketListCard";
-import { KelimelikRaceCard } from "@/components/zuya/KelimelikRaceCard";
+import { ScrabbleCard } from "@/components/zuya/ScrabbleCard";
 
 export const dynamic = "force-dynamic";
 
@@ -30,18 +30,19 @@ export default function ZuyaDashboard() {
       </div>
 
       {/* The fun row. */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch">
         <div id="zuya-question" className="scroll-mt-20 [&>*]:h-full">
           <DailyQuestionCard />
         </div>
         <div id="zuya-bucket" className="scroll-mt-20 [&>*]:h-full">
           <BucketListCard />
         </div>
-        <div id="zuya-kelimelik" className="scroll-mt-20 md:col-span-2 xl:col-span-1 [&>*]:h-full">
-          <KelimelikRaceCard />
-        </div>
       </div>
 
+      {/* Kelimelik — Turkish Scrabble, full width for the board. */}
+      <div id="zuya-kelimelik" className="scroll-mt-20">
+        <ScrabbleCard />
+      </div>
     </main>
   );
 }
