@@ -1,14 +1,44 @@
 import { createServiceClient } from "@/lib/supabase/service";
-import { refreshAccessToken } from "@/lib/google/refresh";
 
 // Server-only helpers around zuya_google_tokens (a table with RLS and zero
 // policies — only the service client can touch it, so partners can never read
 // each other's refresh token).
 
+// Zuya uses its OWN Google OAuth client so its setup never touches the personal
+// dashboard's GOOGLE_CLIENT_ID/SECRET (the dashboard mints refresh tokens
+// through Supabase's Google provider and refreshes them with those exact keys —
+// overwriting them breaks its calendar/mail/drive). Falls back to the shared
+// keys only if the Zuya-specific ones aren't set.
+export function zuyaGoogleClientId(): string {
+  return (process.env.ZUYA_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID) ?? "";
+}
+export function zuyaGoogleClientSecret(): string {
+  return (process.env.ZUYA_GOOGLE_CLIENT_SECRET || process.env.GOOGLE_CLIENT_SECRET) ?? "";
+}
+
 export const ZUYA_GOOGLE_SCOPES = [
   "https://www.googleapis.com/auth/calendar.readonly",
   "https://www.googleapis.com/auth/calendar.events",
 ].join(" ");
+
+// Refresh a Zuya access token with Zuya's own client credentials.
+async function zuyaRefreshAccessToken(refreshToken: string): Promise<string> {
+  const res = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      client_id: zuyaGoogleClientId(),
+      client_secret: zuyaGoogleClientSecret(),
+      grant_type: "refresh_token",
+      refresh_token: refreshToken,
+    }),
+  });
+  if (!res.ok) {
+    throw new Error(`Google token refresh failed: ${res.status} ${await res.text()}`);
+  }
+  const json = (await res.json()) as { access_token: string };
+  return json.access_token;
+}
 
 export function zuyaGoogleRedirectUri(requestUrl: string): string {
   const base = process.env.NEXT_PUBLIC_SITE_URL || new URL(requestUrl).origin;
@@ -28,7 +58,7 @@ export async function zuyaAccessTokenFor(
   if (!row?.refresh_token) return { error: "not_connected" };
 
   try {
-    const token = await refreshAccessToken(row.refresh_token);
+    const token = await zuyaRefreshAccessToken(row.refresh_token);
     return { token };
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);

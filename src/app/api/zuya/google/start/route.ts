@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { randomBytes } from "node:crypto";
 import { getZuyaMember } from "@/lib/zuya/server";
-import { ZUYA_GOOGLE_SCOPES, zuyaGoogleRedirectUri } from "@/lib/zuya/google";
+import { ZUYA_GOOGLE_SCOPES, zuyaGoogleRedirectUri, zuyaGoogleClientId } from "@/lib/zuya/google";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +14,7 @@ export async function GET(req: Request) {
 
   const state = randomBytes(16).toString("hex");
   const params = new URLSearchParams({
-    client_id: process.env.GOOGLE_CLIENT_ID!,
+    client_id: zuyaGoogleClientId(),
     redirect_uri: zuyaGoogleRedirectUri(req.url),
     response_type: "code",
     scope: ZUYA_GOOGLE_SCOPES,
