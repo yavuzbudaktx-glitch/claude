@@ -5,12 +5,12 @@ import useSWR from "swr";
 import { Delete, CornerDownLeft } from "lucide-react";
 import { zuyaToday } from "@/lib/zuya/day";
 
-// A trimmed Wordle engine for the daily couple race: same word for both of
-// you (seeded by the shared /api/wordle route + zuyaToday), ONE attempt per
-// day (no "new game"), a timer that starts at your first keypress, and an
-// onComplete callback that reports the result. In-progress state survives
-// reloads via localStorage. Deliberately separate from fun/Wordle.tsx, whose
-// synced-pref save state belongs to the personal dashboard.
+// Kelimelik — a Turkish 5-letter word game (Wordle-style) for the daily couple
+// race. Same word for both players (shared /api/kelimelik seed + zuyaToday),
+// ONE attempt per day, a timer from the first keypress, and an onComplete
+// callback with the result. Full Turkish keyboard; Turkish-locale casing so
+// İ/I and the accented letters behave correctly. In-progress state survives
+// reloads via localStorage.
 
 const ROWS = 6;
 const COLS = 5;
@@ -18,14 +18,14 @@ const COLS = 5;
 export type TileState = "right" | "present" | "wrong";
 export type BoardRow = { ch: string; state: TileState }[];
 
-export interface WordleOutcome {
+export interface KelimelikOutcome {
   won: boolean;
   guesses: number; // 0 when failed
   timeMs: number;
   board: BoardRow[];
 }
 
-interface WordleResp {
+interface Resp {
   answer: string;
 }
 
@@ -37,19 +37,26 @@ interface Saved {
 
 const fetcher = (u: string) => fetch(u).then((r) => r.json());
 
+// Turkish letters are all single code points; split on them safely.
+const letters = (s: string) => [...s];
+
 export function scoreGuess(guess: string, answer: string): BoardRow {
-  const out: BoardRow = Array.from({ length: COLS }, () => ({ ch: "", state: "wrong" as TileState }));
-  const remaining = answer.split("");
+  const g = letters(guess);
+  const a = letters(answer);
+  const out: BoardRow = Array.from({ length: COLS }, (_, i) => ({
+    ch: g[i] ?? "",
+    state: "wrong" as TileState,
+  }));
+  const remaining = [...a];
   for (let i = 0; i < COLS; i++) {
-    out[i].ch = guess[i] ?? "";
-    if (guess[i] === answer[i]) {
+    if (g[i] === a[i]) {
       out[i].state = "right";
       remaining[i] = "_";
     }
   }
   for (let i = 0; i < COLS; i++) {
     if (out[i].state === "right") continue;
-    const idx = remaining.indexOf(guess[i] ?? "");
+    const idx = remaining.indexOf(g[i] ?? "");
     if (idx >= 0) {
       out[i].state = "present";
       remaining[idx] = "_";
@@ -58,10 +65,11 @@ export function scoreGuess(guess: string, answer: string): BoardRow {
   return out;
 }
 
+// Full Turkish alphabet keyboard (29 letters, no Q/W/X).
 const KEYS = [
-  "Q W E R T Y U I O P".split(" "),
-  "A S D F G H J K L".split(" "),
-  ["ENTER", ..."Z X C V B N M".split(" "), "BACK"],
+  "E R T Y U I O P Ğ Ü".split(" "),
+  "A S D F G H J K L Ş İ".split(" "),
+  ["ENTER", ..."Z C V B N M Ö Ç".split(" "), "BACK"],
 ];
 
 const RIGHT = "var(--up)";
@@ -74,12 +82,12 @@ function tileColors(s: TileState | undefined, filled: boolean) {
   return { bg: "transparent", fg: "var(--ink)", border: filled ? "var(--ink-soft)" : "var(--rule)" };
 }
 
-export function ZuyaWordle({ onComplete }: { onComplete: (o: WordleOutcome) => void }) {
+const TR_LETTERS = new Set("ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ".split(""));
+
+export function ZuyaKelimelik({ onComplete }: { onComplete: (o: KelimelikOutcome) => void }) {
   const day = useMemo(() => zuyaToday(), []);
-  const storageKey = `zuya.wordle.${day}`;
-  const { data } = useSWR<WordleResp>(`/api/wordle?d=${day}`, fetcher, {
-    revalidateOnFocus: false,
-  });
+  const storageKey = `zuya.kelimelik.${day}`;
+  const { data } = useSWR<Resp>(`/api/kelimelik?d=${day}`, fetcher, { revalidateOnFocus: false });
 
   const [guesses, setGuesses] = useState<string[]>([]);
   const [current, setCurrent] = useState("");
@@ -87,7 +95,6 @@ export function ZuyaWordle({ onComplete }: { onComplete: (o: WordleOutcome) => v
   const startedAt = useRef<number | null>(null);
   const completed = useRef(false);
 
-  // Restore an in-progress game after a reload.
   useEffect(() => {
     try {
       const raw = localStorage.getItem(storageKey);
@@ -110,7 +117,7 @@ export function ZuyaWordle({ onComplete }: { onComplete: (o: WordleOutcome) => v
     } catch {}
   }
 
-  const answer = (data?.answer ?? "").toUpperCase();
+  const answer = data?.answer ?? "";
 
   function finish(gs: string[], won: boolean) {
     if (completed.current) return;
@@ -126,11 +133,11 @@ export function ZuyaWordle({ onComplete }: { onComplete: (o: WordleOutcome) => v
 
   function press(k: string) {
     if (!answer || completed.current) return;
-    if (startedAt.current === null && /^[A-Z]$/.test(k)) {
+    if (startedAt.current === null && TR_LETTERS.has(k)) {
       startedAt.current = Date.now();
     }
     if (k === "ENTER") {
-      if (current.length !== COLS) {
+      if (letters(current).length !== COLS) {
         setShake(true);
         setTimeout(() => setShake(false), 380);
         return;
@@ -142,9 +149,9 @@ export function ZuyaWordle({ onComplete }: { onComplete: (o: WordleOutcome) => v
       if (current === answer) finish(next, true);
       else if (next.length >= ROWS) finish(next, false);
     } else if (k === "BACK") {
-      setCurrent((c) => c.slice(0, -1));
-    } else if (/^[A-Z]$/.test(k)) {
-      setCurrent((c) => (c.length >= COLS ? c : c + k));
+      setCurrent((c) => letters(c).slice(0, -1).join(""));
+    } else if (TR_LETTERS.has(k)) {
+      setCurrent((c) => (letters(c).length >= COLS ? c : c + k));
     }
   }
 
@@ -153,21 +160,11 @@ export function ZuyaWordle({ onComplete }: { onComplete: (o: WordleOutcome) => v
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
       if (e.metaKey || e.ctrlKey || e.altKey) return;
-      if (e.key === "Enter") {
-        e.preventDefault();
-        press("ENTER");
-        return;
-      }
-      if (e.key === "Backspace") {
-        e.preventDefault();
-        press("BACK");
-        return;
-      }
-      const k = e.key.toUpperCase();
-      if (/^[A-Z]$/.test(k)) {
-        e.preventDefault();
-        press(k);
-      }
+      if (e.key === "Enter") { e.preventDefault(); press("ENTER"); return; }
+      if (e.key === "Backspace") { e.preventDefault(); press("BACK"); return; }
+      // Turkish-locale uppercase so i→İ and ı→I map correctly.
+      const k = e.key.toLocaleUpperCase("tr");
+      if (TR_LETTERS.has(k)) { e.preventDefault(); press(k); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -187,7 +184,7 @@ export function ZuyaWordle({ onComplete }: { onComplete: (o: WordleOutcome) => v
     return m;
   }, [guesses, answer]);
 
-  if (!data) return <p className="text-muted text-sm">Loading…</p>;
+  if (!data) return <p className="text-muted text-sm">Yükleniyor…</p>;
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -196,6 +193,7 @@ export function ZuyaWordle({ onComplete }: { onComplete: (o: WordleOutcome) => v
           const isSubmitted = !!guesses[r];
           const isCurrent = r === guesses.length && !completed.current;
           const g = guesses[r] ?? (isCurrent ? current : "");
+          const gl = letters(g);
           const scored = isSubmitted ? scoreGuess(g, answer) : null;
           return (
             <div
@@ -204,7 +202,7 @@ export function ZuyaWordle({ onComplete }: { onComplete: (o: WordleOutcome) => v
               style={isCurrent && shake ? { animation: "wordleShake .38s" } : undefined}
             >
               {Array.from({ length: COLS }).map((_, c) => {
-                const ch = g[c] ?? "";
+                const ch = gl[c] ?? "";
                 const s = scored?.[c]?.state;
                 const { bg, fg, border } = tileColors(s, !!ch);
                 return (
@@ -227,7 +225,7 @@ export function ZuyaWordle({ onComplete }: { onComplete: (o: WordleOutcome) => v
         })}
       </div>
 
-      <div className="flex flex-col gap-1.5 w-full max-w-[340px]">
+      <div className="flex flex-col gap-1.5 w-full max-w-[360px]">
         {KEYS.map((row, ri) => (
           <div key={ri} className="flex justify-center gap-1">
             {row.map((k) => {
@@ -238,9 +236,10 @@ export function ZuyaWordle({ onComplete }: { onComplete: (o: WordleOutcome) => v
               return (
                 <button
                   key={k}
+                  type="button"
                   onClick={() => press(k)}
                   className={`grid place-items-center rounded-md font-semibold text-[11px] h-10 transition active:scale-95 hover:brightness-110 ${
-                    wide ? "px-2" : "flex-1 min-w-0"
+                    wide ? "px-1.5" : "flex-1 min-w-0"
                   }`}
                   style={{ background: bg, color: st ? "#fff" : "var(--ink)" }}
                   aria-label={k}

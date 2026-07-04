@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Trophy, Swords, Hourglass } from "lucide-react";
 import { Card } from "@/components/Card";
 import { useZuya, useZuyaTableEvent } from "@/components/zuya/ZuyaProvider";
-import { ZuyaWordle, type WordleOutcome, type BoardRow } from "@/components/zuya/ZuyaWordle";
+import { ZuyaKelimelik, type KelimelikOutcome, type BoardRow } from "@/components/zuya/ZuyaKelimelik";
 import { zuyaToday } from "@/lib/zuya/day";
 import type { ZuyaWordleResultRow } from "@/types/zuya";
 
@@ -35,13 +35,13 @@ function MiniBoard({ board }: { board: BoardRow[] }) {
 
 function fmtTime(ms: number): string {
   const s = Math.round(ms / 1000);
-  return s < 60 ? `${s}s` : `${Math.floor(s / 60)}m ${s % 60}s`;
+  return s < 60 ? `${s}sn` : `${Math.floor(s / 60)}dk ${s % 60}sn`;
 }
 
-// Daily Wordle, raced head-to-head: same word for both (shared /api/wordle
-// seed), fewest guesses wins, time breaks ties. Partner's board stays hidden
-// (RLS) until you've finished yours.
-export function WordleRaceCard() {
+// Daily Kelimelik, raced head-to-head: same word for both, fewest guesses
+// wins, time breaks ties. Partner's board stays hidden (RLS) until you finish.
+// Reuses the zuya_wordle_results table.
+export function KelimelikRaceCard() {
   const { supabase, me, partner } = useZuya();
   const today = zuyaToday();
   const [results, setResults] = useState<ZuyaWordleResultRow[]>([]);
@@ -68,7 +68,7 @@ export function WordleRaceCard() {
   const mine = results.find((r) => r.user_id === me.user_id);
   const theirs = results.find((r) => r.user_id === partner.user_id);
 
-  async function record(o: WordleOutcome) {
+  async function record(o: KelimelikOutcome) {
     await supabase.from("zuya_wordle_results").insert({
       user_id: me.user_id,
       day: today,
@@ -79,8 +79,6 @@ export function WordleRaceCard() {
     void load();
   }
 
-  // Head-to-head verdict for a finished day: fewer guesses wins (0 = failed
-  // = worst), time breaks ties.
   function winnerOf(a: ZuyaWordleResultRow, b: ZuyaWordleResultRow): string | null {
     const rank = (r: ZuyaWordleResultRow) => (r.guesses === 0 ? 99 : r.guesses);
     if (rank(a) !== rank(b)) return rank(a) < rank(b) ? a.user_id : b.user_id;
@@ -90,9 +88,7 @@ export function WordleRaceCard() {
 
   const weeklyScore = useMemo(() => {
     const byDay = new Map<string, ZuyaWordleResultRow[]>();
-    for (const r of weekRows) {
-      byDay.set(r.day, [...(byDay.get(r.day) ?? []), r]);
-    }
+    for (const r of weekRows) byDay.set(r.day, [...(byDay.get(r.day) ?? []), r]);
     let meWins = 0;
     let themWins = 0;
     for (const rows of byDay.values()) {
@@ -107,23 +103,23 @@ export function WordleRaceCard() {
   const verdict = mine && theirs ? winnerOf(mine, theirs) : undefined;
 
   return (
-    <Card id="zuya-wordle-card" title="Wordle race" collapsible={false}>
+    <Card id="zuya-kelimelik-card" title="Kelimelik" collapsible={false}>
       {(weeklyScore.meWins > 0 || weeklyScore.themWins > 0) && (
         <p className="text-[12px] text-muted mb-3 inline-flex items-center gap-1.5">
           <Trophy className="h-3.5 w-3.5 text-accent-2" />
-          This week: you {weeklyScore.meWins} — {weeklyScore.themWins} {partner.display_name}
+          Bu hafta: sen {weeklyScore.meWins} — {weeklyScore.themWins} {partner.display_name}
         </p>
       )}
 
       {!loaded ? (
-        <p className="text-muted text-sm">Loading…</p>
+        <p className="text-muted text-sm">Yükleniyor…</p>
       ) : !mine ? (
         <>
           <p className="text-[12.5px] text-muted mb-3 inline-flex items-center gap-1.5">
             <Swords className="h-3.5 w-3.5" />
-            Same word for both of you — fewest guesses wins, speed breaks ties.
+            İkiniz de aynı kelime — az tahminde bilen kazanır, süre eşitliği bozar.
           </p>
-          <ZuyaWordle onComplete={record} />
+          <ZuyaKelimelik onComplete={record} />
         </>
       ) : (
         <div className="space-y-4">
@@ -132,7 +128,7 @@ export function WordleRaceCard() {
               <p className="label mb-1.5">{me.display_name}</p>
               <MiniBoard board={mine.board} />
               <p className="text-[12px] text-muted mt-1.5">
-                {mine.guesses === 0 ? "didn't get it 😅" : `in ${mine.guesses} · ${fmtTime(mine.time_ms)}`}
+                {mine.guesses === 0 ? "bilemedi 😅" : `${mine.guesses} tahmin · ${fmtTime(mine.time_ms)}`}
               </p>
             </div>
             <div>
@@ -142,13 +138,13 @@ export function WordleRaceCard() {
                   <MiniBoard board={theirs.board} />
                   <p className="text-[12px] text-muted mt-1.5">
                     {theirs.guesses === 0
-                      ? "didn't get it 😅"
-                      : `in ${theirs.guesses} · ${fmtTime(theirs.time_ms)}`}
+                      ? "bilemedi 😅"
+                      : `${theirs.guesses} tahmin · ${fmtTime(theirs.time_ms)}`}
                   </p>
                 </>
               ) : (
                 <p className="text-[12.5px] text-muted inline-flex items-center gap-1.5 pt-1">
-                  <Hourglass className="h-3.5 w-3.5" /> still playing…
+                  <Hourglass className="h-3.5 w-3.5" /> hâlâ oynuyor…
                 </p>
               )}
             </div>
@@ -160,10 +156,10 @@ export function WordleRaceCard() {
               style={{ background: "var(--accent-soft)", color: "var(--accent)" }}
             >
               {verdict === null
-                ? "Tie."
+                ? "Berabere."
                 : verdict === me.user_id
-                  ? "You won today! 🏆"
-                  : `${partner.display_name} takes it today 🏆`}
+                  ? "Bugün sen kazandın 🏆"
+                  : `Bugün ${partner.display_name} kazandı 🏆`}
             </p>
           )}
         </div>
