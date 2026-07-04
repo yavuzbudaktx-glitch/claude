@@ -159,7 +159,7 @@ export function DateSuggestionItem({
             className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-[12.5px] font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
             style={{ background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" }}
           >
-            <Check className="h-3.5 w-3.5" /> Yes! ♥
+            <Check className="h-3.5 w-3.5" /> Accept
           </button>
           <button
             onClick={() => setEditing(true)}

@@ -84,7 +84,7 @@ export function MemberChip({ member, isMe }: { member: ZuyaMemberRow; isMe: bool
 
       {open && (
         <div className="absolute left-0 top-full mt-2 z-50 w-64 card !p-2 max-h-[70vh] overflow-y-auto">
-          <p className="label px-2 pt-1 pb-2">How are you, canım?</p>
+          <p className="label px-2 pt-1 pb-2">Set your status</p>
           {ZUYA_STATUSES.map((s) => {
             const Icon = s.icon;
             const active = s.slug === member.status;

@@ -107,7 +107,7 @@ export function WordleRaceCard() {
   const verdict = mine && theirs ? winnerOf(mine, theirs) : undefined;
 
   return (
-    <Card id="zuya-wordle-card" title="Wordle race" meta="kim daha hızlı?" collapsible={false}>
+    <Card id="zuya-wordle-card" title="Wordle race" collapsible={false}>
       {(weeklyScore.meWins > 0 || weeklyScore.themWins > 0) && (
         <p className="text-[12px] text-muted mb-3 inline-flex items-center gap-1.5">
           <Trophy className="h-3.5 w-3.5 text-accent-2" />
@@ -160,7 +160,7 @@ export function WordleRaceCard() {
               style={{ background: "var(--accent-soft)", color: "var(--accent)" }}
             >
               {verdict === null
-                ? "Dead heat — kader ♥"
+                ? "Tie."
                 : verdict === me.user_id
                   ? "You won today! 🏆"
                   : `${partner.display_name} takes it today 🏆`}

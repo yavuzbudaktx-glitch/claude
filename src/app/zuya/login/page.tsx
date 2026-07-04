@@ -92,7 +92,7 @@ export default function ZuyaLoginPage() {
         password,
       });
       if (error) {
-        setMsg(isFirstTime ? error.message : "Wrong password. Try again, aşkım.");
+        setMsg(isFirstTime ? error.message : "That's not the password.");
         return;
       }
       window.location.href = "/zuya";
@@ -111,7 +111,7 @@ export default function ZuyaLoginPage() {
           <Heart className="h-6 w-6 text-white" fill="currentColor" />
         </div>
         <h1 className="font-display text-5xl tracking-tight mt-4 text-gradient leading-[1.1] pb-1">Zuya</h1>
-        <p className="label mt-1">Yavuz ♥ Züleyha</p>
+        <p className="label mt-1">Yavuz &amp; Züleyha</p>
 
         {status.state === "error" && (
           <div className="mt-6 rounded-2xl border border-[var(--down)] bg-[color-mix(in_srgb,var(--down)_8%,transparent)] p-4 text-left">
@@ -169,9 +169,9 @@ export default function ZuyaLoginPage() {
 
             <p className="text-sm text-ink-soft">
               {isFirstTime ? (
-                <>Welcome, <b>{ZUYA_DISPLAY_NAMES[who]}</b> ♥ Choose a password — you&apos;ll use it from now on.</>
+                <>First time here, <b>{ZUYA_DISPLAY_NAMES[who]}</b>. Set a password you&apos;ll use from now on.</>
               ) : (
-                <>Welcome back, <b>{ZUYA_DISPLAY_NAMES[who]}</b> ♥</>
+                <>Welcome back, <b>{ZUYA_DISPLAY_NAMES[who]}</b>.</>
               )}
             </p>
 
@@ -223,8 +223,6 @@ export default function ZuyaLoginPage() {
         )}
 
         {msg && <p className="text-[13px] text-down mt-4 text-left">{msg}</p>}
-
-        <div className="label mt-8">seni seviyorum, her gün</div>
       </div>
     </main>
   );

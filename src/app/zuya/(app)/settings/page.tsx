@@ -53,7 +53,7 @@ export default function ZuyaSettingsPage() {
         .update({ avatar_updated_at: new Date().toISOString() })
         .eq("user_id", me.user_id);
       refreshAvatar(me.user_id);
-      setAvatarMsg("Looking good ♥");
+      setAvatarMsg("Saved.");
     } finally {
       setAvatarBusy(false);
     }

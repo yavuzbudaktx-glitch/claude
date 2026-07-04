@@ -25,7 +25,7 @@ export function DailyPhotoCard() {
   const pick = entries.length > 0 ? entries[zuyaSeedIdx(`${today}-zuya-photo`, entries.length)] : null;
 
   return (
-    <Card id="zuya-photo-card" title="Today's us" meta="günün karesi" collapsible={false}>
+    <Card id="zuya-photo-card" title="Photo of the day" collapsible={false}>
       {pick ? (
         <figure>
           <div className="rounded-2xl overflow-hidden border border-[var(--rule-soft)]">

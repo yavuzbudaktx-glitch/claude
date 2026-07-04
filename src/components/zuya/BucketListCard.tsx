@@ -73,7 +73,7 @@ export function BucketListCard() {
     <Card
       id="zuya-bucket-card"
       title="Bucket list"
-      meta={items.length > 0 ? `${done}/${items.length} yaptık` : "hayallerimiz"}
+      meta={items.length > 0 ? `${done}/${items.length} done` : undefined}
       collapsible={false}
     >
       <form onSubmit={add} className="flex gap-2 mb-3">
@@ -96,7 +96,7 @@ export function BucketListCard() {
 
       {items.length === 0 && (
         <p className="text-[13px] text-muted text-center py-6">
-          Empty so far — add the first dream ✨
+          Nothing here yet.
         </p>
       )}
 

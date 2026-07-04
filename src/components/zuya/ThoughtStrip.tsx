@@ -105,11 +105,11 @@ export function ThoughtStrip() {
             <b className="text-gradient font-display text-[26px] md:text-[30px] align-middle mr-1.5">
               {partnerCount}
             </b>
-            {partnerCount === 1 ? "time" : "times"} {partner.display_name} thought about you today 💭
+            {partnerCount === 1 ? "time" : "times"} {partner.display_name} thought about you today
           </p>
           <p className="text-muted text-[12.5px] mt-1">
             You thought about {partner.display_name} <b className="text-ink-soft">{myCount}</b>{" "}
-            {myCount === 1 ? "time" : "times"} — seni düşünmek güzel.
+            {myCount === 1 ? "time" : "times"} today.
           </p>
         </div>
 
@@ -130,7 +130,7 @@ export function ThoughtStrip() {
             {cooldownLeft > 0 ? (
               <span className="tabular-nums">{mm}:{ss}</span>
             ) : (
-              <span>Seni düşündüm</span>
+              <span>Seni düşünüyor</span>
             )}
           </button>
 

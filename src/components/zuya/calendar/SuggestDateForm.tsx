@@ -114,7 +114,7 @@ export function SuggestDateForm({
           }}
           className={inputCls}
         >
-          <option value="">✨ …or pick from our bucket list</option>
+          <option value="">…or pick from the bucket list</option>
           {bucket.map((b) => (
             <option key={b.id} value={b.id}>
               {b.title}

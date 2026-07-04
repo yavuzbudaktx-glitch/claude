@@ -187,8 +187,7 @@ export function ZuyaCalendarCard() {
   return (
     <Card
       id="zuya-calendar-card"
-      title="Us, planned"
-      meta="takvimimiz"
+      title="Calendar"
       collapsible={false}
       status={{
         updatedAt: data ? Date.now() : undefined,
@@ -241,7 +240,7 @@ export function ZuyaCalendarCard() {
             </p>
             {agenda.length === 0 && (
               <p className="text-[13px] text-muted">
-                {selectedDay ? "Nothing planned — free for each other ♥" : "A quiet stretch ahead."}
+                {selectedDay ? "Nothing planned." : "A quiet stretch ahead."}
               </p>
             )}
             <div className="divide-rule">
@@ -291,8 +290,7 @@ export function ZuyaCalendarCard() {
       {tab === "suggest" && (
         <div className="max-w-md">
           <p className="text-[13px] text-muted mb-3">
-            Pick a day, a time and a place — {partner.display_name} gets to say yes, tweak it, or
-            (bravely) decline.
+            Pick a day, time and place. {partner.display_name} can accept, suggest changes, or pass.
           </p>
           <SuggestDateForm
             key={bucketPrefill?.id ?? "blank"}
@@ -301,7 +299,7 @@ export function ZuyaCalendarCard() {
               title: bucketPrefill?.title,
               bucket_item_id: bucketPrefill?.id ?? null,
             }}
-            submitLabel={`Ask ${partner.display_name} out`}
+            submitLabel={`Send to ${partner.display_name}`}
             busy={creating}
             onSubmit={createSuggestion}
           />
@@ -312,7 +310,7 @@ export function ZuyaCalendarCard() {
         <div className="space-y-2.5">
           {suggestions.length === 0 && (
             <p className="text-[13px] text-muted">
-              No plans yet — go to “Suggest a date” and ask {partner.display_name} out ✨
+              Nothing planned yet.
             </p>
           )}
           {suggestions.map((s) => (
