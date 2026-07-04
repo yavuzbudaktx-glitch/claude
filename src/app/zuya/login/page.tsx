@@ -1,31 +1,20 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Heart, ArrowLeft, Eye, EyeOff, RotateCcw, AlertTriangle } from "lucide-react";
+import { Heart, ArrowLeft, Eye, EyeOff, RotateCcw } from "lucide-react";
 import { createZuyaClient } from "@/lib/supabase/zuya-client";
 import { ZUYA_DISPLAY_NAMES, ZUYA_USERNAMES, zuyaEmail, type ZuyaUsername } from "@/lib/zuya/config";
 
-type Status =
-  | { state: "loading" }
-  | { state: "ready"; registered: Record<ZuyaUsername, boolean> }
-  | { state: "error"; problem: string; detail?: string };
-
-function problemText(problem: string, detail?: string): string {
-  switch (problem) {
-    case "migration_missing":
-      return "The database isn't set up yet. Open Supabase → SQL Editor, run supabase/migrations/0013_zuya.sql from the repo, then Retry.";
-    case "missing_service_key":
-      return "The server is missing its Supabase key. Add SUPABASE_SERVICE_ROLE_KEY in Vercel → project settings → Environment Variables, then redeploy.";
-    case "fetch_failed":
-      return "Couldn't reach the server. Check your connection and Retry.";
-    default:
-      return `Something's off on the server${detail ? `: ${detail}` : "."} Retry in a moment.`;
-  }
-}
+// The status fetch is ONLY a hint (labels a name "first visit" and preselects
+// set-password vs sign-in). It never gates the UI — the form and the reset
+// button always render, and the server is the source of truth on submit. This
+// is deliberate: a transient status hiccup must not lock anyone out.
+type Registered = Partial<Record<ZuyaUsername, boolean>>;
 
 export default function ZuyaLoginPage() {
-  const [status, setStatus] = useState<Status>({ state: "loading" });
+  const [registered, setRegistered] = useState<Registered>({});
   const [who, setWho] = useState<ZuyaUsername | null>(null);
+  const [firstTimeToggle, setFirstTimeToggle] = useState(false); // user chose "set a password"
   const [forceFirstTime, setForceFirstTime] = useState(false); // after "start over"
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -35,19 +24,14 @@ export default function ZuyaLoginPage() {
   const [msg, setMsg] = useState<string | null>(null);
 
   const loadStatus = useCallback(async () => {
-    setStatus({ state: "loading" });
     try {
       const res = await fetch("/api/zuya/auth/status", { cache: "no-store" });
       const d = await res.json().catch(() => null);
       if (d && d.ready === true) {
-        setStatus({ state: "ready", registered: { yavuz: !!d.yavuz, zuleyha: !!d.zuleyha } });
-      } else if (d && d.ready === false) {
-        setStatus({ state: "error", problem: d.problem ?? "server_error", detail: d.detail });
-      } else {
-        setStatus({ state: "error", problem: "server_error", detail: `HTTP ${res.status}` });
+        setRegistered({ yavuz: !!d.yavuz, zuleyha: !!d.zuleyha });
       }
     } catch {
-      setStatus({ state: "error", problem: "fetch_failed" });
+      // Non-blocking — the form works without it.
     }
   }, []);
 
@@ -55,9 +39,23 @@ export default function ZuyaLoginPage() {
     void loadStatus();
   }, [loadStatus]);
 
-  const registeredNow =
-    who !== null && status.state === "ready" && status.registered[who];
-  const isFirstTime = who !== null && (!registeredNow || forceFirstTime);
+  // Known-registered from the hint: true / false / undefined(unknown).
+  const hint = who ? registered[who] : undefined;
+  // Show the set-password (two-field) flow when: we know it's a new account,
+  // the user asked to set one, or they just reset.
+  const isFirstTime = who !== null && (forceFirstTime || firstTimeToggle || hint === false);
+
+  async function signIn(supabase: ReturnType<typeof createZuyaClient>, username: ZuyaUsername) {
+    const { error } = await supabase.auth.signInWithPassword({
+      email: zuyaEmail(username),
+      password,
+    });
+    if (error) {
+      setMsg(error.message);
+      return false;
+    }
+    return true;
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -69,33 +67,31 @@ export default function ZuyaLoginPage() {
         setMsg("Enter a password.");
         return;
       }
-      if (isFirstTime && password !== confirm) {
-        setMsg("The two passwords don't match.");
-        return;
-      }
+      const supabase = createZuyaClient();
+
       if (isFirstTime) {
+        if (password !== confirm) {
+          setMsg("The two passwords don't match.");
+          return;
+        }
         const res = await fetch("/api/zuya/auth/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username: who, password }),
         });
+        if (res.status === 409) {
+          // Already registered — the hint was stale. Just sign in instead.
+          if (await signIn(supabase, who)) window.location.href = "/zuya";
+          return;
+        }
         if (!res.ok) {
           const d = await res.json().catch(() => ({}));
           setMsg(d.error ?? `Couldn't create the account (HTTP ${res.status}).`);
           return;
         }
       }
-      const supabase = createZuyaClient();
-      const { error } = await supabase.auth.signInWithPassword({
-        email: zuyaEmail(who),
-        password,
-      });
-      if (error) {
-        // Surface the real reason — no more silent failures.
-        setMsg(error.message);
-        return;
-      }
-      window.location.href = "/zuya";
+
+      if (await signIn(supabase, who)) window.location.href = "/zuya";
     } catch (err) {
       setMsg(err instanceof Error ? err.message : "Something went wrong — try again.");
     } finally {
@@ -103,7 +99,6 @@ export default function ZuyaLoginPage() {
     }
   }
 
-  // "Start over" — wipe the account so this name registers fresh.
   async function startOver() {
     if (!who) return;
     setResetting(true);
@@ -122,8 +117,8 @@ export default function ZuyaLoginPage() {
       setPassword("");
       setConfirm("");
       setForceFirstTime(true);
+      setRegistered((r) => ({ ...r, [who]: false }));
       setMsg("Done — set a fresh password below.");
-      void loadStatus();
     } finally {
       setResetting(false);
     }
@@ -132,6 +127,7 @@ export default function ZuyaLoginPage() {
   function pickName(u: ZuyaUsername) {
     setWho(u);
     setForceFirstTime(false);
+    setFirstTimeToggle(false);
     setPassword("");
     setConfirm("");
     setMsg(null);
@@ -147,29 +143,7 @@ export default function ZuyaLoginPage() {
         <h1 className="font-display text-5xl tracking-tight mt-4 text-gradient leading-[1.1] pb-1">Zuya</h1>
         <p className="label mt-1">Yavuz &amp; Züleyha</p>
 
-        {status.state === "error" && (
-          <div className="mt-6 rounded-2xl border border-[var(--down)] bg-[color-mix(in_srgb,var(--down)_8%,transparent)] p-4 text-left">
-            <p className="text-[13px] text-ink-soft leading-relaxed inline-flex items-start gap-2">
-              <AlertTriangle className="h-4 w-4 text-down shrink-0 mt-0.5" />
-              <span>{problemText(status.problem, status.detail)}</span>
-            </p>
-            <button
-              onClick={() => void loadStatus()}
-              className="mt-3 inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-accent hover:brightness-110"
-            >
-              <RotateCcw className="h-3.5 w-3.5" /> Retry
-            </button>
-          </div>
-        )}
-
-        {status.state === "loading" && (
-          <p className="text-muted text-sm mt-6 inline-flex items-center gap-2">
-            <span className="h-3 w-3 rounded-full border border-current border-t-transparent animate-spin" />
-            loading…
-          </p>
-        )}
-
-        {status.state === "ready" && !who && (
+        {!who && (
           <>
             <p className="text-muted text-sm mt-6">Who are you?</p>
             <div className="mt-4 grid grid-cols-2 gap-3">
@@ -182,7 +156,7 @@ export default function ZuyaLoginPage() {
                   <span className="block text-2xl font-display text-ink">
                     {ZUYA_DISPLAY_NAMES[u]}
                   </span>
-                  {!status.registered[u] && (
+                  {registered[u] === false && (
                     <span className="label mt-1 block text-accent">first visit</span>
                   )}
                 </button>
@@ -191,7 +165,7 @@ export default function ZuyaLoginPage() {
           </>
         )}
 
-        {status.state === "ready" && who && (
+        {who && (
           <form onSubmit={submit} className="mt-6 space-y-3 text-left">
             <button
               type="button"
@@ -254,17 +228,29 @@ export default function ZuyaLoginPage() {
               {busy ? "…" : isFirstTime ? "Set password & come in" : "Come in"}
             </button>
 
-            {/* Locked out? Wipe this name and start fresh. */}
-            {!isFirstTime && (
+            {/* Escape hatches — always available, never gated on the status hint. */}
+            <div className="flex items-center justify-between pt-1">
+              {!isFirstTime ? (
+                <button
+                  type="button"
+                  onClick={() => setFirstTimeToggle(true)}
+                  className="text-[12px] text-muted hover:text-ink transition"
+                >
+                  First time? Set a password
+                </button>
+              ) : (
+                <span />
+              )}
               <button
                 type="button"
                 onClick={startOver}
                 disabled={resetting}
-                className="w-full text-[12.5px] text-muted hover:text-down transition disabled:opacity-50"
+                className="inline-flex items-center gap-1 text-[12px] text-muted hover:text-down transition disabled:opacity-50"
               >
-                {resetting ? "resetting…" : "Can't get in? Start over (wipes this account)"}
+                <RotateCcw className="h-3 w-3" />
+                {resetting ? "resetting…" : "Start over"}
               </button>
-            )}
+            </div>
           </form>
         )}
 

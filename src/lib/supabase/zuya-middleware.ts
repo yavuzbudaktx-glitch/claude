@@ -38,14 +38,22 @@ export async function updateZuyaSession(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const path = request.nextUrl.pathname;
 
+  // Any early return MUST carry the cookies getUser() may have refreshed onto
+  // `response` — otherwise a token rotation that coincides with a redirect is
+  // thrown away and the next request logs the user out (intermittent, ~hourly).
+  const carryCookies = (res: NextResponse) => {
+    response.cookies.getAll().forEach((c) => res.cookies.set(c));
+    return res;
+  };
+
   if (!isZuyaEmail(user?.email) && !isPublicZuyaPath(path)) {
     if (path.startsWith("/api/")) {
-      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+      return carryCookies(NextResponse.json({ error: "unauthorized" }, { status: 401 }));
     }
     const url = request.nextUrl.clone();
     url.pathname = "/zuya/login";
     url.search = "";
-    return NextResponse.redirect(url);
+    return carryCookies(NextResponse.redirect(url));
   }
 
   // Signed-in zuya user landing on the login page: straight to the dashboard.
@@ -53,7 +61,7 @@ export async function updateZuyaSession(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/zuya";
     url.search = "";
-    return NextResponse.redirect(url);
+    return carryCookies(NextResponse.redirect(url));
   }
 
   return response;
