@@ -29,6 +29,7 @@ interface CalEvent {
 interface CalResp {
   events: CalEvent[];
   connected: Record<ZuyaUsername, "connected" | "not_connected" | "needs_reconnect" | "error">;
+  details?: Record<string, string>;
 }
 
 const fetcher = (u: string) => fetch(u).then((r) => r.json());
@@ -118,6 +119,7 @@ export function ZuyaCalendarCard() {
     if (!state || state === "connected") return null;
     const isMe = me.username === username;
     const name = isMe ? "your" : `${partner.display_name}'s`;
+    const detail = data?.details?.[username];
     const label =
       state === "needs_reconnect"
         ? `${name} Google needs reconnecting`
@@ -127,13 +129,18 @@ export function ZuyaCalendarCard() {
     return (
       <div
         key={username}
-        className="flex items-center justify-between gap-2 rounded-xl px-3 py-2 bg-[var(--accent-soft)] text-[12px] text-ink-soft"
+        className="rounded-xl px-3 py-2 bg-[var(--accent-soft)] text-[12px] text-ink-soft"
       >
-        <span>{label}</span>
-        {isMe && state !== "error" && (
-          <a href="/api/zuya/google/start" className="font-semibold text-accent shrink-0">
-            Connect →
-          </a>
+        <div className="flex items-center justify-between gap-2">
+          <span>{label}</span>
+          {isMe && (
+            <a href="/api/zuya/google/start" className="font-semibold text-accent shrink-0">
+              {state === "needs_reconnect" || state === "error" ? "Reconnect →" : "Connect →"}
+            </a>
+          )}
+        </div>
+        {isMe && detail && (
+          <p className="mt-1 text-[10.5px] font-mono text-muted-2 break-words">{detail}</p>
         )}
       </div>
     );
