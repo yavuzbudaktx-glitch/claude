@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { X, Play, Pause, RotateCcw, Coffee, Timer } from "lucide-react";
 import { useCommand } from "@/lib/commands";
 import { usePref } from "@/components/PrefsProvider";
@@ -23,7 +24,14 @@ interface FocusDaily {
   sessions: number;    // completed pomodoros today
 }
 
+// Focus mode belongs to the personal dashboard; skip it inside Zuya.
 export function FocusMode() {
+  const pathname = usePathname();
+  if (pathname?.startsWith("/zuya")) return null;
+  return <FocusModeInner />;
+}
+
+function FocusModeInner() {
   const [active, setActive] = useState(false);
   const [mode, setMode] = useState<"count-up" | "pomodoro">("pomodoro");
   const [phase, setPhase] = useState<"focus" | "break">("focus");

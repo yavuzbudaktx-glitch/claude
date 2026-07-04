@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Search, CornerDownLeft } from "lucide-react";
 import { emitCommand, scrollToSection } from "@/lib/commands";
 import { useCity, searchCities, type GeoResult } from "@/lib/use-city";
@@ -24,7 +25,14 @@ function setTheme(next: "light" | "dark") {
   try { localStorage.setItem("theme", next); } catch {}
 }
 
+// The palette belongs to the personal dashboard; Zuya has its own world.
 export function CommandPalette() {
+  const pathname = usePathname();
+  if (pathname?.startsWith("/zuya")) return null;
+  return <CommandPaletteInner />;
+}
+
+function CommandPaletteInner() {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<Mode>("root");
   const [query, setQuery] = useState("");
