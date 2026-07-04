@@ -7,6 +7,10 @@ const withPWA = withPWAInit({
   workboxOptions: {
     skipWaiting: true,
     clientsClaim: true,
+    // Never satisfy /zuya or API navigations from a stale precache — the login
+    // page must always come fresh from the network so a half-updated service
+    // worker can't serve an old, broken auth bundle.
+    navigateFallbackDenylist: [/^\/zuya/, /^\/api/],
   },
 });
 
