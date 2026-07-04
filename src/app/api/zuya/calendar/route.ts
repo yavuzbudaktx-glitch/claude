@@ -31,6 +31,7 @@ export async function GET(req: Request) {
 
   const events: ZuyaCalendarEvent[] = [];
   const connected: Record<string, ZuyaConnState> = {};
+  const details: Record<string, string> = {};
 
   await Promise.all(
     (members ?? []).map(async (m) => {
@@ -38,18 +39,20 @@ export async function GET(req: Request) {
       const tok = await zuyaAccessTokenFor(m.user_id);
       if ("error" in tok) {
         connected[username] = tok.error;
+        if (tok.detail) details[username] = tok.detail;
         return;
       }
       try {
         const evs = await fetchEventsBetween(tok.token, from, to);
         connected[username] = "connected";
         for (const e of evs) events.push({ ...e, owner: username });
-      } catch {
+      } catch (e) {
         connected[username] = "error";
+        details[username] = (e instanceof Error ? e.message : String(e)).slice(0, 300);
       }
     }),
   );
 
   events.sort((a, b) => a.start.localeCompare(b.start));
-  return NextResponse.json({ events, connected, from, to });
+  return NextResponse.json({ events, connected, details, from, to });
 }

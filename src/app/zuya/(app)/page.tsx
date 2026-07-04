@@ -1,19 +1,14 @@
-import { NudgeStrip } from "@/components/zuya/NudgeStrip";
 import { ZuyaCalendarCard } from "@/components/zuya/calendar/ZuyaCalendarCard";
 import { DailyPhotoCard } from "@/components/zuya/DailyPhotoCard";
 import { MessagesCard } from "@/components/zuya/MessagesCard";
 import { DailyQuestionCard } from "@/components/zuya/DailyQuestionCard";
 import { BucketListCard } from "@/components/zuya/BucketListCard";
-import { ScrabbleCard } from "@/components/zuya/ScrabbleCard";
 
 export const dynamic = "force-dynamic";
 
 export default function ZuyaDashboard() {
   return (
     <main className="space-y-5 pt-5">
-      {/* Both of us + a quick nudge. */}
-      <NudgeStrip />
-
       {/* Our calendars, merged + date suggestions. */}
       <div id="zuya-calendar" className="scroll-mt-20 [&>*]:h-full">
         <ZuyaCalendarCard />
@@ -37,11 +32,6 @@ export default function ZuyaDashboard() {
         <div id="zuya-bucket" className="scroll-mt-20 [&>*]:h-full">
           <BucketListCard />
         </div>
-      </div>
-
-      {/* Kelimelik — Turkish Scrabble, full width for the board. */}
-      <div id="zuya-kelimelik" className="scroll-mt-20">
-        <ScrabbleCard />
       </div>
     </main>
   );

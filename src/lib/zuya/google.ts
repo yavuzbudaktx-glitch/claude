@@ -45,10 +45,14 @@ export function zuyaGoogleRedirectUri(requestUrl: string): string {
   return `${base.replace(/\/$/, "")}/api/zuya/google/callback`;
 }
 
-/** Mint an access token for a zuya user, or report why we can't. */
-export async function zuyaAccessTokenFor(
-  userId: string,
-): Promise<{ token: string } | { error: "not_connected" | "needs_reconnect" }> {
+export type ZuyaTokenResult =
+  | { token: string }
+  | { error: "not_connected" | "needs_reconnect" | "error"; detail?: string };
+
+/** Mint an access token for a zuya user, or report why we can't. Never throws
+ * — unexpected failures come back as { error: "error", detail } so the UI can
+ * show the real reason instead of a blank "didn't load". */
+export async function zuyaAccessTokenFor(userId: string): Promise<ZuyaTokenResult> {
   const service = createServiceClient();
   const { data: row } = await service
     .from("zuya_google_tokens")
@@ -63,14 +67,11 @@ export async function zuyaAccessTokenFor(
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     if (msg.includes("invalid_grant")) {
-      // Token revoked or expired (e.g. Google testing-mode 7-day expiry):
-      // flip the flag so the UI shows a "Reconnect" chip instead of erroring.
-      await service
-        .from("zuya_members")
-        .update({ google_connected: false })
-        .eq("user_id", userId);
+      // Token revoked or expired: flip the flag so the UI shows "Reconnect".
+      await service.from("zuya_members").update({ google_connected: false }).eq("user_id", userId);
       return { error: "needs_reconnect" };
     }
-    throw e;
+    // invalid_client / bad keys / API errors — surface the reason.
+    return { error: "error", detail: msg.slice(0, 300) };
   }
 }
