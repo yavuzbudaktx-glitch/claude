@@ -1,14 +1,14 @@
 # Britannica scrape debug dump
-# generated: 2026-07-03T20:42:53.332Z
-# url:       https://www.britannica.com/on-this-day/july-3
+# generated: 2026-07-04T08:13:17.826Z
+# url:       https://www.britannica.com/on-this-day/july-4
 # fetcher:   Jina Reader
 # kind:      markdown
-# length:    20655
+# length:    22924
 # parsed:    NO
 # -----------------------------------------------------------------
 Title: On This Day - What Happened Today In History | Britannica
 
-URL Source: https://www.britannica.com/on-this-day/july-3
+URL Source: https://www.britannica.com/on-this-day/july-4
 
 Markdown Content:
 [🎆 Save 30% Off A Britannica Subscription! 🎆 Subscribe Now](https://cam.britannica.com/subscribe/bp-july-fourth-2026?utm_source=premium&utm_medium=toupee&utm_campaign=july-fourth-2026)
@@ -35,7 +35,7 @@ Login
 
 [Home](https://www.britannica.com/) Today in History ![Image 3: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-logo.png?v=3.190.3)
 
-![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-star.svg?v=3.190.3)July 3
+![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-star.svg?v=3.190.3)July 4
 
 ![Image 5: Today In History Phone](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-phone.png?v=3.189.7)
 
@@ -61,7 +61,7 @@ June
 
 [22](https://www.britannica.com/on-this-day/June-22)[23](https://www.britannica.com/on-this-day/June-23)[24](https://www.britannica.com/on-this-day/June-24)[25](https://www.britannica.com/on-this-day/June-25)[26](https://www.britannica.com/on-this-day/June-26)[27](https://www.britannica.com/on-this-day/June-27)[28](https://www.britannica.com/on-this-day/June-28)
 
-[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-3)[](https://www.britannica.com/on-this-day/july-3)[](https://www.britannica.com/on-this-day/july-3)[](https://www.britannica.com/on-this-day/july-3)[](https://www.britannica.com/on-this-day/july-3)
+[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)
 
 July
 
@@ -73,7 +73,7 @@ July
 
 [22](https://www.britannica.com/on-this-day/July-22)[23](https://www.britannica.com/on-this-day/July-23)[24](https://www.britannica.com/on-this-day/July-24)[25](https://www.britannica.com/on-this-day/July-25)[26](https://www.britannica.com/on-this-day/July-26)[27](https://www.britannica.com/on-this-day/July-27)[28](https://www.britannica.com/on-this-day/July-28)
 
-[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-3)[](https://www.britannica.com/on-this-day/july-3)[](https://www.britannica.com/on-this-day/july-3)[](https://www.britannica.com/on-this-day/july-3)
+[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)
 
 August
 
@@ -85,7 +85,7 @@ August
 
 [22](https://www.britannica.com/on-this-day/August-22)[23](https://www.britannica.com/on-this-day/August-23)[24](https://www.britannica.com/on-this-day/August-24)[25](https://www.britannica.com/on-this-day/August-25)[26](https://www.britannica.com/on-this-day/August-26)[27](https://www.britannica.com/on-this-day/August-27)[28](https://www.britannica.com/on-this-day/August-28)
 
-[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-3)[](https://www.britannica.com/on-this-day/july-3)[](https://www.britannica.com/on-this-day/july-3)[](https://www.britannica.com/on-this-day/july-3)
+[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)
 
 August
 
@@ -95,25 +95,25 @@ August
 
 [Go to Today's Date](https://www.britannica.com/on-this-day)
 
- 1863: The end of the Battle of Gettysburg
+ 1776: The “misguided Americans” and their “inadmissible claim of Independence”
 
- On this day in 1863, the [Battle of Gettysburg](https://www.britannica.com/event/Battle-of-Gettysburg) ended with a crushing Southern defeat and marked the turning point in the [American Civil War](https://www.britannica.com/event/American-Civil-War). The fighting began two days earlier when Gen. [Robert E. Lee](https://www.britannica.com/biography/Robert-E-Lee) led Confederate troops into Pennsylvania and attacked Union forces. The climax occurred on July 3, with the spectacular failure of Pickett’s Charge, in which Confederate troops tried to break through Union lines. Lee was forced to retreat the next day. Gettysburg was the bloodiest battle of the war, with more than 50,000 casualties.
+ On this day in 1776, the[Declaration of Independence](https://www.britannica.com/topic/Declaration-of-Independence)was approved by the [Continental Congress](https://www.britannica.com/topic/Continental-Congress). The document—which announced the separation of the [13 North American British colonies](https://www.britannica.com/topic/American-colonies)from Great Britain—was met with scorn by British officials. Fighting dragged on for years, and when the [American Revolution](https://www.britannica.com/event/American-Revolution) finally ended in 1783, the colonies were victorious and went on to form the [United States of America](https://www.britannica.com/place/United-States). July 4 subsequently became a national holiday.
 
-[READ MORE](https://www.britannica.com/today-in-history/July-3-The-End-of-the-Battle-of-Gettysburg?utm_source=otd)
+[READ MORE](https://www.britannica.com/today-in-history/July-4-Declaration-of-Independence-approved?utm_source=otd)
 
-![Image 6: July 3, 1863: What seemed like a good way to end the war ended in the single bloodiest battle of it](https://cdn.britannica.com/08/289308-050-BA6B74F8/today-in-history-Battle-of-Gettysburg-ends.jpg?w=530&h=300&c=crop)
+![Image 6: July 4, 1776: The Unanimous Declaration of the 13 United States](https://cdn.britannica.com/09/289309-050-19BC31FC/today-in-history-Declaration-of-Independence-approved.jpg?w=530&h=300&c=crop)
 
- © North Wind Picture Archives/Alamy; Photo Illustration Encyclopædia Britannica, Inc.
+ Library of Congress, Washington, D.C. (2003576546); Photo Illustration Encyclopædia Britannica, Inc.
 
  Featured Event 
 
-![Image 7: Quebec city](https://cdn.britannica.com/13/193613-050-F2A41D84/Chateau-Frontenac-city-Quebec-Canada-Saint-Lawrence.jpg?w=356&h=200&c=crop)
+![Image 7: John Trumbull's depiction of July 4, 1776](https://cdn.britannica.com/21/143621-050-D0409B47/Declaration-of-Independence-canvas-rotunda-John-Trumbull-July-4-1776.jpg?w=356&h=200&c=crop)
 
- © Pgiam—iStock/Getty Images
+ Architect of the Capitol
 
-[Quebec founded](https://www.britannica.com/place/Quebec)
+The death of Jefferson and Adams
 
- On this day in 1608, [Samuel de Champlain](https://www.britannica.com/biography/Samuel-de-Champlain) founded the city of [Quebec](https://www.britannica.com/place/Quebec), the first permanent European base in [Canada](https://www.britannica.com/place/Canada). Its splendid views and unique character were noted as early as 1842 during a visit by[Charles Dickens](https://www.britannica.com/biography/Charles-Dickens-British-novelist), who called Quebec the “Gibraltar of North America.”
+ Two major figures of the [American Revolution](https://www.britannica.com/event/American-Revolution) who became U.S. presidents, [Thomas Jefferson](https://www.britannica.com/biography/Thomas-Jefferson) and [John Adams](https://www.britannica.com/biography/John-Adams-president-of-United-States), died on this day in 1826—50 years to the day after the adoption of the [Declaration of Independence](https://www.britannica.com/topic/Declaration-of-Independence). Adams’s last words were “Jefferson survives.” He was unaware that Jefferson had died hours earlier.
 
 Featured Biography
 
@@ -121,123 +121,151 @@ Featured Biography
 
  Featured Biography 
 
-[![Image 8: Leoš Janáček](https://cdn.britannica.com/06/10706-004-4006BC17/Leos-Janacek.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Leos-Janacek?utm_source=otd)
+[![Image 8: Swami Vivekananda, 1897](https://cdn.britannica.com/51/195551-050-9F66C031/Vivekananda-1897.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Vivekananda?utm_source=otd)
 
- Eastfoto
+ Paul Fearn/Alamy
 
-Leoš Janáček
+Vivekananda
 
-> From an early age, Janác̆ek believed that music should follow the natural rhythms of human speech, animals, and birds. He went on to produce works…that are romantic, delight in the natural, and have an ‘angular’ and even ascetic quality and a rhythmic vitality, all at the same time.
-> 
-> L.D. Lampson, Classical Net
-
-Czech composer [Leoš Janáček](https://www.britannica.com/biography/Leos-Janacek), born this day in 1854, was a leading exponent of musical nationalism during the 20th century, and he developed a style that was intimately connected with the inflections of the [Czech language](https://www.britannica.com/topic/Czech-language).
+Hindu spiritual leader and reformer [Vivekananda](https://www.britannica.com/biography/Vivekananda)—who sought to combine Indian spirituality with Western material progress, maintaining that they supplemented and complemented one another—died this day in [Calcutta](https://www.britannica.com/place/Kolkata) in 1902.
 
 Famous Birthdays
 
-1949
+1910
 
-[Elizabeth Edwards](https://www.britannica.com/biography/Elizabeth-Edwards?utm_source=otd)
+[Robert K. Merton](https://www.britannica.com/biography/Robert-K-Merton?utm_source=otd)
 
-American attorney and author
+American sociologist
 
-1909
+1902
 
-[Stavros Spyros Niarchos](https://www.britannica.com/money/Stavros-Spyros-Niarchos?utm_source=otd)
+[Meyer Lansky](https://www.britannica.com/biography/Meyer-Lansky?utm_source=otd)
 
-Greek businessman
+American gangster
 
-1879
+1883
 
-[Alfred Korzybski](https://www.britannica.com/biography/Alfred-Korzybski?utm_source=otd)
+[Rube Goldberg](https://www.britannica.com/biography/Rube-Goldberg?utm_source=otd)
 
-American philosopher
+American cartoonist
 
-1860
+1546
 
-[Charlotte Perkins Gilman](https://www.britannica.com/biography/Charlotte-Perkins-Gilman?utm_source=otd)
+[Murad III](https://www.britannica.com/biography/Murad-III?utm_source=otd)
 
-American author and social reformer
+Ottoman sultan
 
-[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-3)
+[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-4)
 
-## More on July 3
+## More on July 4
 
-![Image 9: Mohamed Morsi](https://cdn.britannica.com/12/233712-050-4D64DC0F/Egyptian-Presdient-Mohamed-Morsi-speaks-Clinton-Global-Initiative-meeting-New-York-City-2012.jpg?w=260&h=196&c=crop)
+![Image 9: Pope Francis](https://cdn.britannica.com/19/166419-050-6F262B52/Francis-I-mass-Vatican-City-March-14-2013.jpg?w=260&h=196&c=crop)
 
- Mario Tama/Getty Images
+ © Abaca Press/Alamy
 
-2013
+2019
 
- Following massive demonstrations against his rule, Egyptian President [Mohamed Morsi](https://www.britannica.com/biography/Mohamed-Morsi) was removed from office by a military action. _[[Test your knowledge of Egyptian history](https://www.britannica.com/quiz/egyptian-history-quiz).]_
+ Pope [Francis](https://www.britannica.com/biography/Francis-I-pope) and President [Vladimir Putin](https://www.britannica.com/biography/Vladimir-Putin) of Russia met in Vatican City and discussed, among other issues, [ongoing fighting in Ukraine](https://www.britannica.com/place/Ukraine/The-Poroshenko-administration#ref351575) and the schism between the [Orthodox Church of Ukraine](https://www.britannica.com/topic/Orthodox-Church-of-Ukraine) and the [Russian Orthodox Church](https://www.britannica.com/topic/Russian-Orthodox-Church).
 
-![Image 10: Mourners and soldiers stand behind coffins draped in Iranian flags at a funeral in Tehran for Iran Air Flight 655 victims, with a large illustration of the plane being shot down displayed.](https://cdn.britannica.com/81/285481-050-7C46B907/Funeral-services-for-Iran-Air-655-victims-July-1988.jpg?w=260&h=196&c=crop)
+![Image 10: Large Hadron Collider](https://cdn.britannica.com/76/100076-050-696FA9C8/magnet-Compact-Muon-Solenoid-Large-Hadron-Collider-2007.jpg?w=260&h=196&c=crop)
 
- ©Norbert Schiller—AFP/Getty Images
+ © 2007 CERN
 
-1988
+2012
 
- The USS _Vincennes_ shot down an Iranian airliner over the[Strait of Hormuz](https://www.britannica.com/place/Strait-of-Hormuz), killing all 290 people on board; the [passenger plane](https://www.britannica.com/event/Iran-Air-flight-655), which was in Iranian airspace, had been incorrectly identified as a fighter jet. _[[Read our timeline about U.S.–Iran relations](https://www.britannica.com/topic/US-Iran-Relations-A-Timeline).]_
+ Scientists at the [Large Hadron Collider](https://www.britannica.com/technology/Large-Hadron-Collider) at [CERN](https://www.britannica.com/topic/CERN) announced that they had detected an interesting signal that was later confirmed to be from a [Higgs boson](https://www.britannica.com/science/Higgs-boson).
 
-![Image 11: Michael J. Fox](https://cdn.britannica.com/33/130633-050-DA6DF1CF/Michael-J-Fox-activist.jpg?w=260&h=196&c=crop)
+![Image 11: the Clash](https://cdn.britannica.com/78/23078-004-8F90DCE3/The-Clash.jpg?w=260&h=196&c=crop)
 
- Peter Kramer/Getty Images
-
-1985
-
- The comedy Back to the Future, directed by [Robert Zemeckis](https://www.britannica.com/biography/Robert-Zemeckis) and starring [Michael J. Fox](https://www.britannica.com/biography/Michael-J-Fox) as Marty McFly, was released in American theaters; a huge hit, it was followed by several sequels. _[[Take our quiz about movies](https://www.britannica.com/quiz/everything-about-movies-quiz).]_
-
-![Image 12: Entebbe raid](https://cdn.britannica.com/72/128072-050-78A16B7D/Israeli-military-commander-Dan-Shomron.jpg?w=260&h=196&c=crop)
-
- Keystone/Hulton Archive /Getty Images
+ © Paul Slattery/Retna Ltd.
 
 1976
 
- An [Israeli](https://www.britannica.com/place/Israel) commando squad, led by [Dan Shomron](https://www.britannica.com/), launched a [rescue](https://www.britannica.com/event/Entebbe-raid) of hostages held by airplane hijackers in [Entebbe](https://www.britannica.com/place/Entebbe), Uganda.
+ British [punk rock](https://www.britannica.com/art/punk) band [the Clash](https://www.britannica.com/topic/the-Clash-British-rock-group) gave their first public performance, opening for [the Sex Pistols](https://www.britannica.com/topic/the-Sex-Pistols) in a pub in Sheffield, England. _[[See what you know about the ’70s](https://www.britannica.com/quiz/that-groovy-70s-quiz).]_
 
-![Image 13: Jim Morrison with the Doors](https://cdn.britannica.com/15/222915-050-9218AAD5/The-Doors-Jim-Morrison-John-Densmore-Ray-Manzarek-Robbie-Krieger-undated-photo.jpg?w=260&h=196&c=crop)
+![Image 12: Manuel A. Roxas](https://cdn.britannica.com/68/135468-050-E7D01338/Manuel-Roxas-1923.jpg?w=260&h=196&c=crop)
 
- Michael Ochs Archives/Getty Images
+ National Photo Company Collection/Library of Congress, Washington, D.C. (Digital File Number: LC-DIG-npcc-10140)
 
-1971
+1946
 
- American singer and songwriter [Jim Morrison](https://www.britannica.com/biography/Jim-Morrison), who was a member of the [psychedelic rock](https://www.britannica.com/art/psychedelic-rock) group [the Doors](https://www.britannica.com/topic/The-Doors), died at age 27 in Paris; the official cause of death was heart failure. _[[Take our quiz about rock music](https://www.britannica.com/quiz/rock-music-and-rock-n-roll).]_
+ The [Republic of the Philippines](https://www.britannica.com/topic/history-of-Philippines/World-War-II#ref360181) was proclaimed, and [Manuel Roxas](https://www.britannica.com/biography/Manuel-Roxas-y-Acuna) became its first president.
 
-![Image 14: The original lineup](https://cdn.britannica.com/41/197341-050-4859B808/The-Rolling-Stones-Bill-Wyman-Keith-Richards-1964.jpg?w=260&h=196&c=crop)
+![Image 13: Lou Gehrig](https://cdn.britannica.com/57/11557-050-1B5685F6/Lou-Gehrig-1939.jpg?w=260&h=196&c=crop)
 
- © Terry O'Neill—REX/Shutterstock.com
+ AP
 
-1969
+1939
 
- Just weeks after being fired from the [rock](https://www.britannica.com/art/rock-and-roll-early-style-of-rock-music) band [the Rolling Stones](https://www.britannica.com/topic/the-Rolling-Stones), British musician Brian Jones was found dead in his swimming pool. _[[How much do you know about musical groups?](https://www.britannica.com/quiz/spotlight-on-musical-groups)]_
+ On an appreciation day in his honor, American [baseball](https://www.britannica.com/sports/baseball) player [Lou Gehrig](https://www.britannica.com/biography/Lou-Gehrig), who had been forced to retire months earlier due to [ALS](https://www.britannica.com/science/amyotrophic-lateral-sclerosis), gave a memorable speech in which he claimed to be “the luckiest man on the face of the earth.” _[[How much do you know about baseball?](https://www.britannica.com/quiz/baseball)]_
 
-![Image 15: Top Gun](https://cdn.britannica.com/11/185311-050-31E5BD65/Tom-Cruise-Top-Gun-Tony-Scott.jpg?w=260&h=196&c=crop)
+![Image 14: default image](https://cdn.britannica.com/mendel-resources/3-190/images/shared/thistle-blue-half.svg?v=3.190.3)
 
- Paramount Pictures
+ Image: Encyclopædia Britannica, Inc.
 
-1962
+1930
 
- American actor [Tom Cruise](https://www.britannica.com/biography/Tom-Cruise)—who was one of Hollywood’s most popular leading men, known for his clean-cut good looks and versatility—was born. _[[Test your knowledge of A-list actors](https://www.britannica.com/quiz/a-list-of-actors).]_
+ The [Nation of Islam](https://www.britannica.com/topic/Nation-of-Islam) is founded by [Wallace Fard](https://www.britannica.com/biography/Wallace-D-Fard) (later Wali Fard Muhammad) in [Detroit](https://www.britannica.com/place/Detroit). A religious movement that combines elements of Muslim teachings with Black nationalism, the Nation of Islam was created with a mission “to teach the downtrodden and defenseless Black people a thorough knowledge of God and of themselves.” _[[Learn more about the people, places, and events that shaped the 1930s](https://www.britannica.com/topic/Timeline-of-the-1930s).]_
 
-![Image 16: United States Capitol, Washington, D.C.](https://cdn.britannica.com/06/77406-050-37596D86/United-States-Capitol-place-Washington-DC-US.jpg?w=260&h=196&c=crop)
+![Image 15: Jack Johnson](https://cdn.britannica.com/57/78357-050-1AADB486/Jack-Johnson-1909.jpg?w=260&h=196&c=crop)
 
- © Corbis
+ Library of Congress, Washington, D.C.
 
-1856
+1910
 
- The [U.S. House of Representatives](https://www.britannica.com/topic/House-of-Representatives-United-States-government) voted to admit [Kansas](https://www.britannica.com/place/Kansas) to statehood under the antislavery resolution known as the [Topeka Constitution](https://www.britannica.com/event/Topeka-Constitution), despite the opposition of the [Senate](https://www.britannica.com/topic/Senate-United-States-government) and President [Franklin Pierce](https://www.britannica.com/biography/Franklin-Pierce). _[[How much do you know about U.S. history?](https://www.britannica.com/quiz/historical-usa)]_
+ In what was billed as the “Fight of the Century,” African American [boxer](https://www.britannica.com/sports/boxing)[Jack Johnson](https://www.britannica.com/biography/Jack-Johnson) defeated [James Jackson Jeffries](https://www.britannica.com/biography/James-Jackson-Jeffries), who was considered the “Great White Hope.” Johnson’s victory led to nationwide celebrations by Black Americans that were sometimes met by violence from white people, resulting in more than 20 deaths across the country.
 
-![Image 17: George Washington](https://cdn.britannica.com/47/65247-050-66AAA610/George-Washington-staff-provision-train-supplies-Continental.jpg?w=260&h=196&c=crop)
+![Image 16: Statue of Liberty](https://cdn.britannica.com/82/183382-050-D832EC3A/Detail-head-crown-Statue-of-Liberty-New.jpg?w=260&h=196&c=crop)
 
- Library of Congress, Washington, D.C. (reproduction no. LC-DIG-pga-0288)
+ © shproteg/Fotolia
 
-1775
+1884
 
-[George Washington](https://www.britannica.com/biography/George-Washington) officially assumed command of the Continental Army during the [American Revolution](https://www.britannica.com/event/American-Revolution), several weeks after being appointed to the post. _[[Take our quiz about the American Revolution](https://www.britannica.com/quiz/the-american-revolution).]_
+ The [Statue of Liberty](https://www.britannica.com/topic/Statue-of-Liberty) was presented to the [United States](https://www.britannica.com/place/United-States) by the [French](https://www.britannica.com/place/France) in Paris. _[[Find out why the Statue of Liberty is a woman](https://www.britannica.com/story/why-is-the-statue-of-liberty-a-woman).]_
+
+![Image 17: Alice's Adventures in Wonderland](https://cdn.britannica.com/98/76198-050-3B5E4070/John-Tenniel-Illustration-Lewis-Carroll-Alices-Adventures.jpg?w=260&h=196&c=crop)
+
+ Image: Encyclopædia Britannica, Inc.
+
+1865
+
+[Lewis Carroll](https://www.britannica.com/biography/Lewis-Carroll)’s [Alice’s Adventures in Wonderland](https://www.britannica.com/) was published, though the first print run was soon recalled because of quality issues; a new first edition was released in November. _[[Take our quiz about famous literary characters](https://www.britannica.com/quiz/getting-into-character).]_
+
+![Image 18: “Walt Whitman, an American, one of the roughs, a kosmos”](https://cdn.britannica.com/80/26880-050-CEB5F414/Walt-Whitman-photograph-Mathew-Brady.jpg?w=260&h=196&c=crop)
+
+ Library of Congress, Washington, D.C.
+
+1855
+
+ American author [Walt Whitman](https://www.britannica.com/biography/Walt-Whitman) first published [Leaves of Grass](https://www.britannica.com/topic/Leaves-of-Grass-by-Whitman), a landmark in the history of [American literature](https://www.britannica.com/art/American-literature); undergoing numerous revisions, the [poetry](https://www.britannica.com/art/poetry) collection became known for its unconventional language and its celebration of the human body and sexual passion. _[[Sort fact from fiction in our poetry quiz](https://www.britannica.com/quiz/the-abcs-of-poetry-fact-or-fiction).]_
+
+![Image 19: Henry David Thoreau](https://cdn.britannica.com/42/9042-050-9C83EE9C/Henry-David-Thoreau-portrait-Samuel-Worcester-Rowse-1854.jpg?w=260&h=196&c=crop)
+
+ Courtesy of the Corporation of the Free Public Library, Concord, Mass.
+
+1845
+
+ Essayist and philosopher [Henry David Thoreau](https://www.britannica.com/biography/Henry-David-Thoreau) moved to his retreat at [Walden Pond](https://www.britannica.com/place/Walden-Pond), where he eventually wrote a series of reflective essays titled [Walden; or, Life in the Woods](https://www.britannica.com/topic/Walden). _[[Take our authors and poets quiz](https://www.britannica.com/quiz/the-literary-world-authors-poets).]_
+
+![Image 20: A son of Salem](https://cdn.britannica.com/33/166133-050-F75F668F/Nathaniel-Hawthorne-photograph-Mathew-Brady.jpg?w=260&h=196&c=crop)
+
+ Brady-Handy Photograph Collection/Library of Congress, Washington, D.C. (digital file no. LC-DIG-cwpbh-03440)
+
+1804
+
+[Nathaniel Hawthorne](https://www.britannica.com/biography/Nathaniel-Hawthorne)—whose greatest literary works, including the novel [The Scarlet Letter](https://www.britannica.com/topic/The-Scarlet-Letter-novel-by-Hawthorne) (1850), are marked by profound psychological and moral insight—was born in [Salem](https://www.britannica.com/place/Salem-Massachusetts), Massachusetts. _[[Test your knowledge of famous novels](https://www.britannica.com/quiz/the-literary-world-famous-novels).]_
+
+![Image 21: United States Military Academy](https://cdn.britannica.com/82/114982-050-44B11DD4/Members-colour-guard-West-Point-United-States.jpg?w=260&h=196&c=crop)
+
+ U.S. Army Photo
+
+1802
+
+ The [United States Military Academy](https://www.britannica.com/topic/United-States-Military-Academy) opened in West Point, New York.
 
 SIGN UP FOR
 
-![Image 18: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 19: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
+![Image 22: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 23: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
 
 History's Biggest Headlines
 
@@ -247,4 +275,4 @@ SIGN UP
 
 ### Thank you for signing up!
 
-![Image 21](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=133&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-3&s=83A9314F-5AE8-40D2-9A95-91E0E0308B04&json=%20)![Image 22: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=c9c330ea-3c92-1548-2268-600c9418850d&iiqpciddate=1783111284224&tsrnd=454_1783111284230&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.46%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.46%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 23](https://ids.ad.gt/api/v1/halo_match?id=AU1D-0100-001783111286-HTBM7I5Z-2ECT&halo_id=060ixfcju6a6597989e9666666666666666uooiwi0e0y62646m60000000001000)![Image 24](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001783111286-HTBM7I5Z-2ECT)![Image 25](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001783111286-HTBM7I5Z-2ECT&adnxs_id=$UID&gdpr=0)![Image 26](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001783111286-HTBM7I5Z-2ECT%26auid%3DAU1D-0100-001783111286-HTBM7I5Z-2ECT&gdpr=0)![Image 27](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001783111286-HTBM7I5Z-2ECT&gdpr=0)![Image 28](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001783111286-HTBM7I5Z-2ECT&gdpr=0)![Image 29](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001783111286-HTBM7I5Z-2ECT&gdpr=0)![Image 30](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001783111286-HTBM7I5Z-2ECT&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001783111286-HTBM7I5Z-2ECT%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 31](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4MzExMTI4Ni1IVEJNN0k1Wi0yRUNU&id=AU1D-0100-001783111286-HTBM7I5Z-2ECT&gdpr=0)![Image 32](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001783111286-HTBM7I5Z-2ECT)![Image 33](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001783111286-HTBM7I5Z-2ECT&uid=[UID]&gdpr=0)![Image 34](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001783111286-HTBM7I5Z-2ECT%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
+![Image 25](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=141&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-4&s=CFD90CFC-582C-4681-A157-C0F7439D1478&json=%20)![Image 26: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=10a458db-473e-be01-0333-01a9bbab907f&iiqpciddate=1783152566365&tsrnd=160_1783152566372&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.46%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.46%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 27](https://ids.ad.gt/api/v1/halo_match?id=AU1D-0100-001783152568-AHDU6O13-355V&halo_id=060ixfcju6a659d9a989b66666666666666uooiwi0e0y6k6e646g000000001000)![Image 28](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001783152568-AHDU6O13-355V)![Image 29](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001783152568-AHDU6O13-355V&adnxs_id=$UID&gdpr=0)![Image 30](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001783152568-AHDU6O13-355V%26auid%3DAU1D-0100-001783152568-AHDU6O13-355V&gdpr=0)![Image 31](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001783152568-AHDU6O13-355V&gdpr=0)![Image 32](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001783152568-AHDU6O13-355V&gdpr=0)![Image 33](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001783152568-AHDU6O13-355V&gdpr=0)![Image 34](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001783152568-AHDU6O13-355V&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001783152568-AHDU6O13-355V%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 35](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4MzE1MjU2OC1BSERVNk8xMy0zNTVW&id=AU1D-0100-001783152568-AHDU6O13-355V&gdpr=0)![Image 36](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001783152568-AHDU6O13-355V)![Image 37](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001783152568-AHDU6O13-355V&uid=[UID]&gdpr=0)![Image 38](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001783152568-AHDU6O13-355V%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
