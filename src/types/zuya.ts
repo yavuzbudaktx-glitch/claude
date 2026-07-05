@@ -8,6 +8,7 @@ export interface ZuyaMemberRow {
   status_updated_at: string | null;
   avatar_updated_at: string | null;
   google_connected: boolean;
+  spotify_connected?: boolean;
   notif_prefs: Record<string, unknown>;
   created_at: string;
   updated_at: string;

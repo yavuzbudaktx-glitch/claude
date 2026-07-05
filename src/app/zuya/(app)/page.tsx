@@ -4,12 +4,16 @@ import { MessagesCard } from "@/components/zuya/MessagesCard";
 import { DailyQuestionCard } from "@/components/zuya/DailyQuestionCard";
 import { BucketListCard } from "@/components/zuya/BucketListCard";
 import { LocationCard } from "@/components/zuya/LocationCard";
+import { NowPlayingCard } from "@/components/zuya/NowPlayingCard";
 
 export const dynamic = "force-dynamic";
 
 export default function ZuyaDashboard() {
   return (
     <main className="space-y-5 pt-5">
+      {/* Listening now (only renders if someone's connected Spotify). */}
+      <NowPlayingCard />
+
       {/* Where we are. */}
       <div id="zuya-location" className="scroll-mt-20">
         <LocationCard />

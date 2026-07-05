@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, Camera, KeyRound, CalendarCheck2, Unplug, LogOut } from "lucide-react";
+import { ArrowLeft, Camera, KeyRound, CalendarCheck2, Unplug, LogOut, Music } from "lucide-react";
 import { Card } from "@/components/Card";
 import { useZuya } from "@/components/zuya/ZuyaProvider";
 import { ZuyaAvatar } from "@/components/zuya/ZuyaAvatar";
@@ -28,6 +28,18 @@ export default function ZuyaSettingsPage() {
   const [pwBusy, setPwBusy] = useState(false);
 
   const [googleBusy, setGoogleBusy] = useState(false);
+  const spotifyFlash = params.get("spotify");
+  const [spotifyBusy, setSpotifyBusy] = useState(false);
+
+  async function disconnectSpotify() {
+    setSpotifyBusy(true);
+    try {
+      await fetch("/api/zuya/spotify/disconnect", { method: "POST" });
+      window.location.href = "/zuya/settings";
+    } finally {
+      setSpotifyBusy(false);
+    }
+  }
 
   async function uploadAvatar(file: File) {
     // iPhone photos are often HEIC (browsers can't show them) and rotated —
@@ -191,6 +203,38 @@ export default function ZuyaSettingsPage() {
                 <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.6l6.2 5.2c-.4.3 6.7-4.9 6.7-14.8 0-1.3-.1-2.4-.4-3.5z"/>
               </svg>
               Connect Google Calendar
+            </a>
+          </>
+        )}
+      </Card>
+
+      <Card title="Spotify" collapsible={false}>
+        {spotifyFlash === "connected" && <p className="text-[13px] text-up mb-3">Spotify bağlandı ✓</p>}
+        {spotifyFlash === "error" && <p className="text-[13px] text-down mb-3">Bağlanamadı — tekrar dene.</p>}
+        {me.spotify_connected ? (
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-[13px] text-ink-soft inline-flex items-center gap-2">
+              <Music className="h-4 w-4 text-up" /> Bağlı — ne dinlediğin panoda görünüyor.
+            </p>
+            <button
+              onClick={disconnectSpotify}
+              disabled={spotifyBusy}
+              className="inline-flex items-center gap-1.5 text-[12.5px] text-muted hover:text-down transition shrink-0"
+            >
+              <Unplug className="h-3.5 w-3.5" /> Kaldır
+            </button>
+          </div>
+        ) : (
+          <>
+            <p className="text-[13px] text-muted mb-3">
+              Spotify&apos;ını bağla — ne dinlediğiniz panonun üstünde birbirinize görünsün.
+            </p>
+            <a
+              href="/api/zuya/spotify/start"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-[13px] font-semibold text-white transition hover:brightness-110"
+              style={{ background: "#1DB954" }}
+            >
+              <Music className="h-4 w-4" /> Spotify&apos;ı bağla
             </a>
           </>
         )}
