@@ -8,6 +8,7 @@ import { Card } from "@/components/Card";
 import { useZuya } from "@/components/zuya/ZuyaProvider";
 import { ZuyaAvatar } from "@/components/zuya/ZuyaAvatar";
 import { toUploadableJpeg } from "@/lib/zuya/image";
+import { PushToggle } from "@/components/zuya/PushToggle";
 
 export default function ZuyaSettingsPage() {
   const { supabase, me, refreshAvatar } = useZuya();
@@ -193,6 +194,10 @@ export default function ZuyaSettingsPage() {
             </a>
           </>
         )}
+      </Card>
+
+      <Card title="Bildirimler" collapsible={false}>
+        <PushToggle />
       </Card>
 
       <Card title="Password" collapsible={false}>

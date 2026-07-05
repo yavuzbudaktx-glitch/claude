@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { getZuyaMember } from "@/lib/zuya/server";
+import { pushToUser } from "@/lib/zuya/push";
 
 export const dynamic = "force-dynamic";
 
@@ -82,6 +83,13 @@ export async function POST(req: Request) {
     user_id: partner.user_id,
     kind: "date_suggested",
     payload: { id: row.id, title: row.title, day: row.day },
+  });
+
+  await pushToUser(partner.user_id, {
+    title: auth.member.display_name,
+    body: `Buluşma teklifi: ${row.title}`,
+    url: "/zuya",
+    tag: "zuya-date",
   });
 
   return NextResponse.json({ suggestion: row });
