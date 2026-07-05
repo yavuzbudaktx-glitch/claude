@@ -1,14 +1,14 @@
 # Britannica scrape debug dump
-# generated: 2026-07-04T20:34:11.645Z
-# url:       https://www.britannica.com/on-this-day/july-4
+# generated: 2026-07-05T08:29:14.336Z
+# url:       https://www.britannica.com/on-this-day/july-5
 # fetcher:   Jina Reader
 # kind:      markdown
-# length:    22762
+# length:    21377
 # parsed:    NO
 # -----------------------------------------------------------------
 Title: On This Day - What Happened Today In History | Britannica
 
-URL Source: https://www.britannica.com/on-this-day/july-4
+URL Source: https://www.britannica.com/on-this-day/july-5
 
 Markdown Content:
 [🎆 Save 30% Off A Britannica Subscription! 🎆 Subscribe Now](https://cam.britannica.com/subscribe/bp-july-fourth-2026?utm_source=premium&utm_medium=toupee&utm_campaign=july-fourth-2026)
@@ -35,7 +35,7 @@ Login
 
 [Home](https://www.britannica.com/) Today in History ![Image 3: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-logo.png?v=3.190.3)
 
-![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-star.svg?v=3.190.3)July 4
+![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-star.svg?v=3.190.3)July 5
 
 ![Image 5: Today In History Phone](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-phone.png?v=3.189.7)
 
@@ -61,7 +61,7 @@ June
 
 [22](https://www.britannica.com/on-this-day/June-22)[23](https://www.britannica.com/on-this-day/June-23)[24](https://www.britannica.com/on-this-day/June-24)[25](https://www.britannica.com/on-this-day/June-25)[26](https://www.britannica.com/on-this-day/June-26)[27](https://www.britannica.com/on-this-day/June-27)[28](https://www.britannica.com/on-this-day/June-28)
 
-[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)
+[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-5)[](https://www.britannica.com/on-this-day/july-5)[](https://www.britannica.com/on-this-day/july-5)[](https://www.britannica.com/on-this-day/july-5)[](https://www.britannica.com/on-this-day/july-5)
 
 July
 
@@ -73,7 +73,7 @@ July
 
 [22](https://www.britannica.com/on-this-day/July-22)[23](https://www.britannica.com/on-this-day/July-23)[24](https://www.britannica.com/on-this-day/July-24)[25](https://www.britannica.com/on-this-day/July-25)[26](https://www.britannica.com/on-this-day/July-26)[27](https://www.britannica.com/on-this-day/July-27)[28](https://www.britannica.com/on-this-day/July-28)
 
-[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)
+[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-5)[](https://www.britannica.com/on-this-day/july-5)[](https://www.britannica.com/on-this-day/july-5)[](https://www.britannica.com/on-this-day/july-5)
 
 August
 
@@ -85,7 +85,7 @@ August
 
 [22](https://www.britannica.com/on-this-day/August-22)[23](https://www.britannica.com/on-this-day/August-23)[24](https://www.britannica.com/on-this-day/August-24)[25](https://www.britannica.com/on-this-day/August-25)[26](https://www.britannica.com/on-this-day/August-26)[27](https://www.britannica.com/on-this-day/August-27)[28](https://www.britannica.com/on-this-day/August-28)
 
-[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)[](https://www.britannica.com/on-this-day/july-4)
+[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-5)[](https://www.britannica.com/on-this-day/july-5)[](https://www.britannica.com/on-this-day/july-5)[](https://www.britannica.com/on-this-day/july-5)
 
 August
 
@@ -95,25 +95,25 @@ August
 
 [Go to Today's Date](https://www.britannica.com/on-this-day)
 
- 1776: The “misguided Americans” and their “inadmissible claim of Independence”
+ 1946: The atomic origins of the bikini
 
- On this day in 1776, the[Declaration of Independence](https://www.britannica.com/topic/Declaration-of-Independence)was approved by the [Continental Congress](https://www.britannica.com/topic/Continental-Congress). The document—which announced the separation of the [13 North American British colonies](https://www.britannica.com/topic/American-colonies)from Great Britain—was met with scorn by British officials. Fighting dragged on for years, and when the [American Revolution](https://www.britannica.com/event/American-Revolution) finally ended in 1783, the colonies were victorious and went on to form the [United States of America](https://www.britannica.com/place/United-States). July 4 subsequently became a national holiday.
+ On this day in 1946, a French designer unveiled a bombastic (or bombtastic?) new swimsuit and named it the bikini, after[Bikini atoll](https://www.britannica.com/place/Bikini-atoll-Marshall-Islands)in the [Marshall Islands](https://www.britannica.com/place/Marshall-Islands), the site of recent U.S. nuclear testing. While the bathing suit was considered scandalous at the time—it was just 30 square inches of fabric—it has since become an exploration of one’s agency, expression, and relationship with one’s body. As fashion icon[Diana Vreeland](https://www.britannica.com/biography/Diana-Vreeland)said, “The bikini is the most important thing since the atom bomb.”
 
-[READ MORE](https://www.britannica.com/today-in-history/July-4-Declaration-of-Independence-approved?utm_source=otd)
+[READ MORE](https://www.britannica.com/today-in-history/July-5-The-Atomic-Origins-of-the-Bikini?utm_source=otd)
 
-![Image 6: July 4, 1776: The Unanimous Declaration of the 13 United States](https://cdn.britannica.com/09/289309-050-19BC31FC/today-in-history-Declaration-of-Independence-approved.jpg?w=530&h=300&c=crop)
+![Image 6: July 5, 1946: An atomic-age publicity stunt helped create one of history's most revolutionary swimsuits](https://cdn.britannica.com/10/289310-050-96D2CE40/today-in-history-The-first-bikini.jpg?w=530&h=300&c=crop)
 
- Library of Congress, Washington, D.C. (2003576546); Photo Illustration Encyclopædia Britannica, Inc.
+ AFP/Getty Images; Photo Illustration Encyclopædia Britannica, Inc.
 
  Featured Event 
 
-![Image 7: John Trumbull's depiction of July 4, 1776](https://cdn.britannica.com/21/143621-050-D0409B47/Declaration-of-Independence-canvas-rotunda-John-Trumbull-July-4-1776.jpg?w=356&h=200&c=crop)
+![Image 7: Twenty-sixth Amendment](https://cdn.britannica.com/00/142500-050-A5C99ECD/Constitution-of-the-United-States-1971.jpg?w=356&h=200&c=crop)
 
- Architect of the Capitol
+ NARA
 
-The death of Jefferson and Adams
+Twenty-sixth Amendment certified
 
- Two major figures of the [American Revolution](https://www.britannica.com/event/American-Revolution) who became U.S. presidents, [Thomas Jefferson](https://www.britannica.com/biography/Thomas-Jefferson) and [John Adams](https://www.britannica.com/biography/John-Adams-president-of-United-States), died on this day in 1826—50 years to the day after the adoption of the [Declaration of Independence](https://www.britannica.com/topic/Declaration-of-Independence). Adams’s last words were “Jefferson survives.” He was unaware that Jefferson had died hours earlier.
+ Certified this day in 1971, the[Twenty-sixth Amendment](https://www.britannica.com/topic/Twenty-sixth-Amendment)to the[U.S. Constitution](https://www.britannica.com/topic/Constitution-of-the-United-States-of-America)lowered the age of eligibility to [vote](https://www.britannica.com/topic/suffrage) to 18. _[[Find out what the voting age is in every country in the world](https://www.britannica.com/topic/Voting-Ages-Around-the-World).]_
 
 Featured Biography
 
@@ -121,151 +121,143 @@ Featured Biography
 
  Featured Biography 
 
-[![Image 8: Swami Vivekananda, 1897](https://cdn.britannica.com/51/195551-050-9F66C031/Vivekananda-1897.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Vivekananda?utm_source=otd)
+[![Image 8: P.T. Barnum](https://cdn.britannica.com/73/29773-004-98C2E6CD/PT-Barnum.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/P-T-Barnum?utm_source=otd)
 
- Paul Fearn/Alamy
+ Library of Congress, Washington, D.C.
 
-Vivekananda
+P.T. Barnum
 
-Hindu spiritual leader and reformer [Vivekananda](https://www.britannica.com/biography/Vivekananda)—who sought to combine Indian spirituality with Western material progress, maintaining that they supplemented and complemented one another—died this day in [Calcutta](https://www.britannica.com/place/Kolkata) in 1902.
+[P.T. Barnum](https://www.britannica.com/biography/P-T-Barnum), born this day in 1810, was an American showman who built his fame on outrageous stunts, the exploitation of “[human curiosities](https://www.britannica.com/art/freak-show),” and brazen deceit. He also, with [James A. Bailey](https://www.britannica.com/biography/James-A-Bailey), made the American[circus](https://www.britannica.com/art/circus-theatrical-entertainment)a popular and gigantic spectacle.
 
 Famous Birthdays
 
-1910
+1979
 
-[Robert K. Merton](https://www.britannica.com/biography/Robert-K-Merton?utm_source=otd)
+[Amélie Mauresmo](https://www.britannica.com/biography/Amelie-Mauresmo?utm_source=otd)
 
-American sociologist
+French tennis player
 
-1902
+1940
 
-[Meyer Lansky](https://www.britannica.com/biography/Meyer-Lansky?utm_source=otd)
+[Chuck Close](https://www.britannica.com/biography/Chuck-Close?utm_source=otd)
 
-American gangster
+American artist
 
-1883
+1904
 
-[Rube Goldberg](https://www.britannica.com/biography/Rube-Goldberg?utm_source=otd)
+[Ernst Mayr](https://www.britannica.com/biography/Ernst-Mayr?utm_source=otd)
 
-American cartoonist
+American biologist
 
-1546
+1801
 
-[Murad III](https://www.britannica.com/biography/Murad-III?utm_source=otd)
+[David Farragut](https://www.britannica.com/biography/David-Farragut?utm_source=otd)
 
-Ottoman sultan
+United States admiral
 
-[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-4)
+[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-5)
 
-## More on July 4
+## More on July 5
 
-![Image 9: Pope Francis](https://cdn.britannica.com/19/166419-050-6F262B52/Francis-I-mass-Vatican-City-March-14-2013.jpg?w=260&h=196&c=crop)
+![Image 9: British Prime Minister Keir Starmer](https://cdn.britannica.com/40/259340-050-1566ABD1/Keir-Starmer-Prime-Minister-United-Kingdom-outside-10-Downing-Street-London-July-5-2024.jpg?w=260&h=196&c=crop)
 
- © Abaca Press/Alamy
+ © Henry Nicholls—AFP/Getty Images
 
-2019
+2024
 
- Pope [Francis](https://www.britannica.com/biography/Francis-I-pope) and President [Vladimir Putin](https://www.britannica.com/biography/Vladimir-Putin) of Russia met in Vatican City and discussed, among other issues, [ongoing fighting in Ukraine](https://www.britannica.com/place/Ukraine/The-Poroshenko-administration#ref351575) and the schism between the [Orthodox Church of Ukraine](https://www.britannica.com/topic/Orthodox-Church-of-Ukraine) and the [Russian Orthodox Church](https://www.britannica.com/topic/Russian-Orthodox-Church).
+[Keir Starmer](https://www.britannica.com/biography/Keir-Starmer), leader of the [Labour Party](https://www.britannica.com/topic/Labour-Party-political-party), became prime minister of the United Kingdom, ending 14 years of [Conservative](https://www.britannica.com/topic/Conservative-Party-political-party-United-Kingdom) rule; he replaced [Rishi Sunak](https://www.britannica.com/biography/Rishi-Sunak). _[[What’s the difference between a prime minister and a president?](https://www.britannica.com/story/whats-the-difference-between-a-president-and-a-prime-minister)]_
 
-![Image 10: Large Hadron Collider](https://cdn.britannica.com/76/100076-050-696FA9C8/magnet-Compact-Muon-Solenoid-Large-Hadron-Collider-2007.jpg?w=260&h=196&c=crop)
+![Image 10: France's biggest rock star](https://cdn.britannica.com/79/276079-050-6ED5F111/French-singer-Johnny-Hallyday-performs-Fete-de-Lhumanite-Humanity-Festival-France-1991.jpg?w=260&h=196&c=crop)
 
- © 2007 CERN
+ © Bernard Bisson—Sygma/Getty Images
 
-2012
+2017
 
- Scientists at the [Large Hadron Collider](https://www.britannica.com/technology/Large-Hadron-Collider) at [CERN](https://www.britannica.com/topic/CERN) announced that they had detected an interesting signal that was later confirmed to be from a [Higgs boson](https://www.britannica.com/science/Higgs-boson).
+ French rock icon [Johnny Hallyday](https://www.britannica.com/biography/Johnny-Hallyday) made his last appearance onstage, at a concert in Carcassonne.
 
-![Image 11: the Clash](https://cdn.britannica.com/78/23078-004-8F90DCE3/The-Clash.jpg?w=260&h=196&c=crop)
+![Image 11: Roger Federer](https://cdn.britannica.com/57/183257-050-0BA11B4B/Roger-Federer-2012.jpg?w=260&h=196&c=crop)
 
- © Paul Slattery/Retna Ltd.
+ Nick Laham—Getty Images Sport/Thinkstock
 
-1976
+2009
 
- British [punk rock](https://www.britannica.com/art/punk) band [the Clash](https://www.britannica.com/topic/the-Clash-British-rock-group) gave their first public performance, opening for [the Sex Pistols](https://www.britannica.com/topic/the-Sex-Pistols) in a pub in Sheffield, England. _[[See what you know about the ’70s](https://www.britannica.com/quiz/that-groovy-70s-quiz).]_
+ Swiss [tennis](https://www.britannica.com/sports/tennis) player [Roger Federer](https://www.britannica.com/biography/Roger-Federer) won a record-setting 15th Grand Slam singles title as he defeated Andy Roddick at the [Wimbledon Championships](https://www.britannica.com/sports/Wimbledon-Championships). _[[Take our quiz about Wimbledon](https://www.britannica.com/quiz/wimbledon).]_
 
-![Image 12: Manuel A. Roxas](https://cdn.britannica.com/68/135468-050-E7D01338/Manuel-Roxas-1923.jpg?w=260&h=196&c=crop)
+![Image 12: Dolly the sheep](https://cdn.britannica.com/29/72029-050-B6BFB4EC/Dolly-sheep-adult-mammal-Edinburgh-Roslin-Institute.jpg?w=260&h=196&c=crop)
 
- National Photo Company Collection/Library of Congress, Washington, D.C. (Digital File Number: LC-DIG-npcc-10140)
+ © John Chadwick—AP/REX/Shutterstock.com
+
+1996
+
+[Dolly](https://www.britannica.com/topic/Dolly-cloned-sheep), a female Finn Dorset [sheep](https://www.britannica.com/animal/domesticated-sheep), was born near Edinburgh, becoming the first successfully [cloned](https://www.britannica.com/science/clone-genetics) mammal; her birth was not publicly revealed until the following year.
+
+![Image 13: Seinfeld](https://cdn.britannica.com/93/100193-050-8F6D02A0/Scene-Seinfeld-actors-Jason-Alexander-Julia-Louis-Dreyfus.jpg?w=260&h=196&c=crop)
+
+ © Castle Rock Entertainment; all rights reserved
+
+1989
+
+ The first episode of the sitcom [Seinfeld](https://www.britannica.com/topic/Seinfeld) (then called The Seinfeld Chronicles) aired on [NBC](https://www.britannica.com/money/National-Broadcasting-Co-Inc). It went on to became a landmark of American popular culture. _[[How much do you know about Seinfeld?](https://www.britannica.com/quiz/seinfeld)]_
+
+![Image 14: A history-making win](https://cdn.britannica.com/93/192393-050-258213FC/Arthur-Ashe-trophy-singles-title-Wimbledon-1975.jpg?w=260&h=196&c=crop)
+
+ © Focus on Sport/Getty Images
+
+1975
+
+[Arthur Ashe](https://www.britannica.com/biography/Arthur-Ashe) defeated [Jimmy Connors](https://www.britannica.com/biography/Jimmy-Connors) in four sets of tennis at the 89th [Wimbledon Championships](https://www.britannica.com/sports/Wimbledon-Championships). _[[Test your knowledge of tennis](https://www.britannica.com/quiz/tennis).]_
+
+![Image 15: Algeria](https://cdn.britannica.com/34/3034-050-077DE27D/Flag-Algeria.jpg?w=260&h=196&c=crop)
+
+ Encyclopædia Britannica, Inc.
+
+1962
+
+[Algeria](https://www.britannica.com/place/Algeria) officially gained its independence from [France](https://www.britannica.com/place/France), which had declared the African country independent two days earlier. _[[Read more stories of independence in Africa](https://www.britannica.com/explore/Colonization-of-Africa).]_
+
+![Image 16: Western Wall and Dome of the Rock](https://cdn.britannica.com/60/91860-050-1D039485/Dome-of-the-Rock-Jerusalem-Western-Wall.jpg?w=260&h=196&c=crop)
+
+ Photos.com/Jupiterimages
+
+1950
+
+ Israel’s [Knesset](https://www.britannica.com/topic/Knesset) passed the Law of Return, which granted Jews the freedom to immigrate to [Israel](https://www.britannica.com/place/Israel) and receive immediate citizenship.
+
+![Image 17: Elvis Presley, 1956](https://cdn.britannica.com/54/19454-050-654173D8/Elvis-Presley-1956.jpg?w=260&h=196&c=crop)
+
+ Picture Lux/The Hollywood Archive/Alamy
+
+1954
+
+ American singer [Elvis Presley](https://www.britannica.com/biography/Elvis-Presley) recorded That’s All Right, which became his first hit and helped give rise to rock and roll music. _[[How much do you know about rock and roll music?](https://www.britannica.com/quiz/rock-music-and-rock-n-roll)]_
+
+![Image 18: The debut of the bikini](https://cdn.britannica.com/79/276279-050-4B169294/Woman-wears-first-bikini-designed-Louis-Reard-July-5-1946-Molitor-Pool-Paris-France.jpg?w=260&h=196&c=crop)
+
+ © AFP/Getty Images
 
 1946
 
- The [Republic of the Philippines](https://www.britannica.com/topic/history-of-Philippines/World-War-II#ref360181) was proclaimed, and [Manuel Roxas](https://www.britannica.com/biography/Manuel-Roxas-y-Acuna) became its first president.
+ The first bikini, designed by French engineer Louis Réard, made its debut in Paris; the [swimsuit](https://www.britannica.com/topic/swimsuit) was named for the [Bikini](https://www.britannica.com/place/Bikini-atoll-Marshall-Islands) atoll, which, just days earlier, had been the site of the world’s first peacetime atomic-weapons test. _[[Can you name these historical fashion trends?](https://www.britannica.com/quiz/quiz-name-these-historical-fashion-trends)]_
 
-![Image 13: Lou Gehrig](https://cdn.britannica.com/57/11557-050-1B5685F6/Lou-Gehrig-1939.jpg?w=260&h=196&c=crop)
-
- AP
-
-1939
-
- On an appreciation day in his honor, American [baseball](https://www.britannica.com/sports/baseball) player [Lou Gehrig](https://www.britannica.com/biography/Lou-Gehrig), who had been forced to retire months earlier due to [ALS](https://www.britannica.com/science/amyotrophic-lateral-sclerosis), gave a memorable speech in which he claimed to be “the luckiest man on the face of the earth.” _[[How much do you know about baseball?](https://www.britannica.com/quiz/baseball)]_
-
-![Image 14: default image](https://cdn.britannica.com/mendel-resources/3-190/images/shared/thistle-blue-half.svg?v=3.190.3)
-
- Image: Encyclopædia Britannica, Inc.
-
-1930
-
- The [Nation of Islam](https://www.britannica.com/topic/Nation-of-Islam) is founded by [Wallace Fard](https://www.britannica.com/biography/Wallace-D-Fard) (later Wali Fard Muhammad) in [Detroit](https://www.britannica.com/place/Detroit). A religious movement that combines elements of Muslim teachings with Black nationalism, the Nation of Islam was created with a mission “to teach the downtrodden and defenseless Black people a thorough knowledge of God and of themselves.” _[[Learn more about the people, places, and events that shaped the 1930s](https://www.britannica.com/topic/Timeline-of-the-1930s).]_
-
-![Image 15: Jack Johnson](https://cdn.britannica.com/57/78357-050-1AADB486/Jack-Johnson-1909.jpg?w=260&h=196&c=crop)
+![Image 19: Secret Service agents escorting U.S. Pres. Theodore Roosevelt](https://cdn.britannica.com/78/276278-050-830239C4/Secret-Service-men-escort-Theodore-Roosevelt-to-presidential-inauguration-Washington-DC-1905.jpg?w=260&h=196&c=crop)
 
  Library of Congress, Washington, D.C.
-
-1910
-
- In what was billed as the “Fight of the Century,” African American [boxer](https://www.britannica.com/sports/boxing)[Jack Johnson](https://www.britannica.com/biography/Jack-Johnson) defeated [James Jackson Jeffries](https://www.britannica.com/biography/James-Jackson-Jeffries), who was considered the “Great White Hope.” Johnson’s victory led to nationwide celebrations by Black Americans that were sometimes met by violence from white people, resulting in more than 20 deaths across the country.
-
-![Image 16: Statue of Liberty](https://cdn.britannica.com/82/183382-050-D832EC3A/Detail-head-crown-Statue-of-Liberty-New.jpg?w=260&h=196&c=crop)
-
- © shproteg/Fotolia
-
-1884
-
- The [Statue of Liberty](https://www.britannica.com/topic/Statue-of-Liberty) was presented to the [United States](https://www.britannica.com/place/United-States) by the [French](https://www.britannica.com/place/France) in Paris. _[[Find out why the Statue of Liberty is a woman](https://www.britannica.com/story/why-is-the-statue-of-liberty-a-woman).]_
-
-![Image 17: Alice's Adventures in Wonderland](https://cdn.britannica.com/98/76198-050-3B5E4070/John-Tenniel-Illustration-Lewis-Carroll-Alices-Adventures.jpg?w=260&h=196&c=crop)
-
- Image: Encyclopædia Britannica, Inc.
 
 1865
 
-[Lewis Carroll](https://www.britannica.com/biography/Lewis-Carroll)’s [Alice’s Adventures in Wonderland](https://www.britannica.com/) was published, though the first print run was soon recalled because of quality issues; a new first edition was released in November. _[[Take our quiz about famous literary characters](https://www.britannica.com/quiz/getting-into-character).]_
+ The [U.S. Secret Service](https://www.britannica.com/topic/US-Secret-Service) began operation under the [Treasury Department](https://www.britannica.com/topic/US-Department-of-the-Treasury) to aid in the prevention of [counterfeiting](https://www.britannica.com/topic/counterfeiting). _[[What code names did the Secret Service give 11 U.S. presidents?](https://www.britannica.com/quiz/quiz-name-these-historical-fashion-trends)]_
 
-![Image 18: “Walt Whitman, an American, one of the roughs, a kosmos”](https://cdn.britannica.com/80/26880-050-CEB5F414/Walt-Whitman-photograph-Mathew-Brady.jpg?w=260&h=196&c=crop)
+![Image 20: Midway Atoll National Wildlife Refuge](https://cdn.britannica.com/13/160813-050-8CE81749/Midway-Atoll-National-Wildlife-Refuge.jpg?w=260&h=196&c=crop)
 
- Library of Congress, Washington, D.C.
+ MCS 2nd Class Mark Logico/U.S. Navy
 
-1855
+1859
 
- American author [Walt Whitman](https://www.britannica.com/biography/Walt-Whitman) first published [Leaves of Grass](https://www.britannica.com/topic/Leaves-of-Grass-by-Whitman), a landmark in the history of [American literature](https://www.britannica.com/art/American-literature); undergoing numerous revisions, the [poetry](https://www.britannica.com/art/poetry) collection became known for its unconventional language and its celebration of the human body and sexual passion. _[[Sort fact from fiction in our poetry quiz](https://www.britannica.com/quiz/the-abcs-of-poetry-fact-or-fiction).]_
-
-![Image 19: Henry David Thoreau](https://cdn.britannica.com/42/9042-050-9C83EE9C/Henry-David-Thoreau-portrait-Samuel-Worcester-Rowse-1854.jpg?w=260&h=196&c=crop)
-
- Courtesy of the Corporation of the Free Public Library, Concord, Mass.
-
-1845
-
- Essayist and philosopher [Henry David Thoreau](https://www.britannica.com/biography/Henry-David-Thoreau) moved to his retreat at [Walden Pond](https://www.britannica.com/place/Walden-Pond), where he eventually wrote a series of reflective essays titled [Walden; or, Life in the Woods](https://www.britannica.com/topic/Walden). _[[Take our authors and poets quiz](https://www.britannica.com/quiz/the-literary-world-authors-poets).]_
-
-![Image 20: A son of Salem](https://cdn.britannica.com/33/166133-050-F75F668F/Nathaniel-Hawthorne-photograph-Mathew-Brady.jpg?w=260&h=196&c=crop)
-
- Brady-Handy Photograph Collection/Library of Congress, Washington, D.C. (digital file no. LC-DIG-cwpbh-03440)
-
-1804
-
-[Nathaniel Hawthorne](https://www.britannica.com/biography/Nathaniel-Hawthorne)—whose greatest literary works, including the novel [The Scarlet Letter](https://www.britannica.com/topic/The-Scarlet-Letter-novel-by-Hawthorne) (1850), are marked by profound psychological and moral insight—was born in [Salem](https://www.britannica.com/place/Salem-Massachusetts), Massachusetts. _[[Test your knowledge of famous novels](https://www.britannica.com/quiz/the-literary-world-famous-novels).]_
-
-![Image 21: United States Military Academy](https://cdn.britannica.com/82/114982-050-44B11DD4/Members-colour-guard-West-Point-United-States.jpg?w=260&h=196&c=crop)
-
- U.S. Army Photo
-
-1802
-
- The [United States Military Academy](https://www.britannica.com/topic/United-States-Military-Academy) opened in West Point, New York.
+ Captain N.C. Brooks discovered the [Midway Islands](https://www.britannica.com/place/Midway-Islands) in the central [Pacific Ocean](https://www.britannica.com/place/Pacific-Ocean) and claimed the territory for the [United States](https://www.britannica.com/place/United-States). _[[Take our islands quiz](https://www.britannica.com/quiz/islands).]_
 
 SIGN UP FOR
 
-![Image 22: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 23: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
+![Image 21: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 22: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
 
 History's Biggest Headlines
 
@@ -275,4 +267,4 @@ SIGN UP
 
 ### Thank you for signing up!
 
-![Image 25](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=137&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-4&s=D6FFB9BE-198C-4E3D-A1F1-525D458847D4&json=%20)![Image 26: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=29c2abbc-3449-a170-bedf-c067246206da&iiqpciddate=1783197159874&tsrnd=243_1783197159985&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.46%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.46%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 27](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001783197162-3PZJCYOC-XNT9)![Image 28](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001783197162-3PZJCYOC-XNT9&adnxs_id=$UID&gdpr=0)![Image 29](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001783197162-3PZJCYOC-XNT9%26auid%3DAU1D-0100-001783197162-3PZJCYOC-XNT9&gdpr=0)![Image 30](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001783197162-3PZJCYOC-XNT9&gdpr=0)![Image 31](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001783197162-3PZJCYOC-XNT9&gdpr=0)![Image 32](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001783197162-3PZJCYOC-XNT9&gdpr=0)![Image 33](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001783197162-3PZJCYOC-XNT9&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001783197162-3PZJCYOC-XNT9%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 34](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4MzE5NzE2Mi0zUFpKQ1lPQy1YTlQ5&id=AU1D-0100-001783197162-3PZJCYOC-XNT9&gdpr=0)![Image 35](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001783197162-3PZJCYOC-XNT9)![Image 36](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001783197162-3PZJCYOC-XNT9&uid=[UID]&gdpr=0)![Image 37](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001783197162-3PZJCYOC-XNT9%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
+![Image 24](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=128&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-5&s=E3FF400A-DBFF-44F7-B5E5-A78C97415AAB&json=%20)![Image 25: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=5f95a3f0-0e22-bf0c-144e-7721a7c38eb4&iiqpciddate=1783239863350&tsrnd=88_1783239863356&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.46%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.46%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 26](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001783239864-KWQXND82-EZUY)![Image 27](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001783239864-KWQXND82-EZUY&adnxs_id=$UID&gdpr=0)![Image 28](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001783239864-KWQXND82-EZUY%26auid%3DAU1D-0100-001783239864-KWQXND82-EZUY&gdpr=0)![Image 29](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001783239864-KWQXND82-EZUY&gdpr=0)![Image 30](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001783239864-KWQXND82-EZUY&gdpr=0)![Image 31](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001783239864-KWQXND82-EZUY&gdpr=0)![Image 32](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001783239864-KWQXND82-EZUY&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001783239864-KWQXND82-EZUY%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 33](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4MzIzOTg2NC1LV1FYTkQ4Mi1FWlVZ&id=AU1D-0100-001783239864-KWQXND82-EZUY&gdpr=0)![Image 34](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001783239864-KWQXND82-EZUY)![Image 35](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001783239864-KWQXND82-EZUY&uid=[UID]&gdpr=0)![Image 36](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001783239864-KWQXND82-EZUY%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
