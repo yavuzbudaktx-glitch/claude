@@ -53,6 +53,8 @@ export function LocationCard() {
   const [locs, setLocs] = useState<Record<string, Loc>>({});
   const [sharing, setSharing] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
+  const [dbError, setDbError] = useState<string | null>(null);
+  const [myCoords, setMyCoords] = useState<{ lat: number; lng: number } | null>(null);
 
   const mapEl = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -61,7 +63,16 @@ export function LocationCard() {
   const watchId = useRef<number | null>(null);
 
   const load = useCallback(async () => {
-    const { data } = await supabase.from("zuya_locations").select("*");
+    const { data, error } = await supabase.from("zuya_locations").select("*");
+    if (error) {
+      setDbError(
+        /relation .*does not exist|schema cache|not exist/i.test(error.message)
+          ? "Konum tablosu yok — Supabase'de 0015_zuya_locations.sql migration'ını çalıştır."
+          : error.message,
+      );
+      return;
+    }
+    setDbError(null);
     const map: Record<string, Loc> = {};
     for (const r of (data as Loc[]) ?? []) map[r.user_id] = r;
     setLocs(map);
@@ -161,7 +172,8 @@ export function LocationCard() {
     watchId.current = navigator.geolocation.watchPosition(
       async (pos) => {
         setStatus(null);
-        await supabase.from("zuya_locations").upsert(
+        setMyCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        const { error } = await supabase.from("zuya_locations").upsert(
           {
             user_id: me.user_id,
             lat: pos.coords.latitude,
@@ -171,6 +183,15 @@ export function LocationCard() {
           },
           { onConflict: "user_id" },
         );
+        if (error) {
+          setDbError(
+            /relation .*does not exist|schema cache|not exist/i.test(error.message)
+              ? "Konum tablosu yok — Supabase'de 0015_zuya_locations.sql migration'ını çalıştır."
+              : `Kaydedilemedi: ${error.message}`,
+          );
+        } else {
+          setDbError(null);
+        }
       },
       (err) => {
         setSharing(false);
@@ -195,9 +216,19 @@ export function LocationCard() {
 
   return (
     <Card id="zuya-location-card" title="Neredeyiz" collapsible={false}>
+      {dbError && (
+        <p className="mb-2 rounded-xl px-3 py-2 bg-[color-mix(in_srgb,var(--down)_10%,transparent)] text-[12px] text-down break-words">
+          {dbError}
+        </p>
+      )}
       <div className="rounded-2xl overflow-hidden border border-[var(--rule-soft)]">
         <div ref={mapEl} style={{ height: 260, width: "100%", background: "var(--rule-soft)" }} />
       </div>
+      {myCoords && (
+        <p className="text-[11px] text-muted-2 mt-1.5 font-mono">
+          konumun: {myCoords.lat.toFixed(5)}, {myCoords.lng.toFixed(5)}
+        </p>
+      )}
 
       <div className="flex items-center justify-between gap-3 mt-3 flex-wrap">
         <div className="text-[12px] text-muted space-y-0.5">
