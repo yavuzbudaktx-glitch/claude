@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-07-05T09:33:21.595Z
+# generated: 2026-07-05T10:26:00.209Z
 # url:       https://www.britannica.com/on-this-day/july-5
 # fetcher:   Jina Reader
 # kind:      markdown
