@@ -217,7 +217,7 @@ export function ZuyaProvider({
       authSub.subscription.unsubscribe();
       if (channel) void supabase.removeChannel(channel);
     };
-  }, [supabase, loadAvatar, recountUnread]);
+  }, [supabase, loadAvatar, recountUnread, meId]);
 
   const me = members[meId] ?? initialMe;
   const partner = members[partnerId] ?? initialPartner;
