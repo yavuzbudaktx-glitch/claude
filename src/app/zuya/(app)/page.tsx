@@ -3,12 +3,18 @@ import { DailyPhotoCard } from "@/components/zuya/DailyPhotoCard";
 import { MessagesCard } from "@/components/zuya/MessagesCard";
 import { DailyQuestionCard } from "@/components/zuya/DailyQuestionCard";
 import { BucketListCard } from "@/components/zuya/BucketListCard";
+import { LocationCard } from "@/components/zuya/LocationCard";
 
 export const dynamic = "force-dynamic";
 
 export default function ZuyaDashboard() {
   return (
     <main className="space-y-5 pt-5">
+      {/* Where we are. */}
+      <div id="zuya-location" className="scroll-mt-20">
+        <LocationCard />
+      </div>
+
       {/* Our calendars, merged + date suggestions. */}
       <div id="zuya-calendar" className="scroll-mt-20 [&>*]:h-full">
         <ZuyaCalendarCard />
