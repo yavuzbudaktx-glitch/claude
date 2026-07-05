@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export default function ZuyaDashboard() {
   return (
-    <main className="space-y-5 pt-5">
+    <main className="space-y-3.5 pt-3.5">
       {/* Listening now (only renders if someone's connected Spotify). */}
       <NowPlayingCard />
 
@@ -25,7 +25,7 @@ export default function ZuyaDashboard() {
       </div>
 
       {/* A photo of us + the message wall. */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 items-stretch">
         <div id="zuya-photo" className="scroll-mt-20 [&>*]:h-full">
           <DailyPhotoCard />
         </div>
@@ -35,7 +35,7 @@ export default function ZuyaDashboard() {
       </div>
 
       {/* The fun row. */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 items-stretch">
         <div id="zuya-question" className="scroll-mt-20 [&>*]:h-full">
           <DailyQuestionCard />
         </div>

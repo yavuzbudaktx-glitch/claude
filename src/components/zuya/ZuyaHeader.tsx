@@ -12,7 +12,10 @@ export function ZuyaHeader() {
   const { me, partner } = useZuya();
 
   return (
-    <header className="sticky top-0 z-40 -mx-5 md:-mx-10 px-5 md:px-10 py-2.5 backdrop-blur-xl bg-[var(--glass)] border-b border-[var(--rule-soft)]">
+    <header
+      className="sticky top-0 z-40 -mx-4 md:-mx-10 px-4 md:px-10 pb-2 backdrop-blur-xl bg-[var(--glass)] border-b border-[var(--rule-soft)]"
+      style={{ paddingTop: "calc(env(safe-area-inset-top) + 0.5rem)" }}
+    >
       <div className="max-w-[1200px] mx-auto flex items-center gap-2">
         {/* Both of us, statuses live. */}
         <div className="flex items-center gap-1 min-w-0">
