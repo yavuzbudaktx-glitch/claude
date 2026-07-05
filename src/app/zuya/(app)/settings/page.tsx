@@ -3,12 +3,11 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, Camera, KeyRound, CalendarCheck2, Unplug } from "lucide-react";
+import { ArrowLeft, Camera, KeyRound, CalendarCheck2, Unplug, LogOut } from "lucide-react";
 import { Card } from "@/components/Card";
 import { useZuya } from "@/components/zuya/ZuyaProvider";
 import { ZuyaAvatar } from "@/components/zuya/ZuyaAvatar";
-
-const MAX_AVATAR_BYTES = 6 * 1024 * 1024;
+import { toUploadableJpeg } from "@/lib/zuya/image";
 
 export default function ZuyaSettingsPage() {
   const { supabase, me, refreshAvatar } = useZuya();
@@ -30,20 +29,19 @@ export default function ZuyaSettingsPage() {
   const [googleBusy, setGoogleBusy] = useState(false);
 
   async function uploadAvatar(file: File) {
-    if (!file.type.startsWith("image/")) {
-      setAvatarMsg("Pick an image file.");
-      return;
-    }
-    if (file.size > MAX_AVATAR_BYTES) {
-      setAvatarMsg("Max 6 MB — pick a smaller photo.");
+    // iPhone photos are often HEIC (browsers can't show them) and rotated —
+    // convert to a right-side-up JPEG before uploading.
+    if (file.size > 40 * 1024 * 1024) {
+      setAvatarMsg("Bu fotoğraf çok büyük.");
       return;
     }
     setAvatarBusy(true);
     setAvatarMsg(null);
     try {
+      const { blob, type } = await toUploadableJpeg(file);
       const { error } = await supabase.storage
         .from("zuya")
-        .upload(`avatars/${me.user_id}`, file, { upsert: true, contentType: file.type });
+        .upload(`avatars/${me.user_id}`, blob, { upsert: true, contentType: type });
       if (error) {
         setAvatarMsg(error.message);
         return;
@@ -229,6 +227,16 @@ export default function ZuyaSettingsPage() {
           Forgot your password? Yavuz can reset it from the Supabase dashboard.
         </p>
       </Card>
+
+      <button
+        onClick={async () => {
+          await supabase.auth.signOut();
+          window.location.href = "/zuya/login";
+        }}
+        className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-[13px] font-semibold text-muted border border-[var(--rule)] hover:text-down hover:border-[var(--down)] transition"
+      >
+        <LogOut className="h-4 w-4" /> Sign out
+      </button>
     </main>
   );
 }

@@ -69,16 +69,19 @@ export function MemberChip({ member, isMe }: { member: ZuyaMemberRow; isMe: bool
           <ZuyaAvatar member={member} size={40} />
           <StatusBadge member={member} />
         </span>
-        <span className="text-left hidden min-[420px]:block">
-          <span className="block text-[13px] font-semibold text-ink leading-tight">
+        <span className={`text-left min-w-0 max-w-[104px] sm:max-w-[150px] ${isMe ? "hidden sm:block" : "block"}`}>
+          <span className="block text-[12.5px] font-semibold text-ink leading-tight truncate">
             {member.display_name}
           </span>
-          <span className="block text-[11px] text-muted leading-tight">
-            {st.tr}
-            {member.status_updated_at && (
-              <span className="text-muted-2"> · {timeAgo(member.status_updated_at)}</span>
-            )}
+          <span className="flex items-center gap-1 text-[11px] leading-tight" style={{ color: st.color }}>
+            <st.icon className="h-3 w-3 shrink-0" />
+            <span className="truncate font-medium">{st.tr}</span>
           </span>
+          {member.status_updated_at && (
+            <span className="block text-[9.5px] text-muted-2 leading-tight truncate">
+              {timeAgo(member.status_updated_at)}
+            </span>
+          )}
         </span>
       </button>
 
