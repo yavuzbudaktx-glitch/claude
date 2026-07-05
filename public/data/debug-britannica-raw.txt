@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-07-05T15:41:03.966Z
+# generated: 2026-07-05T20:39:24.941Z
 # url:       https://www.britannica.com/on-this-day/july-5
 # fetcher:   Wayback Machine
 # kind:      html
