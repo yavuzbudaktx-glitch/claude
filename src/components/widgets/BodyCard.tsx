@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
 import { Card } from "@/components/Card";
-import { localDateKey } from "@/lib/local-date";
+import { localDateKey, localDateKeyAt } from "@/lib/local-date";
 import { createClient } from "@/lib/supabase/client";
 import { usePref } from "@/components/PrefsProvider";
 
@@ -584,7 +584,9 @@ export function BodyCard() {
     else setDraft(current != null ? String(current) : "");
   }
 
-  const today = localDateKey();
+  // Nutrition day rolls over at 5 AM, not midnight — a 1 AM snack still
+  // counts toward "yesterday".
+  const today = localDateKeyAt(5);
   const calsToday = state.calsDate === today ? state.calsTotal : 0;
   const proteinToday = state.calsDate === today ? state.proteinTotal : 0;
   const goalNum = Number(state.calorieGoal);

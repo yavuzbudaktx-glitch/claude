@@ -1,0 +1,46 @@
+name: Zuya photo manifest
+
+# Whenever photos are added/removed in public/zuya/daily (e.g. uploaded via
+# the GitHub website), regenerate manifest.json automatically and commit it.
+# Existing captions are preserved; new files get a caption from the filename.
+# This means: upload photos → done. No script to run.
+
+on:
+  push:
+    branches: ["claude/morning-dashboard-ak4rc"]
+    paths:
+      - "public/zuya/daily/**"
+      - "!public/zuya/daily/manifest.json"
+  workflow_dispatch: {}
+
+jobs:
+  manifest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Regenerate manifest
+        run: node scripts/gen-zuya-manifest.mjs
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [[ -z "$(git status --porcelain public/zuya/daily/manifest.json)" ]]; then
+            echo "Manifest unchanged."
+            exit 0
+          fi
+          git add public/zuya/daily/manifest.json
+          git commit -m "data: regenerate zuya photo manifest"
+          for i in 1 2 3; do
+            git push && break
+            git pull --rebase && sleep $((i * 2))
+          done
