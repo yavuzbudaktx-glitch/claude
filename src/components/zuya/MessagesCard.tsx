@@ -97,7 +97,16 @@ export function MessagesCard() {
         .from("zuya_messages")
         .insert({ sender_id: me.user_id, body });
       if (!error && !text) setDraft("");
-      if (error) console.warn("zuya message send failed:", error.message);
+      if (error) {
+        console.warn("zuya message send failed:", error.message);
+      } else {
+        // Push the partner (best-effort; fine if push isn't set up).
+        fetch("/api/zuya/push/notify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ kind: "message", text: body }),
+        }).catch(() => {});
+      }
     } finally {
       setSending(false);
     }
