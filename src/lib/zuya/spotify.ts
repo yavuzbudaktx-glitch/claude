@@ -3,7 +3,11 @@ import { createServiceClient } from "@/lib/supabase/service";
 // Server-only helpers around zuya_spotify_tokens (policy-less table, service
 // role only). Uses SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET.
 
-export const ZUYA_SPOTIFY_SCOPES = ["user-read-currently-playing", "user-read-playback-state"].join(" ");
+export const ZUYA_SPOTIFY_SCOPES = [
+  "user-read-currently-playing",
+  "user-read-playback-state",
+  "user-read-recently-played",
+].join(" ");
 
 export function spotifyClientId(): string {
   return process.env.SPOTIFY_CLIENT_ID ?? "";
@@ -51,6 +55,24 @@ export interface NowPlaying {
   artist?: string;
   art?: string;
   url?: string;
+  playedAt?: string; // ISO time of last play, when not currently playing
+}
+
+interface SpotifyItem {
+  name?: string;
+  artists?: { name: string }[];
+  album?: { images?: { url: string }[] };
+  external_urls?: { spotify?: string };
+}
+function mapItem(item: SpotifyItem, playing: boolean, playedAt?: string): NowPlaying {
+  return {
+    playing,
+    track: item.name,
+    artist: (item.artists ?? []).map((a) => a.name).join(", "),
+    art: item.album?.images?.[item.album.images.length - 1]?.url ?? item.album?.images?.[0]?.url,
+    url: item.external_urls?.spotify,
+    playedAt,
+  };
 }
 
 /** What a user is currently playing (or their most recent), or null if not
@@ -71,25 +93,20 @@ export async function spotifyNowPlaying(userId: string): Promise<NowPlaying | nu
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
   });
-  if (res.status === 204) return { playing: false };
-  if (!res.ok) return { playing: false };
+  if (res.ok && res.status !== 204) {
+    const data = (await res.json()) as { is_playing?: boolean; item?: SpotifyItem };
+    if (data.item) return mapItem(data.item, !!data.is_playing);
+  }
 
-  const data = (await res.json()) as {
-    is_playing?: boolean;
-    item?: {
-      name?: string;
-      artists?: { name: string }[];
-      album?: { images?: { url: string }[] };
-      external_urls?: { spotify?: string };
-    };
-  };
-  const item = data.item;
-  if (!item) return { playing: false };
-  return {
-    playing: !!data.is_playing,
-    track: item.name,
-    artist: (item.artists ?? []).map((a) => a.name).join(", "),
-    art: item.album?.images?.[item.album.images.length - 1]?.url ?? item.album?.images?.[0]?.url,
-    url: item.external_urls?.spotify,
-  };
+  // Nothing playing right now — fall back to the most recent track + when.
+  const recent = await fetch("https://api.spotify.com/v1/me/player/recently-played?limit=1", {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
+  if (recent.ok) {
+    const data = (await recent.json()) as { items?: { track?: SpotifyItem; played_at?: string }[] };
+    const first = data.items?.[0];
+    if (first?.track) return mapItem(first.track, false, first.played_at);
+  }
+  return { playing: false };
 }

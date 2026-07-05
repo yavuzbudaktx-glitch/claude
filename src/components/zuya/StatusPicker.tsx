@@ -73,9 +73,8 @@ export function MemberChip({ member, isMe }: { member: ZuyaMemberRow; isMe: bool
           <span className="block text-[12.5px] font-semibold text-ink leading-tight truncate">
             {member.display_name}
           </span>
-          <span className="flex items-center gap-1 text-[11px] leading-tight" style={{ color: st.color }}>
-            <st.icon className="h-3 w-3 shrink-0" />
-            <span className="truncate font-medium">{st.tr}</span>
+          <span className="block text-[11px] leading-tight font-medium truncate" style={{ color: st.color }}>
+            {st.tr}
           </span>
           {member.status_updated_at && (
             <span className="block text-[9.5px] text-muted-2 leading-tight truncate">

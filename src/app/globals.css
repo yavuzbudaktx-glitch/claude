@@ -2970,3 +2970,18 @@ main { position: relative; z-index: 1; }
   56% { transform: scale(1); }
 }
 .zuya-heartbeat { animation: zuyaHeartbeat 2.6s ease-in-out infinite; }
+
+/* Zuya density — tighter cards + corners so more fits on a phone. */
+.zuya-scope .card {
+  border-radius: 16px;
+  padding: 0.95rem 1.05rem 1.05rem;
+}
+.zuya-scope .card::before { border-radius: inherit; }
+.zuya-scope .card-bare {
+  border-radius: 12px;
+  padding: 0.7rem 0.85rem;
+}
+.zuya-scope .headrule { margin-bottom: 0.7rem; padding-bottom: 0.55rem; }
+
+/* Tiny "now playing" equalizer bars. */
+@keyframes zeq { 0%,100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }

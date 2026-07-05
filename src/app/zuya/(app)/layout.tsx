@@ -40,7 +40,7 @@ export default async function ZuyaAppLayout({ children }: { children: React.Reac
 
   return (
     <ZuyaProvider initialMe={me} initialPartner={partnerRow}>
-      <div className="max-w-[1200px] mx-auto px-5 md:px-10 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+      <div className="max-w-[1200px] mx-auto px-4 md:px-8 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
         <ZuyaHeader />
         {children}
       </div>
