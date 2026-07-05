@@ -88,10 +88,14 @@ export function LocationCard() {
       const Lib = (await import("leaflet")).default;
       if (cancelled || !mapEl.current || mapRef.current) return;
       libRef.current = Lib;
-      const map = Lib.map(mapEl.current, { zoomControl: false, attributionControl: false }).setView([39, 35], 5);
+      const map = Lib.map(mapEl.current, { zoomControl: true, attributionControl: false }).setView([39, 35], 5);
       Lib.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(map);
       mapRef.current = map;
-      setStatus((s) => s); // trigger a marker sync pass
+      // Leaflet needs its size recomputed once the container has painted (and
+      // again after the card's fade-in), or tiles render half/grey.
+      const fix = () => map.invalidateSize();
+      setTimeout(fix, 60);
+      setTimeout(fix, 400);
       syncMarkers();
     })();
     return () => {
@@ -127,6 +131,7 @@ export function LocationCard() {
         delete markers.current[uid];
       }
     }
+    map.invalidateSize();
     if (pts.length === 1) map.setView(pts[0], 14);
     else if (pts.length > 1) map.fitBounds(Lib.latLngBounds(pts).pad(0.4));
   }, [locs, me.user_id, me.username, me.display_name, partner.username, partner.display_name]);
