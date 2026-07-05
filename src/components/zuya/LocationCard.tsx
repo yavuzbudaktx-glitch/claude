@@ -55,6 +55,7 @@ export function LocationCard() {
   const [status, setStatus] = useState<string | null>(null);
   const [dbError, setDbError] = useState<string | null>(null);
   const [myCoords, setMyCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [ready, setReady] = useState(false); // map instance exists
 
   const mapEl = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -107,7 +108,9 @@ export function LocationCard() {
       const fix = () => map.invalidateSize();
       setTimeout(fix, 60);
       setTimeout(fix, 400);
-      syncMarkers();
+      // Signal that the map exists so the marker-sync effect runs with the
+      // location data that may have already loaded (fixes the init race).
+      setReady(true);
     })();
     return () => {
       cancelled = true;
@@ -148,8 +151,8 @@ export function LocationCard() {
   }, [locs, me.user_id, me.username, me.display_name, partner.username, partner.display_name]);
 
   useEffect(() => {
-    syncMarkers();
-  }, [syncMarkers]);
+    if (ready) syncMarkers();
+  }, [syncMarkers, ready]);
 
   async function toggleShare() {
     if (sharing) {
@@ -191,6 +194,7 @@ export function LocationCard() {
           );
         } else {
           setDbError(null);
+          void load(); // draw my pin now, don't wait on realtime
         }
       },
       (err) => {
