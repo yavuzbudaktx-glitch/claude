@@ -1,14 +1,16 @@
 # Britannica scrape debug dump
-# generated: 2026-07-06T17:18:06.662Z
-# url:       https://www.britannica.com/on-this-day
+# generated: 2026-07-06T21:14:38.787Z
+# url:       https://www.britannica.com/on-this-day/july-6
 # fetcher:   Jina Reader
 # kind:      markdown
-# length:    19980
+# length:    20134
 # parsed:    NO
 # -----------------------------------------------------------------
 Title: On This Day - What Happened Today In History | Britannica
 
-URL Source: https://www.britannica.com/on-this-day
+URL Source: https://www.britannica.com/on-this-day/july-6
+
+Published Time: Tue, 21 Mar 2023 05:02:13 GMT
 
 Markdown Content:
 [🎆 Save 30% Off A Britannica Subscription! 🎆 Subscribe Now](https://cam.britannica.com/subscribe/bp-july-fourth-2026?utm_source=premium&utm_medium=toupee&utm_campaign=july-fourth-2026)
@@ -61,7 +63,7 @@ June
 
 [22](https://www.britannica.com/on-this-day/June-22)[23](https://www.britannica.com/on-this-day/June-23)[24](https://www.britannica.com/on-this-day/June-24)[25](https://www.britannica.com/on-this-day/June-25)[26](https://www.britannica.com/on-this-day/June-26)[27](https://www.britannica.com/on-this-day/June-27)[28](https://www.britannica.com/on-this-day/June-28)
 
-[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day)[](https://www.britannica.com/on-this-day)[](https://www.britannica.com/on-this-day)[](https://www.britannica.com/on-this-day)[](https://www.britannica.com/on-this-day)
+[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)
 
 July
 
@@ -73,7 +75,7 @@ July
 
 [22](https://www.britannica.com/on-this-day/July-22)[23](https://www.britannica.com/on-this-day/July-23)[24](https://www.britannica.com/on-this-day/July-24)[25](https://www.britannica.com/on-this-day/July-25)[26](https://www.britannica.com/on-this-day/July-26)[27](https://www.britannica.com/on-this-day/July-27)[28](https://www.britannica.com/on-this-day/July-28)
 
-[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day)[](https://www.britannica.com/on-this-day)[](https://www.britannica.com/on-this-day)[](https://www.britannica.com/on-this-day)
+[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)
 
 August
 
@@ -85,7 +87,7 @@ August
 
 [22](https://www.britannica.com/on-this-day/August-22)[23](https://www.britannica.com/on-this-day/August-23)[24](https://www.britannica.com/on-this-day/August-24)[25](https://www.britannica.com/on-this-day/August-25)[26](https://www.britannica.com/on-this-day/August-26)[27](https://www.britannica.com/on-this-day/August-27)[28](https://www.britannica.com/on-this-day/August-28)
 
-[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day)[](https://www.britannica.com/on-this-day)[](https://www.britannica.com/on-this-day)[](https://www.britannica.com/on-this-day)
+[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)
 
 August
 
@@ -279,7 +281,7 @@ SIGN UP
 
 ### Thank you for signing up!
 
-![Image 25](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=77&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day&s=4A031C98-845B-4D45-A1C8-2E8E63CEDD8E&json=%20)![Image 26](https://pixel.rubiconproject.com/token?pid=49096&us_privacy=1YNY)
+![Image 25](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=71&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-6&s=E6F1A719-4909-4C6B-8079-F5CBF1852379&json=%20)![Image 26](https://pixel.rubiconproject.com/token?pid=49096&us_privacy=1YNY)
 
 ✕
 ## Do not sell or share my personal information.
