@@ -157,24 +157,8 @@ export function LocationCard() {
     if (ready) syncMarkers();
   }, [syncMarkers, ready]);
 
-  async function toggleShare() {
-    if (sharing) {
-      // Stop sharing.
-      if (watchId.current != null) navigator.geolocation.clearWatch(watchId.current);
-      watchId.current = null;
-      setSharing(false);
-      setStatus(null);
-      await supabase
-        .from("zuya_locations")
-        .upsert({ user_id: me.user_id, sharing: false }, { onConflict: "user_id" });
-      return;
-    }
-    if (!navigator.geolocation) {
-      setStatus("Bu cihaz konum desteklemiyor.");
-      return;
-    }
-    setStatus("Konum alınıyor…");
-    setSharing(true);
+  const startWatch = useCallback(() => {
+    if (!navigator.geolocation || watchId.current != null) return;
     watchId.current = navigator.geolocation.watchPosition(
       async (pos) => {
         setStatus(null);
@@ -197,7 +181,7 @@ export function LocationCard() {
           );
         } else {
           setDbError(null);
-          void load(); // draw my pin now, don't wait on realtime
+          void load();
         }
       },
       (err) => {
@@ -206,8 +190,35 @@ export function LocationCard() {
         if (watchId.current != null) navigator.geolocation.clearWatch(watchId.current);
         watchId.current = null;
       },
-      { enableHighAccuracy: true, maximumAge: 30_000, timeout: 20_000 },
+      { enableHighAccuracy: true, maximumAge: 15_000, timeout: 20_000 },
     );
+  }, [supabase, me.user_id, load]);
+
+  // Auto-resume location on every app open: if sharing was left on, re-acquire
+  // and push a fresh position without needing to toggle.
+  useEffect(() => {
+    if (sharing) startWatch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sharing]);
+
+  async function toggleShare() {
+    if (sharing) {
+      if (watchId.current != null) navigator.geolocation.clearWatch(watchId.current);
+      watchId.current = null;
+      setSharing(false);
+      setStatus(null);
+      await supabase
+        .from("zuya_locations")
+        .upsert({ user_id: me.user_id, sharing: false }, { onConflict: "user_id" });
+      return;
+    }
+    if (!navigator.geolocation) {
+      setStatus("Bu cihaz konum desteklemiyor.");
+      return;
+    }
+    setStatus("Konum alınıyor…");
+    setSharing(true);
+    startWatch();
   }
 
   // Stop the watcher when the card unmounts.

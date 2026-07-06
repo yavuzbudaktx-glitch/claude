@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ZUYA_STATUSES, zuyaStatus } from "@/lib/zuya/statuses";
 import { useZuya } from "@/components/zuya/ZuyaProvider";
 import { ZuyaAvatar } from "@/components/zuya/ZuyaAvatar";
+import { AnchoredPanel } from "@/components/zuya/AnchoredPanel";
 import type { ZuyaMemberRow } from "@/types/zuya";
 
 // Small icon chip overlapping the avatar's bottom-right corner.
@@ -37,16 +38,8 @@ export function MemberChip({ member, isMe }: { member: ZuyaMemberRow; isMe: bool
   const { supabase } = useZuya();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
   const st = zuyaStatus(member.status);
-
-  useEffect(() => {
-    if (!open) return;
-    const onDown = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", onDown);
-    return () => document.removeEventListener("mousedown", onDown);
-  }, [open]);
 
   async function setStatus(slug: string) {
     setOpen(false);
@@ -59,8 +52,9 @@ export function MemberChip({ member, isMe }: { member: ZuyaMemberRow; isMe: bool
   return (
     <div className="relative" ref={ref}>
       <button
+        ref={btnRef}
         onClick={() => isMe && setOpen((v) => !v)}
-        className={`flex items-center gap-2.5 rounded-2xl px-2 py-1.5 transition ${
+        className={`flex items-center gap-2 rounded-2xl px-1.5 py-1.5 transition ${
           isMe ? "hover:bg-[var(--hl)] cursor-pointer" : "cursor-default"
         }`}
         title={isMe ? "Change your status" : undefined}
@@ -84,8 +78,8 @@ export function MemberChip({ member, isMe }: { member: ZuyaMemberRow; isMe: bool
         </span>
       </button>
 
-      {open && (
-        <div className="absolute left-0 top-full mt-2 z-50 w-[min(16rem,calc(100vw-1.25rem))] card !p-2 max-h-[70vh] overflow-y-auto">
+      <AnchoredPanel open={open} onClose={() => setOpen(false)} anchorRef={btnRef} align="left" width={256}>
+        <div className="card !p-2">
           <p className="label px-2 pt-1 pb-2">Set your status</p>
           {ZUYA_STATUSES.map((s) => {
             const Icon = s.icon;
@@ -112,7 +106,7 @@ export function MemberChip({ member, isMe }: { member: ZuyaMemberRow; isMe: bool
             );
           })}
         </div>
-      )}
+      </AnchoredPanel>
     </div>
   );
 }

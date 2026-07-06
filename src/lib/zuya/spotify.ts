@@ -89,20 +89,17 @@ export async function spotifyNowPlaying(userId: string): Promise<NowPlaying | nu
   const token = await spotifyAccessToken(row.refresh_token);
   if (!token) return null;
 
-  // If something is actively playing, that's the answer.
+  // The player's loaded track (playing OR paused) is the most recent one.
   const res = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
   });
-  let pausedItem: SpotifyItem | undefined;
   if (res.ok && res.status !== 204) {
     const data = (await res.json()) as { is_playing?: boolean; item?: SpotifyItem };
-    if (data.item && data.is_playing) return mapItem(data.item, true);
-    pausedItem = data.item; // paused — keep only as a last resort
+    if (data.item) return mapItem(data.item, !!data.is_playing);
   }
 
-  // Otherwise show the most recently *finished* track with its timestamp —
-  // this is the authoritative "last listened" (the paused item can be stale).
+  // Nothing loaded in the player — show the last finished track + when.
   const recent = await fetch("https://api.spotify.com/v1/me/player/recently-played?limit=1", {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
@@ -112,6 +109,5 @@ export async function spotifyNowPlaying(userId: string): Promise<NowPlaying | nu
     const first = data.items?.[0];
     if (first?.track) return mapItem(first.track, false, first.played_at);
   }
-  if (pausedItem) return mapItem(pausedItem, false);
   return { playing: false };
 }

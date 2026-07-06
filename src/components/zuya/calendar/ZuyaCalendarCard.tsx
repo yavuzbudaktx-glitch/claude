@@ -41,7 +41,7 @@ function mondayOf(d: Date): Date {
   return m;
 }
 
-type Tab = "calendar" | "suggest" | "plans";
+type Tab = "calendar" | "suggest";
 
 export function ZuyaCalendarCard() {
   const { supabase, me, partner } = useZuya();
@@ -106,7 +106,7 @@ export function ZuyaCalendarCard() {
       });
       if (res.ok) {
         setBucketPrefill(null);
-        setTab("plans");
+        setTab("calendar");
         void loadSuggestions();
       }
     } finally {
@@ -183,9 +183,8 @@ export function ZuyaCalendarCard() {
       }}
     >
       <div className="flex flex-wrap gap-2 mb-4">
-        {tabBtn("calendar", <CalendarDays className="h-3.5 w-3.5" />, "Calendar")}
-        {tabBtn("suggest", <Sparkles className="h-3.5 w-3.5" />, "Suggest a date")}
-        {tabBtn("plans", <CalendarHeart className="h-3.5 w-3.5" />, "Plans", myTurnCount)}
+        {tabBtn("calendar", <CalendarDays className="h-3.5 w-3.5" />, "Takvim", myTurnCount)}
+        {tabBtn("suggest", <Sparkles className="h-3.5 w-3.5" />, "Buluşma teklif et")}
       </div>
 
       {tab === "calendar" && (
@@ -221,6 +220,18 @@ export function ZuyaCalendarCard() {
               </button>
             )}
           </div>
+
+          {/* Pending + recent suggestions, inline (no separate Plans tab). */}
+          {suggestions.filter((s) => s.status === "pending").length > 0 && (
+            <div className="space-y-2.5 pt-1">
+              <p className="label">Teklifler</p>
+              {suggestions
+                .filter((s) => s.status === "pending")
+                .map((s) => (
+                  <DateSuggestionItem key={s.id} suggestion={s} onChanged={() => void loadSuggestions()} />
+                ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -243,18 +254,6 @@ export function ZuyaCalendarCard() {
         </div>
       )}
 
-      {tab === "plans" && (
-        <div className="space-y-2.5">
-          {suggestions.length === 0 && (
-            <p className="text-[13px] text-muted">
-              Nothing planned yet.
-            </p>
-          )}
-          {suggestions.map((s) => (
-            <DateSuggestionItem key={s.id} suggestion={s} onChanged={() => void loadSuggestions()} />
-          ))}
-        </div>
-      )}
     </Card>
   );
 }
