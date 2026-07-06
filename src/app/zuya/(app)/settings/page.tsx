@@ -9,6 +9,7 @@ import { useZuya } from "@/components/zuya/ZuyaProvider";
 import { ZuyaAvatar } from "@/components/zuya/ZuyaAvatar";
 import { toUploadableJpeg } from "@/lib/zuya/image";
 import { PushToggle } from "@/components/zuya/PushToggle";
+import { ZuyaThemePicker } from "@/components/zuya/ZuyaThemePicker";
 
 export default function ZuyaSettingsPage() {
   const { supabase, me, refreshAvatar } = useZuya();
@@ -238,6 +239,10 @@ export default function ZuyaSettingsPage() {
             </a>
           </>
         )}
+      </Card>
+
+      <Card title="Tema" collapsible={false}>
+        <ZuyaThemePicker />
       </Card>
 
       <Card title="Bildirimler" collapsible={false}>

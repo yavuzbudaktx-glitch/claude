@@ -2851,7 +2851,18 @@ main { position: relative; z-index: 1; }
    text utilities) but every token swapped to a warm blush/plum palette,
    with its own dawn-gradient background painted over the aurora.
 ======================================================================= */
+/* Universal Zuya wrapper bits (theme-independent). Any selected dashboard
+   theme applies to this element too, so `background: var(--bg)` picks up the
+   theme's colour when the rose palette isn't active. */
 .zuya-scope {
+  min-height: 100dvh;
+  color: var(--ink);
+  background: var(--bg);
+  overflow-x: clip;
+}
+
+/* Default "Dawn Rose" palette — gated so a chosen theme can override it. */
+.zuya-scope.zt-rose {
   /* -------- light: dawn pink over cream -------- */
   color-scheme: light;
   --bg:           #f4ebe7;
@@ -2884,14 +2895,11 @@ main { position: relative; z-index: 1; }
   --shadow-hover: 0 26px 60px -22px rgba(74, 22, 42, 0.44),
                   0 3px 8px rgba(74, 22, 42, 0.08),
                   inset 0 1px 0 rgba(255, 255, 255, 0.85);
-
-  min-height: 100dvh;
-  color: var(--ink);
 }
 
 /* Zuya paints its own dawn over the app-wide aurora: fixed layer, later in
    the tree than body::before, so it simply covers it. */
-.zuya-scope::before {
+.zuya-scope.zt-rose::before {
   content: "";
   position: fixed;
   inset: 0;
@@ -2906,7 +2914,7 @@ main { position: relative; z-index: 1; }
 }
 
 /* -------- dark: deep plum night -------- */
-.dark .zuya-scope {
+.dark .zuya-scope.zt-rose {
   color-scheme: dark;
   --bg:           #140a11;
   --paper:        rgba(255, 255, 255, 0.045);
@@ -2940,7 +2948,7 @@ main { position: relative; z-index: 1; }
                   inset 0 1px 0 rgba(255, 255, 255, 0.10);
 }
 
-.dark .zuya-scope::before {
+.dark .zuya-scope.zt-rose::before {
   background:
     radial-gradient(46% 40% at 18% 16%, rgba(176, 61, 100, 0.30), transparent 70%),
     radial-gradient(40% 36% at 84% 10%, rgba(226, 176, 74, 0.14), transparent 70%),
@@ -2987,4 +2995,3 @@ main { position: relative; z-index: 1; }
 @keyframes zeq { 0%,100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
 
 /* A popover can never make the whole page scroll sideways. */
-.zuya-scope { overflow-x: clip; }
