@@ -39,8 +39,12 @@ export function TopUtilityBar({
   return (
     <div className="flex items-center justify-between gap-4 flex-wrap">
       <div className="flex items-center gap-2 flex-wrap">
-        <div className="inline-flex items-center gap-2.5 rounded-full border border-[var(--glass-border)] bg-[var(--paper)] px-3.5 py-1.5 text-[12.5px] text-ink-soft backdrop-blur-md shadow-[var(--shadow-card)]">
-          <span className="font-medium">{now ? format(now, "EEEE, MMMM d") : ""}</span>
+        <div className="inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--paper)] px-3 py-1.5 text-[11px] sm:text-[12.5px] text-ink-soft backdrop-blur-md shadow-[var(--shadow-card)] whitespace-nowrap">
+          <span className="font-medium">
+            {/* Shorter on phones so date + weather stay on one line. */}
+            <span className="sm:hidden">{now ? format(now, "EEE, MMM d") : ""}</span>
+            <span className="hidden sm:inline">{now ? format(now, "EEEE, MMMM d") : ""}</span>
+          </span>
           <span className="h-1 w-1 rounded-full bg-[var(--accent)] shrink-0" aria-hidden />
           <WeatherSummary />
         </div>

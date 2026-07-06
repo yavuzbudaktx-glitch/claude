@@ -36,7 +36,7 @@ export default async function Page() {
     user.email?.split("@")[0];
 
   return (
-    <main className="max-w-[1480px] mx-auto px-5 md:px-10 pt-3 md:pt-4 pb-6 md:pb-8 space-y-5">
+    <main className="max-w-[1480px] mx-auto px-5 md:px-10 pt-[max(0.75rem,env(safe-area-inset-top))] md:pt-4 pb-6 md:pb-8 space-y-5">
       <section className="relative z-30 grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-6 items-stretch lg:min-h-[220px]">
         <div className="flex flex-col gap-4 min-w-0">
           <TopUtilityBar
