@@ -91,7 +91,7 @@ export function NotificationsPopover() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 z-50 w-80 card !p-3 max-h-[70vh] overflow-y-auto">
+        <div className="absolute right-0 top-full mt-2 z-50 w-[min(20rem,calc(100vw-1.25rem))] card !p-3 max-h-[70vh] overflow-y-auto">
           <p className="label px-1 pb-2">From {partner.display_name}</p>
           {items.length === 0 && (
             <p className="text-[13px] text-muted px-1 pb-1">Nothing yet — quiet and cozy.</p>

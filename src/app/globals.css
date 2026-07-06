@@ -2985,3 +2985,6 @@ main { position: relative; z-index: 1; }
 
 /* Tiny "now playing" equalizer bars. */
 @keyframes zeq { 0%,100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
+
+/* A popover can never make the whole page scroll sideways. */
+.zuya-scope { overflow-x: clip; }
