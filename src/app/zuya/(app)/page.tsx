@@ -2,7 +2,7 @@ import { ZuyaCalendarCard } from "@/components/zuya/calendar/ZuyaCalendarCard";
 import { DailyPhotoCard } from "@/components/zuya/DailyPhotoCard";
 import { MessagesCard } from "@/components/zuya/MessagesCard";
 import { DailyQuestionCard } from "@/components/zuya/DailyQuestionCard";
-import { BucketListCard } from "@/components/zuya/BucketListCard";
+import { BoardCard } from "@/components/zuya/BoardCard";
 import { LocationCard } from "@/components/zuya/LocationCard";
 import { NowPlayingCard } from "@/components/zuya/NowPlayingCard";
 
@@ -39,8 +39,8 @@ export default function ZuyaDashboard() {
         <div id="zuya-question" className="scroll-mt-20 [&>*]:h-full">
           <DailyQuestionCard />
         </div>
-        <div id="zuya-bucket" className="scroll-mt-20 [&>*]:h-full">
-          <BucketListCard />
+        <div id="zuya-board" className="scroll-mt-20 [&>*]:h-full">
+          <BoardCard />
         </div>
       </div>
     </main>
