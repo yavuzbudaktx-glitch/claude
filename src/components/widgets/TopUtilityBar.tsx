@@ -66,7 +66,7 @@ export function TopUtilityBar({
           ))}
       </div>
 
-      {right && <div className="flex items-center gap-2 shrink-0">{right}</div>}
+      {right && <div className="flex items-center flex-wrap gap-1.5 md:gap-2 justify-end">{right}</div>}
     </div>
   );
 }

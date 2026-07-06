@@ -69,7 +69,7 @@ function Row({ name, entry }: { name: string; entry: Entry | undefined }) {
 export function NowPlayingCard() {
   const { me, partner } = useZuya();
   const { data } = useSWR<Resp>("/api/zuya/spotify/now", fetcher, {
-    refreshInterval: 20_000,
+    refreshInterval: 12_000,
     revalidateOnFocus: true,
   });
 

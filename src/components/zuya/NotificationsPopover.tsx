@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Bell, CalendarHeart, Check, X, Pencil } from "lucide-react";
 import { useZuya, useZuyaTableEvent } from "@/components/zuya/ZuyaProvider";
+import { AnchoredPanel } from "@/components/zuya/AnchoredPanel";
 import type { ZuyaNotificationKind, ZuyaNotificationRow } from "@/types/zuya";
 
 const KIND_META: Record<ZuyaNotificationKind, { icon: typeof Bell; text: (p: Record<string, unknown>) => string }> = {
@@ -27,6 +28,7 @@ export function NotificationsPopover() {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState<ZuyaNotificationRow[]>([]);
   const ref = useRef<HTMLDivElement>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
 
   async function load() {
     const { data } = await supabase
@@ -45,15 +47,6 @@ export function NotificationsPopover() {
   }, []);
 
   useZuyaTableEvent("zuya_notifications", () => void load());
-
-  useEffect(() => {
-    if (!open) return;
-    const onDown = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", onDown);
-    return () => document.removeEventListener("mousedown", onDown);
-  }, [open]);
 
   async function markAllRead() {
     await supabase
@@ -75,8 +68,9 @@ export function NotificationsPopover() {
   return (
     <div className="relative" ref={ref}>
       <button
+        ref={btnRef}
         onClick={openBell}
-        className="relative grid place-items-center h-10 w-10 rounded-full border border-[var(--rule)] bg-[var(--paper)] hover:border-[var(--accent)] transition"
+        className="relative grid place-items-center h-9 w-9 rounded-full border border-[var(--rule)] bg-[var(--paper)] hover:border-[var(--accent)] transition"
         aria-label="Notifications"
       >
         <Bell className="h-4.5 w-4.5 text-ink" style={{ width: 18, height: 18 }} />
@@ -90,8 +84,8 @@ export function NotificationsPopover() {
         )}
       </button>
 
-      {open && (
-        <div className="absolute right-0 top-full mt-2 z-50 w-[min(20rem,calc(100vw-1.25rem))] card !p-3 max-h-[70vh] overflow-y-auto">
+      <AnchoredPanel open={open} onClose={() => setOpen(false)} anchorRef={btnRef} align="right" width={320}>
+        <div className="card !p-3">
           <p className="label px-1 pb-2">From {partner.display_name}</p>
           {items.length === 0 && (
             <p className="text-[13px] text-muted px-1 pb-1">Nothing yet — quiet and cozy.</p>
@@ -116,7 +110,7 @@ export function NotificationsPopover() {
             })}
           </div>
         </div>
-      )}
+      </AnchoredPanel>
     </div>
   );
 }

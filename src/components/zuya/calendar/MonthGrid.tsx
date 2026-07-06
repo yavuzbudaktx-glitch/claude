@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import type { ZuyaUsername } from "@/lib/zuya/config";
 
 export const OWNER_COLORS: Record<ZuyaUsername, string> = {
-  yavuz: "#b0812a",   // gold
+  yavuz: "#2e9e6b",   // green
   zuleyha: "#d64570", // rose
 };
 
