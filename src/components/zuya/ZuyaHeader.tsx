@@ -4,9 +4,7 @@ import Link from "next/link";
 import { Settings } from "lucide-react";
 import { useZuya } from "@/components/zuya/ZuyaProvider";
 import { MemberChip } from "@/components/zuya/StatusPicker";
-import { NotificationsPopover } from "@/components/zuya/NotificationsPopover";
 import { ZuyaAvatar } from "@/components/zuya/ZuyaAvatar";
-import { ZuyaLogo } from "@/components/zuya/ZuyaLogo";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function ZuyaHeader() {
@@ -18,11 +16,6 @@ export function ZuyaHeader() {
       style={{ paddingTop: "calc(env(safe-area-inset-top) + 0.5rem)" }}
     >
       <div className="max-w-[1200px] mx-auto flex items-center gap-2">
-        {/* Brand mark — the lighthouse. */}
-        <Link href="/zuya" aria-label="Zuya" className="shrink-0 grid place-items-center h-8 w-8 text-accent">
-          <ZuyaLogo size={22} />
-        </Link>
-
         {/* Both of us, statuses live. */}
         <div className="flex items-center gap-1 min-w-0">
           <MemberChip member={me} isMe />
@@ -30,7 +23,6 @@ export function ZuyaHeader() {
         </div>
 
         <div className="ml-auto flex items-center gap-1.5 shrink-0">
-          <NotificationsPopover />
           <ThemeToggle />
           <Link
             href="/zuya/settings"

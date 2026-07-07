@@ -9,12 +9,17 @@ import {
   UtensilsCrossed,
   Car,
   MessageCircleHeart,
-  type LucideIcon,
 } from "lucide-react";
+import type { ComponentType, CSSProperties } from "react";
+import { TeaBag } from "@/components/zuya/TeaBagIcon";
+
+// Both lucide icons and our custom TeaBag satisfy this — they all take a
+// className and an optional inline style (which the badge uses to size them).
+type StatusIcon = ComponentType<{ className?: string; style?: CSSProperties }>;
 
 export interface ZuyaStatus {
   slug: string;
-  icon: LucideIcon;
+  icon: StatusIcon;
   en: string;
   tr: string;
   /** Chip/badge tint. */
@@ -34,6 +39,7 @@ export const ZUYA_STATUSES: ZuyaStatus[] = [
   { slug: "sleeping",     icon: Moon,               en: "Sleeping",        tr: "Uyuyorum",         color: "#7c6bd6" },
   { slug: "eating",       icon: UtensilsCrossed,    en: "Eating",          tr: "Yemekteyim",       color: "#a8743d" },
   { slug: "driving",      icon: Car,                en: "Driving",         tr: "Yoldayım",         color: "#4b8a8f" },
+  { slug: "brewing",      icon: TeaBag,             en: "Making tea",      tr: "Demleniyor",       color: "#9c6b3f" },
 ];
 
 export function zuyaStatus(slug: string): ZuyaStatus {

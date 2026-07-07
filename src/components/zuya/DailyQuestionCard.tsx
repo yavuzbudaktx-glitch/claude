@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, Lock, SendHorizontal, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, Lock, SendHorizontal, Sparkles, Hand } from "lucide-react";
 import { Card } from "@/components/Card";
 import { useZuya, useZuyaTableEvent } from "@/components/zuya/ZuyaProvider";
 import { ZUYA_QUESTIONS } from "@/lib/zuya/questions";
@@ -24,6 +24,27 @@ export function DailyQuestionCard() {
   const [draft, setDraft] = useState("");
   const [busy, setBusy] = useState(false);
   const [partnerHasAnswered, setPartnerHasAnswered] = useState(false);
+  const [poked, setPoked] = useState(false);
+
+  const partnerReal = !!partner.user_id && partner.user_id !== "pending-partner";
+
+  async function poke() {
+    if (poked || !partnerReal) return;
+    setPoked(true);
+    void supabase
+      .from("zuya_notifications")
+      .insert({
+        user_id: partner.user_id,
+        kind: "question_nudge",
+        payload: { name: me.display_name },
+      })
+      .then(() => {}, () => {});
+    fetch("/api/zuya/push/notify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ kind: "question", text: "Günün sorusunu bekliyorum 👀" }),
+    }).catch(() => {});
+  }
 
   const questionIdx = useMemo(
     () => zuyaSeedIdx(`${day}-zuya-question`, ZUYA_QUESTIONS.length),
@@ -103,8 +124,26 @@ export function DailyQuestionCard() {
         </button>
       </div>
 
-      <p className="text-[15px] text-ink font-medium leading-snug">{q.en}</p>
-      <p className="text-[12.5px] text-muted italic mt-1">{q.tr}</p>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[15px] text-ink font-medium leading-snug">{q.en}</p>
+          <p className="text-[12.5px] text-muted italic mt-1">{q.tr}</p>
+        </div>
+        {isToday && partnerReal && !theirs && (
+          <button
+            onClick={() => void poke()}
+            disabled={poked}
+            title={`${partner.display_name}'ı dürt — cevap versin`}
+            className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold border transition ${
+              poked
+                ? "border-[var(--rule)] text-muted"
+                : "border-[var(--accent)] text-accent hover:bg-[var(--accent-soft)]"
+            }`}
+          >
+            <Hand className="h-3.5 w-3.5" /> {poked ? "Dürtüldü" : "Dürt"}
+          </button>
+        )}
+      </div>
 
       <div className="mt-4">
         {!mine && (

@@ -57,7 +57,6 @@ export function LocationCard() {
   const [sharing, setSharing] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [dbError, setDbError] = useState<string | null>(null);
-  const [myCoords, setMyCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [ready, setReady] = useState(false); // map instance exists
 
   const mapEl = useRef<HTMLDivElement>(null);
@@ -162,7 +161,6 @@ export function LocationCard() {
     watchId.current = navigator.geolocation.watchPosition(
       async (pos) => {
         setStatus(null);
-        setMyCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
         const { error } = await supabase.from("zuya_locations").upsert(
           {
             user_id: me.user_id,
@@ -242,12 +240,6 @@ export function LocationCard() {
       <div className="rounded-2xl overflow-hidden border border-[var(--rule-soft)]">
         <div ref={mapEl} style={{ height: 260, width: "100%", background: "var(--rule-soft)" }} />
       </div>
-      {myCoords && (
-        <p className="text-[11px] text-muted-2 mt-1.5 font-mono">
-          konumun: {myCoords.lat.toFixed(5)}, {myCoords.lng.toFixed(5)}
-        </p>
-      )}
-
       <div className="flex items-center justify-between gap-3 mt-3 flex-wrap">
         <div className="text-[12px] text-muted space-y-0.5">
           <div className="inline-flex items-center gap-1.5">
@@ -284,9 +276,6 @@ export function LocationCard() {
       {status && status !== "Konum alınıyor…" && (
         <p className="text-[12px] text-down mt-2">{status}</p>
       )}
-      <p className="text-[11px] text-muted-2 mt-2">
-        Konum yalnızca uygulama açıkken ve paylaşım açıkken güncellenir.
-      </p>
     </Card>
   );
 }
