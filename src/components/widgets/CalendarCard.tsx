@@ -388,7 +388,7 @@ export function CalendarCard() {
           card's intrinsic height. The row is sized by whatever sibling is
           tallest (the hadith), and this card stretches to match — its content
           scrolls internally instead of growing the row. */}
-      <div className="relative flex-1 min-h-0">
+      <div className="relative flex-1 min-h-0 h-72 md:h-auto">
         <div ref={fitRef} className="absolute inset-0 overflow-y-auto pr-0.5">
           {tab === "calendar" ? (
             <CalendarTab

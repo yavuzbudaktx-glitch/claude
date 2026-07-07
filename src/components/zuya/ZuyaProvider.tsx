@@ -26,6 +26,7 @@ const LIVE_TABLES = [
   "zuya_bucket_list",
   "zuya_wordle_results",
   "zuya_board",
+  "zuya_settings",
 ] as const;
 
 export type ZuyaLiveTable = (typeof LIVE_TABLES)[number];

@@ -25,9 +25,11 @@ export interface ZuyaThoughtRow {
 export interface ZuyaMessageRow {
   id: string;
   sender_id: string;
-  body: string;
+  body: string | null;
   created_at: string;
   read_at: string | null;
+  audio_path: string | null;
+  audio_dur: number | null;
 }
 
 export type ZuyaDateStatus = "pending" | "accepted" | "rejected" | "cancelled";

@@ -1,10 +1,27 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { SendHorizontal, Check, CheckCheck } from "lucide-react";
+import { SendHorizontal, Check, CheckCheck, Mic, X } from "lucide-react";
 import { Card } from "@/components/Card";
 import { useZuya, useZuyaTableEvent } from "@/components/zuya/ZuyaProvider";
+import { VoiceMessage } from "@/components/zuya/VoiceMessage";
 import type { ZuyaMessageRow } from "@/types/zuya";
+
+const MAX_REC_SECS = 120;
+
+function pickAudioMime(): { mime: string; ext: string } {
+  const MR = typeof window !== "undefined" ? window.MediaRecorder : undefined;
+  const candidates: [string, string][] = [
+    ["audio/webm;codecs=opus", "webm"],
+    ["audio/webm", "webm"],
+    ["audio/mp4", "mp4"],
+    ["audio/aac", "aac"],
+  ];
+  for (const [mime, ext] of candidates) {
+    if (MR && MR.isTypeSupported?.(mime)) return { mime, ext };
+  }
+  return { mime: "", ext: "webm" };
+}
 
 const QUICK_EMOJI = ["❤️", "😘", "🔥", "😂", "🥺", "😍", "😉", "🙄"];
 const PAGE = 120;
@@ -30,6 +47,16 @@ export function MessagesCard() {
   const [sending, setSending] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const visibleRef = useRef(false);
+
+  const [recording, setRecording] = useState(false);
+  const [recSecs, setRecSecs] = useState(0);
+  const [recErr, setRecErr] = useState<string | null>(null);
+  const recRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const streamRef = useRef<MediaStream | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const canceledRef = useRef(false);
+  const secsRef = useRef(0);
 
   const load = useCallback(async () => {
     const { data } = await supabase
@@ -112,6 +139,93 @@ export function MessagesCard() {
     }
   }
 
+  const stopTracks = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = null;
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+  }, []);
+
+  const uploadVoice = useCallback(
+    async (blob: Blob, ext: string, secs: number) => {
+      const path = `voice/${crypto.randomUUID()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("zuya")
+        .upload(path, blob, { contentType: blob.type || "audio/webm", upsert: false });
+      if (upErr) {
+        setRecErr("Ses gönderilemedi.");
+        return;
+      }
+      const { error } = await supabase
+        .from("zuya_messages")
+        .insert({ sender_id: me.user_id, body: null, audio_path: path, audio_dur: secs });
+      if (error) {
+        setRecErr("Ses gönderilemedi.");
+        return;
+      }
+      fetch("/api/zuya/push/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "message", text: "🎤 Sesli mesaj" }),
+      }).catch(() => {});
+    },
+    [supabase, me.user_id],
+  );
+
+  const startRec = useCallback(async () => {
+    if (recording) return;
+    setRecErr(null);
+    let stream: MediaStream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch {
+      setRecErr("Mikrofona erişilemedi.");
+      return;
+    }
+    const { mime, ext } = pickAudioMime();
+    const mr = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+    streamRef.current = stream;
+    recRef.current = mr;
+    chunksRef.current = [];
+    canceledRef.current = false;
+    secsRef.current = 0;
+    setRecSecs(0);
+
+    mr.ondataavailable = (e) => {
+      if (e.data.size > 0) chunksRef.current.push(e.data);
+    };
+    mr.onstop = () => {
+      stopTracks();
+      const secs = Math.max(1, Math.round(secsRef.current));
+      const blob = new Blob(chunksRef.current, { type: mr.mimeType || mime || "audio/webm" });
+      setRecording(false);
+      if (canceledRef.current || blob.size < 512) return;
+      void uploadVoice(blob, ext, secs);
+    };
+
+    mr.start();
+    setRecording(true);
+    timerRef.current = setInterval(() => {
+      secsRef.current += 1;
+      setRecSecs(secsRef.current);
+      if (secsRef.current >= MAX_REC_SECS) recRef.current?.stop();
+    }, 1000);
+  }, [recording, stopTracks, uploadVoice]);
+
+  const stopAndSend = useCallback(() => {
+    canceledRef.current = false;
+    recRef.current?.stop();
+  }, []);
+
+  const cancelRec = useCallback(() => {
+    canceledRef.current = true;
+    recRef.current?.stop();
+    stopTracks();
+    setRecording(false);
+  }, [stopTracks]);
+
+  useEffect(() => () => stopTracks(), [stopTracks]);
+
   let lastDay = "";
 
   return (
@@ -152,7 +266,11 @@ export function MessagesCard() {
                       : undefined
                   }
                 >
-                  {m.body}
+                  {m.audio_path ? (
+                    <VoiceMessage path={m.audio_path} dur={m.audio_dur} mine={mine} />
+                  ) : (
+                    m.body
+                  )}
                   <span
                     className={`block text-[10px] mt-0.5 text-right ${
                       mine ? "text-white/70" : "text-muted-2"
@@ -187,29 +305,71 @@ export function MessagesCard() {
             </button>
           ))}
         </div>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            void send();
-          }}
-          className="flex gap-2"
-        >
-          <input
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            placeholder={`Write to ${partner.display_name}…`}
-            maxLength={2000}
-            className="flex-1 px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-white/5 text-sm outline-none focus:ring-2 focus:ring-[var(--accent)]"
-          />
-          <button
-            disabled={sending || !draft.trim()}
-            className="grid place-items-center h-10 w-10 rounded-full text-white transition hover:brightness-110 active:scale-95 disabled:opacity-40 shrink-0"
-            style={{ background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" }}
-            aria-label="Send"
+        {recording ? (
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={cancelRec}
+              className="grid place-items-center h-10 w-10 rounded-full text-muted hover:text-down transition shrink-0"
+              aria-label="Cancel recording"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <div className="flex-1 flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-white/5">
+              <span className="h-2.5 w-2.5 rounded-full bg-[var(--down)] animate-pulse shrink-0" />
+              <span className="text-sm tabular-nums text-ink">
+                {Math.floor(recSecs / 60)}:{(recSecs % 60).toString().padStart(2, "0")}
+              </span>
+              <span className="text-[12px] text-muted">Kaydediliyor…</span>
+            </div>
+            <button
+              type="button"
+              onClick={stopAndSend}
+              className="grid place-items-center h-10 w-10 rounded-full text-white transition hover:brightness-110 active:scale-95 shrink-0"
+              style={{ background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" }}
+              aria-label="Send voice message"
+            >
+              <SendHorizontal className="h-4 w-4" />
+            </button>
+          </div>
+        ) : (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              void send();
+            }}
+            className="flex gap-2"
           >
-            <SendHorizontal className="h-4 w-4" />
-          </button>
-        </form>
+            <input
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              placeholder={`Write to ${partner.display_name}…`}
+              maxLength={2000}
+              className="flex-1 px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-white/5 text-sm outline-none focus:ring-2 focus:ring-[var(--accent)]"
+            />
+            {draft.trim() ? (
+              <button
+                disabled={sending}
+                className="grid place-items-center h-10 w-10 rounded-full text-white transition hover:brightness-110 active:scale-95 disabled:opacity-40 shrink-0"
+                style={{ background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" }}
+                aria-label="Send"
+              >
+                <SendHorizontal className="h-4 w-4" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => void startRec()}
+                className="grid place-items-center h-10 w-10 rounded-full text-white transition hover:brightness-110 active:scale-95 shrink-0"
+                style={{ background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" }}
+                aria-label="Record a voice message"
+              >
+                <Mic className="h-4 w-4" />
+              </button>
+            )}
+          </form>
+        )}
+        {recErr && <p className="text-[12px] text-down mt-1.5">{recErr}</p>}
       </div>
     </Card>
   );

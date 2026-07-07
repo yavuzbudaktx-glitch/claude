@@ -2,7 +2,7 @@ import { ZuyaCalendarCard } from "@/components/zuya/calendar/ZuyaCalendarCard";
 import { DailyPhotoCard } from "@/components/zuya/DailyPhotoCard";
 import { MessagesCard } from "@/components/zuya/MessagesCard";
 import { DailyQuestionCard } from "@/components/zuya/DailyQuestionCard";
-import { BoardCard } from "@/components/zuya/BoardCard";
+import { PinterestCard } from "@/components/zuya/PinterestCard";
 import { LocationCard } from "@/components/zuya/LocationCard";
 import { NowPlayingCard } from "@/components/zuya/NowPlayingCard";
 
@@ -40,7 +40,7 @@ export default function ZuyaDashboard() {
           <DailyQuestionCard />
         </div>
         <div id="zuya-board" className="scroll-mt-20 [&>*]:h-full">
-          <BoardCard />
+          <PinterestCard />
         </div>
       </div>
     </main>
