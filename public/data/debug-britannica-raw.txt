@@ -1,20 +1,16 @@
 # Britannica scrape debug dump
-# generated: 2026-07-06T21:14:38.787Z
-# url:       https://www.britannica.com/on-this-day/july-6
+# generated: 2026-07-07T08:49:08.476Z
+# url:       https://www.britannica.com/on-this-day/july-7
 # fetcher:   Jina Reader
 # kind:      markdown
-# length:    20134
+# length:    19816
 # parsed:    NO
 # -----------------------------------------------------------------
 Title: On This Day - What Happened Today In History | Britannica
 
-URL Source: https://www.britannica.com/on-this-day/july-6
-
-Published Time: Tue, 21 Mar 2023 05:02:13 GMT
+URL Source: https://www.britannica.com/on-this-day/july-7
 
 Markdown Content:
-[🎆 Save 30% Off A Britannica Subscription! 🎆 Subscribe Now](https://cam.britannica.com/subscribe/bp-july-fourth-2026?utm_source=premium&utm_medium=toupee&utm_campaign=july-fourth-2026)
-
 [![Image 1: Encyclopedia Britannica](https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png)](https://www.britannica.com/)
 
 Search Britannica Click here to search
@@ -23,21 +19,15 @@ Search Britannica Click here to search
 
 Search Britannica Click here to search
 
-[SUBSCRIBE](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=global-nav&utm_campaign=july-fourth-2026)
-
-[SUBSCRIBE](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=global-nav-mobile&utm_campaign=july-fourth-2026)
-
 Login
 
-[Subscribe to Britannica Premium](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=nav-login-box&utm_campaign=july-fourth-2026)
-
-[SUBSCRIBE TO PREMIUM](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=july-fourth-2026)
+[](https://www.britannica.com/on-this-day/july-7)
 
 [Ask the Chatbot](https://www.britannica.com/chatbot)[Games & Quizzes](https://www.britannica.com/quiz/browse)[History & Society](https://www.britannica.com/History-Society)[Science & Tech](https://www.britannica.com/Science-Tech)[Biographies](https://www.britannica.com/Biographies)[Animals & Nature](https://www.britannica.com/Animals-Nature)[Geography & Travel](https://www.britannica.com/Geography-Travel)[Arts & Culture](https://www.britannica.com/Arts-Culture)[ProCon](https://www.britannica.com/procon)[Money](https://www.britannica.com/money)[Videos](https://www.britannica.com/videos)
 
 [Home](https://www.britannica.com/) Today in History ![Image 3: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-logo.png?v=3.190.3)
 
-![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-star.svg?v=3.190.3)July 6
+![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-star.svg?v=3.190.3)July 7
 
 ![Image 5: Today In History Phone](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-phone.png?v=3.189.7)
 
@@ -63,7 +53,7 @@ June
 
 [22](https://www.britannica.com/on-this-day/June-22)[23](https://www.britannica.com/on-this-day/June-23)[24](https://www.britannica.com/on-this-day/June-24)[25](https://www.britannica.com/on-this-day/June-25)[26](https://www.britannica.com/on-this-day/June-26)[27](https://www.britannica.com/on-this-day/June-27)[28](https://www.britannica.com/on-this-day/June-28)
 
-[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)
+[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-7)[](https://www.britannica.com/on-this-day/july-7)[](https://www.britannica.com/on-this-day/july-7)[](https://www.britannica.com/on-this-day/july-7)[](https://www.britannica.com/on-this-day/july-7)
 
 July
 
@@ -75,7 +65,7 @@ July
 
 [22](https://www.britannica.com/on-this-day/July-22)[23](https://www.britannica.com/on-this-day/July-23)[24](https://www.britannica.com/on-this-day/July-24)[25](https://www.britannica.com/on-this-day/July-25)[26](https://www.britannica.com/on-this-day/July-26)[27](https://www.britannica.com/on-this-day/July-27)[28](https://www.britannica.com/on-this-day/July-28)
 
-[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)
+[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-7)[](https://www.britannica.com/on-this-day/july-7)[](https://www.britannica.com/on-this-day/july-7)[](https://www.britannica.com/on-this-day/july-7)
 
 August
 
@@ -87,7 +77,7 @@ August
 
 [22](https://www.britannica.com/on-this-day/August-22)[23](https://www.britannica.com/on-this-day/August-23)[24](https://www.britannica.com/on-this-day/August-24)[25](https://www.britannica.com/on-this-day/August-25)[26](https://www.britannica.com/on-this-day/August-26)[27](https://www.britannica.com/on-this-day/August-27)[28](https://www.britannica.com/on-this-day/August-28)
 
-[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)[](https://www.britannica.com/on-this-day/july-6)
+[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-7)[](https://www.britannica.com/on-this-day/july-7)[](https://www.britannica.com/on-this-day/july-7)[](https://www.britannica.com/on-this-day/july-7)
 
 August
 
@@ -97,25 +87,25 @@ August
 
 [Go to Today's Date](https://www.britannica.com/on-this-day)
 
- 1957: Althea Gibson wins Wimbledon
+ 1928: The commercial introduction of sliced bread
 
- On this day in 1957, American tennis player [Althea Gibson](https://www.britannica.com/biography/Althea-Gibson) became the first Black player to win the women’s singles title at Wimbledon, where in 1951, she was the first Black player to compete at the tournament. Between 1956 and 1958, Gibson appeared in 19 major finals—including singles, doubles, and mixed doubles—and won 11 titles. She won the singles title again at [Wimbledon](https://www.britannica.com/sports/Wimbledon-Championships) in 1958.
+ On this day in 1928, [bread](https://www.britannica.com/topic/bread) loaves that had been presliced—with the first commercial bread slicer—were sold for the very first time. Advertised as “The Greatest Forward Step in the Baking Industry Since Bread Was Wrapped” and “a fine loaf sold a better way,” the loaves were produced by Chillicothe Baking Company in [Chillicothe](https://www.britannica.com/place/Chillicothe-Missouri), Missouri and cut using a slicing machine designed by jeweler Otto Rohwedder.
 
-[READ MORE](https://www.britannica.com/today-in-history/July-6-Althea-Gibson-Wins-Wimbledon?utm_source=otd)
+[READ MORE](https://www.britannica.com/today-in-history/July-7-The-Long-Road-to-Sliced-Bread?utm_source=otd)
 
-![Image 6: July 6, 1957: Tennis history is made](https://cdn.britannica.com/11/289311-050-79B37FB1/today-in-history-Althea-Gibson.jpg?w=530&h=300&c=crop)
+![Image 6: July 7, 1928: “A fine loaf sold a better way”](https://cdn.britannica.com/12/289312-050-44002693/today-in-history-Sliced-bread-sold-for-the-first-time.jpg?w=530&h=300&c=crop)
 
- © Keystone/Hulton Archive—Getty Images; Photo Illustration Encyclopædia Britannica, Inc.
+ Prints and Photographs Division/Library of Congress, Washington, D.C. (LC-USF34-034954-D); Photo Illustration Encyclopædia Britannica, Inc.
 
  Featured Event 
 
-![Image 7: Anne Frank](https://cdn.britannica.com/06/160006-050-8A1AEBDB/Anne-Frank.jpg?w=356&h=200&c=crop)
+![Image 7: Honolulu: Iolani Palace](https://cdn.britannica.com/21/193321-050-A3E7B660/Iolani-Palace-Honolulu-Hawaii.jpg?w=356&h=200&c=crop)
 
- © AKG London/SuperStock
+ © James Crawford/Dreamstime.com
 
-Anne Frank forced into hiding
+Hawaiian Islands annexed by the United States
 
-[Anne Frank](https://www.britannica.com/biography/Anne-Frank) and her family went into hiding in Amsterdam on this day in 1942 and lived in a secret annex—an experience documented in her [diary](https://www.britannica.com/topic/The-Diary-of-a-Young-Girl), which became a classic of war literature—until their capture on August 4, 1944. _[[Take a tour of the Anne Frank House in Amsterdam](https://www.britannica.com/biography/Anne-Frank/images-videos#/media/1/217168/192171).]_
+ The [U.S. Congress](https://www.britannica.com/topic/Congress-of-the-United-States) annexed [Hawaii](https://www.britannica.com/place/Hawaii-state) through a joint resolution signed by President [William McKinley](https://www.britannica.com/biography/William-McKinley) on this day in 1898, paving the way for the islands to become a territory (1900) and later a U.S. state (1959). _[[Sort fact from fiction in our quiz about Hawaii](https://www.britannica.com/quiz/hawaii-fact-or-fiction).]_
 
 Featured Biography
 
@@ -123,155 +113,135 @@ Featured Biography
 
  Featured Biography 
 
-[![Image 8: John Paul Jones](https://cdn.britannica.com/17/62617-050-923F2421/John-Paul-Jones-etching.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/John-Paul-Jones-United-States-naval-officer?utm_source=otd)
-
- Prints and Photographs Division, Library of Congress, Washington, D.C. (reproduction no. LC-USZC4-2761)
-
-John Paul Jones
-
-> Sir, I have not yet begun to fight.
-> 
-> John Paul Jones, September 23, 1779
-
-[John Paul Jones](https://www.britannica.com/biography/John-Paul-Jones-United-States-naval-officer), born this day in 1747 in Scotland, was a naval hero in the [American Revolution](https://www.britannica.com/event/American-Revolution), renowned for his victory over British warships off the eastern coast of England on September 23, 1779.
-
-Famous Birthdays
-
-1986
-
-[David Karp](https://www.britannica.com/money/David-Karp?utm_source=otd)
-
-American Web developer and entrepreneur
-
-1952
-
-[Hilary Mantel](https://www.britannica.com/biography/Hilary-Mantel?utm_source=otd)
-
-British writer
-
-1923
-
-[Wojciech Witold Jaruzelski](https://www.britannica.com/biography/Wojciech-Jaruzelski?utm_source=otd)
-
-Polish general
-
-1781
-
-[Sir Stamford Raffles](https://www.britannica.com/biography/Stamford-Raffles?utm_source=otd)
-
-British colonial agent
-
-[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-6)
-
-## More on July 6
-
-![Image 9: Serena Williams](https://cdn.britannica.com/70/149370-050-F2F4BEE5/Serena-Williams-US-Open-2004.jpg?w=260&h=196&c=crop)
-
- © Patrick Tuohy/Shutterstock.com
-
-2002
-
-[Serena Williams](https://www.britannica.com/biography/Serena-Williams) defeated her sister [Venus](https://www.britannica.com/biography/Venus-Williams) to win her first [Wimbledon](https://www.britannica.com/sports/Wimbledon-Championships) singles title. _[[Test your knowledge of tennis](https://www.britannica.com/quiz/tennis).]_
-
-![Image 10: Black Sunday](https://cdn.britannica.com/37/176937-004-F227C283/Robert-Evans-John-Frankenheimer-filming-Black-Sunday.jpg?w=260&h=196&c=crop)
-
- © 1977 Paramount Pictures Corporation
-
-2002
-
-[John Frankenheimer](https://www.britannica.com/biography/John-Frankenheimer)—who was considered one of the most creatively gifted directors of the 1950s and ’60s, especially noted for such classic movies as [The Manchurian Candidate](https://www.britannica.com/topic/The-Manchurian-Candidate-film-1962) (1962) and [Birdman of Alcatraz](https://www.britannica.com/topic/Birdman-of-Alcatraz) (1962)—died in Los Angeles. _[[How well do you know the history of cinema?](https://www.britannica.com/quiz/everything-about-movies-quiz)]_
-
-![Image 11: Srebrenica genocide](https://cdn.britannica.com/65/230865-050-DB03C42C/Women-mourn-before-mass-funeral-victims-Srebrenica-massacre-at-memorial-2015.jpg?w=260&h=196&c=crop)
-
- Matej Divizna/Getty Images
-
-1995
-
- Bosnian Serb forces began an attack on [Srebrenica](https://www.britannica.com/place/Srebrenica), Bosnia and Herzegovina, ultimately killing more than 7,000 Bosniak (Bosnian Muslim) boys and men; the [massacre](https://www.britannica.com/event/Srebrenica-genocide) was the worst episode of mass murder in Europe since [World War II](https://www.britannica.com/event/World-War-II).
-
-![Image 12: Malawi](https://cdn.britannica.com/21/4221-050-1830E77A/Flag-Malawi.jpg?w=260&h=196&c=crop)
+[![Image 8: Marc Chagall stands behind a staircase railing, looking up, with one of his colorful paintings displayed on the wall behind him.](https://cdn.britannica.com/54/78654-050-D5F70B06/Marc-Chagall-one-artworks-background.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Marc-Chagall?utm_source=otd)
 
  Encyclopædia Britannica, Inc.
 
-1964
+Marc Chagall
 
-[Nyasaland](https://www.britannica.com/place/Federation-of-Rhodesia-and-Nyasaland) broke from British rule and became the independent country of [Malawi](https://www.britannica.com/place/Malawi/History#ref214462) within the [Commonwealth of Nations](https://www.britannica.com/topic/Commonwealth-association-of-states). _[[Explore the history of independence movements in Africa](https://www.britannica.com/explore/colonization-of-Africa).]_
+Born this day in 1887, French artist [Marc Chagall](https://www.britannica.com/biography/Marc-Chagall) created images based on emotional and poetic associations, and his early works, which predated [Surrealism](https://www.britannica.com/art/Surrealism), were among the first expressions of psychic reality in modern art.
 
-![Image 13: The Fab Four](https://cdn.britannica.com/72/241072-050-42AF0599/Beatles-MBEs-Order-of-the-British-Empire-1965-Buckingham-Palace-London.jpg?w=260&h=196&c=crop)
+Famous Birthdays
 
- Hulton Archive/Getty Images
+1941
 
-1957
+[Michael Howard, Baron Howard of Lympne](https://www.britannica.com/biography/Michael-Howard?utm_source=otd)
 
-[Paul McCartney](https://www.britannica.com/biography/Paul-McCartney) met [John Lennon](https://www.britannica.com/biography/John-Lennon) for the first time, at a church event in Liverpool, England, where the latter’s band was performing; the duo would later form [the Beatles](https://www.britannica.com/topic/the-Beatles), one of the most influential bands in history. _[[How much do you know about the Fab Four?](https://www.britannica.com/quiz/beatlemania)]_
+British politician
 
-![Image 14: George W. Bush](https://cdn.britannica.com/78/73178-050-00309E51/George-W-Bush.jpg?w=260&h=196&c=crop)
+1921
 
- Eric Draper/White House Photo
+[Ezzard Charles](https://www.britannica.com/biography/Ezzard-Charles?utm_source=otd)
+
+American boxer
+
+1911
+
+[Gian Carlo Menotti](https://www.britannica.com/biography/Gian-Carlo-Menotti?utm_source=otd)
+
+Italian composer
+
+1868
+
+[Frank Bunker Gilbreth](https://www.britannica.com/biography/Frank-Bunker-Gilbreth?utm_source=otd)
+
+American engineer
+
+[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-7)
+
+## More on July 7
+
+![Image 9: 2015 FIFA Women's World Cup: U.S. celebration](https://cdn.britannica.com/29/185329-050-D2F53882/ticker-tape-parade-association-football-players-triumph-team-July-5.jpg?w=260&h=196&c=crop)
+
+ © lev radin/Shutterstock.com
+
+2019
+
+ Led by [Megan Rapinoe](https://www.britannica.com/biography/Megan-Rapinoe), the U.S. women’s [football (soccer)](https://www.britannica.com/sports/football-soccer) team defeated the Netherlands to win its fourth [World Cup](https://www.britannica.com/sports/Womens-World-Cup). _[[What’s the history behind the World Cup?](https://www.britannica.com/video/did-you-know-FIFA-World-Cup-soccer/-255381)]_
+
+![Image 10: Harry Potter and the Order of the Phoenix](https://cdn.britannica.com/31/183131-050-222D0E67/Harry-Potter-and-the-Order-of-Phoenix.jpg?w=260&h=196&c=crop)
+
+ Warner Brothers
+
+2011
+
+ Harry Potter and the Deathly Hallows: Part 2, the final film adaptation of [J.K. Rowling](https://www.britannica.com/biography/J-K-Rowling)’s popular [children’s book series](https://www.britannica.com/topic/Harry-Potter), had its world premiere in London. _[[Test your knowledge of classic children’s books](https://www.britannica.com/quiz/classic-childrens-books).]_
+
+![Image 11: London bombings of 2005](https://cdn.britannica.com/88/141488-050-E7902C8F/Targets-London-terrorist-attacks-July-7-2005.jpg?w=260&h=196&c=crop)
+
+ Encyclopædia Britannica, Inc.
+
+2005
+
+ The London transit system was struck by coordinated [suicide bomb attacks](https://www.britannica.com/event/London-bombings-of-2005) that killed 39 people and injured more than 700.
+
+![Image 12: Martina Navratilova](https://cdn.britannica.com/40/26140-050-10F65FE6/Martina-Navratilova-Wimbledon-Championships-1986.jpg?w=260&h=196&c=crop)
+
+ © Keystone—Hulton Archive/Getty Images
+
+1978
+
+ Czech-born [tennis](https://www.britannica.com/sports/tennis) player [Martina Navratilova](https://www.britannica.com/biography/Martina-Navratilova) defeated [Chris Evert](https://www.britannica.com/biography/Chris-Evert) to win her first of nine [Wimbledon](https://www.britannica.com/sports/Wimbledon-Championships) singles titles. _[[Take our Wimbledon quiz](https://www.britannica.com/quiz/wimbledon).]_
+
+![Image 13: Solomon Islands](https://cdn.britannica.com/98/3298-050-9F44CA8A/Flag-Solomon-Islands.jpg?w=260&h=196&c=crop)
+
+ Encyclopædia Britannica, Inc.
+
+1978
+
+ The [Solomon Islands](https://www.britannica.com/place/Solomon-Islands) became an independent nation.
+
+![Image 14: Mother Frances Xavier Cabrini](https://cdn.britannica.com/74/21674-050-C623B805/Frances-Xavier-Cabrini.jpg?w=260&h=196&c=crop)
+
+ Archive Photos/Getty Images
 
 1946
 
-[George W. Bush](https://www.britannica.com/biography/George-W-Bush), who served as the 43rd [president of the United States](https://www.britannica.com/topic/presidency-of-the-United-States-of-America), was born in New Haven, Connecticut. _[[Sort fact from fiction in our quiz about U.S. presidents](https://www.britannica.com/quiz/president-of-the-united-states-fact-or-fiction).]_
+ Mother [Frances Xavier Cabrini](https://www.britannica.com/biography/Saint-Frances-Xavier-Cabrini) became the first U.S. citizen to be [canonized](https://www.britannica.com/topic/canonization) by the [Roman Catholic Church](https://www.britannica.com/topic/Roman-Catholicism/Structure-of-the-church#ref43647). _[[Find out how a person becomes a saint](https://www.britannica.com/video/how-does-a-person-become-a-saint-canonization/-308642).]_
 
-![Image 15: default image](https://cdn.britannica.com/mendel-resources/3-190/images/shared/thistle-blue-half.svg?v=3.190.3)
+![Image 15: Second Sino-Japanese War](https://cdn.britannica.com/37/127037-004-6C956756/tanks-Sherman-China-Sino-Japanese-War.jpg?w=260&h=196&c=crop)
 
  Image: Encyclopædia Britannica, Inc.
 
-1928
+1937
 
- The first full-length all-talking [motion picture](https://www.britannica.com/art/history-of-film), Lights of New York, premiered in New York City. _[[Take our film buff quiz](https://www.britannica.com/quiz/film-buff).]_
+ Chinese and Japanese troops clashed near the [Marco Polo Bridge](https://www.britannica.com/event/Marco-Polo-Bridge-Incident) outside Beijing, launching the [Second Sino-Japanese War](https://www.britannica.com/event/Second-Sino-Japanese-War). _[[Take our quiz about the history of war](https://www.britannica.com/quiz/a-history-of-war).]_
 
-![Image 16: Frida Kahlo: Self-portrait with Thorn Necklace and Hummingbird](https://cdn.britannica.com/75/190175-050-DF798A2E/Self-portrait-oil-canvas-Thorn-Necklace-Hummingbird-Frida.jpg?w=260&h=196&c=crop)
+![Image 16: Satchel Paige](https://cdn.britannica.com/73/80373-050-92313B19/Satchel-Paige-Kansas-City-Monarchs-baseball-pitchers-1948.jpg?w=260&h=196&c=crop)
 
- © Album/Alamy
+ AP Images
 
-1907
+1906
 
-[Frida Kahlo](https://www.britannica.com/biography/Frida-Kahlo), best known for her intense, brilliantly colored self-portraits, was born in Coyoacán, Mexico. _[[Test your knowledge of art](https://www.britannica.com/quiz/ultimate-art-quiz).]_
+[Satchel Paige](https://www.britannica.com/biography/Satchel-Paige), a professional [baseball](https://www.britannica.com/sports/baseball) pitcher who earned legendary fame during his many years in the [Negro leagues](https://www.britannica.com/sports/Negro-league), is believed to have been born this day in Mobile, Alabama. _[[Take our baseball quiz](https://www.britannica.com/quiz/baseball).]_
 
-![Image 17: Dadabhai Naoroji](https://cdn.britannica.com/37/181437-050-C8E450A2/indian-nationalist-Dadabhai-Naoroji.jpg?w=260&h=196&c=crop)
+![Image 17: default image](https://cdn.britannica.com/mendel-resources/3-190/images/shared/thistle-blue-half.svg?v=3.190.3)
 
- The British Library (Public Domain)
+ Image: Encyclopædia Britannica, Inc.
 
-1892
+1770
 
-[Dadabhai Naoroji](https://www.britannica.com/biography/Dadabhai-Naoroji) won election to the House of Commons from a constituency in [London](https://www.britannica.com/place/London), becoming the first Asian elected to British [Parliament](https://www.britannica.com/topic/Parliament). He had previously, in 1885, helped to found the[Indian National Congress](https://www.britannica.com/topic/Indian-National-Congress).
+ A [Russian](https://www.britannica.com/place/Russia) fleet destroyed an [Ottoman](https://www.britannica.com/place/Ottoman-Empire) fleet in the [Battle of Çeşme](https://www.britannica.com/event/Battle-of-Cesme) on the [Aegean Sea](https://www.britannica.com/place/Aegean-Sea). _[[Take our military history buff quiz](https://www.britannica.com/quiz/military-history-buff-quiz).]_
 
-![Image 18: Louis Pasteur](https://cdn.britannica.com/00/3400-050-0819DB14/Louis-Pasteur.jpg?w=260&h=196&c=crop)
+![Image 18: Charles VII](https://cdn.britannica.com/27/23727-050-D898C493/Charles-VII-detail-portrait-Jean-Fouquet-Louvre.jpg?w=260&h=196&c=crop)
 
- Archives Photographiques, Paris
+ © Photos.com/Getty Images
 
-1885
+1438
 
-[Louis Pasteur](https://www.britannica.com/biography/Louis-Pasteur) successfully tested an [antirabies](https://www.britannica.com/science/rabies) vaccine. _[[Learn more about the development of vaccines through history](https://www.britannica.com/explore/vaccines-immunization-history-timeline).]_
+ King [Charles VII](https://www.britannica.com/biography/Charles-VII-king-of-France) of France issued the [Pragmatic Sanction of Bourges](https://www.britannica.com/topic/Pragmatic-Sanction-of-Bourges), restricting the rights of the pope and in many cases making the pope’s jurisdiction subject to the will of the king.
 
-![Image 19: Fort Ticonderoga](https://cdn.britannica.com/16/153316-050-A8BD5769/Fort-Ticonderoga-New-York.jpg?w=260&h=196&c=crop)
+![Image 19: Edward I](https://cdn.britannica.com/64/164-050-0A5CFD7C/Edward-I.jpg?w=260&h=196&c=crop)
 
- © Roy Johnson/Alamy
+ Hulton Archive/Getty Images
 
-1777
+1307
 
- A day after American troops abandoned Fort Ticonderoga in New York, British general [John Burgoyne](https://www.britannica.com/biography/John-Burgoyne) and his forces [seized it](https://www.britannica.com/event/Siege-of-Fort-Ticonderoga), outraging the leaders of the [American Revolution](https://www.britannica.com/event/American-Revolution). _[[Learn how the American colonies gained their independence](https://www.britannica.com/quiz/the-american-revolution).]_
-
-![Image 20: Antoine Caron: The Arrest and Execution of Sir Thomas More in 1535](https://cdn.britannica.com/13/147613-050-300C9370/Execution-Thomas-More-Arrest-panel-oil-Antoine-1535.jpg?w=260&h=196&c=crop)
-
- Photos.com/Getty Images
-
-1535
-
- English humanist and statesman [Thomas More](https://www.britannica.com/biography/Thomas-More-English-humanist-and-statesman) was beheaded for refusing to accept King [Henry VIII](https://www.britannica.com/biography/Henry-VIII-king-of-England) as head of the [Church of England](https://www.britannica.com/topic/Church-of-England). _[[Take our quiz about the Tudor period](https://www.britannica.com/quiz/tudor-period-quiz).]_
-
-![Image 21: Jan Hus](https://cdn.britannica.com/71/81671-050-4B153EF6/Jan-Hus-stake-woodcut-Hussite-prayer-book-1563.jpg?w=260&h=196&c=crop)
-
- The Granger Collection, New York
-
-1415
-
- Religious reformer [Jan Hus](https://www.britannica.com/biography/Jan-Hus), whose criticisms of the church anticipated the [Reformation](https://www.britannica.com/event/Reformation) by more than a century, was burned at the stake for [heresy](https://www.britannica.com/topic/heresy).
+ King [Edward I](https://www.britannica.com/biography/Edward-I-king-of-England) of England died on his way to subdue the new Scottish king, [Robert the Bruce](https://www.britannica.com/biography/Robert-the-Bruce). _[[Sort fact from fiction in our quiz about English royalty](https://www.britannica.com/quiz/english-royalty-fact-or-fiction).]_
 
 SIGN UP FOR
 
-![Image 22: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 23: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
+![Image 20: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 21: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
 
 History's Biggest Headlines
 
@@ -281,21 +251,4 @@ SIGN UP
 
 ### Thank you for signing up!
 
-![Image 25](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=71&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-6&s=E6F1A719-4909-4C6B-8079-F5CBF1852379&json=%20)![Image 26](https://pixel.rubiconproject.com/token?pid=49096&us_privacy=1YNY)
-
-✕
-## Do not sell or share my personal information.
-
-You have chosen to opt-out of the sale or sharing of your information from this site and any of its affiliates. To opt back in please click the "Reenable Personalization" link.
-
-This site collects information through the use of cookies and other tracking tools. Cookies and these tools do not contain any information that personally identifies a user, but personal information that would be stored about you may be linked to the information stored in and obtained from them. This information would be used and shared for Analytics, Ad Serving, Interest Based Advertising, among other purposes.
-
-For more information please visit this site's Privacy Policy.
-
-CANCEL
-
-CONTINUE
-
-Information from your device can be used to personalize your ad experience. 
-
-[Do not sell or share my personal information.](https://www.britannica.com/)
+![Image 23: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=546abbcd-4687-af22-47a8-3c28ea711bb4&iiqpciddate=1783414110536&tsrnd=40_1783414110937&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.46%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.46%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 24](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=135&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-7&s=EF7CEDF1-67F5-4FFE-93A2-367343A84FFD&json=%20)![Image 25](https://ids.ad.gt/api/v1/halo_match?id=AU1D-0100-001783414112-YTS6WGNH-R88T&halo_id=060ixfcju6a659a999b9966666666666666uooiwi0e0y6e666g66000000001000)![Image 26](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001783414112-YTS6WGNH-R88T)![Image 27](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001783414112-YTS6WGNH-R88T&adnxs_id=$UID&gdpr=0)![Image 28](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001783414112-YTS6WGNH-R88T%26auid%3DAU1D-0100-001783414112-YTS6WGNH-R88T&gdpr=0)![Image 29](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001783414112-YTS6WGNH-R88T&gdpr=0)![Image 30](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001783414112-YTS6WGNH-R88T&gdpr=0)![Image 31](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001783414112-YTS6WGNH-R88T&gdpr=0)![Image 32](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001783414112-YTS6WGNH-R88T&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001783414112-YTS6WGNH-R88T%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 33](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4MzQxNDExMi1ZVFM2V0dOSC1SODhU&id=AU1D-0100-001783414112-YTS6WGNH-R88T&gdpr=0)![Image 34](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001783414112-YTS6WGNH-R88T)![Image 35](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001783414112-YTS6WGNH-R88T&uid=[UID]&gdpr=0)![Image 36](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001783414112-YTS6WGNH-R88T%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
