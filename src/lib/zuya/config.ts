@@ -27,3 +27,22 @@ export function zuyaEmail(username: ZuyaUsername): string {
 export function isZuyaEmail(email: string | null | undefined): boolean {
   return !!email && email.endsWith(`@${ZUYA_EMAIL_DOMAIN}`);
 }
+
+// A shared secret that gates the only two unauthenticated write paths —
+// first-time registration and account reset. Set ZUYA_SIGNUP_CODE on Vercel to
+// something only the two of you know. If it's unset, both paths are CLOSED, so
+// a stranger can never register an open slot or wipe an account.
+export function zuyaSignupCode(): string {
+  return process.env.ZUYA_SIGNUP_CODE ?? "";
+}
+
+// Constant-time-ish compare so the code can't be probed by timing.
+export function zuyaCodeOk(given: string | undefined | null): boolean {
+  const expected = zuyaSignupCode();
+  if (!expected) return false; // unset ⇒ closed
+  const a = String(given ?? "");
+  if (a.length !== expected.length) return false;
+  let diff = 0;
+  for (let i = 0; i < expected.length; i++) diff |= a.charCodeAt(i) ^ expected.charCodeAt(i);
+  return diff === 0;
+}
