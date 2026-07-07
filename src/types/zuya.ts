@@ -32,6 +32,17 @@ export interface ZuyaMessageRow {
   audio_dur: number | null;
 }
 
+export interface ZuyaWatchlistRow {
+  id: string;
+  added_by: string;
+  title: string;
+  kind: string; // 'movie' | 'show'
+  watched: boolean;
+  watched_at: string | null;
+  ratings: Record<string, number>;
+  created_at: string;
+}
+
 export type ZuyaDateStatus = "pending" | "accepted" | "rejected" | "cancelled";
 
 export interface ZuyaDateHistoryEntry {

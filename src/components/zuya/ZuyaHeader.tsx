@@ -5,6 +5,7 @@ import { Settings } from "lucide-react";
 import { useZuya } from "@/components/zuya/ZuyaProvider";
 import { MemberChip } from "@/components/zuya/StatusPicker";
 import { ZuyaAvatar } from "@/components/zuya/ZuyaAvatar";
+import { KissButton } from "@/components/zuya/KissButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function ZuyaHeader() {
@@ -23,6 +24,7 @@ export function ZuyaHeader() {
         </div>
 
         <div className="ml-auto flex items-center gap-1.5 shrink-0">
+          <KissButton />
           <ThemeToggle />
           <Link
             href="/zuya/settings"
