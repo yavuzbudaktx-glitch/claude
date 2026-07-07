@@ -1,39 +1,41 @@
 # Britannica scrape debug dump
-# generated: 2026-07-07T13:26:57.318Z
+# generated: 2026-07-07T15:34:11.091Z
 # url:       https://www.britannica.com/on-this-day/july-7
 # fetcher:   Jina Reader
 # kind:      markdown
-# length:    19866
+# length:    20242
 # parsed:    NO
 # -----------------------------------------------------------------
 Title: On This Day - What Happened Today In History | Britannica
 
 URL Source: https://www.britannica.com/on-this-day/july-7
 
-Published Time: Wed, 27 Aug 2025 22:17:04 GMT
-
 Markdown Content:
-![Image 2](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=34&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-7&s=4D90B37E-4167-4A30-BAEE-45B1904F0274&json=%20)
-
-[![Image 3: Encyclopedia Britannica](https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png)](https://www.britannica.com/)
+[![Image 1: Encyclopedia Britannica](https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png)](https://www.britannica.com/)
 
 Search Britannica Click here to search
 
-[![Image 4: Encyclopedia Britannica](https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png)](https://www.britannica.com/)
+[![Image 2: Encyclopedia Britannica](https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png)](https://www.britannica.com/)
 
 Search Britannica Click here to search
+
+[SUBSCRIBE](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=global-nav&utm_campaign=blue-evergreen-header)
+
+[SUBSCRIBE](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=global-nav-mobile&utm_campaign=blue-evergreen)
 
 Login
 
 [](https://www.britannica.com/on-this-day/july-7)
 
+[SUBSCRIBE TO PREMIUM](https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=hamburger-menu&utm_campaign=bdpremium)
+
 [Ask the Chatbot](https://www.britannica.com/chatbot)[Games & Quizzes](https://www.britannica.com/quiz/browse)[History & Society](https://www.britannica.com/History-Society)[Science & Tech](https://www.britannica.com/Science-Tech)[Biographies](https://www.britannica.com/Biographies)[Animals & Nature](https://www.britannica.com/Animals-Nature)[Geography & Travel](https://www.britannica.com/Geography-Travel)[Arts & Culture](https://www.britannica.com/Arts-Culture)[ProCon](https://www.britannica.com/procon)[Money](https://www.britannica.com/money)[Videos](https://www.britannica.com/videos)
 
-[Home](https://www.britannica.com/) Today in History ![Image 5: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-logo.png?v=3.190.3)
+[Home](https://www.britannica.com/) Today in History ![Image 3: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-logo.png?v=3.190.3)
 
-![Image 6: Today In History Star](https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-star.svg?v=3.190.3)July 7
+![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-star.svg?v=3.190.3)July 7
 
-![Image 7: Today In History Phone](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-phone.png?v=3.189.7)
+![Image 5: Today In History Phone](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-phone.png?v=3.189.7)
 
 Get Our Newsletter in your Inbox 📩
 
@@ -97,13 +99,13 @@ August
 
 [READ MORE](https://www.britannica.com/today-in-history/July-7-The-Long-Road-to-Sliced-Bread?utm_source=otd)
 
-![Image 8: July 7, 1928: “A fine loaf sold a better way”](https://cdn.britannica.com/12/289312-050-44002693/today-in-history-Sliced-bread-sold-for-the-first-time.jpg?w=530&h=300&c=crop)
+![Image 6: July 7, 1928: “A fine loaf sold a better way”](https://cdn.britannica.com/12/289312-050-44002693/today-in-history-Sliced-bread-sold-for-the-first-time.jpg?w=530&h=300&c=crop)
 
  Prints and Photographs Division/Library of Congress, Washington, D.C. (LC-USF34-034954-D); Photo Illustration Encyclopædia Britannica, Inc.
 
  Featured Event 
 
-![Image 9: Honolulu: Iolani Palace](https://cdn.britannica.com/21/193321-050-A3E7B660/Iolani-Palace-Honolulu-Hawaii.jpg?w=356&h=200&c=crop)
+![Image 7: Honolulu: Iolani Palace](https://cdn.britannica.com/21/193321-050-A3E7B660/Iolani-Palace-Honolulu-Hawaii.jpg?w=356&h=200&c=crop)
 
  © James Crawford/Dreamstime.com
 
@@ -117,7 +119,7 @@ Featured Biography
 
  Featured Biography 
 
-[![Image 10: Marc Chagall stands behind a staircase railing, looking up, with one of his colorful paintings displayed on the wall behind him.](https://cdn.britannica.com/54/78654-050-D5F70B06/Marc-Chagall-one-artworks-background.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Marc-Chagall?utm_source=otd)
+[![Image 8: Marc Chagall stands behind a staircase railing, looking up, with one of his colorful paintings displayed on the wall behind him.](https://cdn.britannica.com/54/78654-050-D5F70B06/Marc-Chagall-one-artworks-background.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Marc-Chagall?utm_source=otd)
 
  Encyclopædia Britannica, Inc.
 
@@ -155,7 +157,7 @@ American engineer
 
 ## More on July 7
 
-![Image 11: 2015 FIFA Women's World Cup: U.S. celebration](https://cdn.britannica.com/29/185329-050-D2F53882/ticker-tape-parade-association-football-players-triumph-team-July-5.jpg?w=260&h=196&c=crop)
+![Image 9: 2015 FIFA Women's World Cup: U.S. celebration](https://cdn.britannica.com/29/185329-050-D2F53882/ticker-tape-parade-association-football-players-triumph-team-July-5.jpg?w=260&h=196&c=crop)
 
  © lev radin/Shutterstock.com
 
@@ -163,7 +165,7 @@ American engineer
 
  Led by [Megan Rapinoe](https://www.britannica.com/biography/Megan-Rapinoe), the U.S. women’s [football (soccer)](https://www.britannica.com/sports/football-soccer) team defeated the Netherlands to win its fourth [World Cup](https://www.britannica.com/sports/Womens-World-Cup). _[[What’s the history behind the World Cup?](https://www.britannica.com/video/did-you-know-FIFA-World-Cup-soccer/-255381)]_
 
-![Image 12: Harry Potter and the Order of the Phoenix](https://cdn.britannica.com/31/183131-050-222D0E67/Harry-Potter-and-the-Order-of-Phoenix.jpg?w=260&h=196&c=crop)
+![Image 10: Harry Potter and the Order of the Phoenix](https://cdn.britannica.com/31/183131-050-222D0E67/Harry-Potter-and-the-Order-of-Phoenix.jpg?w=260&h=196&c=crop)
 
  Warner Brothers
 
@@ -171,7 +173,7 @@ American engineer
 
  Harry Potter and the Deathly Hallows: Part 2, the final film adaptation of [J.K. Rowling](https://www.britannica.com/biography/J-K-Rowling)’s popular [children’s book series](https://www.britannica.com/topic/Harry-Potter), had its world premiere in London. _[[Test your knowledge of classic children’s books](https://www.britannica.com/quiz/classic-childrens-books).]_
 
-![Image 13: London bombings of 2005](https://cdn.britannica.com/88/141488-050-E7902C8F/Targets-London-terrorist-attacks-July-7-2005.jpg?w=260&h=196&c=crop)
+![Image 11: London bombings of 2005](https://cdn.britannica.com/88/141488-050-E7902C8F/Targets-London-terrorist-attacks-July-7-2005.jpg?w=260&h=196&c=crop)
 
  Encyclopædia Britannica, Inc.
 
@@ -179,7 +181,7 @@ American engineer
 
  The London transit system was struck by coordinated [suicide bomb attacks](https://www.britannica.com/event/London-bombings-of-2005) that killed 39 people and injured more than 700.
 
-![Image 14: Martina Navratilova](https://cdn.britannica.com/40/26140-050-10F65FE6/Martina-Navratilova-Wimbledon-Championships-1986.jpg?w=260&h=196&c=crop)
+![Image 12: Martina Navratilova](https://cdn.britannica.com/40/26140-050-10F65FE6/Martina-Navratilova-Wimbledon-Championships-1986.jpg?w=260&h=196&c=crop)
 
  © Keystone—Hulton Archive/Getty Images
 
@@ -187,7 +189,7 @@ American engineer
 
  Czech-born [tennis](https://www.britannica.com/sports/tennis) player [Martina Navratilova](https://www.britannica.com/biography/Martina-Navratilova) defeated [Chris Evert](https://www.britannica.com/biography/Chris-Evert) to win her first of nine [Wimbledon](https://www.britannica.com/sports/Wimbledon-Championships) singles titles. _[[Take our Wimbledon quiz](https://www.britannica.com/quiz/wimbledon).]_
 
-![Image 15: Solomon Islands](https://cdn.britannica.com/98/3298-050-9F44CA8A/Flag-Solomon-Islands.jpg?w=260&h=196&c=crop)
+![Image 13: Solomon Islands](https://cdn.britannica.com/98/3298-050-9F44CA8A/Flag-Solomon-Islands.jpg?w=260&h=196&c=crop)
 
  Encyclopædia Britannica, Inc.
 
@@ -195,7 +197,7 @@ American engineer
 
  The [Solomon Islands](https://www.britannica.com/place/Solomon-Islands) became an independent nation.
 
-![Image 16: Mother Frances Xavier Cabrini](https://cdn.britannica.com/74/21674-050-C623B805/Frances-Xavier-Cabrini.jpg?w=260&h=196&c=crop)
+![Image 14: Mother Frances Xavier Cabrini](https://cdn.britannica.com/74/21674-050-C623B805/Frances-Xavier-Cabrini.jpg?w=260&h=196&c=crop)
 
  Archive Photos/Getty Images
 
@@ -203,7 +205,7 @@ American engineer
 
  Mother [Frances Xavier Cabrini](https://www.britannica.com/biography/Saint-Frances-Xavier-Cabrini) became the first U.S. citizen to be [canonized](https://www.britannica.com/topic/canonization) by the [Roman Catholic Church](https://www.britannica.com/topic/Roman-Catholicism/Structure-of-the-church#ref43647). _[[Find out how a person becomes a saint](https://www.britannica.com/video/how-does-a-person-become-a-saint-canonization/-308642).]_
 
-![Image 17: Second Sino-Japanese War](https://cdn.britannica.com/37/127037-004-6C956756/tanks-Sherman-China-Sino-Japanese-War.jpg?w=260&h=196&c=crop)
+![Image 15: Second Sino-Japanese War](https://cdn.britannica.com/37/127037-004-6C956756/tanks-Sherman-China-Sino-Japanese-War.jpg?w=260&h=196&c=crop)
 
  Image: Encyclopædia Britannica, Inc.
 
@@ -211,7 +213,7 @@ American engineer
 
  Chinese and Japanese troops clashed near the [Marco Polo Bridge](https://www.britannica.com/event/Marco-Polo-Bridge-Incident) outside Beijing, launching the [Second Sino-Japanese War](https://www.britannica.com/event/Second-Sino-Japanese-War). _[[Take our quiz about the history of war](https://www.britannica.com/quiz/a-history-of-war).]_
 
-![Image 18: Satchel Paige](https://cdn.britannica.com/73/80373-050-92313B19/Satchel-Paige-Kansas-City-Monarchs-baseball-pitchers-1948.jpg?w=260&h=196&c=crop)
+![Image 16: Satchel Paige](https://cdn.britannica.com/73/80373-050-92313B19/Satchel-Paige-Kansas-City-Monarchs-baseball-pitchers-1948.jpg?w=260&h=196&c=crop)
 
  AP Images
 
@@ -219,7 +221,7 @@ American engineer
 
 [Satchel Paige](https://www.britannica.com/biography/Satchel-Paige), a professional [baseball](https://www.britannica.com/sports/baseball) pitcher who earned legendary fame during his many years in the [Negro leagues](https://www.britannica.com/sports/Negro-league), is believed to have been born this day in Mobile, Alabama. _[[Take our baseball quiz](https://www.britannica.com/quiz/baseball).]_
 
-![Image 19: default image](https://cdn.britannica.com/mendel-resources/3-190/images/shared/thistle-blue-half.svg?v=3.190.3)
+![Image 17: default image](https://cdn.britannica.com/mendel-resources/3-190/images/shared/thistle-blue-half.svg?v=3.190.3)
 
  Image: Encyclopædia Britannica, Inc.
 
@@ -227,7 +229,7 @@ American engineer
 
  A [Russian](https://www.britannica.com/place/Russia) fleet destroyed an [Ottoman](https://www.britannica.com/place/Ottoman-Empire) fleet in the [Battle of Çeşme](https://www.britannica.com/event/Battle-of-Cesme) on the [Aegean Sea](https://www.britannica.com/place/Aegean-Sea). _[[Take our military history buff quiz](https://www.britannica.com/quiz/military-history-buff-quiz).]_
 
-![Image 20: Charles VII](https://cdn.britannica.com/27/23727-050-D898C493/Charles-VII-detail-portrait-Jean-Fouquet-Louvre.jpg?w=260&h=196&c=crop)
+![Image 18: Charles VII](https://cdn.britannica.com/27/23727-050-D898C493/Charles-VII-detail-portrait-Jean-Fouquet-Louvre.jpg?w=260&h=196&c=crop)
 
  © Photos.com/Getty Images
 
@@ -235,7 +237,7 @@ American engineer
 
  King [Charles VII](https://www.britannica.com/biography/Charles-VII-king-of-France) of France issued the [Pragmatic Sanction of Bourges](https://www.britannica.com/topic/Pragmatic-Sanction-of-Bourges), restricting the rights of the pope and in many cases making the pope’s jurisdiction subject to the will of the king.
 
-![Image 21: Edward I](https://cdn.britannica.com/64/164-050-0A5CFD7C/Edward-I.jpg?w=260&h=196&c=crop)
+![Image 19: Edward I](https://cdn.britannica.com/64/164-050-0A5CFD7C/Edward-I.jpg?w=260&h=196&c=crop)
 
  Hulton Archive/Getty Images
 
@@ -245,7 +247,7 @@ American engineer
 
 SIGN UP FOR
 
-![Image 22: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 23: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
+![Image 20: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 21: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
 
 History's Biggest Headlines
 
@@ -255,4 +257,4 @@ SIGN UP
 
 ### Thank you for signing up!
 
-![Image 24: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=2eb86bcd-9554-3016-6471-7885dee9bf6e&iiqpciddate=1783430732035&tsrnd=926_1783430732045&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.46%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.46%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 25](https://ids.ad.gt/api/v1/halo_match?id=AU1D-0100-001783430733-9K72PP6K-34WN&halo_id=060ixfcju6a659796989a66666666666666uooiwi0e0y6260646e000000001000)![Image 26](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001783430733-9K72PP6K-34WN)![Image 27](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001783430733-9K72PP6K-34WN&adnxs_id=$UID&gdpr=0)![Image 28](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001783430733-9K72PP6K-34WN%26auid%3DAU1D-0100-001783430733-9K72PP6K-34WN&gdpr=0)![Image 29](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001783430733-9K72PP6K-34WN&gdpr=0)![Image 30](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001783430733-9K72PP6K-34WN&gdpr=0)![Image 31](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001783430733-9K72PP6K-34WN&gdpr=0)![Image 32](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001783430733-9K72PP6K-34WN&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001783430733-9K72PP6K-34WN%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 33](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4MzQzMDczMy05SzcyUFA2Sy0zNFdO&id=AU1D-0100-001783430733-9K72PP6K-34WN&gdpr=0)![Image 34](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001783430733-9K72PP6K-34WN)![Image 35](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001783430733-9K72PP6K-34WN&uid=[UID]&gdpr=0)![Image 36](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001783430733-9K72PP6K-34WN%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
+![Image 23](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=128&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-7&s=9C07099D-9A97-4FA6-9EAE-0CFCC1142C18&json=%20)![Image 24: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=70fc9628-6e7b-ef76-ffd8-ffc6a77adf35&iiqpciddate=1783438359884&tsrnd=92_1783438359890&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.46%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.46%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 25](https://ids.ad.gt/api/v1/halo_match?id=AU1D-0100-001783438361-ZH17A9HK-4TSW&halo_id=060ixfcju6a65979b999d66666666666666uooiwi0e0y626g666k000000001000)![Image 26](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001783438361-ZH17A9HK-4TSW)![Image 27](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001783438361-ZH17A9HK-4TSW&adnxs_id=$UID&gdpr=0)![Image 28](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001783438361-ZH17A9HK-4TSW%26auid%3DAU1D-0100-001783438361-ZH17A9HK-4TSW&gdpr=0)![Image 29](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001783438361-ZH17A9HK-4TSW&gdpr=0)![Image 30](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001783438361-ZH17A9HK-4TSW&gdpr=0)![Image 31](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001783438361-ZH17A9HK-4TSW&gdpr=0)![Image 32](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001783438361-ZH17A9HK-4TSW&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001783438361-ZH17A9HK-4TSW%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 33](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4MzQzODM2MS1aSDE3QTlISy00VFNX&id=AU1D-0100-001783438361-ZH17A9HK-4TSW&gdpr=0)![Image 34](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001783438361-ZH17A9HK-4TSW)![Image 35](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001783438361-ZH17A9HK-4TSW&uid=[UID]&gdpr=0)![Image 36](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001783438361-ZH17A9HK-4TSW%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
