@@ -11,6 +11,14 @@ interface Pin {
   description: string;
 }
 
+const BROWSER_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36",
+  Accept: "text/html,application/json,application/xhtml+xml,*/*;q=0.8",
+  "Accept-Language": "en-US,en;q=0.9",
+  Referer: "https://www.pinterest.com/",
+};
+
 // Parse "username/board-slug" out of whatever the user pasted — a full
 // pinterest.com URL, a "user/board" pair, or with/without trailing slashes.
 function parseBoard(input: string): { user: string; slug: string } | null {
@@ -24,57 +32,23 @@ function parseBoard(input: string): { user: string; slug: string } | null {
   return { user: parts[0], slug: parts[1] };
 }
 
-export async function GET(req: Request) {
-  const auth = await getZuyaMember();
-  if (!auth) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-
-  const board = new URL(req.url).searchParams.get("board") ?? "";
-  const parsed = parseBoard(board);
-  if (!parsed) return NextResponse.json({ pins: [], notConfigured: true });
-
-  // Pinterest's public board-widget endpoint — the same JSON the official
-  // "board widget" embed uses. No API key or OAuth needed for public boards.
+// Strategy 1: Pinterest's board-widget JSON endpoint. When it works it's the
+// cleanest (gives pin ids + descriptions), but it 404s for many boards now.
+async function fromWidget(user: string, slug: string): Promise<Pin[] | null> {
   const endpoint = `https://widgets.pinterest.com/v3/pidgets/boards/${encodeURIComponent(
-    parsed.user,
-  )}/${encodeURIComponent(parsed.slug)}/pins/`;
-
+    user,
+  )}/${encodeURIComponent(slug)}/pins/`;
   try {
-    const res = await fetch(endpoint, {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36",
-        Accept: "application/json, text/plain, */*",
-        "Accept-Language": "en-US,en;q=0.9",
-        Referer: "https://www.pinterest.com/",
-      },
-      cache: "no-store",
-    });
-    if (!res.ok) {
-      return NextResponse.json({
-        pins: [],
-        error: `Pinterest returned ${res.status}. Make sure the board is public and the link is right.`,
-      });
-    }
-    const text = await res.text();
-    let json: { data?: { pins?: Array<Record<string, unknown>> } };
-    try {
-      json = JSON.parse(text);
-    } catch {
-      return NextResponse.json({
-        pins: [],
-        error: "Pinterest didn't return pin data for that link.",
-      });
-    }
-    const rawPins = json?.data?.pins ?? [];
-    const pins: Pin[] = rawPins.slice(0, 10).map((p) => {
+    const res = await fetch(endpoint, { headers: BROWSER_HEADERS, cache: "no-store" });
+    if (!res.ok) return null;
+    const json = (await res.json()) as { data?: { pins?: Array<Record<string, unknown>> } };
+    const raw = json?.data?.pins ?? [];
+    if (raw.length === 0) return null;
+    return raw.slice(0, 10).map((p) => {
       const images = (p.images ?? {}) as Record<string, { url?: string }>;
-      // Prefer the largest thumbnail Pinterest returns.
       const best =
-        images["736x"]?.url ??
-        images["600x315"]?.url ??
-        images["237x"]?.url ??
-        Object.values(images)[0]?.url ??
-        "";
+        images["736x"]?.url ?? images["600x315"]?.url ?? images["237x"]?.url ??
+        Object.values(images)[0]?.url ?? "";
       const id = String(p.id ?? "");
       return {
         id,
@@ -83,8 +57,72 @@ export async function GET(req: Request) {
         description: String(p.description ?? ""),
       };
     });
-    return NextResponse.json({ pins });
   } catch {
-    return NextResponse.json({ pins: [], error: "Board couldn't be reached." });
+    return null;
   }
+}
+
+// Strategy 2: scrape the public board page for pin image URLs. Pinterest
+// server-renders the first screenful of pins, so their i.pinimg.com thumbnails
+// are in the HTML even without login.
+async function fromHtml(
+  user: string,
+  slug: string,
+): Promise<{ pins: Pin[]; status: number } | null> {
+  const url = `https://www.pinterest.com/${encodeURIComponent(user)}/${encodeURIComponent(slug)}/`;
+  let html = "";
+  let status = 0;
+  try {
+    const res = await fetch(url, { headers: BROWSER_HEADERS, cache: "no-store" });
+    status = res.status;
+    if (!res.ok) return { pins: [], status };
+    html = await res.text();
+  } catch {
+    return null;
+  }
+
+  // Collect i.pinimg.com image URLs, deduped by the pin's file hash so the
+  // same image at different sizes counts once. Normalize to a large size.
+  const re = /https:\/\/i\.pinimg\.com\/[0-9a-zA-Zx]+\/[0-9a-f/]+\/[0-9a-f]{20,}\.(?:jpg|jpeg|png|webp)/g;
+  const seen = new Set<string>();
+  const pins: Pin[] = [];
+  for (const raw of html.match(re) ?? []) {
+    const file = raw.slice(raw.lastIndexOf("/") + 1);
+    if (seen.has(file)) continue;
+    seen.add(file);
+    // Bump whatever size segment Pinterest emitted up to 564x for display.
+    const image = raw.replace(/i\.pinimg\.com\/[0-9a-zA-Zx]+\//, "i.pinimg.com/564x/");
+    pins.push({
+      id: file,
+      link: `https://www.pinterest.com/${user}/${slug}/`,
+      image,
+      description: "",
+    });
+    if (pins.length >= 10) break;
+  }
+  return { pins, status };
+}
+
+export async function GET(req: Request) {
+  const auth = await getZuyaMember();
+  if (!auth) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+  const board = new URL(req.url).searchParams.get("board") ?? "";
+  const parsed = parseBoard(board);
+  if (!parsed) return NextResponse.json({ pins: [], notConfigured: true });
+
+  const widget = await fromWidget(parsed.user, parsed.slug);
+  if (widget && widget.length > 0) return NextResponse.json({ pins: widget });
+
+  const html = await fromHtml(parsed.user, parsed.slug);
+  if (html && html.pins.length > 0) return NextResponse.json({ pins: html.pins });
+
+  const status = html?.status;
+  return NextResponse.json({
+    pins: [],
+    error:
+      status && status >= 400
+        ? `Pinterest returned ${status} for that board. Make sure it's public and the link points to the board itself.`
+        : "Couldn't read any pins from that board. Make sure it's public and the link is the board's URL.",
+  });
 }

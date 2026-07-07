@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ArrowLeft, Eye, EyeOff, RotateCcw } from "lucide-react";
-import { ZuyaLogo } from "@/components/zuya/ZuyaLogo";
 import { createZuyaClient } from "@/lib/supabase/zuya-client";
 import { ZUYA_DISPLAY_NAMES, ZUYA_USERNAMES, zuyaEmail, type ZuyaUsername } from "@/lib/zuya/config";
 
@@ -137,10 +136,9 @@ export default function ZuyaLoginPage() {
   return (
     <main className="min-h-dvh flex items-center justify-center px-6 py-10">
       <div className="card max-w-sm w-full text-center animate-fadeIn !p-8 md:!p-10">
-        <div className="mx-auto h-12 w-12 rounded-full grid place-items-center"
-          style={{ background: "linear-gradient(135deg, var(--grad-from), var(--grad-to))" }}>
-          <ZuyaLogo size={26} className="text-white" />
-        </div>
+        {/* Your logo — replace /public/icons/zuya-512.png with your own image. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/icons/zuya-512.png" alt="Zuya" className="mx-auto h-14 w-14 rounded-2xl object-cover" />
         <h1 className="font-display text-5xl tracking-tight mt-4 text-gradient leading-[1.1] pb-1">Zuya</h1>
         <p className="label mt-1">Yavuz &amp; Züleyha</p>
 

@@ -13,6 +13,7 @@ const KIND_META: Record<ZuyaNotificationKind, { icon: typeof Bell; text: (p: Rec
   date_rejected: { icon: X, text: (p) => `Can't make "${p.title}"` },
   date_cancelled: { icon: X, text: (p) => `Called off "${p.title}"` },
   status_changed: { icon: CircleDot, text: (p) => `${p.name ?? "They"} is now ${p.label ?? "around"}` },
+  question_nudge: { icon: Bell, text: (p) => `${p.name ?? "They"} nudged you — answer today's question` },
 };
 
 function timeAgo(iso: string): string {

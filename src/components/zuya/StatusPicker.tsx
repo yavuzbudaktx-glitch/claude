@@ -15,7 +15,7 @@ export function StatusBadge({ member, size = 20 }: { member: ZuyaMemberRow; size
     <span
       className="absolute -bottom-0.5 -right-0.5 grid place-items-center rounded-full border-2 border-[var(--bg)]"
       style={{ width: size, height: size, background: st.color }}
-      title={`${st.en} · ${st.tr}`}
+      title={st.tr}
     >
       <Icon className="text-white" style={{ width: size * 0.58, height: size * 0.58 }} />
     </span>
@@ -118,10 +118,7 @@ export function MemberChip({ member, isMe }: { member: ZuyaMemberRow; isMe: bool
                 >
                   <Icon className="h-3.5 w-3.5 text-white" />
                 </span>
-                <span>
-                  <span className="block text-[13px] font-medium text-ink leading-tight">{s.tr}</span>
-                  <span className="block text-[11px] text-muted leading-tight">{s.en}</span>
-                </span>
+                <span className="text-[13px] font-medium text-ink leading-tight">{s.tr}</span>
               </button>
             );
           })}
