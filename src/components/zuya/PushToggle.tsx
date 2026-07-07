@@ -28,11 +28,30 @@ export function PushToggle() {
       !!VAPID;
     setSupported(ok);
     if (!ok) return;
-    navigator.serviceWorker.ready
-      .then((reg) => reg.pushManager.getSubscription())
+    if (Notification.permission === "denied") {
+      setMsg("Bildirim izni tarayıcı ayarlarından engellenmiş — oradan izin ver, sonra tekrar dene.");
+    }
+    // Reflect an existing subscription without hanging if the SW isn't ready.
+    navigator.serviceWorker
+      .getRegistration()
+      .then((reg) => reg?.pushManager.getSubscription())
       .then((sub) => setOn(!!sub))
       .catch(() => {});
   }, []);
+
+  // Get an active service-worker registration, registering it ourselves if
+  // next-pwa's auto-registration hasn't landed yet, and never hang forever.
+  async function getReg(): Promise<ServiceWorkerRegistration> {
+    let reg = await navigator.serviceWorker.getRegistration();
+    if (!reg) reg = await navigator.serviceWorker.register("/sw.js");
+    // ready resolves once a SW is active; race it with a timeout so a stuck
+    // install surfaces an error instead of spinning forever.
+    const ready = navigator.serviceWorker.ready;
+    const timeout = new Promise<never>((_, rej) =>
+      setTimeout(() => rej(new Error("Service worker hazır olmadı — sayfayı yenile ve tekrar dene.")), 8000),
+    );
+    return (await Promise.race([ready, timeout])) as ServiceWorkerRegistration;
+  }
 
   async function enable() {
     setBusy(true);
@@ -40,14 +59,20 @@ export function PushToggle() {
     try {
       const perm = await Notification.requestPermission();
       if (perm !== "granted") {
-        setMsg("İzin verilmedi. Telefonda uygulamayı ana ekrana ekleyip tekrar dene.");
+        setMsg(
+          perm === "denied"
+            ? "İzin engellenmiş. Tarayıcı/site ayarlarından bildirimlere izin ver."
+            : "İzin verilmedi. iPhone'da uygulamayı Ana Ekrana ekleyip oradan aç, sonra tekrar dene.",
+        );
         return;
       }
-      const reg = await navigator.serviceWorker.ready;
-      const sub = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID!) as BufferSource,
-      });
+      const reg = await getReg();
+      const sub =
+        (await reg.pushManager.getSubscription()) ??
+        (await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(VAPID!) as BufferSource,
+        }));
       const json = sub.toJSON();
       const res = await fetch("/api/zuya/push/subscribe", {
         method: "POST",
@@ -55,11 +80,12 @@ export function PushToggle() {
         body: JSON.stringify({ endpoint: json.endpoint, keys: json.keys }),
       });
       if (!res.ok) {
-        setMsg("Kaydedilemedi — 0016 migration çalıştı mı?");
+        const d = await res.json().catch(() => null);
+        setMsg(d?.error ? `Kaydedilemedi: ${d.error}` : "Kaydedilemedi (0016 migration çalıştı mı?).");
         return;
       }
       setOn(true);
-      setMsg("Açık ✓");
+      setMsg("Açık ✓ — 'Test gönder'e basıp dene.");
     } catch (e) {
       setMsg(e instanceof Error ? e.message : "Bir şeyler ters gitti.");
     } finally {
