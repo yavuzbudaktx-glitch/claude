@@ -67,6 +67,20 @@ export function PushToggle() {
     }
   }
 
+  async function sendTest() {
+    setBusy(true);
+    setMsg(null);
+    try {
+      const res = await fetch("/api/zuya/push/test", { method: "POST" });
+      const d = await res.json().catch(() => null);
+      setMsg(d?.message ?? "Test edilemedi.");
+    } catch {
+      setMsg("Test edilemedi.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function disable() {
     setBusy(true);
     setMsg(null);
@@ -99,19 +113,30 @@ export function PushToggle() {
 
   return (
     <div>
-      <button
-        onClick={on ? disable : enable}
-        disabled={busy}
-        className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-[13px] font-semibold transition disabled:opacity-50 ${
-          on
-            ? "border border-[var(--rule)] text-muted hover:text-down hover:border-[var(--down)]"
-            : "text-white hover:brightness-110"
-        }`}
-        style={on ? undefined : { background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" }}
-      >
-        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : on ? <BellOff className="h-4 w-4" /> : <Bell className="h-4 w-4" />}
-        {on ? "Bildirimleri kapat" : "Bildirimleri aç"}
-      </button>
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          onClick={on ? disable : enable}
+          disabled={busy}
+          className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-[13px] font-semibold transition disabled:opacity-50 ${
+            on
+              ? "border border-[var(--rule)] text-muted hover:text-down hover:border-[var(--down)]"
+              : "text-white hover:brightness-110"
+          }`}
+          style={on ? undefined : { background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" }}
+        >
+          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : on ? <BellOff className="h-4 w-4" /> : <Bell className="h-4 w-4" />}
+          {on ? "Bildirimleri kapat" : "Bildirimleri aç"}
+        </button>
+        {on && (
+          <button
+            onClick={sendTest}
+            disabled={busy}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-[13px] font-semibold border border-[var(--rule)] hover:border-[var(--accent)] transition disabled:opacity-50"
+          >
+            <Bell className="h-4 w-4" /> Test gönder
+          </button>
+        )}
+      </div>
       {msg && <p className="text-[12px] text-muted mt-2">{msg}</p>}
       <p className="text-[11px] text-muted-2 mt-2">
         Mesaj ve buluşma tekliflerinde telefonun bildirim alır (uygulama kapalıyken de).
