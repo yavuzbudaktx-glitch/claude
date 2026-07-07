@@ -25,17 +25,16 @@ export function DailyPhotoCard() {
   const pick = entries.length > 0 ? entries[zuyaSeedIdx(`${today}-zuya-photo`, entries.length)] : null;
 
   return (
-    <Card id="zuya-photo-card" title="Photo of the day" collapsible={false}>
+    <Card id="zuya-photo-card" title="Photo of the day" collapsible={false} className="flex flex-col">
       {pick ? (
-        <div
-          className="rounded-2xl overflow-hidden border border-[var(--rule-soft)] bg-[var(--paper-2)] grid place-items-center"
-          style={{ height: 360 }}
-        >
+        <div className="relative flex-1 min-h-[300px] rounded-2xl overflow-hidden border border-[var(--rule-soft)] bg-[var(--paper-2)]">
+          {/* absolute fill + object-contain: the whole photo always fits the
+              box, whatever its shape, and the box stretches to the card. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={`/zuya/daily/${encodeURIComponent(pick.file)}`}
             alt="us"
-            className="max-h-full max-w-full object-contain"
+            className="absolute inset-0 h-full w-full object-contain"
           />
         </div>
       ) : (
