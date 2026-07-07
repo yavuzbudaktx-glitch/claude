@@ -9,6 +9,7 @@ export interface ZuyaMemberRow {
   avatar_updated_at: string | null;
   google_connected: boolean;
   spotify_connected?: boolean;
+  pinterest_connected?: boolean;
   notif_prefs: Record<string, unknown>;
   created_at: string;
   updated_at: string;
@@ -42,6 +43,7 @@ export interface ZuyaWatchlistRow {
   ratings: Record<string, number>;
   cover: string | null;
   year: string | null;
+  rating: string | null;
   created_at: string;
 }
 

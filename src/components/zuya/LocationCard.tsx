@@ -18,20 +18,18 @@ interface Loc {
   updated_at: string;
 }
 
-function pinIcon(Lib: typeof L, color: string) {
-  // A little heart pin with a soft colored glow. The teardrop keeps the same
-  // 24×24 geometry + [12,24] anchor as before (tip on the real spot) — only
-  // box-shadow (which doesn't affect layout) adds the glow, so it never drifts.
-  const heart =
-    '<svg style="transform:rotate(45deg)" width="12" height="12" viewBox="0 0 24 24" fill="#fff">' +
-    '<path d="M12 20s-6.4-4.3-8.9-8.4C1.7 8.9 3 5.9 6.1 5.9c1.8 0 3 1.1 3.9 2.1.9-1 2.1-2.1 3.9-2.1 3.1 0 4.4 3 3 5.7C18.4 15.7 12 20 12 20z"/></svg>';
+function pinIcon(Lib: typeof L, color: string, letter: string) {
+  // Initial-in-a-teardrop pin with a soft colored glow. Same 24×24 geometry +
+  // [12,24] anchor (tip on the real spot); box-shadow doesn't affect layout so
+  // it never drifts.
   return Lib.divIcon({
     className: "",
     html:
       `<div style="width:24px;height:24px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);` +
       `background:${color};border:2.5px solid #fff;` +
       `box-shadow:0 2px 6px rgba(0,0,0,.35), 0 0 12px 2px ${color}88;` +
-      `display:grid;place-items:center">${heart}</div>`,
+      `display:grid;place-items:center">` +
+      `<span style="transform:rotate(45deg);color:#fff;font-weight:700;font-size:11px">${letter}</span></div>`,
     iconSize: [24, 24],
     iconAnchor: [12, 24],
   });
@@ -146,7 +144,7 @@ export function LocationCard() {
           existing.setLatLng([loc.lat, loc.lng]);
         } else {
           markers.current[uid] = Lib.marker([loc.lat, loc.lng], {
-            icon: pinIcon(Lib, OWNER_COLORS[username]),
+            icon: pinIcon(Lib, OWNER_COLORS[username], name.charAt(0)),
             title: name,
           }).addTo(map);
         }

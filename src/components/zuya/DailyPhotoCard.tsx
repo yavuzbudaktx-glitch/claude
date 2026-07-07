@@ -27,21 +27,17 @@ export function DailyPhotoCard() {
   return (
     <Card id="zuya-photo-card" title="Photo of the day" collapsible={false}>
       {pick ? (
-        <figure>
-          <div className="rounded-2xl overflow-hidden border border-[var(--rule-soft)]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`/zuya/daily/${encodeURIComponent(pick.file)}`}
-              alt={pick.caption || "us"}
-              className="w-full max-h-[340px] object-cover"
-            />
-          </div>
-          {pick.caption && (
-            <figcaption className="text-center text-[13px] text-ink-soft italic mt-3">
-              “{pick.caption}”
-            </figcaption>
-          )}
-        </figure>
+        <div
+          className="rounded-2xl overflow-hidden border border-[var(--rule-soft)] bg-[var(--paper-2)] grid place-items-center"
+          style={{ height: 360 }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`/zuya/daily/${encodeURIComponent(pick.file)}`}
+            alt="us"
+            className="max-h-full max-w-full object-contain"
+          />
+        </div>
       ) : (
         <div className="grid place-items-center text-center py-10">
           <span className="grid place-items-center h-12 w-12 rounded-full bg-[var(--accent-soft)] mb-3">
