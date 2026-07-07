@@ -108,11 +108,16 @@ export function PinterestCard() {
                 title={p.description}
                 className="group relative block aspect-square overflow-hidden rounded-lg bg-black/5 dark:bg-white/5"
               >
+                {/* no-referrer: i.pinimg.com hotlink-blocks based on Referer. */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={p.image}
                   alt={p.description || "pin"}
                   loading="lazy"
+                  referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    (e.currentTarget.closest("a") as HTMLElement | null)?.style.setProperty("display", "none");
+                  }}
                   className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                 />
               </a>

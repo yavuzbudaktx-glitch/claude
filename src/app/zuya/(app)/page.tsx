@@ -1,6 +1,6 @@
 import { ZuyaCalendarCard } from "@/components/zuya/calendar/ZuyaCalendarCard";
 import { DailyPhotoCard } from "@/components/zuya/DailyPhotoCard";
-import { MessagesCard } from "@/components/zuya/MessagesCard";
+import { WatchlistCard } from "@/components/zuya/WatchlistCard";
 import { DailyQuestionCard } from "@/components/zuya/DailyQuestionCard";
 import { PinterestCard } from "@/components/zuya/PinterestCard";
 import { LocationCard } from "@/components/zuya/LocationCard";
@@ -24,13 +24,13 @@ export default function ZuyaDashboard() {
         <ZuyaCalendarCard />
       </div>
 
-      {/* A photo of us + the message wall. */}
+      {/* A photo of us + the watch-together queue. */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 items-stretch">
         <div id="zuya-photo" className="scroll-mt-20 [&>*]:h-full">
           <DailyPhotoCard />
         </div>
-        <div id="zuya-messages" className="scroll-mt-20 [&>*]:h-full">
-          <MessagesCard />
+        <div id="zuya-watchlist" className="scroll-mt-20 [&>*]:h-full">
+          <WatchlistCard />
         </div>
       </div>
 

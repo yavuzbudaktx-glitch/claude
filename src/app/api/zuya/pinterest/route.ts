@@ -81,20 +81,25 @@ async function fromHtml(
     return null;
   }
 
-  // Collect i.pinimg.com image URLs, deduped by the pin's file hash so the
-  // same image at different sizes counts once. Normalize to a large size.
+  // Collect i.pinimg.com image URLs (the `_RS` avatar sizes carry an
+  // underscore and don't match, so they're naturally excluded). Dedupe by the
+  // pin's file hash so the same image at different sizes counts once, and
+  // normalize whatever size Pinterest emitted up to 564x for display.
   const re = /https:\/\/i\.pinimg\.com\/[0-9a-zA-Zx]+\/[0-9a-f/]+\/[0-9a-f]{20,}\.(?:jpg|jpeg|png|webp)/g;
   const seen = new Set<string>();
   const pins: Pin[] = [];
+  const pinIds = html.match(/\/pin\/(\d+)\//g)?.map((m) => m.split("/")[2]) ?? [];
+  let idx = 0;
   for (const raw of html.match(re) ?? []) {
     const file = raw.slice(raw.lastIndexOf("/") + 1);
     if (seen.has(file)) continue;
     seen.add(file);
-    // Bump whatever size segment Pinterest emitted up to 564x for display.
     const image = raw.replace(/i\.pinimg\.com\/[0-9a-zA-Zx]+\//, "i.pinimg.com/564x/");
+    // Best-effort pin link — pair with the Nth pin id seen, else the board.
+    const id = pinIds[idx++];
     pins.push({
       id: file,
-      link: `https://www.pinterest.com/${user}/${slug}/`,
+      link: id ? `https://www.pinterest.com/pin/${id}/` : `https://www.pinterest.com/${user}/${slug}/`,
       image,
       description: "",
     });
