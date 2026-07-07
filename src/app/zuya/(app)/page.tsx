@@ -2,7 +2,6 @@ import { ZuyaCalendarCard } from "@/components/zuya/calendar/ZuyaCalendarCard";
 import { DailyPhotoCard } from "@/components/zuya/DailyPhotoCard";
 import { WatchlistCard } from "@/components/zuya/WatchlistCard";
 import { DailyQuestionCard } from "@/components/zuya/DailyQuestionCard";
-import { PinterestCard } from "@/components/zuya/PinterestCard";
 import { LocationCard } from "@/components/zuya/LocationCard";
 import { NowPlayingCard } from "@/components/zuya/NowPlayingCard";
 
@@ -34,14 +33,9 @@ export default function ZuyaDashboard() {
         </div>
       </div>
 
-      {/* The fun row. */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 items-stretch">
-        <div id="zuya-question" className="scroll-mt-20 [&>*]:h-full">
-          <DailyQuestionCard />
-        </div>
-        <div id="zuya-board" className="scroll-mt-20 [&>*]:h-full">
-          <PinterestCard />
-        </div>
+      {/* Question of the day. */}
+      <div id="zuya-question" className="scroll-mt-20">
+        <DailyQuestionCard />
       </div>
     </main>
   );
