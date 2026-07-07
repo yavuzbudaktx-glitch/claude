@@ -1,10 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, Lock, SendHorizontal, Sparkles, Hand } from "lucide-react";
+import { ChevronLeft, ChevronRight, Lock, SendHorizontal, Sparkles, Hand, Flame } from "lucide-react";
 import { Card } from "@/components/Card";
 import { useZuya, useZuyaTableEvent } from "@/components/zuya/ZuyaProvider";
-import { ZUYA_QUESTIONS } from "@/lib/zuya/questions";
+import {
+  ZUYA_QUESTIONS,
+  ZUYA_SPICY_QUESTIONS,
+  ZUYA_SPICY_OFFSET,
+  getZuyaQuestion,
+} from "@/lib/zuya/questions";
 import { zuyaToday, zuyaSeedIdx } from "@/lib/zuya/day";
 import type { ZuyaDailyAnswerRow } from "@/types/zuya";
 
@@ -46,15 +51,23 @@ export function DailyQuestionCard() {
     }).catch(() => {});
   }
 
+  const [spicy, setSpicy] = useState(false);
+  useEffect(() => setSpicy(false), [day]);
+
   const questionIdx = useMemo(
     () => zuyaSeedIdx(`${day}-zuya-question`, ZUYA_QUESTIONS.length),
     [day],
   );
+  const spicyIdx = useMemo(
+    () => zuyaSeedIdx(`${day}-zuya-spicy`, ZUYA_SPICY_QUESTIONS.length),
+    [day],
+  );
+  const chosenIdx = spicy ? ZUYA_SPICY_OFFSET + spicyIdx : questionIdx;
 
   const mine = answers.find((a) => a.user_id === me.user_id && a.day === day);
   const theirs = answers.find((a) => a.user_id === partner.user_id && a.day === day);
   // Question for a past day: prefer the recorded index (list may grow).
-  const q = ZUYA_QUESTIONS[mine?.question_idx ?? theirs?.question_idx ?? questionIdx];
+  const q = getZuyaQuestion(mine?.question_idx ?? theirs?.question_idx ?? chosenIdx);
 
   const load = useCallback(async () => {
     const { data } = await supabase
@@ -84,7 +97,7 @@ export function DailyQuestionCard() {
       const { error } = await supabase.from("zuya_daily_answers").insert({
         user_id: me.user_id,
         day,
-        question_idx: questionIdx,
+        question_idx: chosenIdx,
         answer: text,
       });
       if (!error) {
@@ -160,13 +173,28 @@ export function DailyQuestionCard() {
               maxLength={4000}
               className="w-full px-3.5 py-2.5 rounded-2xl bg-black/5 dark:bg-white/5 text-sm outline-none focus:ring-2 focus:ring-[var(--accent)] resize-none"
             />
-            <button
-              disabled={busy || !draft.trim()}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-[13px] font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
-              style={{ background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" }}
-            >
-              <SendHorizontal className="h-3.5 w-3.5" /> Answer blind
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                disabled={busy || !draft.trim()}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-[13px] font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
+                style={{ background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" }}
+              >
+                <SendHorizontal className="h-3.5 w-3.5" /> Answer blind
+              </button>
+              <button
+                type="button"
+                onClick={() => setSpicy((v) => !v)}
+                title={spicy ? "Back to the normal question" : "Make it spicy"}
+                className={`inline-flex items-center gap-1.5 px-3 py-2.5 rounded-2xl text-[13px] font-semibold border transition ${
+                  spicy
+                    ? "border-transparent text-white"
+                    : "border-[var(--rule)] text-muted hover:text-accent hover:border-[var(--accent)]"
+                }`}
+                style={spicy ? { background: "linear-gradient(135deg, #c2452d, #d64570)" } : undefined}
+              >
+                <Flame className="h-3.5 w-3.5" /> {spicy ? "Spicy" : "Spice it"}
+              </button>
+            </div>
           </form>
         )}
 

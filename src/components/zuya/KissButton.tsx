@@ -2,13 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Moon, Sun, Heart } from "lucide-react";
-import { useZuya } from "@/components/zuya/ZuyaProvider";
 
 // A time-aware one-tap button: at night it sends an "iyi geceler öpücüğü",
 // in the morning a "günaydın", and a plain kiss the rest of the day. Lands as
 // a push on your partner's phone.
 export function KissButton() {
-  const { partner } = useZuya();
   const [hour, setHour] = useState<number | null>(null);
   const [sent, setSent] = useState(false);
 
@@ -18,8 +16,7 @@ export function KissButton() {
     return () => clearInterval(t);
   }, []);
 
-  const partnerReal = !!partner?.user_id && partner.user_id !== "pending-partner";
-  if (!partnerReal || hour == null) return null;
+  if (hour == null) return null;
 
   const mode = hour >= 19 || hour < 5 ? "night" : hour < 11 ? "morning" : "day";
   const cfg =

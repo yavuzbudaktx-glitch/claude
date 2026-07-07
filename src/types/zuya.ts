@@ -40,6 +40,8 @@ export interface ZuyaWatchlistRow {
   watched: boolean;
   watched_at: string | null;
   ratings: Record<string, number>;
+  cover: string | null;
+  year: string | null;
   created_at: string;
 }
 

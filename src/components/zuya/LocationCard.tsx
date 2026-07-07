@@ -18,13 +18,20 @@ interface Loc {
   updated_at: string;
 }
 
-function pinIcon(Lib: typeof L, color: string, letter: string) {
-  // No CSS translate here — Leaflet positions the icon by `iconAnchor`. Doing
-  // both double-offsets the pin, and that fixed pixel error looks like the pin
-  // drifting off the real spot as you zoom out.
+function pinIcon(Lib: typeof L, color: string) {
+  // A little heart pin with a soft colored glow. The teardrop keeps the same
+  // 24×24 geometry + [12,24] anchor as before (tip on the real spot) — only
+  // box-shadow (which doesn't affect layout) adds the glow, so it never drifts.
+  const heart =
+    '<svg style="transform:rotate(45deg)" width="12" height="12" viewBox="0 0 24 24" fill="#fff">' +
+    '<path d="M12 20s-6.4-4.3-8.9-8.4C1.7 8.9 3 5.9 6.1 5.9c1.8 0 3 1.1 3.9 2.1.9-1 2.1-2.1 3.9-2.1 3.1 0 4.4 3 3 5.7C18.4 15.7 12 20 12 20z"/></svg>';
   return Lib.divIcon({
     className: "",
-    html: `<div style="width:24px;height:24px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${color};border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.4);display:grid;place-items:center"><span style="transform:rotate(45deg);color:#fff;font-weight:700;font-size:11px">${letter}</span></div>`,
+    html:
+      `<div style="width:24px;height:24px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);` +
+      `background:${color};border:2.5px solid #fff;` +
+      `box-shadow:0 2px 6px rgba(0,0,0,.35), 0 0 12px 2px ${color}88;` +
+      `display:grid;place-items:center">${heart}</div>`,
     iconSize: [24, 24],
     iconAnchor: [12, 24],
   });
@@ -139,7 +146,8 @@ export function LocationCard() {
           existing.setLatLng([loc.lat, loc.lng]);
         } else {
           markers.current[uid] = Lib.marker([loc.lat, loc.lng], {
-            icon: pinIcon(Lib, OWNER_COLORS[username], name.charAt(0)),
+            icon: pinIcon(Lib, OWNER_COLORS[username]),
+            title: name,
           }).addTo(map);
         }
       } else if (markers.current[uid]) {
@@ -237,8 +245,15 @@ export function LocationCard() {
           {dbError}
         </p>
       )}
-      <div className="rounded-2xl overflow-hidden border border-[var(--rule-soft)]">
+      <div className="relative rounded-[22px] overflow-hidden border border-[var(--rule-soft)] shadow-[0_8px_28px_-14px_var(--glow)]">
         <div ref={mapEl} style={{ height: 260, width: "100%", background: "var(--rule-soft)" }} />
+        {/* soft vignette + accent ring for a cuter frame; doesn't block the map */}
+        <div
+          className="pointer-events-none absolute inset-0 rounded-[22px]"
+          style={{
+            boxShadow: "inset 0 0 0 1.5px color-mix(in srgb, var(--accent) 22%, transparent), inset 0 -28px 34px -26px rgba(0,0,0,.35)",
+          }}
+        />
       </div>
       <div className="flex items-center justify-between gap-3 mt-3 flex-wrap">
         <div className="text-[12px] text-muted space-y-0.5">
