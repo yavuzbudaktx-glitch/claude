@@ -241,7 +241,7 @@ export function NewsCard() {
           the row sized by the (fixed-content) prayer card instead of letting
           a long list grow the row. useFitCount reads the available height and
           renders just enough headlines to fill it (min 5). */}
-      <div className="relative flex-1 min-h-0">
+      <div className="relative flex-1 min-h-0 h-72 md:h-auto">
         <div ref={fitRef} className="absolute inset-0 overflow-y-auto pr-0.5">
       {(data || pool || active === "saved") &&
         (refreshing ? (
