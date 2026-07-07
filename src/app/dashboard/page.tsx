@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
+import { Settings } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Masthead } from "@/components/widgets/Masthead";
 import { TopUtilityBar } from "@/components/widgets/TopUtilityBar";
@@ -51,6 +53,9 @@ export default async function Page() {
                 <ClaudeChat />
                 <ThemeVariantButton />
                 <ThemeToggle />
+                <Link href="/dashboard/settings" className="btn-ghost" aria-label="Settings" title="Settings">
+                  <Settings className="h-4 w-4" />
+                </Link>
                 <FullscreenToggle />
                 <SignOutButton />
               </>

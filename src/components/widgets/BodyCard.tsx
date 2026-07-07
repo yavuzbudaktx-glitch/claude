@@ -6,6 +6,15 @@ import { Card } from "@/components/Card";
 import { localDateKey, localDateKeyAt } from "@/lib/local-date";
 import { createClient } from "@/lib/supabase/client";
 import { usePref } from "@/components/PrefsProvider";
+import {
+  GYM_PREF_KEY,
+  DEFAULT_GYM,
+  ROLLOVER_PREF_KEY,
+  DEFAULT_ROLLOVER_HOUR,
+  gymLabel,
+  isGymDay,
+  type GymSchedule,
+} from "@/lib/dashboard/settings";
 
 // Monday→Sunday keys for the current week, all in local time. Re-computed
 // from the supplied `today` key so a tab left open across midnight still
@@ -584,9 +593,10 @@ export function BodyCard() {
     else setDraft(current != null ? String(current) : "");
   }
 
-  // Nutrition day rolls over at 5 AM, not midnight — a 1 AM snack still
-  // counts toward "yesterday".
-  const today = localDateKeyAt(5);
+  // Nutrition day rolls over at a configurable hour (default 5 AM), not
+  // midnight — a 1 AM snack still counts toward "yesterday".
+  const [rolloverHour] = usePref<number>(ROLLOVER_PREF_KEY, DEFAULT_ROLLOVER_HOUR);
+  const today = localDateKeyAt(rolloverHour);
   const calsToday = state.calsDate === today ? state.calsTotal : 0;
   const proteinToday = state.calsDate === today ? state.proteinTotal : 0;
   const goalNum = Number(state.calorieGoal);
@@ -633,8 +643,26 @@ export function BodyCard() {
     "bg-[var(--rule-soft)] border border-transparent opacity-75 placeholder:text-muted-2 " +
     "hover:opacity-100 focus:opacity-100 focus:bg-[var(--paper)] focus:border-[var(--accent)] focus:outline-none";
 
+  // Today's gym plan, from the weekly schedule set in dashboard settings.
+  const [gym] = usePref<GymSchedule>(GYM_PREF_KEY, DEFAULT_GYM);
+  const todayGym = (gym ?? DEFAULT_GYM)[new Date().getDay()] ?? "off";
+  const gymBadge = (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ${
+        isGymDay(todayGym)
+          ? "text-white"
+          : "text-muted border border-[var(--rule)]"
+      }`}
+      style={isGymDay(todayGym) ? { background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" } : undefined}
+      title="Set your weekly schedule in dashboard settings"
+    >
+      <span className={`h-1.5 w-1.5 rounded-full ${isGymDay(todayGym) ? "bg-white" : "bg-[var(--rule)]"}`} />
+      Today · {gymLabel(todayGym)}
+    </span>
+  );
+
   return (
-    <Card num="09" title="Body · Weight & Training">
+    <Card num="09" title="Body · Weight & Training" action={gymBadge}>
       <div className="grid grid-cols-1 lg:grid-cols-[210px_1fr_auto] gap-6 items-center">
         {/* Weight dial + arrows */}
         <div className="flex items-center justify-center gap-3">
