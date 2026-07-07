@@ -63,7 +63,8 @@ export type ZuyaNotificationKind =
   | "date_countered"
   | "date_accepted"
   | "date_rejected"
-  | "date_cancelled";
+  | "date_cancelled"
+  | "status_changed";
 
 export interface ZuyaNotificationRow {
   id: string;

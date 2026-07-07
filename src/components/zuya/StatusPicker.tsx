@@ -35,7 +35,7 @@ function timeAgo(iso: string | null): string {
 // One user in the header: avatar + badge + name + status line. The logged-in
 // user's own entry opens the status picker.
 export function MemberChip({ member, isMe }: { member: ZuyaMemberRow; isMe: boolean }) {
-  const { supabase } = useZuya();
+  const { supabase, me, partner } = useZuya();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -43,10 +43,30 @@ export function MemberChip({ member, isMe }: { member: ZuyaMemberRow; isMe: bool
 
   async function setStatus(slug: string) {
     setOpen(false);
-    await supabase
+    const { error } = await supabase
       .from("zuya_members")
       .update({ status: slug, status_updated_at: new Date().toISOString() })
       .eq("user_id", member.user_id);
+    if (error || !isMe) return;
+
+    // Let the other person know — an in-app bell notification + a push.
+    const partnerId = partner?.user_id;
+    if (partnerId && partnerId !== "pending-partner") {
+      const s = zuyaStatus(slug);
+      void supabase
+        .from("zuya_notifications")
+        .insert({
+          user_id: partnerId,
+          kind: "status_changed",
+          payload: { name: me.display_name, label: s.en },
+        })
+        .then(() => {}, () => {});
+      fetch("/api/zuya/push/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "status", text: s.tr }),
+      }).catch(() => {});
+    }
   }
 
   return (
