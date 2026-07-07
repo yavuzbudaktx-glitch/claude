@@ -2981,15 +2981,32 @@ main { position: relative; z-index: 1; }
 
 /* Zuya density — tighter cards + corners so more fits on a phone. */
 .zuya-scope .card {
-  border-radius: 16px;
-  padding: 0.95rem 1.05rem 1.05rem;
+  border-radius: 22px;
+  padding: 1.05rem 1.15rem 1.15rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 12%, var(--rule-soft));
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 4%, transparent), transparent 42%),
+    var(--paper);
+  box-shadow: 0 10px 30px -18px var(--glow), 0 1px 0 rgba(255,255,255,0.35) inset;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.zuya-scope .card:hover {
+  box-shadow: 0 16px 40px -20px var(--glow), 0 1px 0 rgba(255,255,255,0.4) inset;
+}
+.dark .zuya-scope.zt-rose .card {
+  box-shadow: 0 12px 34px -20px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.06) inset;
 }
 .zuya-scope .card::before { border-radius: inherit; }
 .zuya-scope .card-bare {
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 0.7rem 0.85rem;
 }
 .zuya-scope .headrule { margin-bottom: 0.7rem; padding-bottom: 0.55rem; }
+
+/* Card titles a touch warmer + more confident in Zuya. */
+.zuya-scope .card > .headrule .font-display,
+.zuya-scope .card h2,
+.zuya-scope .card h3 { letter-spacing: -0.01em; }
 
 /* Tiny "now playing" equalizer bars. */
 @keyframes zeq { 0%,100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }

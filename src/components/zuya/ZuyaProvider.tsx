@@ -155,49 +155,52 @@ export function ZuyaProvider({
 
   // -- The single multiplexed realtime channel -------------------------------
   useEffect(() => {
-    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let channels: ReturnType<typeof supabase.channel>[] = [];
     let cancelled = false;
 
-    const build = () => {
-    let ch = supabase.channel("zuya");
-    for (const table of LIVE_TABLES) {
-      ch = ch.on(
-        "postgres_changes",
-        { event: "*", schema: "public", table },
-        (payload) => {
-          if (table === "zuya_members") {
-            const row = payload.new as ZuyaMemberRow | undefined;
-            if (row?.user_id) {
-              setMembers((m) => {
-                const prev = m[row.user_id];
-                const next = { ...m, [row.user_id]: row };
-                // Re-sign the avatar URL when it changed.
-                if (row.avatar_updated_at !== prev?.avatar_updated_at) {
-                  void loadAvatar(row.user_id, !!row.avatar_updated_at);
-                }
-                return next;
-              });
+    const handle = (table: ZuyaLiveTable) => (payload: Parameters<TableListener>[0]) => {
+      if (table === "zuya_members") {
+        const row = payload.new as ZuyaMemberRow | undefined;
+        if (row?.user_id) {
+          setMembers((m) => {
+            const prev = m[row.user_id];
+            const next = { ...m, [row.user_id]: row };
+            // Re-sign the avatar URL when it changed.
+            if (row.avatar_updated_at !== prev?.avatar_updated_at) {
+              void loadAvatar(row.user_id, !!row.avatar_updated_at);
             }
-          }
-          if (table === "zuya_notifications") {
-            const row = payload.new as { user_id?: string; kind?: string } | undefined;
-            if (row?.user_id === meId && row.kind === "nudge") {
-              // A nudge: buzz the phone (foreground only) + show a toast.
-              try { navigator.vibrate?.([90, 60, 120]); } catch {}
-              setNudge({ at: Date.now() });
-            }
-          }
-          if (table === "zuya_messages" || table === "zuya_notifications") {
-            void recountUnread();
-          }
-          const set = listeners.current.get(table);
-          if (set) for (const cb of set) cb(payload as Parameters<TableListener>[0]);
-        },
-      );
-    }
-      ch.subscribe();
-      return ch;
+            return next;
+          });
+        }
+      }
+      if (table === "zuya_notifications") {
+        const row = payload.new as { user_id?: string; kind?: string } | undefined;
+        if (row?.user_id === meId && row.kind === "nudge") {
+          // A nudge: buzz the phone (foreground only) + show a toast.
+          try { navigator.vibrate?.([90, 60, 120]); } catch {}
+          setNudge({ at: Date.now() });
+        }
+      }
+      if (table === "zuya_messages" || table === "zuya_notifications") {
+        void recountUnread();
+      }
+      const set = listeners.current.get(table);
+      if (set) for (const cb of set) cb(payload);
     };
+
+    // ONE channel per table. Supabase fails an entire channel if any single
+    // postgres_changes binding is invalid (e.g. a table not yet in the
+    // realtime publication because its migration hasn't been run) — so a
+    // shared channel let one un-migrated table silently kill live updates for
+    // everything else, including status. Isolating each table means a missing
+    // one only breaks its own subscription.
+    const build = () =>
+      LIVE_TABLES.map((table) =>
+        supabase
+          .channel(`zuya:${table}`)
+          .on("postgres_changes", { event: "*", schema: "public", table }, handle(table))
+          .subscribe(),
+      );
 
     // Realtime with RLS only delivers rows the subscriber is authorized to
     // read — so the connection MUST carry the user's access token before we
@@ -208,7 +211,7 @@ export function ZuyaProvider({
       const { data: { session } } = await supabase.auth.getSession();
       if (cancelled) return;
       if (session?.access_token) supabase.realtime.setAuth(session.access_token);
-      channel = build();
+      channels = build();
     })();
 
     const { data: authSub } = supabase.auth.onAuthStateChange((_e, session) => {
@@ -218,7 +221,7 @@ export function ZuyaProvider({
     return () => {
       cancelled = true;
       authSub.subscription.unsubscribe();
-      if (channel) void supabase.removeChannel(channel);
+      for (const ch of channels) void supabase.removeChannel(ch);
     };
   }, [supabase, loadAvatar, recountUnread, meId]);
 

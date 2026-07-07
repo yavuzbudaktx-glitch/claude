@@ -59,3 +59,33 @@ export const ZUYA_QUESTIONS: ZuyaQuestion[] = [
   { en: "What would make tonight unforgettable?", tr: "Bu geceyi ne unutulmaz yapardı?" },
   { en: "One thing you'd change about me — and one you never would.", tr: "Bende değiştireceğin bir şey — ve asla değiştirmeyeceğin bir şey." },
 ];
+
+// The spicier deck — behind the 🌶️ button. Adult but tasteful.
+export const ZUYA_SPICY_QUESTIONS: ZuyaQuestion[] = [
+  { en: "Boldest place you'd want to be alone with me?", tr: "Benimle yalnız kalmak isteyeceğin en cesur yer neresi?" },
+  { en: "Something you've fantasized about but never told me?", tr: "Hayalini kurup bana hiç söylemediğin şey ne?" },
+  { en: "What do I wear that you can't stop thinking about?", tr: "Giydiğimde aklından çıkaramadığın şey ne?" },
+  { en: "Describe our perfect night with the door locked.", tr: "Kapı kilitliyken geçireceğimiz mükemmel geceyi anlat." },
+  { en: "A touch you want more of?", tr: "Daha fazlasını istediğin bir dokunuş ne?" },
+  { en: "One thing you'd love me to do slower?", tr: "Daha yavaş yapmamı istediğin bir şey ne?" },
+  { en: "A word or whisper that gets to you every time?", tr: "Her seferinde sana işleyen bir kelime ya da fısıltı ne?" },
+  { en: "If I walked in right now, first thing you'd do?", tr: "Şu an içeri girsem ilk yapacağın şey ne?" },
+  { en: "Lights on or off — and why?", tr: "Işıklar açık mı kapalı mı — neden?" },
+  { en: "Which look of mine undoes you?", tr: "Sana bakışlarımdan hangisi seni eritiyor?" },
+  { en: "Where do you daydream about kissing me?", tr: "Seni nerede öpmenin hayalini kuruyorsun?" },
+  { en: "A fantasy you'd actually want to make real?", tr: "Gerçekleştirmek isteyeceğin bir fantezi ne?" },
+  { en: "Morning, midnight, or mid-afternoon — when do you want me most?", tr: "Sabah, gece yarısı ya da öğlen — beni en çok ne zaman istiyorsun?" },
+  { en: "Something you want to hear me say more often?", tr: "Daha sık söylememi istediğin şey ne?" },
+  { en: "What's the fastest way I get under your skin — the good kind?", tr: "Seni en hızlı etkilemenin yolu ne — iyi anlamda?" },
+];
+
+// Spicy questions live at this index offset so a single `question_idx` column
+// can point into either deck without a schema change.
+export const ZUYA_SPICY_OFFSET = 100000;
+
+export function getZuyaQuestion(idx: number): ZuyaQuestion {
+  if (idx >= ZUYA_SPICY_OFFSET) {
+    return ZUYA_SPICY_QUESTIONS[idx - ZUYA_SPICY_OFFSET] ?? ZUYA_SPICY_QUESTIONS[0];
+  }
+  return ZUYA_QUESTIONS[idx] ?? ZUYA_QUESTIONS[0];
+}
