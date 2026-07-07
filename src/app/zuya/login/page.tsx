@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { ArrowLeft, Eye, EyeOff, RotateCcw } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { createZuyaClient } from "@/lib/supabase/zuya-client";
 import { ZUYA_DISPLAY_NAMES, ZUYA_USERNAMES, zuyaEmail, type ZuyaUsername } from "@/lib/zuya/config";
 
@@ -15,12 +15,11 @@ export default function ZuyaLoginPage() {
   const [registered, setRegistered] = useState<Registered>({});
   const [who, setWho] = useState<ZuyaUsername | null>(null);
   const [firstTimeToggle, setFirstTimeToggle] = useState(false); // user chose "set a password"
-  const [forceFirstTime, setForceFirstTime] = useState(false); // after "start over"
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [code, setCode] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [resetting, setResetting] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
   const loadStatus = useCallback(async () => {
@@ -41,9 +40,9 @@ export default function ZuyaLoginPage() {
 
   // Known-registered from the hint: true / false / undefined(unknown).
   const hint = who ? registered[who] : undefined;
-  // Show the set-password (two-field) flow when: we know it's a new account,
-  // the user asked to set one, or they just reset.
-  const isFirstTime = who !== null && (forceFirstTime || firstTimeToggle || hint === false);
+  // Show the set-password (two-field) flow when we know it's a new account or
+  // the user asked to set one.
+  const isFirstTime = who !== null && (firstTimeToggle || hint === false);
 
   async function signIn(supabase: ReturnType<typeof createZuyaClient>, username: ZuyaUsername) {
     const { error } = await supabase.auth.signInWithPassword({
@@ -77,7 +76,7 @@ export default function ZuyaLoginPage() {
         const res = await fetch("/api/zuya/auth/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username: who, password }),
+          body: JSON.stringify({ username: who, password, code }),
         });
         if (res.status === 409) {
           // Already registered — the hint was stale. Just sign in instead.
@@ -99,37 +98,12 @@ export default function ZuyaLoginPage() {
     }
   }
 
-  async function startOver() {
-    if (!who) return;
-    setResetting(true);
-    setMsg(null);
-    try {
-      const res = await fetch("/api/zuya/auth/reset", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: who }),
-      });
-      if (!res.ok) {
-        const d = await res.json().catch(() => ({}));
-        setMsg(d.error ?? "Couldn't reset — try again.");
-        return;
-      }
-      setPassword("");
-      setConfirm("");
-      setForceFirstTime(true);
-      setRegistered((r) => ({ ...r, [who]: false }));
-      setMsg("Done — set a fresh password below.");
-    } finally {
-      setResetting(false);
-    }
-  }
-
   function pickName(u: ZuyaUsername) {
     setWho(u);
-    setForceFirstTime(false);
     setFirstTimeToggle(false);
     setPassword("");
     setConfirm("");
+    setCode("");
     setMsg(null);
   }
 
@@ -204,15 +178,29 @@ export default function ZuyaLoginPage() {
             </div>
 
             {isFirstTime && (
-              <input
-                type={showPw ? "text" : "password"}
-                required
-                minLength={1}
-                value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
-                placeholder="Repeat the password"
-                className="w-full px-4 py-3 rounded-2xl bg-black/5 dark:bg-white/5 text-sm outline-none focus:ring-2 focus:ring-[var(--accent)]"
-              />
+              <>
+                <input
+                  type={showPw ? "text" : "password"}
+                  required
+                  minLength={1}
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                  placeholder="Repeat the password"
+                  className="w-full px-4 py-3 rounded-2xl bg-black/5 dark:bg-white/5 text-sm outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                />
+                <input
+                  type="text"
+                  required
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder="Setup code"
+                  autoComplete="off"
+                  className="w-full px-4 py-3 rounded-2xl bg-black/5 dark:bg-white/5 text-sm outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                />
+                <p className="text-[11.5px] text-muted-2 -mt-1">
+                  The private code you two set up. Ask Yavuz if you don&apos;t have it.
+                </p>
+              </>
             )}
 
             <button
@@ -227,9 +215,8 @@ export default function ZuyaLoginPage() {
               {busy ? "…" : isFirstTime ? "Set password & come in" : "Come in"}
             </button>
 
-            {/* Escape hatches — always available, never gated on the status hint. */}
-            <div className="flex items-center justify-between pt-1">
-              {!isFirstTime ? (
+            {!isFirstTime && (
+              <div className="pt-1">
                 <button
                   type="button"
                   onClick={() => setFirstTimeToggle(true)}
@@ -237,19 +224,8 @@ export default function ZuyaLoginPage() {
                 >
                   First time? Set a password
                 </button>
-              ) : (
-                <span />
-              )}
-              <button
-                type="button"
-                onClick={startOver}
-                disabled={resetting}
-                className="inline-flex items-center gap-1 text-[12px] text-muted hover:text-down transition disabled:opacity-50"
-              >
-                <RotateCcw className="h-3 w-3" />
-                {resetting ? "resetting…" : "Start over"}
-              </button>
-            </div>
+              </div>
+            )}
           </form>
         )}
 

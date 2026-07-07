@@ -4,6 +4,8 @@ import {
   ZUYA_USERNAMES,
   ZUYA_DISPLAY_NAMES,
   zuyaEmail,
+  zuyaCodeOk,
+  zuyaSignupCode,
   type ZuyaUsername,
 } from "@/lib/zuya/config";
 
@@ -15,11 +17,22 @@ export const dynamic = "force-dynamic";
 // constraint on zuya_members.username make it self-sealing: once both slots
 // are claimed this endpoint is permanently dead.
 export async function POST(req: Request) {
-  let body: { username?: string; password?: string };
+  let body: { username?: string; password?: string; code?: string };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "invalid request" }, { status: 400 });
+  }
+
+  // Gate: registration is closed unless the correct shared setup code is given.
+  if (!zuyaSignupCode()) {
+    return NextResponse.json(
+      { error: "Registration is closed." },
+      { status: 403 },
+    );
+  }
+  if (!zuyaCodeOk(body.code)) {
+    return NextResponse.json({ error: "Wrong setup code." }, { status: 403 });
   }
 
   const username = (body.username ?? "").toLowerCase().trim() as ZuyaUsername;

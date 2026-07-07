@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/service";
-import { ZUYA_USERNAMES, zuyaEmail, type ZuyaUsername } from "@/lib/zuya/config";
+import {
+  ZUYA_USERNAMES,
+  zuyaEmail,
+  zuyaCodeOk,
+  zuyaSignupCode,
+  type ZuyaUsername,
+} from "@/lib/zuya/config";
 
 export const dynamic = "force-dynamic";
 
@@ -10,11 +16,20 @@ export const dynamic = "force-dynamic";
 // the username slot is free to register again. Unauthenticated by necessity
 // (the person is locked out); acceptable for this private two-person app.
 export async function POST(req: Request) {
-  let body: { username?: string };
+  let body: { username?: string; code?: string };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "invalid request" }, { status: 400 });
+  }
+
+  // Gate: resetting deletes an account + all its data, so it demands the shared
+  // setup code. Closed entirely when ZUYA_SIGNUP_CODE is unset.
+  if (!zuyaSignupCode()) {
+    return NextResponse.json({ error: "Reset is disabled." }, { status: 403 });
+  }
+  if (!zuyaCodeOk(body.code)) {
+    return NextResponse.json({ error: "Wrong setup code." }, { status: 403 });
   }
 
   const username = (body.username ?? "").toLowerCase().trim() as ZuyaUsername;
