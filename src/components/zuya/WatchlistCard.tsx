@@ -10,6 +10,8 @@ interface Hit {
   title: string;
   year: string;
   cover: string;
+  rating: string;
+  imdbID: string;
 }
 
 function Stars({
@@ -42,7 +44,17 @@ function Stars({
   );
 }
 
-function Poster({ cover, kind, size }: { cover: string | null; kind: string; size: number }) {
+function Poster({
+  cover,
+  kind,
+  size,
+  rating,
+}: {
+  cover: string | null;
+  kind: string;
+  size: number;
+  rating?: string | null;
+}) {
   const Icon = kind === "show" ? Tv : Film;
   return (
     <div
@@ -56,6 +68,12 @@ function Poster({ cover, kind, size }: { cover: string | null; kind: string; siz
         <div className="grid h-full w-full place-items-center text-muted-2">
           <Icon className="h-4 w-4" />
         </div>
+      )}
+      {rating && (
+        <span className="absolute top-0.5 left-0.5 inline-flex items-center gap-0.5 rounded px-1 py-[1px] bg-black/75 text-[9px] font-bold text-[#f5c518] leading-none">
+          <Star className="h-2 w-2" fill="currentColor" />
+          {rating}
+        </span>
       )}
     </div>
   );
@@ -123,12 +141,29 @@ export function WatchlistCard() {
     setQ("");
     setHits([]);
     setOpen(false);
+    let cover = hit?.cover ?? null;
+    let rating: string | null = hit?.rating || null;
+    // Search results don't carry the rating — fetch it (and a poster if the
+    // search row had none) from the detail endpoint.
+    if (hit?.imdbID) {
+      try {
+        const res = await fetch(`/api/zuya/movie?id=${encodeURIComponent(hit.imdbID)}`);
+        const j = await res.json();
+        if (j.item) {
+          rating = j.item.rating || rating;
+          cover = j.item.cover || cover;
+        }
+      } catch {
+        /* keep search values */
+      }
+    }
     const { error } = await supabase.from("zuya_watchlist").insert({
       added_by: me.user_id,
       title,
       kind,
-      cover: hit?.cover ?? null,
+      cover,
       year: hit?.year ?? null,
+      rating,
     });
     if (!error) void load();
   }
@@ -161,7 +196,7 @@ export function WatchlistCard() {
     const theirR = partner?.user_id ? row.ratings?.[partner.user_id] ?? 0 : 0;
     return (
       <div className="group flex items-start gap-3 py-2.5">
-        <Poster cover={row.cover} kind={row.kind} size={40} />
+        <Poster cover={row.cover} kind={row.kind} size={40} rating={row.rating} />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
             <span className={`text-[13.5px] font-medium truncate ${row.watched ? "text-muted" : "text-ink"}`}>

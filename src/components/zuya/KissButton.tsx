@@ -1,14 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Moon, Sun, Heart } from "lucide-react";
 
-// A time-aware one-tap button: at night it sends an "iyi geceler öpücüğü",
-// in the morning a "günaydın", and a plain kiss the rest of the day. Lands as
-// a push on your partner's phone.
+// A 💋 button. The first tap of the morning sends a "Günaydın", the first tap
+// of the night sends an "İyi geceler öpücüğü", and every tap after that (until
+// the period flips) just sends kisses. State is remembered per day+period so
+// the greeting only fires once.
+function periodOf(hour: number): "morning" | "night" | "day" {
+  if (hour >= 19 || hour < 5) return "night";
+  if (hour < 11) return "morning";
+  return "day";
+}
+
+function todayKey(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
 export function KissButton() {
   const [hour, setHour] = useState<number | null>(null);
-  const [sent, setSent] = useState(false);
+  const [pop, setPop] = useState(false);
 
   useEffect(() => {
     setHour(new Date().getHours());
@@ -18,41 +28,38 @@ export function KissButton() {
 
   if (hour == null) return null;
 
-  const mode = hour >= 19 || hour < 5 ? "night" : hour < 11 ? "morning" : "day";
-  const cfg =
-    mode === "night"
-      ? { Icon: Moon, title: "İyi geceler öpücüğü gönder", text: "İyi geceler öpücüğü 😘🌙" }
-      : mode === "morning"
-        ? { Icon: Sun, title: "Günaydın gönder", text: "Günaydın aşkım ☀️😘" }
-        : { Icon: Heart, title: "Öpücük gönder", text: "Öpücük 😘" };
+  const period = periodOf(hour);
 
   async function send() {
-    if (sent) return;
-    setSent(true);
+    let text = "Öpücük 💋";
+    if (period === "morning" || period === "night") {
+      const key = `zuya.greet.${period}.${todayKey()}`;
+      const alreadyGreeted = typeof window !== "undefined" && localStorage.getItem(key);
+      if (!alreadyGreeted) {
+        text = period === "morning" ? "Günaydın aşkım ☀️💋" : "İyi geceler öpücüğü 🌙💋";
+        try { localStorage.setItem(key, "1"); } catch {}
+      }
+    }
+    setPop(true);
+    setTimeout(() => setPop(false), 600);
     fetch("/api/zuya/push/notify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ kind: "kiss", text: cfg.text }),
+      body: JSON.stringify({ kind: "kiss", text }),
     }).catch(() => {});
-    setTimeout(() => setSent(false), 5000);
   }
-
-  const Icon = sent ? Heart : cfg.Icon;
 
   return (
     <button
       onClick={() => void send()}
-      disabled={sent}
-      title={cfg.title}
-      aria-label={cfg.title}
-      className={`relative grid place-items-center h-9 w-9 rounded-full border transition ${
-        sent
-          ? "border-transparent text-white"
-          : "border-[var(--rule)] bg-[var(--paper)] text-accent hover:border-[var(--accent)]"
+      title="Öpücük gönder"
+      aria-label="Send a kiss"
+      className={`grid place-items-center h-9 w-9 rounded-full border border-[var(--rule)] bg-[var(--paper)] hover:border-[var(--accent)] transition ${
+        pop ? "scale-125" : "scale-100"
       }`}
-      style={sent ? { background: "linear-gradient(135deg, var(--grad-from), var(--grad-via))" } : undefined}
+      style={{ transitionDuration: "180ms" }}
     >
-      <Icon className="h-4 w-4" fill={sent ? "currentColor" : "none"} />
+      <span className="text-[17px] leading-none" aria-hidden>💋</span>
     </button>
   );
 }

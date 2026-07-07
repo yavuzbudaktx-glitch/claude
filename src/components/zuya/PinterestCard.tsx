@@ -14,11 +14,13 @@ interface Pin {
 }
 
 export function PinterestCard() {
-  const { supabase } = useZuya();
+  const { supabase, me, partner } = useZuya();
   const [board, setBoard] = useState<string | null>(null);
   const [pins, setPins] = useState<Pin[]>([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+
+  const connected = !!me.pinterest_connected || !!partner?.pinterest_connected;
 
   const loadBoard = useCallback(async () => {
     const { data } = await supabase
@@ -37,7 +39,7 @@ export function PinterestCard() {
   useZuyaTableEvent("zuya_settings", () => void loadBoard());
 
   const loadPins = useCallback(async () => {
-    if (!board) {
+    if (!connected) {
       setPins([]);
       setLoading(false);
       return;
@@ -45,7 +47,7 @@ export function PinterestCard() {
     setLoading(true);
     setErr(null);
     try {
-      const res = await fetch(`/api/zuya/pinterest?board=${encodeURIComponent(board)}`);
+      const res = await fetch(`/api/zuya/pinterest?board=${encodeURIComponent(board ?? "")}`);
       const json = await res.json();
       if (json.error) setErr(json.error);
       setPins((json.pins ?? []).filter((p: Pin) => p.image));
@@ -54,7 +56,7 @@ export function PinterestCard() {
     } finally {
       setLoading(false);
     }
-  }, [board]);
+  }, [board, connected]);
 
   useEffect(() => {
     void loadPins();
@@ -66,7 +68,7 @@ export function PinterestCard() {
       : `https://www.pinterest.com/${board.replace(/^\/+/, "")}`
     : null;
 
-  const action = board ? (
+  const action = connected ? (
     <button
       onClick={() => void loadPins()}
       className="text-muted hover:text-accent transition"
@@ -79,11 +81,11 @@ export function PinterestCard() {
 
   return (
     <Card title="Pinboard" collapsible={false} action={action} className="flex flex-col">
-      {!board ? (
+      {!connected ? (
         <div className="text-[13px] text-muted py-6 text-center">
-          <p className="mb-2">Connect your shared Pinterest board.</p>
+          <p className="mb-2">Connect Pinterest to see your board&apos;s latest pins.</p>
           <Link href="/zuya/settings" className="text-accent underline underline-offset-2">
-            Add it in settings →
+            Connect in settings →
           </Link>
         </div>
       ) : loading && pins.length === 0 ? (

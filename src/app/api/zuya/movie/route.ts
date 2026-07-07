@@ -3,52 +3,53 @@ import { getZuyaMember } from "@/lib/zuya/server";
 
 export const dynamic = "force-dynamic";
 
-interface MovieHit {
-  title: string;
-  year: string;
-  cover: string;
-}
-
-// Search movie/show titles + posters via the iTunes Search API — keyless, no
-// signup, and reliable from a server. We upscale the 100px artwork to 600px.
+// Movie/show search + IMDb ratings via OMDb (https://www.omdbapi.com).
+// Needs a free key in the OMDB_API_KEY env var. Two modes:
+//   ?q=<term>&kind=movie|show  → search results (title, year, cover, imdbID)
+//   ?id=<imdbID>               → one item's detail incl. imdbRating
 export async function GET(req: Request) {
   const auth = await getZuyaMember();
   if (!auth) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-  const url = new URL(req.url);
-  const q = (url.searchParams.get("q") ?? "").trim();
-  const kind = url.searchParams.get("kind") === "show" ? "show" : "movie";
-  if (q.length < 2) return NextResponse.json({ results: [] });
+  const key = process.env.OMDB_API_KEY;
+  if (!key) return NextResponse.json({ results: [], error: "OMDb key not configured." });
 
-  const params = new URLSearchParams({
-    term: q,
-    country: "US",
-    limit: "6",
-    media: kind === "show" ? "tvShow" : "movie",
-    entity: kind === "show" ? "tvSeason" : "movie",
-  });
+  const url = new URL(req.url);
+  const id = url.searchParams.get("id");
 
   try {
-    const res = await fetch(`https://itunes.apple.com/search?${params}`, {
-      headers: { Accept: "application/json" },
-      cache: "no-store",
-    });
-    if (!res.ok) return NextResponse.json({ results: [] });
-    const json = (await res.json()) as { results?: Array<Record<string, unknown>> };
-    const seen = new Set<string>();
-    const results: MovieHit[] = [];
-    for (const r of json.results ?? []) {
-      const title = String((kind === "show" ? r.collectionName : r.trackName) ?? "").trim();
-      if (!title || seen.has(title.toLowerCase())) continue;
-      seen.add(title.toLowerCase());
-      const art = String(r.artworkUrl100 ?? "");
-      results.push({
-        title,
-        year: String(r.releaseDate ?? "").slice(0, 4),
-        cover: art ? art.replace("100x100bb", "600x600bb") : "",
+    if (id) {
+      const res = await fetch(`https://www.omdbapi.com/?apikey=${key}&i=${encodeURIComponent(id)}`, {
+        cache: "no-store",
       });
-      if (results.length >= 6) break;
+      const j = (await res.json()) as Record<string, string>;
+      return NextResponse.json({
+        item: {
+          title: j.Title ?? "",
+          year: (j.Year ?? "").slice(0, 4),
+          cover: j.Poster && j.Poster !== "N/A" ? j.Poster : "",
+          rating: j.imdbRating && j.imdbRating !== "N/A" ? j.imdbRating : "",
+          imdbID: j.imdbID ?? id,
+        },
+      });
     }
+
+    const q = (url.searchParams.get("q") ?? "").trim();
+    const type = url.searchParams.get("kind") === "show" ? "series" : "movie";
+    if (q.length < 2) return NextResponse.json({ results: [] });
+
+    const res = await fetch(
+      `https://www.omdbapi.com/?apikey=${key}&s=${encodeURIComponent(q)}&type=${type}`,
+      { cache: "no-store" },
+    );
+    const j = (await res.json()) as { Search?: Array<Record<string, string>> };
+    const results = (j.Search ?? []).slice(0, 7).map((r) => ({
+      title: r.Title ?? "",
+      year: (r.Year ?? "").slice(0, 4),
+      cover: r.Poster && r.Poster !== "N/A" ? r.Poster : "",
+      rating: "",
+      imdbID: r.imdbID ?? "",
+    }));
     return NextResponse.json({ results });
   } catch {
     return NextResponse.json({ results: [] });
