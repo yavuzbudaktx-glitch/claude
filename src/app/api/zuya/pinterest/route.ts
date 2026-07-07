@@ -40,15 +40,31 @@ export async function GET(req: Request) {
 
   try {
     const res = await fetch(endpoint, {
-      headers: { "User-Agent": "Mozilla/5.0", Accept: "application/json" },
-      next: { revalidate: 300 },
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36",
+        Accept: "application/json, text/plain, */*",
+        "Accept-Language": "en-US,en;q=0.9",
+        Referer: "https://www.pinterest.com/",
+      },
+      cache: "no-store",
     });
     if (!res.ok) {
-      return NextResponse.json({ pins: [], error: "Board couldn't be reached." });
+      return NextResponse.json({
+        pins: [],
+        error: `Pinterest returned ${res.status}. Make sure the board is public and the link is right.`,
+      });
     }
-    const json = (await res.json()) as {
-      data?: { pins?: Array<Record<string, unknown>> };
-    };
+    const text = await res.text();
+    let json: { data?: { pins?: Array<Record<string, unknown>> } };
+    try {
+      json = JSON.parse(text);
+    } catch {
+      return NextResponse.json({
+        pins: [],
+        error: "Pinterest didn't return pin data for that link.",
+      });
+    }
     const rawPins = json?.data?.pins ?? [];
     const pins: Pin[] = rawPins.slice(0, 10).map((p) => {
       const images = (p.images ?? {}) as Record<string, { url?: string }>;

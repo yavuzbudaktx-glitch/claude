@@ -4,7 +4,6 @@ import { getZuyaMember } from "@/lib/zuya/server";
 import { ZuyaProvider } from "@/components/zuya/ZuyaProvider";
 import { ZuyaHeader } from "@/components/zuya/ZuyaHeader";
 import { PullToRefresh } from "@/components/zuya/PullToRefresh";
-import { ZuyaThemeApplier } from "@/components/zuya/ZuyaThemeApplier";
 import type { ZuyaMemberRow } from "@/types/zuya";
 
 export const dynamic = "force-dynamic";
@@ -43,7 +42,6 @@ export default async function ZuyaAppLayout({ children }: { children: React.Reac
   return (
     <ZuyaProvider initialMe={me} initialPartner={partnerRow}>
       <div className="max-w-[1200px] mx-auto px-4 md:px-8 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-        <ZuyaThemeApplier />
         <PullToRefresh>
           <ZuyaHeader />
           {children}

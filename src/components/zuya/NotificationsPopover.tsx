@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Bell, CalendarHeart, Check, X, Pencil } from "lucide-react";
+import { Bell, CalendarHeart, Check, X, Pencil, CircleDot } from "lucide-react";
 import { useZuya, useZuyaTableEvent } from "@/components/zuya/ZuyaProvider";
 import { AnchoredPanel } from "@/components/zuya/AnchoredPanel";
 import type { ZuyaNotificationKind, ZuyaNotificationRow } from "@/types/zuya";
@@ -12,6 +12,7 @@ const KIND_META: Record<ZuyaNotificationKind, { icon: typeof Bell; text: (p: Rec
   date_accepted: { icon: Check, text: (p) => `Accepted "${p.title}"` },
   date_rejected: { icon: X, text: (p) => `Can't make "${p.title}"` },
   date_cancelled: { icon: X, text: (p) => `Called off "${p.title}"` },
+  status_changed: { icon: CircleDot, text: (p) => `${p.name ?? "They"} is now ${p.label ?? "around"}` },
 };
 
 function timeAgo(iso: string): string {

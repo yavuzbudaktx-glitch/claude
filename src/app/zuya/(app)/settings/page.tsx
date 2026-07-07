@@ -9,7 +9,6 @@ import { useZuya } from "@/components/zuya/ZuyaProvider";
 import { ZuyaAvatar } from "@/components/zuya/ZuyaAvatar";
 import { toUploadableJpeg } from "@/lib/zuya/image";
 import { PushToggle } from "@/components/zuya/PushToggle";
-import { ZuyaThemePicker } from "@/components/zuya/ZuyaThemePicker";
 import { PinterestSetting } from "@/components/zuya/PinterestSetting";
 
 export default function ZuyaSettingsPage() {
@@ -244,10 +243,6 @@ export default function ZuyaSettingsPage() {
 
       <Card title="Pinterest board" collapsible={false}>
         <PinterestSetting />
-      </Card>
-
-      <Card title="Tema" collapsible={false}>
-        <ZuyaThemePicker />
       </Card>
 
       <Card title="Bildirimler" collapsible={false}>
