@@ -267,7 +267,12 @@ export function LocationCard() {
           </div>
           {dist != null && (
             <div className="text-ink-soft font-medium pt-0.5">
-              {dist < 1 ? `${Math.round(dist * 1000)} m arada` : `${dist.toFixed(1)} km arada`}
+              {(() => {
+                const miles = dist * 0.621371;
+                return miles < 0.1
+                  ? `${Math.round(miles * 5280)} ft arada`
+                  : `${miles.toFixed(1)} mil arada`;
+              })()}
             </div>
           )}
         </div>

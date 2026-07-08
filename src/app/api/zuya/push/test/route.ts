@@ -22,7 +22,7 @@ export async function POST() {
         "Sunucuda VAPID anahtarları eksik. Vercel env'e NEXT_PUBLIC_VAPID_PUBLIC_KEY ve VAPID_PRIVATE_KEY ekleyip yeniden deploy et.",
     });
   }
-  webpush.setVapidDetails("mailto:zuya@zuya.local", pub, priv);
+  webpush.setVapidDetails("mailto:yavuzbudaktx@gmail.com", pub, priv);
 
   const service = createServiceClient();
   const { data: subs } = await service
