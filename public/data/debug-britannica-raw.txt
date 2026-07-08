@@ -1,9 +1,9 @@
 # Britannica scrape debug dump
-# generated: 2026-07-08T07:54:04.268Z
+# generated: 2026-07-08T09:17:17.363Z
 # url:       https://www.britannica.com/on-this-day/july-8
 # fetcher:   Jina Reader
 # kind:      markdown
-# length:    17539
+# length:    19336
 # parsed:    NO
 # -----------------------------------------------------------------
 Title: On This Day - What Happened Today In History | Britannica
@@ -241,21 +241,4 @@ SIGN UP
 
 ### Thank you for signing up!
 
-![Image 21](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=76&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-8&s=F4046F70-6238-49A2-8E85-087B1E9A3B1B&json=%20)![Image 22](https://pixel.rubiconproject.com/token?pid=49096&us_privacy=1YNY)
-
-✕
-## Do not sell or share my personal information.
-
-You have chosen to opt-out of the sale or sharing of your information from this site and any of its affiliates. To opt back in please click the "Reenable Personalization" link.
-
-This site collects information through the use of cookies and other tracking tools. Cookies and these tools do not contain any information that personally identifies a user, but personal information that would be stored about you may be linked to the information stored in and obtained from them. This information would be used and shared for Analytics, Ad Serving, Interest Based Advertising, among other purposes.
-
-For more information please visit this site's Privacy Policy.
-
-CANCEL
-
-CONTINUE
-
-Information from your device can be used to personalize your ad experience. 
-
-[Do not sell or share my personal information.](https://www.britannica.com/)
+![Image 21](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=134&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-8&s=F8B75DE5-D834-461F-B38B-F7846FD6C626&json=%20)![Image 22: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=8c9cfa71-8777-e86c-1ac4-45ef9bbb9f3d&iiqpciddate=1783502143484&tsrnd=225_1783502143489&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.46%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.46%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 23](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001783502145-37T9GOBJ-TKI6)![Image 24](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001783502145-37T9GOBJ-TKI6&adnxs_id=$UID&gdpr=0)![Image 25](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001783502145-37T9GOBJ-TKI6%26auid%3DAU1D-0100-001783502145-37T9GOBJ-TKI6&gdpr=0)![Image 26](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001783502145-37T9GOBJ-TKI6&gdpr=0)![Image 27](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001783502145-37T9GOBJ-TKI6&gdpr=0)![Image 28](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001783502145-37T9GOBJ-TKI6&gdpr=0)![Image 29](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001783502145-37T9GOBJ-TKI6&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001783502145-37T9GOBJ-TKI6%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 30](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4MzUwMjE0NS0zN1Q5R09CSi1US0k2&id=AU1D-0100-001783502145-37T9GOBJ-TKI6&gdpr=0)![Image 31](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001783502145-37T9GOBJ-TKI6)![Image 32](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001783502145-37T9GOBJ-TKI6&uid=[UID]&gdpr=0)![Image 33](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001783502145-37T9GOBJ-TKI6%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
