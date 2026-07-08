@@ -39,25 +39,35 @@ export function PushToggle() {
       .catch(() => {});
   }, []);
 
+  // Reject after `ms` so no single step can spin the button forever.
+  function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
+    return Promise.race([
+      p,
+      new Promise<never>((_, rej) => setTimeout(() => rej(new Error(label)), ms)),
+    ]);
+  }
+
   // Get an active service-worker registration, registering it ourselves if
   // next-pwa's auto-registration hasn't landed yet, and never hang forever.
   async function getReg(): Promise<ServiceWorkerRegistration> {
     let reg = await navigator.serviceWorker.getRegistration();
     if (!reg) reg = await navigator.serviceWorker.register("/sw.js");
-    // ready resolves once a SW is active; race it with a timeout so a stuck
-    // install surfaces an error instead of spinning forever.
-    const ready = navigator.serviceWorker.ready;
-    const timeout = new Promise<never>((_, rej) =>
-      setTimeout(() => rej(new Error("Service worker hazır olmadı — sayfayı yenile ve tekrar dene.")), 8000),
+    return withTimeout(
+      navigator.serviceWorker.ready,
+      8000,
+      "Service worker hazır olmadı — uygulamayı tamamen kapatıp tekrar aç.",
     );
-    return (await Promise.race([ready, timeout])) as ServiceWorkerRegistration;
   }
 
   async function enable() {
     setBusy(true);
     setMsg(null);
     try {
-      const perm = await Notification.requestPermission();
+      const perm = await withTimeout(
+        Notification.requestPermission(),
+        20000,
+        "İzin ekranı yanıt vermedi — tekrar dene.",
+      );
       if (perm !== "granted") {
         setMsg(
           perm === "denied"
@@ -67,18 +77,27 @@ export function PushToggle() {
         return;
       }
       const reg = await getReg();
+      const existing = await reg.pushManager.getSubscription();
       const sub =
-        (await reg.pushManager.getSubscription()) ??
-        (await reg.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(VAPID!) as BufferSource,
-        }));
+        existing ??
+        (await withTimeout(
+          reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(VAPID!) as BufferSource,
+          }),
+          12000,
+          "Abonelik alınamadı (push servisine ulaşılamadı) — internetini kontrol edip tekrar dene.",
+        ));
       const json = sub.toJSON();
-      const res = await fetch("/api/zuya/push/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ endpoint: json.endpoint, keys: json.keys }),
-      });
+      const res = await withTimeout(
+        fetch("/api/zuya/push/subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ endpoint: json.endpoint, keys: json.keys }),
+        }),
+        12000,
+        "Sunucuya ulaşılamadı — tekrar dene.",
+      );
       if (!res.ok) {
         const d = await res.json().catch(() => null);
         setMsg(d?.error ? `Kaydedilemedi: ${d.error}` : "Kaydedilemedi (0016 migration çalıştı mı?).");
