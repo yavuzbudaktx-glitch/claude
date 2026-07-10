@@ -1,14 +1,14 @@
 # Britannica scrape debug dump
-# generated: 2026-07-09T21:07:12.278Z
-# url:       https://www.britannica.com/on-this-day/july-9
+# generated: 2026-07-10T08:48:32.535Z
+# url:       https://www.britannica.com/on-this-day/july-10
 # fetcher:   Jina Reader
 # kind:      markdown
-# length:    24390
+# length:    23446
 # parsed:    NO
 # -----------------------------------------------------------------
 Title: On This Day - What Happened Today In History | Britannica
 
-URL Source: https://www.britannica.com/on-this-day/july-9
+URL Source: https://www.britannica.com/on-this-day/july-10
 
 Markdown Content:
 [✨**How Everything Works:**A NEW Britannica Newsletter✨ Learn More](https://signup.britannica.com/howeverythingworks)
@@ -35,7 +35,7 @@ Login
 
 [Home](https://www.britannica.com/) Today in History ![Image 3: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-191/images/shared/tih-logo.png?v=3.191.5)
 
-![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-191/images/shared/tih-star.svg?v=3.191.5)July 9
+![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-191/images/shared/tih-star.svg?v=3.191.5)July 10
 
 ![Image 5: Today In History Phone](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-phone.png?v=3.189.7)
 
@@ -61,7 +61,7 @@ June
 
 [22](https://www.britannica.com/on-this-day/June-22)[23](https://www.britannica.com/on-this-day/June-23)[24](https://www.britannica.com/on-this-day/June-24)[25](https://www.britannica.com/on-this-day/June-25)[26](https://www.britannica.com/on-this-day/June-26)[27](https://www.britannica.com/on-this-day/June-27)[28](https://www.britannica.com/on-this-day/June-28)
 
-[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-9)[](https://www.britannica.com/on-this-day/july-9)[](https://www.britannica.com/on-this-day/july-9)[](https://www.britannica.com/on-this-day/july-9)[](https://www.britannica.com/on-this-day/july-9)
+[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-10)[](https://www.britannica.com/on-this-day/july-10)[](https://www.britannica.com/on-this-day/july-10)[](https://www.britannica.com/on-this-day/july-10)[](https://www.britannica.com/on-this-day/july-10)
 
 July
 
@@ -73,7 +73,7 @@ July
 
 [22](https://www.britannica.com/on-this-day/July-22)[23](https://www.britannica.com/on-this-day/July-23)[24](https://www.britannica.com/on-this-day/July-24)[25](https://www.britannica.com/on-this-day/July-25)[26](https://www.britannica.com/on-this-day/July-26)[27](https://www.britannica.com/on-this-day/July-27)[28](https://www.britannica.com/on-this-day/July-28)
 
-[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-9)[](https://www.britannica.com/on-this-day/july-9)[](https://www.britannica.com/on-this-day/july-9)[](https://www.britannica.com/on-this-day/july-9)
+[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-10)[](https://www.britannica.com/on-this-day/july-10)[](https://www.britannica.com/on-this-day/july-10)[](https://www.britannica.com/on-this-day/july-10)
 
 August
 
@@ -85,7 +85,7 @@ August
 
 [22](https://www.britannica.com/on-this-day/August-22)[23](https://www.britannica.com/on-this-day/August-23)[24](https://www.britannica.com/on-this-day/August-24)[25](https://www.britannica.com/on-this-day/August-25)[26](https://www.britannica.com/on-this-day/August-26)[27](https://www.britannica.com/on-this-day/August-27)[28](https://www.britannica.com/on-this-day/August-28)
 
-[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-9)[](https://www.britannica.com/on-this-day/july-9)[](https://www.britannica.com/on-this-day/july-9)[](https://www.britannica.com/on-this-day/july-9)
+[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-10)[](https://www.britannica.com/on-this-day/july-10)[](https://www.britannica.com/on-this-day/july-10)[](https://www.britannica.com/on-this-day/july-10)
 
 August
 
@@ -95,25 +95,25 @@ August
 
 [Go to Today's Date](https://www.britannica.com/on-this-day)
 
- 1807: Napoleon Bonaparte signs the second Treaty of Tilsit
+ 1040: Lady Godiva’s legendary ride
 
- French Emperor [Napoleon Bonaparte](https://www.britannica.com/biography/Napoleon-I) signed the second [Treaty of Tilsit](https://www.britannica.com/topic/Treaties-of-Tilsit) with Russia and Prussia following victories at [Jena](https://www.britannica.com/event/Battle-of-Jena) and [Friedland](https://www.britannica.com/event/Battle-of-Friedland-1807). France and Russia were now allies, and Prussia was largely left to its fate. It was yet another episode in the [Napoleonic Wars](https://www.britannica.com/event/Napoleonic-Wars) and the emperor’s attempts to dominate Europe. Perhaps more interesting than the treaty? The rabbit hunt that followed. Read on for that story in which rabbits sent Napoleon running.
+ According to legend, on this day in 1040, [Lady Godiva](https://www.britannica.com/biography/Lady-Godiva) rode horseback naked through the village of [Coventry](https://www.britannica.com/place/Coventry-England) to fulfill an agreement with her husband, [Leofric](https://www.britannica.com/biography/Leofric), the earl of [Mercia](https://www.britannica.com/place/Mercia) (a kingdom in what is now England), to reduce the heavy taxes imposed on their people. Also part of the legend? The first “Peeping Tom.” Read on to discover this date in Myth-Story.
 
-[READ MORE](https://www.britannica.com/today-in-history/July-9-1807-Napoleon-Treaty-of-Tilsit-and-Rabbits?utm_source=otd)
+[READ MORE](https://www.britannica.com/today-in-history/July-10-1040-Legend-of-Lady-Godiva?utm_source=otd)
 
-![Image 6: July 9, 1807: The Little Corporal once lost a battle to bunnies](https://cdn.britannica.com/14/289314-050-2FA8A364/today-in-history-Emperor-Napoleon-Bonaparte-Treaties-of-Tilsit.jpg?w=530&h=300&c=crop)
+![Image 6: July 10, 1040: Today in Myth-Story: Lady Godiva's famed ride](https://cdn.britannica.com/15/289315-050-321E29A4/today-in-history-Lady-Godiva-Rides-Through-City-Naked-to-Lower-Taxes.jpg?w=530&h=300&c=crop)
 
- © Leemage—Corbis Historical/Getty Images; Photo Illustration Encyclopædia Britannica, Inc.
+ © Buyenlarge— Archive Photos/Getty Images; Photo Illustration Encyclopædia Britannica, Inc.
 
  Featured Event 
 
-![Image 7: Catherine II](https://cdn.britannica.com/60/176360-050-FF9A0213/oil-Catherine-II-canvas-collection-Richard-Brompton-1782.jpg?w=356&h=200&c=crop)
+![Image 7: Telstar 1 communications satellite with a spherical, panel-covered top and cylindrical base, displayed indoors.](https://cdn.britannica.com/35/435-050-7DAECBE7/communications-satellite-American-Telstar-1-television-signals-July-10-1962.jpg?w=356&h=200&c=crop)
 
- Pictures from History—Universal Images Group/Getty Images
+ NASA
 
-Catherine the Great assumed power
+Telstar 1 launched
 
-[Catherine the Great](https://www.britannica.com/biography/Catherine-the-Great) overthrew [Peter III](https://www.britannica.com/biography/Peter-III-emperor-of-Russia) on this day in 1762 and began her reign as empress of [Russia](https://www.britannica.com/place/Russia), leading her country into full participation in the political and cultural life of Europe and extending Russian territory. _[[Test your knowledge of Russian history](https://www.britannica.com/quiz/exploring-russian-history).]_
+[Telstar](https://www.britannica.com/technology/Telstar-communications-satellite) 1, the first communications [satellite](https://www.britannica.com/technology/satellite-communication) to transmit live television signals and telephone conversations across the [Atlantic Ocean](https://www.britannica.com/place/Atlantic-Ocean), was launched this day in 1962, inaugurating a new age in electronic communications. _[[Sort fact from fiction in our quiz about objects in space](https://www.britannica.com/quiz/objects-in-space-fact-or-fiction).]_
 
 Featured Biography
 
@@ -121,183 +121,167 @@ Featured Biography
 
  Featured Biography 
 
-[![Image 8: O.J. Simpson attending his robbery trial in Las Vegas, 2008](https://cdn.britannica.com/97/256797-050-CBE26139/OJ-Simpson-trial-Las-Vegas.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/O-J-Simpson?utm_source=otd)
+[![Image 8: John Calvin](https://cdn.britannica.com/29/117629-050-1EF9CC9B/John-Calvin.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/John-Calvin?utm_source=otd)
 
- © Daniel Gluskoter/Getty Images
+ Library of Congress, Washington, D.C. (LC-DIG-pga-08225)
 
-O.J. Simpson
+John Calvin
 
-Born this day in 1947, [O.J. Simpson](https://www.britannica.com/biography/O-J-Simpson) was an outstanding [football](https://www.britannica.com/sports/American-football) running back, winning the 1968 [Heisman Trophy](https://www.britannica.com/sports/Heisman-Trophy) and setting an NFL single-season record for rushing yards. By the end of his life, he was better known for a [1995 trial](https://www.britannica.com/event/O-J-Simpson-trial) in which he was acquitted of murder charges.
+French Protestant [reformer](https://www.britannica.com/event/Reformation)[John Calvin](https://www.britannica.com/biography/John-Calvin), who advanced a theology—articulated in his Institutes of the Christian Religion (1536)—that became the foundation for the Reformed church and [Presbyterianism](https://www.britannica.com/topic/Presbyterian-churches), was born this day in 1509.
 
 Famous Birthdays
 
-1929
+1938
 
-[Hassan II](https://www.britannica.com/biography/Hassan-II?utm_source=otd)
+[Lee Morgan](https://www.britannica.com/biography/Lee-Morgan?utm_source=otd)
 
-king of Morocco
+American musician
 
-1911
+1899
 
-[John Archibald Wheeler](https://www.britannica.com/biography/John-Archibald-Wheeler?utm_source=otd)
+[John Gilbert](https://www.britannica.com/biography/John-Gilbert-American-actor?utm_source=otd)
 
-American physicist
+American actor
 
-1858
+1891
 
-[Franz Boas](https://www.britannica.com/biography/Franz-Boas?utm_source=otd)
+[Rexford Guy Tugwell](https://www.britannica.com/biography/Rexford-Guy-Tugwell?utm_source=otd)
 
-German-American anthropologist
+American economist
 
-1578
+1723
 
-[Ferdinand II](https://www.britannica.com/biography/Ferdinand-II-Holy-Roman-emperor?utm_source=otd)
+[Sir William Blackstone](https://www.britannica.com/biography/William-Blackstone?utm_source=otd)
 
-Holy Roman emperor
+English jurist
 
-[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-9)
+[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-10)
 
-## More on July 9
+## More on July 10
 
-![Image 9: Ross Perot](https://cdn.britannica.com/87/212087-050-0EFA8C7B/American-businessman-presidential-candidate-Ross-Perot-1992.jpg?w=260&h=196&c=crop)
+![Image 9: Volkswagen Beetle](https://cdn.britannica.com/22/167722-050-EB735938/Volkswagen-Beetle-1973.jpg?w=260&h=196&c=crop)
 
- © Joe Sohm/Dreamstime.com
+ IFCAR
 
 2019
 
- American businessman and politician [Ross Perot](https://www.britannica.com/money/Ross-Perot)—who ran for [U.S. president](https://www.britannica.com/topic/presidency-of-the-United-States-of-America) as an independent in [1992](https://www.britannica.com/event/United-States-presidential-election-of-1992), receiving some 19 percent of the popular vote—died at age 89. _[[How much do you know about U.S. presidential elections?](https://www.britannica.com/quiz/us-presidential-elections)]_
+ German automaker [Volkswagen](https://www.britannica.com/money/Volkswagen-Group) ended production of the Beetle, the first model of which had been introduced in 1938. _[[Take our quiz about machinery and manufacturing](https://www.britannica.com/quiz/machinery-and-manufacturing).]_
 
-![Image 10: South Sudan](https://cdn.britannica.com/37/150637-050-A09496B0/flag-of-South-Sudan.jpg?w=260&h=196&c=crop)
+![Image 10: Omar Sharif](https://cdn.britannica.com/62/188062-050-B784E716/Omar-Sharif.jpg?w=260&h=196&c=crop)
+
+ © D. Morrison—Hulton Archive/Getty Images
+
+2015
+
+ Egyptian actor [Omar Sharif](https://www.britannica.com/biography/Omar-Sharif), who garnered international acclaim for his roles in [Lawrence of Arabia](https://www.britannica.com/) (1962) and [Doctor Zhivago](https://www.britannica.com/topic/Doctor-Zhivago-film) (1965), died at the age of 83. _[[Sort fact from fiction in our quiz about films](https://www.britannica.com/quiz/film-school-fact-or-fiction).]_
+
+![Image 11: Boris Yeltsin](https://cdn.britannica.com/06/198706-050-8F86AA6B/Boris-Yeltsin-1994.jpg?w=260&h=196&c=crop)
+
+ © mark reinstein/Shutterstock.com
+
+1991
+
+ Russian politician [Boris Yeltsin](https://www.britannica.com/biography/Boris-Yeltsin) was sworn into office as the country’s first elected president. _[[Test your knowledge of Russian history](https://www.britannica.com/quiz/exploring-russian-history).]_
+
+![Image 12: Greenpeace ship Rainbow Warrior](https://cdn.britannica.com/71/233771-050-C8ACFE1D/Rainbow-Warrior-sinks-July-10-1985-on-way-to-Moruroa-Atoll-to-protest-French-atmospheric-nuclear-weapon-tests.jpg?w=260&h=196&c=crop)
+
+ Patrick Riviere—Hulton Archive/Getty Images
+
+1985
+
+ The [Greenpeace](https://www.britannica.com/topic/Greenpeace) ship Rainbow Warrior was sunk by two bomb explosions while berthed in [Auckland](https://www.britannica.com/place/Auckland-New-Zealand) Harbour, New Zealand; it was later revealed that French intelligence agents had planted the explosives.
+
+![Image 13: Flag of The Bahamas](https://cdn.britannica.com/06/5106-050-D11C8B55/Flag-of-The-Bahamas.jpg?w=260&h=196&c=crop)
 
  Encyclopædia Britannica, Inc.
 
-2011
+1973
 
-[South Sudan](https://www.britannica.com/place/South-Sudan) declared its independence after a referendum to secede from [Sudan](https://www.britannica.com/place/Sudan) passed overwhelmingly.
+[The Bahamas](https://www.britannica.com/place/The-Bahamas) gained independence from [Britain](https://www.britannica.com/place/United-Kingdom) within the [Commonwealth](https://www.britannica.com/topic/Commonwealth-association-of-states). _[[Take our quiz about islands](https://www.britannica.com/quiz/islands).]_
 
-![Image 11: Bud Selig](https://cdn.britannica.com/09/190809-050-2A361E72/Bud-Selig-2008.jpg?w=260&h=196&c=crop)
+![Image 14: The Rolling Stones, 1982](https://cdn.britannica.com/69/21269-004-B71907D4/The-Rolling-Stones-Charlie-Watts-Mick-Jagger-1982.jpg?w=260&h=196&c=crop)
 
- © s_bukley/Shutterstock.com
+ © Michael Putland/Retna
 
-2002
+1965
 
- Fearing that there would not be enough eligible players to continue, Major League Baseball Commissioner [Bud Selig](https://www.britannica.com/biography/Bud-Selig) stopped the annual [All-Star Game](https://www.britannica.com/sports/All-Star-Game) in the 11th inning with the score tied at 7–7. _[[Find out which MLB team has won the most World Series](https://www.britannica.com/sports/Which-team-has-won-the-most-World-Series-2232658).]_
+ British [rock](https://www.britannica.com/art/rock-and-roll-early-style-of-rock-music) band [the Rolling Stones](https://www.britannica.com/topic/the-Rolling-Stones) topped U.S. charts for the first time with the single (I Can’t Get No) Satisfaction. _[[How much do you know about rock and roll?](https://www.britannica.com/quiz/rock-music-and-rock-n-roll)]_
 
-![Image 12: The Office](https://cdn.britannica.com/81/254281-050-3CCABD81/english-comedian-actor-writer-producer-ricky-gervaise-as-david-brent-bbc-series-the-office-sitcom.jpg?w=260&h=196&c=crop)
+![Image 15: default image](https://cdn.britannica.com/mendel-resources/3-191/images/shared/thistle-blue-half.svg?v=3.191.5)
 
- © 2003/British Broadcasting Corporation (BBC)
+ Image: Encyclopædia Britannica, Inc.
 
-2001
+1962
 
- The British TV series [The Office](https://www.britannica.com/topic/The-Office-British-TV-series), created and written by [Ricky Gervais](https://www.britannica.com/biography/Ricky-Gervais) and Stephen Merchant, debuted on the BBC. It became a huge hit, spawning [a popular American version](https://www.britannica.com/topic/The-Office-American-television-program) and making Gervais a star.
+ Swedish engineer Nils Bohlin was issued a U.S. [patent](https://www.britannica.com/topic/patent) for a three-point seatbelt for [cars](https://www.britannica.com/technology/automobile); a major safety innovation, it featured a strap that extended across the upper body in addition to a standard lap restraint. _[[Sort fact from fiction in our quiz about famous inventions and inventors](https://www.britannica.com/quiz/inventions-and-inventors-fact-or-fiction).]_
 
-![Image 13: Jerry Garcia](https://cdn.britannica.com/78/195978-050-505A4590/Jerry-Garcia-Grateful-Dead-1994.jpg?w=260&h=196&c=crop)
+![Image 16: Eritrea](https://cdn.britannica.com/09/09-050-E3476052/Flag-Eritrea.jpg?w=260&h=196&c=crop)
 
- © Northfoto/Shutterstock.com
+ Encyclopædia Britannica, Inc.
 
-1995
+1952
 
- American [psychedelic rock](https://www.britannica.com/art/psychedelic-rock) band the [Grateful Dead](https://www.britannica.com/topic/Grateful-Dead) performed their last concert, at Soldier Field in Chicago; lead guitarist and vocalist [Jerry Garcia](https://www.britannica.com/) died the following month. _[[Take our quiz about musical groups](https://www.britannica.com/quiz/spotlight-on-musical-groups).]_
+ The constitution of [Eritrea](https://www.britannica.com/place/Eritrea), prepared by the [United Nations](https://www.britannica.com/topic/United-Nations) in consultation with Emperor [Haile Selassie I](https://www.britannica.com/biography/Haile-Selassie-I) of [Ethiopia](https://www.britannica.com/place/Ethiopia), was adopted. _[[Sort fact from fiction in our quiz about Africa](https://www.britannica.com/quiz/destination-africa-fact-or-fiction).]_
 
-![Image 14: Thresher](https://cdn.britannica.com/23/117223-004-3CA56E11/Thresher-attack-sea-sailors-board-April-10-1963.jpg?w=260&h=196&c=crop)
+![Image 17: Scopes Trial](https://cdn.britannica.com/31/78631-050-4F319C67/William-Jennings-Bryan-courtroom-Clarence-Darrow-Dayton-July-1925.jpg?w=260&h=196&c=crop)
 
- Naval Historical Center/U.S. Navy
-
-1960
-
- The [Thresher](https://www.britannica.com/topic/Thresher-submarine), the first of a class of U.S. nuclear-powered attack [submarines](https://www.britannica.com/technology/submarine-naval-vessel), was launched; it sank in 1963 in the worst submarine accident in history. _[[Sort fact from fiction in our quiz about submarines, ships, and other watercraft](https://www.britannica.com/quiz/submarines-ships-and-other-watercraft-fact-or-fiction).]_
-
-![Image 15: Tom Hanks in Charlie Wilson's War](https://cdn.britannica.com/41/132241-050-4B93B096/Tom-Hanks-Charlie-Wilsons-War.jpg?w=260&h=196&c=crop)
-
- © Francois Duhamel—Participant Media, LLC
-
-1956
-
- American actor [Tom Hanks](https://www.britannica.com/biography/Tom-Hanks), best known for his cheerful everyman persona, was born in California.
-
-![Image 16: Bill Haley and His Comets](https://cdn.britannica.com/68/23168-004-24629F13/Bill-Haley-and-His-Comets.jpg?w=260&h=196&c=crop)
-
- © David Redfern—Redferns/Retna Ltd.
-
-1955
-
- Rock Around the Clock by [Bill Haley](https://www.britannica.com/biography/Bill-Haley) and His Comets became the first [rock-and-roll](https://www.britannica.com/art/rock-and-roll-early-style-of-rock-music) single to hit number one on Billboard’s pop charts. _[[Take our quiz about rock and roll](https://www.britannica.com/quiz/rock-music-and-rock-n-roll).]_
-
-![Image 17: Guru Dutt](https://cdn.britannica.com/75/274375-050-6A4DF23C/Iconic-Indian-Filmmaker-Actor-And-Producer-Guru-Dutt-Vasanth-Kumar-Shivashankar-Padukone.jpg?w=260&h=196&c=crop)
-
- © Dinodia Photos/Alamy
+ Library of Congress, Washington, D.C.
 
 1925
 
- Hindi motion-picture producer, director, writer, and actor [Guru Dutt](https://www.britannica.com/biography/Guru-Dutt), one of the best-known and most-accomplished stylists of[Bollywood](https://www.britannica.com/topic/Bollywood-film-industry-India)’s golden age, was born. _[[What’s the highest-grossing Indian film ever made?](https://www.britannica.com/topic/List-of-the-Highest-Grossing-Indian-Films)]_
+ The [Scopes Trial](https://www.britannica.com/event/Scopes-Trial) began in Dayton, Tennessee, with [William Jennings Bryan](https://www.britannica.com/biography/William-Jennings-Bryan) arguing for the prosecution and [Clarence Darrow](https://www.britannica.com/biography/Clarence-Darrow) for the defense. _[[Read more about this and nine other “trials of the century.”](https://www.britannica.com/list/order-in-the-court-10-trials-of-the-century)]_
 
-![Image 18: John Archibald Wheeler](https://cdn.britannica.com/25/164025-050-A3846145/John-Archibald-Wheeler.jpg?w=260&h=196&c=crop)
+![Image 18: Wyoming](https://cdn.britannica.com/38/5238-050-C4B3E388/flag-citizen-Wyoming-response-contest-field-border-1917.jpg?w=260&h=196&c=crop)
 
- New York World-Telegram and the Sun Newspaper Photograph Collection, Library of Congress (negative no. LC-USZ62-118106)
+ Encyclopædia Britannica, Inc.
 
-1911
+1890
 
- Physicist [John Archibald Wheeler](https://www.britannica.com/biography/John-Archibald-Wheeler), the first American involved in the theoretical development of the [atomic bomb](https://www.britannica.com/technology/atomic-bomb) and the originator of the term _[black hole](https://www.britannica.com/science/black-hole)_, was born. _[[How much do you know about physics?](https://www.britannica.com/quiz/all-about-physics-quiz)]_
+[Wyoming](https://www.britannica.com/place/Wyoming-state) is admitted as the United States’ 44th state. Wyoming’s constitution (1889) was the first in the world to grant full voting rights to women, as well as allow them to hold public office. Wyoming also became the first state to elect a woman governor when [Nellie Tayloe Ross](https://www.britannica.com/biography/Nellie-Tayloe-Ross) won the position in 1924. Because of these developments, Wyoming has been called the Equality State.
 
-![Image 19: Nikola Tesla](https://cdn.britannica.com/49/4649-050-BB5F0463/Nikola-Tesla.jpg?w=260&h=196&c=crop)
+![Image 19: Mary McLeod Bethune](https://cdn.britannica.com/66/6466-050-199B0866/Mary-McLeod-Bethune.jpg?w=260&h=196&c=crop)
 
- Culver Pictures
+ Bettmann/Getty Images
 
-1856
+1875
 
-[Nikola Tesla](https://www.britannica.com/biography/Nikola-Tesla)—a Serbian American inventor and researcher who discovered the rotating [magnetic field](https://www.britannica.com/science/magnetic-field), the basis of most alternating-current machinery—was born this day (or the next) in Smiljan, Croatia. _[[Take our quiz about scientists and inventors](https://www.britannica.com/quiz/scientists-and-inventors-fact-or-fiction).]_
+[Mary McLeod Bethune](https://www.britannica.com/biography/Mary-McLeod-Bethune), an African American educator who was active in national Black affairs and a special adviser to President [Franklin D. Roosevelt](https://www.britannica.com/biography/Franklin-D-Roosevelt), was born in Mayesville, South Carolina. _[[Take our quiz about African American history](https://www.britannica.com/quiz/how-well-do-you-know-your-african-american-history-education-politics-and-protest).]_
 
-![Image 20: Zachary Taylor](https://cdn.britannica.com/00/4600-050-877A6893/Zachary-Taylor-daguerreotype-Mathew-B-Brady.jpg?w=260&h=196&c=crop)
+![Image 20: Marcel Proust](https://cdn.britannica.com/93/152993-050-8E5C5A79/Marcel-Proust.jpg?w=260&h=196&c=crop)
 
- Library of Congress, Washington, D.C. (neg. no. LC-USZ62-13012)
+ Hulton Archive/Getty Images
 
-1850
+1871
 
-[Zachary Taylor](https://www.britannica.com/biography/Zachary-Taylor), 12th president of the United States, died, only 16 months after taking office. _[[Test your knowledge of U.S. presidents](https://www.britannica.com/quiz/presidents-of-the-united-states-quiz).]_
+ French novelist [Marcel Proust](https://www.britannica.com/biography/Marcel-Proust)—who wrote À la recherche du temps perdu (1913–27; [In Search of Lost Time](https://www.britannica.com/topic/In-Search-of-Lost-Time)), a seven-volume novel based on his life—was born. _[[Test your knowledge of French writers](https://www.britannica.com/quiz/french-writers-quiz).]_
 
-![Image 21: Sarah Goodridge: portrait of Gilbert Stuart](https://cdn.britannica.com/62/228862-050-5B2C486F/Gilbert-Stuart-watercolor-on-ivory-by-Sarah-Goodridge-c1825.jpg?w=260&h=196&c=crop)
+![Image 21: default image](https://cdn.britannica.com/mendel-resources/3-191/images/shared/thistle-blue-half.svg?v=3.191.5)
 
- National Portrait Gallery, Washington, D.C.; Smithsonian Institution Conserved with funds from the Smithsonian Women's Committee (object no. NPG.92.120)
+ Image: Encyclopædia Britannica, Inc.
 
-1828
+1609
 
- American painter [Gilbert Stuart](https://www.britannica.com/biography/Gilbert-Stuart), who was one of the great portrait painters of his era and the creator of a distinctively American portrait style, died at age 72. _[[Sort fact from fiction in our artists and painters quiz](https://www.britannica.com/quiz/artists-painters-fact-or-fiction).]_
+ The [Catholic League](https://www.britannica.com/topic/Catholic-League) was formed by [Maximilian I](https://www.britannica.com/biography/Maximilian-I-duke-of-Bavaria), duke of [Bavaria](https://www.britannica.com/place/Bavaria), and the [Catholic](https://www.britannica.com/topic/Roman-Catholicism) powers in Germany. _[[Take our quiz about the history of Roman Catholicism](https://www.britannica.com/quiz/history-of-roman-catholicism-quiz).]_
 
-![Image 22: Congress of Tucumán](https://cdn.britannica.com/39/140439-050-778F5260/House-of-Tucuman-site-Congress-San-Miguel.jpg?w=260&h=196&c=crop)
+![Image 22: William I](https://cdn.britannica.com/10/232210-050-5C0B75B7/Portrait-of-William-I-Prince-of-Orange-by-Adriaen-Thomasz-Key-c1579-Rijksmuseum-Amsterdam.jpg?w=260&h=196&c=crop)
 
- José Lazarte
+ Courtesy of the Rijksmuseum, Amsterdam, purchased with the support of the Commissie voor de Willem de Zwijgertentoonstellingobject; object no. SK-A-3148
 
-1816
+1584
 
- The [Congress of Tucumán](https://www.britannica.com/topic/Congress-of-Tucuman) declared [Argentina](https://www.britannica.com/place/Argentina)’s independence from [Spain](https://www.britannica.com/place/Spain).
+[William I](https://www.britannica.com/biography/William-I-stadholder-of-United-Provinces-of-The-Netherlands), first of the hereditary [stadtholders](https://www.britannica.com/topic/stadtholder) of the United Provinces of the [Netherlands](https://www.britannica.com/place/Netherlands), was assassinated. _[[How much do you know about European history?](https://www.britannica.com/quiz/european-history)]_
 
-![Image 23: George Washington](https://cdn.britannica.com/47/65247-050-66AAA610/George-Washington-staff-provision-train-supplies-Continental.jpg?w=260&h=196&c=crop)
+![Image 23: Lady Jane Grey](https://cdn.britannica.com/69/149969-050-2103F47D/Jane-Grey-engraving-W-Holl.jpg?w=260&h=196&c=crop)
 
- Library of Congress, Washington, D.C. (reproduction no. LC-DIG-pga-0288)
+ Hulton Archive/Getty Images
 
-1776
+1553
 
- General [George Washington](https://www.britannica.com/biography/George-Washington) ordered the [Declaration of Independence](https://www.britannica.com/topic/Declaration-of-Independence)—approved by the [Continental Congress](https://www.britannica.com/topic/Continental-Congress) just [five days earlier](https://www.britannica.com/today-in-history/July-4-Declaration-of-Independence-approved)—to be read aloud to his army.
-
-![Image 24: Edward Braddock](https://cdn.britannica.com/31/70431-050-DFE908B8/Edward-Braddock.jpg?w=260&h=196&c=crop)
-
- Library of Congress, Washington, D.C. (LC-DIG-ds-05283)
-
-1755
-
- General [Edward Braddock](https://www.britannica.com/biography/Edward-Braddock)’s British army was thoroughly defeated in the [Battle of the Monongahela](https://www.britannica.com/event/Battle-of-the-Monongahela) during the [French and Indian War](https://www.britannica.com/event/French-and-Indian-War). _[[Take our history of war quiz](https://www.britannica.com/quiz/a-history-of-war).]_
-
-![Image 25: Hans Holbein the Younger: Anne of Cleves](https://cdn.britannica.com/46/1246-050-239CFEF9/Anne-of-Cleves-portrait-Hans-Holbein-the.jpg?w=260&h=196&c=crop)
-
- © Giraudon/Art Resource, New York
-
-1540
-
- The marriage of King [Henry VIII](https://www.britannica.com/biography/Henry-VIII-king-of-England) of England and [Anne of Cleves](https://www.britannica.com/biography/Anne-of-Cleves-queen-of-England)—the fourth of [his six wives](https://www.britannica.com/topic/The-six-wives-of-Henry-VIII)—was annulled. _[[Take our quiz about Henry VIII and his wives](https://www.britannica.com/quiz/henry-viii-and-his-wives).]_
+[Lady Jane Grey](https://www.britannica.com/biography/Lady-Jane-Grey), the 15-year-old great-granddaughter of [Henry VII](https://www.britannica.com/biography/Henry-VII-king-of-England), became queen of England, but her reign lasted only nine days, and she was executed by [Mary Tudor](https://www.britannica.com/biography/Mary-I) the following year. _[[Sort fact from fiction in our quiz about English royalty](https://www.britannica.com/quiz/english-royalty-fact-or-fiction).]_
 
 SIGN UP FOR
 
-![Image 26: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 27: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
+![Image 24: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 25: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
 
 History's Biggest Headlines
 
@@ -307,4 +291,4 @@ SIGN UP
 
 ### Thank you for signing up!
 
-![Image 29: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=f68b13f3-8812-25f4-0b21-d488fd81e85c&iiqpciddate=1783631137141&tsrnd=757_1783631137147&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 30](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001783631138-J8Z65PZC-JLOZ)![Image 31](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001783631138-J8Z65PZC-JLOZ&adnxs_id=$UID&gdpr=0)![Image 32](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001783631138-J8Z65PZC-JLOZ%26auid%3DAU1D-0100-001783631138-J8Z65PZC-JLOZ&gdpr=0)![Image 33](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001783631138-J8Z65PZC-JLOZ&gdpr=0)![Image 34](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001783631138-J8Z65PZC-JLOZ&gdpr=0)![Image 35](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001783631138-J8Z65PZC-JLOZ&gdpr=0)![Image 36](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001783631138-J8Z65PZC-JLOZ&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001783631138-J8Z65PZC-JLOZ%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 37](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4MzYzMTEzOC1KOFo2NVBaQy1KTE9a&id=AU1D-0100-001783631138-J8Z65PZC-JLOZ&gdpr=0)![Image 38](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001783631138-J8Z65PZC-JLOZ)![Image 39](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001783631138-J8Z65PZC-JLOZ&uid=[UID]&gdpr=0)![Image 40](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001783631138-J8Z65PZC-JLOZ%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
+![Image 27](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=144&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-10&s=1DD6C692-4802-44F3-A346-A36F74769228&json=%20)![Image 28: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=625ff181-35c1-df82-a10d-418570302183&iiqpciddate=1783673244880&tsrnd=366_1783673244888&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 29](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001783673246-0HTULEDK-5ZUB)![Image 30](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001783673246-0HTULEDK-5ZUB&adnxs_id=$UID&gdpr=0)![Image 31](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001783673246-0HTULEDK-5ZUB%26auid%3DAU1D-0100-001783673246-0HTULEDK-5ZUB&gdpr=0)![Image 32](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001783673246-0HTULEDK-5ZUB&gdpr=0)![Image 33](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001783673246-0HTULEDK-5ZUB&gdpr=0)![Image 34](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001783673246-0HTULEDK-5ZUB&gdpr=0)![Image 35](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001783673246-0HTULEDK-5ZUB&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001783673246-0HTULEDK-5ZUB%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 36](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4MzY3MzI0Ni0wSFRVTEVESy01WlVC&id=AU1D-0100-001783673246-0HTULEDK-5ZUB&gdpr=0)![Image 37](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001783673246-0HTULEDK-5ZUB)![Image 38](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001783673246-0HTULEDK-5ZUB&uid=[UID]&gdpr=0)![Image 39](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001783673246-0HTULEDK-5ZUB%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
