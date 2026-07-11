@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-07-11T09:47:36.731Z
+# generated: 2026-07-11T10:45:16.533Z
 # url:       https://www.britannica.com/on-this-day/july-11
 # fetcher:   Jina Reader
 # kind:      markdown
