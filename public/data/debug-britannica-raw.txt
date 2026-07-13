@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-07-13T15:32:45.988Z
+# generated: 2026-07-13T16:44:43.135Z
 # url:       https://www.britannica.com/on-this-day/july-13
 # fetcher:   Wayback Machine
 # kind:      html
