@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-07-14T12:23:29.667Z
+# generated: 2026-07-14T14:28:06.749Z
 # url:       https://www.britannica.com/on-this-day/july-14
 # fetcher:   Jina Reader
 # kind:      markdown
@@ -13,11 +13,11 @@ URL Source: https://www.britannica.com/on-this-day/july-14
 Markdown Content:
 [✨**How Everything Works:**A NEW Britannica Newsletter✨ Learn More](https://signup.britannica.com/howeverythingworks)
 
-[![Image 1: Encyclopedia Britannica](https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png)](https://www.britannica.com/)
+[![Image 2: Encyclopedia Britannica](https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png)](https://www.britannica.com/)
 
 Search Britannica Click here to search
 
-[![Image 2: Encyclopedia Britannica](https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png)](https://www.britannica.com/)
+[![Image 3: Encyclopedia Britannica](https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png)](https://www.britannica.com/)
 
 Search Britannica Click here to search
 
@@ -33,11 +33,11 @@ Login
 
 [Ask the Chatbot](https://www.britannica.com/chatbot)[Games & Quizzes](https://www.britannica.com/quiz/browse)[History & Society](https://www.britannica.com/History-Society)[Science & Tech](https://www.britannica.com/Science-Tech)[Biographies](https://www.britannica.com/Biographies)[Animals & Nature](https://www.britannica.com/Animals-Nature)[Geography & Travel](https://www.britannica.com/Geography-Travel)[Arts & Culture](https://www.britannica.com/Arts-Culture)[ProCon](https://www.britannica.com/procon)[Money](https://www.britannica.com/money)[Videos](https://www.britannica.com/videos)
 
-[Home](https://www.britannica.com/) Today in History ![Image 3: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-191/images/shared/tih-logo.png?v=3.191.5)
+[Home](https://www.britannica.com/) Today in History ![Image 4: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-191/images/shared/tih-logo.png?v=3.191.5)
 
-![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-191/images/shared/tih-star.svg?v=3.191.5)July 14
+![Image 5: Today In History Star](https://cdn.britannica.com/mendel-resources/3-191/images/shared/tih-star.svg?v=3.191.5)July 14
 
-![Image 5: Today In History Phone](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-phone.png?v=3.189.7)
+![Image 6: Today In History Phone](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-phone.png?v=3.189.7)
 
 Get Our Newsletter in your Inbox 📩
 
@@ -101,13 +101,13 @@ August
 
 [READ MORE](https://www.britannica.com/today-in-history/July-14-1850-John-Gorrie-Invention-of-Ice-Machine?utm_source=otd)
 
-![Image 6: July 14, 1850: A doctor's quest to fight yellow fever takes a chilling turn](https://cdn.britannica.com/19/289319-050-D7A232D3/today-in-history-The-first-public-demo-of-ice.jpg?w=530&h=300&c=crop)
+![Image 7: July 14, 1850: A doctor's quest to fight yellow fever takes a chilling turn](https://cdn.britannica.com/19/289319-050-D7A232D3/today-in-history-The-first-public-demo-of-ice.jpg?w=530&h=300&c=crop)
 
  Smithsonian National Museum of American History, Washington, D.C. (MC.285397); Photo Illustration Encyclopædia Britannica, Inc.
 
  Featured Event 
 
-![Image 7: Maryam Mirzakhani](https://cdn.britannica.com/15/181315-050-8853F093/Maryam-Mirzakhani-stanford-2014-Fields-Medal.jpg?w=356&h=200&c=crop)
+![Image 8: Maryam Mirzakhani](https://cdn.britannica.com/15/181315-050-8853F093/Maryam-Mirzakhani-stanford-2014-Fields-Medal.jpg?w=356&h=200&c=crop)
 
  © Yonhap—EPA/Shutterstock.com
 
@@ -119,7 +119,7 @@ Featured Biography
 
  Featured Biography 
 
-[![Image 8: Woody Guthrie](https://cdn.britannica.com/23/11323-050-7D45C02E/Woody-Guthrie.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Woody-Guthrie?utm_source=otd)
+[![Image 9: Woody Guthrie](https://cdn.britannica.com/23/11323-050-7D45C02E/Woody-Guthrie.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Woody-Guthrie?utm_source=otd)
 
  Encyclopædia Britannica, Inc.
 
@@ -161,7 +161,7 @@ French diplomat, writer, and ethnologist
 
 ## More on July 14
 
-![Image 9: Nice, France](https://cdn.britannica.com/86/64486-050-C8AEE0D0/Nice-France.jpg?w=260&h=196&c=crop)
+![Image 10: Nice, France](https://cdn.britannica.com/86/64486-050-C8AEE0D0/Nice-France.jpg?w=260&h=196&c=crop)
 
  Encyclopædia Britannica, Inc.
 
@@ -169,7 +169,7 @@ French diplomat, writer, and ethnologist
 
  In France’s third major [terrorist](https://www.britannica.com/topic/terrorism) attack in 18 months, a man drove a truck through a crowd of revelers celebrating [Bastille Day](https://www.britannica.com/topic/Bastille-Day) in [Nice](https://www.britannica.com/place/Nice), killing more than 80 people and injuring hundreds. _[[Test your knowledge of French history](https://www.britannica.com/quiz/france-a-history-quiz).]_
 
-![Image 10: default image](https://cdn.britannica.com/mendel-resources/3-191/images/shared/thistle-blue-half.svg?v=3.191.5)
+![Image 11: default image](https://cdn.britannica.com/mendel-resources/3-191/images/shared/thistle-blue-half.svg?v=3.191.5)
 
  Image: Encyclopædia Britannica, Inc.
 
@@ -177,7 +177,7 @@ French diplomat, writer, and ethnologist
 
  The world’s last telegram was sent as India’s state-run telecommunications company ended its [telegraph](https://www.britannica.com/technology/telegraph) service. _[[Take our quiz about communications firsts](https://www.britannica.com/quiz/communications-firsts-quiz).]_
 
-![Image 11: Easy Rider](https://cdn.britannica.com/00/176000-050-94B43894/Dennis-Hopper-Peter-Fonda-Jack-Nicholson-Easy.jpg?w=260&h=196&c=crop)
+![Image 12: Easy Rider](https://cdn.britannica.com/00/176000-050-94B43894/Dennis-Hopper-Peter-Fonda-Jack-Nicholson-Easy.jpg?w=260&h=196&c=crop)
 
  © Columbia Pictures Corporation
 
@@ -185,7 +185,7 @@ French diplomat, writer, and ethnologist
 
 [Easy Rider](https://www.britannica.com/topic/Easy-Rider-1969-film) was released in U.S. theaters, becoming a classic of the counterculture and propelling [Jack Nicholson](https://www.britannica.com/biography/Jack-Nicholson) to stardom. _[[Sort fact from fiction in our film quiz](https://www.britannica.com/quiz/film-school-fact-or-fiction).]_
 
-![Image 12: Hank Aaron](https://cdn.britannica.com/83/5283-050-20357D2B/Hank-Aaron.jpg?w=260&h=196&c=crop)
+![Image 13: Hank Aaron](https://cdn.britannica.com/83/5283-050-20357D2B/Hank-Aaron.jpg?w=260&h=196&c=crop)
 
  Pictorial Parade
 
@@ -193,7 +193,7 @@ French diplomat, writer, and ethnologist
 
  American [baseball](https://www.britannica.com/sports/baseball) great [Hank Aaron](https://www.britannica.com/biography/Hank-Aaron) hit his 500th career home run. _[[See where Hank Aaron ranks on our list of the 10 greatest baseball players of all time](https://www.britannica.com/list/10-greatest-baseball-players-of-all-time).]_
 
-![Image 13: Jane Goodall](https://cdn.britannica.com/26/163226-050-D316CD8D/Jane-Goodall-Freud-British-Tanzania-Gombe-National.jpg?w=260&h=196&c=crop)
+![Image 14: Jane Goodall](https://cdn.britannica.com/26/163226-050-D316CD8D/Jane-Goodall-Freud-British-Tanzania-Gombe-National.jpg?w=260&h=196&c=crop)
 
  Michael Neugebauer/the Jane Goodall Institute
 
@@ -201,7 +201,7 @@ French diplomat, writer, and ethnologist
 
  British ethologist [Jane Goodall](https://www.britannica.com/biography/Jane-Goodall) first arrived at what became Gombe Stream National Park in [Tanzania](https://www.britannica.com/place/Tanzania); there she conducted her groundbreaking research on [chimpanzees](https://www.britannica.com/animal/chimpanzee). _[[Explore Jane Goodall’s life in pictures](https://www.britannica.com/biography/Jane-Goodall-A-Life-in-Pictures-2228820).]_
 
-![Image 14: Edward Whymper](https://cdn.britannica.com/50/8750-004-6D194A97/engraving-Edward-Whymper-1881.jpg?w=260&h=196&c=crop)
+![Image 15: Edward Whymper](https://cdn.britannica.com/50/8750-004-6D194A97/engraving-Edward-Whymper-1881.jpg?w=260&h=196&c=crop)
 
  BBC Hulton Picture Library
 
@@ -209,7 +209,7 @@ French diplomat, writer, and ethnologist
 
  British mountaineer [Edward Whymper](https://www.britannica.com/biography/Edward-Whymper) became the first person to climb the [Matterhorn](https://www.britannica.com/place/Matterhorn-mountain-Europe). _[[Sort fact from fiction in our quiz about mountains](https://www.britannica.com/quiz/mountains-fact-or-fiction).]_
 
-![Image 15: Storming of the Bastille](https://cdn.britannica.com/83/191383-050-04962456/Storming-of-the-Bastille-July-14-1789.jpg?w=260&h=196&c=crop)
+![Image 16: Storming of the Bastille](https://cdn.britannica.com/83/191383-050-04962456/Storming-of-the-Bastille-July-14-1789.jpg?w=260&h=196&c=crop)
 
  © Everett-Art/Shutterstock.com
 
@@ -219,7 +219,7 @@ French diplomat, writer, and ethnologist
 
 SIGN UP FOR
 
-![Image 16: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 17: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
+![Image 17: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 18: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
 
 History's Biggest Headlines
 
@@ -229,4 +229,4 @@ SIGN UP
 
 ### Thank you for signing up!
 
-![Image 19](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=124&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-14&s=D8494BB7-CB40-48B4-90CE-EDA5A00533D1&json=%20)![Image 20: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=71f6ede2-ec32-0dcc-65bc-fe0a177192e9&iiqpciddate=1784031716484&tsrnd=665_1784031716491&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 21](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001784031718-Z4SCYO0V-6DKW)![Image 22](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001784031718-Z4SCYO0V-6DKW&adnxs_id=$UID&gdpr=0)![Image 23](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001784031718-Z4SCYO0V-6DKW%26auid%3DAU1D-0100-001784031718-Z4SCYO0V-6DKW&gdpr=0)![Image 24](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001784031718-Z4SCYO0V-6DKW&gdpr=0)![Image 25](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001784031718-Z4SCYO0V-6DKW&gdpr=0)![Image 26](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001784031718-Z4SCYO0V-6DKW&gdpr=0)![Image 27](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001784031718-Z4SCYO0V-6DKW&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001784031718-Z4SCYO0V-6DKW%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 28](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4NDAzMTcxOC1aNFNDWU8wVi02REtX&id=AU1D-0100-001784031718-Z4SCYO0V-6DKW&gdpr=0)![Image 29](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001784031718-Z4SCYO0V-6DKW)![Image 30](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001784031718-Z4SCYO0V-6DKW&uid=[UID]&gdpr=0)![Image 31](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001784031718-Z4SCYO0V-6DKW%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
+![Image 19](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=112&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-14&s=13096974-6434-425B-86E5-28595A22730F&json=%20)![Image 20: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=1f807b8e-c8b6-cb55-0e57-46a193b9933d&iiqpciddate=1784039187814&tsrnd=84_1784039187821&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 21](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001784039189-4TTDNROO-7IY2)![Image 22](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001784039189-4TTDNROO-7IY2&adnxs_id=$UID&gdpr=0)![Image 23](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001784039189-4TTDNROO-7IY2%26auid%3DAU1D-0100-001784039189-4TTDNROO-7IY2&gdpr=0)![Image 24](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001784039189-4TTDNROO-7IY2&gdpr=0)![Image 25](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001784039189-4TTDNROO-7IY2&gdpr=0)![Image 26](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001784039189-4TTDNROO-7IY2&gdpr=0)![Image 27](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001784039189-4TTDNROO-7IY2&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001784039189-4TTDNROO-7IY2%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 28](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4NDAzOTE4OS00VFRETlJPTy03SVky&id=AU1D-0100-001784039189-4TTDNROO-7IY2&gdpr=0)![Image 29](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001784039189-4TTDNROO-7IY2)![Image 30](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001784039189-4TTDNROO-7IY2&uid=[UID]&gdpr=0)![Image 31](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001784039189-4TTDNROO-7IY2%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
