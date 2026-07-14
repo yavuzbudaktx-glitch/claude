@@ -1,14 +1,14 @@
 # Britannica scrape debug dump
-# generated: 2026-07-13T20:42:15.445Z
-# url:       https://www.britannica.com/on-this-day/july-13
+# generated: 2026-07-14T07:25:32.441Z
+# url:       https://www.britannica.com/on-this-day/july-14
 # fetcher:   Jina Reader
 # kind:      markdown
-# length:    20832
+# length:    18410
 # parsed:    NO
 # -----------------------------------------------------------------
 Title: On This Day - What Happened Today In History | Britannica
 
-URL Source: https://www.britannica.com/on-this-day/july-13
+URL Source: https://www.britannica.com/on-this-day/july-14
 
 Markdown Content:
 [✨**How Everything Works:**A NEW Britannica Newsletter✨ Learn More](https://signup.britannica.com/howeverythingworks)
@@ -35,7 +35,7 @@ Login
 
 [Home](https://www.britannica.com/) Today in History ![Image 3: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-191/images/shared/tih-logo.png?v=3.191.5)
 
-![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-191/images/shared/tih-star.svg?v=3.191.5)July 13
+![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-191/images/shared/tih-star.svg?v=3.191.5)July 14
 
 ![Image 5: Today In History Phone](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-phone.png?v=3.189.7)
 
@@ -61,7 +61,7 @@ June
 
 [22](https://www.britannica.com/on-this-day/June-22)[23](https://www.britannica.com/on-this-day/June-23)[24](https://www.britannica.com/on-this-day/June-24)[25](https://www.britannica.com/on-this-day/June-25)[26](https://www.britannica.com/on-this-day/June-26)[27](https://www.britannica.com/on-this-day/June-27)[28](https://www.britannica.com/on-this-day/June-28)
 
-[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-13)[](https://www.britannica.com/on-this-day/july-13)[](https://www.britannica.com/on-this-day/july-13)[](https://www.britannica.com/on-this-day/july-13)[](https://www.britannica.com/on-this-day/july-13)
+[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-14)[](https://www.britannica.com/on-this-day/july-14)[](https://www.britannica.com/on-this-day/july-14)[](https://www.britannica.com/on-this-day/july-14)[](https://www.britannica.com/on-this-day/july-14)
 
 July
 
@@ -73,7 +73,7 @@ July
 
 [22](https://www.britannica.com/on-this-day/July-22)[23](https://www.britannica.com/on-this-day/July-23)[24](https://www.britannica.com/on-this-day/July-24)[25](https://www.britannica.com/on-this-day/July-25)[26](https://www.britannica.com/on-this-day/July-26)[27](https://www.britannica.com/on-this-day/July-27)[28](https://www.britannica.com/on-this-day/July-28)
 
-[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-13)[](https://www.britannica.com/on-this-day/july-13)[](https://www.britannica.com/on-this-day/july-13)[](https://www.britannica.com/on-this-day/july-13)
+[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-14)[](https://www.britannica.com/on-this-day/july-14)[](https://www.britannica.com/on-this-day/july-14)[](https://www.britannica.com/on-this-day/july-14)
 
 August
 
@@ -85,7 +85,7 @@ August
 
 [22](https://www.britannica.com/on-this-day/August-22)[23](https://www.britannica.com/on-this-day/August-23)[24](https://www.britannica.com/on-this-day/August-24)[25](https://www.britannica.com/on-this-day/August-25)[26](https://www.britannica.com/on-this-day/August-26)[27](https://www.britannica.com/on-this-day/August-27)[28](https://www.britannica.com/on-this-day/August-28)
 
-[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-13)[](https://www.britannica.com/on-this-day/july-13)[](https://www.britannica.com/on-this-day/july-13)[](https://www.britannica.com/on-this-day/july-13)
+[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-14)[](https://www.britannica.com/on-this-day/july-14)[](https://www.britannica.com/on-this-day/july-14)[](https://www.britannica.com/on-this-day/july-14)
 
 August
 
@@ -95,23 +95,23 @@ August
 
 [Go to Today's Date](https://www.britannica.com/on-this-day)
 
- 1930: The first World Cup begins
+ 1850: A Florida doctor invents the ice machine
 
- On this day in 1930, 13 teams across Europe and the Americas took the field in [Montevideo](https://www.britannica.com/place/Montevideo), [Uruguay](https://www.britannica.com/place/Uruguay), for the start of the first [FIFA World Cup](https://www.britannica.com/sports/World-Cup-football). The two opening matches kicked off simultaneously, and French forward Lucien Laurent scored the first goal in World Cup history—reportedly in falling snow. Uruguay would go on to defeat Argentina to become the first World Cup champions.
+ On this day in 1850 machine-made ice debuted at a Florida party, astonishing guests accustomed to imported natural ice. Its inventor, physician John Gorrie, had originally created the machine to cool [yellow fever](https://www.britannica.com/science/yellow-fever) patients. Although he was mocked during his lifetime, his breakthrough became a crucial step toward modern [refrigeration](https://www.britannica.com/technology/refrigeration) and [air conditioning](https://www.britannica.com/technology/air-conditioning).
 
-[READ MORE](https://www.britannica.com/today-in-history/July-13-1930-First-FIFA-World-Cup?utm_source=otd)
+[READ MORE](https://www.britannica.com/today-in-history/July-14-1850-John-Gorrie-Invention-of-Ice-Machine?utm_source=otd)
 
-![Image 6: July 13, 1930: The scrappy tournament that changed the world](https://cdn.britannica.com/18/289318-050-B86C89EC/today-in-history-first-world-cup.jpg?w=530&h=300&c=crop)
+![Image 6: July 14, 1850: A doctor's quest to fight yellow fever takes a chilling turn](https://cdn.britannica.com/19/289319-050-D7A232D3/today-in-history-The-first-public-demo-of-ice.jpg?w=530&h=300&c=crop)
 
- © Hulton Picture Library/Allsport—Hulton Archive/Getty Images; Photo Illustration Encyclopædia Britannica, Inc.
+ Smithsonian National Museum of American History, Washington, D.C. (MC.285397); Photo Illustration Encyclopædia Britannica, Inc.
 
  Featured Event 
 
-![Image 7: Assassination attempt on Donald Trump](https://cdn.britannica.com/37/259837-050-B8D8311E/Former-president-Donald-Trump-raises-his-arm-with-blood-on-his-face-during-a-campaign-rally-at-Butler-Farm-Show-Inc-on-July-13-2024-in-Butler-Pennslyvania-Assassination-attempt.jpg?w=356&h=200&c=crop)
+![Image 7: Maryam Mirzakhani](https://cdn.britannica.com/15/181315-050-8853F093/Maryam-Mirzakhani-stanford-2014-Fields-Medal.jpg?w=356&h=200&c=crop)
 
- © Jabin Botsford—The Washington Post/Getty Images
+ © Yonhap—EPA/Shutterstock.com
 
-[Donald Trump](https://www.britannica.com/biography/Donald-Trump), the [Republican](https://www.britannica.com/topic/Republican-Party) presidential nominee, survived an assassination attempt after a gunman opened fire during a campaign event in Pennsylvania; the former U.S. president suffered a wound to his ear. _[[Learn about political violence in the U.S. in the 21st century](https://www.britannica.com/topic/Political-Violence-in-the-US-in-the-21st-Century)]_
+Iranian mathematician [Maryam Mirzakhani](https://www.britannica.com/biography/Maryam-Mirzakhani)—the first woman and first Iranian to be awarded a [Fields Medal](https://www.britannica.com/science/Fields-Medal), cited for “her outstanding contributions to the dynamics and geometry of Riemann surfaces and their moduli spaces”—died at age 40. _[[Take our mathematics quiz](https://www.britannica.com/quiz/mathematics).]_
 
 Featured Biography
 
@@ -119,123 +119,107 @@ Featured Biography
 
  Featured Biography 
 
-[![Image 8: Wole Soyinka](https://cdn.britannica.com/16/9316-004-C509D9C8/Wole-Soyinka.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Wole-Soyinka?utm_source=otd)
+[![Image 8: Woody Guthrie](https://cdn.britannica.com/23/11323-050-7D45C02E/Woody-Guthrie.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Woody-Guthrie?utm_source=otd)
 
- Vernon L. Smith
+ Encyclopædia Britannica, Inc.
 
-Wole Soyinka
+Woody Guthrie
 
-> Some people think the Nobel Prize makes you bulletproof. I never had that illusion.
+> My eyes has been my camera taking pictures of the world and my songs has been messages that I tried to scatter across the back sides and along the steps of the fire escapes and on the windowsills and throughout the dark halls.
 > 
-> Wole Soyinka
+> Woody Guthrie
 
-Nigerian playwright, poet, and novelist [Wole Soyinka](https://www.britannica.com/biography/Wole-Soyinka), born this day in 1934, wrote of modern West Africa in a satiric style and with a tragic sense of the obstacles of progress, winning the 1986 [Nobel Prize for Literature](https://www.britannica.com/art/Winners-of-the-Nobel-Prize-for-Literature-1856938).
+American singer and composer [Woody Guthrie](https://www.britannica.com/biography/Woody-Guthrie), born this day in 1912, wrote politically charged songs of common people and their struggles, especially during the [Depression](https://www.britannica.com/event/Great-Depression), and his classics include This Land Is Your Land.
 
 Famous Birthdays
 
-1956
+1938
 
-[Michael Spinks](https://www.britannica.com/biography/Michael-Spinks?utm_source=otd)
+[Moshe Safdie](https://www.britannica.com/biography/Moshe-Safdie?utm_source=otd)
 
-American boxer
+Israeli-Canadian-American architect
 
-1944
+1912
 
-[Erno Rubik](https://www.britannica.com/biography/Erno-Rubik?utm_source=otd)
+[Northrop Frye](https://www.britannica.com/biography/Northrop-Frye?utm_source=otd)
 
-Hungarian inventor
+Canadian literary critic
 
-1793
+1911
 
-[John Clare](https://www.britannica.com/biography/John-Clare?utm_source=otd)
+[Terry-Thomas](https://www.britannica.com/biography/Terry-Thomas?utm_source=otd)
 
-British poet
+British actor
 
-1608
+1816
 
-[Ferdinand III](https://www.britannica.com/biography/Ferdinand-III-Holy-Roman-emperor?utm_source=otd)
+[Arthur de Gobineau](https://www.britannica.com/biography/Arthur-de-Gobineau?utm_source=otd)
 
-Holy Roman emperor
+French diplomat, writer, and ethnologist
 
-[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-13)
+[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-14)
 
-## More on July 13
+## More on July 14
 
-![Image 9: Lin Xiaobo](https://cdn.britannica.com/32/144932-004-550D301D/Liu-Xiaobo-2008.jpg?w=260&h=196&c=crop)
+![Image 9: Nice, France](https://cdn.britannica.com/86/64486-050-C8AEE0D0/Nice-France.jpg?w=260&h=196&c=crop)
 
- VOA
-
-2017
-
- Chinese writer and [human rights](https://www.britannica.com/topic/human-rights) activist [Liu Xiaobo](https://www.britannica.com/biography/Liu-Xiaobo), who advocated for democratic reforms and was the first Chinese citizen to be awarded (2010) the [Nobel Peace Prize](https://www.britannica.com/topic/Winners-of-the-Nobel-Prize-for-Peace-1856940), died at age 61. _[[Take our quiz about the Nobel Prize](https://www.britannica.com/quiz/nobel-prize).]_
-
-![Image 10: Theresa May](https://cdn.britannica.com/47/190747-050-08063967/Theresa-May-United-Kingdom.jpg?w=260&h=196&c=crop)
-
- UK Home Office (CC BY 2.0)
+ Encyclopædia Britannica, Inc.
 
 2016
 
-[Theresa May](https://www.britannica.com/biography/Theresa-May), the [Conservative Party](https://www.britannica.com/topic/Conservative-Party-political-party-United-Kingdom) leader, became the second woman prime minister of the [United Kingdom](https://www.britannica.com/place/United-Kingdom), replacing [David Cameron](https://www.britannica.com/biography/David-Cameron), who resigned after the country [voted](https://www.britannica.com/) to leave the [European Union](https://www.britannica.com/topic/European-Union). _[[Test your knowledge of British culture and politics](https://www.britannica.com/quiz/british-culture-and-politics).]_
+ In France’s third major [terrorist](https://www.britannica.com/topic/terrorism) attack in 18 months, a man drove a truck through a crowd of revelers celebrating [Bastille Day](https://www.britannica.com/topic/Bastille-Day) in [Nice](https://www.britannica.com/place/Nice), killing more than 80 people and injuring hundreds. _[[Test your knowledge of French history](https://www.britannica.com/quiz/france-a-history-quiz).]_
 
-![Image 11: George Steinbrenner](https://cdn.britannica.com/38/217838-050-2D06245F/American-businessman-George-Steinbrenner-1998.jpg?w=260&h=196&c=crop)
-
- Mediapunch/Shutterstock.com
-
-2010
-
- American businessman [George Steinbrenner](https://www.britannica.com/money/George-Steinbrenner)—who, while principal owner of the [New York Yankees](https://www.britannica.com/topic/New-York-Yankees), became one of the most controversial personalities in major league [baseball](https://www.britannica.com/sports/baseball)—died at age 80. _[[How much do you know about baseball?](https://www.britannica.com/quiz/batter-up)]_
-
-![Image 12: Honeybee host](https://cdn.britannica.com/93/272593-050-5D6D6DAF/A-Varroa-mite-sits-on-a-honeybee-Germany-2019.jpg?w=260&h=196&c=crop)
-
- ©Sebastian Gollnow—picture alliance/Getty Images
-
-2007
-
- The U.S. Department of Agriculture announced plans to address [colony collapse disorder](https://www.britannica.com/science/colony-collapse-disorder), which had been first reported several months earlier. A disorder affecting [honeybees](https://www.britannica.com/animal/honeybee), it represents a serious threat to American agriculture. _[[Learn why bees, along with wasps and ants, are one of the most ecologically important animal groups on Earth](https://www.britannica.com/explore/hymenoptera-ants-bees-wasps).]_
-
-![Image 13: Live Aid, 1985](https://cdn.britannica.com/38/200938-050-E22981D1/Freddie-Mercury-Live-Aid-Queen-Wembley-Stadium-July-13-1985.jpg?w=260&h=196&c=crop)
-
- Trinity Mirror/Mirrorpix/Alamy
-
-1985
-
- The benefit concert [Live Aid](https://www.britannica.com/event/Live-Aid) was held simultaneously at Wembley Stadium in [London](https://www.britannica.com/place/London) and JFK Stadium in [Philadelphia](https://www.britannica.com/place/Philadelphia). Organized by [Bob Geldof](https://www.britannica.com/biography/Bob-Geldof) and Midge Ure, the event drew an estimated 1.5 billion television viewers and raised millions of dollars for famine relief in [Ethiopia](https://www.britannica.com/place/Ethiopia). _[[Take our music quiz](https://www.britannica.com/quiz/music-quiz).]_
-
-![Image 14: Harrison Ford](https://cdn.britannica.com/63/141063-050-BAF0C8E1/Harrison-Ford-Indiana-Jones-and-the-Last.jpg?w=260&h=196&c=crop)
-
- © 1989 Lucasfilm with Paramount Pictures Corporation
-
-1942
-
- American actor [Harrison Ford](https://www.britannica.com/biography/Harrison-Ford), who was perhaps best known for playing charismatic rogues in the [Star Wars](https://www.britannica.com/topic/Star-Wars-film-series) and [Indiana Jones](https://www.britannica.com/topic/Indiana-Jones-fictional-character) film franchises, was born. _[[Test your knowledge of actors and acting](https://www.britannica.com/quiz/actors-and-acting-quiz).]_
-
-![Image 15: “The Voice”](https://cdn.britannica.com/20/187920-050-0425AFBB/Frank-Sinatra-1947.jpg?w=260&h=196&c=crop)
-
- Library of Congress, Washington, D.C. (LC-GLB13-0779)
-
-1939
-
- Backed by trumpeter [Harry James](https://www.britannica.com/biography/Harry-James), American singer [Frank Sinatra](https://www.britannica.com/biography/Frank-Sinatra) recorded his first single, From the Bottom of My Heart. _[[How much do you know about Frank Sinatra?](https://www.britannica.com/quiz/frank-sinatra-quiz)]_
-
-![Image 16: "The Death of Marat" by Jacques-Louis David shows the slain Jean-Paul Marat slumped in a bath, holding a letter, with a wooden box inscribed "A Marat David" in the foreground.](https://cdn.britannica.com/21/7921-050-2742DCFE/Death-of-Marat-Jacques-Louis-David-Royal-Museums-1793.jpg?w=260&h=196&c=crop)
-
- © VCG Wilson/Fine Art—Corbis/Getty Images
-
-1793
-
-[Jean-Paul Marat](https://www.britannica.com/biography/Jean-Paul-Marat), a leader of the radical [Montagnard](https://www.britannica.com/topic/Montagnard-French-history) faction during the [French Revolution](https://www.britannica.com/event/French-Revolution), was stabbed to death in his bath by [Charlotte Corday](https://www.britannica.com/biography/Charlotte-Corday), a young [Girondin](https://www.britannica.com/topic/Girondin) supporter who was subsequently guillotined. _[[How much do you know about French history?](https://www.britannica.com/quiz/france-a-history-quiz)]_
-
-![Image 17: default image](https://cdn.britannica.com/mendel-resources/3-191/images/shared/thistle-blue-half.svg?v=3.191.5)
+![Image 10: default image](https://cdn.britannica.com/mendel-resources/3-191/images/shared/thistle-blue-half.svg?v=3.191.5)
 
  Image: Encyclopædia Britannica, Inc.
 
-1713
+2013
 
-[Spain](https://www.britannica.com/place/Spain) and [Britain](https://www.britannica.com/place/United-Kingdom) signed one of the [treaties of Utrecht](https://www.britannica.com/topic/treaties-of-Utrecht), this one giving [Gibraltar](https://www.britannica.com/place/Gibraltar) and [Minorca](https://www.britannica.com/place/Minorca) to Britain. _[[How much do you know about European history?](https://www.britannica.com/quiz/european-history)]_
+ The world’s last telegram was sent as India’s state-run telecommunications company ended its [telegraph](https://www.britannica.com/technology/telegraph) service. _[[Take our quiz about communications firsts](https://www.britannica.com/quiz/communications-firsts-quiz).]_
+
+![Image 11: Easy Rider](https://cdn.britannica.com/00/176000-050-94B43894/Dennis-Hopper-Peter-Fonda-Jack-Nicholson-Easy.jpg?w=260&h=196&c=crop)
+
+ © Columbia Pictures Corporation
+
+1969
+
+[Easy Rider](https://www.britannica.com/topic/Easy-Rider-1969-film) was released in U.S. theaters, becoming a classic of the counterculture and propelling [Jack Nicholson](https://www.britannica.com/biography/Jack-Nicholson) to stardom. _[[Sort fact from fiction in our film quiz](https://www.britannica.com/quiz/film-school-fact-or-fiction).]_
+
+![Image 12: Hank Aaron](https://cdn.britannica.com/83/5283-050-20357D2B/Hank-Aaron.jpg?w=260&h=196&c=crop)
+
+ Pictorial Parade
+
+1968
+
+ American [baseball](https://www.britannica.com/sports/baseball) great [Hank Aaron](https://www.britannica.com/biography/Hank-Aaron) hit his 500th career home run. _[[See where Hank Aaron ranks on our list of the 10 greatest baseball players of all time](https://www.britannica.com/list/10-greatest-baseball-players-of-all-time).]_
+
+![Image 13: Jane Goodall](https://cdn.britannica.com/26/163226-050-D316CD8D/Jane-Goodall-Freud-British-Tanzania-Gombe-National.jpg?w=260&h=196&c=crop)
+
+ Michael Neugebauer/the Jane Goodall Institute
+
+1960
+
+ British ethologist [Jane Goodall](https://www.britannica.com/biography/Jane-Goodall) first arrived at what became Gombe Stream National Park in [Tanzania](https://www.britannica.com/place/Tanzania); there she conducted her groundbreaking research on [chimpanzees](https://www.britannica.com/animal/chimpanzee). _[[Explore Jane Goodall’s life in pictures](https://www.britannica.com/biography/Jane-Goodall-A-Life-in-Pictures-2228820).]_
+
+![Image 14: Edward Whymper](https://cdn.britannica.com/50/8750-004-6D194A97/engraving-Edward-Whymper-1881.jpg?w=260&h=196&c=crop)
+
+ BBC Hulton Picture Library
+
+1865
+
+ British mountaineer [Edward Whymper](https://www.britannica.com/biography/Edward-Whymper) became the first person to climb the [Matterhorn](https://www.britannica.com/place/Matterhorn-mountain-Europe). _[[Sort fact from fiction in our quiz about mountains](https://www.britannica.com/quiz/mountains-fact-or-fiction).]_
+
+![Image 15: Storming of the Bastille](https://cdn.britannica.com/83/191383-050-04962456/Storming-of-the-Bastille-July-14-1789.jpg?w=260&h=196&c=crop)
+
+ © Everett-Art/Shutterstock.com
+
+1789
+
+ A mob advanced on the [Bastille](https://www.britannica.com/topic/Bastille) in [Paris](https://www.britannica.com/place/Paris), demanding the arms and munitions stored there. When the guards resisted, the crowd captured the prison, an act that symbolized the [end of the ancien régime](https://www.britannica.com/event/French-Revolution). _[[How much do you know about French history?](https://www.britannica.com/quiz/france-a-history-quiz)]_
 
 SIGN UP FOR
 
-![Image 18: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 19: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
+![Image 16: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 17: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
 
 History's Biggest Headlines
 
@@ -245,4 +229,4 @@ SIGN UP
 
 ### Thank you for signing up!
 
-![Image 21](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=126&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-13&s=C3E00A6E-637C-4D4D-AFCC-E0E49F318E07&json=%20)![Image 22: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=929a7364-8750-fc30-10fa-e7d41b66891d&iiqpciddate=1783975273682&tsrnd=638_1783975273689&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 23](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001783975275-GFGVK9B7-I6LR)![Image 24](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001783975275-GFGVK9B7-I6LR&adnxs_id=$UID&gdpr=0)![Image 25](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001783975275-GFGVK9B7-I6LR%26auid%3DAU1D-0100-001783975275-GFGVK9B7-I6LR&gdpr=0)![Image 26](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001783975275-GFGVK9B7-I6LR&gdpr=0)![Image 27](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001783975275-GFGVK9B7-I6LR&gdpr=0)![Image 28](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001783975275-GFGVK9B7-I6LR&gdpr=0)![Image 29](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001783975275-GFGVK9B7-I6LR&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001783975275-GFGVK9B7-I6LR%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 30](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4Mzk3NTI3NS1HRkdWSzlCNy1JNkxS&id=AU1D-0100-001783975275-GFGVK9B7-I6LR&gdpr=0)![Image 31](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001783975275-GFGVK9B7-I6LR)![Image 32](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001783975275-GFGVK9B7-I6LR&uid=[UID]&gdpr=0)![Image 33](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001783975275-GFGVK9B7-I6LR%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
+![Image 19](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=126&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-14&s=C0CEB237-AEDB-4544-9DD4-189D52A096A6&json=%20)![Image 20: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=33942ea8-eea8-86ac-5792-38b3132c055f&iiqpciddate=1784013831097&tsrnd=132_1784013831112&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 21](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001784013832-BVI9VWOY-1EUY)![Image 22](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001784013832-BVI9VWOY-1EUY&adnxs_id=$UID&gdpr=0)![Image 23](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001784013832-BVI9VWOY-1EUY%26auid%3DAU1D-0100-001784013832-BVI9VWOY-1EUY&gdpr=0)![Image 24](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001784013832-BVI9VWOY-1EUY&gdpr=0)![Image 25](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001784013832-BVI9VWOY-1EUY&gdpr=0)![Image 26](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001784013832-BVI9VWOY-1EUY&gdpr=0)![Image 27](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001784013832-BVI9VWOY-1EUY&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001784013832-BVI9VWOY-1EUY%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 28](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4NDAxMzgzMi1CVkk5VldPWS0xRVVZ&id=AU1D-0100-001784013832-BVI9VWOY-1EUY&gdpr=0)![Image 29](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001784013832-BVI9VWOY-1EUY)![Image 30](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001784013832-BVI9VWOY-1EUY&uid=[UID]&gdpr=0)![Image 31](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001784013832-BVI9VWOY-1EUY%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
