@@ -17,7 +17,22 @@ export interface DivisionRanking {
   contenders: RankedFighter[];
 }
 
-const WANTED = ["Featherweight", "Lightweight", "Welterweight", "Middleweight"] as const;
+// All UFC divisions, in the canonical order the UFC lists them (men's
+// heaviest → lightest, then women's). Pound-for-pound is excluded — it's
+// not a real weight class. octagon-api / ufc.com use these exact names.
+const WANTED = [
+  "Flyweight",
+  "Bantamweight",
+  "Featherweight",
+  "Lightweight",
+  "Welterweight",
+  "Middleweight",
+  "Light Heavyweight",
+  "Heavyweight",
+  "Women's Strawweight",
+  "Women's Flyweight",
+  "Women's Bantamweight",
+] as const;
 
 function decode(s: string): string {
   return s
@@ -63,6 +78,15 @@ async function fetchTextViaProxies(target: string): Promise<string | null> {
 interface RawFighter { id?: string; fighterName?: string; name?: string; rank?: string | number }
 interface RawDivision { categoryName?: string; championId?: string; fighters?: RawFighter[] }
 
+// Match a source's division label to one of our WANTED names, tolerating the
+// "Men's " prefix that ufc.com sometimes adds and the "Pound-for-Pound" rows
+// we don't want. Returns the canonical WANTED name or null.
+function matchDivision(label: string): (typeof WANTED)[number] | null {
+  const norm = label.trim().toLowerCase().replace(/^men'?s\s+/, "");
+  if (/pound.?for.?pound|p4p/.test(norm)) return null;
+  return WANTED.find((w) => w.toLowerCase() === norm) ?? null;
+}
+
 function normalizeOctagon(json: unknown): DivisionRanking[] {
   const rawDivisions: RawDivision[] = Array.isArray(json)
     ? (json as RawDivision[])
@@ -71,7 +95,7 @@ function normalizeOctagon(json: unknown): DivisionRanking[] {
   const byWanted = new Map<string, DivisionRanking>();
   for (const raw of rawDivisions) {
     const category = (raw.categoryName ?? "").trim();
-    const wanted = WANTED.find((w) => w.toLowerCase() === category.toLowerCase());
+    const wanted = matchDivision(category);
     if (!wanted) continue;
 
     let championId = raw.championId?.trim() || null;
@@ -125,7 +149,7 @@ function parseUfcRankingsHtml(html: string): DivisionRanking[] {
   }
 
   for (let i = 0; i < headers.length; i++) {
-    const wanted = WANTED.find((w) => w.toLowerCase() === headers[i].name.toLowerCase());
+    const wanted = matchDivision(headers[i].name);
     if (!wanted) continue;
     if (byDivision.has(wanted)) continue; // already filled from an earlier header
     const chunk = html.slice(headers[i].index, headers[i + 1]?.index ?? html.length);

@@ -100,8 +100,12 @@ async function audioFromArticle(title: string): Promise<string> {
   const media = await getJson<MediaList>(
     `https://en.wikipedia.org/api/rest_v1/page/media-list/${encodeURIComponent(title.replace(/ /g, "_"))}`,
   );
+  // Match on the FILE EXTENSION, not the `type` field — media-list sometimes
+  // labels bird-call clips as type "video" (they're .ogv/.oga containers) or
+  // omits the type entirely, which is why real embedded recordings were being
+  // skipped.
   const audio = (media?.items ?? []).find(
-    (i) => i.type === "audio" && i.title && /\.(ogg|oga|opus|mp3|wav|flac)$/i.test(i.title),
+    (i) => i.title && /\.(ogg|oga|ogv|opus|mp3|wav|flac|m4a)$/i.test(i.title),
   );
   if (!audio?.title) return "";
   return resolveFileUrl(audio.title.startsWith("File:") ? audio.title : `File:${audio.title}`);
@@ -178,9 +182,14 @@ export async function GET(req: Request) {
   // archived" beats a dead tab every time.
   let best: { title: string; wiki: WikiSummary; audio: string } | null = null;
   if (photoOnly) {
-    let audio = await audioFromWikiXc(photoOnly.title);
-    if (!audio && !outOfTime()) audio = await audioFromArticle(photoOnly.title);
+    // Prefer the recording embedded ON the Wikipedia article — that's the
+    // one the user actually sees/hears on the page, and it resolves to an
+    // upload.wikimedia.org URL our /api/bird-audio proxy definitely streams.
+    // The xeno-canto download link is a weaker fallback (its /download
+    // endpoint 302-redirects and sometimes rejects the proxy hop).
+    let audio = await audioFromArticle(photoOnly.title);
     if (!audio && !outOfTime()) audio = await audioFromCommonsSearch(photoOnly.title);
+    if (!audio && !outOfTime()) audio = await audioFromWikiXc(photoOnly.title);
     if (audio) best = { title: photoOnly.title, wiki: photoOnly.wiki, audio };
   }
 

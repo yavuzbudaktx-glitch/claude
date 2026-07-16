@@ -346,13 +346,16 @@ async function buildPayload(): Promise<Payload> {
     bySub.set(p.subreddit.toLowerCase(), arr);
   }
 
-  // SECONDARY: for any sub that came back empty from the multi call, try a
-  // direct per-sub fetch. This catches the case where one sub is private,
-  // banned, or Reddit silently drops it from the combined listing.
-  const missing = SUBS.filter((s) => !(bySub.get(s.toLowerCase()) ?? []).length);
-  if (missing.length > 0) {
-    const got = await Promise.all(missing.map(fetchSubResilient));
-    missing.forEach((s, i) => {
+  // SECONDARY: the combined `top` listing is score-sorted GLOBALLY, so the
+  // biggest sub (r/Accounting) dominates it and the small subs come back with
+  // one or two posts (or none). Top up ANY sub that has fewer than 6 posts
+  // with a direct per-sub fetch, so every sub is genuinely represented — this
+  // is the real "only one subreddit shows" fix (the old code only topped up
+  // subs with exactly ZERO).
+  const thin = SUBS.filter((s) => (bySub.get(s.toLowerCase()) ?? []).length < 6);
+  if (thin.length > 0) {
+    const got = await Promise.all(thin.map(fetchSubResilient));
+    thin.forEach((s, i) => {
       if (got[i].length) bySub.set(s.toLowerCase(), got[i]);
     });
   }
@@ -378,8 +381,11 @@ async function buildPayload(): Promise<Payload> {
     if (!advanced) break;
   }
 
-  // Highest-quality posts first, regardless of which sub they came from.
-  out.sort((a, b) => b.score - a.score || b.created - a.created);
+  // DO NOT globally sort by score here. The round-robin above alternates the
+  // subs so the top of the feed is "the #1 post from each sub", then the #2s,
+  // etc. Sorting by score afterwards re-collapsed the feed onto the single
+  // biggest sub — which is exactly why it looked like only one subreddit was
+  // ever fetched. The interleaved order is the intended one.
   return { posts: out, subs: SUBS, sort: SORT, period: PERIOD };
 }
 

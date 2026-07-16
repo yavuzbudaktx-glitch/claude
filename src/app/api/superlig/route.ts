@@ -208,6 +208,11 @@ const LEAGUE_LABELS: Record<string, string> = {
   "uefa.europa.qual": "Europa Qual.",
   "uefa.europa_conf": "Conference",
   "uefa.europa_conf.qual": "Conference Qual.",
+  // Pre-season / mid-season club friendlies. In the summer the league season
+  // is over and Beşiktaş only plays these — without the slug ESPN returned
+  // nothing and the card looked dead ("no past or upcoming matches").
+  "club.friendly": "Friendly",
+  "fifa.friendly.club": "Friendly",
 };
 
 const LEAGUE_SLUGS = Object.keys(LEAGUE_LABELS);

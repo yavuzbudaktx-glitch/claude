@@ -477,10 +477,28 @@ function daysUntil(dateStr: string): number {
   const [y, m, d] = dateStr.split("-").map(Number);
   return Math.round((new Date(y, m - 1, d).getTime() - today.getTime()) / 86_400_000);
 }
+// The stored `nextBill` is the LAST date the user entered; a recurring sub
+// bills again every cycle. Roll it forward by whole months (or years) until
+// it lands on/after today, so a date that's "41d ago" becomes "in 19 days"
+// instead of showing a stale past date.
+function nextBillDate(dateStr: string, cycle: "mo" | "yr"): string {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const date = new Date(y, m - 1, d);
+  let guard = 0;
+  while (date.getTime() < today.getTime() && guard++ < 240) {
+    if (cycle === "yr") date.setFullYear(date.getFullYear() + 1);
+    else date.setMonth(date.getMonth() + 1);
+  }
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+function daysUntilNext(s: { nextBill: string; cycle: "mo" | "yr" }): number {
+  return daysUntil(nextBillDate(s.nextBill, s.cycle));
+}
 function relDays(n: number): string {
   if (n === 0) return "today";
   if (n === 1) return "tomorrow";
-  if (n > 0) return `in ${n} days`;
+  if (n > 0) return `in ${n} day${n === 1 ? "" : "s"}`;
   return `${-n}d ago`;
 }
 
@@ -503,16 +521,13 @@ export function SubscriptionsSection() {
 
   const sorted = useMemo(() => {
     return [...subs].sort((a, b) => {
-      const da = a.nextBill ? daysUntil(a.nextBill) : Infinity;
-      const db = b.nextBill ? daysUntil(b.nextBill) : Infinity;
-      const ka = da === Infinity ? 2 : da < 0 ? 1 : 0;
-      const kb = db === Infinity ? 2 : db < 0 ? 1 : 0;
-      if (ka !== kb) return ka - kb;
+      const da = a.nextBill ? daysUntilNext(a) : Infinity;
+      const db = b.nextBill ? daysUntilNext(b) : Infinity;
       return da - db;
     });
   }, [subs]);
 
-  const nextUp = sorted.find((s) => s.nextBill && daysUntil(s.nextBill) >= 0 && daysUntil(s.nextBill) <= 31);
+  const nextUp = sorted.find((s) => s.nextBill && daysUntilNext(s) >= 0 && daysUntilNext(s) <= 31);
 
   return (
     <div className="space-y-5">
@@ -526,13 +541,14 @@ export function SubscriptionsSection() {
           <CalendarClock className="h-4 w-4 text-accent shrink-0" />
           <span className="text-ink-soft">Next up</span>
           <span className="font-medium text-ink">{nextUp.name}</span>
-          <span className="ml-auto font-mono text-muted">{relDays(daysUntil(nextUp.nextBill))}</span>
+          <span className="ml-auto font-mono text-muted">{relDays(daysUntilNext(nextUp))}</span>
         </div>
       )}
 
       <ul className="space-y-1.5">
         {sorted.map((s) => {
-          const d = s.nextBill ? daysUntil(s.nextBill) : null;
+          const d = s.nextBill ? daysUntilNext(s) : null;
+          const billDate = s.nextBill ? nextBillDate(s.nextBill, s.cycle) : null;
           const soon = d != null && d >= 0 && d <= 7;
           return (
             <li key={s.id} className="group flex items-center gap-3 rounded-xl border border-[var(--rule-soft)] px-3 py-2 hover:border-[var(--rule)] transition">
@@ -545,9 +561,9 @@ export function SubscriptionsSection() {
               <div className="min-w-0 flex-1">
                 <div className="text-[13px] font-medium text-ink truncate">{s.name}</div>
                 <div className="flex items-center gap-1.5 text-[11px] text-muted">
-                  {s.nextBill ? (
+                  {s.nextBill && billDate ? (
                     <>
-                      <span>{format(new Date(s.nextBill + "T00:00:00"), "MMM d")}</span>
+                      <span>{format(new Date(billDate + "T00:00:00"), "MMM d")}</span>
                       <span className={soon ? "text-accent font-medium" : ""}>· {relDays(d!)}</span>
                     </>
                   ) : (

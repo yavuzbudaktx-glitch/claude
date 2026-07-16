@@ -428,8 +428,8 @@ function RollButton({ onRefresh, label }: { onRefresh: () => void; label?: strin
 type Tab = "art" | "bird" | "nasa" | "wiki" | "archive";
 
 const TABS: Array<{ id: Tab; label: string; icon: typeof Rocket }> = [
-  { id: "art",     label: "Art",      icon: PaletteIcon },
   { id: "bird",    label: "Bird",     icon: BirdIcon },
+  { id: "art",     label: "Art",      icon: PaletteIcon },
   { id: "nasa",    label: "NASA",     icon: Rocket },
   { id: "wiki",    label: "Wiki",     icon: BookOpen },
   { id: "archive", label: "Archive",  icon: ArchiveIcon },
@@ -442,7 +442,7 @@ const ZERO: RollState = {
 };
 
 export function NasaApod() {
-  const [tab, setTab] = useState<Tab>("art");
+  const [tab, setTab] = useState<Tab>("bird");
   const [showInfo, setShowInfo] = useState(true);
   const today = localDateKey();
   // Per-tab reroll counter, PERSISTED (synced) so a "New" pick survives a page
