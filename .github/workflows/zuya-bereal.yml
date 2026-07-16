@@ -1,0 +1,31 @@
+name: Zuya Anlık ping
+
+# Pings /api/zuya/bereal/tick every 15 minutes during the 8 AM – 1 PM Dallas
+# window. The endpoint is idempotent — the first ping at/after the day's
+# random target minute (seeded from the date) fires the "take today's
+# dual-camera photo" push to both partners; every other ping is a no-op.
+#
+# Requires ONE repository secret: ZUYA_SITE_URL (e.g. https://your-app.vercel.app).
+# Without it the job exits quietly and the in-app heartbeat (BeRealCard pings
+# the same endpoint every 5 minutes while Zuya is open) carries the feature.
+
+on:
+  schedule:
+    - cron: "*/15 13-18 * * *"   # 13:00–18:45 UTC ≈ 8:00 AM–1:45 PM CDT
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tick
+        env:
+          SITE: ${{ secrets.ZUYA_SITE_URL }}
+        run: |
+          if [[ -z "$SITE" ]]; then
+            echo "ZUYA_SITE_URL secret not set — skipping (in-app heartbeat covers this)."
+            exit 0
+          fi
+          # No `|| true` — if the tick 401s/500s the job should go red so we
+          # actually notice instead of silently never sending the push.
+          curl -fsS --max-time 20 "${SITE%/}/api/zuya/bereal/tick"

@@ -1,5 +1,5 @@
 import { ZuyaCalendarCard } from "@/components/zuya/calendar/ZuyaCalendarCard";
-import { DailyPhotoCard } from "@/components/zuya/DailyPhotoCard";
+import { BeRealCard } from "@/components/zuya/BeRealCard";
 import { WatchlistCard } from "@/components/zuya/WatchlistCard";
 import { DailyQuestionCard } from "@/components/zuya/DailyQuestionCard";
 import { LocationCard } from "@/components/zuya/LocationCard";
@@ -23,10 +23,10 @@ export default function ZuyaDashboard() {
         <ZuyaCalendarCard />
       </div>
 
-      {/* A photo of us + the question of the day (movie ratings moved down). */}
+      {/* Anlık (our BeReal) + the question of the day. */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 items-stretch">
-        <div id="zuya-photo" className="scroll-mt-20 [&>*]:h-full">
-          <DailyPhotoCard />
+        <div id="zuya-bereal" className="scroll-mt-20 [&>*]:h-full">
+          <BeRealCard />
         </div>
         <div id="zuya-question" className="scroll-mt-20 [&>*]:h-full">
           <DailyQuestionCard />

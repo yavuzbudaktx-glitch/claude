@@ -17,9 +17,8 @@ export interface DivisionRanking {
   contenders: RankedFighter[];
 }
 
-// All UFC divisions, in the canonical order the UFC lists them (men's
-// heaviest → lightest, then women's). Pound-for-pound is excluded — it's
-// not a real weight class. octagon-api / ufc.com use these exact names.
+// All MEN'S UFC divisions, lightest → heaviest (the canonical order).
+// Women's divisions and pound-for-pound are intentionally excluded.
 const WANTED = [
   "Flyweight",
   "Bantamweight",
@@ -29,9 +28,6 @@ const WANTED = [
   "Middleweight",
   "Light Heavyweight",
   "Heavyweight",
-  "Women's Strawweight",
-  "Women's Flyweight",
-  "Women's Bantamweight",
 ] as const;
 
 function decode(s: string): string {

@@ -5,8 +5,15 @@ import { ZUYA_COOKIE_NAME, isZuyaEmail } from "@/lib/zuya/config";
 type CookieToSet = { name: string; value: string; options?: CookieOptions };
 
 // Paths under /zuya reachable without a Zuya session.
+// The Anlık tick is deliberately public: it's the idempotent scheduler ping
+// the GitHub Actions cron hits with no cookie (it exposes nothing and can
+// only trigger the one daily notification both partners want anyway).
 function isPublicZuyaPath(path: string): boolean {
-  return path === "/zuya/login" || path.startsWith("/api/zuya/auth/");
+  return (
+    path === "/zuya/login" ||
+    path === "/api/zuya/bereal/tick" ||
+    path.startsWith("/api/zuya/auth/")
+  );
 }
 
 // Session refresh + gate for the Zuya section. Mirrors updateSession() but on

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Bell, CalendarHeart, Check, X, Pencil, CircleDot } from "lucide-react";
+import { Bell, CalendarHeart, Check, X, Pencil, CircleDot, Camera } from "lucide-react";
 import { useZuya, useZuyaTableEvent } from "@/components/zuya/ZuyaProvider";
 import { AnchoredPanel } from "@/components/zuya/AnchoredPanel";
 import type { ZuyaNotificationKind, ZuyaNotificationRow } from "@/types/zuya";
@@ -14,6 +14,7 @@ const KIND_META: Record<ZuyaNotificationKind, { icon: typeof Bell; text: (p: Rec
   date_cancelled: { icon: X, text: (p) => `Called off "${p.title}"` },
   status_changed: { icon: CircleDot, text: (p) => `${p.name ?? "They"} is now ${p.label ?? "around"}` },
   question_nudge: { icon: Bell, text: (p) => `${p.name ?? "They"} nudged you — answer today's question` },
+  bereal_time: { icon: Camera, text: () => "Anlık zamanı! Çift kamera fotoğrafını çek 📸" },
 };
 
 function timeAgo(iso: string): string {

@@ -3012,3 +3012,42 @@ main { position: relative; z-index: 1; }
 @keyframes zeq { 0%,100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
 
 /* A popover can never make the whole page scroll sideways. */
+
+/* =======================================================================
+   ZUYA polish — heart-lattice backdrop, camera flash, card entrances.
+======================================================================= */
+
+/* A whisper of hearts over the dawn gradient. Fixed so it doesn't swim
+   while scrolling; tiny fill-opacity so it reads as texture, not wallpaper. */
+.zuya-scope.zt-rose::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84' viewBox='0 0 84 84'%3E%3Cg fill='%23c23a63' fill-opacity='0.05'%3E%3Cpath transform='translate(10 12) scale(0.9)' d='M12 20.3C6.7 16.1 2 12.4 2 7.6 2 4.5 4.4 2 7.5 2c1.8 0 3.5.9 4.5 2.3C13 2.9 14.7 2 16.5 2 19.6 2 22 4.5 22 7.6c0 4.8-4.7 8.5-10 12.7z'/%3E%3Cpath transform='translate(52 54) scale(0.62)' d='M12 20.3C6.7 16.1 2 12.4 2 7.6 2 4.5 4.4 2 7.5 2c1.8 0 3.5.9 4.5 2.3C13 2.9 14.7 2 16.5 2 19.6 2 22 4.5 22 7.6c0 4.8-4.7 8.5-10 12.7z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 84px 84px;
+}
+.dark .zuya-scope.zt-rose::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84' viewBox='0 0 84 84'%3E%3Cg fill='%23f27ba0' fill-opacity='0.045'%3E%3Cpath transform='translate(10 12) scale(0.9)' d='M12 20.3C6.7 16.1 2 12.4 2 7.6 2 4.5 4.4 2 7.5 2c1.8 0 3.5.9 4.5 2.3C13 2.9 14.7 2 16.5 2 19.6 2 22 4.5 22 7.6c0 4.8-4.7 8.5-10 12.7z'/%3E%3Cpath transform='translate(52 54) scale(0.62)' d='M12 20.3C6.7 16.1 2 12.4 2 7.6 2 4.5 4.4 2 7.5 2c1.8 0 3.5.9 4.5 2.3C13 2.9 14.7 2 16.5 2 19.6 2 22 4.5 22 7.6c0 4.8-4.7 8.5-10 12.7z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 84px 84px;
+}
+
+/* Camera-shutter flash in the Anlık capture overlay. */
+@keyframes zuyaFlash { from { opacity: 1; } to { opacity: 0; } }
+
+/* Cards drift up gently as the page arrives, staggered top-to-bottom. */
+@keyframes zuyaRise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.zuya-scope main .card { animation: zuyaRise 0.45s cubic-bezier(0.16, 0.84, 0.34, 1) both; }
+.zuya-scope main > *:nth-child(1) .card { animation-delay: 0.02s; }
+.zuya-scope main > *:nth-child(2) .card { animation-delay: 0.07s; }
+.zuya-scope main > *:nth-child(3) .card { animation-delay: 0.12s; }
+.zuya-scope main > *:nth-child(4) .card { animation-delay: 0.17s; }
+.zuya-scope main > *:nth-child(5) .card { animation-delay: 0.22s; }
+.zuya-scope main > *:nth-child(6) .card { animation-delay: 0.27s; }
+@media (prefers-reduced-motion: reduce) {
+  .zuya-scope main .card { animation: none; }
+}

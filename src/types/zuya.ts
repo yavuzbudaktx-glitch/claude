@@ -80,7 +80,8 @@ export type ZuyaNotificationKind =
   | "date_rejected"
   | "date_cancelled"
   | "status_changed"
-  | "question_nudge";
+  | "question_nudge"
+  | "bereal_time";
 
 export interface ZuyaNotificationRow {
   id: string;
