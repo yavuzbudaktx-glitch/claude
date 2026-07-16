@@ -13,6 +13,7 @@ import { ClaudeChat } from "@/components/ClaudeChat";
 import { FullscreenToggle } from "@/components/FullscreenToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SignOutButton } from "@/components/SignOutButton";
+import { CpaMcqCard } from "@/components/widgets/CpaMcqCard";
 import {
   NetWorthSection,
   CashFlowSection,
@@ -64,6 +65,11 @@ export default async function AccountingPage() {
         <div className="[&>*]:h-full">
           <Card title="CPA Video" meta="daily pick"><CpaVideoSection /></Card>
         </div>
+      </div>
+
+      {/* Daily CPA MCQ — quick exam rep with a streak. */}
+      <div id="sec-cpa-mcq" className="scroll-mt-4">
+        <CpaMcqCard />
       </div>
 
       {/* Row 2 — CPA Exam (left, wide) + Net Worth (compact). */}

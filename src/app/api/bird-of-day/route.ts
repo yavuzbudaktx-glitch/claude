@@ -14,9 +14,12 @@
 
 import { NextResponse } from "next/server";
 import { raceJson } from "@/lib/race-json";
+import { readHarvested } from "@/lib/daily-content";
 
 export const revalidate = 3600;
 export const maxDuration = 30;
+
+interface BirdOut { imageUrl?: string; blurb?: string }
 
 function seedIdx(key: string, n: number): number {
   let h = 0;
@@ -151,6 +154,16 @@ export async function GET(req: Request) {
   const outOfTime = () => Date.now() - startedAt > 6500;
   const url = new URL(req.url);
   const dateKey = url.searchParams.get("d") ?? new Date().toISOString().slice(0, 10);
+
+  // Harvested-file fast path (fail-safe: null → live fetch below).
+  const pre = await readHarvested<BirdOut>(
+    "bird",
+    [dateKey],
+    (v) => !!v.imageUrl && !!v.blurb && v.blurb.trim().length > 40,
+  );
+  if (pre) {
+    return NextResponse.json(pre, { headers: { "Cache-Control": "s-maxage=3600, stale-while-revalidate=43200" } });
+  }
 
   const pool = await getBirdPool();
   if (pool.length === 0) {

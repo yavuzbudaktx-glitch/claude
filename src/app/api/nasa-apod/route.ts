@@ -10,9 +10,24 @@
 //   4. The last good response from in-memory cache.
 
 import { NextResponse } from "next/server";
+import { readHarvested } from "@/lib/daily-content";
 
 export const revalidate = 3600;
 export const maxDuration = 20;
+
+interface NasaOut { url?: string; title?: string }
+
+// Today / yesterday in UTC and in Dallas-local (harvester TZ) — accept any so
+// the harvested APOD is used even across the timezone/UTC boundary.
+function acceptDates(): string[] {
+  const iso = (ms: number) => new Date(ms).toISOString().slice(0, 10);
+  const now = Date.now();
+  const dallas = (ms: number) => {
+    const d = new Date(ms - 5 * 3600_000);
+    return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
+  };
+  return Array.from(new Set([iso(now), iso(now - 86400_000), dallas(now), dallas(now - 86400_000)]));
+}
 
 interface ApodResp {
   date?: string;
@@ -178,6 +193,12 @@ function parseApodHtml(html: string): ApodResp | null {
 }
 
 export async function GET() {
+  // 0) Harvested-file fast path (fail-safe: null → live paths below).
+  const pre = await readHarvested<NasaOut>("nasa", acceptDates(), (v) => !!v.url && !!v.title);
+  if (pre) {
+    return NextResponse.json(pre, { headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400" } });
+  }
+
   const key = process.env.NASA_API_KEY;
 
   // 1) Real key (if configured) — instant and reliable.

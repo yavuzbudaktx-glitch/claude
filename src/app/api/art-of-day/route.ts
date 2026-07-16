@@ -7,9 +7,12 @@
 
 import { NextResponse } from "next/server";
 import { raceJson } from "@/lib/race-json";
+import { readHarvested } from "@/lib/daily-content";
 
 export const revalidate = 3600;
 export const maxDuration = 30;
+
+interface ArtOut { imageUrl?: string; description?: string }
 
 interface MetSearch { total?: number; objectIDs?: number[] | null }
 interface MetObject {
@@ -66,6 +69,16 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const dateKey = url.searchParams.get("d") ?? new Date().toISOString().slice(0, 10);
   const refresh = url.searchParams.get("r") ?? "";
+
+  // Harvested-file fast path (fail-safe: null → live fetch below).
+  const pre = await readHarvested<ArtOut>(
+    "art",
+    [dateKey],
+    (v) => !!v.imageUrl && !!v.description,
+  );
+  if (pre) {
+    return NextResponse.json(pre, { headers: { "Cache-Control": "s-maxage=3600, stale-while-revalidate=43200" } });
+  }
 
   const ids = await fetchAllPaintingIds();
   if (ids.length === 0) {

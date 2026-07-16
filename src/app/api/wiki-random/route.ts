@@ -15,9 +15,12 @@
 
 import { NextResponse } from "next/server";
 import { raceJson } from "@/lib/race-json";
+import { readHarvested } from "@/lib/daily-content";
 
 export const revalidate = 3600;
 export const maxDuration = 30;
+
+interface WikiOut { title?: string; extract?: string; imageUrl?: string }
 
 function seedIdx(key: string, n: number): number {
   let h = 0;
@@ -111,6 +114,15 @@ export async function GET(req: Request) {
   // (1) When the user hasn't asked for "Another", serve Today's Featured
   //     Article — the single curated pick.
   if (!refresh) {
+    // Harvested-file fast path (fail-safe: null → live fetch below).
+    const pre = await readHarvested<WikiOut>(
+      "wiki",
+      [dateKey],
+      (v) => !!v.title && !!v.extract,
+    );
+    if (pre) {
+      return NextResponse.json(pre, { headers: { "Cache-Control": "s-maxage=3600, stale-while-revalidate=43200" } });
+    }
     const d = new Date(dateKey + "T00:00:00Z");
     const yyyy = d.getUTCFullYear();
     const mm = String(d.getUTCMonth() + 1).padStart(2, "0");

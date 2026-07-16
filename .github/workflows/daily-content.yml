@@ -1,0 +1,51 @@
+name: Daily content harvest
+
+# Pulls the day's Art / Bird / Wiki / NASA content once from a GitHub runner
+# (clean IP, no serverless time limit, can retry hard) and commits
+# public/data/daily-content.json. The app's routes read that file first, so
+# every user request is a fast, reliable file read instead of a live scrape
+# from Vercel's rate-limited datacenter IPs.
+
+on:
+  schedule:
+    # ~1 AM Dallas (CDT = UTC-5). Extra off-peak attempts because GitHub's
+    # scheduler is best-effort and often delays runs; the script is
+    # idempotent so a no-change run is a cheap no-op.
+    - cron: "5 6 * * *"    # ~01:05 CDT
+    - cron: "40 7 * * *"   # ~02:40 CDT (backup)
+    - cron: "20 11 * * *"  # ~06:20 CDT (final backstop before the morning)
+  workflow_dispatch: {}
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Harvest
+        env:
+          NASA_API_KEY: ${{ secrets.NASA_API_KEY }}
+        run: node scripts/harvest-daily.mjs
+      - name: Commit & push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [[ -z "$(git status --porcelain public/data/daily-content.json)" ]]; then
+            echo "No change."; exit 0
+          fi
+          git add public/data/daily-content.json
+          git commit -m "data: daily content harvest"
+          for branch in claude/morning-dashboard-ak4rc ${GITHUB_REF_NAME}; do
+            for i in 1 2 3 4 5; do
+              if git push origin "HEAD:${branch}"; then break; fi
+              git fetch origin "$branch" || true
+              git rebase "origin/${branch}" 2>/dev/null || git rebase --abort 2>/dev/null || true
+              sleep $((i * 3))
+            done
+          done
