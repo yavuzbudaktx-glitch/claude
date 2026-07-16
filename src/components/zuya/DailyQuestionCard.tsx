@@ -51,8 +51,11 @@ export function DailyQuestionCard() {
     }).catch(() => {});
   }
 
-  const [spicy, setSpicy] = useState(false);
-  useEffect(() => setSpicy(false), [day]);
+  // Local spicy state is only used as a fallback when the shared meta table
+  // isn't available. The SHARED spicy choice lives in `meta`.
+  const [spicyLocal, setSpicyLocal] = useState(false);
+  const [meta, setMeta] = useState<{ spicy: boolean; locked: boolean } | null>(null);
+  useEffect(() => { setSpicyLocal(false); setMeta(null); }, [day]);
 
   const questionIdx = useMemo(
     () => zuyaSeedIdx(`${day}-zuya-question`, ZUYA_QUESTIONS.length),
@@ -62,6 +65,8 @@ export function DailyQuestionCard() {
     () => zuyaSeedIdx(`${day}-zuya-spicy`, ZUYA_SPICY_QUESTIONS.length),
     [day],
   );
+  // Effective spice = the shared meta value if we have one, else local.
+  const spicy = meta ? meta.spicy : spicyLocal;
   const chosenIdx = spicy ? ZUYA_SPICY_OFFSET + spicyIdx : questionIdx;
 
   const mine = answers.find((a) => a.user_id === me.user_id && a.day === day);
@@ -69,24 +74,56 @@ export function DailyQuestionCard() {
   // Question for a past day: prefer the recorded index (list may grow).
   const q = getZuyaQuestion(mine?.question_idx ?? theirs?.question_idx ?? chosenIdx);
 
+  // The spice toggle is only allowed while NEITHER partner has locked the
+  // day. Locked = the shared meta says so (set when the first person answers),
+  // or I've already answered. This is the "only spice it when the other
+  // person also hasn't answered" rule the user asked for.
+  const spiceLocked = !!meta?.locked || !!mine;
+
+  const loadMeta = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from("zuya_daily_meta")
+        .select("spicy, locked")
+        .eq("day", day)
+        .maybeSingle();
+      if (!error && data) setMeta({ spicy: !!data.spicy, locked: !!data.locked });
+    } catch { /* table not migrated yet — fall back to local spicy */ }
+  }, [supabase, day]);
+
   const load = useCallback(async () => {
     const { data } = await supabase
       .from("zuya_daily_answers")
       .select("*")
       .eq("day", day);
     setAnswers((data as ZuyaDailyAnswerRow[]) ?? []);
-    // "Has the partner answered?" without seeing the row: count with head.
-    // RLS hides their row pre-reveal, so this only works post-reveal — show a
-    // soft hint instead when we can't know.
     const rows = (data as ZuyaDailyAnswerRow[]) ?? [];
     setPartnerHasAnswered(rows.some((r) => r.user_id === partner.user_id));
   }, [supabase, day, partner.user_id]);
 
   useEffect(() => {
     void load();
-  }, [load]);
+    void loadMeta();
+  }, [load, loadMeta]);
 
   useZuyaTableEvent("zuya_daily_answers", () => void load());
+  useZuyaTableEvent("zuya_daily_meta", () => void loadMeta());
+
+  // Toggle the SHARED spice choice. Writes the meta row so the partner's
+  // client converges on the same question. Falls back to local-only when the
+  // table isn't there.
+  async function toggleSpice() {
+    if (spiceLocked) return;
+    const next = !spicy;
+    setSpicyLocal(next);
+    setMeta((m) => (m ? { ...m, spicy: next } : { spicy: next, locked: false }));
+    try {
+      await supabase.from("zuya_daily_meta").upsert(
+        { day, spicy: next, question_idx: next ? ZUYA_SPICY_OFFSET + spicyIdx : questionIdx, set_by: me.user_id, updated_at: new Date().toISOString() },
+        { onConflict: "day" },
+      );
+    } catch { /* local fallback already applied */ }
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -94,15 +131,25 @@ export function DailyQuestionCard() {
     if (!text || busy) return;
     setBusy(true);
     try {
+      // Lock the day's question FIRST (so the partner is pinned to the same
+      // spicy/normal question), then record the answer against that same idx.
+      const lockedIdx = meta ? chosenIdx : (mine?.question_idx ?? theirs?.question_idx ?? chosenIdx);
+      try {
+        await supabase.from("zuya_daily_meta").upsert(
+          { day, spicy, question_idx: lockedIdx, locked: true, set_by: me.user_id, updated_at: new Date().toISOString() },
+          { onConflict: "day" },
+        );
+      } catch { /* meta table optional */ }
       const { error } = await supabase.from("zuya_daily_answers").insert({
         user_id: me.user_id,
         day,
-        question_idx: chosenIdx,
+        question_idx: lockedIdx,
         answer: text,
       });
       if (!error) {
         setDraft("");
         void load();
+        void loadMeta();
       }
     } finally {
       setBusy(false);
@@ -183,9 +230,14 @@ export function DailyQuestionCard() {
               </button>
               <button
                 type="button"
-                onClick={() => setSpicy((v) => !v)}
-                title={spicy ? "Back to the normal question" : "Make it spicy"}
-                className={`inline-flex items-center gap-1.5 px-3 py-2.5 rounded-2xl text-[13px] font-semibold border transition ${
+                onClick={() => void toggleSpice()}
+                disabled={spiceLocked}
+                title={
+                  spiceLocked
+                    ? "Locked in — one of you already answered"
+                    : spicy ? "Back to the normal question" : "Make it spicy (for both of you)"
+                }
+                className={`inline-flex items-center gap-1.5 px-3 py-2.5 rounded-2xl text-[13px] font-semibold border transition disabled:opacity-40 ${
                   spicy
                     ? "border-transparent text-white"
                     : "border-[var(--rule)] text-muted hover:text-accent hover:border-[var(--accent)]"

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { OWNER_COLORS } from "@/components/zuya/calendar/MonthGrid";
 import type { ZuyaUsername } from "@/lib/zuya/config";
@@ -52,6 +53,21 @@ export function WeekView({
   const todayKey = ymd(new Date());
   const end = days[6];
 
+  // Auto-scroll the 7-day strip so TODAY is in view. On a phone the week is
+  // wider than the screen and starts at Monday, so mid/late-week days were
+  // off-screen and the user had to scroll to find today.
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const todayRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const cell = todayRef.current;
+    const box = scrollRef.current;
+    if (!cell || !box) return;
+    // Center today's column within the scroll box (no page scroll — only the
+    // horizontal container moves).
+    const left = cell.offsetLeft - box.clientWidth / 2 + cell.clientWidth / 2;
+    box.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+  }, [weekStart]);
+
   const shift = (n: number) => {
     const d = new Date(weekStart);
     d.setDate(weekStart.getDate() + n);
@@ -81,7 +97,7 @@ export function WeekView({
         </button>
       </div>
 
-      <div className="overflow-x-auto -mx-1 px-1">
+      <div ref={scrollRef} className="overflow-x-auto -mx-1 px-1">
         <div className="grid gap-1.5 min-w-[620px]" style={{ gridTemplateColumns: "repeat(7, 1fr)" }}>
           {days.map((d) => {
             const key = ymd(d);
@@ -92,6 +108,7 @@ export function WeekView({
             return (
               <button
                 key={key}
+                ref={isToday ? todayRef : undefined}
                 onClick={() => onSelectDay(key)}
                 className={`text-left rounded-xl p-1.5 min-h-[120px] border transition ${
                   isSel ? "border-[var(--accent)] bg-[var(--accent-soft)]" : "border-[var(--rule-soft)] hover:border-[var(--rule)]"

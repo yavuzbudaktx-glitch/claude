@@ -23,19 +23,19 @@ export default function ZuyaDashboard() {
         <ZuyaCalendarCard />
       </div>
 
-      {/* A photo of us + the watch-together queue. */}
+      {/* A photo of us + the question of the day (movie ratings moved down). */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 items-stretch">
         <div id="zuya-photo" className="scroll-mt-20 [&>*]:h-full">
           <DailyPhotoCard />
         </div>
-        <div id="zuya-watchlist" className="scroll-mt-20 [&>*]:h-full">
-          <WatchlistCard />
+        <div id="zuya-question" className="scroll-mt-20 [&>*]:h-full">
+          <DailyQuestionCard />
         </div>
       </div>
 
-      {/* Question of the day. */}
-      <div id="zuya-question" className="scroll-mt-20">
-        <DailyQuestionCard />
+      {/* Watch-together queue + movie ratings. */}
+      <div id="zuya-watchlist" className="scroll-mt-20">
+        <WatchlistCard />
       </div>
     </main>
   );

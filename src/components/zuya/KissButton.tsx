@@ -6,10 +6,15 @@ import { useEffect, useState } from "react";
 // of the night sends an "İyi geceler öpücüğü", and every tap after that (until
 // the period flips) just sends kisses. State is remembered per day+period so
 // the greeting only fires once.
+//
+// Window logic that "makes sense":
+//   • Günaydın  → morning only, from 5:00 AM up to (not including) noon.
+//   • İyi geceler → night only, from 10:00 PM (22:00) through 4:59 AM.
+//   • Everything between noon and 10 PM is a plain kiss.
 function periodOf(hour: number): "morning" | "night" | "day" {
-  if (hour >= 19 || hour < 5) return "night";
-  if (hour < 11) return "morning";
-  return "day";
+  if (hour >= 22 || hour < 5) return "night";     // 10 PM – 4:59 AM
+  if (hour >= 5 && hour < 12) return "morning";   // 5 AM – 11:59 AM
+  return "day";                                    // noon – 9:59 PM
 }
 
 function todayKey(): string {

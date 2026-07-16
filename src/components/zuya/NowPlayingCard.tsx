@@ -54,6 +54,10 @@ function Row({ name, entry }: { name: string; entry: Entry | undefined }) {
               )}
             </p>
           </>
+        ) : entry && "needsReconnect" in entry && entry.needsReconnect ? (
+          <p className="text-[11px] text-accent truncate" title="Son çalınanları görmek için Spotify'ı yeniden bağla">
+            yeniden bağlan · son şarkı için
+          </p>
         ) : (
           <p className="text-[12px] text-muted-2 truncate">
             {entry?.connected ? "henüz şarkı yok" : "bağlı değil"}

@@ -56,6 +56,10 @@ export interface NowPlaying {
   art?: string;
   url?: string;
   playedAt?: string; // ISO time of last play, when not currently playing
+  // True when the account is connected but the token predates the
+  // `user-read-recently-played` scope, so we can show current-but-not-recent.
+  // The user needs to reconnect Spotify to grant it.
+  needsReconnect?: boolean;
 }
 
 interface SpotifyItem {
@@ -108,6 +112,12 @@ export async function spotifyNowPlaying(userId: string): Promise<NowPlaying | nu
     const data = (await recent.json()) as { items?: { track?: SpotifyItem; played_at?: string }[] };
     const first = data.items?.[0];
     if (first?.track) return mapItem(first.track, false, first.played_at);
+    return { playing: false };
   }
+  // 403 here = the refresh token was minted before we requested the
+  // `user-read-recently-played` scope (this is why "it shows when playing but
+  // not recent" — currently-playing works, recently-played doesn't). Signal a
+  // reconnect so the UI can prompt it.
+  if (recent.status === 403) return { playing: false, needsReconnect: true };
   return { playing: false };
 }

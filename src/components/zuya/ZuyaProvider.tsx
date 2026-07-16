@@ -28,6 +28,7 @@ const LIVE_TABLES = [
   "zuya_board",
   "zuya_settings",
   "zuya_watchlist",
+  "zuya_daily_meta",
 ] as const;
 
 export type ZuyaLiveTable = (typeof LIVE_TABLES)[number];
