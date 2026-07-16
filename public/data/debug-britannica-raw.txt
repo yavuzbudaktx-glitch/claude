@@ -1,14 +1,14 @@
 # Britannica scrape debug dump
-# generated: 2026-07-15T20:38:54.735Z
-# url:       https://www.britannica.com/on-this-day/july-15
+# generated: 2026-07-16T07:36:26.063Z
+# url:       https://www.britannica.com/on-this-day/july-16
 # fetcher:   Jina Reader
 # kind:      markdown
-# length:    18297
+# length:    23119
 # parsed:    NO
 # -----------------------------------------------------------------
 Title: On This Day - What Happened Today In History | Britannica
 
-URL Source: https://www.britannica.com/on-this-day/july-15
+URL Source: https://www.britannica.com/on-this-day/july-16
 
 Markdown Content:
 [![Image 1: Encyclopedia Britannica](https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png)](https://www.britannica.com/)
@@ -33,7 +33,7 @@ Login
 
 [Home](https://www.britannica.com/) Today in History ![Image 3: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-191/images/shared/tih-logo.png?v=3.191.5)
 
-![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-191/images/shared/tih-star.svg?v=3.191.5)July 15
+![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-191/images/shared/tih-star.svg?v=3.191.5)July 16
 
 ![Image 5: Today In History Phone](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-phone.png?v=3.189.7)
 
@@ -59,7 +59,7 @@ June
 
 [22](https://www.britannica.com/on-this-day/June-22)[23](https://www.britannica.com/on-this-day/June-23)[24](https://www.britannica.com/on-this-day/June-24)[25](https://www.britannica.com/on-this-day/June-25)[26](https://www.britannica.com/on-this-day/June-26)[27](https://www.britannica.com/on-this-day/June-27)[28](https://www.britannica.com/on-this-day/June-28)
 
-[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-15)[](https://www.britannica.com/on-this-day/july-15)[](https://www.britannica.com/on-this-day/july-15)[](https://www.britannica.com/on-this-day/july-15)[](https://www.britannica.com/on-this-day/july-15)
+[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-16)[](https://www.britannica.com/on-this-day/july-16)[](https://www.britannica.com/on-this-day/july-16)[](https://www.britannica.com/on-this-day/july-16)[](https://www.britannica.com/on-this-day/july-16)
 
 July
 
@@ -71,7 +71,7 @@ July
 
 [22](https://www.britannica.com/on-this-day/July-22)[23](https://www.britannica.com/on-this-day/July-23)[24](https://www.britannica.com/on-this-day/July-24)[25](https://www.britannica.com/on-this-day/July-25)[26](https://www.britannica.com/on-this-day/July-26)[27](https://www.britannica.com/on-this-day/July-27)[28](https://www.britannica.com/on-this-day/July-28)
 
-[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-15)[](https://www.britannica.com/on-this-day/july-15)[](https://www.britannica.com/on-this-day/july-15)[](https://www.britannica.com/on-this-day/july-15)
+[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-16)[](https://www.britannica.com/on-this-day/july-16)[](https://www.britannica.com/on-this-day/july-16)[](https://www.britannica.com/on-this-day/july-16)
 
 August
 
@@ -83,7 +83,7 @@ August
 
 [22](https://www.britannica.com/on-this-day/August-22)[23](https://www.britannica.com/on-this-day/August-23)[24](https://www.britannica.com/on-this-day/August-24)[25](https://www.britannica.com/on-this-day/August-25)[26](https://www.britannica.com/on-this-day/August-26)[27](https://www.britannica.com/on-this-day/August-27)[28](https://www.britannica.com/on-this-day/August-28)
 
-[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-15)[](https://www.britannica.com/on-this-day/july-15)[](https://www.britannica.com/on-this-day/july-15)[](https://www.britannica.com/on-this-day/july-15)
+[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-16)[](https://www.britannica.com/on-this-day/july-16)[](https://www.britannica.com/on-this-day/july-16)[](https://www.britannica.com/on-this-day/july-16)
 
 August
 
@@ -93,25 +93,25 @@ August
 
 [Go to Today's Date](https://www.britannica.com/on-this-day)
 
- 1835: A war fought over Toledo
+ 1945: First atomic bomb exploded near Alamogordo, New Mexico
 
- The only bloodshed during the [Toledo War](https://www.britannica.com/event/Toledo-War), fought between [Ohio](https://www.britannica.com/place/Ohio-state) and [Michigan](https://www.britannica.com/place/Michigan) over a disputed border, occurred on this day in a [Toledo](https://www.britannica.com/place/Toledo-Ohio) tavern when Ohio partisan Two Stickney stabbed Michigan Sheriff Joseph Wood with a penknife. (Wood survived.) The “war” ended two years later with Toledo awarded to Ohio and the resource-rich Upper Peninsula to Michigan.
+ On this day in 1945 the [United States](https://www.britannica.com/place/United-States) detonated the world’s first [atomic bomb](https://www.britannica.com/technology/atomic-bomb) during the [Trinity test](https://www.britannica.com/topic/Trinity-test) in the desert near [Alamogordo](https://www.britannica.com/place/Alamogordo), New Mexico. The successful culmination of the top secret [Manhattan Project](https://www.britannica.com/event/Manhattan-Project) marked the beginning of the atomic age and paved the way for the [bombings of Hiroshima and Nagasaki](https://www.britannica.com/event/atomic-bombings-of-Hiroshima-and-Nagasaki)—and the end of [World War II](https://www.britannica.com/event/World-War-II)—just weeks later.
 
-[READ MORE](https://www.britannica.com/today-in-history/July-15-1835-Michigan-Ohio-and-Toledo-War?utm_source=otd)
+[READ MORE](https://www.britannica.com/today-in-history/July-16-The-Day-the-End-of-the-World-Began?utm_source=otd)
 
-![Image 6: July 15, 1835: The Toledo War was fought via legal declarations, long-winded speeches, and one stabbing](https://cdn.britannica.com/20/289320-050-1940EB1E/today-in-history-toledo-war.jpg?w=530&h=300&c=crop)
+![Image 6: July 16, 1945: The first atom bomb test was the culmination of a giant project](https://cdn.britannica.com/21/289321-050-1A30D271/today-in-history-Test-of-the-first-atomic-bomb.jpg?w=530&h=300&c=crop)
 
- Norman B. Leventhal Map & Education Center Collection/Boston Public Library; Photo Illustration Encyclopædia Britannica, Inc.
+ U.S. Department of Energy; Photo Illustration Encyclopædia Britannica, Inc.
 
  Featured Event 
 
-![Image 7: Mars](https://cdn.britannica.com/64/73464-050-56C80D3A/view-composite-images-Mars-spacecraft-Global-Surveyor-April-1999.jpg?w=356&h=200&c=crop)
+![Image 7: An elegant pair](https://cdn.britannica.com/57/251457-050-F2FD4459/john-f-kennedy-jr-and-carolyn-besette-kennedy-1999.jpg?w=356&h=200&c=crop)
 
- NASA/JPL/Malin Space Science Systems
+ © Justin Ide/Newsmakers/Boston Herald—Hulton Archive/Getty Images
 
-[Mariner 4 photographed Mars](https://www.britannica.com/technology/Mariner)
+[Kennedy plane crash](https://www.britannica.com/event/John-F-Kennedy-Jr-plane-crash)
 
- On this day in 1965 [Mariner](https://www.britannica.com/technology/Mariner) 4, an uncrewed space probe launched by [NASA](https://www.britannica.com/topic/NASA) in 1964, flew by [Mars](https://www.britannica.com/place/Mars-planet) and returned close-up pictures of its surface. The pictures proved that the [planet’s so-called canals](https://www.britannica.com/place/canals-of-Mars) were illusions. _[[Sort fact from fiction in our quiz about Mars](https://www.britannica.com/quiz/mars-fact-or-fiction).]_
+[John F. Kennedy, Jr.](https://www.britannica.com/biography/John-F-Kennedy-Jr), his wife, [Carolyn Bessette Kennedy](https://www.britannica.com/biography/Carolyn-Bessette-Kennedy), and her sister Lauren Bessette were killed in [a plane crash](https://www.britannica.com/event/John-F-Kennedy-Jr-plane-crash) off the coast of[Martha’s Vineyard](https://www.britannica.com/place/Marthas-Vineyard), Massachusetts, while en route to a family wedding. _[[Is there a Kennedy curse?](https://www.britannica.com/topic/Is-There-a-Kennedy-Curse)]_
 
 Featured Biography
 
@@ -119,103 +119,159 @@ Featured Biography
 
  Featured Biography 
 
-[![Image 8: Rembrandt: Isaac and Rebecca](https://cdn.britannica.com/32/3732-050-1AFCB2CB/Portrait-Couple-oil-canvas-Isaac-Rebecca-Rembrandt.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Rembrandt-van-Rijn?utm_source=otd)
+[![Image 8: Ginger Rogers](https://cdn.britannica.com/00/150800-050-9CA10771/Ginger-Rogers.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Ginger-Rogers?utm_source=otd)
 
- Courtesy of the Rijksmuseum, Amsterdam, object no. SK-C-216
+ Image: Encyclopædia Britannica, Inc.
 
-Rembrandt van Rijn
+Ginger Rogers
 
-Born this day in 1606 was Dutch painter and printmaker [Rembrandt](https://www.britannica.com/biography/Rembrandt-van-Rijn)—one of the greatest storytellers in the history of art, known for his exceptional ability to render people in their various moods and dramatic guises.
+American dancer and actress [Ginger Rogers](https://www.britannica.com/biography/Ginger-Rogers), born this day in 1911, achieved fame as the partner of [Fred Astaire](https://www.britannica.com/biography/Fred-Astaire) in a series of popular musicals and later won an [Oscar](https://www.britannica.com/art/Academy-Award) for her dramatic performance in Kitty Foyle (1940).
 
 Famous Birthdays
 
+1953
+
+[Dean Ornish](https://www.britannica.com/biography/Dean-Ornish?utm_source=otd)
+
+American physician
+
+1877
+
+[Ivy Ledbetter Lee](https://www.britannica.com/biography/Ivy-Ledbetter-Lee?utm_source=otd)
+
+American publicist
+
+1704
+
+[John Kay](https://www.britannica.com/biography/John-Kay?utm_source=otd)
+
+British engineer and inventor
+
+1486
+
+[Andrea del Sarto](https://www.britannica.com/biography/Andrea-del-Sarto?utm_source=otd)
+
+Italian painter
+
+[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-16)
+
+## More on July 16
+
+![Image 9: George A. Romero](https://cdn.britannica.com/81/163381-050-E43BD78A/George-A-Romero-2009.jpg?w=260&h=196&c=crop)
+
+ © ChinellatoPhoto/Shutterstock.com
+
+2017
+
+ American filmmaker [George A. Romero](https://www.britannica.com/biography/George-A-Romero)—who was known for his [horror films](https://www.britannica.com/art/horror-film), notably Night of the Living Dead (1968), which launched a series of related movies—died at age 77. _[[Test your knowledge of scary movies](https://www.britannica.com/quiz/scary-movie-quiz).]_
+
+![Image 10: Chicago: Millennium Park](https://cdn.britannica.com/64/154264-050-98813D50/Millennium-Park-Chicago-2008.jpg?w=260&h=196&c=crop)
+
+ © Margie Hurwich/Shutterstock.com
+
+2004
+
+[Chicago](https://www.britannica.com/place/Chicago) officially opened its Millennium Park, which featured fountains, eye-catching sculptures, and a large outdoor concert facility designed by architect [Frank Gehry](https://www.britannica.com/biography/Frank-Gehry). _[[Sort fact from fiction in our quiz about Chicago architecture](https://www.britannica.com/quiz/chicago-architecture).]_
+
+![Image 11: Jacques Rogge](https://cdn.britannica.com/08/233908-050-3D124C56/Jacques-Rogge-President-International-Olympic-Committee-2013.jpg?w=260&h=196&c=crop)
+
+ Ian Walton/Getty Images
+
+2001
+
+[Jacques Rogge](https://www.britannica.com/biography/Jacques-Rogge) of Belgium was chosen to replace [Juan António Samaranch](https://www.britannica.com/biography/Juan-Antonio-Samaranch-marques-de-Samaranch) as the president of the [International Olympic Committee](https://www.britannica.com/topic/International-Olympic-Committee). _[[Take our quiz about Olympic history](https://www.britannica.com/quiz/olympic-history).]_
+
+![Image 12: Saddam Hussein in 1983, wearing a green military uniform and resting his face on his right hand.](https://cdn.britannica.com/83/35483-050-FAFC211C/Saddam-Hussein-1983.jpg?w=260&h=196&c=crop)
+
+ © Jacques Pavlovsky—Sygma/Getty Images
+
+1979
+
+[Saddam Hussein](https://www.britannica.com/biography/Saddam-Hussein) became president of [Iraq](https://www.britannica.com/place/Iraq), and his brutal rule, which lasted 24 years, was marked by costly and unsuccessful wars with neighboring countries as well as atrocities against the Iraqi people. _[[Sort fact from fiction in our quiz about the Middle East](https://www.britannica.com/quiz/the-middle-east-fact-or-fiction).]_
+
+![Image 13: Apollo 11](https://cdn.britannica.com/80/144580-050-2840ED84/Launch-Apollo-11-July-16-1969.jpg?w=260&h=196&c=crop)
+
+ KSC/NASA
+
+1969
+
+[Apollo 11](https://www.britannica.com/topic/Apollo-11) lifted off from [NASA](https://www.britannica.com/topic/NASA)’s John F. Kennedy Space Center in Florida, and four days later two of its astronauts, [Neil Armstrong](https://www.britannica.com/biography/Neil-Armstrong) and [Buzz Aldrin](https://www.britannica.com/biography/Buzz-Aldrin), became the first humans to set foot on the [Moon](https://www.britannica.com/place/Moon). _[[Test your knowledge of space exploration](https://www.britannica.com/quiz/space-exploration).]_
+
+![Image 14: Mont Blanc](https://cdn.britannica.com/36/76236-050-97AAD99C/pinnacles-Mont-Blanc-France.jpg?w=260&h=196&c=crop)
+
+ © vouvraysan/stock.adobe.com
+
 1965
 
-[David Miliband](https://www.britannica.com/biography/David-Miliband?utm_source=otd)
+ The [Mont Blanc Tunnel](https://www.britannica.com/topic/Mont-Blanc-Tunnel) officially opened, linking [France](https://www.britannica.com/place/France) and [Italy](https://www.britannica.com/place/Italy); at the time, it was the world’s longest vehicular tunnel, spanning 7.3 miles (11.7 km). _[[Sort fact from fiction in our quiz about European history](https://www.britannica.com/quiz/european-history-fact-or-fiction).]_
 
-British foreign secretary
+![Image 15: Cover of The Catcher in the Rye](https://cdn.britannica.com/94/181394-050-2F76F7EE/Reproduction-cover-edition-The-Catcher-in-the.jpg?w=260&h=196&c=crop)
 
-1922
+ Little, Brown and Company/Hachette Book Group USA
 
-[Leon Max Lederman](https://www.britannica.com/biography/Leon-Max-Lederman?utm_source=otd)
+1951
 
-American physicist
+[J.D. Salinger](https://www.britannica.com/biography/J-D-Salinger)’s [The Catcher in the Rye](https://www.britannica.com/topic/The-Catcher-in-the-Rye), which centred on the sensitive, rebellious adolescent [Holden Caulfield](https://www.britannica.com/topic/Holden-Caulfield), was published and later became a classic. _[[Take our quiz about famous novels](https://www.britannica.com/quiz/the-literary-world-famous-novels).]_
 
-1848
+![Image 16: Joe DiMaggio](https://cdn.britannica.com/79/24479-050-08708BF3/Joe-DiMaggio.jpg?w=260&h=196&c=crop)
 
-[Vilfredo Pareto](https://www.britannica.com/money/Vilfredo-Pareto?utm_source=otd)
+ Encyclopædia Britannica, Inc.
 
-Italian economist and sociologist
+1941
 
-1573
+ American [baseball](https://www.britannica.com/sports/baseball) player [Joe DiMaggio](https://www.britannica.com/biography/Joe-DiMaggio) set an [MLB](https://www.britannica.com/topic/Major-League-Baseball) record for most consecutive games (56) with a hit. _[[How much do you know about baseball?](https://www.britannica.com/quiz/baseball)]_
 
-[Inigo Jones](https://www.britannica.com/biography/Inigo-Jones?utm_source=otd)
+![Image 17: default image](https://cdn.britannica.com/mendel-resources/3-191/images/shared/thistle-blue-half.svg?v=3.191.5)
 
-English architect and artist
+ Image: Encyclopædia Britannica, Inc.
 
-[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-15)
+1935
 
-## More on July 15
+ The world’s first parking meters were installed in Oklahoma City, Oklahoma; the device, which sought to ease congestion, was designed by Carl C. Magee. _[[Test your knowledge of inventors and their inventions](https://www.britannica.com/quiz/inventors-and-inventions).]_
 
-![Image 9: Jack Dorsey](https://cdn.britannica.com/31/217131-050-3DF60FAE/Twitter-founder-Jack-Dorsey-2018.jpg?w=260&h=196&c=crop)
+![Image 18: Mary Todd Lincoln](https://cdn.britannica.com/37/61937-050-FCD064F2/Mary-Todd-Lincoln.jpg?w=260&h=196&c=crop)
 
- Jose Luis Magana—AP/Shutterstock.com
+ Library of Congress, Washington, D.C. (neg. no. LC USZ 62 15325)
 
-2006
+1882
 
- Cofounders [Jack Dorsey](https://www.britannica.com/money/Jack-Dorsey), [Evan Williams](https://www.britannica.com/biography/Evan-Williams), and [Biz Stone](https://www.britannica.com/money/Biz-Stone) publicly launched [Twitter](https://www.britannica.com/money/Twitter), and within the following decade the [social media](https://www.britannica.com/topic/social-media) platform had more than 300 million users.
+[First lady](https://www.britannica.com/topic/first-lady-United-States-title) (1861–65) [Mary Todd Lincoln](https://www.britannica.com/biography/Mary-Todd-Lincoln)—the wife of [Abraham Lincoln](https://www.britannica.com/biography/Abraham-Lincoln), 16th [president of the United States](https://www.britannica.com/topic/presidency-of-the-United-States-of-America)—died at age 63. _[[Take our quiz about first ladies of the United States](https://www.britannica.com/quiz/first-ladies-of-the-united-states).]_
 
-![Image 10: Gianni Versace](https://cdn.britannica.com/36/198036-050-5904106D/Gianni-Versace-Naomi-Campbell-fashion-show-1994.jpg?w=260&h=196&c=crop)
+![Image 19: Ida B. Wells-Barnett](https://cdn.britannica.com/33/5033-050-6D606D3D/Ida-Bell-Wells-Barnett-1930.jpg?w=260&h=196&c=crop)
 
- © REX/Shutterstock.com
+ Courtesy of the Chicago History Museum
 
-1997
+1862
 
- Italian fashion designer [Gianni Versace](https://www.britannica.com/biography/Gianni-Versace) was murdered at his home in Florida by a serial killer. _[[Read about 7 of history’s most notorious serial killers](https://www.britannica.com/list/7-of-historys-most-notorious-serial-killers).]_
+[Ida B. Wells-Barnett](https://www.britannica.com/biography/Ida-B-Wells-Barnett), an American journalist who led a crusade against [lynching](https://www.britannica.com/topic/lynching), was born in Holly Springs, Mississippi. _[[How well do you know African American history?](https://www.britannica.com/quiz/how-well-do-you-know-your-african-american-history-education-politics-and-protest)]_
 
-![Image 11: Bruce Willis](https://cdn.britannica.com/43/194243-050-32D60E00/Bruce-Willis-Die-Hard-with-a-Vengeance.jpg?w=260&h=196&c=crop)
+![Image 20: Richard II](https://cdn.britannica.com/19/132119-050-A26115C9/Richard-II.jpg?w=260&h=196&c=crop)
 
- © Twentieth Century-Fox Film Corporation. All rights reserved.
+ © Photos.com/Jupiterimages
 
-1988
+1377
 
- The thriller Die Hard was first released in U.S. theaters, launching a hugely popular series and helping establish [Bruce Willis](https://www.britannica.com/biography/Bruce-Willis) as an action star. _[[Take our quiz about movies](https://www.britannica.com/quiz/a-movie-lesson).]_
+[Richard II](https://www.britannica.com/biography/Richard-II-king-of-England) was officially installed as king of [England](https://www.britannica.com/place/England), almost a month after the death of his grandfather, [Edward III](https://www.britannica.com/biography/Edward-III-king-of-England). _[[Test your knowledge of the kings of England](https://www.britannica.com/quiz/kings-of-england).]_
 
-![Image 12: Leon Max Lederman](https://cdn.britannica.com/32/21032-050-E08BDB16/Leon-Max-Lederman-1983.jpg?w=260&h=196&c=crop)
+![Image 21: Schism of 1054](https://cdn.britannica.com/38/196138-050-F002BCD4/Map-Schism.jpg?w=260&h=196&c=crop)
 
- Fermilab National Accelerator Laboratory
+ Encyclopædia Britannica, Inc./Kenny Chmielewski
 
-1922
+1054
 
-[Leon Max Lederman](https://www.britannica.com/biography/Leon-Max-Lederman), who was a corecipient of the 1988 [Nobel Prize for Physics](https://www.britannica.com/science/Winners-of-the-Nobel-Prize-for-Physics-1856942) for research on [neutrinos](https://www.britannica.com/science/neutrino), was born in New York City. _[[Take our quiz about the Nobel Prize](https://www.britannica.com/quiz/nobel-prize).]_
+[Humbert of Silva Candida](https://www.britannica.com/biography/Humbert-of-Silva-Candida), cardinal and papal legate, excommunicated [Michael Cerularius](https://www.britannica.com/biography/Michael-Cerularius), patriarch of [Constantinople](https://www.britannica.com/place/Istanbul), who retaliated by excommunicating the cardinal, which led to the [East-West schism](https://www.britannica.com/event/East-West-Schism-1054) between the churches of [Rome](https://www.britannica.com/place/Rome) and Constantinople.
 
-![Image 13: General Tom Thumb](https://cdn.britannica.com/19/162019-050-6C0CEC74/Tom-Thumb-1863.jpg?w=260&h=196&c=crop)
+![Image 22: The Prophet's Mosque](https://cdn.britannica.com/91/65191-050-0EDFC82C/Prophets-Mosque-tomb-Medina-Saudi-Arabia-Muhammad.jpg?w=260&h=196&c=crop)
 
- Library of Congress, Washington, D.C. (file no. LC-USZ62-48353)
+ © Mawardibahar/Dreamstime.com
 
-1883
+622
 
-[Circus](https://www.britannica.com/art/circus-theatrical-entertainment) performer Charles Stratton, known to the world as [General Tom Thumb](https://www.britannica.com/biography/Charles-Stratton), died at age 45. _[[Take our quiz about American personalities](https://www.britannica.com/quiz/american-personalities).]_
-
-![Image 14: François Gérard: Napoleon in His Imperial Robes](https://cdn.britannica.com/95/115195-050-6A7506E0/Napoleon-His-Imperial-Robes-Francois-Gerard-Versailles-1805.jpg?w=260&h=196&c=crop)
-
- © THOMAS COEX—AFP/Getty Images
-
-1815
-
- Several weeks after his abdication as emperor, [Napoleon](https://www.britannica.com/biography/Napoleon-I) boarded the HMS _Bellerophon_ to ask British officials for protection. They decided to send him into exile on the island of [Saint Helena](https://www.britannica.com/place/Saint-Helena-island-South-Atlantic-Ocean). _[[Watch: How Napoleon Bonaparte became emperor of France](https://www.britannica.com/video/how-did-Napoleon-become-a-legend/-287948).]_
-
-![Image 15: Peasants' Revolt](https://cdn.britannica.com/84/9684-050-E1F6EBC0/death-miniature-peasants-manuscript-Wat-Tyler-Richard.jpg?w=260&h=196&c=crop)
-
- The British Library (Public Domain)
-
-1381
-
-[John Ball](https://www.britannica.com/biography/John-Ball), who advocated for a classless society, was executed for his role in the [Peasants’ Revolt](https://www.britannica.com/event/Peasants-Revolt), the first significant popular rebellion in English history.
+ The Prophet [Muhammad](https://www.britannica.com/biography/Muhammad)’s migration from [Mecca](https://www.britannica.com/place/Mecca) to Yathrib ([Medina](https://www.britannica.com/place/Medina-Saudi-Arabia)), known as the [Hijrah](https://www.britannica.com/event/Hijrah-Islam), began. The Hijrah marks the beginning of the [Islamic calendar](https://www.britannica.com/topic/Islamic-calendar) and one of the defining moments in Islamic history. 
 
 SIGN UP FOR
 
-![Image 16: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 17: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
+![Image 23: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 24: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
 
 History's Biggest Headlines
 
@@ -225,4 +281,4 @@ SIGN UP
 
 ### Thank you for signing up!
 
-![Image 19](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=123&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-15&s=712AE296-C9E6-40AC-88CC-0FEDC0BAC1B1&json=%20)![Image 20: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=3fd9d9ac-6b39-6229-041d-d642da1aff39&iiqpciddate=1784147881698&tsrnd=429_1784147881705&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 21](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001784147883-RA5B3JFQ-8O4N)![Image 22](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001784147883-RA5B3JFQ-8O4N&adnxs_id=$UID&gdpr=0)![Image 23](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001784147883-RA5B3JFQ-8O4N%26auid%3DAU1D-0100-001784147883-RA5B3JFQ-8O4N&gdpr=0)![Image 24](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001784147883-RA5B3JFQ-8O4N&gdpr=0)![Image 25](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001784147883-RA5B3JFQ-8O4N&gdpr=0)![Image 26](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001784147883-RA5B3JFQ-8O4N&gdpr=0)![Image 27](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001784147883-RA5B3JFQ-8O4N&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001784147883-RA5B3JFQ-8O4N%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 28](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4NDE0Nzg4My1SQTVCM0pGUS04TzRO&id=AU1D-0100-001784147883-RA5B3JFQ-8O4N&gdpr=0)![Image 29](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001784147883-RA5B3JFQ-8O4N)![Image 30](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001784147883-RA5B3JFQ-8O4N&uid=[UID]&gdpr=0)![Image 31](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001784147883-RA5B3JFQ-8O4N%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
+![Image 26: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=775a499b-e6e6-6c6c-973d-ee3ff1bdba16&iiqpciddate=1784187286453&tsrnd=277_1784187286875&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 27](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=145&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-16&s=E380B5B3-49AA-4D00-99BD-9BF2A58D4CD0&json=%20)![Image 28](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001784187289-NZX7H0T6-R7VJ)![Image 29](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001784187289-NZX7H0T6-R7VJ&adnxs_id=$UID&gdpr=0)![Image 30](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001784187289-NZX7H0T6-R7VJ%26auid%3DAU1D-0100-001784187289-NZX7H0T6-R7VJ&gdpr=0)![Image 31](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001784187289-NZX7H0T6-R7VJ&gdpr=0)![Image 32](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001784187289-NZX7H0T6-R7VJ&gdpr=0)![Image 33](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001784187289-NZX7H0T6-R7VJ&gdpr=0)![Image 34](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001784187289-NZX7H0T6-R7VJ&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001784187289-NZX7H0T6-R7VJ%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 35](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4NDE4NzI4OS1OWlg3SDBUNi1SN1ZK&id=AU1D-0100-001784187289-NZX7H0T6-R7VJ&gdpr=0)![Image 36](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001784187289-NZX7H0T6-R7VJ)![Image 37](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001784187289-NZX7H0T6-R7VJ&uid=[UID]&gdpr=0)![Image 38](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001784187289-NZX7H0T6-R7VJ%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
