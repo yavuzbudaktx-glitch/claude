@@ -1,0 +1,45 @@
+{
+  "date": "2026-07-16",
+  "generatedAt": "2026-07-16T08:24:30.976Z",
+  "art": {
+    "id": 75552,
+    "title": "Children Playing in Summer and Winter",
+    "artist": "Maruyama Ōshin",
+    "date": "early 19th century",
+    "medium": "Pair of six-panel folding screens; ink, color, and gold on paper",
+    "origin": "Japan",
+    "description": "Children Playing in Summer and Winter, by Maruyama Ōshin. Pair of six-panel folding screens; ink, color, and gold on paper, Japan, early 19th century.",
+    "alt": "Children Playing in Summer and Winter",
+    "imageUrl": "https://images.metmuseum.org/CRDImages/as/original/2009_511a.jpg",
+    "pageUrl": "https://www.metmuseum.org/art/collection/search/75552",
+    "source": "The Met",
+    "highlight": false
+  },
+  "bird": {
+    "name": "Riparian antbird",
+    "scientific": "",
+    "blurb": "The riparian antbird is a species of passerine bird in subfamily Thamnophilinae of family Thamnophilidae, the \"typical antbirds\". It is found in Bolivia, Brazil, Colombia, Ecuador, and Peru.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/6/63/Cercomacroides_fuscicauda_Riparian_Antbird_%28male%29%3B_Ramal_do_Noca%2C_Rio_Branco%2C_Acre%2C_Brazil.jpg",
+    "audioUrl": "",
+    "recordist": "",
+    "place": "",
+    "pageUrl": "https://en.wikipedia.org/wiki/Riparian_antbird",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Riparian%20antbird%20audio",
+    "source": "Wikipedia · Wikimedia Commons"
+  },
+  "wiki": {
+    "title": "Holden Commodore (VE)",
+    "description": "Australian full-size car",
+    "extract": "The Holden Commodore (VE) is a full-size car that was produced from 2006 to 2013 by Holden, the former Australian subsidiary of General Motors. Dubbed Holden's \"billion dollar baby\", the car was available as the Holden Berlina—the mid-range model—and the Holden Calais, the luxury variant; utility body styles were marketed as the Holden Ute.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/7/73/2008_Holden_Calais_%28VE_MY09%29_V_sedan_%282010-06-17%29_01.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Holden_Commodore_(VE)",
+    "source": "Wikipedia · Today's Featured Article"
+  },
+  "nasa": {
+    "title": "NGC 300: A Cosmic Gemstone with Stars and Gas Clouds",
+    "explanation": "This sparkling, colorful gemstone is a spiral galaxy, NGC 300 . It is one of the closest spiral galaxies to Earth, only about 6 million light-years away. But does it really look like this ? Here is a more standard portrait of it. This unusual image combines the light from the stars and dust within the galaxy with the light from ionized clouds of interstellar gas shown in red (Sulphur), green (Hydrogen) and blue (Oxygen). Combining red and green light in different proportions makes yellow or orange light, most visible in the image. Light from other ionized gases is also at work in neon signs, fluorescent tubes and street lights. These massive clouds of ionized gas are typically created by young, massive stars that produce high-energy ultraviolet radiation capable of ionizing the gas. Massive stars are short-lived , compared with lighter stars like our sun, and explode as supernovas at the end of their lives. Some of the colorful clouds in the image could be hiding supernova remnants .",
+    "url": "https://apod.nasa.gov/apod/image/2607/ngc300_1024.jpg",
+    "hdurl": "https://apod.nasa.gov/apod/image/2607/ngc300.jpg",
+    "media_type": "image"
+  }
+}
