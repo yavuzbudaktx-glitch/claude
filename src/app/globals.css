@@ -3017,37 +3017,40 @@ main { position: relative; z-index: 1; }
    ZUYA polish — heart-lattice backdrop, camera flash, card entrances.
 ======================================================================= */
 
-/* A whisper of hearts over the dawn gradient. Fixed so it doesn't swim
-   while scrolling; tiny fill-opacity so it reads as texture, not wallpaper. */
-.zuya-scope.zt-rose::after {
-  content: "";
+/* A whisper of hearts woven over the dawn gradient. Rendered as a REAL fixed
+   layer (a <div class="zuya-bg"> in the Zuya layout) rather than a pseudo —
+   pseudo ::after stacked unpredictably against the existing dawn ::before and
+   the app-wide body::before, so it never reliably showed. This owns z-index 0
+   inside the scope: above the fixed z-index:-1 dawn, below all the cards. */
+.zuya-bg {
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: -1;   /* over the dawn ::before (also -1, earlier in tree), below cards */
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84' viewBox='0 0 84 84'%3E%3Cg fill='%23c23a63' fill-opacity='0.05'%3E%3Cpath transform='translate(10 12) scale(0.9)' d='M12 20.3C6.7 16.1 2 12.4 2 7.6 2 4.5 4.4 2 7.5 2c1.8 0 3.5.9 4.5 2.3C13 2.9 14.7 2 16.5 2 19.6 2 22 4.5 22 7.6c0 4.8-4.7 8.5-10 12.7z'/%3E%3Cpath transform='translate(52 54) scale(0.62)' d='M12 20.3C6.7 16.1 2 12.4 2 7.6 2 4.5 4.4 2 7.5 2c1.8 0 3.5.9 4.5 2.3C13 2.9 14.7 2 16.5 2 19.6 2 22 4.5 22 7.6c0 4.8-4.7 8.5-10 12.7z'/%3E%3C/g%3E%3C/svg%3E");
-  background-size: 84px 84px;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc5MCcgaGVpZ2h0PSc5MCcgdmlld0JveD0nMCAwIDkwIDkwJz48ZyBmaWxsPScjYzIzYTYzJz48cGF0aCBmaWxsLW9wYWNpdHk9JzAuMDcnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDE0IDE2KSBzY2FsZSgxLjA1KScgZD0nTTEyIDIxQzYgMTYuNCAyIDEyLjYgMiA4LjIgMiA1IDQuNCAyLjYgNy40IDIuNmMxLjggMCAzLjUuOSA0LjYgMi40QzEzLjEgMy41IDE0LjggMi42IDE2LjYgMi42YzMgMCA1LjQgMi40IDUuNCA1LjYgMCA0LjQtNCA4LjItMTAgMTIuOHonLz48cGF0aCBmaWxsLW9wYWNpdHk9JzAuMDUnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU4IDU2KSBzY2FsZSgwLjcpJyBkPSdNMTIgMjFDNiAxNi40IDIgMTIuNiAyIDguMiAyIDUgNC40IDIuNiA3LjQgMi42YzEuOCAwIDMuNS45IDQuNiAyLjRDMTMuMSAzLjUgMTQuOCAyLjYgMTYuNiAyLjZjMyAwIDUuNCAyLjQgNS40IDUuNiAwIDQuNC00IDguMi0xMCAxMi44eicvPjwvZz48L3N2Zz4=");
+  background-size: 90px 90px;
 }
-.dark .zuya-scope.zt-rose::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84' viewBox='0 0 84 84'%3E%3Cg fill='%23f27ba0' fill-opacity='0.045'%3E%3Cpath transform='translate(10 12) scale(0.9)' d='M12 20.3C6.7 16.1 2 12.4 2 7.6 2 4.5 4.4 2 7.5 2c1.8 0 3.5.9 4.5 2.3C13 2.9 14.7 2 16.5 2 19.6 2 22 4.5 22 7.6c0 4.8-4.7 8.5-10 12.7z'/%3E%3Cpath transform='translate(52 54) scale(0.62)' d='M12 20.3C6.7 16.1 2 12.4 2 7.6 2 4.5 4.4 2 7.5 2c1.8 0 3.5.9 4.5 2.3C13 2.9 14.7 2 16.5 2 19.6 2 22 4.5 22 7.6c0 4.8-4.7 8.5-10 12.7z'/%3E%3C/g%3E%3C/svg%3E");
-  background-size: 84px 84px;
+.dark .zuya-bg {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc5MCcgaGVpZ2h0PSc5MCcgdmlld0JveD0nMCAwIDkwIDkwJz48ZyBmaWxsPScjZjI3YmEwJz48cGF0aCBmaWxsLW9wYWNpdHk9JzAuMDYnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDE0IDE2KSBzY2FsZSgxLjA1KScgZD0nTTEyIDIxQzYgMTYuNCAyIDEyLjYgMiA4LjIgMiA1IDQuNCAyLjYgNy40IDIuNmMxLjggMCAzLjUuOSA0LjYgMi40QzEzLjEgMy41IDE0LjggMi42IDE2LjYgMi42YzMgMCA1LjQgMi40IDUuNCA1LjYgMCA0LjQtNCA4LjItMTAgMTIuOHonLz48cGF0aCBmaWxsLW9wYWNpdHk9JzAuMDQ1JyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1OCA1Nikgc2NhbGUoMC43KScgZD0nTTEyIDIxQzYgMTYuNCAyIDEyLjYgMiA4LjIgMiA1IDQuNCAyLjYgNy40IDIuNmMxLjggMCAzLjUuOSA0LjYgMi40QzEzLjEgMy41IDE0LjggMi42IDE2LjYgMi42YzMgMCA1LjQgMi40IDUuNCA1LjYgMCA0LjQtNCA4LjItMTAgMTIuOHonLz48L2c+PC9zdmc+");
+  background-size: 90px 90px;
 }
 
 /* Camera-shutter flash in the Anlık capture overlay. */
 @keyframes zuyaFlash { from { opacity: 1; } to { opacity: 0; } }
 
-/* Cards drift up gently as the page arrives, staggered top-to-bottom. */
+/* Cards rise + settle as the page arrives, staggered top-to-bottom. Overrides
+   the shared .animate-fadeIn with a distinctly felt entrance. */
 @keyframes zuyaRise {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  0%   { opacity: 0; transform: translateY(18px) scale(0.985); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
-.zuya-scope main .card { animation: zuyaRise 0.45s cubic-bezier(0.16, 0.84, 0.34, 1) both; }
-.zuya-scope main > *:nth-child(1) .card { animation-delay: 0.02s; }
-.zuya-scope main > *:nth-child(2) .card { animation-delay: 0.07s; }
-.zuya-scope main > *:nth-child(3) .card { animation-delay: 0.12s; }
-.zuya-scope main > *:nth-child(4) .card { animation-delay: 0.17s; }
-.zuya-scope main > *:nth-child(5) .card { animation-delay: 0.22s; }
-.zuya-scope main > *:nth-child(6) .card { animation-delay: 0.27s; }
+.zuya-scope .card { animation: zuyaRise 0.5s cubic-bezier(0.16, 0.84, 0.34, 1) both; }
+.zuya-scope main > *:nth-child(1) .card { animation-delay: 0.03s; }
+.zuya-scope main > *:nth-child(2) .card { animation-delay: 0.09s; }
+.zuya-scope main > *:nth-child(3) .card { animation-delay: 0.15s; }
+.zuya-scope main > *:nth-child(4) .card { animation-delay: 0.21s; }
+.zuya-scope main > *:nth-child(5) .card { animation-delay: 0.27s; }
+.zuya-scope main > *:nth-child(6) .card { animation-delay: 0.33s; }
 @media (prefers-reduced-motion: reduce) {
-  .zuya-scope main .card { animation: none; }
+  .zuya-scope .card { animation: none; }
 }

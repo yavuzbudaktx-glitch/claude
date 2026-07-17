@@ -27,5 +27,11 @@ export const viewport: Viewport = {
 // login page stays reachable. `.zuya-scope` swaps the CSS variables to the
 // warm blush/plum palette and paints its own background over the aurora.
 export default function ZuyaLayout({ children }: { children: React.ReactNode }) {
-  return <div className="zuya-scope zt-rose">{children}</div>;
+  return (
+    <div className="zuya-scope zt-rose">
+      {/* Fixed heart-lattice texture over the dawn gradient (see .zuya-bg). */}
+      <div className="zuya-bg" aria-hidden />
+      {children}
+    </div>
+  );
 }

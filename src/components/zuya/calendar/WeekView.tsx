@@ -59,13 +59,24 @@ export function WeekView({
   const scrollRef = useRef<HTMLDivElement>(null);
   const todayRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    const cell = todayRef.current;
-    const box = scrollRef.current;
-    if (!cell || !box) return;
-    // Center today's column within the scroll box (no page scroll — only the
-    // horizontal container moves).
-    const left = cell.offsetLeft - box.clientWidth / 2 + cell.clientWidth / 2;
-    box.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+    // todayRef only exists when today is in the visible week, so this never
+    // fights the user's manual navigation to other weeks.
+    const center = () => {
+      const cell = todayRef.current;
+      const box = scrollRef.current;
+      if (!cell || !box) return;
+      // Bias slightly left of center so today AND the next couple of days are
+      // visible (a pure center buries the upcoming days off-screen right).
+      const left = cell.offsetLeft - box.clientWidth * 0.38 + cell.clientWidth / 2;
+      // Instant placement — a smooth scroll on mount gets interrupted by
+      // layout/tile paints and lands short, which is the "not perfect" bug.
+      box.scrollTo({ left: Math.max(0, left), behavior: "auto" });
+    };
+    // Run after layout settles: rAF (post-paint) + a fallback tick for slow
+    // first paints (map tiles, fonts) that shift measurement.
+    const r1 = requestAnimationFrame(center);
+    const t = setTimeout(center, 160);
+    return () => { cancelAnimationFrame(r1); clearTimeout(t); };
   }, [weekStart]);
 
   const shift = (n: number) => {

@@ -198,12 +198,56 @@ export function LocationCard() {
     );
   }, [supabase, me.user_id, load]);
 
+  // A one-shot fresh fix — used to force an immediate update the moment the
+  // app is foregrounded (watchPosition often pauses while backgrounded, so
+  // without this the pin could be stale until the OS delivers the next tick).
+  const pushOnce = useCallback(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        void supabase.from("zuya_locations").upsert(
+          {
+            user_id: me.user_id,
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+            accuracy: pos.coords.accuracy,
+            sharing: true,
+          },
+          { onConflict: "user_id" },
+        ).then(() => void load());
+      },
+      () => {},
+      { enableHighAccuracy: true, maximumAge: 10_000, timeout: 15_000 },
+    );
+  }, [supabase, me.user_id, load]);
+
   // Auto-resume location on every app open: if sharing was left on, re-acquire
   // and push a fresh position without needing to toggle.
   useEffect(() => {
     if (sharing) startWatch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sharing]);
+
+  // Keep the pin fresh across app open / foreground / return-to-tab. True
+  // "while fully closed" GPS isn't possible in a web app (the browser blocks
+  // it for privacy), so the best is: stream continuously while open, and push
+  // an immediate fresh fix every time the app is reopened or refocused, PLUS
+  // a slow heartbeat while it's in the foreground.
+  useEffect(() => {
+    if (!sharing) return;
+    const onVisible = () => { if (document.visibilityState === "visible") pushOnce(); };
+    window.addEventListener("focus", pushOnce);
+    document.addEventListener("visibilitychange", onVisible);
+    const heartbeat = setInterval(() => {
+      if (document.visibilityState === "visible") pushOnce();
+    }, 90_000);
+    pushOnce(); // fresh fix right now
+    return () => {
+      window.removeEventListener("focus", pushOnce);
+      document.removeEventListener("visibilitychange", onVisible);
+      clearInterval(heartbeat);
+    };
+  }, [sharing, pushOnce]);
 
   async function toggleShare() {
     if (sharing) {
