@@ -12,6 +12,7 @@ const state = {
   pins: new Set(), // pinned comment ids for the current video
   loading: false,
   loadSeq: 0, // bumped to cancel an in-flight load
+  source: "", // "api" | "dom"
 };
 
 // ------------------------------- dom ---------------------------------
@@ -183,45 +184,89 @@ async function injectFetch(token) {
   return (results && results[0] && results[0].result) || null;
 }
 
+async function injectScrape(maxScrolls) {
+  const results = await chrome.scripting.executeScript({
+    target: { tabId: state.tabId },
+    world: "MAIN",
+    func: YCG_scrapeDom,
+    args: [maxScrolls],
+  });
+  return (results && results[0] && results[0].result) || null;
+}
+
+// Try the internal API; return {ok, debug, error}. Fills state.comments.
+async function loadViaApi(seq) {
+  let token = null;
+  let pages = 0;
+  let firstDebug = null;
+  let lastError = null;
+  do {
+    const res = await injectFetch(token);
+    if (seq !== state.loadSeq) return { ok: false, aborted: true };
+    if (!res) {
+      lastError = "no-result";
+      break;
+    }
+    if (!firstDebug) firstDebug = res.debug || null;
+    if (res.error) {
+      lastError = res.error;
+      break;
+    }
+    state.comments.push(...res.comments);
+    token = res.nextToken;
+    pages++;
+    setStatus(`Loaded ${state.comments.length} comments…`);
+    render();
+    if (token) await new Promise((r) => setTimeout(r, 0));
+  } while (token && pages < 400);
+  return { ok: state.comments.length > 0, debug: firstDebug, error: lastError };
+}
+
 async function loadComments() {
   if (state.loading) return;
   const seq = ++state.loadSeq;
   state.loading = true;
   state.comments = [];
+  state.source = "";
   els.list.innerHTML = "";
   els.controls.hidden = false;
   els.reload.classList.add("spinning");
   setStatus("Loading comments…");
 
-  let token = null;
-  let pages = 0;
   try {
-    do {
-      const res = await injectFetch(token);
-      if (seq !== state.loadSeq) return; // superseded by a newer load
-      if (!res) {
-        setStatus("Could not read comments from the page.", true);
-        break;
+    // 1) Primary: internal InnerTube API.
+    const api = await loadViaApi(seq);
+    if (api.aborted) return;
+    if (api.ok) {
+      state.source = "api";
+    } else {
+      // 2) Fallback: scrape the rendered DOM (scrolls the page).
+      setStatus("Reading comments from the page… (scrolling)");
+      let scrape = null;
+      try {
+        scrape = await injectScrape(60);
+      } catch (e) {
+        scrape = null;
       }
-      if (res.error === "no-token") {
-        setStatus(
-          "No comments found. They may be disabled, or scroll the video page down once and hit ⟳.",
-          true
-        );
-        break;
+      if (seq !== state.loadSeq) return;
+      if (scrape && scrape.comments && scrape.comments.length) {
+        state.comments = scrape.comments;
+        state.source = "dom";
+      } else {
+        const d = api.debug || {};
+        const detail =
+          `Couldn't load comments. [api: ${api.error || "0 parsed"}` +
+          (d.http != null ? `, http ${d.http}` : "") +
+          (d.items != null ? `, items ${d.items}` : "") +
+          (d.entities != null ? `, entities ${d.entities}` : "") +
+          `; page-scroll: ${(scrape && scrape.error) || "none"}]. ` +
+          `If comments are enabled, scroll the video page down once, then hit ⟳.`;
+        setStatus(detail, true);
+        state.loading = false;
+        els.reload.classList.remove("spinning");
+        return;
       }
-      if (res.error) {
-        setStatus("Error: " + res.error, true);
-        break;
-      }
-      state.comments.push(...res.comments);
-      token = res.nextToken;
-      pages++;
-      setStatus(`Loaded ${state.comments.length} comments…`);
-      render();
-      // small yield so the UI stays responsive on huge threads
-      if (token) await new Promise((r) => setTimeout(r, 0));
-    } while (token && pages < 400);
+    }
 
     if (seq === state.loadSeq) {
       setStatus("");
@@ -369,7 +414,7 @@ function commentEl(c, isReply) {
     pinBtn.dataset.pin = c.id;
     actions.appendChild(pinBtn);
 
-    if (c.replyCount > 0) {
+    if (c.replyCount > 0 && c.replyToken) {
       const rb = document.createElement("button");
       rb.className = "replies-btn";
       rb.dataset.replies = c.id;
@@ -413,9 +458,12 @@ function render() {
   for (const c of rest) els.list.appendChild(commentEl(c, false));
 
   const shown = pinned.length + rest.length;
+  const src =
+    state.source === "dom" ? " · via page" : state.source === "api" ? " · via API" : "";
   els.count.textContent =
     `${shown} shown / ${state.comments.length} loaded` +
-    (state.pins.size ? ` · ${state.pins.size} pinned` : "");
+    (state.pins.size ? ` · ${state.pins.size} pinned` : "") +
+    src;
 
   if (!state.loading && shown === 0 && state.comments.length > 0) {
     setStatus("No comments match your filters.");

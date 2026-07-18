@@ -4,24 +4,41 @@
  * self-contained (no references to anything outside their own body), because
  * they are serialized and run inside the page, not the side panel.
  *
- * They read YouTube's own ytcfg / ytInitialData and call the internal InnerTube
- * `/youtubei/v1/next` endpoint (same-origin, with cookies) to page through
- * comments — no API key setup required from the user.
+ * Primary path (YCG_fetchPage): read YouTube's own ytcfg / ytInitialData and
+ * call the internal InnerTube `/youtubei/v1/next` endpoint (same-origin, with
+ * cookies) to page through comments — no API key setup required.
+ *
+ * Fallback path (YCG_scrapeDom): if the internal API can't be parsed, scroll the
+ * page and read comments straight out of the rendered DOM.
  */
 
 /**
- * Fetch one page of comments (or replies).
+ * Fetch one page of comments (or replies) via the internal InnerTube API.
  * @param {string|null} continuationToken - null for the first top-level page,
  *   otherwise a continuation token (next page, or a thread's reply token).
- * @returns {{comments:Array, nextToken:string|null, error?:string, total?:number}}
+ * @returns {{comments:Array, nextToken:string|null, error:?string, debug:object}}
  */
 async function YCG_fetchPage(continuationToken) {
-  // ---- helpers (kept inside so the function stays self-contained) ----
+  const debug = {
+    hasKey: false,
+    hasContext: false,
+    hasToken: false,
+    http: null,
+    items: 0,
+    entities: 0,
+    parsed: 0,
+  };
+
   const cfg = window.ytcfg;
   const getCfg = (k) => {
     if (!cfg) return undefined;
     if (typeof cfg.get === "function") {
-      try { return cfg.get(k); } catch (e) { /* ignore */ }
+      try {
+        const v = cfg.get(k);
+        if (v !== undefined) return v;
+      } catch (e) {
+        /* ignore */
+      }
     }
     return cfg.data_ ? cfg.data_[k] : undefined;
   };
@@ -30,7 +47,7 @@ async function YCG_fetchPage(continuationToken) {
     if (s == null) return 0;
     if (typeof s === "number") return s;
     const str = String(s).trim().replace(/,/g, "");
-    const m = str.match(/^([\d.]+)\s*([KMB]?)/i);
+    const m = str.match(/([\d.]+)\s*([KMB]?)/i);
     if (!m) {
       const n = parseInt(str.replace(/[^\d]/g, ""), 10);
       return isNaN(n) ? 0 : n;
@@ -43,44 +60,6 @@ async function YCG_fetchPage(continuationToken) {
     return Math.round(n);
   };
 
-  // Recursively locate the comments-section continuation token in ytInitialData.
-  const findInitialToken = (root) => {
-    let found = null;
-    const seen = new Set();
-    const walk = (node) => {
-      if (found || !node || typeof node !== "object") return;
-      if (seen.has(node)) return;
-      seen.add(node);
-      if (
-        node.itemSectionRenderer &&
-        node.itemSectionRenderer.sectionIdentifier === "comment-item-section"
-      ) {
-        const contents = node.itemSectionRenderer.contents || [];
-        for (const c of contents) {
-          const t =
-            c &&
-            c.continuationItemRenderer &&
-            c.continuationItemRenderer.continuationEndpoint &&
-            c.continuationItemRenderer.continuationEndpoint.continuationCommand &&
-            c.continuationItemRenderer.continuationEndpoint.continuationCommand
-              .token;
-          if (t) {
-            found = t;
-            return;
-          }
-        }
-      }
-      const vals = Array.isArray(node) ? node : Object.values(node);
-      for (const v of vals) {
-        if (v && typeof v === "object") walk(v);
-        if (found) return;
-      }
-    };
-    walk(root);
-    return found;
-  };
-
-  // Pull a continuation token out of a continuationItemRenderer (page or replies).
   const tokenFromContinuationItem = (cir) => {
     if (!cir) return null;
     if (
@@ -102,40 +81,81 @@ async function YCG_fetchPage(continuationToken) {
     return null;
   };
 
+  // Find the comments-section continuation token in ytInitialData.
+  const findInitialToken = (root) => {
+    let bySection = null;
+    let firstAny = null;
+    const seen = new Set();
+    const walk = (node) => {
+      if (!node || typeof node !== "object" || seen.has(node)) return;
+      seen.add(node);
+      if (
+        node.itemSectionRenderer &&
+        node.itemSectionRenderer.sectionIdentifier === "comment-item-section"
+      ) {
+        for (const c of node.itemSectionRenderer.contents || []) {
+          const t = tokenFromContinuationItem(
+            c && c.continuationItemRenderer
+          );
+          if (t) {
+            bySection = t;
+            return;
+          }
+        }
+      }
+      if (!firstAny && node.continuationItemRenderer) {
+        const t = tokenFromContinuationItem(node.continuationItemRenderer);
+        if (t) firstAny = t;
+      }
+      const vals = Array.isArray(node) ? node : Object.values(node);
+      for (const v of vals) {
+        if (v && typeof v === "object") walk(v);
+        if (bySection) return;
+      }
+    };
+    walk(root);
+    return bySection || firstAny;
+  };
+
   const apiKey = getCfg("INNERTUBE_API_KEY");
   const context = getCfg("INNERTUBE_CONTEXT");
+  debug.hasKey = !!apiKey;
+  debug.hasContext = !!context;
   if (!context) {
-    return { comments: [], nextToken: null, error: "no-context" };
+    return { comments: [], nextToken: null, error: "no-context", debug };
   }
 
   let token = continuationToken;
+  if (!token) token = findInitialToken(window.ytInitialData);
+  debug.hasToken = !!token;
   if (!token) {
-    token = findInitialToken(window.ytInitialData);
-  }
-  if (!token) {
-    // Comments may be disabled, or the section hasn't rendered.
-    return { comments: [], nextToken: null, error: "no-token" };
+    return { comments: [], nextToken: null, error: "no-token", debug };
   }
 
-  // ---- request ----
   let data;
   try {
     const url =
-      "https://www.youtube.com/youtubei/v1/next" +
-      (apiKey ? "?key=" + encodeURIComponent(apiKey) : "?prettyPrint=false") +
-      (apiKey ? "&prettyPrint=false" : "");
+      "https://www.youtube.com/youtubei/v1/next?prettyPrint=false" +
+      (apiKey ? "&key=" + encodeURIComponent(apiKey) : "");
     const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({ context, continuation: token }),
     });
+    debug.http = res.status;
     data = await res.json();
   } catch (e) {
-    return { comments: [], nextToken: null, error: "fetch-failed: " + e.message };
+    return {
+      comments: [],
+      nextToken: null,
+      error: "fetch-failed: " + e.message,
+      debug,
+    };
   }
 
-  // ---- build an entity map from the modern payload format ----
+  // Build an entity map keyed by BOTH commentId and entityKey, because
+  // commentViewModel may reference an entity by either.
   const entities = {};
   const mutations =
     (data.frameworkUpdates &&
@@ -144,34 +164,33 @@ async function YCG_fetchPage(continuationToken) {
     [];
   for (const m of mutations) {
     const p = m && m.payload && m.payload.commentEntityPayload;
-    if (p && p.properties && p.properties.commentId) {
-      entities[p.properties.commentId] = p;
-    }
+    if (!p) continue;
+    debug.entities++;
+    const props = p.properties || {};
+    if (props.commentId) entities[props.commentId] = p;
+    if (p.key) entities[p.key] = p;
+    if (m.entityKey) entities[m.entityKey] = p;
   }
 
-  // ---- collect the continuation items from either endpoint shape ----
   let items = [];
   let nextToken = null;
-  const endpoints = data.onResponseReceivedEndpoints || [];
-  for (const ep of endpoints) {
+  for (const ep of data.onResponseReceivedEndpoints || []) {
     const cmd =
       ep.reloadContinuationItemsCommand || ep.appendContinuationItemsCommand;
-    if (cmd && cmd.continuationItems) {
-      items = items.concat(cmd.continuationItems);
-    }
+    if (cmd && cmd.continuationItems) items = items.concat(cmd.continuationItems);
   }
+  debug.items = items.length;
 
   const comments = [];
 
-  const buildFromEntity = (commentId, replyToken, isReply) => {
-    const ent = entities[commentId];
+  const fromEntity = (ent, replyToken, isReply) => {
     if (!ent) return null;
     const author = ent.author || {};
     const props = ent.properties || {};
     const toolbar = ent.toolbar || {};
     const likeLabel = toolbar.likeCountNotliked || toolbar.likeCountLiked || "";
     return {
-      id: commentId,
+      id: props.commentId || ent.key || Math.random().toString(36).slice(2),
       author: author.displayName || "",
       authorThumb:
         author.avatarThumbnailUrl ||
@@ -192,25 +211,33 @@ async function YCG_fetchPage(continuationToken) {
     };
   };
 
-  // Legacy renderer fallback (older accounts / experiments still see this).
-  const buildFromRenderer = (r, replyToken, isReply) => {
+  const lookupEntity = (cvm) => {
+    if (!cvm) return null;
+    return (
+      entities[cvm.commentId] ||
+      entities[cvm.commentKey] ||
+      entities[cvm.commentSurfaceKey] ||
+      null
+    );
+  };
+
+  // Legacy renderer fallback.
+  const fromRenderer = (r, replyToken, isReply) => {
     if (!r) return null;
     const runs = r.contentText && r.contentText.runs;
-    const text = runs ? runs.map((x) => x.text).join("") : "";
-    const authorRuns = r.authorText && r.authorText.simpleText;
     return {
-      id: r.commentId || "",
-      author: authorRuns || "",
+      id: r.commentId || Math.random().toString(36).slice(2),
+      author: (r.authorText && r.authorText.simpleText) || "",
       authorThumb:
         (r.authorThumbnail &&
           r.authorThumbnail.thumbnails &&
-          r.authorThumbnail.thumbnails[0] &&
-          r.authorThumbnail.thumbnails[0].url) ||
+          r.authorThumbnail.thumbnails.slice(-1)[0] &&
+          r.authorThumbnail.thumbnails.slice(-1)[0].url) ||
         "",
       authorIsVerified: false,
-      text: text,
-      likeLabel: r.voteCount ? r.voteCount.simpleText || "" : "",
-      likeCount: parseCount(r.voteCount ? r.voteCount.simpleText : 0),
+      text: runs ? runs.map((x) => x.text).join("") : "",
+      likeLabel: (r.voteCount && r.voteCount.simpleText) || "",
+      likeCount: parseCount(r.voteCount && r.voteCount.simpleText),
       publishedTime:
         (r.publishedTimeText &&
           r.publishedTimeText.runs &&
@@ -226,7 +253,6 @@ async function YCG_fetchPage(continuationToken) {
   for (const it of items) {
     if (it.commentThreadRenderer) {
       const ct = it.commentThreadRenderer;
-      // reply continuation token, if this thread has replies
       let replyToken = null;
       const repl =
         ct.replies &&
@@ -237,29 +263,28 @@ async function YCG_fetchPage(continuationToken) {
           repl[repl.length - 1].continuationItemRenderer
         );
       }
-      // modern: commentViewModel referencing an entity by id
       const cvm =
-        ct.commentViewModel && ct.commentViewModel.commentViewModel;
-      if (cvm && cvm.commentId) {
-        const c = buildFromEntity(cvm.commentId, replyToken, false);
+        (ct.commentViewModel && ct.commentViewModel.commentViewModel) ||
+        ct.commentViewModel;
+      const ent = lookupEntity(cvm);
+      if (ent) {
+        const c = fromEntity(ent, replyToken, false);
         if (c) comments.push(c);
         continue;
       }
-      // legacy: comment.commentRenderer
       const cr = ct.comment && ct.comment.commentRenderer;
       if (cr) {
-        const c = buildFromRenderer(cr, replyToken, false);
+        const c = fromRenderer(cr, replyToken, false);
         if (c) comments.push(c);
       }
     } else if (it.commentViewModel) {
-      // replies come as bare commentViewModel items
-      const cvm = it.commentViewModel;
-      if (cvm.commentId) {
-        const c = buildFromEntity(cvm.commentId, null, true);
+      const ent = lookupEntity(it.commentViewModel);
+      if (ent) {
+        const c = fromEntity(ent, null, true);
         if (c) comments.push(c);
       }
     } else if (it.commentRenderer) {
-      const c = buildFromRenderer(it.commentRenderer, null, true);
+      const c = fromRenderer(it.commentRenderer, null, true);
       if (c) comments.push(c);
     } else if (it.continuationItemRenderer) {
       const t = tokenFromContinuationItem(it.continuationItemRenderer);
@@ -267,12 +292,89 @@ async function YCG_fetchPage(continuationToken) {
     }
   }
 
-  return { comments, nextToken, error: null };
+  debug.parsed = comments.length;
+  return { comments, nextToken, error: null, debug };
 }
 
 /**
- * Seek the page's <video> to a given number of seconds.
+ * Fallback: scroll the page and scrape comments from the rendered DOM.
+ * @param {number} maxScrolls
+ * @returns {{comments:Array, nextToken:null, error:?string, source:string}}
  */
+async function YCG_scrapeDom(maxScrolls) {
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const parseCount = (s) => {
+    if (!s) return 0;
+    const str = String(s).trim().replace(/,/g, "");
+    const m = str.match(/([\d.]+)\s*([KMB]?)/i);
+    if (!m) return 0;
+    let n = parseFloat(m[1]);
+    const u = (m[2] || "").toUpperCase();
+    if (u === "K") n *= 1e3;
+    else if (u === "M") n *= 1e6;
+    else if (u === "B") n *= 1e9;
+    return Math.round(n);
+  };
+  const hash = (str) => {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0;
+    return "dom-" + (h >>> 0).toString(36);
+  };
+
+  // Make sure the comments section is in view, then keep scrolling.
+  const commentsEl = document.querySelector("ytd-comments, #comments");
+  if (commentsEl) commentsEl.scrollIntoView();
+  let last = -1;
+  let stable = 0;
+  for (let i = 0; i < maxScrolls; i++) {
+    window.scrollTo(0, document.documentElement.scrollHeight);
+    await sleep(650);
+    const n = document.querySelectorAll("ytd-comment-thread-renderer").length;
+    if (n === last) {
+      if (++stable >= 3) break;
+    } else {
+      stable = 0;
+      last = n;
+    }
+  }
+
+  const threads = document.querySelectorAll("ytd-comment-thread-renderer");
+  const comments = [];
+  threads.forEach((th) => {
+    const textEl = th.querySelector("#content-text");
+    const authorEl = th.querySelector("#author-text");
+    if (!textEl) return;
+    const likeEl = th.querySelector("#vote-count-middle");
+    const timeEl = th.querySelector(
+      ".published-time-text a, #published-time-text a"
+    );
+    const imgEl = th.querySelector("#author-thumbnail img, #img");
+    const text = (textEl.innerText || textEl.textContent || "").trim();
+    const author = (authorEl ? authorEl.textContent : "").trim();
+    comments.push({
+      id: hash(author + "|" + text.slice(0, 40)),
+      author: author,
+      authorThumb: imgEl ? imgEl.src : "",
+      authorIsVerified: false,
+      text: text,
+      likeLabel: likeEl ? likeEl.textContent.trim() : "",
+      likeCount: parseCount(likeEl ? likeEl.textContent : ""),
+      publishedTime: timeEl ? timeEl.textContent.trim() : "",
+      replyCount: 0,
+      replyToken: null,
+      isReply: false,
+    });
+  });
+
+  return {
+    comments,
+    nextToken: null,
+    error: comments.length ? null : "dom-empty",
+    source: "dom",
+  };
+}
+
+/** Seek the page's <video> to a given number of seconds. */
 function YCG_seek(seconds) {
   const v = document.querySelector("video");
   if (v) {
