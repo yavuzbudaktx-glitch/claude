@@ -125,8 +125,41 @@ async function YCG_fetchPage(continuationToken) {
     return { comments: [], nextToken: null, error: "no-context", debug };
   }
 
+  const nextUrl =
+    "https://www.youtube.com/youtubei/v1/next?prettyPrint=false" +
+    (apiKey ? "&key=" + encodeURIComponent(apiKey) : "");
+  const post = async (bodyObj) => {
+    const res = await fetch(nextUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(bodyObj),
+    });
+    debug.http = res.status;
+    return res.json();
+  };
+
   let token = continuationToken;
   if (!token) token = findInitialToken(window.ytInitialData);
+  if (!token) {
+    // Resolve a fresh comments token server-side via videoId — works even
+    // when the comments section hasn't been scrolled into view yet, so we
+    // never need to scroll the page.
+    try {
+      const vid =
+        new URL(location.href).searchParams.get("v") ||
+        (window.ytInitialPlayerResponse &&
+          window.ytInitialPlayerResponse.videoDetails &&
+          window.ytInitialPlayerResponse.videoDetails.videoId);
+      if (vid) {
+        const wn = await post({ context, videoId: vid });
+        token = findInitialToken(wn);
+        debug.viaVideoId = true;
+      }
+    } catch (e) {
+      /* fall through to no-token */
+    }
+  }
   debug.hasToken = !!token;
   if (!token) {
     return { comments: [], nextToken: null, error: "no-token", debug };
@@ -134,17 +167,7 @@ async function YCG_fetchPage(continuationToken) {
 
   let data;
   try {
-    const url =
-      "https://www.youtube.com/youtubei/v1/next?prettyPrint=false" +
-      (apiKey ? "&key=" + encodeURIComponent(apiKey) : "");
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ context, continuation: token }),
-    });
-    debug.http = res.status;
-    data = await res.json();
+    data = await post({ context, continuation: token });
   } catch (e) {
     return {
       comments: [],
@@ -321,9 +344,10 @@ async function YCG_scrapeDom(maxScrolls) {
     return "dom-" + (h >>> 0).toString(36);
   };
 
-  // Make sure the comments section is in view, then keep scrolling.
-  const commentsEl = document.querySelector("ytd-comments, #comments");
-  if (commentsEl) commentsEl.scrollIntoView();
+  // Remember where the user was so we can put them back afterwards.
+  const startX = window.scrollX;
+  const startY = window.scrollY;
+
   let last = -1;
   let stable = 0;
   for (let i = 0; i < maxScrolls; i++) {
@@ -337,6 +361,9 @@ async function YCG_scrapeDom(maxScrolls) {
       last = n;
     }
   }
+
+  // Restore the user's original scroll position.
+  window.scrollTo(startX, startY);
 
   const threads = document.querySelectorAll("ytd-comment-thread-renderer");
   const comments = [];

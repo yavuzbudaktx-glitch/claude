@@ -255,6 +255,14 @@ body {
   gap: 10px;
 }
 
+.scrape-row {
+  padding: 0 12px;
+  flex: 0 0 auto;
+}
+.scrape-row .mini-btn {
+  width: 100%;
+}
+
 /* ---- status ---- */
 .status {
   padding: 8px 12px;

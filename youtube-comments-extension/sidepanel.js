@@ -31,6 +31,7 @@ const els = {
   txt: $("txtBtn"),
   analyticsBtn: $("analyticsBtn"),
   analytics: $("analytics"),
+  scrapeBtn: $("scrapeBtn"),
   status: $("status"),
   list: $("list"),
   count: $("countLabel"),
@@ -233,47 +234,65 @@ async function loadComments() {
   els.reload.classList.add("spinning");
   setStatus("Loading comments…");
 
+  els.scrapeBtn.hidden = true;
   try {
-    // 1) Primary: internal InnerTube API.
+    // Internal InnerTube API only — never scrolls the page.
     const api = await loadViaApi(seq);
     if (api.aborted) return;
     if (api.ok) {
       state.source = "api";
-    } else {
-      // 2) Fallback: scrape the rendered DOM (scrolls the page).
-      setStatus("Reading comments from the page… (scrolling)");
-      let scrape = null;
-      try {
-        scrape = await injectScrape(60);
-      } catch (e) {
-        scrape = null;
-      }
-      if (seq !== state.loadSeq) return;
-      if (scrape && scrape.comments && scrape.comments.length) {
-        state.comments = scrape.comments;
-        state.source = "dom";
-      } else {
-        const d = api.debug || {};
-        const detail =
-          `Couldn't load comments. [api: ${api.error || "0 parsed"}` +
-          (d.http != null ? `, http ${d.http}` : "") +
-          (d.items != null ? `, items ${d.items}` : "") +
-          (d.entities != null ? `, entities ${d.entities}` : "") +
-          `; page-scroll: ${(scrape && scrape.error) || "none"}]. ` +
-          `If comments are enabled, scroll the video page down once, then hit ⟳.`;
-        setStatus(detail, true);
-        state.loading = false;
-        els.reload.classList.remove("spinning");
-        return;
-      }
-    }
-
-    if (seq === state.loadSeq) {
       setStatus("");
+      render();
+    } else {
+      // Do NOT auto-scroll. Explain, and offer the page-scroll method as an
+      // explicit opt-in the user can decline.
+      const d = api.debug || {};
+      const detail =
+        `Couldn't load comments via YouTube's API [${api.error || "0 parsed"}` +
+        (d.http != null ? `, http ${d.http}` : "") +
+        (d.items != null ? `, items ${d.items}` : "") +
+        (d.entities != null ? `, entities ${d.entities}` : "") +
+        `]. You can try the page-scroll method below (it briefly scrolls the ` +
+        `page, then returns you to your spot).`;
+      setStatus(detail, true);
+      els.scrapeBtn.hidden = false;
       render();
     }
   } catch (e) {
     if (seq === state.loadSeq) setStatus("Failed: " + e.message, true);
+  } finally {
+    if (seq === state.loadSeq) {
+      state.loading = false;
+      els.reload.classList.remove("spinning");
+    }
+  }
+}
+
+// Explicit, opt-in page-scroll load (only when the API method fails).
+async function loadViaScrape() {
+  if (state.loading) return;
+  const seq = ++state.loadSeq;
+  state.loading = true;
+  state.comments = [];
+  els.list.innerHTML = "";
+  els.scrapeBtn.hidden = true;
+  els.reload.classList.add("spinning");
+  setStatus("Reading comments from the page…");
+  try {
+    const scrape = await injectScrape(60);
+    if (seq !== state.loadSeq) return;
+    if (scrape && scrape.comments && scrape.comments.length) {
+      state.comments = scrape.comments;
+      state.source = "dom";
+      setStatus("");
+      render();
+    } else {
+      setStatus("Still couldn't read comments from the page.", true);
+      els.scrapeBtn.hidden = false;
+    }
+  } catch (e) {
+    setStatus("Page-scroll failed: " + e.message, true);
+    els.scrapeBtn.hidden = false;
   } finally {
     if (seq === state.loadSeq) {
       state.loading = false;
@@ -654,6 +673,7 @@ els.tsOnly.addEventListener("change", render);
 els.pinnedOnly.addEventListener("change", render);
 
 els.reload.addEventListener("click", () => detectAndMaybeLoad(true));
+els.scrapeBtn.addEventListener("click", loadViaScrape);
 
 els.analyticsBtn.addEventListener("click", () => {
   els.analytics.hidden = !els.analytics.hidden;
