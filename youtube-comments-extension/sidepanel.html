@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Comment Grabber</title>
+    <link rel="stylesheet" href="sidepanel.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="title-row">
+        <span class="logo">💬</span>
+        <h1>Comment Grabber</h1>
+        <button id="reloadBtn" class="icon-btn" title="Reload comments">⟳</button>
+      </div>
+      <div id="videoTitle" class="video-title"></div>
+    </header>
+
+    <section id="controls" class="controls" hidden>
+      <input
+        id="search"
+        type="search"
+        class="search"
+        placeholder="Search comments or authors…"
+        autocomplete="off"
+      />
+
+      <div class="filter-row">
+        <select id="sort" class="select" title="Sort">
+          <option value="top">Top (most liked)</option>
+          <option value="new">Newest</option>
+          <option value="old">Oldest</option>
+          <option value="long">Longest</option>
+        </select>
+
+        <label class="minlikes" title="Minimum likes">
+          👍<input id="minLikes" type="number" min="0" value="0" />
+        </label>
+
+        <label class="toggle" title="Only comments containing a timestamp">
+          <input id="tsOnly" type="checkbox" /> ⏱ Timestamps
+        </label>
+
+        <label class="toggle" title="Show only pinned comments">
+          <input id="pinnedOnly" type="checkbox" /> 📌 Pinned
+        </label>
+      </div>
+
+      <div class="export-row">
+        <button id="copyBtn" class="mini-btn">Copy all</button>
+        <button id="csvBtn" class="mini-btn">CSV</button>
+        <button id="jsonBtn" class="mini-btn">JSON</button>
+        <button id="txtBtn" class="mini-btn">TXT</button>
+        <button id="analyticsBtn" class="mini-btn" title="Toggle analytics">
+          📊 Insights
+        </button>
+      </div>
+    </section>
+
+    <section id="analytics" class="analytics" hidden></section>
+
+    <div id="status" class="status">Open a YouTube video to load its comments.</div>
+
+    <main id="list" class="list"></main>
+
+    <footer class="footer">
+      <span id="countLabel"></span>
+    </footer>
+
+    <script src="injected.js"></script>
+    <script src="sidepanel.js"></script>
+  </body>
+</html>
