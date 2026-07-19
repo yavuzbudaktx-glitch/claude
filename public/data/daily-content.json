@@ -1,32 +1,45 @@
 {
-  "date": "2026-07-18",
-  "generatedAt": "2026-07-18T12:09:22.772Z",
-  "art": null,
+  "date": "2026-07-19",
+  "generatedAt": "2026-07-19T08:27:52.515Z",
+  "art": {
+    "id": 41472,
+    "title": "Guanyin as the Nine-Lotus Bodhisattva",
+    "artist": "Unidentified artist",
+    "date": "1593",
+    "medium": "Hanging scroll; ink and color on silk",
+    "origin": "China",
+    "description": "Guanyin as the Nine-Lotus Bodhisattva, by Unidentified artist. Hanging scroll; ink and color on silk, China, 1593.",
+    "alt": "Guanyin as the Nine-Lotus Bodhisattva",
+    "imageUrl": "https://images.metmuseum.org/CRDImages/as/original/DP-18087-002.jpg",
+    "pageUrl": "https://www.metmuseum.org/art/collection/search/41472",
+    "source": "The Met",
+    "highlight": false
+  },
   "bird": {
-    "name": "Rusty-belted tapaculo",
+    "name": "Grey-bellied cuckoo",
     "scientific": "",
-    "blurb": "The rusty-belted tapaculo is a species of suboscine passerine bird in the tapaculo family Rhinocryptidae. It is the only species placed in the genus Liosceles. It is found in Brazil, Bolivia, Colombia, Ecuador, and Peru.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/d/db/Liosceles_thoracicus_Rusty-belted_Tapaculo%3B_Amazonia_National_Park%2C_Itaituba%2C_Par%C3%A1%2C_Brazil_%28cropped%29.jpg",
-    "audioUrl": "",
+    "blurb": "The grey-bellied cuckoo or the Indian plaintive cuckoo is a cuckoo with widespread occurrence throughout Asia.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Gray-bellied_Cuckoo_in_Bhigwan_August_2025_by_Tisha_Mukherjee_05.jpg/3840px-Gray-bellied_Cuckoo_in_Bhigwan_August_2025_by_Tisha_Mukherjee_05.jpg",
+    "audioUrl": "/api/bird-audio?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Ff%2Ff0%2FCacomantis_passerinus_20220524_133445.ogg",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Rusty-belted_tapaculo",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Rusty-belted%20tapaculo%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Grey-bellied_cuckoo",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Grey-bellied%20cuckoo%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Kyoto Animation arson attack",
-    "description": "2019 mass murder in Kyoto, Japan",
-    "extract": "The Kyoto Animation arson attack occurred at Kyoto Animation's Studio 1 building in the Fushimi ward of Kyoto, Kyoto Prefecture, Japan, on the morning of 18 July 2019. The arson killed 36 people, injured an additional 34, and destroyed most of the materials and computers in Studio 1. It is one of the deadliest massacres in Japan since the end of World War II, the deadliest building fire in Japan since the 2001 Myojo 56 building fire, and the first massacre ever to have occurred at a studio associated with an entertainment company, and the animation industry.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Kyoto_animation_arson_attack_1_20190721.jpg/3840px-Kyoto_animation_arson_attack_1_20190721.jpg",
-    "pageUrl": "https://en.wikipedia.org/wiki/Kyoto_Animation_arson_attack",
-    "source": "Wikipedia · On this day"
+    "title": "The Halo Graphic Novel",
+    "description": "2006 American graphic novel",
+    "extract": "The Halo Graphic Novel is a graphic novel anthology published by Marvel Comics in partnership with Bungie, set in the universe of the science fiction franchise Halo. The Halo Graphic Novel was the series' first entry into the sequential art medium, and features aspects of the Halo universe which until then had not been discussed or seen in any medium.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/8c/Halocomicbook.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/The_Halo_Graphic_Novel",
+    "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
-    "title": "Shadow and Rainbow",
-    "explanation": "At sunset, an alignment of rainbow and mountain shadow was captured in this remarkable snapshot. The stunning view was recorded from a fire lookout on Smith Peak in the Plumas National Forest near Portola, California on July 13. Still, near sunset it's no accident that the majestic mountain shadow seems to point to the center of the graceful rainbow arc . Due to perspective and the long line of sight the mountain shadow naturally forms a tapering triangular shape, its apex positioned at the point opposite the Sun on the horizon. Following thunderstorms across the region, the rainbow arcs across the early evening sky, with its colorful and characteristic 42 degree arc formed as sunlight is refracted and reflected by the atmospheric water droplets. The geometric center of a rainbow arc lies at the antisolar point. And in this scene from the golden hour on planet Earth , that's also oposite the setting Sun along the distant horizon.",
-    "url": "https://apod.nasa.gov/apod/image/2607/ShadowandRainbow_Loschiavo1024.jpg",
-    "hdurl": "https://apod.nasa.gov/apod/image/2607/ShadowandRainbow_Loschiavo.jpg",
+    "title": "Flying Saucer Crash Lands in Utah Desert",
+    "explanation": "A flying saucer from outer space crash-landed in the Utah desert after being tracked by radar and chased by helicopters. The year was 2004, and no space aliens were involved. The saucer, pictured here, was the Genesis sample return capsule, part of a human-made robot Genesis spaceship launched in 2001 by NASA itself to study the Sun. The unexpectedly hard landing at over 300 kilometers per hour occurred because the parachutes did not open as planned. The Genesis mission had been orbiting the Sun collecting solar wind particles that are usually deflected away by Earth's magnetic field . Despite the crash landing, many return samples remained in good enough condition to analyze. Genesis -related discoveries included new details about the composition of the Sun and how the abundance of some types of elements differ across the Solar System . These results have provided intriguing clues into details of how the Sun and planets formed billions of years ago.",
+    "url": "https://apod.nasa.gov/apod/image/2607/Genesisimpact_nasa_960.jpg",
+    "hdurl": "https://apod.nasa.gov/apod/image/2607/Genesisimpact_nasa_960.jpg",
     "media_type": "image"
   }
 }
