@@ -1,14 +1,14 @@
 # Britannica scrape debug dump
-# generated: 2026-07-18T20:25:17.575Z
-# url:       https://www.britannica.com/on-this-day/july-18
+# generated: 2026-07-19T07:40:28.494Z
+# url:       https://www.britannica.com/on-this-day/july-19
 # fetcher:   Jina Reader
 # kind:      markdown
-# length:    18737
+# length:    19673
 # parsed:    NO
 # -----------------------------------------------------------------
 Title: On This Day - What Happened Today In History | Britannica
 
-URL Source: https://www.britannica.com/on-this-day/july-18
+URL Source: https://www.britannica.com/on-this-day/july-19
 
 Markdown Content:
 [![Image 1: Encyclopedia Britannica](https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png)](https://www.britannica.com/)
@@ -33,7 +33,7 @@ Login
 
 [Home](https://www.britannica.com/) Today in History ![Image 3: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-192/images/shared/tih-logo.png?v=3.192.4)
 
-![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-192/images/shared/tih-star.svg?v=3.192.4)July 18
+![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-192/images/shared/tih-star.svg?v=3.192.4)July 19
 
 ![Image 5: Today In History Phone](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-phone.png?v=3.189.7)
 
@@ -59,7 +59,7 @@ June
 
 [22](https://www.britannica.com/on-this-day/June-22)[23](https://www.britannica.com/on-this-day/June-23)[24](https://www.britannica.com/on-this-day/June-24)[25](https://www.britannica.com/on-this-day/June-25)[26](https://www.britannica.com/on-this-day/June-26)[27](https://www.britannica.com/on-this-day/June-27)[28](https://www.britannica.com/on-this-day/June-28)
 
-[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-18)[](https://www.britannica.com/on-this-day/july-18)[](https://www.britannica.com/on-this-day/july-18)[](https://www.britannica.com/on-this-day/july-18)[](https://www.britannica.com/on-this-day/july-18)
+[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-19)[](https://www.britannica.com/on-this-day/july-19)[](https://www.britannica.com/on-this-day/july-19)[](https://www.britannica.com/on-this-day/july-19)[](https://www.britannica.com/on-this-day/july-19)
 
 July
 
@@ -71,7 +71,7 @@ July
 
 [22](https://www.britannica.com/on-this-day/July-22)[23](https://www.britannica.com/on-this-day/July-23)[24](https://www.britannica.com/on-this-day/July-24)[25](https://www.britannica.com/on-this-day/July-25)[26](https://www.britannica.com/on-this-day/July-26)[27](https://www.britannica.com/on-this-day/July-27)[28](https://www.britannica.com/on-this-day/July-28)
 
-[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-18)[](https://www.britannica.com/on-this-day/july-18)[](https://www.britannica.com/on-this-day/july-18)[](https://www.britannica.com/on-this-day/july-18)
+[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-19)[](https://www.britannica.com/on-this-day/july-19)[](https://www.britannica.com/on-this-day/july-19)[](https://www.britannica.com/on-this-day/july-19)
 
 August
 
@@ -83,7 +83,7 @@ August
 
 [22](https://www.britannica.com/on-this-day/August-22)[23](https://www.britannica.com/on-this-day/August-23)[24](https://www.britannica.com/on-this-day/August-24)[25](https://www.britannica.com/on-this-day/August-25)[26](https://www.britannica.com/on-this-day/August-26)[27](https://www.britannica.com/on-this-day/August-27)[28](https://www.britannica.com/on-this-day/August-28)
 
-[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-18)[](https://www.britannica.com/on-this-day/july-18)[](https://www.britannica.com/on-this-day/july-18)[](https://www.britannica.com/on-this-day/july-18)
+[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-19)[](https://www.britannica.com/on-this-day/july-19)[](https://www.britannica.com/on-this-day/july-19)[](https://www.britannica.com/on-this-day/july-19)
 
 August
 
@@ -93,25 +93,25 @@ August
 
 [Go to Today's Date](https://www.britannica.com/on-this-day)
 
- 1921: Baseball’s Black Sox trial begins
+ 1545: The sinking of the _Mary Rose_
 
- On this day in 1921 the trial of baseball’s infamous [Black Sox](https://www.britannica.com/event/Black-Sox-Scandal) began. Eight [Chicago White Sox](https://www.britannica.com/topic/Chicago-White-Sox) players stood accused of accepting bribes to intentionally lose the 1919 [World Series](https://www.britannica.com/sports/World-Series). Although a jury acquitted them after key evidence disappeared, baseball’s commissioner permanently banned all eight from the sport, including legendary outfielder [Joe (“Shoeless Joe”) Jackson](https://www.britannica.com/biography/Shoeless-Joe-Jackson).
+ On this day in 1545 [Henry VIII](https://www.britannica.com/biography/Henry-VIII-king-of-England)’s flagship, the [Mary Rose](https://www.britannica.com/topic/Mary-Rose-English-warship), sank during the [Battle of the Solent](https://www.britannica.com/event/Battle-of-the-Solent) after a gust of wind caused seawater to pour through its open gunports. More than 400 crew members died. Rediscovered in the [English Channel](https://www.britannica.com/place/English-Channel) centuries later, the remarkably preserved wreck became one of the world’s most important underwater archaeological discoveries.
 
-[READ MORE](https://www.britannica.com/today-in-history/July-18-Baseballs-Black-Sox-Trial-Begins)
+[READ MORE](https://www.britannica.com/today-in-history/July-19-The-Sinking-of-the-Mary-Rose)
 
-![Image 6: July 18, 1921: A courtroom acquittal couldn't save baseball's most infamous team](https://cdn.britannica.com/23/289323-050-93FB8288/today-in-history-The-Chicago-Black-Sox-trial-begins.jpg?w=530&h=300&c=crop)
+![Image 6: July 19, 1545: Henry VIII's favorite warship vs. the wind](https://cdn.britannica.com/24/289324-050-4EC0B23F/today-in-history-The-Mary-Rose-sinks-during-battle.jpg?w=530&h=300&c=crop)
 
- TPLP—Archive Photos/Getty Images; Photo Illustration Encyclopædia Britannica, Inc.
+ © ZU_09—DigitalVision Vectors/Getty Images; Photo Illustration Encyclopædia Britannica, Inc.
 
  Featured Event 
 
-![Image 7: Lives uprooted by war: Salvadoran civilians returning home](https://cdn.britannica.com/84/281084-050-42F821B7/salvadorian-nationals-residing-in-honduras-red-cross-headquarters-san-miguel-july-7-1969.jpg?w=356&h=200&c=crop)
+![Image 7: Women's suffrage: “Declaration of Sentiments,” Seneca Falls](https://cdn.britannica.com/96/117396-050-BD367126/Declaration-of-Sentiments-Signatories-Seneca-Falls-Convention-July-1848.jpg?w=356&h=200&c=crop)
 
- © Alfredo Quant—AFP/Getty Images
+ Rare Book And Special Collections Division, Library of Congress, Washington, D.C. (rbcmil.scrp4006701)
 
-[The end of the Football War](https://www.britannica.com/event/Football-War)
+[U.S. women’s suffrage movement begun](https://www.britannica.com/topic/History-of-Woman-Suffrage)
 
- The [Football War](https://www.britannica.com/event/Football-War), fought between [Honduras](https://www.britannica.com/place/Honduras) and [El Salvador](https://www.britannica.com/place/El-Salvador), came to an end on this day in 1969, four days after it began. It had significant human and economic costs, including the displacement of an estimated 300,000 Salvadorans, most of whom were expelled or fled from Honduras.
+ On this day in 1848, the [women’s suffrage](https://www.britannica.com/topic/woman-suffrage) movement in the [United States](https://www.britannica.com/place/United-States) was launched with the opening of the [Seneca Falls Convention](https://www.britannica.com/event/Seneca-Falls-Convention), which sought to gain certain rights and privileges for women, notably the right to vote. _[[Take our quiz about the Nineteenth Amendment and women’s suffrage](https://www.britannica.com/quiz/nineteenth-amendment-and-womens-suffrage).]_
 
 Featured Biography
 
@@ -119,131 +119,119 @@ Featured Biography
 
  Featured Biography 
 
-[![Image 8: Nelson Mandela stands at a podium with both hands raised, smiling, during Walter Sisulu's funeral at Orlando Stadium in Soweto, Johannesburg.](https://cdn.britannica.com/47/96747-050-32506138/Nelson-Mandela-school-Johannesburg-South-Africa.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Nelson-Mandela)
+[![Image 8: Edgar Degas: Ballet](https://cdn.britannica.com/97/7997-050-11FF8C8B/Prima-Ballerina-pastel-Edgar-Degas-Musee-dOrsay-1876.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Edgar-Degas)
 
- © Alexander Joe—AFP/Getty Images
+ Christophel Fine Art—Universal Images Group/Getty Images
 
-Nelson Mandela
+Edgar Degas
 
-> During my lifetime I have dedicated myself to this struggle of the African people. I have fought against white domination, and I have fought against black domination. I have cherished the ideal of a democratic and free society in which all persons live together in harmony and with equal opportunities. It is an ideal which I hope to live for, and to achieve. But if needs be, it is an ideal for which I am prepared to die.
-> 
-> Nelson Mandela, 1964
-
-[South African](https://www.britannica.com/place/South-Africa) Black nationalist and statesman [Nelson Mandela](https://www.britannica.com/biography/Nelson-Mandela), whose long imprisonment (1962–90) and ascent to the presidency (1994–99) symbolized the aspirations of his country’s Black majority, was born this day in 1918.
+[Edgar Degas](https://www.britannica.com/biography/Edgar-Degas)—a French painter and sculptor who was prominent in the [Impressionist](https://www.britannica.com/art/Impressionism-art) group and widely celebrated for his images of the female figure, especially ballet dancers and bathers—was born this day in 1834. _[[Explore the radicalism of Impressionism](https://www.britannica.com/art/The-Radicalism-of-Impressionism).]_
 
 Famous Birthdays
 
-1950
+1962
 
-[Jack Layton](https://www.britannica.com/biography/Jack-Layton)
+[Eddie Lampert](https://www.britannica.com/money/Edward-S-Lampert)
 
-Canadian politician
+American investor
 
-1907
+1949
 
-[H.L.A. Hart](https://www.britannica.com/biography/H-L-A-Hart)
+[Kgalema Motlanthe](https://www.britannica.com/biography/Kgalema-Motlanthe)
 
-English philosopher, teacher, and author
+president of South Africa
 
-1906
+1893
 
-[Clifford Odets](https://www.britannica.com/biography/Clifford-Odets)
+[Vladimir Mayakovsky](https://www.britannica.com/biography/Vladimir-Vladimirovich-Mayakovsky)
 
-American dramatist
+Russian poet
 
-1848
+1814
 
-[William Gilbert Grace](https://www.britannica.com/biography/William-Gilbert-Grace)
+[Samuel Colt](https://www.britannica.com/biography/Samuel-Colt)
 
-British cricketer
+American inventor and manufacturer
 
-[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-18)
+[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-19)
 
-## More on July 18
+## More on July 19
 
-![Image 9: Detroit, Michigan](https://cdn.britannica.com/25/100325-050-82D6E189/Detroit-Michigan.jpg?w=260&h=196&c=crop)
+![Image 9: James Garner](https://cdn.britannica.com/50/158250-050-65CF70FB/James-Garner-The-Rockford-Files.jpg?w=260&h=196&c=crop)
 
- © Index Open
+ © National Broadcasting Company
 
-2013
+2014
 
-[Detroit](https://www.britannica.com/place/Detroit) submitted a claim for Chapter 9 [bankruptcy](https://www.britannica.com/money/bankruptcy) protection, the largest such filing for a U.S. city ever; the city officially emerged from bankruptcy the following year. _[[See our list of nine must-see paintings at the Detroit Institute of Arts](https://www.britannica.com/list/9-must-see-paintings-in-detroit).]_
+ American actor [James Garner](https://www.britannica.com/biography/James-Garner), who was perhaps best known for his roles in the television series Maverick and The Rockford Files, died at age 86. _[[Sort fact from fiction in our quiz about A-list actors](https://www.britannica.com/quiz/a-list-of-actors-fact-or-fiction).]_
 
-![Image 10: Nadia Comăneci](https://cdn.britannica.com/83/194783-050-4D3C2683/Nadia-Comaneci-1976-Summer-Olympics-Montreal-1976.jpg?w=260&h=196&c=crop)
+![Image 10: Mad Men](https://cdn.britannica.com/32/182132-050-5677AFBA/Cast-members-television-series-Mad-Men-2014.jpg?w=260&h=196&c=crop)
 
- Sportschrome/Newscom
+ © AMC
 
-1976
+2007
 
- For her performance in the [uneven parallel bars](https://www.britannica.com/sports/uneven-parallel-bars) at the [Olympic Games in Montreal](https://www.britannica.com/event/Montreal-1976-Olympic-Games), [Nadia Comăneci](https://www.britannica.com/biography/Nadia-Comaneci) of Romania became the first gymnast to be awarded a perfect score of 10 in an Olympic gymnastic event. _[[How have the Olympics changed over time?](https://www.britannica.com/topic/How-have-the-Olympics-changed)]_
+ The first episode of [Mad Men](https://www.britannica.com/topic/Mad-Men) aired, and the series, which starred [Jon Hamm](https://www.britannica.com/biography/Jon-Hamm), quickly became a critical and commercial hit, noted for its nuanced representation of social life in the 1960s and for its stylish visual flair. _[[Test your knowledge of actors and acting](https://www.britannica.com/quiz/actors-and-acting-quiz).]_
 
-![Image 11: Gemini 10](https://cdn.britannica.com/20/420-050-DDD6C2E5/blastoff-Gemini-10-result-Cape-Kennedy-Florida-July-18-1966.jpg?w=260&h=196&c=crop)
+![Image 11: Daley Thompson at the Moscow 1980 Olympic Games](https://cdn.britannica.com/09/255209-050-34F7548B/Daley-Thompson-javelin-throw-Decathlon-Moscow-1980-Olympics.jpg?w=260&h=196&c=crop)
 
- NASA
+ © Giuliano Bevilacqua—Sygma/Getty Images
 
-1966
+1980
 
-[Gemini](https://www.britannica.com/science/Gemini-spacecraft-and-space-program) 10 launched from Florida, carrying astronauts [John Young](https://www.britannica.com/biography/John-W-Young) and [Michael Collins](https://www.britannica.com/biography/Michael-Collins-American-astronaut) into space. The mission, which lasted nearly three days, included the first space walk from one spacecraft to another.
+ The [Moscow 1980 Olympic Games](https://www.britannica.com/event/Moscow-1980-Olympic-Games) opened, though some 60 countries refused to attend because of the [Soviet Union’s invasion of Afghanistan](https://www.britannica.com/event/Soviet-invasion-of-Afghanistan) in 1979; it was the largest boycott in the history of the Olympic movement. _[[How much do you know about the Olympics?](https://www.britannica.com/quiz/the-olympic-games)]_
 
-![Image 12: Saint-Lô, France: Church of Notre-Dame](https://cdn.britannica.com/72/118472-050-78E5B7D7/Church-Notre-Dame-France-Saint-Lo.jpg?w=260&h=196&c=crop)
-
- © Keith Heaton/Shutterstock.com
-
-1944
-
- Allied forces captured the French town of [Saint-Lô](https://www.britannica.com/place/Saint-Lo), a vital communications center, during [World War II](https://www.britannica.com/event/World-War-II). _[[Sort fact from fiction in our World War II quiz](https://www.britannica.com/quiz/the-second-world-war-fact-or-fiction).]_
-
-![Image 13: A baseball legend](https://cdn.britannica.com/99/12799-004-5E3BEDBC/Ty-Cobb.jpg?w=260&h=196&c=crop)
-
- Pictorial Parade
-
-1927
-
- American baseball player [Ty Cobb](https://www.britannica.com/biography/Ty-Cobb) collected his 4,000th career hit. _[[See where Ty Cobb ranks on our list of the 10 greatest baseball players of all time](https://www.britannica.com/list/10-greatest-baseball-players-of-all-time).]_
-
-![Image 14: John Glenn](https://cdn.britannica.com/98/85198-050-793B6D9A/John-H-Glenn-Jr-Friendship-7-American-February-1962.jpg?w=260&h=196&c=crop)
-
- NASA
-
-1921
-
-[John Glenn](https://www.britannica.com/biography/John-Glenn)—the first U.S. [astronaut](https://www.britannica.com/topic/astronaut) to orbit [Earth](https://www.britannica.com/place/Earth), completing three orbits in 1962—was born in Ohio. _[[Take our quiz of famous astronauts and cosmonauts](https://www.britannica.com/quiz/famous-astronauts-and-cosmonauts).]_
-
-![Image 15: Ferdinand Foch](https://cdn.britannica.com/03/11803-050-A44853CC/Ferdinand-Foch.jpg?w=260&h=196&c=crop)
+![Image 12: Clyde Beatty](https://cdn.britannica.com/49/79249-050-D4D6F126/Clyde-Beatty-1933.jpg?w=260&h=196&c=crop)
 
  Encyclopædia Britannica, Inc.
 
-1918
+1965
 
- French General [Ferdinand Foch](https://www.britannica.com/biography/Ferdinand-Foch) launched a counterstrike that forced the Germans into a hasty retreat during the [Second Battle of the Marne](https://www.britannica.com/event/Second-Battle-of-the-Marne), the last large German offensive of [World War I](https://www.britannica.com/event/World-War-I). _[[Sort fact from fiction in our quiz about World War I](https://www.britannica.com/quiz/world-war-i-fact-or-fiction).]_
+ American wild-animal tamer [Clyde Beatty](https://www.britannica.com/biography/Clyde-Beatty)—who was known for his “fighting act,” which was designed to show his courage and mastery of the ferocious animals under his control—died at age 62.
 
-![Image 16: Jane Austen](https://cdn.britannica.com/79/83679-050-08F0DFBA/Jane-Austen.jpg?w=260&h=196&c=crop)
+![Image 13: George McGovern](https://cdn.britannica.com/25/2425-004-6F93419F/George-S-McGovern-Democratic-National-Convention-nomination-1972.jpg?w=260&h=196&c=crop)
 
- Stock Montage—Archive Photos/Getty Images
+ Archive Photos
 
-1817
+1922
 
- The English novelist [Jane Austen](https://www.britannica.com/biography/Jane-Austen), who wrote such classics as [Sense and Sensibility](https://www.britannica.com/topic/Sense-and-Sensibility) (1811) and [Pride and Prejudice](https://www.britannica.com/topic/Pride-and-Prejudice) (1813), died in Winchester, Hampshire, at age 41. _[[How much do you know about Jane Austen?](https://www.britannica.com/quiz/jane-austen)]_
+ American liberal [Democratic](https://www.britannica.com/topic/Democratic-Party) politician [George S. McGovern](https://www.britannica.com/biography/George-McGovern), who served as a U.S. senator (1962–80) and was an unsuccessful candidate for the [presidency in 1972](https://www.britannica.com/event/United-States-presidential-election-of-1972), was born in Avon, South Dakota. _[[Test your knowledge of American politics](https://www.britannica.com/quiz/history-of-american-politics).]_
 
-![Image 17: William Makepeace Thackeray](https://cdn.britannica.com/56/9056-050-B5FB0CD5/William-Makepeace-Thackeray-detail-oil-painting-Samuel.jpg?w=260&h=196&c=crop)
+![Image 14: Tour de France](https://cdn.britannica.com/82/8982-050-EB50B5A8/Tour-de-France-Poitiers-Bordeaux.jpg?w=260&h=196&c=crop)
 
- Courtesy of The National Portrait Gallery, London
+ Daniel Nouvel/Gamma Liaison
 
-1811
+1903
 
- English novelist [William Makepeace Thackeray](https://www.britannica.com/biography/William-Makepeace-Thackeray), best known for [Vanity Fair](https://www.britannica.com/topic/Vanity-Fair) (1847–48) and [The History of Henry Esmond, Esq.](https://www.britannica.com/topic/Henry-Esmond-historical-novel-by-Thackeray) (1852), was born in India. _[[Test your knowledge of famous authors](https://www.britannica.com/quiz/famous-authors).]_
+ French bicyclist Maurice Garin won the first [Tour de France](https://www.britannica.com/sports/Tour-de-France), which covered 2,428 km (1,508 miles). _[[Sort fact from fiction in our quiz about the Tour de France](https://www.britannica.com/quiz/tour-de-france-fact-or-fiction).]_
 
-![Image 18: Alfonso VIII](https://cdn.britannica.com/34/233934-050-F9630F9E/Alfonso-VIII-king-of-Castile.jpg?w=260&h=196&c=crop)
+![Image 15: Napoleon III](https://cdn.britannica.com/69/9869-050-B2D4D3F0/Napoleon-III-detail-portrait-Hippolyte-Flandrin-Versailles.jpg?w=260&h=196&c=crop)
 
- Aclosund Historic/Alamy
+ H. Roger-Viollet
 
-1195
+1870
 
- The [Almohads](https://www.britannica.com/topic/Almohads) were victorious over the forces of King [Alfonso VIII](https://www.britannica.com/biography/Alfonso-VIII) of Castile in the [Battle of Alarcos](https://www.britannica.com/event/Battle-of-Alarcos).
+ The French emperor [Napoleon III](https://www.britannica.com/biography/Napoleon-III-emperor-of-France) declared war on [Prussia](https://www.britannica.com/place/Prussia), beginning the [Franco-German War](https://www.britannica.com/event/Franco-German-War). _[[Take our history of war quiz](https://www.britannica.com/quiz/a-history-of-war).]_
+
+![Image 16: Lizzie Borden](https://cdn.britannica.com/44/160544-050-09BDC57B/Lizzie-Borden-attorney-courtroom-sketch-acquittal-B-June-1893.jpg?w=260&h=196&c=crop)
+
+ Library of Congress, Washington, D.C. (Digital file no. cph 3c23237)
+
+1860
+
+[Lizzie Borden](https://www.britannica.com/biography/Lizzie-Borden-American-murder-suspect)—who was suspected of murdering her stepmother and father but was acquitted in a trial that became a national sensation in the United States—was born in Fall River, Massachusetts. _[[Read more about this and nine other “trials of the century.”](https://www.britannica.com/list/order-in-the-court-10-trials-of-the-century)]_
+
+![Image 17: Edward III](https://cdn.britannica.com/65/165-004-FA737130/Edward-III-watercolour-British-Library.jpg?w=260&h=196&c=crop)
+
+ By permission of the British Library
+
+1333
+
+ Scottish forces were defeated by the English under King [Edward III](https://www.britannica.com/biography/Edward-III-king-of-England) in the [Battle of Halidon Hill](https://www.britannica.com/event/Battle-of-Halidon-Hill). _[[Take our kings of England quiz](https://www.britannica.com/quiz/kings-of-england).]_
 
 SIGN UP FOR
 
-![Image 19: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 20: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
+![Image 18: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 19: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
 
 History's Biggest Headlines
 
@@ -253,21 +241,4 @@ SIGN UP
 
 ### Thank you for signing up!
 
-![Image 22](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=76&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-18&s=9A3C9A14-10B5-4D88-9002-F54B13687240&json=%20)![Image 23](https://pixel.rubiconproject.com/token?pid=49096&us_privacy=1YNY)
-
-✕
-## Do not sell or share my personal information.
-
-You have chosen to opt-out of the sale or sharing of your information from this site and any of its affiliates. To opt back in please click the "Reenable Personalization" link.
-
-This site collects information through the use of cookies and other tracking tools. Cookies and these tools do not contain any information that personally identifies a user, but personal information that would be stored about you may be linked to the information stored in and obtained from them. This information would be used and shared for Analytics, Ad Serving, Interest Based Advertising, among other purposes.
-
-For more information please visit this site's Privacy Policy.
-
-CANCEL
-
-CONTINUE
-
-Information from your device can be used to personalize your ad experience. 
-
-[Do not sell or share my personal information.](https://www.britannica.com/)
+![Image 21](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=132&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-19&s=AFEE43D2-24F9-4785-9A94-D79A7813C848&json=%20)![Image 22: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=aca166f1-edc0-d709-b1e0-79f84f826239&iiqpciddate=1784446734597&tsrnd=777_1784446734614&jsver=6.253&testPercentage=95&testGroup=B&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 23](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001784446736-M2YKQEQU-4JBA)![Image 24](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001784446736-M2YKQEQU-4JBA&adnxs_id=$UID&gdpr=0)![Image 25](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001784446736-M2YKQEQU-4JBA%26auid%3DAU1D-0100-001784446736-M2YKQEQU-4JBA&gdpr=0)![Image 26](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001784446736-M2YKQEQU-4JBA&gdpr=0)![Image 27](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001784446736-M2YKQEQU-4JBA&gdpr=0)![Image 28](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001784446736-M2YKQEQU-4JBA&gdpr=0)![Image 29](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001784446736-M2YKQEQU-4JBA&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001784446736-M2YKQEQU-4JBA%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 30](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4NDQ0NjczNi1NMllLUUVRVS00SkJB&id=AU1D-0100-001784446736-M2YKQEQU-4JBA&gdpr=0)![Image 31](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001784446736-M2YKQEQU-4JBA)![Image 32](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001784446736-M2YKQEQU-4JBA&uid=[UID]&gdpr=0)![Image 33](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001784446736-M2YKQEQU-4JBA%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
