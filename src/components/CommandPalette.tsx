@@ -112,7 +112,6 @@ function CommandPaletteInner() {
       { id: "focus", label: "Start focus mode", hint: "Focus", run: () => { emitCommand({ kind: "focus" }); close(); } },
       { id: "scratch", label: "Open scratchpad", hint: "Note", run: () => { emitCommand({ kind: "scratchpad" }); close(); } },
       { id: "accounting", label: "Open Accounting page", hint: "Tools", run: () => { window.location.href = "/accounting"; close(); } },
-      { id: "nofap", label: "Open Discipline page", hint: "Tools", run: () => { window.location.href = "/nofap"; close(); } },
       { id: "city", label: "Change city…", hint: "Location", run: () => { setMode("city"); setQuery(""); setSel(0); } },
       { id: "ticker", label: "Add ticker…", hint: "Watchlist", run: () => { setMode("ticker"); setQuery(""); setSel(0); } },
       { id: "task", label: "Add task…", hint: "Tasks", run: () => { setMode("task"); setQuery(""); setSel(0); } },

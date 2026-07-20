@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
 import { format } from "date-fns";
-import { Calculator, Flame, LayoutDashboard, Sparkles } from "lucide-react";
+import { Calculator, LayoutDashboard, Sparkles } from "lucide-react";
 import { WeatherSummary } from "./WeatherSummary";
 
 // Shared utility strip at the top of every authed page: a date+weather pill,
@@ -15,7 +15,7 @@ export function TopUtilityBar({
   context,
   right,
 }: {
-  context: "dashboard" | "accounting" | "fun" | "nofap";
+  context: "dashboard" | "accounting" | "fun";
   right?: ReactNode;
 }) {
   const [now, setNow] = useState<Date | null>(null);
@@ -34,7 +34,6 @@ export function TopUtilityBar({
     { id: "dashboard",  href: "/dashboard",  label: "Dashboard",  Icon: LayoutDashboard },
     { id: "accounting", href: "/accounting", label: "Accounting", Icon: Calculator },
     { id: "fun",        href: "/fun",        label: "Fun",        Icon: Sparkles },
-    { id: "nofap",      href: "/nofap",      label: "Discipline", Icon: Flame },
   ];
 
   return (
@@ -57,12 +56,12 @@ export function TopUtilityBar({
               href={href}
               title={`Open ${label}`}
               aria-label={label}
-              className={`${pill} ${id === "fun" || id === "nofap" ? "!px-2" : ""}`}
+              className={`${pill} ${id === "fun" ? "!px-2" : ""}`}
             >
               <span className={dot} style={dotStyle}>
                 <Icon className="h-2.5 w-2.5" />
               </span>
-              {id !== "fun" && id !== "nofap" && <span className="font-medium">{label}</span>}
+              {id !== "fun" && <span className="font-medium">{label}</span>}
             </Link>
           ))}
       </div>
