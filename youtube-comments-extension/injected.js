@@ -111,42 +111,6 @@ async function YCG_fetchPage(continuationToken, wantVideoId) {
     return bySection;
   };
 
-  // Collect continuation items from ANY container YouTube uses
-  // (onResponseReceivedEndpoints / Actions / Commands, or legacy
-  // continuationContents), so pagination doesn't depend on the exact shape.
-  // Only the commands' own continuationItems are gathered, which keeps
-  // per-thread reply tokens out of top-level page-token detection.
-  const collectContinuationItems = (root) => {
-    const out = [];
-    const seen = new Set();
-    const walk = (node) => {
-      if (!node || typeof node !== "object" || seen.has(node)) return;
-      seen.add(node);
-      const cmd =
-        node.appendContinuationItemsCommand ||
-        node.reloadContinuationItemsCommand;
-      if (cmd && Array.isArray(cmd.continuationItems)) {
-        out.push(...cmd.continuationItems);
-      }
-      if (
-        node.itemSectionContinuation &&
-        Array.isArray(node.itemSectionContinuation.contents)
-      ) {
-        out.push(...node.itemSectionContinuation.contents);
-      }
-      if (
-        node.commentSectionContinuation &&
-        Array.isArray(node.commentSectionContinuation.contents)
-      ) {
-        out.push(...node.commentSectionContinuation.contents);
-      }
-      const vals = Array.isArray(node) ? node : Object.values(node);
-      for (const v of vals) if (v && typeof v === "object") walk(v);
-    };
-    walk(root);
-    return out;
-  };
-
   // Gather comment entity mutations wherever they live.
   const collectMutations = (root) => {
     const out = [];
@@ -249,10 +213,7 @@ async function YCG_fetchPage(continuationToken, wantVideoId) {
     if (m.entityKey) entities[m.entityKey] = p;
   }
 
-  const items = collectContinuationItems(data);
   let nextToken = null;
-  debug.items = items.length;
-
   const comments = [];
 
   const fromEntity = (ent, replyToken, isReply) => {
@@ -322,9 +283,20 @@ async function YCG_fetchPage(continuationToken, wantVideoId) {
     };
   };
 
-  for (const it of items) {
-    if (it.commentThreadRenderer) {
-      const ct = it.commentThreadRenderer;
+  // Container-agnostic deep walk. YouTube keeps changing which container holds
+  // the item list (append/reloadContinuationItemsCommand on page 1, something
+  // else on later pages), so instead of matching container names we walk the
+  // whole response and pick out comment nodes + the page-next token wherever
+  // they are. commentThreadRenderer subtrees are NOT descended into, so a
+  // thread's reply-continuation token can never be mistaken for the page token.
+  let records = 0;
+  const walkSeen = new Set();
+  const walkItems = (node) => {
+    if (!node || typeof node !== "object" || walkSeen.has(node)) return;
+    walkSeen.add(node);
+
+    if (node.commentThreadRenderer) {
+      const ct = node.commentThreadRenderer;
       let replyToken = null;
       const repl =
         ct.replies &&
@@ -341,54 +313,98 @@ async function YCG_fetchPage(continuationToken, wantVideoId) {
       const ent = lookupEntity(cvm);
       if (ent) {
         const c = fromEntity(ent, replyToken, false);
-        if (c) comments.push(c);
-        continue;
+        if (c) {
+          comments.push(c);
+          records++;
+        }
+      } else {
+        const cr = ct.comment && ct.comment.commentRenderer;
+        if (cr) {
+          const c = fromRenderer(cr, replyToken, false);
+          if (c) {
+            comments.push(c);
+            records++;
+          }
+        }
       }
-      const cr = ct.comment && ct.comment.commentRenderer;
-      if (cr) {
-        const c = fromRenderer(cr, replyToken, false);
-        if (c) comments.push(c);
-      }
-    } else if (it.commentViewModel) {
-      const ent = lookupEntity(it.commentViewModel);
-      if (ent) {
-        const c = fromEntity(ent, null, true);
-        if (c) comments.push(c);
-      }
-    } else if (it.commentRenderer) {
-      const c = fromRenderer(it.commentRenderer, null, true);
-      if (c) comments.push(c);
-    } else {
-      // Any non-comment item is a continuation wrapper; dig out its token.
-      // Safe because comment items are handled above and never reach here,
-      // so this can't pick up a per-thread reply token.
-      const t = tokenFromContinuationItem(it.continuationItemRenderer || it);
-      if (t) nextToken = t;
+      return; // do not descend: keeps reply tokens/nested VMs out
     }
+
+    // Bare commentViewModel (later-page / reply-page shape).
+    const bareVm =
+      (node.commentViewModel && node.commentViewModel.commentId) ||
+      (node.commentViewModel && node.commentViewModel.commentKey)
+        ? node.commentViewModel
+        : null;
+    if (bareVm) {
+      const ent = lookupEntity(bareVm);
+      if (ent) {
+        const c = fromEntity(ent, null, false);
+        if (c) {
+          comments.push(c);
+          records++;
+        }
+      }
+      return;
+    }
+
+    if (node.commentRenderer) {
+      const c = fromRenderer(node.commentRenderer, null, false);
+      if (c) {
+        comments.push(c);
+        records++;
+      }
+      return;
+    }
+
+    if (node.continuationItemRenderer) {
+      // Outside any thread subtree → this is the page-next continuation.
+      const t = tokenFromContinuationItem(node.continuationItemRenderer);
+      if (t) nextToken = t;
+      return;
+    }
+
+    const vals = Array.isArray(node) ? node : Object.values(node);
+    for (const v of vals) if (v && typeof v === "object") walkItems(v);
+  };
+  walkItems(data);
+
+  // Entity-only fallback: if the walk found no comment nodes but the response
+  // carried comment entities, emit every entity (deduped by commentId). This
+  // guarantees comments render even if the item-list shape is unrecognized.
+  if (comments.length === 0 && Object.keys(entities).length) {
+    const seenIds = new Set();
+    for (const k in entities) {
+      const ent = entities[k];
+      const id = ent && ent.properties && ent.properties.commentId;
+      if (!id || seenIds.has(id)) continue;
+      seenIds.add(id);
+      const c = fromEntity(ent, null, false);
+      if (c) comments.push(c);
+    }
+    debug.entityFallback = comments.length;
   }
 
   debug.parsed = comments.length;
+  debug.records = records;
   debug.hasNext = !!nextToken;
-  // Structural breadcrumbs so pagination issues can be diagnosed from the panel.
-  debug.itemKinds = items.map((it) => Object.keys(it || {})[0] || "unknown");
   debug.responseKeys = Object.keys(data || {});
-  // Capture the non-comment items (headers / continuation wrappers) — this is
-  // where the "next page" token lives — truncated so it stays small.
-  debug.nonCommentItems = items
-    .filter(
-      (it) =>
-        it &&
-        !it.commentThreadRenderer &&
-        !it.commentViewModel &&
-        !it.commentRenderer
-    )
-    .map((it) => {
+  // Skeleton of the response's continuation containers, for diagnosis if a page
+  // ever yields nothing.
+  if (records === 0) {
+    debug.endpointSkeleton = (data.onResponseReceivedEndpoints || []).map((ep) =>
+      Object.keys(ep || {})
+    );
+    // Truncated dump of each endpoint so an unrecognized container can be
+    // identified from the panel's Debug button.
+    debug.endpointDump = (data.onResponseReceivedEndpoints || []).map((ep) => {
       try {
-        return JSON.stringify(it).slice(0, 1800);
+        return JSON.stringify(ep).slice(0, 1500);
       } catch (e) {
         return "unserializable";
       }
     });
+  }
   return { comments, nextToken, error: null, debug };
 }
 

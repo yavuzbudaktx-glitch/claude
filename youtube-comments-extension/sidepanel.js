@@ -713,7 +713,7 @@ els.analyticsBtn.addEventListener("click", () => {
 
 els.debugBtn.addEventListener("click", async () => {
   const info = {
-    version: "1.3.2",
+    version: "1.3.3",
     videoId: state.videoId,
     source: state.source,
     pagesLoaded: state.pagesLoaded,
