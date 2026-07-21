@@ -713,7 +713,7 @@ els.analyticsBtn.addEventListener("click", () => {
 
 els.debugBtn.addEventListener("click", async () => {
   const info = {
-    version: "1.3.3",
+    version: "1.3.4",
     videoId: state.videoId,
     source: state.source,
     pagesLoaded: state.pagesLoaded,
@@ -784,11 +784,17 @@ els.list.addEventListener("click", async (e) => {
       return;
     }
     btn.textContent = "Loading replies…";
+    btn.disabled = true;
     if (!c.repliesLoaded) await loadReplies(c);
+    btn.disabled = false;
     wrap.innerHTML = "";
-    for (const r of c.replies || []) wrap.appendChild(commentEl(r, true));
-    wrap.classList.add("open");
-    btn.textContent = "▾ Hide replies";
+    if (c.replies && c.replies.length) {
+      for (const r of c.replies) wrap.appendChild(commentEl(r, true));
+      wrap.classList.add("open");
+      btn.textContent = "▾ Hide replies";
+    } else {
+      btn.textContent = "⚠ Couldn't load replies";
+    }
   }
 });
 

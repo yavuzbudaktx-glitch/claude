@@ -307,6 +307,8 @@ async function YCG_fetchPage(continuationToken, wantVideoId) {
           repl[repl.length - 1].continuationItemRenderer
         );
       }
+      // Robust fallback: dig any continuation token out of the replies subtree.
+      if (!replyToken && ct.replies) replyToken = deepToken(ct.replies);
       const cvm =
         (ct.commentViewModel && ct.commentViewModel.commentViewModel) ||
         ct.commentViewModel;
@@ -387,6 +389,7 @@ async function YCG_fetchPage(continuationToken, wantVideoId) {
 
   debug.parsed = comments.length;
   debug.records = records;
+  debug.withReplyToken = comments.filter((c) => c.replyToken).length;
   debug.hasNext = !!nextToken;
   debug.responseKeys = Object.keys(data || {});
   // Skeleton of the response's continuation containers, for diagnosis if a page
