@@ -62,26 +62,25 @@ async function YCG_fetchPage(continuationToken, wantVideoId) {
     return Math.round(n);
   };
 
-  const tokenFromContinuationItem = (cir) => {
-    if (!cir) return null;
-    if (
-      cir.continuationEndpoint &&
-      cir.continuationEndpoint.continuationCommand &&
-      cir.continuationEndpoint.continuationCommand.token
-    ) {
-      return cir.continuationEndpoint.continuationCommand.token;
+  // Find a continuation token anywhere inside a continuationItemRenderer.
+  // YouTube nests it in several shapes (continuationEndpoint.continuationCommand,
+  // button.buttonRenderer.command.continuationCommand, or wrapped in a
+  // commandExecutorCommand.commands[]), so search rather than hard-code paths.
+  // A continuationItemRenderer only holds its own continuation, so this is safe.
+  const deepToken = (o) => {
+    if (!o || typeof o !== "object") return null;
+    if (o.continuationCommand && o.continuationCommand.token) {
+      return o.continuationCommand.token;
     }
-    const btn = cir.button && cir.button.buttonRenderer;
-    if (
-      btn &&
-      btn.command &&
-      btn.command.continuationCommand &&
-      btn.command.continuationCommand.token
-    ) {
-      return btn.command.continuationCommand.token;
+    for (const v of Array.isArray(o) ? o : Object.values(o)) {
+      if (v && typeof v === "object") {
+        const t = deepToken(v);
+        if (t) return t;
+      }
     }
     return null;
   };
+  const tokenFromContinuationItem = (cir) => (cir ? deepToken(cir) : null);
 
   // Find the comments-section continuation token in a watchNext-shaped object.
   const findInitialToken = (root) => {
@@ -359,13 +358,17 @@ async function YCG_fetchPage(continuationToken, wantVideoId) {
     } else if (it.commentRenderer) {
       const c = fromRenderer(it.commentRenderer, null, true);
       if (c) comments.push(c);
-    } else if (it.continuationItemRenderer) {
-      const t = tokenFromContinuationItem(it.continuationItemRenderer);
+    } else {
+      // Any non-comment item is a continuation wrapper; dig out its token.
+      // Safe because comment items are handled above and never reach here,
+      // so this can't pick up a per-thread reply token.
+      const t = tokenFromContinuationItem(it.continuationItemRenderer || it);
       if (t) nextToken = t;
     }
   }
 
   debug.parsed = comments.length;
+  debug.hasNext = !!nextToken;
   return { comments, nextToken, error: null, debug };
 }
 

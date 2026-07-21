@@ -14,6 +14,7 @@ const state = {
   loadSeq: 0, // bumped to cancel an in-flight load
   stopRequested: false,
   source: "", // "api" | "dom"
+  pagesLoaded: 0,
 };
 
 // ------------------------------- dom ---------------------------------
@@ -221,6 +222,7 @@ async function loadViaApi(seq) {
     state.comments.push(...res.comments);
     token = res.nextToken;
     pages++;
+    state.pagesLoaded = pages;
     setStatus(
       `Loaded ${state.comments.length} comments…` +
         (token ? " (still loading — hit Stop to halt)" : "")
@@ -494,7 +496,11 @@ function render() {
 
   const shown = pinned.length + rest.length;
   const src =
-    state.source === "dom" ? " · via page" : state.source === "api" ? " · via API" : "";
+    state.source === "dom"
+      ? " · via page"
+      : state.source === "api"
+      ? ` · via API (${state.pagesLoaded}p)`
+      : "";
   els.count.textContent =
     `${shown} shown / ${state.comments.length} loaded` +
     (state.pins.size ? ` · ${state.pins.size} pinned` : "") +
