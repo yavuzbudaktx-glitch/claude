@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-07-21T12:43:56.755Z
+# generated: 2026-07-21T14:38:41.132Z
 # url:       https://www.britannica.com/on-this-day/july-21
 # fetcher:   Wayback Machine
 # kind:      html
