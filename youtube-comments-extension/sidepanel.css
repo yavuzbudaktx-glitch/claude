@@ -261,6 +261,15 @@ body {
 }
 .scrape-row .mini-btn {
   width: 100%;
+  margin-bottom: 4px;
+}
+.mini-btn.stop {
+  background: var(--like);
+  color: #fff;
+  border-color: var(--like);
+}
+.mini-btn.stop:hover {
+  filter: brightness(1.1);
 }
 
 /* ---- status ---- */

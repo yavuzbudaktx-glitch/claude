@@ -12,6 +12,7 @@ const state = {
   pins: new Set(), // pinned comment ids for the current video
   loading: false,
   loadSeq: 0, // bumped to cancel an in-flight load
+  stopRequested: false,
   source: "", // "api" | "dom"
 };
 
@@ -32,6 +33,7 @@ const els = {
   analyticsBtn: $("analyticsBtn"),
   analytics: $("analytics"),
   scrapeBtn: $("scrapeBtn"),
+  stopBtn: $("stopBtn"),
   status: $("status"),
   list: $("list"),
   count: $("countLabel"),
@@ -180,7 +182,7 @@ async function injectFetch(token) {
     target: { tabId: state.tabId },
     world: "MAIN",
     func: YCG_fetchPage,
-    args: [token || null],
+    args: [token || null, state.videoId || null],
   });
   return (results && results[0] && results[0].result) || null;
 }
@@ -196,11 +198,14 @@ async function injectScrape(maxScrolls) {
 }
 
 // Try the internal API; return {ok, debug, error}. Fills state.comments.
+// Pages through EVERY comment while a nextToken exists (high safety ceiling
+// only to prevent a runaway loop). Stops early if the user hits Stop.
 async function loadViaApi(seq) {
   let token = null;
   let pages = 0;
   let firstDebug = null;
   let lastError = null;
+  const MAX_PAGES = 5000;
   do {
     const res = await injectFetch(token);
     if (seq !== state.loadSeq) return { ok: false, aborted: true };
@@ -216,10 +221,14 @@ async function loadViaApi(seq) {
     state.comments.push(...res.comments);
     token = res.nextToken;
     pages++;
-    setStatus(`Loaded ${state.comments.length} comments…`);
+    setStatus(
+      `Loaded ${state.comments.length} comments…` +
+        (token ? " (still loading — hit Stop to halt)" : "")
+    );
     render();
+    if (state.stopRequested) break;
     if (token) await new Promise((r) => setTimeout(r, 0));
-  } while (token && pages < 400);
+  } while (token && pages < MAX_PAGES);
   return { ok: state.comments.length > 0, debug: firstDebug, error: lastError };
 }
 
@@ -227,11 +236,13 @@ async function loadComments() {
   if (state.loading) return;
   const seq = ++state.loadSeq;
   state.loading = true;
+  state.stopRequested = false;
   state.comments = [];
   state.source = "";
   els.list.innerHTML = "";
   els.controls.hidden = false;
   els.reload.classList.add("spinning");
+  els.stopBtn.hidden = false;
   setStatus("Loading comments…");
 
   els.scrapeBtn.hidden = true;
@@ -241,7 +252,11 @@ async function loadComments() {
     if (api.aborted) return;
     if (api.ok) {
       state.source = "api";
-      setStatus("");
+      setStatus(
+        state.stopRequested
+          ? `Stopped at ${state.comments.length} comments.`
+          : ""
+      );
       render();
     } else {
       // Do NOT auto-scroll. Explain, and offer the page-scroll method as an
@@ -264,6 +279,7 @@ async function loadComments() {
     if (seq === state.loadSeq) {
       state.loading = false;
       els.reload.classList.remove("spinning");
+      els.stopBtn.hidden = true;
     }
   }
 }
@@ -674,6 +690,10 @@ els.pinnedOnly.addEventListener("change", render);
 
 els.reload.addEventListener("click", () => detectAndMaybeLoad(true));
 els.scrapeBtn.addEventListener("click", loadViaScrape);
+els.stopBtn.addEventListener("click", () => {
+  state.stopRequested = true;
+  els.stopBtn.hidden = true;
+});
 
 els.analyticsBtn.addEventListener("click", () => {
   els.analytics.hidden = !els.analytics.hidden;

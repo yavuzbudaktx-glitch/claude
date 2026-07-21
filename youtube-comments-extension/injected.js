@@ -16,9 +16,11 @@
  * Fetch one page of comments (or replies) via the internal InnerTube API.
  * @param {string|null} continuationToken - null for the first top-level page,
  *   otherwise a continuation token (next page, or a thread's reply token).
+ * @param {string|null} wantVideoId - the video id the panel expects, used to
+ *   resolve a fresh comments token reliably even across YouTube SPA navigations.
  * @returns {{comments:Array, nextToken:string|null, error:?string, debug:object}}
  */
-async function YCG_fetchPage(continuationToken) {
+async function YCG_fetchPage(continuationToken, wantVideoId) {
   const debug = {
     hasKey: false,
     hasContext: false,
@@ -81,10 +83,9 @@ async function YCG_fetchPage(continuationToken) {
     return null;
   };
 
-  // Find the comments-section continuation token in ytInitialData.
+  // Find the comments-section continuation token in a watchNext-shaped object.
   const findInitialToken = (root) => {
     let bySection = null;
-    let firstAny = null;
     const seen = new Set();
     const walk = (node) => {
       if (!node || typeof node !== "object" || seen.has(node)) return;
@@ -94,18 +95,12 @@ async function YCG_fetchPage(continuationToken) {
         node.itemSectionRenderer.sectionIdentifier === "comment-item-section"
       ) {
         for (const c of node.itemSectionRenderer.contents || []) {
-          const t = tokenFromContinuationItem(
-            c && c.continuationItemRenderer
-          );
+          const t = tokenFromContinuationItem(c && c.continuationItemRenderer);
           if (t) {
             bySection = t;
             return;
           }
         }
-      }
-      if (!firstAny && node.continuationItemRenderer) {
-        const t = tokenFromContinuationItem(node.continuationItemRenderer);
-        if (t) firstAny = t;
       }
       const vals = Array.isArray(node) ? node : Object.values(node);
       for (const v of vals) {
@@ -114,7 +109,63 @@ async function YCG_fetchPage(continuationToken) {
       }
     };
     walk(root);
-    return bySection || firstAny;
+    return bySection;
+  };
+
+  // Collect continuation items from ANY container YouTube uses
+  // (onResponseReceivedEndpoints / Actions / Commands, or legacy
+  // continuationContents), so pagination doesn't depend on the exact shape.
+  // Only the commands' own continuationItems are gathered, which keeps
+  // per-thread reply tokens out of top-level page-token detection.
+  const collectContinuationItems = (root) => {
+    const out = [];
+    const seen = new Set();
+    const walk = (node) => {
+      if (!node || typeof node !== "object" || seen.has(node)) return;
+      seen.add(node);
+      const cmd =
+        node.appendContinuationItemsCommand ||
+        node.reloadContinuationItemsCommand;
+      if (cmd && Array.isArray(cmd.continuationItems)) {
+        out.push(...cmd.continuationItems);
+      }
+      if (
+        node.itemSectionContinuation &&
+        Array.isArray(node.itemSectionContinuation.contents)
+      ) {
+        out.push(...node.itemSectionContinuation.contents);
+      }
+      if (
+        node.commentSectionContinuation &&
+        Array.isArray(node.commentSectionContinuation.contents)
+      ) {
+        out.push(...node.commentSectionContinuation.contents);
+      }
+      const vals = Array.isArray(node) ? node : Object.values(node);
+      for (const v of vals) if (v && typeof v === "object") walk(v);
+    };
+    walk(root);
+    return out;
+  };
+
+  // Gather comment entity mutations wherever they live.
+  const collectMutations = (root) => {
+    const out = [];
+    const seen = new Set();
+    const walk = (node) => {
+      if (!node || typeof node !== "object" || seen.has(node)) return;
+      seen.add(node);
+      if (
+        node.entityBatchUpdate &&
+        Array.isArray(node.entityBatchUpdate.mutations)
+      ) {
+        out.push(...node.entityBatchUpdate.mutations);
+      }
+      const vals = Array.isArray(node) ? node : Object.values(node);
+      for (const v of vals) if (v && typeof v === "object") walk(v);
+    };
+    walk(root);
+    return out;
   };
 
   const apiKey = getCfg("INNERTUBE_API_KEY");
@@ -140,25 +191,34 @@ async function YCG_fetchPage(continuationToken) {
   };
 
   let token = continuationToken;
-  if (!token) token = findInitialToken(window.ytInitialData);
   if (!token) {
-    // Resolve a fresh comments token server-side via videoId — works even
-    // when the comments section hasn't been scrolled into view yet, so we
-    // never need to scroll the page.
-    try {
-      const vid =
-        new URL(location.href).searchParams.get("v") ||
-        (window.ytInitialPlayerResponse &&
-          window.ytInitialPlayerResponse.videoDetails &&
-          window.ytInitialPlayerResponse.videoDetails.videoId);
-      if (vid) {
+    const pageVid =
+      new URL(location.href).searchParams.get("v") ||
+      (window.ytInitialPlayerResponse &&
+        window.ytInitialPlayerResponse.videoDetails &&
+        window.ytInitialPlayerResponse.videoDetails.videoId) ||
+      null;
+    const vid = wantVideoId || pageVid;
+
+    // Fast path: trust ytInitialData only when it's for the video we want
+    // (it goes stale across YouTube's SPA navigations).
+    if (vid && pageVid === vid) token = findInitialToken(window.ytInitialData);
+
+    // Authoritative: ask the server for a fresh comments token by videoId.
+    // Works even before the comments section is scrolled into view, so we
+    // never need to scroll the page, and it's always the correct video.
+    if (!token && vid) {
+      try {
         const wn = await post({ context, videoId: vid });
         token = findInitialToken(wn);
         debug.viaVideoId = true;
+      } catch (e) {
+        /* fall through */
       }
-    } catch (e) {
-      /* fall through to no-token */
     }
+
+    // Last resort: whatever ytInitialData has.
+    if (!token) token = findInitialToken(window.ytInitialData);
   }
   debug.hasToken = !!token;
   if (!token) {
@@ -180,12 +240,7 @@ async function YCG_fetchPage(continuationToken) {
   // Build an entity map keyed by BOTH commentId and entityKey, because
   // commentViewModel may reference an entity by either.
   const entities = {};
-  const mutations =
-    (data.frameworkUpdates &&
-      data.frameworkUpdates.entityBatchUpdate &&
-      data.frameworkUpdates.entityBatchUpdate.mutations) ||
-    [];
-  for (const m of mutations) {
+  for (const m of collectMutations(data)) {
     const p = m && m.payload && m.payload.commentEntityPayload;
     if (!p) continue;
     debug.entities++;
@@ -195,13 +250,8 @@ async function YCG_fetchPage(continuationToken) {
     if (m.entityKey) entities[m.entityKey] = p;
   }
 
-  let items = [];
+  const items = collectContinuationItems(data);
   let nextToken = null;
-  for (const ep of data.onResponseReceivedEndpoints || []) {
-    const cmd =
-      ep.reloadContinuationItemsCommand || ep.appendContinuationItemsCommand;
-    if (cmd && cmd.continuationItems) items = items.concat(cmd.continuationItems);
-  }
   debug.items = items.length;
 
   const comments = [];
