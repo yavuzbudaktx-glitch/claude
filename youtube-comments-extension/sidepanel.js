@@ -32,6 +32,7 @@ const els = {
   json: $("jsonBtn"),
   txt: $("txtBtn"),
   analyticsBtn: $("analyticsBtn"),
+  debugBtn: $("debugBtn"),
   analytics: $("analytics"),
   scrapeBtn: $("scrapeBtn"),
   stopBtn: $("stopBtn"),
@@ -207,6 +208,8 @@ async function loadViaApi(seq) {
   let firstDebug = null;
   let lastError = null;
   const MAX_PAGES = 5000;
+  state.firstDebug = null;
+  state.lastDebug = null;
   do {
     const res = await injectFetch(token);
     if (seq !== state.loadSeq) return { ok: false, aborted: true };
@@ -215,6 +218,8 @@ async function loadViaApi(seq) {
       break;
     }
     if (!firstDebug) firstDebug = res.debug || null;
+    state.firstDebug = firstDebug;
+    state.lastDebug = res.debug || null; // debug of the page where we stop
     if (res.error) {
       lastError = res.error;
       break;
@@ -704,6 +709,26 @@ els.stopBtn.addEventListener("click", () => {
 els.analyticsBtn.addEventListener("click", () => {
   els.analytics.hidden = !els.analytics.hidden;
   renderAnalytics();
+});
+
+els.debugBtn.addEventListener("click", async () => {
+  const info = {
+    version: "1.3.2",
+    videoId: state.videoId,
+    source: state.source,
+    pagesLoaded: state.pagesLoaded,
+    commentsLoaded: state.comments.length,
+    firstPageDebug: state.firstDebug || null,
+    lastPageDebug: state.lastDebug || null,
+  };
+  const text = JSON.stringify(info, null, 2);
+  try {
+    await navigator.clipboard.writeText(text);
+    setStatus("Debug info copied to clipboard — paste it to the developer.");
+  } catch (e) {
+    // Fallback: show it so it can be copied manually.
+    setStatus("Copy failed; debug below:\n" + text, true);
+  }
 });
 
 els.copy.addEventListener("click", async () => {

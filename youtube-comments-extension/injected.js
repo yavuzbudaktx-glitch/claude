@@ -369,6 +369,26 @@ async function YCG_fetchPage(continuationToken, wantVideoId) {
 
   debug.parsed = comments.length;
   debug.hasNext = !!nextToken;
+  // Structural breadcrumbs so pagination issues can be diagnosed from the panel.
+  debug.itemKinds = items.map((it) => Object.keys(it || {})[0] || "unknown");
+  debug.responseKeys = Object.keys(data || {});
+  // Capture the non-comment items (headers / continuation wrappers) — this is
+  // where the "next page" token lives — truncated so it stays small.
+  debug.nonCommentItems = items
+    .filter(
+      (it) =>
+        it &&
+        !it.commentThreadRenderer &&
+        !it.commentViewModel &&
+        !it.commentRenderer
+    )
+    .map((it) => {
+      try {
+        return JSON.stringify(it).slice(0, 1800);
+      } catch (e) {
+        return "unserializable";
+      }
+    });
   return { comments, nextToken, error: null, debug };
 }
 
