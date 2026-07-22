@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { RadioTower, Settings2, X, Radio, BookOpenText, Shuffle } from "lucide-react";
 import {
   subscribeRadio, radioStatus, toggleRadio, stopRadio, playRadioSource,
-  getCustomRadioUrl, setCustomRadioUrl, type RadioSource,
+  prefetchQuranLibrary, getCustomRadioUrl, setCustomRadioUrl, type RadioSource,
 } from "@/lib/radio";
 
 // Equalizer animation: three thin bars that breathe at offset rates while
@@ -48,7 +48,11 @@ export function RadioButton() {
   // so the user chooses a source before anything plays.
   function onClick() {
     if (active || loading) { stopRadio(); return; }
-    setPicking((p) => !p);
+    setPicking((p) => {
+      const next = !p;
+      if (next) prefetchQuranLibrary(); // warm the Quran list before they pick it
+      return next;
+    });
   }
   function pick(source: RadioSource) {
     setPicking(false);
@@ -106,7 +110,7 @@ export function RadioButton() {
 
       {picking && typeof window !== "undefined" && createPortal(
         <>
-          <div className="fixed inset-0 z-[58] animate-fadeIn" onClick={() => setPicking(false)} aria-hidden />
+          <div className="fixed inset-0 z-[58] bg-black/25 backdrop-blur-sm animate-fadeIn" onClick={() => setPicking(false)} aria-hidden />
           <div className="fixed top-[72px] right-5 md:right-10 z-[60] w-[min(300px,calc(100vw-2.5rem))] card !p-2 animate-fadeIn">
             <div className="px-2 py-1.5 label flex items-center gap-1.5">
               <RadioTower className="h-3 w-3" /> Pick a station

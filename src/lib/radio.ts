@@ -325,6 +325,22 @@ async function fetchQuranIds(): Promise<string[]> {
   }
 }
 
+// Warm the Quran library BEFORE the user picks it. Browsers only allow
+// autoplay-with-sound from inside a real user gesture; if we had to await a
+// network round-trip after the click, the iframe would mount too late and be
+// blocked (muted). Prefetching on picker-open means the ids are already in
+// hand, so the pick handler can mount synchronously. Fire-and-forget.
+let quranIdsCache: string[] | null = null;
+let quranPrefetching = false;
+export function prefetchQuranLibrary() {
+  if (quranIdsCache?.length || quranPrefetching) return;
+  quranPrefetching = true;
+  fetchQuranIds()
+    .then((ids) => { if (ids.length) quranIdsCache = ids; })
+    .catch(() => { /* noop */ })
+    .finally(() => { quranPrefetching = false; });
+}
+
 function ytEmbedUrl(src: string): string {
   return `ytembed:${encodeURIComponent(src)}`;
 }
@@ -354,8 +370,10 @@ export async function playRadioSource(source: RadioSource) {
 
     // quran — shuffle the library and play it as a looping playlist. The first
     // id is the embed target; `playlist=` lists the rest (plus the first) so
-    // `loop=1` cycles the whole set indefinitely.
-    const ids = shuffled(await fetchQuranIds());
+    // `loop=1` cycles the whole set indefinitely. Prefer the prefetched cache
+    // so the mount stays inside the click gesture (autoplay-with-sound); only
+    // fall back to a live fetch if the prefetch hasn't landed yet.
+    const ids = shuffled(quranIdsCache?.length ? quranIdsCache : await fetchQuranIds());
     if (ids.length) {
       const first = ids[0];
       const list = ids.join(",");
