@@ -102,32 +102,119 @@ function teardownHls() {
 // 24/7 broadcasts (Kral Müzik Akustik, etc). YouTube can't be played via
 // <audio>, so when the URL starts with `yt:` we mount a hidden iframe instead.
 // One iframe at a time; tear down on stop.
-let ytWrap: HTMLDivElement | null = null;
-// Mount a hidden YouTube IFrame from a full embed `src`. `enablejsapi=1` lets
-// us send commands; `mute=0` keeps it audible; the click that triggered this
-// is a real user gesture, so autoplay-with-sound is allowed. One iframe at a
-// time.
-function mountYouTubeEmbed(src: string) {
-  if (typeof document === "undefined") return;
+// ---- YouTube: IFrame Player API (reliable audio) ---------------------------
+// The old approach dropped a hidden `autoplay=1` iframe into the page. That
+// only plays WITH SOUND when the browser grants the iframe *transient*
+// activation at load-time — fragile, and the reason picking a station could
+// stay silent. The IFrame Player API is the reliable path: we build ONE player
+// up front (warmed the moment the picker opens), then on the user's pick call
+// unMute()+playVideo() on it. Those succeed on *sticky* activation (any prior
+// click on the page), which always holds by the time a station is chosen.
+//
+// A raw <iframe> embed is kept only as a last-ditch fallback if the API can't
+// load at all; it lives in its own wrapper so it never clobbers the player.
+let ytWrap: HTMLDivElement | null = null;      // hosts the API player
+let embedWrap: HTMLDivElement | null = null;   // hosts the fallback iframe
+let ytPlayer: any = null;
+let ytPlayerReady = false;
+let ytApiPromise: Promise<void> | null = null;
+let ytPlayerPromise: Promise<any> | null = null;
+
+function loadYtApi(): Promise<void> {
+  if (typeof window === "undefined") return Promise.resolve();
+  const w = window as any;
+  if (w.YT && w.YT.Player) return Promise.resolve();
+  if (ytApiPromise) return ytApiPromise;
+  ytApiPromise = new Promise<void>((resolve) => {
+    const prev = w.onYouTubeIframeAPIReady;
+    w.onYouTubeIframeAPIReady = () => {
+      if (typeof prev === "function") { try { prev(); } catch { /* noop */ } }
+      resolve();
+    };
+    const s = document.createElement("script");
+    s.src = "https://www.youtube.com/iframe_api";
+    s.async = true;
+    s.onerror = () => resolve();   // fall through to the iframe-embed path
+    document.head.appendChild(s);
+  });
+  return ytApiPromise;
+}
+
+function ytHost(): HTMLElement {
   if (!ytWrap) {
     ytWrap = document.createElement("div");
-    ytWrap.style.cssText = "position:fixed;left:-9999px;top:0;width:320px;height:180px;";
     ytWrap.setAttribute("aria-hidden", "true");
+    // Kept technically on-screen but invisible: a real (if tiny) box plays more
+    // reliably than a display:none / 0×0 one.
+    ytWrap.style.cssText =
+      "position:fixed;left:0;bottom:0;width:180px;height:101px;opacity:0.001;pointer-events:none;z-index:-1;overflow:hidden;";
     document.body.appendChild(ytWrap);
   }
-  ytWrap.innerHTML =
+  const host = document.createElement("div");
+  ytWrap.appendChild(host);
+  return host;
+}
+
+// Build (or return) the singleton player. Safe to call repeatedly; resolves to
+// null if the API can't load so callers can fall back.
+export function ensureYtPlayer(): Promise<any> {
+  if (typeof window === "undefined") return Promise.resolve(null);
+  if (ytPlayer && ytPlayerReady) return Promise.resolve(ytPlayer);
+  if (ytPlayerPromise) return ytPlayerPromise;
+  ytPlayerPromise = loadYtApi()
+    .then(() => {
+      const w = window as any;
+      if (!w.YT || !w.YT.Player) return null;
+      return new Promise<any>((resolve) => {
+        ytPlayer = new w.YT.Player(ytHost(), {
+          width: "180",
+          height: "101",
+          playerVars: { autoplay: 0, controls: 0, disablekb: 1, playsinline: 1, rel: 0, modestbranding: 1 },
+          events: {
+            onReady: () => { ytPlayerReady = true; resolve(ytPlayer); },
+          },
+        });
+      });
+    })
+    .catch(() => null);
+  return ytPlayerPromise;
+}
+
+// Apply a load command then force audible playback. Returns false if the
+// player isn't usable so the caller can fall back to the raw embed.
+function ytApplyAndPlay(load: (p: any) => void): boolean {
+  if (!ytPlayer || !ytPlayerReady) return false;
+  try {
+    load(ytPlayer);
+    try { ytPlayer.unMute?.(); ytPlayer.setVolume?.(100); } catch { /* noop */ }
+    ytPlayer.playVideo?.();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Fallback only: a hidden autoplay <iframe> in its OWN wrapper.
+function mountYouTubeEmbed(src: string) {
+  if (typeof document === "undefined") return;
+  if (!embedWrap) {
+    embedWrap = document.createElement("div");
+    embedWrap.style.cssText = "position:fixed;left:-9999px;top:0;width:320px;height:180px;";
+    embedWrap.setAttribute("aria-hidden", "true");
+    document.body.appendChild(embedWrap);
+  }
+  embedWrap.innerHTML =
     `<iframe src="${src}" allow="autoplay; encrypted-media" ` +
     `width="320" height="180" frameborder="0"></iframe>`;
 }
-// Single video looped forever — a `playlist` value equal to the id makes a
-// non-live video loop; live broadcasts already loop.
 function mountYouTube(videoId: string) {
   mountYouTubeEmbed(
     `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=0&loop=1&playlist=${videoId}&enablejsapi=1`,
   );
 }
 function unmountYouTube() {
-  if (ytWrap) { ytWrap.innerHTML = ""; }
+  try { ytPlayer?.stopVideo?.(); } catch { /* noop */ }
+  if (embedWrap) { embedWrap.innerHTML = ""; }
 }
 
 // Indefinite playback — radio streams drop on network glitches, sleeping
@@ -351,41 +438,64 @@ export async function playRadioSource(source: RadioSource) {
   reconnectAttempts = 0;
   setStatus("loading");
 
+  // Silence any audio-element stream that might be running.
+  try { audio?.pause(); } catch { /* noop */ }
+  teardownHls();
+
+  // Make sure the player exists. Warmed on picker-open, so this usually
+  // resolves instantly; even if it has to await, playVideo() still succeeds
+  // afterwards because the page already has sticky user activation.
+  await ensureYtPlayer();
+
   try {
     if (source === "kral") {
-      await playUrl(`yt:${KRAL_LIVE_ID}`);
+      lastPlayedUrl = `yt:${KRAL_LIVE_ID}`;
+      if (ytApplyAndPlay((p) => p.loadVideoById(KRAL_LIVE_ID))) { setStatus("playing"); return; }
+      await playUrl(`yt:${KRAL_LIVE_ID}`);       // fallback embed
       setStatus("playing");
       return;
     }
 
     if (source === "mix") {
-      // Seed video + generated-radio list. YouTube autoplays the whole mix.
+      lastPlayedUrl = `ytmix:${MIX_LIST_ID}`;
+      const ok = ytApplyAndPlay((p) => {
+        // The RDEM list is a generated "radio" mix; loadPlaylist starts it and
+        // YouTube auto-advances through it. Seed video is the fallback.
+        if (typeof p.loadPlaylist === "function") p.loadPlaylist({ list: MIX_LIST_ID, listType: "playlist", index: 0 });
+        else p.loadVideoById(MIX_SEED_ID);
+      });
+      if (ok) { setStatus("playing"); return; }
       const src =
         `https://www.youtube.com/embed/${MIX_SEED_ID}` +
         `?autoplay=1&mute=0&controls=0&enablejsapi=1&list=${MIX_LIST_ID}`;
-      await playUrl(ytEmbedUrl(src));
+      await playUrl(ytEmbedUrl(src));            // fallback embed
       setStatus("playing");
       return;
     }
 
-    // quran — shuffle the library and play it as a looping playlist. The first
-    // id is the embed target; `playlist=` lists the rest (plus the first) so
-    // `loop=1` cycles the whole set indefinitely. Prefer the prefetched cache
-    // so the mount stays inside the click gesture (autoplay-with-sound); only
-    // fall back to a live fetch if the prefetch hasn't landed yet.
+    // quran — shuffle the whole library and play it as a looping playlist.
+    // Prefer the prefetched cache (warmed on picker-open) so nothing blocks.
     const ids = shuffled(quranIdsCache?.length ? quranIdsCache : await fetchQuranIds());
     if (ids.length) {
+      lastPlayedUrl = "ytquran";
+      const ok = ytApplyAndPlay((p) => {
+        p.loadPlaylist(ids, 0);
+        try { p.setLoop?.(true); } catch { /* noop */ }
+      });
+      if (ok) { setStatus("playing"); return; }
       const first = ids[0];
-      const list = ids.join(",");
       const src =
         `https://www.youtube.com/embed/${first}` +
-        `?autoplay=1&mute=0&controls=0&enablejsapi=1&loop=1&playlist=${list}`;
-      await playUrl(ytEmbedUrl(src));
+        `?autoplay=1&mute=0&controls=0&enablejsapi=1&loop=1&playlist=${ids.join(",")}`;
+      await playUrl(ytEmbedUrl(src));            // fallback embed
       setStatus("playing");
       return;
     }
-    // Library fetch failed — fall back to the live Kral broadcast so the button
+
+    // Library unavailable — fall back to the live Kral broadcast so the button
     // still does something audible.
+    lastPlayedUrl = `yt:${KRAL_LIVE_ID}`;
+    if (ytApplyAndPlay((p) => p.loadVideoById(KRAL_LIVE_ID))) { setStatus("playing"); return; }
     await playUrl(`yt:${KRAL_LIVE_ID}`);
     setStatus("playing");
   } catch {

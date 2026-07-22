@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { RadioTower, Settings2, X, Radio, BookOpenText, Shuffle } from "lucide-react";
 import {
   subscribeRadio, radioStatus, toggleRadio, stopRadio, playRadioSource,
-  prefetchQuranLibrary, getCustomRadioUrl, setCustomRadioUrl, type RadioSource,
+  prefetchQuranLibrary, ensureYtPlayer, getCustomRadioUrl, setCustomRadioUrl, type RadioSource,
 } from "@/lib/radio";
 
 // Equalizer animation: three thin bars that breathe at offset rates while
@@ -50,7 +50,10 @@ export function RadioButton() {
     if (active || loading) { stopRadio(); return; }
     setPicking((p) => {
       const next = !p;
-      if (next) prefetchQuranLibrary(); // warm the Quran list before they pick it
+      if (next) {
+        ensureYtPlayer();          // build the YouTube player now so a pick plays instantly
+        prefetchQuranLibrary();    // warm the Quran list before they pick it
+      }
       return next;
     });
   }

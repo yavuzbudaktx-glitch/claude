@@ -1280,7 +1280,7 @@ main { position: relative; z-index: 1; }
 ======================================================================= */
 :root.theme-rain {
   color-scheme: dark;
-  --bg:           #0a0f16;
+  --bg:           #070b12;
   --paper:        rgba(150, 180, 215, 0.06);
   --paper-2:      rgba(150, 180, 215, 0.11);
   --ink:          #e8eef7;
@@ -1345,42 +1345,29 @@ main { position: relative; z-index: 1; }
   background: linear-gradient(118deg, #3a6ea5, #6db3e6 50%, #cfe4f5);
   -webkit-background-clip: text; background-clip: text;
 }
-/* Three parallax sheets of falling rain. Each layer is a repeating diagonal
-   gradient of short bright dashes; the keyframe scrolls each straight down by
-   an integer number of its own tiles so the loop is seamless, and by
-   DIFFERENT amounts so near sheets fall faster than far ones. */
+/* The falling drops are drawn on a <canvas> by <WeatherFx>; the CSS only sets
+   the mood. body::after becomes a heavy vignette + top gloom so the sky feels
+   overcast and closed-in, the way it does under a real downpour. */
 .theme-rain body::after {
   opacity: 1;
-  mix-blend-mode: screen;
-  background-image:
-    repeating-linear-gradient(101deg, transparent 0 20px, rgba(190,216,248,0.34) 20px 22px, transparent 22px 46px),
-    repeating-linear-gradient(99deg,  transparent 0 32px, rgba(200,224,250,0.18) 32px 33px, transparent 33px 78px),
-    repeating-linear-gradient(103deg, transparent 0 12px, rgba(165,198,240,0.11) 12px 13px, transparent 13px 30px);
-  background-size: 170px 190px, 210px 230px, 120px 140px;
-  animation: rainfall 0.62s linear infinite;
-}
-@keyframes rainfall {
-  from { background-position: 0 0,     0 0,     0 0; }
-  to   { background-position: 0 570px, 0 460px, 0 280px; }
-}
-/* Light / overcast mode — screen-blending bright dashes vanish on a pale sky,
-   so switch to darker streaks over the page at reduced strength. */
-.theme-rain:not(.dark) body::after {
   mix-blend-mode: normal;
-  opacity: 0.55;
   background-image:
-    repeating-linear-gradient(101deg, transparent 0 20px, rgba(64,104,146,0.30) 20px 22px, transparent 22px 46px),
-    repeating-linear-gradient(99deg,  transparent 0 32px, rgba(84,120,158,0.17) 32px 33px, transparent 33px 78px),
-    repeating-linear-gradient(103deg, transparent 0 12px, rgba(58,98,140,0.12) 12px 13px, transparent 13px 30px);
+    linear-gradient(180deg, rgba(3, 7, 14, 0.55) 0%, transparent 26%),
+    radial-gradient(120% 80% at 50% 38%, transparent 46%, rgba(3, 7, 14, 0.62) 100%);
+}
+.theme-rain:not(.dark) body::after {
+  background-image:
+    linear-gradient(180deg, rgba(120, 134, 154, 0.42) 0%, transparent 24%),
+    radial-gradient(120% 80% at 50% 38%, transparent 50%, rgba(120, 134, 154, 0.4) 100%);
 }
 /* Storm backdrop — the aurora mesh recoloured to slate, with a slow swell
    that gently brightens the whole sky like a passing squall. */
 .theme-rain body::before {
-  filter: blur(90px) saturate(130%);
+  filter: blur(90px) saturate(120%) brightness(0.82);
   animation: aurora 40s ease-in-out infinite alternate, rainStorm 13s ease-in-out infinite;
 }
 @keyframes rainStorm {
-  0%, 100% { opacity: 0.88; transform: translate3d(0,0,0); }
+  0%, 100% { opacity: 0.9;  transform: translate3d(0,0,0); }
   50%      { opacity: 1;    transform: translate3d(-1.5%, 0.5%, 0) scale(1.05); }
 }
 .theme-rain .card {

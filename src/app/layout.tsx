@@ -5,6 +5,7 @@ import { CommandPalette } from "@/components/CommandPalette";
 import { FocusMode } from "@/components/FocusMode";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { ThemeRestorer } from "@/components/ThemeRestorer";
+import { WeatherFx } from "@/components/WeatherFx";
 import { CURRENT } from "@/lib/app-config";
 import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="antialiased">
         <PrefsProvider>
           <ThemeRestorer />
+          <WeatherFx />
           <ScrollProgress />
           {children}
           <CommandPalette />
