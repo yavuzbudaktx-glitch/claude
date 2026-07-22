@@ -407,6 +407,10 @@ body {
 .reply-wrap.open {
   display: block;
 }
+.more-replies {
+  margin: 4px 0 8px 34px;
+  font-weight: 500;
+}
 
 /* ---- footer ---- */
 .footer {

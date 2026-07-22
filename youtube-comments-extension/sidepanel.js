@@ -340,6 +340,28 @@ async function loadReplies(comment) {
   comment.repliesLoaded = true;
 }
 
+const REPLY_PAGE = 10;
+
+// Render replies for a comment in batches of REPLY_PAGE, with a "show more"
+// button that reveals the next batch from the already-loaded replies.
+function renderReplies(comment, wrap) {
+  wrap.innerHTML = "";
+  const total = (comment.replies || []).length;
+  const shown = Math.min(comment.repliesShown || 0, total);
+  for (let i = 0; i < shown; i++) {
+    wrap.appendChild(commentEl(comment.replies[i], true));
+  }
+  const remaining = total - shown;
+  if (remaining > 0) {
+    const more = document.createElement("button");
+    more.className = "replies-btn more-replies";
+    more.dataset.moreReplies = comment.id;
+    more.textContent =
+      "↓ Show " + Math.min(REPLY_PAGE, remaining) + " more (" + remaining + " left)";
+    wrap.appendChild(more);
+  }
+}
+
 // --------------------------- pins ------------------------------------
 function pinKey() {
   return "ycg_pins_" + state.videoId;
@@ -713,7 +735,7 @@ els.analyticsBtn.addEventListener("click", () => {
 
 els.debugBtn.addEventListener("click", async () => {
   const info = {
-    version: "1.3.4",
+    version: "1.3.5",
     videoId: state.videoId,
     source: state.source,
     pagesLoaded: state.pagesLoaded,
@@ -772,6 +794,20 @@ els.list.addEventListener("click", async (e) => {
     return;
   }
 
+  // "Show more replies" — reveal the next batch.
+  const moreId = e.target.dataset.moreReplies;
+  if (moreId) {
+    const c = state.comments.find((x) => x.id === moreId);
+    const wrap = els.list.querySelector(`[data-reply-wrap="${CSS.escape(moreId)}"]`);
+    if (!c || !wrap) return;
+    c.repliesShown = Math.min(
+      (c.repliesShown || 0) + REPLY_PAGE,
+      (c.replies || []).length
+    );
+    renderReplies(c, wrap);
+    return;
+  }
+
   const repId = e.target.dataset.replies;
   if (repId) {
     const c = state.comments.find((x) => x.id === repId);
@@ -787,9 +823,13 @@ els.list.addEventListener("click", async (e) => {
     btn.disabled = true;
     if (!c.repliesLoaded) await loadReplies(c);
     btn.disabled = false;
-    wrap.innerHTML = "";
     if (c.replies && c.replies.length) {
-      for (const r of c.replies) wrap.appendChild(commentEl(r, true));
+      // Show the first batch (preserve a larger count if re-expanding).
+      c.repliesShown = Math.min(
+        Math.max(c.repliesShown || 0, REPLY_PAGE),
+        c.replies.length
+      );
+      renderReplies(c, wrap);
       wrap.classList.add("open");
       btn.textContent = "▾ Hide replies";
     } else {
