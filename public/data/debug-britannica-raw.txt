@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-07-22T11:29:52.383Z
+# generated: 2026-07-22T12:45:40.181Z
 # url:       https://www.britannica.com/on-this-day/july-22
 # fetcher:   Wayback Machine
 # kind:      html
