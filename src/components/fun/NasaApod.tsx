@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { useState, useRef, useEffect } from "react";
 import {
   ExternalLink, Rocket, Info, Palette as PaletteIcon,
-  Landmark, Bird as BirdIcon, BookOpen, Archive as ArchiveIcon,
+  Landmark, Bird as BirdIcon, Archive as ArchiveIcon,
   RotateCcw, Play, Pause,
 } from "lucide-react";
 import { usePref } from "@/components/PrefsProvider";
@@ -335,46 +335,6 @@ function BirdPanel({ showInfo, setShowInfo }: { showInfo: boolean; setShowInfo: 
   );
 }
 
-// ---------- Wikipedia rabbithole -------------------------------------------
-
-interface Wiki { title?: string; description?: string; extract?: string; imageUrl?: string; pageUrl?: string; source?: string; error?: string }
-
-function WikiPanel({ showInfo, setShowInfo, refreshN, onRefresh }: { showInfo: boolean; setShowInfo: (v: boolean) => void; refreshN: number; onRefresh: () => void }) {
-  // Daily — but a "New" click bumps refreshN, which gives us a different
-  // cache key so the user can roll for another article today if they want.
-  const today = localDateKey();
-  const { data, isLoading } = useDailyCached<Wiki>(`wiki:${refreshN}`, `/api/wiki-random?d=${today}&r=${refreshN}`);
-  if (isLoading && !data) return <Loading />;
-  if (data?.error) return <Failed what="Wikipedia" />;
-  return (
-    <div className="flex flex-col gap-3 h-full min-h-0">
-      <div className="relative flex-[3] min-h-0 rounded-xl overflow-hidden bg-[var(--rule-soft)] border border-[var(--rule)]">
-        {data?.imageUrl ? (
-          <a href={data.pageUrl} target="_blank" rel="noreferrer" className="absolute inset-0">
-            <img src={data.imageUrl} alt={data.title ?? ""} className="h-full w-full object-cover transition hover:scale-[1.01]" loading="lazy" />
-          </a>
-        ) : (
-          <a href={data?.pageUrl} target="_blank" rel="noreferrer" className="absolute inset-0 grid place-items-center p-6 text-center">
-            <span className="font-display text-2xl text-ink-soft leading-tight">{data?.title}</span>
-          </a>
-        )}
-        <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 rounded-full bg-black/55 backdrop-blur px-2 py-0.5 text-[10px] font-semibold text-white"><BookOpen className="h-3 w-3" /> Rabbit hole</span>
-        <RollButton onRefresh={onRefresh} label="Another" />
-      </div>
-      <div className="flex flex-col min-h-0 flex-[2]">
-        <div className="flex items-start gap-2 shrink-0">
-          <div className="min-w-0 flex-1">
-            <a href={data?.pageUrl} target="_blank" rel="noreferrer" title={data?.title} className="block text-[13.5px] font-medium text-ink-soft hover:text-accent transition leading-snug line-clamp-1">{data?.title}</a>
-            {data?.description && <div className="text-[10.5px] text-muted-2 truncate mt-0.5">{data.description}</div>}
-          </div>
-          <InfoButton on={showInfo} set={setShowInfo} />
-        </div>
-        {showInfo && data?.extract && <p className="mt-2.5 text-[12.5px] leading-relaxed text-ink-soft min-h-0 flex-1 overflow-y-auto pr-1">{data.extract}</p>}
-      </div>
-    </div>
-  );
-}
-
 // ---------- Internet Archive -----------------------------------------------
 
 interface Archive { title?: string; mediatype?: string; year?: string; description?: string; imageUrl?: string; pageUrl?: string; source?: string; error?: string }
@@ -425,20 +385,19 @@ function RollButton({ onRefresh, label }: { onRefresh: () => void; label?: strin
 
 // ---------- the box ---------------------------------------------------------
 
-type Tab = "art" | "bird" | "nasa" | "wiki" | "archive";
+type Tab = "art" | "bird" | "nasa" | "archive";
 
 const TABS: Array<{ id: Tab; label: string; icon: typeof Rocket }> = [
   { id: "bird",    label: "Bird",     icon: BirdIcon },
   { id: "art",     label: "Art",      icon: PaletteIcon },
   { id: "nasa",    label: "NASA",     icon: Rocket },
-  { id: "wiki",    label: "Wiki",     icon: BookOpen },
   { id: "archive", label: "Archive",  icon: ArchiveIcon },
 ];
 
 type RollState = Record<Tab, { date: string; n: number }>;
 const ZERO: RollState = {
   art: { date: "", n: 0 }, bird: { date: "", n: 0 },
-  nasa: { date: "", n: 0 }, wiki: { date: "", n: 0 }, archive: { date: "", n: 0 },
+  nasa: { date: "", n: 0 }, archive: { date: "", n: 0 },
 };
 
 export function NasaApod() {
@@ -480,7 +439,6 @@ export function NasaApod() {
         {tab === "art"     && <ArtPanel     showInfo={showInfo} setShowInfo={setShowInfo} />}
         {tab === "bird"    && <BirdPanel    showInfo={showInfo} setShowInfo={setShowInfo} />}
         {tab === "nasa"    && <NasaPanel    showInfo={showInfo} setShowInfo={setShowInfo} />}
-        {tab === "wiki"    && <WikiPanel    showInfo={showInfo} setShowInfo={setShowInfo} refreshN={refreshFor("wiki")}    onRefresh={() => roll("wiki")} />}
         {tab === "archive" && <ArchivePanel showInfo={showInfo} setShowInfo={setShowInfo} refreshN={refreshFor("archive")} onRefresh={() => roll("archive")} />}
       </div>
     </div>

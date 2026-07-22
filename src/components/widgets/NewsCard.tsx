@@ -69,6 +69,8 @@ function publisherLogoUrls(link: string): string[] {
 const SOURCE_LOGOS: Record<string, string> = {
   "Al Jazeera":
     "https://www.emergencyusa.org/wp-content/uploads/2017/03/Aljazeera-logo-English-1024x768.png",
+  "NPR World":
+    "https://www.logolounge.com/wp-content/uploads/2026/03/NPR-core-ID-1024x640.jpg",
   "Hacker News": "https://cdn-icons-png.flaticon.com/512/9543/9543111.png",
   "Anadolu Ajansı":
     "https://play-lh.googleusercontent.com/ME_9wBMHWB_QmJwy-QXRmEsOd_i0VFw4K-3wdHAmydgnmJnDmrqWVFfEOGnHzubdzg",

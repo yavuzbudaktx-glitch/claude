@@ -228,28 +228,89 @@ async function harvestNasa() {
   return null;
 }
 
+// ---- REDDIT (per-sub top-of-week, balanced round-robin) -------------------
+// Reddit hard-blocks datacenter IPs on the live route, so it kept collapsing
+// to one subreddit. Harvested from the runner (gentle: one daily pass, spaced
+// requests, honest UA) it comes back balanced across all five subs.
+const REDDIT_SUBS = ["CPA", "Accounting", "Big4", "tax", "Bookkeeping"];
+const DEAD_TITLE = /^\[(removed|deleted|removed by reddit)\]$/i;
+
+function mapRedditChildren(json, sub) {
+  const kids = json?.data?.children ?? [];
+  return kids
+    .map((c) => c.data)
+    .filter((d) => d && !d.stickied && !d.over_18 && typeof d.title === "string" && !DEAD_TITLE.test(d.title))
+    .map((d) => {
+      const prev = d.preview?.images?.[0];
+      let image = null;
+      if (prev?.resolutions?.length) image = (prev.resolutions[Math.min(prev.resolutions.length - 1, 2)]?.url ?? prev.source?.url ?? "").replace(/&amp;/g, "&") || null;
+      else if (/\.(jpg|jpeg|png|gif|webp)$/i.test(d.url_overridden_by_dest ?? d.url ?? "")) image = d.url_overridden_by_dest ?? d.url;
+      return {
+        id: d.id ?? "",
+        title: d.title ?? "",
+        subreddit: d.subreddit ?? sub,
+        permalink: `https://www.reddit.com${d.permalink ?? ""}`,
+        score: typeof d.score === "number" ? d.score : 0,
+        ratio: typeof d.upvote_ratio === "number" ? d.upvote_ratio : 0,
+        comments: typeof d.num_comments === "number" ? d.num_comments : 0,
+        created: (typeof d.created_utc === "number" ? d.created_utc : 0) * 1000,
+        flair: (typeof d.link_flair_text === "string" && d.link_flair_text) || null,
+        author: d.author ?? "",
+        image,
+      };
+    })
+    .filter((p) => p.id && p.title);
+}
+
+async function harvestReddit() {
+  const perSub = [];
+  for (const sub of REDDIT_SUBS) {
+    const url = `https://www.reddit.com/r/${sub}/top.json?t=week&limit=25&raw_json=1`;
+    const j = await getJson(url, 2);
+    perSub.push(mapRedditChildren(j, sub));
+    await new Promise((r) => setTimeout(r, 700)); // be gentle between subs
+  }
+  const hit = perSub.filter((a) => a.length > 0).length;
+  if (hit < 2) return null; // not worth committing a one-sub result
+
+  // Round-robin interleave so the top of the feed alternates subs.
+  const seen = new Set();
+  const out = [];
+  for (let i = 0; out.length < 70; i++) {
+    let advanced = false;
+    for (const list of perSub) {
+      const p = list[i];
+      if (p) { advanced = true; if (!seen.has(p.id)) { seen.add(p.id); out.push(p); } }
+    }
+    if (!advanced) break;
+  }
+  return { posts: out, subs: REDDIT_SUBS, sort: "top", period: "week", subsHit: hit };
+}
+
 async function main() {
   const date = localDateKey();
   console.log("Harvesting daily content for", date);
-  const [art, bird, wiki, nasa] = await Promise.all([
+  const [art, bird, wiki, nasa, reddit] = await Promise.all([
     harvestArt(date).catch((e) => (console.warn("art:", e?.message), null)),
     harvestBird(date).catch((e) => (console.warn("bird:", e?.message), null)),
     harvestWiki(date).catch((e) => (console.warn("wiki:", e?.message), null)),
     harvestNasa().catch((e) => (console.warn("nasa:", e?.message), null)),
+    harvestReddit().catch((e) => (console.warn("reddit:", e?.message), null)),
   ]);
 
   // Never overwrite with an all-null harvest (e.g. a bad-network run) — that
   // would just push the routes onto their live fallback anyway, and could
   // clobber a good file from an earlier run this day.
-  if (!art && !bird && !wiki && !nasa) {
+  if (!art && !bird && !wiki && !nasa && !reddit) {
     console.warn("All fetchers returned null — leaving existing file untouched.");
     process.exit(0);
   }
-  const payload = { date, generatedAt: new Date().toISOString(), art, bird, wiki, nasa };
+  const payload = { date, generatedAt: new Date().toISOString(), art, bird, wiki, nasa, reddit };
   await mkdir(dirname(OUT), { recursive: true });
   await writeFile(OUT, JSON.stringify(payload, null, 2));
   console.log("Wrote", OUT, {
     art: !!art, bird: !!bird, birdAudio: !!bird?.audioUrl, wiki: !!wiki, nasa: !!nasa,
+    reddit: reddit ? `${reddit.subsHit} subs, ${reddit.posts.length} posts` : false,
   });
 }
 

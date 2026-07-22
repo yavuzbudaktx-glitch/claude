@@ -13,6 +13,7 @@
 
 import { NextResponse } from "next/server";
 import Parser from "rss-parser";
+import { readHarvested } from "@/lib/daily-content";
 
 // Force-dynamic + 0 revalidate so the refresh button truly re-fetches every
 // time — Next's own data cache used to swallow the request even when the
@@ -389,8 +390,35 @@ async function buildPayload(): Promise<Payload> {
   return { posts: out, subs: SUBS, sort: SORT, period: PERIOD };
 }
 
+// Today / yesterday, UTC and Dallas-local (the harvester's TZ). Top-of-week
+// content is stable across a day, so accept the recent window.
+function harvestAcceptDates(): string[] {
+  const iso = (ms: number) => new Date(ms).toISOString().slice(0, 10);
+  const dallas = (ms: number) => {
+    const d = new Date(ms - 5 * 3600_000);
+    return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
+  };
+  const n = Date.now();
+  return Array.from(new Set([iso(n), iso(n - 86400_000), dallas(n), dallas(n - 86400_000)]));
+}
+
 export async function GET(req: Request) {
   const force = new URL(req.url).searchParams.has("n"); // manual refresh nonce
+
+  // 0) Harvested feed (from the GitHub runner, where Reddit ISN'T IP-blocked)
+  //    — the reliable, balanced-across-all-subs path. Fail-safe: null on any
+  //    problem → the live snapshot/fetch path below runs unchanged.
+  const pre = await readHarvested<Payload & { subsHit?: number }>(
+    "reddit",
+    harvestAcceptDates(),
+    (v) => Array.isArray(v.posts) && v.posts.length >= 8 && (v.subsHit ?? 0) >= 2,
+  );
+  if (pre) {
+    return NextResponse.json(
+      { posts: pre.posts, subs: pre.subs ?? SUBS, sort: pre.sort ?? SORT, period: pre.period ?? PERIOD },
+      { headers: { "Cache-Control": CDN_CACHE } },
+    );
+  }
 
   // Serve the warm snapshot immediately unless the user forced a refresh.
   if (!force && snapshot && Date.now() - snapshot.at < SNAP_TTL) {

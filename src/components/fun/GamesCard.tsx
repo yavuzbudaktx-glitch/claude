@@ -1,15 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Type, Crown, Worm, Grid3x3, Zap, Globe2 } from "lucide-react";
+import { Type, Crown, Worm, Grid3x3, Globe2 } from "lucide-react";
 import { Wordle } from "./Wordle";
 import { ChessPuzzle } from "./ChessPuzzle";
 import { Snake } from "./Snake";
 import { Game2048 } from "./Game2048";
-import { Zigzag } from "./Zigzag";
 import { Worldle } from "./Worldle";
 
-type GameTab = "chess" | "2048" | "snake" | "zigzag" | "wordle" | "worldle";
+type GameTab = "chess" | "2048" | "snake" | "wordle" | "worldle";
 
 export function GamesCard() {
   const [tab, setTab] = useState<GameTab>("chess");
@@ -22,7 +21,6 @@ export function GamesCard() {
             { id: "chess",     label: "Chess",  icon: Crown },
             { id: "2048",      label: "2048",   icon: Grid3x3 },
             { id: "snake",     label: "Snake",  icon: Worm },
-            { id: "zigzag",    label: "Zigzag", icon: Zap },
             { id: "wordle",    label: "Wordle", icon: Type },
             { id: "worldle",   label: "Worldle", icon: Globe2 },
           ] as Array<{ id: GameTab; label: string; icon: typeof Type }>
@@ -46,7 +44,6 @@ export function GamesCard() {
         {tab === "wordle" && <Wordle />}
         {tab === "2048" && <Game2048 />}
         {tab === "snake" && <Snake />}
-        {tab === "zigzag" && <Zigzag />}
         {tab === "worldle" && <Worldle />}
       </div>
     </div>

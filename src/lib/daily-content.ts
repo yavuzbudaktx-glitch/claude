@@ -8,7 +8,7 @@ import path from "node:path";
 // existing live-fetch path. The harvest can only ADD reliability; it can
 // never break a route that works without it.
 
-export type DailyKind = "art" | "bird" | "wiki" | "nasa";
+export type DailyKind = "art" | "bird" | "wiki" | "nasa" | "reddit";
 
 interface DailyFile {
   date?: string;
@@ -16,6 +16,7 @@ interface DailyFile {
   bird?: unknown;
   wiki?: unknown;
   nasa?: unknown;
+  reddit?: unknown;
 }
 
 // Cheap in-instance cache — the file changes at most once a day.
