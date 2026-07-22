@@ -491,6 +491,7 @@ main { position: relative; z-index: 1; }
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   body::before { animation: none; }
+  body::after { animation: none; }
   .text-gradient { animation: none; }
   .animate-fadeIn { animation: none; }
 }
@@ -1268,6 +1269,128 @@ main { position: relative; z-index: 1; }
 .theme-water .dot {
   background: radial-gradient(circle at 32% 30%, #e6ffff, var(--accent) 55%, #0a6e8c);
   box-shadow: 0 0 0 3px rgba(20,225,238,0.18), 0 0 14px var(--glow), 0 0 28px rgba(20,225,238,0.45);
+}
+
+/* =======================================================================
+   RAIN (theme) — a storm outside the window: slate sky, three parallax
+   sheets of rain streaking down the whole page, a slow storm-brightening
+   swell in the backdrop. Rain is drawn on body::after as diagonal dashes
+   (short colour segments in a repeating-linear-gradient) that scroll
+   downward; near sheets are bigger, bolder and fall faster than far ones.
+======================================================================= */
+:root.theme-rain {
+  color-scheme: dark;
+  --bg:           #0a0f16;
+  --paper:        rgba(150, 180, 215, 0.06);
+  --paper-2:      rgba(150, 180, 215, 0.11);
+  --ink:          #e8eef7;
+  --ink-soft:     #b7c6d9;
+  --muted:        #7d90a8;
+  --muted-2:      #4a5a70;
+  --rule:         rgba(150, 180, 215, 0.20);
+  --rule-soft:    rgba(150, 180, 215, 0.09);
+  --accent:       #6db3e6;
+  --accent-soft:  rgba(109, 179, 230, 0.22);
+  --accent-2:     #9ccbf0;
+  --hl:           rgba(109, 179, 230, 0.18);
+  --up:           #6fdbb0;
+  --down:         #ff8fa3;
+  --grad-from:    #3a6ea5;
+  --grad-via:     #6db3e6;
+  --grad-to:      #cfe4f5;
+  --glass:        rgba(14, 22, 34, 0.62);
+  --glass-border: rgba(150, 180, 215, 0.26);
+  --glow:         rgba(109, 179, 230, 0.65);
+  --shadow-card:  0 18px 50px -16px rgba(0, 8, 20, 0.90),
+                  inset 0 1px 0 rgba(210, 228, 250, 0.10),
+                  0 0 26px -10px rgba(109, 179, 230, 0.30);
+  --shadow-hover: 0 34px 78px -22px rgba(0, 12, 28, 0.92),
+                  inset 0 1px 0 rgba(210, 228, 250, 0.16),
+                  0 0 52px -12px rgba(109, 179, 230, 0.45);
+  --aurora-1:     rgba(30, 55, 90, 0.85);
+  --aurora-2:     rgba(60, 95, 140, 0.55);
+  --aurora-3:     rgba(20, 40, 70, 0.70);
+  --aurora-4:     rgba(6, 12, 22, 0.80);
+  --grain:        0.05;
+}
+:root.theme-rain:not(.dark) {
+  color-scheme: light;
+  --bg:           #d6dee8;
+  --paper:        #ffffff;
+  --paper-2:      #eef3f8;
+  --ink:          #16222f;
+  --ink-soft:     #3d4e60;
+  --muted:        #667485;
+  --muted-2:      #9fadbd;
+  --rule:         rgba(22, 34, 47, 0.12);
+  --rule-soft:    rgba(22, 34, 47, 0.05);
+  --accent:       #2b6cb0;
+  --accent-soft:  rgba(43, 108, 176, 0.10);
+  --accent-2:     #3a7bc0;
+  --hl:           rgba(43, 108, 176, 0.07);
+  --up:           #0e9488;
+  --down:         #d11d54;
+  --grad-from:    #2b6cb0;
+  --grad-via:     #4a90d9;
+  --grad-to:      #9cc3e8;
+  --glass:        rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(22, 34, 47, 0.10);
+  --glow:         rgba(43, 108, 176, 0.20);
+  --shadow-card:  0 1px 2px rgba(22,34,47,0.05), 0 10px 26px -16px rgba(43,108,176,0.26);
+  --shadow-hover: 0 2px 4px rgba(22,34,47,0.07), 0 20px 44px -20px rgba(43,108,176,0.36);
+  --aurora-1: rgba(43,108,176,0.14); --aurora-2: rgba(120,160,200,0.16);
+  --aurora-3: rgba(60,90,130,0.10); --aurora-4: transparent;
+}
+.theme-rain .text-gradient {
+  background: linear-gradient(118deg, #3a6ea5, #6db3e6 50%, #cfe4f5);
+  -webkit-background-clip: text; background-clip: text;
+}
+/* Three parallax sheets of falling rain. Each layer is a repeating diagonal
+   gradient of short bright dashes; the keyframe scrolls each straight down by
+   an integer number of its own tiles so the loop is seamless, and by
+   DIFFERENT amounts so near sheets fall faster than far ones. */
+.theme-rain body::after {
+  opacity: 1;
+  mix-blend-mode: screen;
+  background-image:
+    repeating-linear-gradient(101deg, transparent 0 20px, rgba(190,216,248,0.34) 20px 22px, transparent 22px 46px),
+    repeating-linear-gradient(99deg,  transparent 0 32px, rgba(200,224,250,0.18) 32px 33px, transparent 33px 78px),
+    repeating-linear-gradient(103deg, transparent 0 12px, rgba(165,198,240,0.11) 12px 13px, transparent 13px 30px);
+  background-size: 170px 190px, 210px 230px, 120px 140px;
+  animation: rainfall 0.62s linear infinite;
+}
+@keyframes rainfall {
+  from { background-position: 0 0,     0 0,     0 0; }
+  to   { background-position: 0 570px, 0 460px, 0 280px; }
+}
+/* Light / overcast mode — screen-blending bright dashes vanish on a pale sky,
+   so switch to darker streaks over the page at reduced strength. */
+.theme-rain:not(.dark) body::after {
+  mix-blend-mode: normal;
+  opacity: 0.55;
+  background-image:
+    repeating-linear-gradient(101deg, transparent 0 20px, rgba(64,104,146,0.30) 20px 22px, transparent 22px 46px),
+    repeating-linear-gradient(99deg,  transparent 0 32px, rgba(84,120,158,0.17) 32px 33px, transparent 33px 78px),
+    repeating-linear-gradient(103deg, transparent 0 12px, rgba(58,98,140,0.12) 12px 13px, transparent 13px 30px);
+}
+/* Storm backdrop — the aurora mesh recoloured to slate, with a slow swell
+   that gently brightens the whole sky like a passing squall. */
+.theme-rain body::before {
+  filter: blur(90px) saturate(130%);
+  animation: aurora 40s ease-in-out infinite alternate, rainStorm 13s ease-in-out infinite;
+}
+@keyframes rainStorm {
+  0%, 100% { opacity: 0.88; transform: translate3d(0,0,0); }
+  50%      { opacity: 1;    transform: translate3d(-1.5%, 0.5%, 0) scale(1.05); }
+}
+.theme-rain .card {
+  border-radius: 16px;
+  background-image: linear-gradient(180deg, rgba(160,200,240,0.05), transparent 40%);
+}
+.theme-rain .card-bare, .theme-rain .btn-ghost, .theme-rain .chip { border-radius: 12px; }
+.theme-rain .dot {
+  background: radial-gradient(circle at 32% 30%, #dbeeff, var(--accent) 55%, #3a6ea5);
+  box-shadow: 0 0 0 3px rgba(109,179,230,0.18), 0 0 14px var(--glow), 0 0 26px rgba(109,179,230,0.40);
 }
 
 /* =======================================================================

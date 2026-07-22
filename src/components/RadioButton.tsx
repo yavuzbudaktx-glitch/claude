@@ -109,9 +109,27 @@ export function RadioButton() {
       </button>
 
       {picking && typeof window !== "undefined" && createPortal(
-        <>
-          <div className="fixed inset-0 z-[58] bg-black/25 backdrop-blur-sm animate-fadeIn" onClick={() => setPicking(false)} aria-hidden />
-          <div className="fixed top-[72px] right-5 md:right-10 z-[60] w-[min(300px,calc(100vw-2.5rem))] card !p-2 animate-fadeIn">
+        // The menu is an OPAQUE panel (var(--bg) is a solid colour in every
+        // theme) with NO backdrop-filter, nested inside the dim overlay. An
+        // earlier version used the frosted `.card` class, whose own
+        // backdrop-filter stacked on top of the overlay's blur and rendered
+        // fully transparent on some GPUs — "screen blurs but no menu". A solid
+        // panel can't be nuked by that interaction.
+        <div
+          className="fixed inset-0 z-[60] bg-black/25 backdrop-blur-sm animate-fadeIn flex items-start justify-end"
+          style={{ paddingTop: 66, paddingRight: 20, paddingLeft: 20 }}
+          onClick={() => setPicking(false)}
+        >
+          <div
+            role="menu"
+            onClick={(e) => e.stopPropagation()}
+            className="w-[min(300px,100%)] rounded-2xl p-2 animate-fadeIn"
+            style={{
+              background: "var(--bg)",
+              border: "1px solid var(--glass-border)",
+              boxShadow: "0 18px 50px -12px rgba(0,0,0,0.5)",
+            }}
+          >
             <div className="px-2 py-1.5 label flex items-center gap-1.5">
               <RadioTower className="h-3 w-3" /> Pick a station
             </div>
@@ -136,7 +154,7 @@ export function RadioButton() {
               })}
             </div>
           </div>
-        </>,
+        </div>,
         document.body,
       )}
 

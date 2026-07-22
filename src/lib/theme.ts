@@ -9,7 +9,7 @@
 // are clean palettes/looks.
 
 export type ThemeId =
-  | "aurora" | "galaxy" | "forest" | "water" | "sunset"
+  | "aurora" | "galaxy" | "forest" | "water" | "rain" | "sunset"
   | "terminal" | "accounting" | "mono"
   | "newspaper" | "blueprint" | "comic"
   | "mosaic" | "stainedglass" | "deco" | "cyberpunk"
@@ -41,13 +41,14 @@ export const THEMES: Array<{
   { id: "galaxy",       label: "Galaxy",       kind: "theme",   description: "Deep space — violet nebula, a dense drifting starfield behind everything." },
   { id: "forest",       label: "Forest",       kind: "theme",   description: "A living woodland — sun shafts through the canopy, drifting leaves, bark-grain cards." },
   { id: "water",        label: "Water",        kind: "theme",   description: "Submerged in a turquoise sea — flowing caustics, streaming bubbles, deep aqua glow." },
+  { id: "rain",         label: "Rain",         kind: "theme",   description: "A storm at the window — slate sky, three parallax sheets of rain streaking down the whole page." },
   { id: "sunset",       label: "Sunset",       kind: "theme",   description: "Golden hour at the coast — peach sky, a slowly sinking sun, long horizon afterglow." },
 ];
 
 const KEY = "brief.theme.v1";
 
 const VALID: ThemeId[] = [
-  "aurora", "galaxy", "forest", "water", "sunset",
+  "aurora", "galaxy", "forest", "water", "rain", "sunset",
   "mosaic", "stainedglass", "deco", "cyberpunk",
   "renaissance", "marble", "subway",
   "terminal", "accounting", "mono",
@@ -86,7 +87,7 @@ export const THEME_BOOT_SCRIPT = `
   (function() {
     try {
       var v = localStorage.getItem(${JSON.stringify(KEY)});
-      var ok = ['galaxy','forest','water','sunset','mosaic','stainedglass','deco','cyberpunk','renaissance','marble','subway','terminal','accounting','mono','newspaper','blueprint','comic'];
+      var ok = ['galaxy','forest','water','rain','sunset','mosaic','stainedglass','deco','cyberpunk','renaissance','marble','subway','terminal','accounting','mono','newspaper','blueprint','comic'];
       var root = document.documentElement;
       var saved = v && ok.indexOf(v) >= 0 ? v : null;
       if (saved) root.classList.add('theme-' + saved);
