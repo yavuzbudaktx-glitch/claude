@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import { RadioTower, Settings2, X } from "lucide-react";
+import { RadioTower, Settings2, X, Radio, BookOpenText, Shuffle } from "lucide-react";
 import {
-  subscribeRadio, radioStatus, toggleRadio,
-  getCustomRadioUrl, setCustomRadioUrl,
+  subscribeRadio, radioStatus, toggleRadio, stopRadio, playRadioSource,
+  getCustomRadioUrl, setCustomRadioUrl, type RadioSource,
 } from "@/lib/radio";
 
 // Equalizer animation: three thin bars that breathe at offset rates while
@@ -32,32 +32,50 @@ export function RadioButton() {
   // paste their own stream if the published mirrors stop working.
   const btnRef = useRef<HTMLButtonElement>(null);
   const [editing, setEditing] = useState(false);
+  const [picking, setPicking] = useState(false);
   const [url, setUrl] = useState("");
   const pressTimer = useRef<number | null>(null);
   useEffect(() => { if (editing) setUrl(getCustomRadioUrl()); }, [editing]);
 
   function onPointerDown() {
-    pressTimer.current = window.setTimeout(() => setEditing(true), 550);
+    pressTimer.current = window.setTimeout(() => { setPicking(false); setEditing(true); }, 550);
   }
   function clearPress() {
     if (pressTimer.current != null) { window.clearTimeout(pressTimer.current); pressTimer.current = null; }
   }
 
+  // Click: if something's playing, stop it. Otherwise open the 3-option picker
+  // so the user chooses a source before anything plays.
+  function onClick() {
+    if (active || loading) { stopRadio(); return; }
+    setPicking((p) => !p);
+  }
+  function pick(source: RadioSource) {
+    setPicking(false);
+    playRadioSource(source);
+  }
+
+  const RADIO_SOURCES: Array<{ id: RadioSource; label: string; sub: string; icon: typeof Radio }> = [
+    { id: "kral",  label: "Kral Türk",         sub: "live akustik broadcast",   icon: Radio },
+    { id: "quran", label: "Relaxing Quran",    sub: "random recitation",        icon: BookOpenText },
+    { id: "mix",   label: "Mix radio",         sub: "personalized station",     icon: Shuffle },
+  ];
+
   return (
     <>
       <button
         ref={btnRef}
-        onClick={() => toggleRadio()}
-        onContextMenu={(e) => { e.preventDefault(); setEditing(true); }}
+        onClick={onClick}
+        onContextMenu={(e) => { e.preventDefault(); setPicking(false); setEditing(true); }}
         onPointerDown={onPointerDown}
         onPointerUp={clearPress}
         onPointerLeave={clearPress}
-        aria-label="SlowTurk radio"
+        aria-label="Radio"
         title={
-          error ? "Couldn't reach SlowTurk — long-press to set a custom URL"
-          : active ? "Stop SlowTurk · long-press to set URL"
+          error ? "Couldn't start the radio — long-press to set a custom URL"
+          : active ? "Stop radio · long-press to set URL"
           : loading ? "Connecting…"
-          : "Play SlowTurk radio · long-press to set URL"
+          : "Play radio · pick a source · long-press to set URL"
         }
         className={`btn-ghost relative overflow-visible ${active || loading ? "!text-accent !border-[var(--accent)] !bg-[var(--accent-soft)]" : ""} ${error ? "!text-down !border-[var(--down)]" : ""}`}
         style={active ? { boxShadow: "0 0 18px -4px var(--glow), inset 0 1px 0 rgba(255,255,255,0.08)" } : undefined}
@@ -85,6 +103,38 @@ export function RadioButton() {
           />
         )}
       </button>
+
+      {picking && typeof window !== "undefined" && createPortal(
+        <>
+          <div className="fixed inset-0 z-[58] animate-fadeIn" onClick={() => setPicking(false)} aria-hidden />
+          <div className="fixed top-[72px] right-5 md:right-10 z-[60] w-[min(300px,calc(100vw-2.5rem))] card !p-2 animate-fadeIn">
+            <div className="px-2 py-1.5 label flex items-center gap-1.5">
+              <RadioTower className="h-3 w-3" /> Pick a station
+            </div>
+            <div className="flex flex-col gap-0.5">
+              {RADIO_SOURCES.map((s) => {
+                const Icon = s.icon;
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => pick(s.id)}
+                    className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-left hover:bg-[var(--rule-soft)] transition group"
+                  >
+                    <span className="grid place-items-center h-8 w-8 shrink-0 rounded-lg bg-[var(--accent-soft)] text-accent">
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-[13px] font-medium text-ink leading-tight">{s.label}</span>
+                      <span className="block text-[11px] text-muted leading-tight">{s.sub}</span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </>,
+        document.body,
+      )}
 
       {editing && typeof window !== "undefined" && createPortal(
         <>

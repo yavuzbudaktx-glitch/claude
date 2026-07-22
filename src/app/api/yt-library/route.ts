@@ -27,6 +27,7 @@ const SOURCES: Record<string, Source> = {
   bobross: { kind: "playlist", list: "PLaLOVNqqD-2HgiA-GZyzcfZN9n-YelhB5", label: "Bob Ross", url: "https://www.youtube.com/playlist?list=PLaLOVNqqD-2HgiA-GZyzcfZN9n-YelhB5", min: 200 },
   elif:    { kind: "channel",  handle: "ElifinHecesi",       label: "Elif'in Hecesi",   url: "https://www.youtube.com/@ElifinHecesi/videos", min: 42 },
   turgut:  { kind: "channel",  handle: "TurgutBayraktarBelgeselleri", label: "Turgut Bayraktar Belgeselleri", url: "https://www.youtube.com/@TurgutBayraktarBelgeselleri/videos", min: 200 },
+  quran:   { kind: "channel",  handle: "Relaxing-HolyQuran",      label: "Relaxing Holy Quran", url: "https://www.youtube.com/@Relaxing-HolyQuran/videos", min: 20 },
 };
 
 async function fetchFor(src: Source): Promise<LibVideo[]> {

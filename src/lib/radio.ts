@@ -103,7 +103,11 @@ function teardownHls() {
 // <audio>, so when the URL starts with `yt:` we mount a hidden iframe instead.
 // One iframe at a time; tear down on stop.
 let ytWrap: HTMLDivElement | null = null;
-function mountYouTube(videoId: string) {
+// Mount a hidden YouTube IFrame from a full embed `src`. `enablejsapi=1` lets
+// us send commands; `mute=0` keeps it audible; the click that triggered this
+// is a real user gesture, so autoplay-with-sound is allowed. One iframe at a
+// time.
+function mountYouTubeEmbed(src: string) {
   if (typeof document === "undefined") return;
   if (!ytWrap) {
     ytWrap = document.createElement("div");
@@ -111,12 +115,16 @@ function mountYouTube(videoId: string) {
     ytWrap.setAttribute("aria-hidden", "true");
     document.body.appendChild(ytWrap);
   }
-  // `enablejsapi=1` lets us send commands; `mute=0` keeps it audible. Setting
-  // a `playlist` value with the same id makes the broadcast loop indefinitely
-  // for non-live videos; live broadcasts already loop.
   ytWrap.innerHTML =
-    `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=0&loop=1&playlist=${videoId}&enablejsapi=1" ` +
-    `allow="autoplay; encrypted-media" width="320" height="180" frameborder="0"></iframe>`;
+    `<iframe src="${src}" allow="autoplay; encrypted-media" ` +
+    `width="320" height="180" frameborder="0"></iframe>`;
+}
+// Single video looped forever — a `playlist` value equal to the id makes a
+// non-live video loop; live broadcasts already loop.
+function mountYouTube(videoId: string) {
+  mountYouTubeEmbed(
+    `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=0&loop=1&playlist=${videoId}&enablejsapi=1`,
+  );
 }
 function unmountYouTube() {
   if (ytWrap) { ytWrap.innerHTML = ""; }
@@ -181,6 +189,17 @@ async function playUrl(url: string): Promise<void> {
     teardownHls();
     lastPlayedUrl = url;
     mountYouTube(id);
+    return;
+  }
+  // `ytembed:<encoded full embed src>` — used by the multi-video / mix radio
+  // sources below. Encoding the whole embed URL keeps reconnect (which replays
+  // lastPlayedUrl through playUrl) working uniformly.
+  if (url.startsWith("ytembed:")) {
+    const src = decodeURIComponent(url.slice("ytembed:".length));
+    try { audio?.pause(); } catch { /* noop */ }
+    teardownHls();
+    lastPlayedUrl = url;
+    mountYouTubeEmbed(src);
     return;
   }
   // For audio streams we leave any prior YouTube iframe up only until the
@@ -267,4 +286,93 @@ export async function toggleRadio() {
   teardownHls();
   setStatus("error");
   setTimeout(() => { if (status === "error") setStatus("idle"); }, 4500);
+}
+
+// ---- Pick-a-source radio ---------------------------------------------------
+// The button offers three picks before playing:
+//   kral  — the live Kral Müzik Akustik 24/7 YouTube broadcast
+//   quran — a random video from the Relaxing Holy Quran channel (a shuffled
+//           playlist of the whole library, looped)
+//   mix   — YouTube's personalized radio "mix" seeded from one track (the RDEM
+//           list is a generated station that can't be enumerated, so we hand
+//           the seed + list to YouTube and let it autoplay the mix)
+export type RadioSource = "kral" | "quran" | "mix";
+
+const KRAL_LIVE_ID = "6He9sFxFv8Y";
+const MIX_SEED_ID = "7t2paZZDSso";
+const MIX_LIST_ID = "RDEMDGoxo2Ts4QVsaNGNvhxDKw";
+
+function shuffled<T>(arr: T[]): T[] {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Pull the Relaxing Holy Quran library (cached server-side) and return the
+// video ids. Empty array on any failure so the caller can fall back.
+async function fetchQuranIds(): Promise<string[]> {
+  try {
+    const r = await fetch("/api/yt-library?source=quran", { signal: AbortSignal.timeout(9000) });
+    if (!r.ok) return [];
+    const j = (await r.json()) as { videos?: Array<{ id?: string }> };
+    const vids = Array.isArray(j.videos) ? j.videos : [];
+    return vids.map((v) => (v?.id ?? "").trim()).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+function ytEmbedUrl(src: string): string {
+  return `ytembed:${encodeURIComponent(src)}`;
+}
+
+export async function playRadioSource(source: RadioSource) {
+  if (status === "playing" || status === "loading") stopRadio();
+  intentionallyStopped = false;
+  reconnectAttempts = 0;
+  setStatus("loading");
+
+  try {
+    if (source === "kral") {
+      await playUrl(`yt:${KRAL_LIVE_ID}`);
+      setStatus("playing");
+      return;
+    }
+
+    if (source === "mix") {
+      // Seed video + generated-radio list. YouTube autoplays the whole mix.
+      const src =
+        `https://www.youtube.com/embed/${MIX_SEED_ID}` +
+        `?autoplay=1&mute=0&controls=0&enablejsapi=1&list=${MIX_LIST_ID}`;
+      await playUrl(ytEmbedUrl(src));
+      setStatus("playing");
+      return;
+    }
+
+    // quran — shuffle the library and play it as a looping playlist. The first
+    // id is the embed target; `playlist=` lists the rest (plus the first) so
+    // `loop=1` cycles the whole set indefinitely.
+    const ids = shuffled(await fetchQuranIds());
+    if (ids.length) {
+      const first = ids[0];
+      const list = ids.join(",");
+      const src =
+        `https://www.youtube.com/embed/${first}` +
+        `?autoplay=1&mute=0&controls=0&enablejsapi=1&loop=1&playlist=${list}`;
+      await playUrl(ytEmbedUrl(src));
+      setStatus("playing");
+      return;
+    }
+    // Library fetch failed — fall back to the live Kral broadcast so the button
+    // still does something audible.
+    await playUrl(`yt:${KRAL_LIVE_ID}`);
+    setStatus("playing");
+  } catch {
+    teardownHls();
+    setStatus("error");
+    setTimeout(() => { if (status === "error") setStatus("idle"); }, 4500);
+  }
 }
