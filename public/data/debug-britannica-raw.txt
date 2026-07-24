@@ -1,14 +1,14 @@
 # Britannica scrape debug dump
-# generated: 2026-07-23T20:39:53.048Z
-# url:       https://www.britannica.com/on-this-day/july-23
+# generated: 2026-07-24T07:55:00.867Z
+# url:       https://www.britannica.com/on-this-day/july-24
 # fetcher:   Jina Reader
 # kind:      markdown
-# length:    20248
+# length:    23854
 # parsed:    NO
 # -----------------------------------------------------------------
 Title: On This Day - What Happened Today In History | Britannica
 
-URL Source: https://www.britannica.com/on-this-day/july-23
+URL Source: https://www.britannica.com/on-this-day/july-24
 
 Markdown Content:
 [![Image 1: Encyclopedia Britannica](https://cdn.britannica.com/mendel/eb-logo/MendelNewThistleLogo.png)](https://www.britannica.com/)
@@ -33,7 +33,7 @@ Login
 
 [Home](https://www.britannica.com/) Today in History ![Image 3: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-193/images/shared/tih-logo.png?v=3.193.1)
 
-![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-193/images/shared/tih-star.svg?v=3.193.1)July 23
+![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-193/images/shared/tih-star.svg?v=3.193.1)July 24
 
 ![Image 5: Today In History Phone](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-phone.png?v=3.189.7)
 
@@ -59,7 +59,7 @@ June
 
 [22](https://www.britannica.com/on-this-day/June-22)[23](https://www.britannica.com/on-this-day/June-23)[24](https://www.britannica.com/on-this-day/June-24)[25](https://www.britannica.com/on-this-day/June-25)[26](https://www.britannica.com/on-this-day/June-26)[27](https://www.britannica.com/on-this-day/June-27)[28](https://www.britannica.com/on-this-day/June-28)
 
-[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-23)[](https://www.britannica.com/on-this-day/july-23)[](https://www.britannica.com/on-this-day/july-23)[](https://www.britannica.com/on-this-day/july-23)[](https://www.britannica.com/on-this-day/july-23)
+[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-24)[](https://www.britannica.com/on-this-day/july-24)[](https://www.britannica.com/on-this-day/july-24)[](https://www.britannica.com/on-this-day/july-24)[](https://www.britannica.com/on-this-day/july-24)
 
 July
 
@@ -71,7 +71,7 @@ July
 
 [22](https://www.britannica.com/on-this-day/July-22)[23](https://www.britannica.com/on-this-day/July-23)[24](https://www.britannica.com/on-this-day/July-24)[25](https://www.britannica.com/on-this-day/July-25)[26](https://www.britannica.com/on-this-day/July-26)[27](https://www.britannica.com/on-this-day/July-27)[28](https://www.britannica.com/on-this-day/July-28)
 
-[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-23)[](https://www.britannica.com/on-this-day/july-23)[](https://www.britannica.com/on-this-day/july-23)[](https://www.britannica.com/on-this-day/july-23)
+[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-24)[](https://www.britannica.com/on-this-day/july-24)[](https://www.britannica.com/on-this-day/july-24)[](https://www.britannica.com/on-this-day/july-24)
 
 August
 
@@ -83,7 +83,7 @@ August
 
 [22](https://www.britannica.com/on-this-day/August-22)[23](https://www.britannica.com/on-this-day/August-23)[24](https://www.britannica.com/on-this-day/August-24)[25](https://www.britannica.com/on-this-day/August-25)[26](https://www.britannica.com/on-this-day/August-26)[27](https://www.britannica.com/on-this-day/August-27)[28](https://www.britannica.com/on-this-day/August-28)
 
-[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-23)[](https://www.britannica.com/on-this-day/july-23)[](https://www.britannica.com/on-this-day/july-23)[](https://www.britannica.com/on-this-day/july-23)
+[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-24)[](https://www.britannica.com/on-this-day/july-24)[](https://www.britannica.com/on-this-day/july-24)[](https://www.britannica.com/on-this-day/july-24)
 
 August
 
@@ -93,25 +93,25 @@ August
 
 [Go to Today's Date](https://www.britannica.com/on-this-day)
 
- 2015: NASA discovers an earthlike planet
+ 1851: The Window Tax that backfired
 
- On this day in 2015,[NASA](https://www.britannica.com/topic/NASA)announced the discovery of[Earth](https://www.britannica.com/place/Earth)’s “bigger, older cousin,” an [exoplanet](https://www.britannica.com/science/extrasolar-planet) named Kepler-452b. Scientists are excited because it shares similarities with Earth, raising the possibility that it could potentially sustain life. However, with our current technology, the planet is too far away to detect the chemical signs of life. It is so distant that its light takes 1,800 years to reach Earth.
+ On this day in 1851,England abolished the despised Window Tax that had been in place since 1696. Because it felt too personal to ask how much someone made, the government developed a tax system that included counting [windows](https://www.britannica.com/technology/window). More windows generally meant a larger and more expensive house. But that was not always true, especially in urban areas. People resorted to boarding up windows, and new construction lacked ventilation. The government finally saw the light and ended the tax.
 
-[READ MORE](https://www.britannica.com/today-in-history/July-23-2015-NASA-Discovers-Earthlike-Exoplanet-Kepler-452b)
+[READ MORE](https://www.britannica.com/today-in-history/July-24-The-Window-Tax-That-Backfired)
 
-![Image 6: July 23, 2015: Discovering Kepler-452b took a miracle](https://cdn.britannica.com/28/289328-050-3D5A5E89/today-in-history-nasa-earthlike-planet.jpg?w=530&h=300&c=crop)
+![Image 6: July 24, 1851: The weird tax that made people brick up their own windows](https://cdn.britannica.com/29/289329-050-6762FB28/today-in-history-England-Window-Tax-is-finally-abolished.jpg?w=530&h=300&c=crop)
 
- JPL/NASA; Photo Illustration Encyclopædia Britannica, Inc.
+ © Fox Photos—Hulton Archive/Getty Images; Photo Illustration Encyclopædia Britannica, Inc.
 
  Featured Event 
 
-![Image 7: Aftermath of the 1952 coup](https://cdn.britannica.com/78/279778-050-E9F709DB/mohammed-naguib-gamal-abdel-nasser-egypt-cairo-1953.jpg?w=356&h=200&c=crop)
+![Image 7: Mata Hari](https://cdn.britannica.com/50/2350-004-6DE68478/Mata-Hari.jpg?w=356&h=200&c=crop)
 
- © Keystone—Hulton Archive/Getty Images
+ Harlinque/H. Roger-Viollet
 
-[Egyptian monarchy toppled by coup](https://www.britannica.com/place/Egypt/The-revolution-and-the-Republic#ref22400)
+[Beginning of Mata Hari’s trial](https://www.britannica.com/biography/Mata-Hari-Dutch-dancer-and-spy)
 
- On this day in 1952, the Free Officers, a nationalistic military group organized by Colonel [Gamal Abdel Nasser](https://www.britannica.com/biography/Gamal-Abdel-Nasser), led a coup that overthrew King [Farouk I](https://www.britannica.com/biography/Farouk-I) of [Egypt](https://www.britannica.com/place/Egypt), ending the monarchy and making Major General [Muḥammad Naguib](https://www.britannica.com/biography/Muhammad-Naguib) the country’s notional leader. _[[How much do you know about Egyptian history?](https://www.britannica.com/quiz/egyptian-history-quiz)]_
+ Dutch-born dancer and courtesan [Mata Hari](https://www.britannica.com/biography/Mata-Hari-Dutch-dancer-and-spy), whose name became a synonym for the seductive female spy, went on trial this day in 1917, accused of [spying](https://www.britannica.com/topic/espionage) for [Germany](https://www.britannica.com/place/Germany), and was subsequently found guilty and shot by a firing squad. _[[Read about 10 famous names in the espionage game](https://www.britannica.com/list/10-famous-names-in-the-espionage-game).]_
 
 Featured Biography
 
@@ -119,123 +119,167 @@ Featured Biography
 
  Featured Biography 
 
-[![Image 8: Haile Selassie](https://cdn.britannica.com/84/11284-050-74AAF28A/Haile-Selassie-1967.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Haile-Selassie-I)
+[![Image 8: Julie Krone](https://cdn.britannica.com/94/150794-050-D58FB927/Julie-Krone-1999.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Julie-Krone)
 
- AP
+ Bill Janscha/AP Images
 
-Haile Selassie
+Julie Krone
 
-> In order that the work of evil may not triumph again over this redeemed humanity, all peace-loving peoples must rally together for the definite re-establishment of right and peace.
-> 
-> Haile Selassie
-
-[Haile Selassie](https://www.britannica.com/biography/Haile-Selassie-I), born this day in 1892 and regarded by many [Rastas](https://www.britannica.com/topic/Rastafari) as the messiah, was the emperor of [Ethiopia](https://www.britannica.com/place/Ethiopia) (1930–74) who sought to modernize the country and who steered it into the mainstream of African politics.
+Born this day in 1963, American jockey [Julie Krone](https://www.britannica.com/biography/Julie-Krone) was the first woman to win a U.S. [Triple Crown](https://www.britannica.com/sports/Triple-Crown-American-thoroughbred-horse-racing) race, capturing the [Belmont Stakes](https://www.britannica.com/sports/Belmont-Stakes) in 1993, and in 2003 she became the first woman to win a Breeders’ Cup race.
 
 Famous Birthdays
 
-1912
+1916
 
-[M.H. Abrams](https://www.britannica.com/biography/M-H-Abrams)
+[John D. MacDonald](https://www.britannica.com/biography/John-D-MacDonald)
 
-American literary critic
+American writer
 
-1891
+1886
 
-[Harry Cohn](https://www.britannica.com/biography/Harry-Cohn)
+[Tanizaki Jun’ichirō](https://www.britannica.com/biography/Tanizaki-Junichiro)
 
-American film producer
+Japanese writer
 
-1884
+1803
 
-[Emil Jannings](https://www.britannica.com/biography/Emil-Jannings)
+[Adolphe Adam](https://www.britannica.com/biography/Adolphe-Adam)
 
-German actor
+French composer
 
-1626
+1802
 
-[Shabbetai Tzevi](https://www.britannica.com/biography/Shabbetai-Tzevi)
+[Alexandre Dumas, père](https://www.britannica.com/biography/Alexandre-Dumas-pere)
 
-Jewish pseudo-messiah
+French author [1802–1870]
 
-[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-23)
+[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-24)
 
-## More on July 23
+## More on July 24
 
-![Image 9: Sally Ride](https://cdn.britannica.com/00/164800-050-8F7307AE/Sally-Ride-Challenger.jpg?w=260&h=196&c=crop)
+![Image 9: X](https://cdn.britannica.com/55/247155-050-44D9EB78/Twitter-rebrand-X.jpg?w=260&h=196&c=crop)
 
- National Archives, Washington, D.C. (ARC Identifier: 541940)
+ Omar Marques—SOPA Images/LightRocket/Getty Images
 
-2012
+2023
 
- U.S. astronaut [Sally Ride](https://www.britannica.com/biography/Sally-Ride), the first American woman to travel in space, died from pancreatic cancer at the age of 61. _[[Take our quiz about famous astronauts and cosmonauts](https://www.britannica.com/quiz/famous-astronauts-and-cosmonauts).]_
+[Elon Musk](https://www.britannica.com/money/Elon-Musk) rebranded the [social media](https://www.britannica.com/topic/social-media) site Twitter as [X](https://www.britannica.com/money/Twitter) after merging Twitter with his company X Holdings. _[Sort fact from fiction in our quiz about technology and gadgets.]_
 
-![Image 10: Gone too soon](https://cdn.britannica.com/27/154727-050-FAEF8943/Amy-Winehouse.jpg?w=260&h=196&c=crop)
+![Image 10: Who Wants to Be a Millionaire](https://cdn.britannica.com/65/128665-050-A7D19690/Regis-Philbin-contestant-Who-Wants-to-Be-1999.jpg?w=260&h=196&c=crop)
 
- © Kevork Djansezian—AP/Shutterstock.com
+ Hulton Archive/Getty Images
 
-2011
+2020
 
- British singer-songwriter [Amy Winehouse](https://www.britannica.com/biography/Amy-Winehouse), who won five [Grammy Awards](https://www.britannica.com/art/Grammy-Award) for her Motown-inspired Back to Black (2006) but struggled with substance-abuse problems, died from alcohol poisoning at the age of 27. _[[Why does the myth of the “27 Club” persist?](https://www.britannica.com/topic/27-Club)]_
+ American TV personality [Regis Philbin](https://www.britannica.com/biography/Regis-Philbin), who was best known for hosting the [talk show](https://www.britannica.com/topic/talk-show) Live! With Regis and Kelly and the game show Who Wants to Be a Millionaire, died at age 88. _[[Take our pop culture quiz](https://www.britannica.com/quiz/pop-culture-quiz).]_
 
-![Image 11: Eileen Collins](https://cdn.britannica.com/46/211146-050-2232FD54/Eileen-Collins-astronaut.jpg?w=260&h=196&c=crop)
+![Image 11: Virginia E. Johnson](https://cdn.britannica.com/45/254945-050-D16592B7/Virginia-E-Masters.jpg?w=260&h=196&c=crop)
 
- NASA
+ © Denver Post/Getty Images
 
-1999
+2013
 
- With the launch of [NASA](https://www.britannica.com/topic/NASA)’s orbiter _Columbia_, [Eileen Collins](https://www.britannica.com/biography/Eileen-Collins) became the first woman to command a [space shuttle](https://www.britannica.com/technology/space-shuttle) mission. _[[Take our quiz about famous firsts for women](https://www.britannica.com/quiz/womens-history-famous-firsts).]_
+ American sex researcher and therapist [Virginia E. Johnson](https://www.britannica.com/biography/Virginia-E-Johnson)—who, with [William H. Masters](https://www.britannica.com/biography/William-H-Masters), formed [Masters and Johnson](https://www.britannica.com/biography/Masters-and-Johnson), a pioneering research team noted for their studies on human sexuality—died at age 88. _[[Test your knowledge of notable Americans](https://www.britannica.com/quiz/american-personalities).]_
 
-![Image 12: Crowds fill 12th Street in Detroit during the 1967 race riot, with people running, debris on the road, and storefront signs visible along both sides of the street.](https://cdn.britannica.com/70/195570-050-B7D927EF/People-Detroit-1967.jpg?w=260&h=196&c=crop)
+![Image 12: Lance Armstrong, 2008](https://cdn.britannica.com/81/171081-050-78310564/Lance-Armstrong-2008.jpg?w=260&h=196&c=crop)
 
- © Keystone Pictures USA/Alamy
+ Desiree Martin—AFP/Getty Images
 
-1967
+2005
 
- Residents of Detroit’s predominately Black neighborhoods began clashing with members of the city’s police department after a police raid on an illegal drinking club. The [violent confrontations](https://www.britannica.com/event/Detroit-Riot-of-1967), which lasted for five days and killed 43 people, helped to catalyze the [Black Power movement](https://www.britannica.com/topic/Black-Power-movement). _[[Learn more about notable riots in U.S. history](https://www.britannica.com/list/theres-a-riot-goin-on-riots-in-us-history-part-two).]_
+ American cyclist [Lance Armstrong](https://www.britannica.com/biography/Lance-Armstrong) became the first rider to win the [Tour de France](https://www.britannica.com/sports/Tour-de-France) seven times; however, he was later stripped of all his titles after an investigation revealed that he was the key figure in a wide-ranging [doping](https://www.britannica.com/science/doping) conspiracy. _[[Sort fact from fiction in our Tour de France quiz](https://www.britannica.com/quiz/tour-de-france-fact-or-fiction).]_
 
-![Image 13: Political map of Laos showing international boundaries, major cities such as Vientiane, Luang Prabang, Savannakhet, and Pakxe, and neighboring countries including China, Vietnam, Cambodia, Thailand, and Myanmar. An inset locator map highlights Laos' position within Southeast Asia.](https://cdn.britannica.com/42/4042-050-ED3A57FC/Laos-map-boundaries-cities-locator.jpg?w=260&h=196&c=crop)
+![Image 13: Tom Hanks, in World War II military gear and helmet, crouches with two other soldiers behind rubble with rifles in a scene from the film Saving Private Ryan.](https://cdn.britannica.com/97/250497-050-5A43FFF6/movie-still-Saving-Private-Ryan-Tom-Hanks-1998.jpg?w=260&h=196&c=crop)
 
- Encyclopædia Britannica, Inc.
+ © Saving Private Ryan/DreamWorks Pictures/Paramount Pictures
 
-1962
+1998
 
- The International Agreement on the Neutrality of [Laos](https://www.britannica.com/place/Laos) was signed in [Geneva](https://www.britannica.com/place/Geneva-Switzerland) by 14 countries, including the [USSR](https://www.britannica.com/place/Soviet-Union), North and South [Vietnam](https://www.britannica.com/place/Vietnam), and the [United States](https://www.britannica.com/place/United-States). The signatories committed to respect Laos’s territorial integrity and neutrality, in part by not interfering in its internal affairs nor introducing military personnel on its territory.
+ The [World War II](https://www.britannica.com/event/World-War-II) drama [Saving Private Ryan](https://www.britannica.com/topic/Saving-Private-Ryan), starring [Tom Hanks](https://www.britannica.com/biography/Tom-Hanks), was released, and it became a critical and commercial success, earning five [Academy Awards](https://www.britannica.com/art/Academy-Award), including [best director](https://www.britannica.com/art/Academy-Award-for-best-director) for [Steven Spielberg](https://www.britannica.com/biography/Steven-Spielberg). _[[Test your knowledge of the Academy Awards](https://www.britannica.com/quiz/academy-awards).]_
 
-![Image 14: Philippe Petain in military uniform and decorated cap, facing the camera with a neutral expression and a large mustache.](https://cdn.britannica.com/58/9658-050-3B61D43D/Philippe-Petain.jpg?w=260&h=196&c=crop)
+![Image 14: Jennifer Lopez smiling on the red carpet in a strapless, shimmering gown with her hair styled up at the 82nd Annual Academy Awards in Hollywood.](https://cdn.britannica.com/35/157835-050-0CD3A8A5/Jennifer-Lopez-2010.jpg?w=260&h=196&c=crop)
 
- Encyclopædia Britannica, Inc.
+ © Paul Smith/Featureflash/Shutterstock.com
+
+1969
+
+ American actress and singer [Jennifer Lopez](https://www.britannica.com/biography/Jennifer-Lopez)—who was one of the highest-paid Latina actresses in the history of Hollywood and later found crossover success in the music industry with a series of pop albums—was born. _[[Sort fact from fiction in our quiz about A-list actors](https://www.britannica.com/quiz/a-list-of-actors-fact-or-fiction).]_
+
+![Image 15: Nikita Khrushchev](https://cdn.britannica.com/86/10486-050-31BED824/Nikita-Khrushchev-1960.jpg?w=260&h=196&c=crop)
+
+ © Keystone/Getty Images
+
+1959
+
+ Soviet Premier [Nikita Khrushchev](https://www.britannica.com/biography/Nikita-Sergeyevich-Khrushchev) and U.S. Vice President [Richard M. Nixon](https://www.britannica.com/biography/Richard-Nixon/Election-of-1960#ref214054) engaged in the “kitchen debate” at an American exhibition in Moscow. _[[Learn what a war between the U.S. and the Soviet Union might have looked like](https://www.britannica.com/event/Cold-War/images-videos#/media/1/125110/248743).]_
+
+![Image 16: Selma Burke and her relief portrait of Franklin D. Roosevelt](https://cdn.britannica.com/86/248686-050-EA125A65/sculptor-Selma-Burke-plaque-President-Roosevelt.jpg?w=260&h=196&c=crop)
+
+ Bettmann/Getty Images
 
 1945
 
- Marshal [Philippe Pétain](https://www.britannica.com/biography/Philippe-Petain) of France went on trial for treason during [World War II](https://www.britannica.com/event/World-War-II); he ultimately was given a life sentence of solitary confinement. _[[Sort fact from fiction in our quiz about World War II](https://www.britannica.com/quiz/the-second-world-war-fact-or-fiction).]_
+[Selma Burke](https://www.britannica.com/biography/Selma-Burke)’s bronze relief portrait of U.S. President [Franklin D. Roosevelt](https://www.britannica.com/biography/Franklin-D-Roosevelt) was shown in public for the first time. The image of Roosevelt on the U.S. dime that was released in 1946 resembles her sculpture, though the U.S. Mint denied that it had any influence.
 
-![Image 15: Flag of the Chinese Communist Party](https://cdn.britannica.com/63/259463-050-F9D964F2/flag-of-communist-party-of-china.jpg?w=260&h=196&c=crop)
+![Image 17: Circular stone mausoleum with a domed roof and sculpted relief, elevated on a wide mound with a staircase, at Majdanek in Lublin, Poland.](https://cdn.britannica.com/43/126743-050-E4E4E5E8/Mausoleum-Majdanek-Lublin-Poland.jpg?w=260&h=196&c=crop)
 
- © peng song—Moment/Getty Images
+ © Stbernardstudio/Dreamstime.com
 
-1921
+1944
 
- The [Chinese Communist Party](https://www.britannica.com/topic/Chinese-Communist-Party) was officially established in [Shanghai](https://www.britannica.com/place/Shanghai) during its First National Congress.
+ Soviet forces liberated the [Majdanek](https://www.britannica.com/place/Majdanek) concentration and [extermination camp](https://www.britannica.com/topic/extermination-camp) on the outskirts of the city of [Lublin](https://www.britannica.com/place/Lublin-Poland), Poland. _[[Sort fact from fiction in our World War II quiz](https://www.britannica.com/quiz/world-war-ii-fact-or-fiction).]_
 
-![Image 16: Model T](https://cdn.britannica.com/59/60459-050-FA449882/Model-T-1909.jpg?w=260&h=196&c=crop)
+![Image 18: default image](https://cdn.britannica.com/mendel-resources/3-193/images/shared/thistle-blue-half.svg?v=3.193.1)
 
- Courtesy of the Ford Motor Company
+ Image: Encyclopædia Britannica, Inc.
 
-1903
+1923
 
-[Ford Motor Company](https://www.britannica.com/money/Ford-Motor-Company) sold its first automobile, a Ford Model A; five years later it introduced the hugely influential [Model T](https://www.britannica.com/technology/Model-T). _[[Test your knowledge of American industry and innovation](https://www.britannica.com/quiz/american-industry-and-innovation).]_
+ The [Treaty of Lausanne](https://www.britannica.com/event/Treaty-of-Lausanne-1923), the final treaty concluding [World War I](https://www.britannica.com/event/World-War-I), was signed. _[[How much do you know about World War I?](https://www.britannica.com/quiz/world-war-i-quiz)]_
 
-![Image 17: Ulysses S. Grant](https://cdn.britannica.com/24/70724-050-41B0B167/Ulysses-S-Grant.jpg?w=260&h=196&c=crop)
+![Image 19: SS Eastland](https://cdn.britannica.com/80/161280-050-37B7366B/Passengers-SS-Eastland-Chicago-River-July-24-1915.jpg?w=260&h=196&c=crop)
 
- Library of Congress, Washington, D.C.
+ AP/Shutterstock.com
 
-1885
+1915
 
- U.S. General [Ulysses S. Grant](https://www.britannica.com/biography/Ulysses-S-Grant), who commanded the Union armies to victory in the [American Civil War](https://www.britannica.com/event/American-Civil-War) and later served as the 18th [president of the United States](https://www.britannica.com/topic/presidency-of-the-United-States-of-America), died at the age of 63. _[[How much do you know about the American Civil War?](https://www.britannica.com/quiz/american-civil-war-quiz)]_
+ In one of the worst maritime disasters in American history, the passenger liner SS [Eastland](https://www.britannica.com/event/Eastland-disaster) capsized in the [Chicago River](https://www.britannica.com/place/Chicago-River), killing more than 840 people, in [Chicago](https://www.britannica.com/place/Chicago). _[[Watch footage of rescue efforts aboard the Eastland](https://www.britannica.com/video/181967/Silent-film-footage-rescue-efforts-Eastland-Chicago-July-24-1915).]_
+
+![Image 20: Machu Picchu, Peru](https://cdn.britannica.com/30/94530-050-99493FEA/Machu-Picchu.jpg?w=260&h=196&c=crop)
+
+ © Adalberto Rios Szalay/Sexto Sol—Photodisc/Getty Images
+
+1911
+
+ Led by a local resident, [Hiram Bingham](https://www.britannica.com/biography/Hiram-Bingham-American-archaeologist-and-United-States-senator) reached [Machu Picchu](https://www.britannica.com/place/Machu-Picchu) in a remote part of the Peruvian [Andes](https://www.britannica.com/place/Andes-Mountains). _[[Machu Picchu was voted one of the New Seven Wonders of the World. What else made the list?](https://www.britannica.com/list/new-seven-wonders-of-the-world)]_
+
+![Image 21: Amelia Earhart](https://cdn.britannica.com/68/12168-050-A90FFD15/Amelia-Earhart.jpg?w=260&h=196&c=crop)
+
+ Culver Pictures
+
+1897
+
+[Amelia Earhart](https://www.britannica.com/biography/Amelia-Earhart), one of the world’s most-celebrated aviators and the first woman to fly alone across the [Atlantic Ocean](https://www.britannica.com/place/Atlantic-Ocean), was born in Atchison, Kansas. _[[Test your knowledge of early aviation](https://www.britannica.com/quiz/early-aviation).]_
+
+![Image 22: Brigham Young migrating to Salt Lake City, Utah](https://cdn.britannica.com/32/62132-050-C8ACB24E/Brigham-Young-Mormons-Utah-Salt-Lake-City.jpg?w=260&h=196&c=crop)
+
+ © North Wind Picture Archives
+
+1847
+
+[Brigham Young](https://www.britannica.com/biography/Brigham-Young) and members of the [Church of Jesus Christ of Latter-day Saints](https://www.britannica.com/topic/Church-of-Jesus-Christ-of-Latter-day-Saints) arrived in [Salt Lake City](https://www.britannica.com/place/Salt-Lake-City), Utah.
+
+![Image 23: Mary, Queen of Scots](https://cdn.britannica.com/25/188425-050-FF580817/Mary-Queen-of-Scots.jpg?w=260&h=196&c=crop)
+
+ Library of Congress, Washington, D.C. (LOT 13407, no. 181)
+
+1567
+
+[Mary, Queen of Scots](https://www.britannica.com/biography/Mary-queen-of-Scotland), was formally deposed after rebellious Scottish nobles deserted her army at Carberry Hill and forced her to abdicate in favour of her one-year-old son, [James](https://www.britannica.com/biography/James-I-king-of-England-and-Scotland). _[[Take our quiz about kings and queens](https://www.britannica.com/quiz/kings-queens-and-more-quiz).]_
 
 SIGN UP FOR
 
-![Image 18: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 19: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
+![Image 24: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 25: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
 
 History's Biggest Headlines
 
@@ -245,4 +289,4 @@ SIGN UP
 
 ### Thank you for signing up!
 
-![Image 21: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=cebcbf91-e439-abb4-6dcb-1e93a18fb939&iiqpciddate=1784839116216&tsrnd=168_1784839116513&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 22](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=137&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-23&s=BFA265A5-270C-4BFF-A6FB-F4BDBF6AB37C&json=%20)![Image 23](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001784839117-GQ9QLPEB-JRZH)![Image 24](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001784839117-GQ9QLPEB-JRZH&adnxs_id=$UID&gdpr=0)![Image 25](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001784839117-GQ9QLPEB-JRZH%26auid%3DAU1D-0100-001784839117-GQ9QLPEB-JRZH&gdpr=0)![Image 26](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001784839117-GQ9QLPEB-JRZH&gdpr=0)![Image 27](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001784839117-GQ9QLPEB-JRZH&gdpr=0)![Image 28](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001784839117-GQ9QLPEB-JRZH&gdpr=0)![Image 29](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001784839117-GQ9QLPEB-JRZH&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001784839117-GQ9QLPEB-JRZH%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 30](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4NDgzOTExNy1HUTlRTFBFQi1KUlpI&id=AU1D-0100-001784839117-GQ9QLPEB-JRZH&gdpr=0)![Image 31](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001784839117-GQ9QLPEB-JRZH)![Image 32](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001784839117-GQ9QLPEB-JRZH&uid=[UID]&gdpr=0)![Image 33](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001784839117-GQ9QLPEB-JRZH%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
+![Image 27](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=138&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-24&s=1839429E-B2EE-4240-AA02-33BB2D1220EB&json=%20)![Image 28: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=756d06e3-9bf3-9ee7-044d-9b8e7f002c44&iiqpciddate=1784879554206&tsrnd=837_1784879554215&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 29](https://ids.ad.gt/api/v1/halo_match?id=AU1D-0100-001784879555-QXL5O7V8-R37T&halo_id=060ixfcju6a659c979a9b66666666666666uooiwi0e0y6i626e6g000000001000)![Image 30](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001784879555-QXL5O7V8-R37T)![Image 31](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001784879555-QXL5O7V8-R37T&adnxs_id=$UID&gdpr=0)![Image 32](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001784879555-QXL5O7V8-R37T%26auid%3DAU1D-0100-001784879555-QXL5O7V8-R37T&gdpr=0)![Image 33](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001784879555-QXL5O7V8-R37T&gdpr=0)![Image 34](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001784879555-QXL5O7V8-R37T&gdpr=0)![Image 35](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001784879555-QXL5O7V8-R37T&gdpr=0)![Image 36](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001784879555-QXL5O7V8-R37T&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001784879555-QXL5O7V8-R37T%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 37](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4NDg3OTU1NS1RWEw1TzdWOC1SMzdU&id=AU1D-0100-001784879555-QXL5O7V8-R37T&gdpr=0)![Image 38](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001784879555-QXL5O7V8-R37T)![Image 39](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001784879555-QXL5O7V8-R37T&uid=[UID]&gdpr=0)![Image 40](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001784879555-QXL5O7V8-R37T%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
