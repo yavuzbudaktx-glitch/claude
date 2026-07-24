@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-07-24T14:24:15.024Z
+# generated: 2026-07-24T15:48:07.167Z
 # url:       https://www.britannica.com/on-this-day/july-24
 # fetcher:   Wayback Machine
 # kind:      html
