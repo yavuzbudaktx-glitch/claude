@@ -490,6 +490,9 @@ export async function playRadioSource(source: RadioSource) {
     // quran — shuffle the whole library and play it as a looping playlist.
     // Prefer the prefetched cache (warmed on picker-open) so nothing blocks.
     const lib = quranLib ?? (await fetchQuranLibrary());
+    // Remember it so a second pick reshuffles the same library instantly
+    // instead of re-hitting the route.
+    if (!quranLib && (lib.ids.length || lib.uploads)) quranLib = lib;
     const ids = shuffled(lib.ids);
     if (ids.length) {
       lastPlayedUrl = "ytquran";

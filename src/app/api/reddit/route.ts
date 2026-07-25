@@ -59,9 +59,15 @@ function proxies(url: string): string[] {
   // old "9 proxies × 10s timeout serially" path was guaranteed to time out
   // and that's exactly why only 1-2 subs were coming back.
   const oldUrl = url.replace("://www.reddit.com", "://old.reddit.com");
+  // api.reddit.com is a third rate-limit bucket and serves the same listing
+  // JSON without the ".json" suffix — one more free racer.
+  const apiUrl = url
+    .replace("://www.reddit.com", "://api.reddit.com")
+    .replace(/\.json(\?|$)/, "$1");
   return [
     url,
     oldUrl,
+    apiUrl,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
     `https://corsproxy.io/?url=${encodeURIComponent(oldUrl)}`,
   ];
