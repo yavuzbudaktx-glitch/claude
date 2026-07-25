@@ -52,7 +52,7 @@ export function TaskItem({
       ? {
           spine: "var(--down)",
           pill: "bg-[var(--down)] text-white",
-          text: "text-down",
+          text: "var(--down)",
           bg: "color-mix(in srgb, var(--down) 8%, transparent)",
           label: daysLate === 1 ? "1 day late" : `${daysLate} days late`,
         }
@@ -60,7 +60,7 @@ export function TaskItem({
         ? {
             spine: "var(--accent)",
             pill: "bg-[var(--accent)] text-white",
-            text: "text-accent",
+            text: "var(--accent)",
             bg: "color-mix(in srgb, var(--accent) 7%, transparent)",
             label: "today",
           }
@@ -68,7 +68,7 @@ export function TaskItem({
           ? {
               spine: "color-mix(in srgb, var(--accent) 55%, transparent)",
               pill: "bg-[var(--accent-soft)] text-accent",
-              text: "text-accent",
+              text: "var(--accent)",
               bg: "transparent",
               label: differenceInCalendarDays(due!, new Date()) === 1
                 ? "tomorrow"
@@ -196,7 +196,13 @@ export function TaskItem({
                     {urgency.label}
                   </span>
                 )}
-                <span className={`metalabel ${urgency && !isComplete ? urgency.text : ""}`}>
+                {/* Inline colour on purpose: `.metalabel` sets `color` and is
+                    defined after `.text-down`/`.text-accent` in globals.css, so
+                    a colour class would lose to it at equal specificity. */}
+                <span
+                  className="metalabel"
+                  style={urgency && !isComplete ? { color: urgency.text } : undefined}
+                >
                   {format(due, "MMM d")}
                 </span>
               </div>

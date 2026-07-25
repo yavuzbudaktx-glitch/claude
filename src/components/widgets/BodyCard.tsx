@@ -4,6 +4,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
 import { Card } from "@/components/Card";
 import { localDateKey, localDateKeyAt } from "@/lib/local-date";
+import {
+  LiftTracker, coerceLifts, unionLifts, parsePlanExercises,
+  type LiftSet, type PlanId,
+} from "./LiftTracker";
 import { createClient } from "@/lib/supabase/client";
 import { usePref } from "@/components/PrefsProvider";
 import {
@@ -253,10 +257,12 @@ interface BodyState {
   calsDate: string;          // localDateKey the calsTotal + proteinTotal apply to
   calsTotal: number;         // calories logged "today"
   proteinTotal: number;      // protein (g) logged "today"
+  lifts: LiftSet[];          // every logged set, see LiftTracker
+  plan: PlanId;              // which workout template is currently active
 }
 
 const KEY = "morning.body.v1";
-const DEFAULT: BodyState = { entries: [], calorieGoal: "", proteinGoal: "", workoutA: "", workoutB: "", calsDate: "", calsTotal: 0, proteinTotal: 0 };
+const DEFAULT: BodyState = { entries: [], calorieGoal: "", proteinGoal: "", workoutA: "", workoutB: "", calsDate: "", calsTotal: 0, proteinTotal: 0, lifts: [], plan: "A" };
 const STEP = 0.2;
 const SEED_WEIGHT = 180;
 
@@ -276,6 +282,10 @@ function coerce(raw: unknown): BodyState {
     calsDate: typeof o.calsDate === "string" ? o.calsDate : "",
     calsTotal: typeof o.calsTotal === "number" ? o.calsTotal : 0,
     proteinTotal: typeof o.proteinTotal === "number" ? o.proteinTotal : 0,
+    // Lifts are validated set-by-set: a single malformed record can't take the
+    // rest of the log (or the weight history) down with it.
+    lifts: coerceLifts(o.lifts),
+    plan: o.plan === "B" ? "B" : "A",
   };
 }
 
@@ -291,7 +301,13 @@ function mergeBody(remote: BodyState, local: BodyState): BodyState {
   const entries = Array.from(byDate.entries())
     .map(([date, weight]) => ({ date, weight }))
     .sort((a, b) => a.date.localeCompare(b.date));
-  return { ...local, entries };
+  // Lifts get the same protection as weight history, but per SET rather than
+  // per day: `unionLifts` keeps every set id from both sides and resolves any
+  // set present on both by its own modified stamp. Logging at the rack on your
+  // phone can therefore never be clobbered by a laptop tab left open since
+  // this morning — the one failure mode that would actually lose training data.
+  const lifts = unionLifts(remote.lifts, local.lifts);
+  return { ...local, entries, lifts };
 }
 
 function loadLocal(): BodyState {
@@ -815,30 +831,49 @@ export function BodyCard() {
           )}
         </div>
 
-        {/* Workouts — A and B side-by-side with real breathing room (they take
-            all the width the compact intake columns free up). */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <div className="label mb-1.5">Workout · A</div>
-            <AutoTextarea
-              value={state.workoutA}
-              placeholder={"e.g.\nBench 4×8\nRows 4×10\nOHP 3×10"}
-              onChange={(e) => setState((s) => ({ ...s, workoutA: e.target.value }))}
-              rows={4}
-              className={fieldClass + " !text-[13px]"}
-            />
+        {/* Workout plan — one template at a time, switched by the A/B toggle
+            below, so the plan you're looking at is the plan you're logging
+            against instead of two textareas competing for attention. */}
+        <div>
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="label">Plan · {state.plan}</span>
+            <span className="ml-auto inline-flex items-center gap-1">
+              {(["A", "B"] as PlanId[]).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setState((s) => ({ ...s, plan: p }))}
+                  className={`chip normal-case !px-2.5 !py-0.5 !text-[11px] ${state.plan === p ? "chip-active" : ""}`}
+                  title={`Workout ${p}`}
+                >
+                  {p}
+                </button>
+              ))}
+            </span>
           </div>
-          <div>
-            <div className="label mb-1.5">Workout · B</div>
-            <AutoTextarea
-              value={state.workoutB}
-              placeholder={"e.g.\nSquat 4×6\nDeadlift 3×5\nCurls 3×12"}
-              onChange={(e) => setState((s) => ({ ...s, workoutB: e.target.value }))}
-              rows={4}
-              className={fieldClass + " !text-[13px]"}
-            />
-          </div>
+          <AutoTextarea
+            value={state.plan === "A" ? state.workoutA : state.workoutB}
+            placeholder={state.plan === "A"
+              ? "e.g.\nBench 4×8\nRows 4×10\nOHP 3×10"
+              : "e.g.\nSquat 4×6\nDeadlift 3×5\nCurls 3×12"}
+            onChange={(e) => setState((s) => (
+              s.plan === "A" ? { ...s, workoutA: e.target.value } : { ...s, workoutB: e.target.value }
+            ))}
+            rows={4}
+            className={fieldClass + " !text-[13px]"}
+          />
+          <p className="metalabel mt-1.5">exercise names here become one-tap buttons in the log</p>
         </div>
+      </div>
+
+      {/* ---- Lift log ------------------------------------------------------ */}
+      <div className="mt-5 pt-4 border-t rule">
+        <LiftTracker
+          lifts={state.lifts}
+          onLifts={(update) => setState((s) => ({ ...s, lifts: update(s.lifts) }))}
+          plan={state.plan}
+          planExercises={parsePlanExercises(state.plan === "A" ? state.workoutA : state.workoutB)}
+          today={today}
+        />
       </div>
     </Card>
   );

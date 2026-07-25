@@ -63,12 +63,16 @@ function eventStartDate(e: CalendarEvent): Date {
 //   tomorrow → accent
 //   ≤7 days  → normal ink
 //   beyond   → muted, it can wait
-function dateTone(d: Date): { cls: string; label?: string } {
+// NOTE: the colour comes back as an inline value, not a class. `.label` and
+// `.metalabel` both set `color` and are defined AFTER `.text-down`/`.text-accent`
+// in globals.css, so a colour class loses to them at equal specificity — an
+// inline style is the only thing that reliably wins here.
+function dateTone(d: Date): { color: string; weight: number } {
   const days = differenceInCalendarDays(d, new Date());
-  if (days <= 0) return { cls: "text-down font-semibold", label: "today" };
-  if (days === 1) return { cls: "text-accent font-medium", label: "tmrw" };
-  if (days <= 7) return { cls: "text-ink-soft" };
-  return { cls: "text-muted-2" };
+  if (days <= 0) return { color: "var(--down)", weight: 700 };
+  if (days === 1) return { color: "var(--accent)", weight: 600 };
+  if (days <= 7) return { color: "var(--ink-soft)", weight: 600 };
+  return { color: "var(--muted-2)", weight: 600 };
 }
 
 // Bucket already-sorted events into consecutive day groups, preserving order.
@@ -260,7 +264,7 @@ function CalendarTab({
           return (
             <section key={g.key}>
               <div className="flex items-center gap-2 mb-1">
-                <span className={`label !text-[10px] ${tone.cls}`}>
+                <span className="label !text-[10px]" style={{ color: tone.color, fontWeight: tone.weight }}>
                   {isToday ? "Today" : days === 1 ? "Tomorrow" : format(g.date, "EEEE")}
                 </span>
                 <span className="metalabel">{format(g.date, "MMM d")}</span>
