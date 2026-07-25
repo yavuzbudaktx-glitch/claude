@@ -1,9 +1,9 @@
 # Britannica scrape debug dump
-# generated: 2026-07-24T20:50:03.392Z
-# url:       https://www.britannica.com/on-this-day/july-24
+# generated: 2026-07-25T07:33:26.212Z
+# url:       https://www.britannica.com/on-this-day
 # fetcher:   Wayback Machine
 # kind:      html
-# length:    81649
+# length:    81931
 # parsed:    NO
 # -----------------------------------------------------------------
 
@@ -71,7 +71,7 @@
 
 <!doctype html>
 
-<html lang="en" class="todayinhistory-desktop ui-chrome148 ui-chrome">
+<html lang="en" class="todayinhistory-desktop ui-unknown0 ui-unknown">
 
 <head prefix="og: https://ogp.me/ns# fb: https://ogp.me/ns/fb#">
 
@@ -96,7 +96,7 @@
 
     <meta name="description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences." />
     <meta name="keywords" content="today in history, anniversary, daily events, today’s historical events, today’s birthdays, born today, on this date, this day in history" />
-    <link rel="canonical" href="https://www.britannica.com/on-this-day/july-24" />
+    <link rel="canonical" href="https://www.britannica.com/on-this-day" />
 
     
 
@@ -274,7 +274,7 @@
             "videoPlayerId" : "UyMCoK2v",
       		"domain": "britannica.com",
 			"page": "TodayInHistory",
-			"sharedUrl": "https://www.britannica.com/on-this-day/july-24",
+			"sharedUrl": "https://www.britannica.com/on-this-day",
 			"amuselabsUrl": "https://cdn3.amuselabs.com",
 	    	"resourcesPrefixUrl": "https://cdn.britannica.com/mendel-resources/3-193/[url]?v=3.193.1",
 			"date": 20260724,
@@ -283,7 +283,7 @@
 										,"country": "US"
 										,"state": "CA"
 										,"timezone": "America/Los_Angeles"
-										,"bcomId": "2809751636075766344"
+										,"bcomId": "-2719426457075926527"
 										,"adProvider": "ay"
 										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":true,"showConsent":true}
 										,"hasAds": true
@@ -331,7 +331,7 @@
 <meta property="og:title" content="On This Day - What Happened Today In History | Britannica"/>
 <meta property="og:description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
 <meta property="og:site_name" content="Encyclopedia Britannica" />
-<meta property="og:url" content="https://www.britannica.com/on-this-day/july-24"/>
+<meta property="og:url" content="https://www.britannica.com/on-this-day"/>
 <meta property="og:image" content="https://cdn.britannica.com/50/2350-004-6DE68478/Mata-Hari.jpg" />
 
 <script type="text/javascript" data-type="init opengraph">
@@ -340,7 +340,7 @@ Mendel.openGraph = {
     "title": "On This Day - What Happened Today In History",
     "description": "On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences.",
     "imageUrl": "https://cdn.britannica.com/50/2350-004-6DE68478/Mata-Hari.jpg",
-    "pageUrl": "https://www.britannica.com/on-this-day/july-24"
+    "pageUrl": "https://www.britannica.com/on-this-day"
 }
 </script>
 
@@ -465,7 +465,10 @@ Mendel.openGraph = {
 {"britannicaMenu1":[{"title":"Home","url":"/"},{"title":"History & Society","url":"/History-Society"},{"title":"Science & Tech","url":"/Science-Tech"},{"title":"Biographies","url":"/Biographies"},{"title":"Animals & Nature","url":"/Animals-Nature"},{"title":"Geography & Travel","url":"/Geography-Travel"},{"title":"Arts & Culture","url":"/Arts-Culture"},{"title":"ProCon","url":"/procon"},{"title":"Money","url":"/money"}],"britannicaMenu2":[{"title":"Games & Quizzes","url":"/quiz/browse"},{"title":"Videos","url":"/videos"},{"title":"Today in History","url":"/on-this-day"},{"title":"Dictionary","url":"/dictionary"},{"title":"New Articles","url":"/new-articles"}],"browseByCategory":[{"title":{"id":5,"title":"History & Society","url":"/History-Society"},"links":[{"title":"History","url":"/browse/World-History"},{"title":"Philosophy & Religion","url":"/browse/Philosophy-Religion"},{"title":"Politics, Law & Government","url":"/browse/Politics-Law-Government"},{"title":"Society & Social Issues","url":"/browse/Lifestyles-Social-Issues"}]},{"title":{"id":6,"title":"Science & Tech","url":"/Science-Tech"},"links":[{"title":"Health & Medicine","url":"/browse/Health-Medicine"},{"title":"Science","url":"/browse/Science"},{"title":"Technology","url":"/browse/Technology"}]},{"title":{"id":3,"title":"Biographies","url":"/Biographies"},"links":[{"title":"Browse Biographies","url":"/browse/biographies"}]},{"title":{"id":1,"title":"Animals & Nature","url":"/Animals-Nature"},"links":[{"title":"Birds, Reptiles & Other Vertebrates","url":"/browse/Birds-Reptiles-Vertebrates"},{"title":"Environment","url":"/browse/Environment"},{"title":"Fossils & Geologic Time","url":"/browse/Fossil-Geologic-Time"},{"title":"Insects & Other Invertebrates","url":"/browse/Bugs-Mollusks-Invertebrates"},{"title":"Mammals","url":"/browse/Mammals"},{"title":"Plants","url":"/browse/Plants"}]},{"title":{"id":4,"title":"Geography & Travel","url":"/Geography-Travel"},"links":[{"title":"Geography & Travel","url":"/browse/Geography-Travel"}]},{"title":{"id":2,"title":"Arts & Culture","url":"/Arts-Culture"},"links":[{"title":"Entertainment & Pop Culture","url":"/browse/Entertainment-Pop-Culture"},{"title":"Literature","url":"/browse/Literature"},{"title":"Sports & Recreation","url":"/browse/Sports-Recreation"},{"title":"Visual Arts","url":"/browse/Visual-Arts"}]}],"browseByFeature":[{"title":"Image Galleries","url":"/gallery/browse"},{"title":"Podcasts","url":"/podcasts"},{"title":"Summaries","url":"/summary"},{"title":"Top Questions","url":"/question"},{"title":"Lists and Stories","url":"/lists-and-stories"}],"moreFromBritannica":[{"newTab":true,"title":"Britannica Kids","url":"https://kids.britannica.com/"}],"menuType":"DEFAULT"}
 </script>
 
-<header id="header" class="bg-navy-dark">
+<div class="KUSTOM-MARKETING-TOUPEE_BANNER"><a href="https://www.merriam-webster.com/games/tagline?utm_source=premium&amp;utm_medium=desk-toupee&amp;utm_campaign=tagline" class="toupee-banner" style="text-decoration: none;">
+      <strong>🧩 Tagline</strong> - A new word game from Merriam-Webster! 🧩
+
+</a></div><header id="header" class="bg-navy-dark">
     <div class="global-nav-top-bar">
         <div class="grid gx-0 h-100 justify-content-between align-items-center container-lg mx-auto p-0 position-relative">
             <div class="d-flex align-items-center">
@@ -2252,10 +2255,4 @@ Ask the Chatbot</a>
                             if (typeof fn === 'function') { fn(); }
                             resolve();
                         }, 50);
-                    });
-                });
-            }
-
-            if (window.dataLayer && typeof window.dataLayer.push === 'function') {
-                const originalDataLayerPush = window.dataLayer.push.bind(window.dataLayer);
-                window.dataLayer.push = function (
+  
