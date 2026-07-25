@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-07-25T15:32:35.190Z
+# generated: 2026-07-25T20:30:15.519Z
 # url:       https://www.britannica.com/on-this-day/july-25
 # fetcher:   Wayback Machine
 # kind:      html
