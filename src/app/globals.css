@@ -161,7 +161,26 @@ main { position: relative; z-index: 1; }
 /* "Serif" is mapped to Inter so legacy usages stay clean sans — no
    newspaper echo anywhere. */
 .font-serif    { font-family: "Inter", ui-sans-serif, system-ui, sans-serif; font-weight: 500; }
-.font-mono     { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; }
+/* `font-mono` is used all over the site for times, dates, counts and figures.
+   It used to be JetBrains Mono, which read as a leftover from v1 — a coder's
+   typeface stamped over an editorial layout. It's now the same modern grotesk
+   as the display face, with TABULAR figures turned on so numbers still line up
+   in columns (the only reason the mono was there). Anything that genuinely
+   needs fixed-width character cells — the Terminal and Blueprint themes, the
+   vault — sets its own monospace family further down. */
+.font-mono {
+  font-family: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" on, "ss01" on;
+  letter-spacing: 0.01em;
+}
+/* …and the two themes whose whole identity IS the terminal look keep real
+   fixed-width cells (the class beats their inherited family, so say it here). */
+.theme-terminal .font-mono,
+.theme-blueprint .font-mono {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0;
+}
 .font-arabic   { font-family: "Amiri", "Scheherazade New", serif; }
 
 .font-display  {
@@ -227,6 +246,30 @@ main { position: relative; z-index: 1; }
   text-transform: uppercase;
   font-weight: 600;
   color: var(--muted-2);
+}
+
+/* ---------- readable plate ----------
+   For content that sits straight on the page background with no card behind
+   it (the "Today" strip under the masthead). Most themes have a calm backdrop
+   and need nothing here — but the heavily patterned concepts (mosaic tilework,
+   comic halftone) swallow small text, so there it becomes a soft paper plate
+   with just enough tint and blur to lift the type off the pattern. */
+.readable-plate { display: block; }
+.theme-mosaic .readable-plate,
+.theme-comic .readable-plate {
+  background: var(--paper-2);
+  -webkit-backdrop-filter: blur(7px) saturate(120%);
+          backdrop-filter: blur(7px) saturate(120%);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 0.6rem 0.85rem 0.7rem;
+  box-shadow: var(--shadow-card);
+}
+/* Comic keeps its hard ink-line personality: square panel, offset shadow. */
+.theme-comic .readable-plate {
+  border-radius: 4px;
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
 }
 
 /* ---------- glass card surfaces ---------- */
@@ -739,314 +782,6 @@ main { position: relative; z-index: 1; }
     0 0 0 4px rgba(192,132,252,0.10),       /* Saturn-style ring */
     0 0 12px rgba(192,132,252,0.45),
     0 0 24px rgba(34,211,238,0.30);
-}
-
-/* ============== ACCOUNTING (concept — green-bar ledger paper, v3) ==========
-   The classic 14⅞-inch continuous-feed accountant's pad, rebuilt so it reads
-   as LEDGER PAPER at a glance and not merely as a green-tinted page:
-
-     · the page itself is the pad — crisp alternating pale-green / cream
-       bands run edge to edge behind everything;
-     · a red margin rule (a heavy hairline plus its lighter companion) runs
-       down the left, exactly where the account name would be written;
-     · tractor-feed perforations punch down both edges;
-     · a fine paper-fibre grain sits over the lot so it reads as stock, not
-       as a flat fill;
-     · every card is a sheet torn off that pad — same bands, same red rule,
-       squared-off corners, and the accountant's double rule under each
-       header (two stacked hairlines, the classic "total" rule);
-     · figures are tabular and lined, so columns of numbers align.
-
-   The whole theme runs on a single rhythm — `--row` = 28px — so every visible
-   band lines up with the kanban tiles, list rows and form inputs inside a
-   card. Nested tiles are sized to exact multiples of `--row`, so the green
-   stripes always end at a tile edge, never mid-content. */
-:root.theme-accounting {
-  color-scheme: light;
-  --bg:           #f6f2e2;             /* the pad itself — warm ledger cream */
-  --paper:        #fdfbf1;             /* a fresh sheet laid on the pad */
-  --paper-2:      #f2f6ea;             /* the faint green of a banded row */
-  --ink:          #10231a;             /* black-green ledger ink */
-  --ink-soft:     #33483b;
-  --muted:        #5f7060;
-  --muted-2:      #a5b0a2;
-  --rule:         rgba(16, 35, 26, 0.26);
-  --rule-soft:    rgba(16, 35, 26, 0.10);
-  --accent:       #176b3c;             /* ledger green — the bookkeeper's ink */
-  --accent-soft:  rgba(23, 107, 60, 0.10);
-  --accent-2:     #b3261e;             /* the unmistakable ledger red */
-  --hl:           rgba(23, 107, 60, 0.10);
-  --up:           #176b3c;
-  --down:         #b3261e;
-  --grad-from:    #0d3b22;
-  --grad-via:     #176b3c;
-  --grad-to:      #5fa172;
-  --glass:        #fdfbf1;
-  --glass-border: rgba(16, 35, 26, 0.34);
-  --glow:         rgba(23, 107, 60, 0.16);
-  --shadow-card:  0 1px 0 rgba(16,35,26,0.10), 0 10px 24px -16px rgba(16, 35, 26, 0.30);
-  --shadow-hover: 0 2px 0 rgba(16,35,26,0.14), 0 18px 38px -18px rgba(16, 35, 26, 0.40);
-  --aurora-1: transparent; --aurora-2: transparent;
-  --aurora-3: transparent; --aurora-4: transparent;
-  --grain:        0.02;
-  /* Ledger rhythm. Everything in the theme is built off this single value so
-     bands and content always agree. */
-  --row:           28px;
-  --row-half:      14px;
-  --ledger-band:      #d9ecd6;             /* the green bar, on a card sheet */
-  --ledger-band-page: rgba(23, 107, 60, 0.115);  /* ditto, on the pad behind */
-  --ledger-red:       rgba(179, 38, 30, 0.62);
-  --ledger-red-soft:  rgba(179, 38, 30, 0.28);
-  --ledger-punch:     rgba(16, 35, 26, 0.14);    /* tractor-feed holes */
-  --ledger-fibre:     0.9;                       /* paper-grain strength */
-  --margin-left:   48px;                /* where the red rule lives on a card */
-  --margin-page:   58px;                /* ...and on the page behind it */
-}
-/* The page IS the pad. ::before carries the printed sheet — green bands, the
-   red margin rule and the tractor-feed perforations; ::after carries the
-   paper fibre over the top. Both are fixed at z-index -1 behind the content,
-   and both are promoted onto their own compositor layer (translateZ) so they
-   paint on the very first frame rather than waiting for a scroll. */
-.theme-accounting body { background: transparent; }
-.theme-accounting body::before {
-  inset: 0;
-  filter: none;
-  animation: none;
-  transform: translateZ(0); will-change: transform; backface-visibility: hidden;
-  background-color: transparent;
-  background-image:
-    /* tractor-feed perforations down the left and right edges, punched one
-       every two bands so they sit dead centre in a green bar */
-    radial-gradient(circle 3.4px at 50% 50%, var(--ledger-punch) 0 86%, transparent 100%),
-    radial-gradient(circle 3.4px at 50% 50%, var(--ledger-punch) 0 86%, transparent 100%),
-    /* the red margin rule: one firm hairline plus its lighter companion */
-    linear-gradient(90deg,
-      transparent 0 calc(var(--margin-page) - 1px),
-      var(--ledger-red) calc(var(--margin-page) - 1px) var(--margin-page),
-      transparent var(--margin-page) calc(var(--margin-page) + 3px),
-      var(--ledger-red-soft) calc(var(--margin-page) + 3px) calc(var(--margin-page) + 4px),
-      transparent calc(var(--margin-page) + 4px)),
-    /* the green bars themselves — one row on, one row off, forever */
-    repeating-linear-gradient(to bottom,
-      var(--ledger-band-page) 0 var(--row),
-      transparent var(--row) calc(var(--row) * 2));
-  background-repeat: repeat-y, repeat-y, no-repeat, repeat;
-  background-size:
-    34px calc(var(--row) * 2), 34px calc(var(--row) * 2),
-    100% 100%, 100% 100%;
-  background-position: left top, right top, left top, left top;
-}
-/* Paper fibre — anisotropic noise (long, fine horizontal streaks) so the
-   stock reads as pressed pulp rather than as a flat colour. */
-.theme-accounting body::after {
-  opacity: var(--ledger-fibre); mix-blend-mode: normal;
-  transform: translateZ(0); will-change: transform; backface-visibility: hidden;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='pf'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8 0.045' numOctaves='3' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23pf)' opacity='0.075'/%3E%3C/svg%3E");
-  background-size: 140px 140px;
-}
-/* Card = a sheet of ledger paper. The bands run the full sheet, the red
-   margin rule sits one ledger-column in from the left, and the sheet has a
-   hard left binding edge so the pad feels glued together. */
-.theme-accounting .card {
-  -webkit-backdrop-filter: none; backdrop-filter: none;
-  border-radius: 0;                    /* ledger stock is guillotined, not rounded */
-  border: 1px solid var(--rule);
-  background-color: var(--paper);
-  background-image:
-    /* red margin rule — heavy hairline + lighter companion, as printed */
-    linear-gradient(90deg,
-      transparent 0 calc(var(--margin-left) - 1px),
-      var(--ledger-red) calc(var(--margin-left) - 1px) var(--margin-left),
-      transparent var(--margin-left) calc(var(--margin-left) + 3px),
-      var(--ledger-red-soft) calc(var(--margin-left) + 3px) calc(var(--margin-left) + 4px),
-      transparent calc(var(--margin-left) + 4px)),
-    /* alternating green / cream bands, anchored to the top edge */
-    repeating-linear-gradient(to bottom,
-      var(--ledger-band) 0 var(--row),
-      var(--paper) var(--row) calc(var(--row) * 2));
-  /* Reserve a narrow margin so card content NEVER overflows the red rule. */
-  padding-left: calc(var(--margin-left) + 12px);
-  /* hard left binding edge — the glued spine of the pad */
-  box-shadow: inset 2px 0 0 0 var(--accent), var(--shadow-card);
-}
-.theme-accounting .card::before { display: none; }
-.theme-accounting .card::after { display: none; }
-.theme-accounting .card:hover { transform: none; border-color: var(--accent); box-shadow: var(--shadow-hover); }
-/* Nested elements get a CLEAN paper background that covers the bands behind
-   them — so the green stripes appear ONLY in the empty gutters between
-   tiles, never crossing through content. */
-.theme-accounting .card-bare {
-  border-radius: 0;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  /* card-bare rests on the band rhythm: padding is half-row, total min
-     height is exactly two rows so the surrounding bands always meet a tile
-     edge cleanly. */
-  padding: var(--row-half);
-  min-height: calc(var(--row) * 2);
-  /* And subtle ledger lines INSIDE the tile so the rhythm survives */
-  background-image: repeating-linear-gradient(to bottom,
-    transparent 0, transparent calc(var(--row) - 1px),
-    rgba(15,31,21,0.06) calc(var(--row) - 1px), rgba(15,31,21,0.06) var(--row));
-  background-position: 0 calc(var(--row-half) - 1px);
-}
-.theme-accounting .btn-ghost { border-radius: 0; background: var(--paper); border: 1px solid var(--rule); }
-.theme-accounting .chip { border-radius: 0; border: 1px solid var(--rule); background: var(--paper); }
-.theme-accounting .chip-active { background: var(--accent); color: #fff; border-color: var(--accent); }
-/* The accountant's DOUBLE RULE under every header — two stacked hairlines with
-   a hair of white between them, exactly the rule you draw above a total. */
-.theme-accounting .headrule {
-  padding-bottom: .5rem;
-  border-bottom: 4px double var(--accent);   /* renders 1px · gap · 1px */
-}
-.theme-accounting .dot { box-shadow: none; border-radius: 0; background: var(--accent); }
-.theme-accounting .font-display { font-weight: 800; letter-spacing: -0.02em; }
-.theme-accounting .text-gradient {
-  background: linear-gradient(118deg, var(--ink), var(--accent) 55%, #4a8a4a);
-  -webkit-background-clip: text; background-clip: text;
-  animation: none;
-}
-/* Every figure on the page is a LEDGER figure: lining, tabular, same advance
-   width, so columns of numbers stack dead straight. Column headings and
-   captions go monospace for the same reason. */
-:root.theme-accounting {
-  font-variant-numeric: lining-nums tabular-nums;
-  font-feature-settings: "tnum" on, "lnum" on;
-}
-.theme-accounting .font-mono { font-feature-settings: "tnum" on, "ss01" on; }
-.theme-accounting .label,
-.theme-accounting .metalabel {
-  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  letter-spacing: 0.09em;
-  font-weight: 500;
-}
-/* Inputs match the band so the typed value sits on a line */
-.theme-accounting input, .theme-accounting textarea {
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 0;
-}
-/* Date inputs in the application kanban: a single band tall */
-.theme-accounting input[type="date"] {
-  height: var(--row);
-  line-height: var(--row);
-}
-
-/* =======================================================================
-   THEME × MODE — dark/light counter-variants
-   Every theme that ships with only one base mode gets the other below, so
-   the global ThemeToggle flips brightness within whichever family the user
-   has chosen. Themes whose base already matches the requested mode are
-   untouched.
-======================================================================= */
-
-/* ---------- TERMINAL · LIGHT (green phosphor on paper — stays green) ---------- */
-:root.theme-terminal:not(.dark) {
-  color-scheme: light;
-  --bg:           #eef6ee;
-  --paper:        #ffffff;
-  --paper-2:      #f4faf4;
-  --ink:          #0a2e16;
-  --ink-soft:     #1f6b3a;
-  --muted:        #3f8a5c;
-  --muted-2:      #84b89a;
-  --rule:         rgba(10, 46, 22, 0.16);
-  --rule-soft:    rgba(10, 46, 22, 0.06);
-  --accent:       #138a3e;
-  --accent-soft:  rgba(19, 138, 62, 0.10);
-  --accent-2:     #0a2e16;
-  --hl:           rgba(19, 138, 62, 0.08);
-  --up:           #138a3e;
-  --down:         #b23b3b;
-  --grad-from:    #0a2e16;
-  --grad-via:     #138a3e;
-  --grad-to:      #4cc46a;
-  --glass:        #ffffff;
-  --glass-border: rgba(10, 46, 22, 0.14);
-  --glow:         rgba(19, 138, 62, 0.18);
-  --shadow-card:  0 1px 2px rgba(10, 46, 22, 0.04), 0 6px 16px -10px rgba(10, 46, 22, 0.18);
-  --shadow-hover: 0 2px 4px rgba(10, 46, 22, 0.06), 0 14px 30px -14px rgba(10, 46, 22, 0.28);
-}
-.theme-terminal:not(.dark) .text-ink { text-shadow: none; }
-.theme-terminal:not(.dark) body { background: transparent; }
-
-/* ---------- GALAXY · LIGHT (daytime sky / iridescent) ---------- */
-:root.theme-galaxy:not(.dark) {
-  color-scheme: light;
-  --bg:           #ecebf6;
-  --paper:        #ffffff;
-  --paper-2:      #fafaff;
-  --ink:          #1a1240;
-  --ink-soft:     #41386b;
-  --muted:        #756d99;
-  --muted-2:      #a8a1c4;
-  --rule:         rgba(26, 18, 64, 0.12);
-  --rule-soft:    rgba(26, 18, 64, 0.05);
-  --accent:       #7c3aed;
-  --accent-soft:  rgba(124, 58, 237, 0.10);
-  --accent-2:     #0891b2;
-  --hl:           rgba(124, 58, 237, 0.07);
-  --up:           #15803d;
-  --down:         #be185d;
-  --grad-from:    #4f46e5;
-  --grad-via:     #a855f7;
-  --grad-to:      #0891b2;
-  --glass:        #ffffff;
-  --glass-border: rgba(26, 18, 64, 0.08);
-  --glow:         rgba(124, 58, 237, 0.20);
-  --shadow-card:  0 1px 2px rgba(26, 18, 64, 0.04), 0 8px 22px -14px rgba(124, 58, 237, 0.24);
-  --shadow-hover: 0 2px 4px rgba(26, 18, 64, 0.06), 0 18px 38px -18px rgba(124, 58, 237, 0.36);
-  --aurora-1: rgba(79, 70, 229, 0.18);
-  --aurora-2: rgba(168, 85, 247, 0.16);
-  --aurora-3: rgba(8, 145, 178, 0.14);
-  --aurora-4: transparent;
-}
-/* Switch off the starfield when galaxy is in light mode — the daytime
-   sky reads as a soft gradient rather than a starfield. */
-.theme-galaxy:not(.dark) body::after { background-image: none; animation: none; }
-.theme-galaxy:not(.dark) body::before {
-  background:
-    radial-gradient(42% 42% at 16% 20%, var(--aurora-1), transparent 70%),
-    radial-gradient(38% 38% at 84% 12%, var(--aurora-2), transparent 70%),
-    radial-gradient(48% 48% at 82% 84%, var(--aurora-3), transparent 70%);
-}
-
-/* ---------- ACCOUNTING · DARK (the ledger under a desk lamp) ----------
-   Same pad, same rhythm, same red margin — but printed on dark stock. The
-   green bar becomes a faint phosphor-green band, the perforations read as
-   punched-out holes letting the dark through, and the fibre grain is pulled
-   back so it doesn't sparkle. */
-:root.theme-accounting.dark {
-  color-scheme: dark;
-  --bg:           #0b120e;             /* the pad, in the dark */
-  --paper:        #131c16;             /* ledger sheet at night */
-  --paper-2:      #18241c;
-  --ink:          #e4f0e6;
-  --ink-soft:     #b9cdbe;
-  --muted:        #86a08c;
-  --muted-2:      #4f6355;
-  --rule:         rgba(228, 240, 230, 0.13);
-  --rule-soft:    rgba(228, 240, 230, 0.055);
-  --accent:       #4ade80;             /* ledger green, lit */
-  --accent-soft:  rgba(74, 222, 128, 0.14);
-  --accent-2:     #f87171;
-  --hl:           rgba(74, 222, 128, 0.10);
-  --up:           #6ee7b7;
-  --down:         #f87171;
-  --grad-from:    #166534;
-  --grad-via:     #4ade80;
-  --grad-to:      #bbf7d0;
-  --glass:        #131c16;
-  --glass-border: rgba(228, 240, 230, 0.11);
-  --glow:         rgba(74, 222, 128, 0.20);
-  --shadow-card:  0 8px 22px -14px rgba(0, 0, 0, 0.80);
-  --shadow-hover: 0 20px 44px -20px rgba(0, 0, 0, 0.88);
-  --ledger-band:      rgba(74, 222, 128, 0.075);
-  --ledger-band-page: rgba(74, 222, 128, 0.055);
-  --ledger-red:       rgba(248, 113, 113, 0.42);
-  --ledger-red-soft:  rgba(248, 113, 113, 0.18);
-  --ledger-punch:     rgba(0, 0, 0, 0.45);
-  --ledger-fibre:     0.5;
 }
 
 /* =======================================================================
@@ -2308,18 +2043,14 @@ main { position: relative; z-index: 1; }
     linear-gradient(to bottom, transparent 0 10px, var(--deco-pin) 10px 11px, transparent 11px 14px, var(--deco-pin) 14px 15px, transparent 15px),
     linear-gradient(to top,    transparent 0 10px, var(--deco-pin) 10px 11px, transparent 11px 14px, var(--deco-pin) 14px 15px, transparent 15px),
     /* stepped ziggurat skyline along the bottom */
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='130'%3E%3Cg fill='none' stroke='%23b08d2a' stroke-width='2' opacity='.42'%3E%3Cpath d='M26 130V108h26V86h26V64h26V42h52v22h26v22h26v22h26v22'/%3E%3Cpath d='M117 42 130 24 143 42'/%3E%3Cpath d='M130 24V12'/%3E%3Cpath d='M112 64V42M130 64V48M148 64V42' opacity='.7'/%3E%3C/g%3E%3Cg fill='none' stroke='%23b08d2a' stroke-width='1' opacity='.3'%3E%3Cpath d='M0 128.5h260M0 124h260'/%3E%3C/g%3E%3C/svg%3E"),
-    /* the veil that fades the fan out into the page */
-    radial-gradient(96% 66% at 50% 0%, transparent 0 20%, var(--bg) 84%),
-    /* concentric fans struck from the top centre */
-    repeating-radial-gradient(circle at 50% 0%,
-      transparent 0 62px, var(--deco-arc) 62px 63px, transparent 63px 126px),
-    /* the sunburst itself */
-    repeating-conic-gradient(from -0.55deg at 50% 0%,
-      var(--deco-ray) 0deg 1.1deg, transparent 1.1deg 5deg);
-  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat-x, no-repeat, no-repeat, no-repeat;
-  background-size: auto, auto, auto, auto, 260px 130px, auto, auto, auto;
-  background-position: 0 0, 0 0, 0 0, 0 0, center bottom, center top, center top, center top;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='130'%3E%3Cg fill='none' stroke='%23b08d2a' stroke-width='2' opacity='.42'%3E%3Cpath d='M26 130V108h26V86h26V64h26V42h52v22h26v22h26v22h26v22'/%3E%3Cpath d='M117 42 130 24 143 42'/%3E%3Cpath d='M130 24V12'/%3E%3Cpath d='M112 64V42M130 64V48M148 64V42' opacity='.7'/%3E%3C/g%3E%3Cg fill='none' stroke='%23b08d2a' stroke-width='1' opacity='.3'%3E%3Cpath d='M0 128.5h260M0 124h260'/%3E%3C/g%3E%3C/svg%3E");
+  /* The sunburst + concentric fans that used to be struck from the top centre
+     are gone by request — they dominated the page. What's left is the
+     architecture the user liked: the ziggurat skyline along the foot and the
+     gold pinstripe frame around the page. */
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat-x;
+  background-size: auto, auto, auto, auto, 260px 130px;
+  background-position: 0 0, 0 0, 0 0, 0 0, center bottom;
 }
 /* Over the architecture, the quiet gold chevron field that was already the
    theme's texture — a herringbone of hairlines, heaviest at the foot. */
@@ -2676,11 +2407,30 @@ main { position: relative; z-index: 1; }
    umber veining), then a warm varnish bloom in the middle of the wall falling
    away to a deep sienna vignette at the edges. Nothing like newsprint's
    halftone dot screen. */
+/* DAY BACKDROP = an actual painting, faded right back so it reads as a wall
+   you'd hang a frame on rather than a photo behind your dashboard. It sits on
+   body::before (which this theme otherwise blanks) at low opacity, warmed and
+   desaturated into the palette. The craquelure/linen/varnish layers on
+   body::after stay ON TOP of it, so the painting picks up the canvas grain —
+   and if the image ever fails to load, those layers plus the aged-canvas --bg
+   still carry the theme on their own. */
+.theme-renaissance:not(.dark) body::before {
+  inset: 0;
+  background: none;
+  background-image: url("https://s.hdnux.com/photos/01/55/16/21/28632153/3/rawImage.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  filter: sepia(0.32) saturate(0.82) contrast(0.94) brightness(1.04);
+  opacity: 0.26;
+  animation: none;
+  transform: translateZ(0);
+}
 .theme-renaissance:not(.dark) body::after {
   opacity: 1; mix-blend-mode: normal;
   background-image:
     radial-gradient(118% 84% at 50% 40%,
-      rgba(255, 238, 196, 0.34) 0%, transparent 46%, rgba(50, 26, 8, 0.34) 100%),
+      rgba(255, 238, 196, 0.30) 0%, transparent 52%, rgba(50, 26, 8, 0.30) 100%),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='cq'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.045' numOctaves='5' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.20 0 0 0 0 0.11 0 0 0 0 0.04 0.62 0 0 0 -0.36'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23cq)'/%3E%3C/svg%3E"),
     repeating-linear-gradient(90deg, rgba(60, 34, 14, 0.055) 0 1px, transparent 1px 3px),
     repeating-linear-gradient(0deg,  rgba(60, 34, 14, 0.05) 0 1px, transparent 1px 3px);

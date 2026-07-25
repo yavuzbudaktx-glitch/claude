@@ -71,6 +71,19 @@ function dateTone(d: Date): { cls: string; label?: string } {
   return { cls: "text-muted-2" };
 }
 
+// Bucket already-sorted events into consecutive day groups, preserving order.
+function groupByDay(events: CalendarEvent[]): Array<{ key: string; date: Date; events: CalendarEvent[] }> {
+  const groups: Array<{ key: string; date: Date; events: CalendarEvent[] }> = [];
+  for (const e of events) {
+    const d = eventStartDate(e);
+    const key = format(d, "yyyy-MM-dd");
+    const last = groups[groups.length - 1];
+    if (last && last.key === key) last.events.push(e);
+    else groups.push({ key, date: d, events: [e] });
+  }
+  return groups;
+}
+
 function relTime(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
@@ -236,42 +249,70 @@ function CalendarTab({
         <p className="text-muted text-sm italic">Nothing scheduled. Enjoy the day.</p>
       )}
 
-      <ul className="divide-rule pr-1">
-        {visible.map((e) => {
-          const start = eventStartDate(e);
-          const tone = dateTone(start);
-          const isToday = differenceInCalendarDays(start, new Date()) <= 0;
+      {/* Grouped by day. Repeating the date on every row (in monospace) was
+          the old look; a slim day heading carries it once and each row is left
+          with just a time and a title, which reads far quicker. */}
+      <div className="flex flex-col gap-3">
+        {groupByDay(visible).map((g) => {
+          const tone = dateTone(g.date);
+          const days = differenceInCalendarDays(g.date, new Date());
+          const isToday = days <= 0;
           return (
-          <li key={e.id} className="group relative flex items-start gap-3 py-2.5 pl-2.5">
-            {/* Today gets a red spine so the eye lands on it instantly. */}
-            <span
-              aria-hidden
-              className="absolute left-0 top-2 bottom-2 w-[2px] rounded-full transition"
-              style={{ background: isToday ? "var(--down)" : "transparent" }}
-            />
-            <div className="font-mono text-[10px] uppercase tracking-wider pt-1 w-[52px] shrink-0 whitespace-nowrap">
-              <div className={tone.cls}>{format(start, "MMM d")}</div>
-              <div className="text-[10px] mt-0.5 text-muted">
-                {e.allDay ? "all day" : format(start, "h:mma").toLowerCase()}
+            <section key={g.key}>
+              <div className="flex items-center gap-2 mb-1">
+                <span className={`label !text-[10px] ${tone.cls}`}>
+                  {isToday ? "Today" : days === 1 ? "Tomorrow" : format(g.date, "EEEE")}
+                </span>
+                <span className="metalabel">{format(g.date, "MMM d")}</span>
+                <span className="h-px flex-1 bg-[var(--rule-soft)]" />
+                {isToday && (
+                  <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ background: "var(--down)" }} aria-hidden />
+                )}
               </div>
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className={`text-sm leading-snug truncate ${isToday ? "font-medium" : ""}`}>{e.summary}</div>
-              {e.location && (
-                <div className="text-[11px] text-muted mt-0.5 truncate">{e.location}</div>
-              )}
-            </div>
-            <button
-              onClick={() => hide(e.id)}
-              title="Hide this event"
-              className="opacity-0 group-hover:opacity-100 text-muted hover:text-accent transition shrink-0"
-            >
-              <EyeOff className="h-4 w-4" />
-            </button>
-          </li>
+              <ul>
+                {g.events.map((e) => {
+                  const start = eventStartDate(e);
+                  return (
+                    <li
+                      key={e.id}
+                      className="group relative flex items-baseline gap-2.5 rounded-lg py-1.5 pl-2 pr-1 -ml-2 transition-colors hover:bg-[var(--rule-soft)]"
+                    >
+                      <span
+                        aria-hidden
+                        className="absolute left-0 top-1.5 bottom-1.5 w-[2px] rounded-full"
+                        style={{ background: isToday ? "var(--down)" : "var(--rule)" }}
+                      />
+                      <span
+                        className={`shrink-0 tabular-nums text-[11.5px] font-medium ${
+                          e.allDay ? "text-muted-2" : isToday ? "text-ink-soft" : "text-muted"
+                        }`}
+                        style={{ minWidth: "58px" }}
+                      >
+                        {e.allDay ? "all day" : format(start, "h:mm a").toLowerCase()}
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className={`block text-[13.5px] leading-snug truncate ${isToday ? "text-ink font-medium" : "text-ink-soft"}`}>
+                          {e.summary}
+                        </span>
+                        {e.location && (
+                          <span className="block text-[11px] text-muted-2 truncate">{e.location}</span>
+                        )}
+                      </span>
+                      <button
+                        onClick={() => hide(e.id)}
+                        title="Hide this event"
+                        className="opacity-0 group-hover:opacity-100 text-muted-2 hover:text-accent transition shrink-0"
+                      >
+                        <EyeOff className="h-3.5 w-3.5" />
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
           );
         })}
-      </ul>
+      </div>
 
       {showHidden && hiddenList.length > 0 && (
         <div className="mt-3 pt-3 border-t rule">

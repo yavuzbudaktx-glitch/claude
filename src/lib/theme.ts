@@ -10,7 +10,7 @@
 
 export type ThemeId =
   | "aurora" | "galaxy" | "forest" | "water" | "rain" | "sunset"
-  | "terminal" | "accounting" | "mono"
+  | "terminal" | "mono"
   | "newspaper" | "blueprint" | "comic"
   | "mosaic" | "stainedglass" | "deco" | "cyberpunk"
   | "renaissance" | "marble" | "subway";
@@ -27,7 +27,6 @@ export const THEMES: Array<{
   { id: "comic",        label: "Comic",        kind: "concept", description: "Halftone dots, ink-line panels, KAPOW red, offset hard shadows — your dashboard as a comic book." },
   { id: "blueprint",    label: "Blueprint",    kind: "concept", description: "Architect's drafting page — white technical strokes on cyan, corner brackets, drafting grid." },
   { id: "terminal",     label: "Terminal",     kind: "concept", description: "Mono-typography, sharp corners, green phosphor, CRT scanlines — day or night." },
-  { id: "accounting",   label: "Accounting",   kind: "concept", description: "Green-bar ledger paper — banded rows, a red margin rule, double-rule headers, tabular figures." },
   { id: "mosaic",       label: "Mosaic",       kind: "concept", description: "Turkish Iznik çini — cobalt + turquoise tilework, coral carnations, eight-pointed stars, hand-laid grout." },
   { id: "stainedglass", label: "Stained Glass",kind: "concept", description: "Leaded cathedral panes — jewel reds, sapphire, emerald, with light spilling through the glazing." },
   { id: "deco",         label: "Art Deco",     kind: "concept", description: "1920s glamour — gold geometry on deep emerald & black, sunburst-crowned cards, high-contrast serif." },
@@ -51,7 +50,7 @@ const VALID: ThemeId[] = [
   "aurora", "galaxy", "forest", "water", "rain", "sunset",
   "mosaic", "stainedglass", "deco", "cyberpunk",
   "renaissance", "marble", "subway",
-  "terminal", "accounting", "mono",
+  "terminal", "mono",
   "newspaper", "blueprint", "comic",
 ];
 const NON_DEFAULT = VALID.filter((v) => v !== "aurora");
@@ -87,7 +86,7 @@ export const THEME_BOOT_SCRIPT = `
   (function() {
     try {
       var v = localStorage.getItem(${JSON.stringify(KEY)});
-      var ok = ['galaxy','forest','water','rain','sunset','mosaic','stainedglass','deco','cyberpunk','renaissance','marble','subway','terminal','accounting','mono','newspaper','blueprint','comic'];
+      var ok = ['galaxy','forest','water','rain','sunset','mosaic','stainedglass','deco','cyberpunk','renaissance','marble','subway','terminal','mono','newspaper','blueprint','comic'];
       var root = document.documentElement;
       var saved = v && ok.indexOf(v) >= 0 ? v : null;
       if (saved) root.classList.add('theme-' + saved);

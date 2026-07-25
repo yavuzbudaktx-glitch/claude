@@ -101,7 +101,11 @@ export function TodaySummaryCard() {
   const isGymDay = [1, 2, 4, 6].includes(new Date().getDay());
 
   return (
-    <div className="animate-fadeIn">
+    // `readable-plate` is a no-op in most themes; the heavily patterned ones
+    // (mosaic tilework, comic halftone) turn it into a soft paper plate so this
+    // strip — which sits straight on the page background with no card behind
+    // it — stays readable over the pattern.
+    <div className="animate-fadeIn readable-plate">
       <div className="label mb-2">Today</div>
 
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">

@@ -13,6 +13,7 @@ import { format } from "date-fns";
 import { usePref, usePrefsLoaded } from "@/components/PrefsProvider";
 import { localDateKey } from "@/lib/local-date";
 import { useFreshAt } from "@/lib/use-fresh";
+import { fetchRedditFromBrowser } from "@/lib/reddit-client";
 import { useCountUp } from "@/lib/use-count-up";
 
 // =============================================================================
@@ -1252,6 +1253,23 @@ const noStoreFetcher = (url: string) =>
   fetch(url, { cache: "reload", headers: { "Cache-Control": "no-cache" } })
     .then((r) => r.json());
 
+// The subs this feed covers. Kept in sync with /api/reddit's own list.
+const REDDIT_SUBS = ["CPA", "Accounting", "Big4", "tax", "Bookkeeping"];
+
+// Reddit blocks datacenter IPs, so BOTH server paths (Vercel and the nightly
+// harvester) get refused and the feed collapses to whatever thin scrap a proxy
+// managed to return. Your browser, on a residential IP, is the one client
+// Reddit will actually serve — and its public JSON allows simple cross-origin
+// GETs. So: try the browser first, and only fall back to the server route if
+// that fails. No API key or registered app required.
+const redditFetcher = async (url: string): Promise<RedditResp> => {
+  const direct = await fetchRedditFromBrowser(REDDIT_SUBS);
+  if (direct && direct.posts.length >= 8 && direct.subsHit >= 2) {
+    return { posts: direct.posts, subs: REDDIT_SUBS };
+  }
+  return noStoreFetcher(url);
+};
+
 export function RedditFeedSection() {
   // A nonce changes the SWR key so it can't dedupe with a previous response,
   // and `n=Date.now()` also defeats any browser/CDN cache between us and the
@@ -1260,7 +1278,7 @@ export function RedditFeedSection() {
   const key = nonce ? `/api/reddit?n=${nonce}` : "/api/reddit";
   const { data, error, isLoading, isValidating, mutate } = useSWR<RedditResp>(
     key,
-    noStoreFetcher,
+    redditFetcher,
     { refreshInterval: 1000 * 60 * 15, keepPreviousData: true, revalidateOnFocus: false },
   );
   const [sub, setSub] = useState<string>("all");

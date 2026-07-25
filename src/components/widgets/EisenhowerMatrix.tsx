@@ -155,7 +155,7 @@ export function EisenhowerMatrix({ userId }: { userId: string }) {
                   setDragQuad(null);
                   if (id) moveTask(id, q.id);
                 }}
-                className="relative rounded-xl border px-3 pt-2.5 pb-1 transition-all duration-200"
+                className="relative overflow-hidden rounded-xl border px-3 pt-3 pb-1 transition-all duration-200"
                 style={{
                   borderColor: dropping ? hue : "var(--rule-soft)",
                   background: dropping
@@ -164,11 +164,13 @@ export function EisenhowerMatrix({ userId }: { userId: string }) {
                   boxShadow: dropping ? `0 0 0 1px ${hue}, 0 8px 24px -14px ${hue}` : "none",
                 }}
               >
-                {/* Quadrant colour cap along the top edge. */}
+                {/* Quadrant colour cap — spans the FULL top edge of the panel
+                    and is clipped to the panel's own rounded corners, so it
+                    reads as part of the box instead of a floating stub. */}
                 <span
                   aria-hidden
-                  className="absolute left-3 right-3 top-0 h-[2px] rounded-full"
-                  style={{ background: hue, opacity: 0.8 }}
+                  className="absolute left-0 right-0 top-0 h-[3px] rounded-t-xl"
+                  style={{ background: hue }}
                 />
                 <div className="flex items-baseline gap-2 mb-1">
                   <span className="font-mono text-[10px] tracking-widest" style={{ color: hue }}>{q.number}</span>
