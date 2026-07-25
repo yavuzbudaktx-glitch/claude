@@ -768,7 +768,7 @@ main { position: relative; z-index: 1; }
   --paper-2:      #f2f6ea;             /* the faint green of a banded row */
   --ink:          #10231a;             /* black-green ledger ink */
   --ink-soft:     #33483b;
-  --muted:        #6c7c6d;
+  --muted:        #5f7060;
   --muted-2:      #a5b0a2;
   --rule:         rgba(16, 35, 26, 0.26);
   --rule-soft:    rgba(16, 35, 26, 0.10);
@@ -815,9 +815,10 @@ main { position: relative; z-index: 1; }
   transform: translateZ(0); will-change: transform; backface-visibility: hidden;
   background-color: transparent;
   background-image:
-    /* tractor-feed perforations down the left and right edges */
-    radial-gradient(circle 2.6px at 50% 13px, var(--ledger-punch) 0 88%, transparent 100%),
-    radial-gradient(circle 2.6px at 50% 13px, var(--ledger-punch) 0 88%, transparent 100%),
+    /* tractor-feed perforations down the left and right edges, punched one
+       every two bands so they sit dead centre in a green bar */
+    radial-gradient(circle 3.4px at 50% 50%, var(--ledger-punch) 0 86%, transparent 100%),
+    radial-gradient(circle 3.4px at 50% 50%, var(--ledger-punch) 0 86%, transparent 100%),
     /* the red margin rule: one firm hairline plus its lighter companion */
     linear-gradient(90deg,
       transparent 0 calc(var(--margin-page) - 1px),
@@ -830,7 +831,9 @@ main { position: relative; z-index: 1; }
       var(--ledger-band-page) 0 var(--row),
       transparent var(--row) calc(var(--row) * 2));
   background-repeat: repeat-y, repeat-y, no-repeat, repeat;
-  background-size: 40px 26px, 40px 26px, 100% 100%, 100% 100%;
+  background-size:
+    34px calc(var(--row) * 2), 34px calc(var(--row) * 2),
+    100% 100%, 100% 100%;
   background-position: left top, right top, left top, left top;
 }
 /* Paper fibre — anisotropic noise (long, fine horizontal streaks) so the
@@ -1876,99 +1879,113 @@ main { position: relative; z-index: 1; }
 .theme-comic.dark .chip { border-color: var(--ink); }
 
 /* =======================================================================
-   MOSAIC (concept) — hand-laid Mediterranean azulejo
-   Terracotta + cobalt + chalk-white tiles on a grout grid. Each card sits as
-   a single tile-set, the body shows the larger pattern through, the dot is a
-   tiny ceramic chip. Light variant is the natural daylit reading; dark
-   variant is the same tilework lit by a single hanging bulb.
+   MOSAIC (concept) — Iznik tilework
+   Traditional Turkish çini: cobalt blue, turquoise and bolus (coral) red on
+   a white glaze, laid up as 160px tiles with real mortar joints between them.
+   Each tile carries a rub el hizb — the eight-pointed star made of two
+   overlapped squares — ringed by interlaced strapwork, with stylised
+   carnation/tulip sprigs springing from each side of the rosette and quarter
+   stars at the corners so the field interlocks across the repeat. Cards are
+   single clean tile faces sitting on that field; the dot is a ceramic chip.
+   Light variant is the daylit panel; dark variant is the same panel on a
+   midnight-blue wall, lit by one lamp.
 ======================================================================= */
 :root.theme-mosaic {
   color-scheme: light;
-  --bg:           #fff4dc;             /* sunlit limewash */
-  --paper:        #ffffff;             /* clean chalk-white tile face */
-  --paper-2:      #fffaef;
-  --ink:          #1e1812;
-  --ink-soft:     #4a3a28;
-  --muted:        #7a684c;
-  --muted-2:      #b0a07e;
-  --rule:         rgba(30, 24, 18, 0.14);
-  --rule-soft:    rgba(30, 24, 18, 0.06);
-  --accent:       #b8341f;             /* deeper terracotta */
-  --accent-soft:  rgba(184, 52, 31, 0.10);
-  --accent-2:     #1a5fa8;             /* warmer cobalt */
-  --hl:           rgba(184, 52, 31, 0.08);
-  --up:           #2e7d4f;
-  --down:         #b3261e;
-  --grad-from:    #1a5fa8;
-  --grad-via:     #b8341f;
-  --grad-to:      #e0a82e;
+  --bg:           #f5f5ef;             /* white glaze ground */
+  --paper:        #ffffff;             /* clean tile face */
+  --paper-2:      #f5fafb;
+  --ink:          #131f2c;             /* cobalt-black outline ink */
+  --ink-soft:     #33475c;
+  --muted:        #64748b;
+  --muted-2:      #a6b3bf;
+  --rule:         rgba(19, 31, 44, 0.16);
+  --rule-soft:    rgba(19, 31, 44, 0.06);
+  --accent:       #1b4f9c;             /* Iznik cobalt */
+  --accent-soft:  rgba(27, 79, 156, 0.10);
+  --accent-2:     #14837e;             /* turquoise */
+  --hl:           rgba(27, 79, 156, 0.08);
+  --up:           #14837e;
+  --down:         #c4402c;             /* bolus red */
+  --grad-from:    #1b4f9c;
+  --grad-via:     #14837e;
+  --grad-to:      #c4402c;
   --glass:        #ffffff;
-  --glass-border: rgba(30, 24, 18, 0.22);
-  --glow:         rgba(184, 52, 31, 0.22);
-  --shadow-card:  0 1px 0 rgba(0,0,0,0.05), 0 14px 32px -18px rgba(30, 24, 18, 0.32);
-  --shadow-hover: 0 2px 0 rgba(0,0,0,0.06), 0 22px 50px -20px rgba(30, 24, 18, 0.42);
+  --glass-border: rgba(19, 31, 44, 0.22);
+  --glow:         rgba(27, 79, 156, 0.22);
+  --shadow-card:  0 1px 0 rgba(0,0,0,0.05), 0 14px 32px -18px rgba(19, 31, 44, 0.30);
+  --shadow-hover: 0 2px 0 rgba(0,0,0,0.06), 0 22px 50px -20px rgba(19, 31, 44, 0.40);
   --aurora-1: transparent; --aurora-2: transparent;
   --aurora-3: transparent; --aurora-4: transparent;
   --grain:        0.02;
+  --tile-motif:   0.62;                /* how loud the tilework reads */
+  --tile-glaze:   rgba(255, 255, 255, 0.62);
+  --tile-craze:   rgba(19, 31, 44, 0.03);
 }
 :root.theme-mosaic.dark {
   color-scheme: dark;
-  --bg:           #1a120a;
-  --paper:        #251710;
-  --paper-2:      #2c1b13;
-  --ink:          #f3e7d2;
-  --ink-soft:     #c9b292;
-  --muted:        #8f7559;
-  --muted-2:      #5f4d3a;
-  --rule:         rgba(243, 231, 210, 0.14);
-  --rule-soft:    rgba(243, 231, 210, 0.06);
-  --accent:       #e0563f;
-  --accent-soft:  rgba(224, 86, 63, 0.16);
-  --accent-2:     #6fa3e4;
-  --hl:           rgba(224, 86, 63, 0.12);
-  --up:           #6fc090;
-  --down:         #ff7a6a;
-  --grad-from:    #6fa3e4;
-  --grad-via:     #e0563f;
-  --grad-to:      #f1c14a;
-  --glass:        #251710;
-  --glass-border: rgba(243, 231, 210, 0.16);
-  --glow:         rgba(224, 86, 63, 0.35);
+  --bg:           #0b1421;             /* midnight wall behind the panel */
+  --paper:        #121f30;
+  --paper-2:      #17273b;
+  --ink:          #e8f1f6;
+  --ink-soft:     #b6cadb;
+  --muted:        #7f96aa;
+  --muted-2:      #4c5f74;
+  --rule:         rgba(232, 241, 246, 0.14);
+  --rule-soft:    rgba(232, 241, 246, 0.06);
+  --accent:       #5b9ce6;             /* cobalt, lamp-lit */
+  --accent-soft:  rgba(91, 156, 230, 0.16);
+  --accent-2:     #3fc8bf;             /* turquoise, lamp-lit */
+  --hl:           rgba(91, 156, 230, 0.12);
+  --up:           #3fc8bf;
+  --down:         #f0846c;
+  --grad-from:    #5b9ce6;
+  --grad-via:     #3fc8bf;
+  --grad-to:      #f0846c;
+  --glass:        #121f30;
+  --glass-border: rgba(232, 241, 246, 0.16);
+  --glow:         rgba(91, 156, 230, 0.32);
+  --tile-motif:   0.5;
+  --tile-glaze:   rgba(11, 20, 33, 0.72);
+  --tile-craze:   rgba(232, 241, 246, 0.03);
 }
 .theme-mosaic body { background: transparent; }
-.theme-mosaic body::before { background: none; animation: none; }
-/* The grout grid + four tile-quadrant motif. Each 64×64 tile is built from
-   conic-gradients that fan four pie-slices of color from the centre,
-   bordered by a thin ink line — exactly the azulejo "fan" pattern. */
+/* The tile field. One 160px çini tile drawn as an inline SVG so the motif is
+   actually a motif — grout joint, corner quarter-stars in turquoise, cobalt
+   strapwork interlacing two squares, four coral carnation sprigs, and the
+   central rub el hizb with a turquoise inner star and a bolus-red boss. Big
+   enough to be legible, pale enough to read type over. Centred horizontally
+   so the pattern is symmetric about the page. (translateZ promotes the fixed
+   layer so it paints on the first frame instead of after a scroll — same
+   reason galaxy/stained glass do it on ::after.) */
+.theme-mosaic body::before {
+  inset: 0;
+  filter: none;
+  animation: none;
+  transform: translateZ(0); will-change: transform; backface-visibility: hidden;
+  opacity: var(--tile-motif);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cg stroke='%23a8b7c9' stroke-width='2' opacity='.6'%3E%3Cpath d='M0 1h160M1 0v160'/%3E%3C/g%3E%3Cg fill='%232a9d9a' opacity='.42'%3E%3Crect x='-20' y='-20' width='40' height='40'/%3E%3Crect x='-20' y='-20' width='40' height='40' transform='rotate(45 0 0)'/%3E%3Crect x='140' y='-20' width='40' height='40'/%3E%3Crect x='140' y='-20' width='40' height='40' transform='rotate(45 160 0)'/%3E%3Crect x='-20' y='140' width='40' height='40'/%3E%3Crect x='-20' y='140' width='40' height='40' transform='rotate(45 0 160)'/%3E%3Crect x='140' y='140' width='40' height='40'/%3E%3Crect x='140' y='140' width='40' height='40' transform='rotate(45 160 160)'/%3E%3C/g%3E%3Cg fill='none' stroke='%231b4f9c' stroke-width='1.5' opacity='.34'%3E%3Crect x='28' y='28' width='104' height='104'/%3E%3Crect x='28' y='28' width='104' height='104' transform='rotate(45 80 80)'/%3E%3Cpath d='M0 0 80 80 160 0M0 160 80 80 160 160'/%3E%3C/g%3E%3Cg opacity='.5'%3E%3Cg transform='translate(80 47)'%3E%3Cpath d='M0 0 c0 -5 -4 -7 -7 -11 c-3 -4 -4 -9 -1 -12 c2 -2 5 -1 6 2 c0 -5 1 -9 2 -12 c1 3 2 7 2 12 c1 -3 4 -4 6 -2 c3 3 2 8 -1 12 c-3 4 -7 6 -7 11 z' fill='%23c4402c'/%3E%3Cpath d='M-1 -2 c-6 0 -11 -4 -12 -9 c6 -1 11 2 12 9 z' fill='%232a9d9a'/%3E%3Cpath d='M1 -2 c6 0 11 -4 12 -9 c-6 -1 -11 2 -12 9 z' fill='%232a9d9a'/%3E%3C/g%3E%3Cg transform='rotate(90 80 80) translate(80 47)'%3E%3Cpath d='M0 0 c0 -5 -4 -7 -7 -11 c-3 -4 -4 -9 -1 -12 c2 -2 5 -1 6 2 c0 -5 1 -9 2 -12 c1 3 2 7 2 12 c1 -3 4 -4 6 -2 c3 3 2 8 -1 12 c-3 4 -7 6 -7 11 z' fill='%23c4402c'/%3E%3Cpath d='M-1 -2 c-6 0 -11 -4 -12 -9 c6 -1 11 2 12 9 z' fill='%232a9d9a'/%3E%3Cpath d='M1 -2 c6 0 11 -4 12 -9 c-6 -1 -11 2 -12 9 z' fill='%232a9d9a'/%3E%3C/g%3E%3Cg transform='rotate(180 80 80) translate(80 47)'%3E%3Cpath d='M0 0 c0 -5 -4 -7 -7 -11 c-3 -4 -4 -9 -1 -12 c2 -2 5 -1 6 2 c0 -5 1 -9 2 -12 c1 3 2 7 2 12 c1 -3 4 -4 6 -2 c3 3 2 8 -1 12 c-3 4 -7 6 -7 11 z' fill='%23c4402c'/%3E%3Cpath d='M-1 -2 c-6 0 -11 -4 -12 -9 c6 -1 11 2 12 9 z' fill='%232a9d9a'/%3E%3Cpath d='M1 -2 c6 0 11 -4 12 -9 c-6 -1 -11 2 -12 9 z' fill='%232a9d9a'/%3E%3C/g%3E%3Cg transform='rotate(270 80 80) translate(80 47)'%3E%3Cpath d='M0 0 c0 -5 -4 -7 -7 -11 c-3 -4 -4 -9 -1 -12 c2 -2 5 -1 6 2 c0 -5 1 -9 2 -12 c1 3 2 7 2 12 c1 -3 4 -4 6 -2 c3 3 2 8 -1 12 c-3 4 -7 6 -7 11 z' fill='%23c4402c'/%3E%3Cpath d='M-1 -2 c-6 0 -11 -4 -12 -9 c6 -1 11 2 12 9 z' fill='%232a9d9a'/%3E%3Cpath d='M1 -2 c6 0 11 -4 12 -9 c-6 -1 -11 2 -12 9 z' fill='%232a9d9a'/%3E%3C/g%3E%3C/g%3E%3Cg fill='%231b4f9c' opacity='.5'%3E%3Crect x='56' y='56' width='48' height='48'/%3E%3Crect x='56' y='56' width='48' height='48' transform='rotate(45 80 80)'/%3E%3C/g%3E%3Cg fill='%232a9d9a' opacity='.62'%3E%3Crect x='68' y='68' width='24' height='24'/%3E%3Crect x='68' y='68' width='24' height='24' transform='rotate(45 80 80)'/%3E%3C/g%3E%3Ccircle cx='80' cy='80' r='5' fill='%23c4402c' opacity='.72'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  background-position: center top;
+  background-repeat: repeat;
+}
+/* The glaze on top of the tiles: a bloom of light across the upper page so
+   page-level type never has to compete with a star, plus the fine crazing
+   you get in an old glaze. Same layer in both modes — only the veil colour
+   flips, via --tile-glaze. */
 .theme-mosaic body::after {
   opacity: 1;
   mix-blend-mode: normal;
   background-image:
-    /* dark grout grid */
-    linear-gradient(rgba(43,26,16,0.16) 1.5px, transparent 1.5px),
-    linear-gradient(90deg, rgba(43,26,16,0.16) 1.5px, transparent 1.5px),
-    /* tile motif — alternating fan rosettes */
-    conic-gradient(from 45deg at 50% 50%,
-      rgba(192,57,43,0.18)  0deg 90deg,
-      rgba(30,74,130,0.18)  90deg 180deg,
-      rgba(192,57,43,0.18)  180deg 270deg,
-      rgba(30,74,130,0.18)  270deg 360deg);
-  background-size:
-    64px 64px,
-    64px 64px,
-    128px 128px;
-  background-position: 0 0, 0 0, 0 0;
+    radial-gradient(135% 62% at 50% 0%,
+      var(--tile-glaze) 0%, transparent 78%),
+    repeating-linear-gradient(63deg, var(--tile-craze) 0 1px, transparent 1px 9px),
+    repeating-linear-gradient(-24deg, var(--tile-craze) 0 1px, transparent 1px 13px);
+  background-size: auto, 90px 90px, 90px 90px;
 }
-.theme-mosaic.dark body::after {
-  background-image:
-    linear-gradient(rgba(243,231,210,0.10) 1.5px, transparent 1.5px),
-    linear-gradient(90deg, rgba(243,231,210,0.10) 1.5px, transparent 1.5px),
-    conic-gradient(from 45deg at 50% 50%,
-      rgba(224,86,63,0.22)  0deg 90deg,
-      rgba(111,163,228,0.22) 90deg 180deg,
-      rgba(224,86,63,0.22)  180deg 270deg,
-      rgba(111,163,228,0.22) 270deg 360deg);
-}
+/* Dark: the same fired tile, but under a lamp — brighten the glaze colours so
+   cobalt and turquoise still read as cobalt and turquoise on a night wall. */
+.theme-mosaic.dark body::before { filter: brightness(1.75) saturate(0.95); }
 .theme-mosaic .card {
   border-radius: 10px;
   background: var(--paper);
@@ -1977,6 +1994,10 @@ main { position: relative; z-index: 1; }
      rosettes (those competed with the body tilework and read as noise). */
   border: 1.5px solid var(--rule);
   box-shadow: var(--shadow-card), inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+/* on the night wall the bevel is a glint off the glaze, not a white line */
+.theme-mosaic.dark .card {
+  box-shadow: var(--shadow-card), inset 0 0 0 1px rgba(232, 241, 246, 0.10);
 }
 .theme-mosaic .card::before { display: none; }
 .theme-mosaic .card::after { display: none; }
@@ -2001,11 +2022,11 @@ main { position: relative; z-index: 1; }
       var(--accent-2) 90deg 180deg,
       var(--accent) 180deg 270deg,
       var(--accent-2) 270deg 360deg);
-  box-shadow: 0 0 0 1.5px rgba(43,26,16,0.45);
+  box-shadow: 0 0 0 1.5px rgba(19,31,44,0.45);
 }
 .theme-mosaic .font-display { letter-spacing: -0.02em; font-weight: 800; }
 .theme-mosaic .text-gradient {
-  background: linear-gradient(118deg, var(--accent-2), var(--accent) 50%, #e0a82e);
+  background: linear-gradient(118deg, var(--accent), var(--accent-2) 50%, #c4402c);
   -webkit-background-clip: text; background-clip: text;
   animation: none;
 }
@@ -2211,6 +2232,13 @@ main { position: relative; z-index: 1; }
   --aurora-3: rgba(7, 40, 30, 0.55);
   --aurora-4: rgba(0, 0, 0, 0.6);
   --grain:        0.04;
+  /* the gilding used by the backdrop architecture (rays, fans, pinstripes,
+     chevrons) — one set of golds per mode, so the geometry itself is written
+     once and never duplicated */
+  --deco-ray:     rgba(212, 175, 55, 0.16);
+  --deco-arc:     rgba(212, 175, 55, 0.10);
+  --deco-pin:     rgba(212, 175, 55, 0.34);
+  --deco-chev:    rgba(212, 175, 55, 0.05);
 }
 :root.theme-deco:not(.dark) {
   color-scheme: light;
@@ -2239,6 +2267,10 @@ main { position: relative; z-index: 1; }
   --shadow-hover: 0 2px 4px rgba(40,30,0,0.08), 0 24px 52px -20px rgba(120,95,20,0.42);
   --aurora-1: transparent; --aurora-2: transparent;
   --aurora-3: transparent; --aurora-4: transparent;
+  --deco-ray:     rgba(154, 123, 31, 0.14);
+  --deco-arc:     rgba(154, 123, 31, 0.10);
+  --deco-pin:     rgba(154, 123, 31, 0.38);
+  --deco-chev:    rgba(154, 123, 31, 0.06);
 }
 .theme-deco .font-display {
   font-family: "Playfair Display", "Times New Roman", serif;
@@ -2246,10 +2278,51 @@ main { position: relative; z-index: 1; }
   letter-spacing: 0.02em;
 }
 .theme-deco body { background: transparent; }
-.theme-deco body::before { background: none; animation: none; }
-/* Background: a quiet gold chevron field only. (The big sunburst that fanned
-   from the top of the PAGE is gone by request — the sunbursts now live only
-   on the cards, where they crown each header.) */
+/* The page becomes a piece of Deco ARCHITECTURE rather than a plain field.
+   Read from the bottom of the stack up:
+     · a symmetrical sunburst of thin gold rays fanning from the top centre
+       (phase-shifted half a ray so it is exactly symmetric about the axis);
+     · concentric fans — the ring-arcs struck from that same centre;
+     · a veil of the page colour that swallows both away from the top, so the
+       geometry crowns the masthead and then gets out of the way of the text
+       (no mask needed — the veil IS the fade, and it keeps every layer above
+       it at full strength);
+     · a stepped ziggurat skyline, crowned with a chevron and a spire,
+       marching along the bottom edge;
+     · and a thin double gold pinstripe framing the whole page, the way a
+       Deco menu card is ruled.
+   All of it is one fixed layer at z-index -1, promoted with translateZ so it
+   paints on the first frame. */
+.theme-deco body::before {
+  inset: 0;
+  filter: none;
+  animation: none;
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  background-color: transparent;
+  background-image:
+    /* gold pinstripe frame — a double hairline inset from each page edge */
+    linear-gradient(to right,  transparent 0 10px, var(--deco-pin) 10px 11px, transparent 11px 14px, var(--deco-pin) 14px 15px, transparent 15px),
+    linear-gradient(to left,   transparent 0 10px, var(--deco-pin) 10px 11px, transparent 11px 14px, var(--deco-pin) 14px 15px, transparent 15px),
+    linear-gradient(to bottom, transparent 0 10px, var(--deco-pin) 10px 11px, transparent 11px 14px, var(--deco-pin) 14px 15px, transparent 15px),
+    linear-gradient(to top,    transparent 0 10px, var(--deco-pin) 10px 11px, transparent 11px 14px, var(--deco-pin) 14px 15px, transparent 15px),
+    /* stepped ziggurat skyline along the bottom */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='130'%3E%3Cg fill='none' stroke='%23b08d2a' stroke-width='2' opacity='.42'%3E%3Cpath d='M26 130V108h26V86h26V64h26V42h52v22h26v22h26v22h26v22'/%3E%3Cpath d='M117 42 130 24 143 42'/%3E%3Cpath d='M130 24V12'/%3E%3Cpath d='M112 64V42M130 64V48M148 64V42' opacity='.7'/%3E%3C/g%3E%3Cg fill='none' stroke='%23b08d2a' stroke-width='1' opacity='.3'%3E%3Cpath d='M0 128.5h260M0 124h260'/%3E%3C/g%3E%3C/svg%3E"),
+    /* the veil that fades the fan out into the page */
+    radial-gradient(96% 66% at 50% 0%, transparent 0 20%, var(--bg) 84%),
+    /* concentric fans struck from the top centre */
+    repeating-radial-gradient(circle at 50% 0%,
+      transparent 0 62px, var(--deco-arc) 62px 63px, transparent 63px 126px),
+    /* the sunburst itself */
+    repeating-conic-gradient(from -0.55deg at 50% 0%,
+      var(--deco-ray) 0deg 1.1deg, transparent 1.1deg 5deg);
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat-x, no-repeat, no-repeat, no-repeat;
+  background-size: auto, auto, auto, auto, 260px 130px, auto, auto, auto;
+  background-position: 0 0, 0 0, 0 0, 0 0, center bottom, center top, center top, center top;
+}
+/* Over the architecture, the quiet gold chevron field that was already the
+   theme's texture — a herringbone of hairlines, heaviest at the foot. */
 .theme-deco body::after {
   opacity: 1;
   mix-blend-mode: normal;
@@ -2257,18 +2330,12 @@ main { position: relative; z-index: 1; }
   will-change: transform;
   backface-visibility: hidden;
   background-image:
-    repeating-linear-gradient(135deg, rgba(212,175,55,0.05) 0 1px, transparent 1px 22px),
-    repeating-linear-gradient(45deg,  rgba(212,175,55,0.05) 0 1px, transparent 1px 22px);
+    repeating-linear-gradient(135deg, var(--deco-chev) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(45deg,  var(--deco-chev) 0 1px, transparent 1px 22px);
   background-size: 44px 44px, 44px 44px;
   background-position: 0 100%, 0 100%;
   -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.2) 50%, #000 100%);
           mask-image: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.2) 50%, #000 100%);
-}
-.theme-deco:not(.dark) body::after {
-  background-image:
-    repeating-linear-gradient(135deg, rgba(154,123,31,0.06) 0 1px, transparent 1px 22px),
-    repeating-linear-gradient(45deg,  rgba(154,123,31,0.06) 0 1px, transparent 1px 22px);
-  opacity: 0.8;
 }
 .theme-deco .card {
   border-radius: 4px;
@@ -2354,52 +2421,74 @@ main { position: relative; z-index: 1; }
   --aurora-4:     rgba(0, 0, 0, 0.6);
   --grain:        0.04;
 }
-/* ---- Cyberpunk · LIGHT ("daylight lab"): white chrome, the same hot
-   pink + cyan signals, soft holographic wash instead of midnight neon. */
+/* ---- Cyberpunk · LIGHT ("daylight lab"): the rig with the neon switched
+   off and the strip lights on. Cool grey-white chrome, desaturated slate
+   type, and steel-blue / electric-cyan signals — deliberately NEUTRAL, not
+   a pastel version of the night palette. Pink survives only as the negative
+   colour and as a whisper in the wash; everything structural is cyan/steel.
+   (Dark mode is untouched — the midnight neon is the point of it.) */
 :root.theme-cyberpunk:not(.dark) {
   color-scheme: light;
-  --bg:           #f3f1fa;
+  --bg:           #eef1f5;        /* cool light grey */
   --paper:        #ffffff;
-  --paper-2:      #f8f5ff;
-  --ink:          #1c1432;
-  --ink-soft:     #443a66;
-  --muted:        #786d9c;
-  --muted-2:      #aaa2c4;
-  --rule:         rgba(224, 24, 109, 0.28);
-  --rule-soft:    rgba(28, 20, 50, 0.07);
-  --accent:       #e0186d;        /* hot pink, deepened for contrast */
-  --accent-soft:  rgba(224, 24, 109, 0.10);
-  --accent-2:     #0891b2;        /* cyan, deepened */
-  --hl:           rgba(224, 24, 109, 0.08);
-  --up:           #0d9b6c;
-  --down:         #d53159;
-  --grad-from:    #0891b2;
-  --grad-via:     #e0186d;
-  --grad-to:      #d97706;
+  --paper-2:      #f4f7fa;
+  --ink:          #161f2a;        /* desaturated slate */
+  --ink-soft:     #3b4959;
+  --muted:        #66727f;
+  --muted-2:      #a3aeba;
+  --rule:         rgba(22, 31, 42, 0.16);
+  --rule-soft:    rgba(22, 31, 42, 0.06);
+  --accent:       #0e7490;        /* electric cyan, deepened for contrast */
+  --accent-soft:  rgba(14, 116, 144, 0.10);
+  --accent-2:     #40647f;        /* steel blue */
+  --hl:           rgba(14, 116, 144, 0.07);
+  --up:           #0d7a5c;
+  --down:         #b83d5e;        /* the one place pink is allowed to shout */
+  --grad-from:    #40647f;
+  --grad-via:     #0e7490;
+  --grad-to:      #64748b;
   --glass:        #ffffff;
-  --glass-border: rgba(224, 24, 109, 0.40);
-  --glow:         rgba(224, 24, 109, 0.22);
-  --shadow-card:  0 1px 2px rgba(28,20,50,0.05), 0 14px 32px -18px rgba(224, 24, 109, 0.26);
-  --shadow-hover: 0 2px 4px rgba(28,20,50,0.07), 0 24px 50px -20px rgba(224, 24, 109, 0.36);
-  --aurora-1:     rgba(224, 24, 109, 0.14);
-  --aurora-2:     rgba(8, 145, 178, 0.14);
-  --aurora-3:     rgba(122, 41, 224, 0.10);
+  --glass-border: rgba(22, 31, 42, 0.18);
+  --glow:         rgba(14, 116, 144, 0.18);
+  --shadow-card:  0 1px 2px rgba(22,31,42,0.05), 0 14px 32px -18px rgba(22, 31, 42, 0.24);
+  --shadow-hover: 0 2px 4px rgba(22,31,42,0.07), 0 24px 50px -20px rgba(22, 31, 42, 0.32);
+  --aurora-1:     rgba(14, 116, 144, 0.12);
+  --aurora-2:     rgba(100, 116, 139, 0.14);
+  --aurora-3:     rgba(224, 24, 109, 0.045);   /* the whisper of pink */
   --aurora-4:     transparent;
   --grain:        0.02;
 }
+/* Scanlines stay — they are the theme's signature — but they go steel, and
+   the glow rising off the bottom edge is cyan instead of hot pink. */
 .theme-cyberpunk:not(.dark) body::after {
   background-image:
     repeating-linear-gradient(to bottom,
-      rgba(8, 145, 178, 0.035) 0 1px,
+      rgba(22, 31, 42, 0.035) 0 1px,
       transparent 1px 3px),
-    radial-gradient(70% 60% at 50% 100%, rgba(224, 24, 109, 0.07), transparent 70%);
+    radial-gradient(70% 60% at 50% 100%, rgba(14, 116, 144, 0.07), transparent 70%);
 }
 .theme-cyberpunk:not(.dark) .card {
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
+  border-color: var(--accent-2);
 }
-.theme-cyberpunk:not(.dark) .chip-active { color: #ffffff; }
-.theme-cyberpunk:not(.dark) .text-gradient { text-shadow: none; }
+.theme-cyberpunk:not(.dark) .card::before {
+  background: linear-gradient(155deg, rgba(14,116,144,0.30) 0%, rgba(14,116,144,0.03) 38%, transparent 65%);
+}
+.theme-cyberpunk:not(.dark) .card-bare,
+.theme-cyberpunk:not(.dark) .btn-ghost,
+.theme-cyberpunk:not(.dark) .chip { border-color: var(--rule); }
+.theme-cyberpunk:not(.dark) .chip-active { color: #ffffff; box-shadow: none; }
+.theme-cyberpunk:not(.dark) .headrule { border-bottom-color: var(--rule); }
+.theme-cyberpunk:not(.dark) .dot {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 0 1px rgba(14,116,144,0.30), 0 0 8px rgba(14,116,144,0.22);
+}
+.theme-cyberpunk:not(.dark) .text-gradient {
+  background: linear-gradient(118deg, var(--accent-2), var(--accent) 55%, #64748b);
+  -webkit-background-clip: text; background-clip: text;
+  text-shadow: none;
+}
 .theme-cyberpunk body { background: transparent; }
 .theme-cyberpunk body::before { filter: blur(95px) saturate(180%); animation: aurora 40s ease-in-out infinite alternate; }
 /* Scanlines + a faint chromatic-aberration glow on the whole field. */
@@ -2538,6 +2627,155 @@ main { position: relative; z-index: 1; }
   background: linear-gradient(118deg, var(--accent), var(--accent-2) 60%, #f3dc9c);
   -webkit-background-clip: text; background-clip: text;
   animation: none;
+}
+
+/* ---------- RENAISSANCE · DAY (an oil in a gilt frame) ----------
+   The day mode used to land in the same neighbourhood as `newspaper`: pale
+   cream stock, black serif, hairline rules. It is now deliberately the other
+   thing — a PAINTING, not a PRINT. Where newspaper is cool newsprint grey,
+   flat ink, no shadow and hard 1px rules, this is deep aged canvas, burnt
+   umber and gold leaf, visible weave and craquelure, real mitred frames with
+   corner flourishes, and heavy shadowing so each card hangs off the wall.
+   (Dark mode is untouched.) */
+:root.theme-renaissance:not(.dark) {
+  color-scheme: light;
+  --bg:           #cbb287;             /* aged canvas / gallery wall */
+  --paper:        #f0e2c0;             /* the warm ground a panel is sized with */
+  --paper-2:      #e6d5ae;
+  --ink:          #2a1509;             /* burnt-umber black */
+  --ink-soft:     #533019;
+  --muted:        #7c5730;
+  --muted-2:      #ab8b62;
+  --rule:         rgba(42, 21, 9, 0.24);
+  --rule-soft:    rgba(42, 21, 9, 0.10);
+  --accent:       #8f2f1c;             /* venetian red, deepened */
+  --accent-soft:  rgba(143, 47, 28, 0.10);
+  --accent-2:     #b0862c;             /* gold leaf, dark enough to read as metal */
+  --hl:           rgba(143, 47, 28, 0.08);
+  --up:           #4f6a24;
+  --down:         #8f2f1c;
+  --grad-from:    #533019;
+  --grad-via:     #8f2f1c;
+  --grad-to:      #c9a24a;
+  --glass:        #f0e2c0;
+  --glass-border: rgba(42, 21, 9, 0.42);
+  --glow:         rgba(201, 162, 74, 0.24);
+  --shadow-card:  0 2px 0 rgba(255,255,255,0.22),
+                  0 16px 30px -14px rgba(42, 21, 9, 0.42),
+                  0 40px 70px -34px rgba(42, 21, 9, 0.55);
+  --shadow-hover: 0 2px 0 rgba(255,255,255,0.28),
+                  0 22px 40px -14px rgba(42, 21, 9, 0.48),
+                  0 54px 90px -38px rgba(42, 21, 9, 0.6);
+  /* beaten gold leaf — the frame moulding, lit from the upper left */
+  --gilt: linear-gradient(138deg,
+            #f6e6ae 0%, #c9a24a 16%, #8a6522 34%,
+            #e0c273 52%, #a87f26 74%, #6f5018 100%);
+}
+/* Canvas + varnish: an orthogonal linen weave, then the craquelure of a
+   three-hundred-year-old varnish layer (turbulence thresholded into mottled
+   umber veining), then a warm varnish bloom in the middle of the wall falling
+   away to a deep sienna vignette at the edges. Nothing like newsprint's
+   halftone dot screen. */
+.theme-renaissance:not(.dark) body::after {
+  opacity: 1; mix-blend-mode: normal;
+  background-image:
+    radial-gradient(118% 84% at 50% 40%,
+      rgba(255, 238, 196, 0.34) 0%, transparent 46%, rgba(50, 26, 8, 0.34) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='cq'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.045' numOctaves='5' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.20 0 0 0 0 0.11 0 0 0 0 0.04 0.62 0 0 0 -0.36'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23cq)'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(90deg, rgba(60, 34, 14, 0.055) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(0deg,  rgba(60, 34, 14, 0.05) 0 1px, transparent 1px 3px);
+  background-size: auto, 240px 240px, auto, auto;
+}
+/* Card = a panel in a mitred gold-leaf frame. The frame is a real gradient
+   border (border-box paint under a transparent border), the rabbet line and
+   the shadow the frame casts onto the canvas live on ::after, and the corner
+   volutes sit on the moulding itself via ::before. */
+.theme-renaissance:not(.dark) .card {
+  border: 8px solid transparent;
+  border-radius: 2px;
+  /* longhands only: the frame eats 8px, so the inner padding comes back a
+     touch — but `.is-collapsed` must still win on padding-bottom */
+  padding-top: 1.25rem;
+  padding-left: 1.35rem;
+  padding-right: 1.35rem;
+  background:
+    linear-gradient(178deg, var(--paper) 0%, var(--paper-2) 100%) padding-box,
+    var(--gilt) border-box;
+  outline: 1px solid rgba(42, 21, 9, 0.38);
+  box-shadow: var(--shadow-card);
+}
+.theme-renaissance:not(.dark) .card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+.theme-renaissance:not(.dark) .card::before {
+  display: block;
+  content: "";
+  position: absolute;
+  inset: -8px;                          /* = the moulding, i.e. the border box */
+  pointer-events: none;
+  /* the base .card::before is a 1px gradient RING (padding + xor mask); the
+     flourishes need the whole box, so both are switched off here */
+  padding: 0;
+  border-radius: 3px;
+  -webkit-mask: none;
+          mask: none;
+  -webkit-mask-composite: add;
+          mask-composite: add;
+  background-repeat: no-repeat;
+  background-size: 26px 26px;
+  background-position: left top, right top, right bottom, left bottom;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cg fill='none' stroke='%23f3e2ab' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M2 12.5C2 6.7 6.7 2 12.5 2'/%3E%3Cpath d='M2 21C2 10.5 10.5 2 21 2'/%3E%3Cpath d='M6.4 6.4 2.6 2.6'/%3E%3Cpath d='M11.4 5.2 10 2.2'/%3E%3Cpath d='M5.2 11.4 2.2 10'/%3E%3C/g%3E%3Ccircle cx='7.4' cy='7.4' r='2.2' fill='%238a6522'/%3E%3Ccircle cx='6.8' cy='6.8' r='1.1' fill='%23f8eec8'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cg transform='rotate(90 13 13)'%3E%3Cg fill='none' stroke='%23f3e2ab' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M2 12.5C2 6.7 6.7 2 12.5 2'/%3E%3Cpath d='M2 21C2 10.5 10.5 2 21 2'/%3E%3Cpath d='M6.4 6.4 2.6 2.6'/%3E%3Cpath d='M11.4 5.2 10 2.2'/%3E%3Cpath d='M5.2 11.4 2.2 10'/%3E%3C/g%3E%3Ccircle cx='7.4' cy='7.4' r='2.2' fill='%238a6522'/%3E%3Ccircle cx='6.8' cy='6.8' r='1.1' fill='%23f8eec8'/%3E%3C/g%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cg transform='rotate(180 13 13)'%3E%3Cg fill='none' stroke='%23f3e2ab' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M2 12.5C2 6.7 6.7 2 12.5 2'/%3E%3Cpath d='M2 21C2 10.5 10.5 2 21 2'/%3E%3Cpath d='M6.4 6.4 2.6 2.6'/%3E%3Cpath d='M11.4 5.2 10 2.2'/%3E%3Cpath d='M5.2 11.4 2.2 10'/%3E%3C/g%3E%3Ccircle cx='7.4' cy='7.4' r='2.2' fill='%238a6522'/%3E%3Ccircle cx='6.8' cy='6.8' r='1.1' fill='%23f8eec8'/%3E%3C/g%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cg transform='rotate(270 13 13)'%3E%3Cg fill='none' stroke='%23f3e2ab' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M2 12.5C2 6.7 6.7 2 12.5 2'/%3E%3Cpath d='M2 21C2 10.5 10.5 2 21 2'/%3E%3Cpath d='M6.4 6.4 2.6 2.6'/%3E%3Cpath d='M11.4 5.2 10 2.2'/%3E%3Cpath d='M5.2 11.4 2.2 10'/%3E%3C/g%3E%3Ccircle cx='7.4' cy='7.4' r='2.2' fill='%238a6522'/%3E%3Ccircle cx='6.8' cy='6.8' r='1.1' fill='%23f8eec8'/%3E%3C/g%3E%3C/svg%3E");
+  opacity: .85;
+}
+/* the rabbet — the dark line where the canvas drops behind the moulding,
+   plus the shadow the frame throws across the top of the picture */
+.theme-renaissance:not(.dark) .card::after {
+  display: block;
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 1;
+  background: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(42, 21, 9, 0.34),
+    inset 0 4px 14px -4px rgba(42, 21, 9, 0.22);
+}
+.theme-renaissance:not(.dark) .card-bare {
+  border-radius: 2px;
+  border: 1px solid var(--rule);
+  background: rgba(42, 21, 9, 0.05);
+}
+/* a gilt rule under each header, brightest at its centre like a lit moulding */
+.theme-renaissance:not(.dark) .headrule {
+  padding-bottom: .55rem;
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg,
+    transparent 0%, #a87f26 10%, #f0dca4 50%, #a87f26 90%, transparent 100%) 1;
+}
+/* Painted lettering, not pressed type: wider inscriptional tracking, old-style
+   figures, and the faintest highlight under each letter. */
+.theme-renaissance:not(.dark) .font-display {
+  letter-spacing: 0.04em;
+  font-variant-numeric: oldstyle-nums proportional-nums;
+  text-shadow: 0 1px 0 rgba(255, 250, 230, 0.4);
+}
+.theme-renaissance:not(.dark) .label,
+.theme-renaissance:not(.dark) .metalabel {
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  color: var(--muted);
+}
+.theme-renaissance:not(.dark) .dot {
+  width: 10px; height: 10px;
+  background: radial-gradient(circle at 32% 30%, #fdf1c8, #c9a24a 55%, #6e4a1e);
+  box-shadow: 0 0 0 1px rgba(42, 21, 9, 0.35), 0 1px 2px rgba(42, 21, 9, 0.4);
 }
 
 /* =======================================================================
