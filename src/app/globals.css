@@ -741,42 +741,51 @@ main { position: relative; z-index: 1; }
     0 0 24px rgba(34,211,238,0.30);
 }
 
-/* ============== ACCOUNTING ============== */
-/* ============== ACCOUNTING (concept — green-bar ledger paper, v2) ==========
-   The classic continuous-feed accountant's pad. The whole theme runs on a
-   single rhythm — `--row` = 28px — so every visible band on a card aligns to
-   the same baseline as the kanban tiles, list rows, and form inputs inside
-   it. Bands snap to the rhythm; nested cards (the application tiles, the
-   subscription rows) are sized to exact multiples of `--row`, so the
-   pale-green stripes always end at a card edge, never mid-content. */
+/* ============== ACCOUNTING (concept — green-bar ledger paper, v3) ==========
+   The classic 14⅞-inch continuous-feed accountant's pad, rebuilt so it reads
+   as LEDGER PAPER at a glance and not merely as a green-tinted page:
+
+     · the page itself is the pad — crisp alternating pale-green / cream
+       bands run edge to edge behind everything;
+     · a red margin rule (a heavy hairline plus its lighter companion) runs
+       down the left, exactly where the account name would be written;
+     · tractor-feed perforations punch down both edges;
+     · a fine paper-fibre grain sits over the lot so it reads as stock, not
+       as a flat fill;
+     · every card is a sheet torn off that pad — same bands, same red rule,
+       squared-off corners, and the accountant's double rule under each
+       header (two stacked hairlines, the classic "total" rule);
+     · figures are tabular and lined, so columns of numbers align.
+
+   The whole theme runs on a single rhythm — `--row` = 28px — so every visible
+   band lines up with the kanban tiles, list rows and form inputs inside a
+   card. Nested tiles are sized to exact multiples of `--row`, so the green
+   stripes always end at a tile edge, never mid-content. */
 :root.theme-accounting {
   color-scheme: light;
-  /* Navy blue-ledger concept — the more sober side of accountant stationery.
-     A deep navy desk blotter under cream sheets banded in cobalt, a single
-     red margin rule down the left, and tabular figures throughout. */
-  --bg:           #c2cee4;             /* dusty cornflower desk blotter */
-  --paper:        #fbfaf3;             /* warm cream ledger sheet */
-  --paper-2:      #f0eee0;             /* faded second tone for nested rows */
-  --ink:          #0c1830;             /* deep navy ink */
-  --ink-soft:     #2f3e5f;
-  --muted:        #6a7a96;
-  --muted-2:      #a8b2c4;
-  --rule:         rgba(12, 24, 48, 0.24);
-  --rule-soft:    rgba(12, 24, 48, 0.10);
-  --accent:       #1d3a8a;             /* cobalt blue — the new ledger ink */
-  --accent-soft:  rgba(29, 58, 138, 0.10);
+  --bg:           #f6f2e2;             /* the pad itself — warm ledger cream */
+  --paper:        #fdfbf1;             /* a fresh sheet laid on the pad */
+  --paper-2:      #f2f6ea;             /* the faint green of a banded row */
+  --ink:          #10231a;             /* black-green ledger ink */
+  --ink-soft:     #33483b;
+  --muted:        #6c7c6d;
+  --muted-2:      #a5b0a2;
+  --rule:         rgba(16, 35, 26, 0.26);
+  --rule-soft:    rgba(16, 35, 26, 0.10);
+  --accent:       #176b3c;             /* ledger green — the bookkeeper's ink */
+  --accent-soft:  rgba(23, 107, 60, 0.10);
   --accent-2:     #b3261e;             /* the unmistakable ledger red */
-  --hl:           rgba(29, 58, 138, 0.10);
-  --up:           #1d6e3c;
+  --hl:           rgba(23, 107, 60, 0.10);
+  --up:           #176b3c;
   --down:         #b3261e;
-  --grad-from:    #0c2050;
-  --grad-via:     #1d3a8a;
-  --grad-to:      #4f7bd1;
-  --glass:        #fbfaf3;
-  --glass-border: rgba(12, 24, 48, 0.32);
-  --glow:         rgba(29, 58, 138, 0.18);
-  --shadow-card:  0 1px 0 rgba(12,24,48,0.10), 0 10px 24px -16px rgba(12, 24, 48, 0.34);
-  --shadow-hover: 0 2px 0 rgba(12,24,48,0.14), 0 18px 38px -18px rgba(12, 24, 48, 0.42);
+  --grad-from:    #0d3b22;
+  --grad-via:     #176b3c;
+  --grad-to:      #5fa172;
+  --glass:        #fdfbf1;
+  --glass-border: rgba(16, 35, 26, 0.34);
+  --glow:         rgba(23, 107, 60, 0.16);
+  --shadow-card:  0 1px 0 rgba(16,35,26,0.10), 0 10px 24px -16px rgba(16, 35, 26, 0.30);
+  --shadow-hover: 0 2px 0 rgba(16,35,26,0.14), 0 18px 38px -18px rgba(16, 35, 26, 0.40);
   --aurora-1: transparent; --aurora-2: transparent;
   --aurora-3: transparent; --aurora-4: transparent;
   --grain:        0.02;
@@ -784,42 +793,78 @@ main { position: relative; z-index: 1; }
      bands and content always agree. */
   --row:           28px;
   --row-half:      14px;
-  --ledger-band:   #d8e2f3;             /* pale cobalt band — the "blue-bar" pad */
-  --ledger-red:    rgba(179, 38, 30, 0.62);
-  --margin-left:   48px;                /* where the red rule lives */
+  --ledger-band:      #d9ecd6;             /* the green bar, on a card sheet */
+  --ledger-band-page: rgba(23, 107, 60, 0.115);  /* ditto, on the pad behind */
+  --ledger-red:       rgba(179, 38, 30, 0.62);
+  --ledger-red-soft:  rgba(179, 38, 30, 0.28);
+  --ledger-punch:     rgba(16, 35, 26, 0.14);    /* tractor-feed holes */
+  --ledger-fibre:     0.9;                       /* paper-grain strength */
+  --margin-left:   48px;                /* where the red rule lives on a card */
+  --margin-page:   58px;                /* ...and on the page behind it */
 }
-.theme-accounting body::before { background: none; animation: none; }
+/* The page IS the pad. ::before carries the printed sheet — green bands, the
+   red margin rule and the tractor-feed perforations; ::after carries the
+   paper fibre over the top. Both are fixed at z-index -1 behind the content,
+   and both are promoted onto their own compositor layer (translateZ) so they
+   paint on the very first frame rather than waiting for a scroll. */
 .theme-accounting body { background: transparent; }
-/* Subtle cross-grain on the navy desk blotter — reads as fabric weave under
-   the cream sheets, not a flat colour fill. */
-.theme-accounting body::after {
-  opacity: 1; mix-blend-mode: normal;
+.theme-accounting body::before {
+  inset: 0;
+  filter: none;
+  animation: none;
   transform: translateZ(0); will-change: transform; backface-visibility: hidden;
+  background-color: transparent;
   background-image:
-    repeating-linear-gradient(90deg, rgba(12,24,48,0.05) 0 1px, transparent 1px 56px),
-    repeating-linear-gradient(0deg,  rgba(12,24,48,0.04) 0 1px, transparent 1px 56px);
+    /* tractor-feed perforations down the left and right edges */
+    radial-gradient(circle 2.6px at 50% 13px, var(--ledger-punch) 0 88%, transparent 100%),
+    radial-gradient(circle 2.6px at 50% 13px, var(--ledger-punch) 0 88%, transparent 100%),
+    /* the red margin rule: one firm hairline plus its lighter companion */
+    linear-gradient(90deg,
+      transparent 0 calc(var(--margin-page) - 1px),
+      var(--ledger-red) calc(var(--margin-page) - 1px) var(--margin-page),
+      transparent var(--margin-page) calc(var(--margin-page) + 3px),
+      var(--ledger-red-soft) calc(var(--margin-page) + 3px) calc(var(--margin-page) + 4px),
+      transparent calc(var(--margin-page) + 4px)),
+    /* the green bars themselves — one row on, one row off, forever */
+    repeating-linear-gradient(to bottom,
+      var(--ledger-band-page) 0 var(--row),
+      transparent var(--row) calc(var(--row) * 2));
+  background-repeat: repeat-y, repeat-y, no-repeat, repeat;
+  background-size: 40px 26px, 40px 26px, 100% 100%, 100% 100%;
+  background-position: left top, right top, left top, left top;
+}
+/* Paper fibre — anisotropic noise (long, fine horizontal streaks) so the
+   stock reads as pressed pulp rather than as a flat colour. */
+.theme-accounting body::after {
+  opacity: var(--ledger-fibre); mix-blend-mode: normal;
+  transform: translateZ(0); will-change: transform; backface-visibility: hidden;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='pf'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8 0.045' numOctaves='3' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23pf)' opacity='0.075'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
 }
 /* Card = a sheet of ledger paper. The bands run the full sheet, the red
    margin rule sits one ledger-column in from the left, and the sheet has a
    hard left binding edge so the pad feels glued together. */
 .theme-accounting .card {
   -webkit-backdrop-filter: none; backdrop-filter: none;
-  border-radius: 2px;
+  border-radius: 0;                    /* ledger stock is guillotined, not rounded */
   border: 1px solid var(--rule);
   background-color: var(--paper);
   background-image:
+    /* red margin rule — heavy hairline + lighter companion, as printed */
+    linear-gradient(90deg,
+      transparent 0 calc(var(--margin-left) - 1px),
+      var(--ledger-red) calc(var(--margin-left) - 1px) var(--margin-left),
+      transparent var(--margin-left) calc(var(--margin-left) + 3px),
+      var(--ledger-red-soft) calc(var(--margin-left) + 3px) calc(var(--margin-left) + 4px),
+      transparent calc(var(--margin-left) + 4px)),
     /* alternating green / cream bands, anchored to the top edge */
     repeating-linear-gradient(to bottom,
-      var(--ledger-band) 0, var(--ledger-band) var(--row),
-      var(--paper) var(--row), var(--paper) calc(var(--row) * 2)),
-    /* red margin rule */
-    linear-gradient(90deg, transparent calc(var(--margin-left) - 1px),
-      var(--ledger-red) calc(var(--margin-left) - 1px),
-      var(--ledger-red) var(--margin-left),
-      transparent var(--margin-left));
+      var(--ledger-band) 0 var(--row),
+      var(--paper) var(--row) calc(var(--row) * 2));
   /* Reserve a narrow margin so card content NEVER overflows the red rule. */
   padding-left: calc(var(--margin-left) + 12px);
-  box-shadow: var(--shadow-card);
+  /* hard left binding edge — the glued spine of the pad */
+  box-shadow: inset 2px 0 0 0 var(--accent), var(--shadow-card);
 }
 .theme-accounting .card::before { display: none; }
 .theme-accounting .card::after { display: none; }
@@ -828,7 +873,7 @@ main { position: relative; z-index: 1; }
    them — so the green stripes appear ONLY in the empty gutters between
    tiles, never crossing through content. */
 .theme-accounting .card-bare {
-  border-radius: 2px;
+  border-radius: 0;
   background: var(--paper);
   border: 1px solid var(--rule);
   /* card-bare rests on the band rhythm: padding is half-row, total min
@@ -842,23 +887,41 @@ main { position: relative; z-index: 1; }
     rgba(15,31,21,0.06) calc(var(--row) - 1px), rgba(15,31,21,0.06) var(--row));
   background-position: 0 calc(var(--row-half) - 1px);
 }
-.theme-accounting .btn-ghost { border-radius: 2px; background: var(--paper); border: 1px solid var(--rule); }
-.theme-accounting .chip { border-radius: 2px; border: 1px solid var(--rule); background: var(--paper); }
+.theme-accounting .btn-ghost { border-radius: 0; background: var(--paper); border: 1px solid var(--rule); }
+.theme-accounting .chip { border-radius: 0; border: 1px solid var(--rule); background: var(--paper); }
 .theme-accounting .chip-active { background: var(--accent); color: #fff; border-color: var(--accent); }
-.theme-accounting .headrule { border-bottom: 3px double var(--accent); padding-bottom: .55rem; }
-.theme-accounting .dot { box-shadow: none; border-radius: 2px; background: var(--accent); }
+/* The accountant's DOUBLE RULE under every header — two stacked hairlines with
+   a hair of white between them, exactly the rule you draw above a total. */
+.theme-accounting .headrule {
+  padding-bottom: .5rem;
+  border-bottom: 4px double var(--accent);   /* renders 1px · gap · 1px */
+}
+.theme-accounting .dot { box-shadow: none; border-radius: 0; background: var(--accent); }
 .theme-accounting .font-display { font-weight: 800; letter-spacing: -0.02em; }
 .theme-accounting .text-gradient {
   background: linear-gradient(118deg, var(--ink), var(--accent) 55%, #4a8a4a);
   -webkit-background-clip: text; background-clip: text;
   animation: none;
 }
+/* Every figure on the page is a LEDGER figure: lining, tabular, same advance
+   width, so columns of numbers stack dead straight. Column headings and
+   captions go monospace for the same reason. */
+:root.theme-accounting {
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "tnum" on, "lnum" on;
+}
 .theme-accounting .font-mono { font-feature-settings: "tnum" on, "ss01" on; }
+.theme-accounting .label,
+.theme-accounting .metalabel {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.09em;
+  font-weight: 500;
+}
 /* Inputs match the band so the typed value sits on a line */
 .theme-accounting input, .theme-accounting textarea {
   background: var(--paper);
   border: 1px solid var(--rule);
-  border-radius: 2px;
+  border-radius: 0;
 }
 /* Date inputs in the application kanban: a single band tall */
 .theme-accounting input[type="date"] {
@@ -945,35 +1008,42 @@ main { position: relative; z-index: 1; }
     radial-gradient(48% 48% at 82% 84%, var(--aurora-3), transparent 70%);
 }
 
-/* ---------- ACCOUNTING · DARK (ledger at night, in navy) ---------- */
+/* ---------- ACCOUNTING · DARK (the ledger under a desk lamp) ----------
+   Same pad, same rhythm, same red margin — but printed on dark stock. The
+   green bar becomes a faint phosphor-green band, the perforations read as
+   punched-out holes letting the dark through, and the fibre grain is pulled
+   back so it doesn't sparkle. */
 :root.theme-accounting.dark {
   color-scheme: dark;
-  --bg:           #0a1124;             /* deep navy desk */
-  --paper:        #131c34;             /* ledger sheet at night */
-  --paper-2:      #182343;
-  --ink:          #e2eaff;
-  --ink-soft:     #b3c2e6;
-  --muted:        #8095bb;
-  --muted-2:      #4e5e7e;
-  --rule:         rgba(226, 234, 255, 0.12);
-  --rule-soft:    rgba(226, 234, 255, 0.05);
-  --accent:       #6aa6ff;             /* bright cobalt at night */
-  --accent-soft:  rgba(106, 166, 255, 0.14);
+  --bg:           #0b120e;             /* the pad, in the dark */
+  --paper:        #131c16;             /* ledger sheet at night */
+  --paper-2:      #18241c;
+  --ink:          #e4f0e6;
+  --ink-soft:     #b9cdbe;
+  --muted:        #86a08c;
+  --muted-2:      #4f6355;
+  --rule:         rgba(228, 240, 230, 0.13);
+  --rule-soft:    rgba(228, 240, 230, 0.055);
+  --accent:       #4ade80;             /* ledger green, lit */
+  --accent-soft:  rgba(74, 222, 128, 0.14);
   --accent-2:     #f87171;
-  --hl:           rgba(106, 166, 255, 0.10);
+  --hl:           rgba(74, 222, 128, 0.10);
   --up:           #6ee7b7;
   --down:         #f87171;
-  --grad-from:    #1d3a8a;
-  --grad-via:     #6aa6ff;
-  --grad-to:      #c7d9ff;
-  --glass:        #131c34;
-  --glass-border: rgba(226, 234, 255, 0.10);
-  --glow:         rgba(106, 166, 255, 0.22);
-  --ledger-band:  rgba(106, 166, 255, 0.10);
+  --grad-from:    #166534;
+  --grad-via:     #4ade80;
+  --grad-to:      #bbf7d0;
+  --glass:        #131c16;
+  --glass-border: rgba(228, 240, 230, 0.11);
+  --glow:         rgba(74, 222, 128, 0.20);
   --shadow-card:  0 8px 22px -14px rgba(0, 0, 0, 0.80);
   --shadow-hover: 0 20px 44px -20px rgba(0, 0, 0, 0.88);
-  --ledger-band:  rgba(74, 222, 128, 0.06);
-  --ledger-red:   rgba(248, 113, 113, 0.40);
+  --ledger-band:      rgba(74, 222, 128, 0.075);
+  --ledger-band-page: rgba(74, 222, 128, 0.055);
+  --ledger-red:       rgba(248, 113, 113, 0.42);
+  --ledger-red-soft:  rgba(248, 113, 113, 0.18);
+  --ledger-punch:     rgba(0, 0, 0, 0.45);
+  --ledger-fibre:     0.5;
 }
 
 /* =======================================================================
