@@ -398,32 +398,39 @@ function shuffled<T>(arr: T[]): T[] {
   return a;
 }
 
-// Pull the Relaxing Holy Quran library (cached server-side) and return the
-// video ids. Empty array on any failure so the caller can fall back.
-async function fetchQuranIds(): Promise<string[]> {
+// Pull the Relaxing Holy Quran library (cached server-side). Returns the video
+// ids plus the channel's uploads-playlist id, which the PLAYER can expand by
+// itself when the server-side enumeration comes back empty.
+interface QuranLib { ids: string[]; uploads: string | null }
+async function fetchQuranLibrary(): Promise<QuranLib> {
   try {
     const r = await fetch("/api/yt-library?source=quran", { signal: AbortSignal.timeout(9000) });
-    if (!r.ok) return [];
-    const j = (await r.json()) as { videos?: Array<{ id?: string }> };
+    if (!r.ok) {
+      // Even an error response carries the uploads id when we could resolve it.
+      const j = (await r.json().catch(() => null)) as { uploads?: string } | null;
+      return { ids: [], uploads: j?.uploads ?? null };
+    }
+    const j = (await r.json()) as { videos?: Array<{ id?: string }>; uploads?: string };
     const vids = Array.isArray(j.videos) ? j.videos : [];
-    return vids.map((v) => (v?.id ?? "").trim()).filter(Boolean);
+    return {
+      ids: vids.map((v) => (v?.id ?? "").trim()).filter(Boolean),
+      uploads: j.uploads ?? null,
+    };
   } catch {
-    return [];
+    return { ids: [], uploads: null };
   }
 }
 
-// Warm the Quran library BEFORE the user picks it. Browsers only allow
-// autoplay-with-sound from inside a real user gesture; if we had to await a
-// network round-trip after the click, the iframe would mount too late and be
-// blocked (muted). Prefetching on picker-open means the ids are already in
-// hand, so the pick handler can mount synchronously. Fire-and-forget.
-let quranIdsCache: string[] | null = null;
+// Warm the Quran library BEFORE the user picks it, so the pick handler never
+// has to await a network round-trip (which would also cost us the click's
+// user-activation). Fire-and-forget.
+let quranLib: QuranLib | null = null;
 let quranPrefetching = false;
 export function prefetchQuranLibrary() {
-  if (quranIdsCache?.length || quranPrefetching) return;
+  if (quranLib?.ids.length || quranPrefetching) return;
   quranPrefetching = true;
-  fetchQuranIds()
-    .then((ids) => { if (ids.length) quranIdsCache = ids; })
+  fetchQuranLibrary()
+    .then((lib) => { if (lib.ids.length || lib.uploads) quranLib = lib; })
     .catch(() => { /* noop */ })
     .finally(() => { quranPrefetching = false; });
 }
@@ -458,11 +465,18 @@ export async function playRadioSource(source: RadioSource) {
 
     if (source === "mix") {
       lastPlayedUrl = `ytmix:${MIX_LIST_ID}`;
+      // Start somewhere RANDOM in the mix, and turn YouTube's own shuffle on.
+      // Previously this always passed index 0, so every play began with the
+      // same track. A generated radio mix is ~25-50 items; a random index in
+      // [0,24] is always in range, and setShuffle re-orders the rest.
+      const startAt = Math.floor(Math.random() * 25);
       const ok = ytApplyAndPlay((p) => {
-        // The RDEM list is a generated "radio" mix; loadPlaylist starts it and
-        // YouTube auto-advances through it. Seed video is the fallback.
-        if (typeof p.loadPlaylist === "function") p.loadPlaylist({ list: MIX_LIST_ID, listType: "playlist", index: 0 });
-        else p.loadVideoById(MIX_SEED_ID);
+        if (typeof p.loadPlaylist === "function") {
+          p.loadPlaylist({ list: MIX_LIST_ID, listType: "playlist", index: startAt });
+          try { p.setShuffle?.(true); } catch { /* noop */ }
+        } else {
+          p.loadVideoById(MIX_SEED_ID);
+        }
       });
       if (ok) { setStatus("playing"); return; }
       const src =
@@ -475,21 +489,39 @@ export async function playRadioSource(source: RadioSource) {
 
     // quran — shuffle the whole library and play it as a looping playlist.
     // Prefer the prefetched cache (warmed on picker-open) so nothing blocks.
-    const ids = shuffled(quranIdsCache?.length ? quranIdsCache : await fetchQuranIds());
+    const lib = quranLib ?? (await fetchQuranLibrary());
+    const ids = shuffled(lib.ids);
     if (ids.length) {
       lastPlayedUrl = "ytquran";
+      // Shuffled order AND a random start index — belt and braces so two plays
+      // in a row don't open on the same recitation.
+      const startAt = Math.floor(Math.random() * ids.length);
       const ok = ytApplyAndPlay((p) => {
-        p.loadPlaylist(ids, 0);
-        try { p.setLoop?.(true); } catch { /* noop */ }
+        p.loadPlaylist(ids, startAt);
+        try { p.setShuffle?.(true); p.setLoop?.(true); } catch { /* noop */ }
       });
       if (ok) { setStatus("playing"); return; }
-      const first = ids[0];
       const src =
-        `https://www.youtube.com/embed/${first}` +
+        `https://www.youtube.com/embed/${ids[startAt]}` +
         `?autoplay=1&mute=0&controls=0&enablejsapi=1&loop=1&playlist=${ids.join(",")}`;
       await playUrl(ytEmbedUrl(src));            // fallback embed
       setStatus("playing");
       return;
+    }
+
+    // The server couldn't enumerate the channel (YouTube rate-limits Vercel's
+    // datacenter IPs). Second chance: hand the channel's *uploads playlist* to
+    // the player and let IT do the fetching — that request comes from the
+    // user's own browser, which isn't blocked. Random index = a different
+    // recitation each time.
+    if (lib.uploads) {
+      lastPlayedUrl = "ytquran";
+      const startAt = Math.floor(Math.random() * 30);
+      const ok = ytApplyAndPlay((p) => {
+        p.loadPlaylist({ list: lib.uploads, listType: "playlist", index: startAt });
+        try { p.setShuffle?.(true); p.setLoop?.(true); } catch { /* noop */ }
+      });
+      if (ok) { setStatus("playing"); return; }
     }
 
     // Library unavailable — fall back to the live Kral broadcast so the button

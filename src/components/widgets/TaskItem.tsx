@@ -1,6 +1,6 @@
 "use client";
 
-import { Trash2, ChevronDown, Pencil, Check, X } from "lucide-react";
+import { Trash2, ChevronDown, Pencil, Check, X, AlertTriangle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { differenceInCalendarDays, format, isPast, isToday, parseISO } from "date-fns";
 import type { Task, TaskStatus } from "@/types/db";
@@ -35,14 +35,46 @@ export function TaskItem({
   }
   const due = task.due_date ? parseISO(task.due_date) : null;
   const isComplete = task.status === "complete";
-  const overdue = due && !isComplete && isPast(due) && !isToday(due);
-  const today = due && isToday(due);
+  const overdue = !!due && !isComplete && isPast(due) && !isToday(due);
+  const today = !!due && isToday(due);
   // "Soon" means due within the next 3 calendar days (not today, not past).
-  // We highlight these in accent red the same way overdue/today are, so the
-  // user can see urgency at a glance even before something's actually due.
   const dueSoon = !!due && !isComplete && !overdue && !today &&
-    differenceInCalendarDays(due, new Date()) < 3;
-  const urgent = overdue || today || dueSoon;
+    differenceInCalendarDays(due, new Date()) <= 3;
+
+  // Urgency drives the whole row: a coloured left spine, a pill on the date,
+  // and a tinted background for anything overdue. Three distinct states so
+  // "late", "due now" and "coming up" never look the same.
+  const daysLate = overdue && due ? Math.abs(differenceInCalendarDays(due, new Date())) : 0;
+  const urgency: {
+    spine: string; pill: string; text: string; bg: string; label: string;
+  } | null =
+    overdue
+      ? {
+          spine: "var(--down)",
+          pill: "bg-[var(--down)] text-white",
+          text: "text-down",
+          bg: "color-mix(in srgb, var(--down) 8%, transparent)",
+          label: daysLate === 1 ? "1 day late" : `${daysLate} days late`,
+        }
+      : today
+        ? {
+            spine: "var(--accent)",
+            pill: "bg-[var(--accent)] text-white",
+            text: "text-accent",
+            bg: "color-mix(in srgb, var(--accent) 7%, transparent)",
+            label: "today",
+          }
+        : dueSoon
+          ? {
+              spine: "color-mix(in srgb, var(--accent) 55%, transparent)",
+              pill: "bg-[var(--accent-soft)] text-accent",
+              text: "text-accent",
+              bg: "transparent",
+              label: differenceInCalendarDays(due!, new Date()) === 1
+                ? "tomorrow"
+                : `in ${differenceInCalendarDays(due!, new Date())} days`,
+            }
+          : null;
 
   const [open, setOpen] = useState(false);
   const [stage, setStage] = useState<"visible" | "fading" | "gone">("visible");
@@ -78,13 +110,22 @@ export function TaskItem({
     <li
       draggable={!editing}
       onDragStart={(e) => e.dataTransfer.setData("text/plain", task.id)}
-      className={`group flex items-start gap-2.5 py-2 transition-opacity ease-out ${editing ? "" : "cursor-grab active:cursor-grabbing"}`}
+      className={`group relative flex items-start gap-2.5 py-2 pl-2.5 rounded-lg transition-opacity ease-out ${editing ? "" : "cursor-grab active:cursor-grabbing"}`}
       style={{
         transitionDuration: "2200ms",
         opacity: stage === "fading" ? 0 : 1,
         pointerEvents: stage === "fading" ? "none" : undefined,
+        background: urgency?.bg ?? "transparent",
       }}
     >
+      {/* Urgency spine — red for late, accent for today, faded for coming up. */}
+      {urgency && !isComplete && (
+        <span
+          aria-hidden
+          className="absolute left-0 top-1.5 bottom-1.5 w-[2.5px] rounded-full"
+          style={{ background: urgency.spine }}
+        />
+      )}
       <div className="relative mt-0.5" ref={ref}>
         <button
           onClick={() => setOpen((v) => !v)}
@@ -146,13 +187,18 @@ export function TaskItem({
               {task.title}
             </div>
             {due && (
-              <div
-                className={`metalabel mt-0.5 ${
-                  urgent ? "!text-accent" : ""
-                }`}
-              >
-                {overdue ? "overdue · " : today ? "today · " : ""}
-                {format(due, "MMM d")}
+              <div className="mt-1 flex items-center gap-1.5">
+                {urgency && !isComplete && (
+                  <span
+                    className={`inline-flex items-center gap-1 rounded-full px-1.5 py-[1px] font-mono text-[9.5px] uppercase tracking-wider ${urgency.pill}`}
+                  >
+                    {overdue && <AlertTriangle className="h-2.5 w-2.5" />}
+                    {urgency.label}
+                  </span>
+                )}
+                <span className={`metalabel ${urgency && !isComplete ? urgency.text : ""}`}>
+                  {format(due, "MMM d")}
+                </span>
               </div>
             )}
           </div>

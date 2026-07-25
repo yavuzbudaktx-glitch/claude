@@ -2,7 +2,7 @@
 
 import useSWR from "swr";
 import { useEffect, useMemo, useState } from "react";
-import { format, formatDistanceToNowStrict } from "date-fns";
+import { differenceInCalendarDays, format, formatDistanceToNowStrict } from "date-fns";
 import { EyeOff, Eye, RotateCcw, Mail, HardDrive, File, FileText, Image as ImageIcon, FileSpreadsheet, ExternalLink, Folder, CalendarDays } from "lucide-react";
 import { Card } from "@/components/Card";
 import { usePref } from "@/components/PrefsProvider";
@@ -56,6 +56,21 @@ function eventStartDate(e: CalendarEvent): Date {
   }
   return new Date(e.start);
 }
+// Colour an event by HOW SOON it is, not by what it is. The time-of-day stays
+// deliberately neutral (it used to be accent-coloured, which painted the whole
+// column red in warm themes); the DATE carries the urgency instead:
+//   today    → red + bold        (it's happening now-ish)
+//   tomorrow → accent
+//   ≤7 days  → normal ink
+//   beyond   → muted, it can wait
+function dateTone(d: Date): { cls: string; label?: string } {
+  const days = differenceInCalendarDays(d, new Date());
+  if (days <= 0) return { cls: "text-down font-semibold", label: "today" };
+  if (days === 1) return { cls: "text-accent font-medium", label: "tmrw" };
+  if (days <= 7) return { cls: "text-ink-soft" };
+  return { cls: "text-muted-2" };
+}
+
 function relTime(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
@@ -222,16 +237,26 @@ function CalendarTab({
       )}
 
       <ul className="divide-rule pr-1">
-        {visible.map((e) => (
-          <li key={e.id} className="group flex items-start gap-3 py-2.5">
-            <div className="font-mono text-[10px] uppercase tracking-wider text-muted pt-1 w-12 shrink-0">
-              {format(eventStartDate(e), "MMM d")}
-              <div className="text-[10px] mt-0.5 text-accent">
-                {e.allDay ? "all day" : format(eventStartDate(e), "h:mma").toLowerCase()}
+        {visible.map((e) => {
+          const start = eventStartDate(e);
+          const tone = dateTone(start);
+          const isToday = differenceInCalendarDays(start, new Date()) <= 0;
+          return (
+          <li key={e.id} className="group relative flex items-start gap-3 py-2.5 pl-2.5">
+            {/* Today gets a red spine so the eye lands on it instantly. */}
+            <span
+              aria-hidden
+              className="absolute left-0 top-2 bottom-2 w-[2px] rounded-full transition"
+              style={{ background: isToday ? "var(--down)" : "transparent" }}
+            />
+            <div className="font-mono text-[10px] uppercase tracking-wider pt-1 w-[52px] shrink-0 whitespace-nowrap">
+              <div className={tone.cls}>{format(start, "MMM d")}</div>
+              <div className="text-[10px] mt-0.5 text-muted">
+                {e.allDay ? "all day" : format(start, "h:mma").toLowerCase()}
               </div>
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-sm leading-snug truncate">{e.summary}</div>
+              <div className={`text-sm leading-snug truncate ${isToday ? "font-medium" : ""}`}>{e.summary}</div>
               {e.location && (
                 <div className="text-[11px] text-muted mt-0.5 truncate">{e.location}</div>
               )}
@@ -244,7 +269,8 @@ function CalendarTab({
               <EyeOff className="h-4 w-4" />
             </button>
           </li>
-        ))}
+          );
+        })}
       </ul>
 
       {showHidden && hiddenList.length > 0 && (

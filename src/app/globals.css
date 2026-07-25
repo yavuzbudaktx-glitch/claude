@@ -1352,13 +1352,13 @@ main { position: relative; z-index: 1; }
   opacity: 1;
   mix-blend-mode: normal;
   background-image:
-    linear-gradient(180deg, rgba(3, 7, 14, 0.55) 0%, transparent 26%),
-    radial-gradient(120% 80% at 50% 38%, transparent 46%, rgba(3, 7, 14, 0.62) 100%);
+    linear-gradient(180deg, rgba(3, 7, 14, 0.34) 0%, transparent 24%),
+    radial-gradient(130% 85% at 50% 40%, transparent 58%, rgba(3, 7, 14, 0.4) 100%);
 }
 .theme-rain:not(.dark) body::after {
   background-image:
-    linear-gradient(180deg, rgba(120, 134, 154, 0.42) 0%, transparent 24%),
-    radial-gradient(120% 80% at 50% 38%, transparent 50%, rgba(120, 134, 154, 0.4) 100%);
+    linear-gradient(180deg, rgba(120, 134, 154, 0.24) 0%, transparent 22%),
+    radial-gradient(130% 85% at 50% 40%, transparent 60%, rgba(120, 134, 154, 0.24) 100%);
 }
 /* Storm backdrop — the aurora mesh recoloured to slate, with a slow swell
    that gently brightens the whole sky like a passing squall. */

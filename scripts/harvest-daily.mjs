@@ -262,16 +262,92 @@ function mapRedditChildren(json, sub) {
     .filter((p) => p.id && p.title);
 }
 
+// OAuth token (only when REDDIT_CLIENT_ID / REDDIT_CLIENT_SECRET are set as
+// repo secrets). This is the ONLY path Reddit officially serves to servers, so
+// when it's configured it's both the fastest and the most reliable.
+let redditToken = null;
+async function getRedditToken() {
+  if (redditToken !== null) return redditToken || null;
+  const id = process.env.REDDIT_CLIENT_ID;
+  const secret = process.env.REDDIT_CLIENT_SECRET;
+  if (!id || !secret) { redditToken = ""; return null; }
+  try {
+    const r = await fetch("https://www.reddit.com/api/v1/access_token", {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${Buffer.from(`${id}:${secret}`).toString("base64")}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": TOOL_UA,
+      },
+      body: "grant_type=client_credentials",
+      signal: AbortSignal.timeout(15000),
+    });
+    if (r.ok) {
+      const j = await r.json();
+      if (j?.access_token) { redditToken = j.access_token; return redditToken; }
+    }
+    console.warn(`reddit: token request failed (${r.status})`);
+  } catch (e) {
+    console.warn("reddit: token error", e?.message);
+  }
+  redditToken = "";
+  return null;
+}
+
+// Every way we know to read a subreddit's top-of-week, tried in order of
+// reliability. Reddit blocks datacenter IPs (including GitHub's) on the plain
+// JSON endpoints, which is why a single strategy kept coming back empty and
+// the whole reddit harvest committed as null — so we try OAuth, then several
+// unauthenticated hosts/mirrors, and log which one actually worked.
+async function fetchSubMulti(sub) {
+  const tok = await getRedditToken();
+  if (tok) {
+    try {
+      const r = await fetch(`https://oauth.reddit.com/r/${sub}/top?t=week&limit=25&raw_json=1`, {
+        headers: { Authorization: `Bearer ${tok}`, "User-Agent": TOOL_UA },
+        signal: AbortSignal.timeout(15000),
+      });
+      if (r.ok) {
+        const posts = mapRedditChildren(await r.json(), sub);
+        if (posts.length) { console.log(`  r/${sub}: ${posts.length} via oauth`); return posts; }
+      }
+    } catch { /* fall through */ }
+  }
+
+  // Unauthenticated hosts. `getJson` already races the direct URL against two
+  // CORS proxies and retries, so each entry here is really several attempts.
+  const candidates = [
+    `https://www.reddit.com/r/${sub}/top.json?t=week&limit=25&raw_json=1`,
+    `https://old.reddit.com/r/${sub}/top.json?t=week&limit=25&raw_json=1`,
+    `https://api.reddit.com/r/${sub}/top?t=week&limit=25&raw_json=1`,
+  ];
+  for (const url of candidates) {
+    const j = await getJson(url, 2);
+    const posts = mapRedditChildren(j, sub);
+    if (posts.length) {
+      console.log(`  r/${sub}: ${posts.length} via ${new URL(url).host}`);
+      return posts;
+    }
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  console.warn(`  r/${sub}: no posts from any source`);
+  return [];
+}
+
 async function harvestReddit() {
   const perSub = [];
   for (const sub of REDDIT_SUBS) {
-    const url = `https://www.reddit.com/r/${sub}/top.json?t=week&limit=25&raw_json=1`;
-    const j = await getJson(url, 2);
-    perSub.push(mapRedditChildren(j, sub));
-    await new Promise((r) => setTimeout(r, 700)); // be gentle between subs
+    perSub.push(await fetchSubMulti(sub));
+    await new Promise((r) => setTimeout(r, 900)); // be gentle between subs
   }
   const hit = perSub.filter((a) => a.length > 0).length;
-  if (hit < 2) return null; // not worth committing a one-sub result
+  if (hit < 2) {
+    console.warn(
+      `reddit: only ${hit} of ${REDDIT_SUBS.length} subs returned posts — not committing. ` +
+      "Set REDDIT_CLIENT_ID / REDDIT_CLIENT_SECRET repo secrets for the reliable OAuth path.",
+    );
+    return null; // not worth committing a one-sub result
+  }
 
   // Round-robin interleave so the top of the feed alternates subs.
   const seen = new Set();

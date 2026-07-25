@@ -605,6 +605,10 @@ export function BodyCard() {
   const proteinGoalNum = Number(state.proteinGoal);
   const hasProteinGoal = Number.isFinite(proteinGoalNum) && proteinGoalNum > 0;
   const proteinPct = hasProteinGoal ? Math.min(100, (proteinToday / proteinGoalNum) * 100) : 0;
+  // Overshoot. Calories over goal is a warning (red); protein over goal is a
+  // win (green) — you're trying to *exceed* a protein target.
+  const calsOver = hasGoal ? Math.max(0, calsToday - goalNum) : 0;
+  const proteinOver = hasProteinGoal ? Math.max(0, proteinToday - proteinGoalNum) : 0;
 
   function addCals(e: React.FormEvent) {
     e.preventDefault();
@@ -728,8 +732,10 @@ export function BodyCard() {
           <div className="flex items-center gap-3 flex-wrap">
             <div className="flex items-baseline gap-2">
               <span className="font-mono tabular-nums text-lg text-ink">{calsToday.toLocaleString()}</span>
-              <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
-                {hasGoal ? `${Math.max(0, goalNum - calsToday).toLocaleString()} left` : "kcal"}
+              <span className={`font-mono text-[11px] uppercase tracking-wider ${calsOver > 0 ? "text-down font-semibold" : "text-muted"}`}>
+                {!hasGoal ? "kcal" : calsOver > 0
+                  ? `${calsOver.toLocaleString()} over`
+                  : `${(goalNum - calsToday).toLocaleString()} left`}
               </span>
             </div>
             <form onSubmit={addCals} className="flex items-center gap-1.5">
@@ -752,7 +758,9 @@ export function BodyCard() {
                 className="h-full rounded-full transition-[width] duration-500"
                 style={{
                   width: `${calPct}%`,
-                  background: "linear-gradient(90deg, var(--grad-from), var(--grad-via), var(--grad-to))",
+                  background: calsOver > 0
+                    ? "linear-gradient(90deg, var(--down), var(--down))"
+                    : "linear-gradient(90deg, var(--grad-from), var(--grad-via), var(--grad-to))",
                 }}
               />
             </div>
@@ -777,8 +785,10 @@ export function BodyCard() {
           <div className="flex items-center gap-3 flex-wrap">
             <div className="flex items-baseline gap-2">
               <span className="font-mono tabular-nums text-lg text-ink">{proteinToday}</span>
-              <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
-                {hasProteinGoal ? `${Math.max(0, proteinGoalNum - proteinToday)} g left` : "grams"}
+              <span className={`font-mono text-[11px] uppercase tracking-wider ${proteinOver > 0 ? "text-up font-semibold" : "text-muted"}`}>
+                {!hasProteinGoal ? "grams" : proteinOver > 0
+                  ? `${proteinOver} g over`
+                  : `${proteinGoalNum - proteinToday} g left`}
               </span>
             </div>
             <form onSubmit={addProtein} className="flex items-center gap-1.5">

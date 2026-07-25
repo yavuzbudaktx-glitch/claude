@@ -4,7 +4,7 @@
 // lives in src/lib/youtube-library.ts.
 
 import { NextResponse } from "next/server";
-import { fetchChannelVideos, fetchChannelShorts, fetchPlaylistVideos, type LibVideo } from "@/lib/youtube-library";
+import { fetchChannelVideos, fetchChannelShorts, fetchPlaylistVideos, resolveChannelId, type LibVideo } from "@/lib/youtube-library";
 
 export const revalidate = 3600;
 // Walking a whole library is several round-trips; give the function the full
@@ -51,8 +51,23 @@ export async function GET(req: Request) {
     videos = [];
   }
 
+  // For channel sources, also hand back the uploads-playlist id ("UU…"). When
+  // our own enumeration is empty (YouTube throttling this datacenter IP), the
+  // client can pass that list straight to the YouTube player and let the
+  // BROWSER expand it — an un-blocked request from the user's own connection.
+  let uploads: string | null = null;
+  if (src.kind === "channel") {
+    try {
+      const cid = await resolveChannelId(src.handle);
+      if (cid) uploads = "UU" + cid.slice(2);
+    } catch { /* optional */ }
+  }
+
   if (videos.length === 0) {
-    return NextResponse.json({ error: "no_videos", label: src.label, url: src.url, videos: [] }, { status: 502 });
+    return NextResponse.json(
+      { error: "no_videos", label: src.label, url: src.url, videos: [], uploads },
+      { status: 502 },
+    );
   }
 
   // No payload cap — for "truly random from the whole library" we want every
@@ -61,7 +76,7 @@ export async function GET(req: Request) {
   const capped = videos;
 
   return NextResponse.json(
-    { label: src.label, url: src.url, count: capped.length, videos: capped },
+    { label: src.label, url: src.url, count: capped.length, videos: capped, uploads },
     { headers: { "Cache-Control": "s-maxage=3600, stale-while-revalidate=43200" } },
   );
 }

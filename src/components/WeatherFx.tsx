@@ -29,21 +29,23 @@ export function WeatherFx() {
     let active = false;
     let w = 0, h = 0;
     let wind = 0, windTarget = 0;
-    let nextBolt = 0, flash = 0;
 
     const isRain = () => root.getAttribute("data-theme") === "rain";
     const isLight = () => !root.classList.contains("dark");
 
+    // A CALM drizzle, not a downpour. Sparse, slow, soft, thin — the point is
+    // ambience you can work under, so every value here is deliberately gentle
+    // (an earlier version was ~3x denser and 3x faster and read as a storm).
     function spawn(anywhere: boolean): Drop {
       const depth = Math.random();               // 0 far … 1 near
-      const len = 9 + depth * 20;
+      const len = 7 + depth * 11;
       return {
         x: Math.random() * (w + 160) - 80,
-        y: anywhere ? Math.random() * h : -len - Math.random() * 80,
+        y: anywhere ? Math.random() * h : -len - Math.random() * 120,
         len,
-        spd: 7 + depth * 15,
-        th: 0.7 + depth * 1.2,
-        a: 0.1 + depth * 0.38,
+        spd: 2.4 + depth * 4.2,
+        th: 0.6 + depth * 0.7,
+        a: 0.05 + depth * 0.17,
       };
     }
 
@@ -73,7 +75,7 @@ export function WeatherFx() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       // Density scales with screen area, clamped so phones stay light and
       // ultrawides don't go sparse.
-      const count = Math.max(220, Math.min(680, Math.round((w * h) / 2900)));
+      const count = Math.max(70, Math.min(210, Math.round((w * h) / 9500)));
       drops = Array.from({ length: count }, () => spawn(true));
     }
 
@@ -82,17 +84,17 @@ export function WeatherFx() {
       const light = isLight();
       ctx.clearRect(0, 0, w, h);
 
-      // Fog bank rising from the bottom.
-      const fog = ctx.createLinearGradient(0, h * 0.5, 0, h);
+      // A soft haze low on the page — just enough to feel damp.
+      const fog = ctx.createLinearGradient(0, h * 0.62, 0, h);
       if (light) {
         fog.addColorStop(0, "rgba(198,206,220,0)");
-        fog.addColorStop(1, "rgba(198,206,220,0.34)");
+        fog.addColorStop(1, "rgba(198,206,220,0.16)");
       } else {
         fog.addColorStop(0, "rgba(8,13,22,0)");
-        fog.addColorStop(1, "rgba(6,10,18,0.5)");
+        fog.addColorStop(1, "rgba(6,10,18,0.26)");
       }
       ctx.fillStyle = fog;
-      ctx.fillRect(0, h * 0.5, w, h * 0.5);
+      ctx.fillRect(0, h * 0.62, w, h * 0.38);
 
       // The rain itself.
       const rgb = light ? "78,106,148" : "188,214,246";
@@ -106,34 +108,21 @@ export function WeatherFx() {
         ctx.stroke();
       }
 
-      // Lightning wash (soft single flash, never a rapid strobe).
-      if (flash > 0) {
-        ctx.fillStyle = light
-          ? `rgba(255,255,255,${0.1 * flash})`
-          : `rgba(200,220,255,${0.18 * flash})`;
-        ctx.fillRect(0, 0, w, h);
-      }
+      // No lightning: a flash is the least relaxing thing a page can do.
     }
 
     function step() {
-      // Wind wanders slowly, easing toward a drifting target.
-      windTarget += (Math.random() - 0.5) * 0.05;
-      if (windTarget > 2.4) windTarget = 2.4;
-      if (windTarget < -2.4) windTarget = -2.4;
-      wind += (windTarget - wind) * 0.02;
+      // A barely-there breeze that wanders instead of gusting.
+      windTarget += (Math.random() - 0.5) * 0.03;
+      if (windTarget > 1.1) windTarget = 1.1;
+      if (windTarget < -1.1) windTarget = -1.1;
+      wind += (windTarget - wind) * 0.015;
 
       for (const d of drops) {
         d.y += d.spd;
-        d.x += wind * (d.spd / 13);
+        d.x += wind * (d.spd / 9);
         if (d.y - d.len > h) Object.assign(d, spawn(false));
       }
-
-      const now = performance.now();
-      if (now > nextBolt && flash <= 0) {
-        nextBolt = now + 9000 + Math.random() * 17000;
-        flash = 1;
-      }
-      if (flash > 0) flash -= 0.05;
 
       paint();
       raf = requestAnimationFrame(step);
@@ -147,7 +136,6 @@ export function WeatherFx() {
       if (reduce) {
         paint();                 // one still, rainy frame
       } else {
-        nextBolt = performance.now() + 6000 + Math.random() * 10000;
         raf = requestAnimationFrame(step);
       }
     }

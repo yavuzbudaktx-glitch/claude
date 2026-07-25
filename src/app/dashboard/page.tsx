@@ -81,6 +81,12 @@ export default async function Page() {
         <EisenhowerMatrix userId={user.id} />
       </div>
 
+      {/* Body sits above the watchlist / Süper Lig row — it gets used far more
+          often than either, so it earns the higher position. */}
+      <div id="sec-body" className="scroll-mt-4">
+        <BodyCard />
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch">
         <div id="sec-watchlist" className="scroll-mt-4 lg:col-span-2 [&>*]:h-full">
           <MoversCard />
@@ -88,10 +94,6 @@ export default async function Page() {
         <div id="sec-superlig" className="scroll-mt-4 [&>*]:h-full">
           <SuperLigCard />
         </div>
-      </div>
-
-      <div id="sec-body" className="scroll-mt-4">
-        <BodyCard />
       </div>
 
       <div id="sec-ufc" className="scroll-mt-4">

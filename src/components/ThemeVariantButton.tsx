@@ -64,6 +64,8 @@ export function ThemeVariantButton() {
   const concepts = THEMES.filter((t) => t.kind === "concept");
   const palettes = THEMES.filter((t) => t.kind === "theme");
 
+  // Name + swatches only — the long descriptions were noise once you know the
+  // themes, so the picker is now a compact two-up grid you can scan at once.
   const renderEntry = (t: (typeof THEMES)[number]) => {
     const on = theme === t.id;
     return (
@@ -72,20 +74,20 @@ export function ThemeVariantButton() {
           onClick={() => choose(t.id)}
           onMouseEnter={() => applyThemeDom(t.id)}      /* live preview only — never writes localStorage */
           onMouseLeave={() => applyThemeDom(theme)}     /* restore the saved theme */
-          className={`group w-full text-left rounded-xl border p-2.5 transition ${
+          className={`group w-full text-left rounded-xl border px-2 py-2 transition ${
             on ? "border-[var(--accent)] bg-[var(--accent-soft)]" : "border-transparent hover:bg-[var(--rule-soft)]"
           }`}
+          title={t.label}
         >
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-0.5">
+          <span className="flex items-center gap-1.5">
+            <span className="inline-flex items-center gap-0.5 shrink-0">
               {SWATCHES[t.id].map((c, i) => (
-                <span key={i} className="h-3.5 w-3.5 rounded-full border border-[var(--rule)]" style={{ background: c }} />
+                <span key={i} className="h-3 w-3 rounded-full border border-[var(--rule)]" style={{ background: c }} />
               ))}
             </span>
-            <span className="text-[13px] font-semibold text-ink">{t.label}</span>
-            {on && <Check className="ml-auto h-3.5 w-3.5 text-accent" />}
-          </div>
-          <p className="text-[11px] text-muted leading-snug mt-1">{t.description}</p>
+            <span className="text-[12.5px] font-medium text-ink truncate">{t.label}</span>
+            {on && <Check className="ml-auto h-3.5 w-3.5 text-accent shrink-0" />}
+          </span>
         </button>
       </li>
     );
@@ -130,7 +132,7 @@ export function ThemeVariantButton() {
             </button>
           </div>
 
-          <ul className="space-y-1">
+          <ul className="grid grid-cols-2 gap-0.5">
             {(section === "concept" ? concepts : palettes).map(renderEntry)}
           </ul>
 
