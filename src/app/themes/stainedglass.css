@@ -1,0 +1,2 @@
+/* stainedglass — theme upgrades. Loaded AFTER globals.css (see src/app/layout.tsx),
+   so equal-specificity rules here win over the base definitions. */
