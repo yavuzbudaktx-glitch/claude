@@ -1,2 +1,284 @@
 /* newspaper — theme upgrades. Loaded AFTER globals.css (see src/app/layout.tsx),
-   so equal-specificity rules here win over the base definitions. */
+   so equal-specificity rules here win over the base definitions.
+
+   The brief: it should read as a broadsheet, not as a website wearing a serif.
+   So the page is ONE sheet of newsprint (cards go transparent and are divided
+   by rules instead of floating as panels), the greeting becomes a masthead with
+   the folio furniture printed above and below it, section heads sit under the
+   classic thick-over-thin rule, and the paper itself gets a centre fold, a
+   press vignette and a halftone screen. */
+
+/* ---------- the sheet ----------
+   body::before is the newsprint: a press vignette at the edges, the vertical
+   crease every broadsheet carries down its middle, and two nearly-flat fibre
+   gradients so the cream is never a dead flat fill. */
+.theme-newspaper body::before {
+  inset: 0;
+  filter: none;
+  animation: none;
+  background:
+    /* centre fold — the paper was folded once, down the middle */
+    linear-gradient(90deg,
+      transparent calc(50% - 30px),
+      rgba(17, 17, 17, 0.022) calc(50% - 11px),
+      rgba(17, 17, 17, 0.070) 50%,
+      rgba(17, 17, 17, 0.022) calc(50% + 11px),
+      transparent calc(50% + 30px)),
+    /* paper fibre — two weaves crossing each other */
+    repeating-linear-gradient(97deg,
+      rgba(120, 96, 60, 0.030) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(6deg,
+      rgba(120, 96, 60, 0.022) 0 1px, transparent 1px 7px),
+    /* press vignette — ink builds up toward the edges of the sheet */
+    radial-gradient(125% 90% at 50% 45%, transparent 52%, rgba(60, 48, 30, 0.10) 100%);
+}
+
+/* body::after is the halftone screen. Two dot grids offset by half a cell make
+   a rosette rather than a plain lattice, which is what newsprint actually is
+   under a loupe. Kept faint, and it sits behind the type, never over it. */
+.theme-newspaper body::after {
+  opacity: 1;
+  mix-blend-mode: multiply;
+  background-image:
+    radial-gradient(rgba(17, 17, 17, 0.10) 0.5px, transparent 0.6px),
+    radial-gradient(rgba(17, 17, 17, 0.07) 0.5px, transparent 0.6px);
+  background-size: 3px 3px, 3px 3px;
+  background-position: 0 0, 1.5px 1.5px;
+}
+
+/* ---------- masthead ----------
+   The greeting IS the front-page headline, so it gets the furniture a front
+   page has: an edition line above it under a heavy rule, a folio line below.
+   The h1 is stretched across the full row so those rules run edge to edge
+   instead of stopping where the words stop. */
+.theme-newspaper header > div > h1.font-display {
+  display: block;
+  flex: 1 1 100%;
+  min-width: 0;
+}
+.theme-newspaper header > div > h1.font-display::before {
+  content: "Late Edition · Istanbul · All the news fit to read";
+  display: block;
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-top: 4px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
+  padding: 6px 0 5px;
+  margin-bottom: 0.6rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.theme-newspaper header > div > h1.font-display::after {
+  content: "Vol. MMXXVI · No. 207 · Today's briefing, in full";
+  display: block;
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: 11px;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: 0.01em;
+  color: var(--muted);
+  border-top: 1px solid var(--rule);
+  border-bottom: 3px double var(--rule);
+  padding: 5px 0 4px;
+  margin-top: 0.65rem;
+}
+/* Didone headline setting — high contrast, tightly fitted. */
+.theme-newspaper .font-display {
+  font-weight: 800 !important;
+  letter-spacing: -0.022em !important;
+  line-height: 1.02;
+}
+
+/* The summary strip under the masthead is the deck: one hairline under it,
+   the way a paper closes off a standfirst. */
+.theme-newspaper .readable-plate {
+  border-bottom: 1px solid var(--rule-soft);
+  padding-bottom: 0.55rem;
+}
+
+/* ---------- columns ----------
+   Transparent cards: the whole page is one sheet, and stories are divided by
+   rules rather than by floating panels. */
+.theme-newspaper .card {
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--rule);
+  border-radius: 0;
+  padding: 0.95rem 1.15rem 1.5rem;
+  box-shadow: none;
+}
+/* Hairline column rule, drawn in the gutter to the right of every column and
+   faded at both ends so it reads as a printed rule, not a table border. */
+.theme-newspaper .card::before {
+  display: block;
+  content: "";
+  position: absolute;
+  top: 4%;
+  bottom: 4%;
+  right: -10.5px;
+  left: auto;
+  width: 1px;
+  padding: 0;
+  border-radius: 0;
+  opacity: 1;
+  -webkit-mask: none;
+          mask: none;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    var(--rule-soft) 10%,
+    var(--rule-soft) 90%,
+    transparent 100%);
+}
+/* End-of-story dingbat — the small filled square papers set after the last
+   line of a piece. Sits inside the card's bottom padding. */
+.theme-newspaper .card::after {
+  display: block;
+  content: "";
+  position: absolute;
+  inset: auto auto 0.6rem 1.15rem;
+  width: 7px;
+  height: 7px;
+  border-radius: 0;
+  background: var(--ink);
+  opacity: 0.3;
+  transition: none;
+}
+.theme-newspaper .card:hover::after { opacity: 0.3; }
+
+/* Section head — the thick-over-thin rule under every standing head. */
+.theme-newspaper .headrule {
+  position: relative;
+  padding-bottom: 0.45rem;
+  margin-bottom: 1rem;
+  border-bottom: 3px solid var(--ink);
+  gap: 0.5rem;
+}
+.theme-newspaper .headrule::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 1px;
+  background: var(--rule-soft);
+}
+/* Standing heads are set in the display serif, a step larger than the sans
+   they replace. Covers the widget markup (a span) and plain headings. */
+.theme-newspaper .headrule > span.text-ink,
+.theme-newspaper .headrule h2,
+.theme-newspaper .headrule h3 {
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.005em;
+  line-height: 1.15;
+}
+
+/* Printer's square instead of the glowing dot. */
+.theme-newspaper .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 0;
+  background: var(--ink);
+  box-shadow: none;
+}
+
+/* ---------- editorial micro-type ----------
+   .label is the kicker over a story, .metalabel the credit line under it. */
+.theme-newspaper .label {
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-weight: 700;
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  color: var(--ink-soft);
+}
+.theme-newspaper .metalabel {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 11.5px;
+  letter-spacing: 0.005em;
+  text-transform: none;
+  color: var(--muted);
+}
+
+/* Body copy is justified and hyphenated, the way set columns are. */
+.theme-newspaper .card p {
+  text-align: justify;
+  text-justify: inter-word;
+  -webkit-hyphens: auto;
+          hyphens: auto;
+}
+/* Drop cap on the lead paragraph — three lines deep, in the display serif,
+   exactly how a feature opener is set. */
+.theme-newspaper .card p.leading-relaxed:first-of-type::first-letter {
+  float: left;
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-weight: 900;
+  font-size: 3.05em;
+  line-height: 0.82;
+  padding: 0.03em 0.1em 0 0;
+  color: var(--ink);
+  -webkit-hyphens: none;
+          hyphens: none;
+}
+
+/* ---------- boxes and furniture ---------- */
+/* Boxed copy gets the grey screen papers lay behind a fact box. */
+.theme-newspaper .card-bare {
+  border-radius: 0;
+  border: none;
+  border-top: 2px solid var(--rule);
+  border-bottom: 1px solid var(--rule-soft);
+  background: rgba(17, 17, 17, 0.045);
+}
+/* Reversed type — a solid ink block with the paper showing through the
+   letters. Papers use it for standing labels; here it's the active chip. */
+.theme-newspaper .chip-active {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+  box-shadow: none;
+}
+.theme-newspaper .chip-active:hover { color: var(--bg); border-color: var(--ink); }
+.theme-newspaper .chip {
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-size: 10.5px;
+}
+.theme-newspaper .btn-ghost { -webkit-backdrop-filter: none; backdrop-filter: none; }
+.theme-newspaper .btn-ghost:hover { box-shadow: none; transform: none; background: rgba(17, 17, 17, 0.06); }
+
+/* ---------- evening edition (dark) ----------
+   Same furniture printed the other way round: the fold catches light instead
+   of ink, the vignette warms the edges, the screen lightens rather than
+   darkens. */
+.theme-newspaper.dark body::before {
+  background:
+    linear-gradient(90deg,
+      transparent calc(50% - 30px),
+      rgba(255, 240, 214, 0.014) calc(50% - 11px),
+      rgba(255, 240, 214, 0.045) 50%,
+      rgba(255, 240, 214, 0.014) calc(50% + 11px),
+      transparent calc(50% + 30px)),
+    repeating-linear-gradient(97deg,
+      rgba(255, 240, 214, 0.016) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(6deg,
+      rgba(255, 240, 214, 0.012) 0 1px, transparent 1px 7px),
+    radial-gradient(125% 90% at 50% 45%, rgba(224, 122, 95, 0.05) 0%, transparent 55%),
+    radial-gradient(125% 90% at 50% 45%, transparent 55%, rgba(0, 0, 0, 0.35) 100%);
+}
+.theme-newspaper.dark body::after {
+  mix-blend-mode: screen;
+  background-image:
+    radial-gradient(rgba(244, 237, 224, 0.055) 0.5px, transparent 0.6px),
+    radial-gradient(rgba(244, 237, 224, 0.04) 0.5px, transparent 0.6px);
+}
+.theme-newspaper.dark .card-bare { background: rgba(244, 237, 224, 0.05); }
+.theme-newspaper.dark .btn-ghost:hover { background: rgba(244, 237, 224, 0.08); }

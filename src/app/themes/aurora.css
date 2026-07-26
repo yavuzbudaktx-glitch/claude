@@ -1,2 +1,108 @@
 /* aurora — theme upgrades. Loaded AFTER globals.css (see src/app/layout.tsx),
    so equal-specificity rules here win over the base definitions. */
+
+/* ---------------------------------------------------------------------------
+   AURORA GLASS — DAY MODE
+   Aurora is the DEFAULT theme, so applyThemeDom() (src/lib/theme.ts) never puts
+   a `theme-aurora` class on <html>; it only sets data-theme="aurora". The
+   attribute selector below is therefore the ONLY correct way to scope to
+   aurora — a bare `:root:not(.dark)` would leak into every other light theme.
+
+   The old light mode was just the four-blob mesh on a grey-blue field, which
+   read as "unstyled". This adds three quiet things: a refracted light ribbon,
+   a glass caustic, and prismatic colour in the card edge. It is still the most
+   restrained theme in the set — it is what you look at all day. Aurora's dark
+   mode is deliberately untouched.
+--------------------------------------------------------------------------- */
+
+/* Layer 1 (z -3) — the ribbon. One broad band of refracted light raked across
+   the upper page and blurred until it has no edges at all. Masked to a soft
+   lobe so it never reaches the bottom of the page, where the content is
+   densest. This is the signature: big, slow, and almost subliminal. */
+:root[data-theme="aurora"]:not(.dark)::before {
+  content: "";
+  position: fixed;
+  inset: -18% -12%;
+  z-index: -3;
+  pointer-events: none;
+  background-image: linear-gradient(
+    104deg,
+    transparent 6%,
+    rgba(125, 211, 252, 0.30) 24%,
+    rgba(255, 255, 255, 0.62) 36%,
+    rgba(94, 234, 212, 0.26) 47%,
+    rgba(196, 181, 253, 0.22) 58%,
+    rgba(253, 224, 176, 0.18) 68%,
+    transparent 84%
+  );
+  -webkit-mask-image: radial-gradient(115% 72% at 44% 4%, #000 0%, rgba(0, 0, 0, 0.6) 44%, transparent 84%);
+          mask-image: radial-gradient(115% 72% at 44% 4%, #000 0%, rgba(0, 0, 0, 0.6) 44%, transparent 84%);
+  filter: blur(44px);
+  opacity: 0.88;
+  animation: auroraRibbon 52s ease-in-out infinite alternate;
+}
+@keyframes auroraRibbon {
+  from { transform: translate3d(-2.4%, -1.2%, 0) rotate(-1.1deg) scaleY(1); }
+  to   { transform: translate3d(2.4%, 1.4%, 0) rotate(1.1deg) scaleY(1.07); }
+}
+
+/* Layer 2 (z -2) — the caustic. Two crossed sheets of hairline light, the
+   pattern you get when sun passes through a thick bevelled pane. Soft-light
+   blended and masked to one lobe so it only ever brightens; you should notice
+   it as surface, never as stripes. */
+:root[data-theme="aurora"]:not(.dark)::after {
+  content: "";
+  position: fixed;
+  inset: -8%;
+  z-index: -2;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  opacity: 0.40;
+  background-image:
+    repeating-linear-gradient(37deg,
+      rgba(255, 255, 255, 0) 0 48px,
+      rgba(255, 255, 255, 0.80) 58px,
+      rgba(255, 255, 255, 0) 68px 132px),
+    repeating-linear-gradient(-51deg,
+      rgba(255, 255, 255, 0) 0 72px,
+      rgba(255, 255, 255, 0.50) 82px,
+      rgba(255, 255, 255, 0) 92px 184px);
+  -webkit-mask-image: radial-gradient(78% 62% at 68% 26%, #000 0%, rgba(0, 0, 0, 0.5) 46%, transparent 78%);
+          mask-image: radial-gradient(78% 62% at 68% 26%, #000 0%, rgba(0, 0, 0, 0.5) 46%, transparent 78%);
+  filter: blur(3.5px);
+  animation: auroraCaustic 78s ease-in-out infinite alternate;
+}
+@keyframes auroraCaustic {
+  from { transform: translate3d(-1.2%, -0.8%, 0) scale(1); }
+  to   { transform: translate3d(1.2%, 0.8%, 0) scale(1.04); }
+}
+
+/* Prismatic edge. The base card ring is pure white; in day mode it now splits
+   into cyan at the top-left and a warm copper at the far corner, the way real
+   glass fringes light. A couple of percent of colour — no more. */
+:root[data-theme="aurora"]:not(.dark) .card::before {
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.88) 0%,
+    rgba(186, 230, 253, 0.62) 15%,
+    rgba(255, 255, 255, 0.10) 38%,
+    transparent 58%,
+    rgba(253, 224, 176, 0.34) 84%,
+    rgba(255, 255, 255, 0.44) 100%
+  );
+  opacity: 0.92;
+}
+
+/* A single soft sheen inside the card's top-left corner so the glass reads as
+   a physical pane catching the ribbon behind it. */
+:root[data-theme="aurora"]:not(.dark) .card {
+  background-image: radial-gradient(120% 70% at 4% -12%, rgba(255, 255, 255, 0.55), transparent 62%);
+}
+
+/* Motion off for anyone who asked for it — the layers stay, they just hold. */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme="aurora"]:not(.dark)::before,
+  :root[data-theme="aurora"]:not(.dark)::after {
+    animation: none;
+  }
+}

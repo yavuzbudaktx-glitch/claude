@@ -1,2 +1,181 @@
 /* water — theme upgrades. Loaded AFTER globals.css (see src/app/layout.tsx),
    so equal-specificity rules here win over the base definitions. */
+
+/* ---------------------------------------------------------------------------
+   WATER — DAY MODE
+   Night mode is the good one and stays exactly as it is: every rule below is
+   scoped :not(.dark).
+
+   Day mode had nothing behind it — a flat pale blue with the dark-mode bubbles
+   dimmed to 55%. It is now a calm sunlit surface seen from above: pale aqua
+   sky on the canvas, three drop points sending concentric rings out across the
+   page, and a soft caustic mesh over the top.
+
+   The rings are the point of the theme, so they are built the cheap way: each
+   ripple is one fixed box centred on its drop point, holding a static ring
+   gradient, and the only thing that animates is transform: scale() plus
+   opacity. That composites on the GPU — no repaint per frame, no blur being
+   re-run. Periods are 15/19/24s and mutually prime-ish, so the three never
+   fall into a visible rhythm.
+--------------------------------------------------------------------------- */
+
+/* The canvas: bright sky glare at the top falling away to deeper water. */
+:root.theme-water:not(.dark) {
+  background-color: #dff2fa;
+  background-image:
+    radial-gradient(120% 62% at 50% -12%, rgba(255, 255, 255, 0.85), transparent 62%),
+    radial-gradient(80% 50% at 84% 8%, rgba(214, 245, 240, 0.55), transparent 70%),
+    linear-gradient(180deg, #ecfafd 0%, #ddf2fa 36%, #cfeaf6 68%, #c2e2f2 100%);
+  background-attachment: fixed;
+}
+
+/* --- ripple 1 (z -3): the big one, low and left ------------------------- */
+:root.theme-water:not(.dark)::before {
+  content: "";
+  position: fixed;
+  z-index: -3;
+  pointer-events: none;
+  left: 26%;
+  top: 64%;
+  width: 112vmax;
+  height: 62vmax;
+  margin: -31vmax 0 0 -56vmax;
+  opacity: 0;
+  background-image: radial-gradient(50% 50% at 50% 50%,
+    transparent 0 38%,
+    rgba(6, 74, 98, 0.09) 40.5%,
+    rgba(255, 255, 255, 0.92) 43.5%,
+    rgba(6, 74, 98, 0.11) 46.5%,
+    transparent 49.5%,
+    transparent 60%,
+    rgba(6, 74, 98, 0.07) 62%,
+    rgba(255, 255, 255, 0.70) 64.5%,
+    rgba(6, 74, 98, 0.08) 67%,
+    transparent 69.5%,
+    transparent 80%,
+    rgba(255, 255, 255, 0.44) 83%,
+    rgba(6, 74, 98, 0.05) 85%,
+    transparent 87.5%);
+  animation: waterRipple 15s linear infinite;
+}
+
+/* --- ripple 2 (z -2): smaller and later, upper right -------------------- */
+:root.theme-water:not(.dark)::after {
+  content: "";
+  position: fixed;
+  z-index: -2;
+  pointer-events: none;
+  left: 77%;
+  top: 30%;
+  width: 78vmax;
+  height: 44vmax;
+  margin: -22vmax 0 0 -39vmax;
+  opacity: 0;
+  background-image: radial-gradient(50% 50% at 50% 50%,
+    transparent 0 40%,
+    rgba(6, 74, 98, 0.085) 42.5%,
+    rgba(255, 255, 255, 0.88) 45.5%,
+    rgba(6, 74, 98, 0.10) 48.5%,
+    transparent 51.5%,
+    transparent 63%,
+    rgba(255, 255, 255, 0.62) 67%,
+    transparent 70%,
+    transparent 82%,
+    rgba(255, 255, 255, 0.38) 85%,
+    transparent 88%);
+  animation: waterRipple 19s linear infinite;
+  animation-delay: -7s;
+}
+
+/* --- ripple 3 (z -1): the slow wide one along the bottom ---------------- */
+.theme-water:not(.dark) body::before {
+  inset: auto;
+  left: 54%;
+  top: 96%;
+  width: 150vmax;
+  height: 74vmax;
+  margin: -37vmax 0 0 -75vmax;
+  opacity: 0;
+  filter: none;
+  background: radial-gradient(50% 50% at 50% 50%,
+    transparent 0 42%,
+    rgba(6, 74, 98, 0.075) 44%,
+    rgba(255, 255, 255, 0.80) 47%,
+    rgba(6, 74, 98, 0.09) 50%,
+    transparent 53%,
+    transparent 66%,
+    rgba(255, 255, 255, 0.56) 69.5%,
+    transparent 72.5%,
+    transparent 84%,
+    rgba(255, 255, 255, 0.34) 87%,
+    transparent 90%);
+  animation: waterRipple 24s linear infinite;
+  animation-delay: -13s;
+}
+
+/* One drop: a fast push outward that decelerates as the ring loses energy,
+   fading to nothing well before the loop restarts so each pass reads as a
+   separate drop rather than a pulsing halo. Scale is stated on every keyframe
+   — otherwise the opacity-only frames would chop the expansion into segments
+   and the ring would visibly stutter. */
+@keyframes waterRipple {
+  0%   { transform: scale(0.05); opacity: 0; }
+  6%   { transform: scale(0.19); opacity: 0.95; }
+  30%  { transform: scale(0.51); opacity: 0.70; }
+  60%  { transform: scale(0.79); opacity: 0.36; }
+  84%  { transform: scale(0.98); opacity: 0.07; }
+  92%  { transform: scale(1.04); opacity: 0; }
+  100% { transform: scale(1.04); opacity: 0; }
+}
+
+/* Surface caustics (z -1, on top of the rings): two crossed sheets of light
+   making the diamond mesh you get on a shallow sunlit bottom. Replaces the
+   night-mode bubble columns, which made no sense from above the surface. */
+.theme-water:not(.dark) body::after {
+  inset: -8%;
+  opacity: 0.46;
+  mix-blend-mode: normal;
+  background-size: auto;
+  background-image:
+    repeating-linear-gradient(34deg,
+      rgba(255, 255, 255, 0) 0 26px,
+      rgba(255, 255, 255, 0.75) 34px,
+      rgba(255, 255, 255, 0) 43px 86px),
+    repeating-linear-gradient(-46deg,
+      rgba(255, 255, 255, 0) 0 34px,
+      rgba(255, 255, 255, 0.55) 43px,
+      rgba(255, 255, 255, 0) 53px 112px);
+  -webkit-mask-image: radial-gradient(105% 78% at 50% 6%, #000 0%, rgba(0, 0, 0, 0.55) 48%, transparent 86%);
+          mask-image: radial-gradient(105% 78% at 50% 6%, #000 0%, rgba(0, 0, 0, 0.55) 48%, transparent 86%);
+  filter: blur(4.5px);
+  animation: waterSurface 46s ease-in-out infinite alternate;
+}
+@keyframes waterSurface {
+  from { transform: translate3d(-1.3%, -0.9%, 0) scale(1); }
+  to   { transform: translate3d(1.3%, 0.9%, 0) scale(1.035); }
+}
+
+/* Cards sit ON the water in day mode: a wet highlight along the top lip and a
+   cool shadow pooled underneath. */
+.theme-water:not(.dark) .card {
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0) 38%),
+    radial-gradient(120% 60% at 50% 100%, rgba(8, 145, 178, 0.05), transparent 70%);
+  box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root.theme-water:not(.dark)::before,
+  :root.theme-water:not(.dark)::after,
+  .theme-water:not(.dark) body::before,
+  .theme-water:not(.dark) body::after {
+    animation: none;
+  }
+  /* the rings rest at 0 opacity, so park them mid-expansion instead of blank */
+  :root.theme-water:not(.dark)::before,
+  :root.theme-water:not(.dark)::after,
+  .theme-water:not(.dark) body::before {
+    opacity: 0.5;
+    transform: scale(0.62);
+  }
+}

@@ -1,2 +1,178 @@
 /* sunset — theme upgrades. Loaded AFTER globals.css (see src/app/layout.tsx),
    so equal-specificity rules here win over the base definitions. */
+
+/* ---------------------------------------------------------------------------
+   SUNSET — DAY MODE (and a light touch on night)
+   Day mode was a cream page with two faint blobs on it; nothing about it said
+   golden hour. It is now an actual sky, built back to front:
+
+     canvas      the graded sky, with the horizon cut into it as a hard stop
+     z -3        the sun — disc, bloom, and the long glare track below it
+     z -2        far cloud bands, thin and high, lit from underneath
+     z -1        near cloud bands + the dusk haze above them
+     z -1 (top)  warm haze pooled on the horizon
+
+   The whole sky is background-attachment: fixed, so the horizon holds still
+   while the page scrolls over it rather than sliding away.
+--------------------------------------------------------------------------- */
+
+/* The sky. Dusty blue overhead falling through mauve and peach into gold, then
+   a one-pixel horizon and slightly cooler water below it. */
+:root.theme-sunset:not(.dark) {
+  background-color: #ffdfbb;
+  background-image: linear-gradient(
+    180deg,
+    #c4d3f0 0%,
+    #d4d4ea 12%,
+    #ecd2dc 26%,
+    #fbdabc 41%,
+    #ffcd9e 56%,
+    #ffba80 68%,
+    #ffa662 78.4%,
+    rgba(190, 100, 70, 0.94) 79.2%,
+    #e59a70 79.8%,
+    #eeac80 88%,
+    #f7cca4 100%
+  );
+  background-attachment: fixed;
+}
+
+/* Layer 1 (z -3) — the sun. A small hot disc just clear of the horizon, a
+   bloom around it, a wide low afterglow smeared along the whole horizon line,
+   and the glare track running down the water toward the viewer. It sinks by
+   about 1% of the viewport and back over 30s, which you feel more than see. */
+:root.theme-sunset:not(.dark)::before {
+  content: "";
+  position: fixed;
+  inset: -4% 0;
+  z-index: -3;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-image:
+    /* glare track running down the water toward the viewer */
+    radial-gradient(6% 16% at 68% 92%, rgba(255, 214, 152, 0.60), transparent 72%),
+    /* long horizon afterglow, smeared the full width */
+    radial-gradient(76% 20% at 62% 78.6%, rgba(255, 222, 152, 0.66), transparent 74%),
+    /* bloom around the disc */
+    radial-gradient(17% 19% at 68% 76%, rgba(255, 176, 96, 0.62), transparent 74%),
+    /* the disc, just clear of the horizon */
+    radial-gradient(circle 3.8vmin at 68% 76.2%,
+      #fffdf4 0 62%,
+      rgba(255, 244, 202, 0.96) 78%,
+      rgba(255, 214, 146, 0.55) 90%,
+      rgba(255, 198, 128, 0) 100%);
+  animation: sunsetSun 30s ease-in-out infinite alternate;
+}
+@keyframes sunsetSun {
+  from { transform: translate3d(0, -0.6%, 0); opacity: 0.90; }
+  to   { transform: translate3d(0, 0.6%, 0);  opacity: 1; }
+}
+
+/* Layer 2 (z -2) — far cloud bands. Thin, nearly flat ellipses at four heights;
+   the two low ones are gold because they are catching the sun from below, the
+   high ones are mauve because they are already out of the light. They cross the
+   sky at about 3% of the viewport width over two minutes. */
+:root.theme-sunset:not(.dark)::after {
+  content: "";
+  position: fixed;
+  inset: 0 -14%;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0.9;
+  background-repeat: no-repeat;
+  background-image:
+    radial-gradient(27% 1.9% at 26% 71%, rgba(255, 235, 196, 0.95), transparent 72%),
+    radial-gradient(21% 1.5% at 63% 67%, rgba(255, 224, 172, 0.85), transparent 74%),
+    radial-gradient(35% 2.1% at 46% 60%, rgba(255, 208, 152, 0.68), transparent 72%),
+    radial-gradient(18% 1.3% at 84% 55%, rgba(255, 240, 210, 0.62), transparent 74%),
+    radial-gradient(31% 2.3% at 15% 46%, rgba(206, 176, 206, 0.38), transparent 76%),
+    radial-gradient(24% 1.8% at 71% 38%, rgba(194, 172, 204, 0.32), transparent 76%),
+    radial-gradient(20% 1.5% at 38% 30%, rgba(198, 180, 210, 0.28), transparent 78%);
+  filter: blur(2.5px);
+  animation: sunsetCloudsFar 124s ease-in-out infinite alternate;
+}
+@keyframes sunsetCloudsFar {
+  from { transform: translate3d(-1.6%, 0, 0); }
+  to   { transform: translate3d(1.6%, 0, 0); }
+}
+
+/* Layer 3 (z -1) — near cloud bands and the upper dusk. Bigger, softer, and
+   drifting the other way at nearly twice the speed, which gives the sky a
+   little parallax depth without anything obviously moving. */
+.theme-sunset:not(.dark) body::before {
+  inset: -6% -22%;
+  background:
+    radial-gradient(33% 2.8% at 33% 74%, rgba(255, 190, 128, 0.62), transparent 74%),
+    radial-gradient(26% 2.3% at 76% 77%, rgba(255, 174, 116, 0.50), transparent 76%),
+    radial-gradient(43% 3.4% at 52% 25%, rgba(196, 166, 198, 0.40), transparent 76%),
+    radial-gradient(30% 2.6% at 12% 30%, rgba(206, 176, 202, 0.34), transparent 76%),
+    radial-gradient(90% 34% at 50% -8%, rgba(148, 166, 214, 0.32), transparent 72%);
+  filter: blur(6px) saturate(112%);
+  opacity: 0.92;
+  animation: sunsetCloudsNear 72s ease-in-out infinite alternate;
+}
+@keyframes sunsetCloudsNear {
+  from { transform: translate3d(2.2%, 0.4%, 0); }
+  to   { transform: translate3d(-2.2%, -0.4%, 0); }
+}
+
+/* Layer 4 (z -1, on top) — the haze. Warm air pooling on the horizon plus a
+   thin bright lip right on the line, which is what actually sells the horizon
+   as a horizon. Breathes very slightly; no movement of its own. */
+.theme-sunset:not(.dark) body::after {
+  opacity: 1;
+  mix-blend-mode: normal;
+  background-image:
+    linear-gradient(180deg,
+      transparent 66%,
+      rgba(255, 202, 138, 0.28) 78.2%,
+      rgba(255, 244, 220, 0.60) 79.1%,
+      rgba(255, 176, 116, 0.20) 80.2%,
+      transparent 92%),
+    radial-gradient(130% 14% at 58% 78.8%, rgba(255, 238, 206, 0.34), transparent 72%);
+  animation: sunsetHaze 34s ease-in-out infinite alternate;
+}
+@keyframes sunsetHaze {
+  from { opacity: 0.80; }
+  to   { opacity: 1; }
+}
+
+/* Day cards read as glass held up against the sky: a warm rim light on the top
+   edge and a faint gold bounce from the horizon along the bottom. */
+.theme-sunset:not(.dark) .card {
+  background-image: radial-gradient(120% 60% at 50% 100%, rgba(255, 176, 110, 0.09), transparent 72%);
+  box-shadow: var(--shadow-card),
+              inset 0 1px 0 rgba(255, 255, 255, 0.92),
+              inset 0 -14px 22px -20px rgba(232, 90, 43, 0.55);
+}
+
+/* ---- NIGHT: a light refinement only, the palette is left alone -----------
+   The base sheet already sinks a sun on body::after. All that is added here is
+   the same cloud banding, dark and lit from beneath, so the night sky has some
+   structure instead of being a plain gradient. */
+:root.theme-sunset.dark::after {
+  content: "";
+  position: fixed;
+  inset: 0 -14%;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0.6;
+  background-repeat: no-repeat;
+  background-image:
+    radial-gradient(30% 2.4% at 26% 66%, rgba(255, 146, 92, 0.40), transparent 76%),
+    radial-gradient(23% 1.9% at 68% 61%, rgba(255, 122, 89, 0.30), transparent 78%),
+    radial-gradient(38% 2.8% at 46% 54%, rgba(180, 74, 96, 0.30), transparent 76%),
+    radial-gradient(27% 2.4% at 16% 43%, rgba(106, 40, 84, 0.34), transparent 78%);
+  filter: blur(4px);
+  animation: sunsetCloudsFar 124s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root.theme-sunset:not(.dark)::before,
+  :root.theme-sunset:not(.dark)::after,
+  :root.theme-sunset.dark::after,
+  .theme-sunset:not(.dark) body::before,
+  .theme-sunset:not(.dark) body::after {
+    animation: none;
+  }
+}

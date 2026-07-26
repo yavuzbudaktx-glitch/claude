@@ -1,2 +1,160 @@
 /* stainedglass — theme upgrades. Loaded AFTER globals.css (see src/app/layout.tsx),
    so equal-specificity rules here win over the base definitions. */
+
+/* =======================================================================
+   WHY THE LIGHT-MODE LEADWORK LOOKED PIXELATED
+   The canes were three `repeating-linear-gradient`s at 60/-60/0 degrees with
+   HARD stops one pixel apart (`transparent 0 38px, rgba(...) 38px 39px`).
+   A hard stop in a rotated gradient gets no anti-aliasing — the compositor
+   snaps each row of the ramp to whole device pixels — so every diagonal cane
+   climbed in visible stair-steps. Dark mode hid it (2px canes on a near-black
+   field); on the pale day field the jaggies were the first thing you saw.
+
+   Replaced with a real leaded lattice drawn as an inline SVG: hexagonal panes
+   whose canes are STROKED (2.6px, round joins), so the renderer anti-aliases
+   them like any other vector art, at any DPR, on any diagonal. The came
+   highlight is a second, thinner stroke offset half a pixel up — the solder
+   catching the light. Everything else in this file is upgrade, not repair.
+======================================================================= */
+
+/* The leaded field goes on ::before and the rose window on ::after, because
+   ::after paints over ::before: the rosette is its own window set into the
+   wall, not something seen through the lattice. Jewel bloom sits under the
+   canes; every gradient stop is a soft ramp, so nothing has an edge that can
+   alias. */
+.theme-stainedglass body::before {
+  inset: 0;
+  filter: none;
+  animation: glassBreath 9s ease-in-out infinite;
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='58.89' height='102' viewBox='0 0 58.89 102'%3E%3Cg%3E%3Cpath d='M29.44 -17.00L58.89 0.00L58.89 34.00L29.44 51.00L-0.00 34.00L0.00 -0.00Z' fill='%23b02038' fill-opacity='0.5'/%3E%3Cpath d='M0.00 34.00L29.44 51.00L29.44 85.00L0.00 102.00L-29.44 85.00L-29.44 51.00Z' fill='%231452a8' fill-opacity='0.5'/%3E%3Cpath d='M58.89 34.00L88.33 51.00L88.33 85.00L58.89 102.00L29.44 85.00L29.44 51.00Z' fill='%232f8f5c' fill-opacity='0.5'/%3E%3Cpath d='M29.44 85.00L58.89 102.00L58.89 136.00L29.44 153.00L-0.00 136.00L0.00 102.00Z' fill='%23e0a82e' fill-opacity='0.5'/%3E%3Cpath d='M29.44 -119.00L58.89 -102.00L58.89 -68.00L29.44 -51.00L-0.00 -68.00L0.00 -102.00Z' fill='%237b3fa0' fill-opacity='0.5'/%3E%3Cpath d='M0.00 -68.00L29.44 -51.00L29.44 -17.00L0.00 0.00L-29.44 -17.00L-29.44 -51.00Z' fill='%231452a8' fill-opacity='0.5'/%3E%3Cpath d='M58.89 -68.00L88.33 -51.00L88.33 -17.00L58.89 0.00L29.44 -17.00L29.44 -51.00Z' fill='%23b02038' fill-opacity='0.5'/%3E%3Cpath d='M29.44 85.00L58.89 102.00L58.89 136.00L29.44 153.00L-0.00 136.00L0.00 102.00Z' fill='%231452a8' fill-opacity='0.5'/%3E%3C/g%3E%3Cg fill='none' stroke='rgba(0,0,0,.88)' stroke-width='3.2' stroke-linejoin='round'%3E%3Cpath d='M29.44 -17.00L58.89 0.00L58.89 34.00L29.44 51.00L-0.00 34.00L0.00 -0.00Z'/%3E%3Cpath d='M0.00 34.00L29.44 51.00L29.44 85.00L0.00 102.00L-29.44 85.00L-29.44 51.00Z'/%3E%3Cpath d='M58.89 34.00L88.33 51.00L88.33 85.00L58.89 102.00L29.44 85.00L29.44 51.00Z'/%3E%3Cpath d='M29.44 85.00L58.89 102.00L58.89 136.00L29.44 153.00L-0.00 136.00L0.00 102.00Z'/%3E%3Cpath d='M29.44 -119.00L58.89 -102.00L58.89 -68.00L29.44 -51.00L-0.00 -68.00L0.00 -102.00Z'/%3E%3Cpath d='M0.00 -68.00L29.44 -51.00L29.44 -17.00L0.00 0.00L-29.44 -17.00L-29.44 -51.00Z'/%3E%3Cpath d='M58.89 -68.00L88.33 -51.00L88.33 -17.00L58.89 0.00L29.44 -17.00L29.44 -51.00Z'/%3E%3Cpath d='M29.44 85.00L58.89 102.00L58.89 136.00L29.44 153.00L-0.00 136.00L0.00 102.00Z'/%3E%3C/g%3E%3Cg fill='none' stroke='rgba(255,255,255,.14)' stroke-width='1' stroke-linejoin='round' transform='translate(0,-0.75)'%3E%3Cpath d='M29.44 -17.00L58.89 0.00L58.89 34.00L29.44 51.00L-0.00 34.00L0.00 -0.00Z'/%3E%3Cpath d='M0.00 34.00L29.44 51.00L29.44 85.00L0.00 102.00L-29.44 85.00L-29.44 51.00Z'/%3E%3Cpath d='M58.89 34.00L88.33 51.00L88.33 85.00L58.89 102.00L29.44 85.00L29.44 51.00Z'/%3E%3Cpath d='M29.44 85.00L58.89 102.00L58.89 136.00L29.44 153.00L-0.00 136.00L0.00 102.00Z'/%3E%3Cpath d='M29.44 -119.00L58.89 -102.00L58.89 -68.00L29.44 -51.00L-0.00 -68.00L0.00 -102.00Z'/%3E%3Cpath d='M0.00 -68.00L29.44 -51.00L29.44 -17.00L0.00 0.00L-29.44 -17.00L-29.44 -51.00Z'/%3E%3Cpath d='M58.89 -68.00L88.33 -51.00L88.33 -17.00L58.89 0.00L29.44 -17.00L29.44 -51.00Z'/%3E%3Cpath d='M29.44 85.00L58.89 102.00L58.89 136.00L29.44 153.00L-0.00 136.00L0.00 102.00Z'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(36% 36% at 25% 30%, rgba(176, 32, 56, 0.34), transparent 70%),
+    radial-gradient(32% 32% at 70% 20%, rgba(20, 82, 168, 0.36), transparent 70%),
+    radial-gradient(38% 38% at 75% 75%, rgba(224, 168, 46, 0.26), transparent 72%),
+    radial-gradient(30% 30% at 22% 78%, rgba(48, 150, 90, 0.26), transparent 70%);
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+  background-size: 118px 204px, auto, auto, auto, auto;
+}
+/* Day: the sun is outside the window. Richer panes, pewter canes instead of
+   iron, and the whole field reads light rather than gridded over. */
+.theme-stainedglass:not(.dark) body::before {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='58.89' height='102' viewBox='0 0 58.89 102'%3E%3Cg%3E%3Cpath d='M29.44 -17.00L58.89 0.00L58.89 34.00L29.44 51.00L-0.00 34.00L0.00 -0.00Z' fill='%23b02038' fill-opacity='0.14'/%3E%3Cpath d='M0.00 34.00L29.44 51.00L29.44 85.00L0.00 102.00L-29.44 85.00L-29.44 51.00Z' fill='%231452a8' fill-opacity='0.14'/%3E%3Cpath d='M58.89 34.00L88.33 51.00L88.33 85.00L58.89 102.00L29.44 85.00L29.44 51.00Z' fill='%232f8f5c' fill-opacity='0.14'/%3E%3Cpath d='M29.44 85.00L58.89 102.00L58.89 136.00L29.44 153.00L-0.00 136.00L0.00 102.00Z' fill='%23e0a82e' fill-opacity='0.14'/%3E%3Cpath d='M29.44 -119.00L58.89 -102.00L58.89 -68.00L29.44 -51.00L-0.00 -68.00L0.00 -102.00Z' fill='%237b3fa0' fill-opacity='0.14'/%3E%3Cpath d='M0.00 -68.00L29.44 -51.00L29.44 -17.00L0.00 0.00L-29.44 -17.00L-29.44 -51.00Z' fill='%231452a8' fill-opacity='0.14'/%3E%3Cpath d='M58.89 -68.00L88.33 -51.00L88.33 -17.00L58.89 0.00L29.44 -17.00L29.44 -51.00Z' fill='%23b02038' fill-opacity='0.14'/%3E%3Cpath d='M29.44 85.00L58.89 102.00L58.89 136.00L29.44 153.00L-0.00 136.00L0.00 102.00Z' fill='%231452a8' fill-opacity='0.14'/%3E%3C/g%3E%3Cg fill='none' stroke='rgba(26,18,48,.42)' stroke-width='2.6' stroke-linejoin='round'%3E%3Cpath d='M29.44 -17.00L58.89 0.00L58.89 34.00L29.44 51.00L-0.00 34.00L0.00 -0.00Z'/%3E%3Cpath d='M0.00 34.00L29.44 51.00L29.44 85.00L0.00 102.00L-29.44 85.00L-29.44 51.00Z'/%3E%3Cpath d='M58.89 34.00L88.33 51.00L88.33 85.00L58.89 102.00L29.44 85.00L29.44 51.00Z'/%3E%3Cpath d='M29.44 85.00L58.89 102.00L58.89 136.00L29.44 153.00L-0.00 136.00L0.00 102.00Z'/%3E%3Cpath d='M29.44 -119.00L58.89 -102.00L58.89 -68.00L29.44 -51.00L-0.00 -68.00L0.00 -102.00Z'/%3E%3Cpath d='M0.00 -68.00L29.44 -51.00L29.44 -17.00L0.00 0.00L-29.44 -17.00L-29.44 -51.00Z'/%3E%3Cpath d='M58.89 -68.00L88.33 -51.00L88.33 -17.00L58.89 0.00L29.44 -17.00L29.44 -51.00Z'/%3E%3Cpath d='M29.44 85.00L58.89 102.00L58.89 136.00L29.44 153.00L-0.00 136.00L0.00 102.00Z'/%3E%3C/g%3E%3Cg fill='none' stroke='rgba(255,255,255,.55)' stroke-width='1' stroke-linejoin='round' transform='translate(0,-0.75)'%3E%3Cpath d='M29.44 -17.00L58.89 0.00L58.89 34.00L29.44 51.00L-0.00 34.00L0.00 -0.00Z'/%3E%3Cpath d='M0.00 34.00L29.44 51.00L29.44 85.00L0.00 102.00L-29.44 85.00L-29.44 51.00Z'/%3E%3Cpath d='M58.89 34.00L88.33 51.00L88.33 85.00L58.89 102.00L29.44 85.00L29.44 51.00Z'/%3E%3Cpath d='M29.44 85.00L58.89 102.00L58.89 136.00L29.44 153.00L-0.00 136.00L0.00 102.00Z'/%3E%3Cpath d='M29.44 -119.00L58.89 -102.00L58.89 -68.00L29.44 -51.00L-0.00 -68.00L0.00 -102.00Z'/%3E%3Cpath d='M0.00 -68.00L29.44 -51.00L29.44 -17.00L0.00 0.00L-29.44 -17.00L-29.44 -51.00Z'/%3E%3Cpath d='M58.89 -68.00L88.33 -51.00L88.33 -17.00L58.89 0.00L29.44 -17.00L29.44 -51.00Z'/%3E%3Cpath d='M29.44 85.00L58.89 102.00L58.89 136.00L29.44 153.00L-0.00 136.00L0.00 102.00Z'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(40% 40% at 22% 26%, rgba(176, 32, 56, 0.20), transparent 72%),
+    radial-gradient(34% 34% at 72% 16%, rgba(20, 82, 168, 0.22), transparent 72%),
+    radial-gradient(42% 42% at 78% 74%, rgba(224, 168, 46, 0.22), transparent 74%),
+    radial-gradient(32% 32% at 20% 80%, rgba(48, 150, 90, 0.18), transparent 72%);
+}
+
+/* Rose window high on the wall, its halo, and the dust-lit shafts falling
+   across everything below it. */
+.theme-stainedglass body::after {
+  opacity: 0.85;
+  mix-blend-mode: normal;
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  animation: sgLightBreath 14s ease-in-out infinite;
+  background-image:
+    repeating-linear-gradient(-19deg,
+      transparent 0, rgba(255, 236, 190, 0.06) 38px, transparent 92px,
+      transparent 210px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='720' viewBox='0 0 720 720'%3E%3Ccircle cx='360' cy='360' r='352' fill='none' stroke='rgba(0,0,0,.85)' stroke-width='7'/%3E%3Ccircle cx='360' cy='360' r='308' fill='none' stroke='rgba(0,0,0,.85)' stroke-width='4'/%3E%3Ccircle cx='360' cy='360' r='188' fill='none' stroke='rgba(0,0,0,.85)' stroke-width='4'/%3E%3Cpath d='M336.8 266.9L296.9 195.7A176 176 0 0 1 423.1 195.7L383.2 266.9A96 96 0 0 0 336.8 266.9Z' fill='%23c2263f' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M409.4 277.7L431.6 199.2A176 176 0 0 1 520.8 288.4L442.3 310.6A96 96 0 0 0 409.4 277.7Z' fill='%231a5fc4' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M453.1 336.8L524.3 296.9A176 176 0 0 1 524.3 423.1L453.1 383.2A96 96 0 0 0 453.1 336.8Z' fill='%232f8f5c' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M442.3 409.4L520.8 431.6A176 176 0 0 1 431.6 520.8L409.4 442.3A96 96 0 0 0 442.3 409.4Z' fill='%23e0a82e' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M383.2 453.1L423.1 524.3A176 176 0 0 1 296.9 524.3L336.8 453.1A96 96 0 0 0 383.2 453.1Z' fill='%237b3fa0' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M310.6 442.3L288.4 520.8A176 176 0 0 1 199.2 431.6L277.7 409.4A96 96 0 0 0 310.6 442.3Z' fill='%23c2263f' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M266.9 383.2L195.7 423.1A176 176 0 0 1 195.7 296.9L266.9 336.8A96 96 0 0 0 266.9 383.2Z' fill='%231a5fc4' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M277.7 310.6L199.2 288.4A176 176 0 0 1 288.4 199.2L310.6 277.7A96 96 0 0 0 277.7 310.6Z' fill='%232f8f5c' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M336.8 171.4L304.2 59.1A306 306 0 0 1 415.8 59.1L383.2 171.4A190 190 0 0 0 336.8 171.4Z' fill='%232f8f5c' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M410.8 176.9L423.6 60.7A306 306 0 0 1 526.7 103.4L453.6 194.6A190 190 0 0 0 410.8 176.9Z' fill='%23e0a82e' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M477.0 210.3L533.3 107.8A306 306 0 0 1 612.2 186.7L509.7 243.0A190 190 0 0 0 477.0 210.3Z' fill='%237b3fa0' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M525.4 266.4L616.6 193.3A306 306 0 0 1 659.3 296.4L543.1 309.2A190 190 0 0 0 525.4 266.4Z' fill='%23c2263f' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M548.6 336.8L660.9 304.2A306 306 0 0 1 660.9 415.8L548.6 383.2A190 190 0 0 0 548.6 336.8Z' fill='%231a5fc4' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M543.1 410.8L659.3 423.6A306 306 0 0 1 616.6 526.7L525.4 453.6A190 190 0 0 0 543.1 410.8Z' fill='%232f8f5c' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M509.7 477.0L612.2 533.3A306 306 0 0 1 533.3 612.2L477.0 509.7A190 190 0 0 0 509.7 477.0Z' fill='%23e0a82e' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M453.6 525.4L526.7 616.6A306 306 0 0 1 423.6 659.3L410.8 543.1A190 190 0 0 0 453.6 525.4Z' fill='%237b3fa0' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M383.2 548.6L415.8 660.9A306 306 0 0 1 304.2 660.9L336.8 548.6A190 190 0 0 0 383.2 548.6Z' fill='%23c2263f' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M309.2 543.1L296.4 659.3A306 306 0 0 1 193.3 616.6L266.4 525.4A190 190 0 0 0 309.2 543.1Z' fill='%231a5fc4' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M243.0 509.7L186.7 612.2A306 306 0 0 1 107.8 533.3L210.3 477.0A190 190 0 0 0 243.0 509.7Z' fill='%232f8f5c' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M194.6 453.6L103.4 526.7A306 306 0 0 1 60.7 423.6L176.9 410.8A190 190 0 0 0 194.6 453.6Z' fill='%23e0a82e' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M171.4 383.2L59.1 415.8A306 306 0 0 1 59.1 304.2L171.4 336.8A190 190 0 0 0 171.4 383.2Z' fill='%237b3fa0' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M176.9 309.2L60.7 296.4A306 306 0 0 1 103.4 193.3L194.6 266.4A190 190 0 0 0 176.9 309.2Z' fill='%23c2263f' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M210.3 243.0L107.8 186.7A306 306 0 0 1 186.7 107.8L243.0 210.3A190 190 0 0 0 210.3 243.0Z' fill='%231a5fc4' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cpath d='M266.4 194.6L193.3 103.4A306 306 0 0 1 296.4 60.7L309.2 176.9A190 190 0 0 0 266.4 194.6Z' fill='%232f8f5c' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='3'/%3E%3Cg stroke='rgba(0,0,0,.85)' stroke-width='3'%3E%3Cline x1='360.0' y1='184.0' x2='360.0' y2='170.0'/%3E%3Cline x1='427.4' y1='197.4' x2='432.7' y2='184.5'/%3E%3Cline x1='484.5' y1='235.5' x2='494.4' y2='225.6'/%3E%3Cline x1='522.6' y1='292.6' x2='535.5' y2='287.3'/%3E%3Cline x1='536.0' y1='360.0' x2='550.0' y2='360.0'/%3E%3Cline x1='522.6' y1='427.4' x2='535.5' y2='432.7'/%3E%3Cline x1='484.5' y1='484.5' x2='494.4' y2='494.4'/%3E%3Cline x1='427.4' y1='522.6' x2='432.7' y2='535.5'/%3E%3Cline x1='360.0' y1='536.0' x2='360.0' y2='550.0'/%3E%3Cline x1='292.6' y1='522.6' x2='287.3' y2='535.5'/%3E%3Cline x1='235.5' y1='484.5' x2='225.6' y2='494.4'/%3E%3Cline x1='197.4' y1='427.4' x2='184.5' y2='432.7'/%3E%3Cline x1='184.0' y1='360.0' x2='170.0' y2='360.0'/%3E%3Cline x1='197.4' y1='292.6' x2='184.5' y2='287.3'/%3E%3Cline x1='235.5' y1='235.5' x2='225.6' y2='225.6'/%3E%3Cline x1='292.6' y1='197.4' x2='287.3' y2='184.5'/%3E%3C/g%3E%3Ccircle cx='424.4' cy='36.3' r='13' fill='%23c2263f' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='2.6'/%3E%3Ccircle cx='543.3' cy='85.6' r='13' fill='%231a5fc4' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='2.6'/%3E%3Ccircle cx='634.4' cy='176.7' r='13' fill='%232f8f5c' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='2.6'/%3E%3Ccircle cx='683.7' cy='295.6' r='13' fill='%23e0a82e' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='2.6'/%3E%3Ccircle cx='683.7' cy='424.4' r='13' fill='%237b3fa0' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='2.6'/%3E%3Ccircle cx='634.4' cy='543.3' r='13' fill='%23c2263f' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='2.6'/%3E%3Ccircle cx='543.3' cy='634.4' r='13' fill='%231a5fc4' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='2.6'/%3E%3Ccircle cx='424.4' cy='683.7' r='13' fill='%232f8f5c' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='2.6'/%3E%3Ccircle cx='295.6' cy='683.7' r='13' fill='%23e0a82e' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='2.6'/%3E%3Ccircle cx='176.7' cy='634.4' r='13' fill='%237b3fa0' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='2.6'/%3E%3Ccircle cx='85.6' cy='543.3' r='13' fill='%23c2263f' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='2.6'/%3E%3Ccircle cx='36.3' cy='424.4' r='13' fill='%231a5fc4' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='2.6'/%3E%3Ccircle cx='36.3' cy='295.6' r='13' fill='%232f8f5c' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='2.6'/%3E%3Ccircle cx='85.6' cy='176.7' r='13' fill='%23e0a82e' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='2.6'/%3E%3Ccircle cx='176.7' cy='85.6' r='13' fill='%237b3fa0' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='2.6'/%3E%3Ccircle cx='295.6' cy='36.3' r='13' fill='%23c2263f' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='2.6'/%3E%3Ccircle cx='360' cy='360' r='94' fill='%23e0a82e' fill-opacity='0.42' stroke='rgba(0,0,0,.85)' stroke-width='4.5'/%3E%3Ccircle cx='360' cy='360' r='46' fill='%23c2263f' fill-opacity='0.48' stroke='rgba(0,0,0,.85)' stroke-width='3.5'/%3E%3Ccircle cx='360' cy='360' r='19' fill='%23ffe9b0' fill-opacity='.5'/%3E%3C/svg%3E"),
+    radial-gradient(44% 32% at 50% 4%, rgba(255, 214, 140, 0.22), transparent 70%);
+  background-repeat: repeat, no-repeat, no-repeat;
+  background-position: 0 0, 50% -13vh, 50% 0;
+  background-size: auto, min(84vh, 720px) min(84vh, 720px), auto;
+}
+.theme-stainedglass:not(.dark) body::after {
+  opacity: 0.72;
+  background-image:
+    repeating-linear-gradient(-19deg,
+      transparent 0, rgba(255, 246, 220, 0.55) 46px, transparent 116px,
+      transparent 250px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='720' viewBox='0 0 720 720'%3E%3Ccircle cx='360' cy='360' r='352' fill='none' stroke='rgba(26,18,48,.34)' stroke-width='7'/%3E%3Ccircle cx='360' cy='360' r='308' fill='none' stroke='rgba(26,18,48,.34)' stroke-width='4'/%3E%3Ccircle cx='360' cy='360' r='188' fill='none' stroke='rgba(26,18,48,.34)' stroke-width='4'/%3E%3Cpath d='M336.8 266.9L296.9 195.7A176 176 0 0 1 423.1 195.7L383.2 266.9A96 96 0 0 0 336.8 266.9Z' fill='%23b02038' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M409.4 277.7L431.6 199.2A176 176 0 0 1 520.8 288.4L442.3 310.6A96 96 0 0 0 409.4 277.7Z' fill='%231452a8' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M453.1 336.8L524.3 296.9A176 176 0 0 1 524.3 423.1L453.1 383.2A96 96 0 0 0 453.1 336.8Z' fill='%232f8f5c' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M442.3 409.4L520.8 431.6A176 176 0 0 1 431.6 520.8L409.4 442.3A96 96 0 0 0 442.3 409.4Z' fill='%23e0a82e' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M383.2 453.1L423.1 524.3A176 176 0 0 1 296.9 524.3L336.8 453.1A96 96 0 0 0 383.2 453.1Z' fill='%237b3fa0' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M310.6 442.3L288.4 520.8A176 176 0 0 1 199.2 431.6L277.7 409.4A96 96 0 0 0 310.6 442.3Z' fill='%23b02038' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M266.9 383.2L195.7 423.1A176 176 0 0 1 195.7 296.9L266.9 336.8A96 96 0 0 0 266.9 383.2Z' fill='%231452a8' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M277.7 310.6L199.2 288.4A176 176 0 0 1 288.4 199.2L310.6 277.7A96 96 0 0 0 277.7 310.6Z' fill='%232f8f5c' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M336.8 171.4L304.2 59.1A306 306 0 0 1 415.8 59.1L383.2 171.4A190 190 0 0 0 336.8 171.4Z' fill='%232f8f5c' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M410.8 176.9L423.6 60.7A306 306 0 0 1 526.7 103.4L453.6 194.6A190 190 0 0 0 410.8 176.9Z' fill='%23e0a82e' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M477.0 210.3L533.3 107.8A306 306 0 0 1 612.2 186.7L509.7 243.0A190 190 0 0 0 477.0 210.3Z' fill='%237b3fa0' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M525.4 266.4L616.6 193.3A306 306 0 0 1 659.3 296.4L543.1 309.2A190 190 0 0 0 525.4 266.4Z' fill='%23b02038' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M548.6 336.8L660.9 304.2A306 306 0 0 1 660.9 415.8L548.6 383.2A190 190 0 0 0 548.6 336.8Z' fill='%231452a8' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M543.1 410.8L659.3 423.6A306 306 0 0 1 616.6 526.7L525.4 453.6A190 190 0 0 0 543.1 410.8Z' fill='%232f8f5c' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M509.7 477.0L612.2 533.3A306 306 0 0 1 533.3 612.2L477.0 509.7A190 190 0 0 0 509.7 477.0Z' fill='%23e0a82e' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M453.6 525.4L526.7 616.6A306 306 0 0 1 423.6 659.3L410.8 543.1A190 190 0 0 0 453.6 525.4Z' fill='%237b3fa0' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M383.2 548.6L415.8 660.9A306 306 0 0 1 304.2 660.9L336.8 548.6A190 190 0 0 0 383.2 548.6Z' fill='%23b02038' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M309.2 543.1L296.4 659.3A306 306 0 0 1 193.3 616.6L266.4 525.4A190 190 0 0 0 309.2 543.1Z' fill='%231452a8' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M243.0 509.7L186.7 612.2A306 306 0 0 1 107.8 533.3L210.3 477.0A190 190 0 0 0 243.0 509.7Z' fill='%232f8f5c' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M194.6 453.6L103.4 526.7A306 306 0 0 1 60.7 423.6L176.9 410.8A190 190 0 0 0 194.6 453.6Z' fill='%23e0a82e' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M171.4 383.2L59.1 415.8A306 306 0 0 1 59.1 304.2L171.4 336.8A190 190 0 0 0 171.4 383.2Z' fill='%237b3fa0' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M176.9 309.2L60.7 296.4A306 306 0 0 1 103.4 193.3L194.6 266.4A190 190 0 0 0 176.9 309.2Z' fill='%23b02038' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M210.3 243.0L107.8 186.7A306 306 0 0 1 186.7 107.8L243.0 210.3A190 190 0 0 0 210.3 243.0Z' fill='%231452a8' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cpath d='M266.4 194.6L193.3 103.4A306 306 0 0 1 296.4 60.7L309.2 176.9A190 190 0 0 0 266.4 194.6Z' fill='%232f8f5c' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='3'/%3E%3Cg stroke='rgba(26,18,48,.34)' stroke-width='3'%3E%3Cline x1='360.0' y1='184.0' x2='360.0' y2='170.0'/%3E%3Cline x1='427.4' y1='197.4' x2='432.7' y2='184.5'/%3E%3Cline x1='484.5' y1='235.5' x2='494.4' y2='225.6'/%3E%3Cline x1='522.6' y1='292.6' x2='535.5' y2='287.3'/%3E%3Cline x1='536.0' y1='360.0' x2='550.0' y2='360.0'/%3E%3Cline x1='522.6' y1='427.4' x2='535.5' y2='432.7'/%3E%3Cline x1='484.5' y1='484.5' x2='494.4' y2='494.4'/%3E%3Cline x1='427.4' y1='522.6' x2='432.7' y2='535.5'/%3E%3Cline x1='360.0' y1='536.0' x2='360.0' y2='550.0'/%3E%3Cline x1='292.6' y1='522.6' x2='287.3' y2='535.5'/%3E%3Cline x1='235.5' y1='484.5' x2='225.6' y2='494.4'/%3E%3Cline x1='197.4' y1='427.4' x2='184.5' y2='432.7'/%3E%3Cline x1='184.0' y1='360.0' x2='170.0' y2='360.0'/%3E%3Cline x1='197.4' y1='292.6' x2='184.5' y2='287.3'/%3E%3Cline x1='235.5' y1='235.5' x2='225.6' y2='225.6'/%3E%3Cline x1='292.6' y1='197.4' x2='287.3' y2='184.5'/%3E%3C/g%3E%3Ccircle cx='424.4' cy='36.3' r='13' fill='%23b02038' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='2.6'/%3E%3Ccircle cx='543.3' cy='85.6' r='13' fill='%231452a8' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='2.6'/%3E%3Ccircle cx='634.4' cy='176.7' r='13' fill='%232f8f5c' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='2.6'/%3E%3Ccircle cx='683.7' cy='295.6' r='13' fill='%23e0a82e' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='2.6'/%3E%3Ccircle cx='683.7' cy='424.4' r='13' fill='%237b3fa0' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='2.6'/%3E%3Ccircle cx='634.4' cy='543.3' r='13' fill='%23b02038' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='2.6'/%3E%3Ccircle cx='543.3' cy='634.4' r='13' fill='%231452a8' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='2.6'/%3E%3Ccircle cx='424.4' cy='683.7' r='13' fill='%232f8f5c' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='2.6'/%3E%3Ccircle cx='295.6' cy='683.7' r='13' fill='%23e0a82e' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='2.6'/%3E%3Ccircle cx='176.7' cy='634.4' r='13' fill='%237b3fa0' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='2.6'/%3E%3Ccircle cx='85.6' cy='543.3' r='13' fill='%23b02038' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='2.6'/%3E%3Ccircle cx='36.3' cy='424.4' r='13' fill='%231452a8' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='2.6'/%3E%3Ccircle cx='36.3' cy='295.6' r='13' fill='%232f8f5c' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='2.6'/%3E%3Ccircle cx='85.6' cy='176.7' r='13' fill='%23e0a82e' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='2.6'/%3E%3Ccircle cx='176.7' cy='85.6' r='13' fill='%237b3fa0' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='2.6'/%3E%3Ccircle cx='295.6' cy='36.3' r='13' fill='%23b02038' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='2.6'/%3E%3Ccircle cx='360' cy='360' r='94' fill='%23e0a82e' fill-opacity='0.16' stroke='rgba(26,18,48,.34)' stroke-width='4.5'/%3E%3Ccircle cx='360' cy='360' r='46' fill='%23b02038' fill-opacity='0.22' stroke='rgba(26,18,48,.34)' stroke-width='3.5'/%3E%3Ccircle cx='360' cy='360' r='19' fill='%23fff' fill-opacity='.5'/%3E%3C/svg%3E"),
+    radial-gradient(44% 32% at 50% 4%, rgba(255, 234, 190, 0.6), transparent 70%);
+}
+/* The sun moving behind the window — brightness, not opacity, so each mode
+   keeps the alpha it was given. */
+@keyframes sgLightBreath {
+  0%, 100% { filter: brightness(0.94) saturate(0.97); }
+  50%      { filter: brightness(1.09) saturate(1.06); }
+}
+
+/* Cards are single panes: black came outside, a bright solder highlight just
+   inside it, and a jewel tint pooling in the corners. */
+.theme-stainedglass .card {
+  border-radius: 14px;
+  border: 2px solid var(--glass-border);
+  box-shadow: var(--shadow-card), inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+}
+.theme-stainedglass:not(.dark) .card {
+  background:
+    radial-gradient(120% 90% at 8% 0%, rgba(255, 249, 232, 0.9), transparent 60%),
+    linear-gradient(140deg,
+      color-mix(in srgb, var(--accent) 7%, #ffffff) 0%,
+      #ffffff 46%,
+      color-mix(in srgb, var(--accent-2) 8%, #ffffff) 100%);
+  box-shadow: var(--shadow-card), inset 0 0 0 1px rgba(255, 255, 255, 0.95);
+}
+
+/* Gothic tracery ghosted into the bottom-right of every pane. globals hides
+   ::after on this theme; it comes back as ornament, pinned on rather than
+   blooming on hover. */
+.theme-stainedglass .card::after {
+  display: block;
+  opacity: 0.5;
+  inset: 0;
+  transition: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='rgba(255,79,106,.16)' stroke='rgba(0,0,0,.8)' stroke-width='3.2'%3E%3Ccircle cx='50' cy='27' r='19'/%3E%3Ccircle cx='73' cy='50' r='19'/%3E%3Ccircle cx='50' cy='73' r='19'/%3E%3Ccircle cx='27' cy='50' r='19'/%3E%3C/g%3E%3Ccircle cx='50' cy='50' r='13' fill='rgba(255,79,106,.16)' stroke='rgba(0,0,0,.8)' stroke-width='3.2'/%3E%3Ccircle cx='50' cy='50' r='45' fill='none' stroke='rgba(0,0,0,.8)' stroke-width='2.4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px bottom 12px;
+  background-size: 72px 72px;
+}
+.theme-stainedglass:not(.dark) .card::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='rgba(20,82,168,.10)' stroke='rgba(26,18,48,.55)' stroke-width='3.2'%3E%3Ccircle cx='50' cy='27' r='19'/%3E%3Ccircle cx='73' cy='50' r='19'/%3E%3Ccircle cx='50' cy='73' r='19'/%3E%3Ccircle cx='27' cy='50' r='19'/%3E%3C/g%3E%3Ccircle cx='50' cy='50' r='13' fill='rgba(20,82,168,.10)' stroke='rgba(26,18,48,.55)' stroke-width='3.2'/%3E%3Ccircle cx='50' cy='50' r='45' fill='none' stroke='rgba(26,18,48,.55)' stroke-width='2.4'/%3E%3C/svg%3E");
+  opacity: 0.32;
+}
+
+/* Header rule as a lead came: dark bar, solder highlight under it. */
+.theme-stainedglass .headrule {
+  border-bottom: 3px solid var(--rule);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  padding-bottom: .6rem;
+}
+/* The dot is a glass boss — a bead of molten jewel with a white catch-light. */
+.theme-stainedglass .dot {
+  width: 11px; height: 11px;
+  background:
+    radial-gradient(circle at 32% 28%, #fff 0 14%, transparent 45%),
+    radial-gradient(circle at 50% 50%, var(--accent) 30%, color-mix(in srgb, var(--accent) 55%, #2a0410) 100%);
+  box-shadow: 0 0 0 2px var(--rule),
+              0 0 12px var(--glow),
+              inset 0 -2px 4px rgba(0, 0, 0, 0.35);
+}
+/* Chips are small panes too: came border, glass fill, jewel when active. */
+.theme-stainedglass .chip-active {
+  background: linear-gradient(140deg, var(--accent), color-mix(in srgb, var(--accent) 60%, #2a0410));
+  color: #fff;
+  border-color: var(--rule);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.theme-stainedglass .btn-ghost:hover {
+  background: color-mix(in srgb, var(--accent) 14%, var(--paper));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+/* Display type gets the faint warmth of glass lit from behind. */
+.theme-stainedglass:not(.dark) h1.font-display {
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+.theme-stainedglass.dark h1.font-display {
+  text-shadow: 0 0 26px rgba(255, 200, 120, 0.22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-stainedglass body::before,
+  .theme-stainedglass body::after { animation: none; }
+}

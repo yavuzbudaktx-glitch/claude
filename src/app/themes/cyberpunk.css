@@ -1,2 +1,257 @@
 /* cyberpunk — theme upgrades. Loaded AFTER globals.css (see src/app/layout.tsx),
    so equal-specificity rules here win over the base definitions. */
+
+/* =======================================================================
+   CYBERPUNK · DAY — "NIGHT CITY, 14:00"
+   The old day mode was a grey office: cyan-on-slate with the neon switched
+   off, which is exactly the thing nobody wants from this theme. Rebuilt on
+   the 2077 palette instead — acid yellow #fcee0a, hard black, hot cyan
+   #00f0ff, glitch red — read as DAYLIGHT: sun-bleached concrete, hazard tape,
+   black hard edges, corner brackets, silkscreened warning type. Yellow is the
+   dominant accent, black does the structure, cyan is the second signal.
+
+   EVERY rule below is scoped `:not(.dark)`. Night mode is untouched.
+======================================================================= */
+:root.theme-cyberpunk:not(.dark) {
+  color-scheme: light;
+  --bg:           #e3e0d6;                  /* sun-bleached concrete */
+  --paper:        #f7f5ee;
+  --paper-2:      #ffffff;
+  --ink:          #0b0b0c;                  /* silkscreen black */
+  --ink-soft:     #23242a;
+  --muted:        #56565e;
+  --muted-2:      #8b8b93;
+  --rule:         rgba(11, 11, 12, 0.88);   /* structure is black, not grey */
+  --rule-soft:    rgba(11, 11, 12, 0.13);
+  --accent:       #6f6800;                  /* acid yellow taken down until it
+                                               passes as body text (4.9:1) */
+  --accent-soft:  rgba(252, 238, 10, 0.38);
+  --accent-2:     #04697a;                  /* hot cyan, deepened */
+  --hl:           rgba(252, 238, 10, 0.32);
+  --up:           #0a6b3d;
+  --down:         #cc0033;                  /* glitch red */
+  --grad-from:    #0b0b0c;
+  --grad-via:     #0b0b0c;
+  --grad-to:      #6f6800;
+  --glass:        #fbfaf5;
+  --glass-border: #0b0b0c;
+  --glow:         rgba(252, 238, 10, 0.75);
+  /* No soft elevation anywhere: everything is a hard silkscreen offset. */
+  --shadow-card:  4px 4px 0 rgba(11, 11, 12, 0.92);
+  --shadow-hover: 6px 6px 0 #fcee0a, 6px 6px 0 1.5px rgba(11, 11, 12, 0.92);
+  --aurora-1:     rgba(252, 238, 10, 0.30);
+  --aurora-2:     rgba(0, 240, 255, 0.16);
+  --aurora-3:     rgba(255, 0, 60, 0.07);
+  --aurora-4:     transparent;
+  --grain:        0.05;
+  /* raw signal colours — only ever used as fills with black on top */
+  --cp-acid:      #fcee0a;
+  --cp-cyan:      #00f0ff;
+  --cp-red:       #ff003c;
+  --cp-black:     #0b0b0c;
+}
+
+/* Backdrop: hazard tape down the left margin, a cyan trim line down the
+   right, sun bouncing off the concrete, and HUD brackets at the corners. */
+.theme-cyberpunk:not(.dark) body::before {
+  inset: 0;
+  filter: none;
+  animation: none;
+  background-image:
+    repeating-linear-gradient(45deg,
+      var(--cp-black) 0 9px, var(--cp-acid) 9px 18px),
+    linear-gradient(var(--cp-cyan) 0 0),
+    linear-gradient(var(--cp-black) 0 0),
+    linear-gradient(var(--cp-black) 0 0),
+    linear-gradient(var(--cp-black) 0 0),
+    linear-gradient(var(--cp-black) 0 0),
+    radial-gradient(58% 42% at 88% 4%, rgba(252, 238, 10, 0.30), transparent 70%),
+    radial-gradient(52% 42% at 6% 96%, rgba(0, 240, 255, 0.14), transparent 70%),
+    radial-gradient(70% 50% at 50% 50%, rgba(255, 255, 255, 0.5), transparent 75%);
+  background-repeat: no-repeat;
+  background-position:
+    left top, right top,
+    24px 22px, 24px 22px,
+    right 24px bottom 22px, right 24px bottom 22px,
+    0 0, 0 0, 0 0;
+  background-size:
+    14px 100%, 3px 100%,
+    /* top-left bracket */   84px 3px, 3px 84px,
+    /* bottom-right bracket */ 84px 3px, 3px 84px,
+    auto, auto, auto;
+  opacity: 0.72;
+}
+
+/* Scanlines stay — they are the theme's signature — plus a fine tech grid on
+   the concrete and a glitch band that sweeps the screen every few seconds. */
+.theme-cyberpunk:not(.dark) body::after {
+  opacity: 1;
+  mix-blend-mode: normal;
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  background-image:
+    linear-gradient(to bottom,
+      transparent 0, rgba(0, 240, 255, 0.55) 40%, rgba(255, 0, 60, 0.45) 60%,
+      transparent 100%),
+    repeating-linear-gradient(to bottom,
+      rgba(11, 11, 12, 0.05) 0 1px, transparent 1px 3px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg stroke='rgba(11,11,11,.16)' stroke-width='.75' fill='none'%3E%3Cpath d='M0 .375H48M.375 0V48'/%3E%3C/g%3E%3Cg fill='rgba(11,11,11,.22)'%3E%3Crect x='23' y='23' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 100% 5px, auto, 48px 48px;
+  background-repeat: no-repeat, repeat, repeat;
+  animation: cpSweep 6.5s cubic-bezier(.7, 0, .3, 1) infinite;
+}
+@keyframes cpSweep {
+  0%       { background-position: 0 -6vh,  0 0, 0 0; }
+  86%      { background-position: 0 -6vh,  0 0, 0 0; }
+  100%     { background-position: 0 108vh, 0 0, 0 0; }
+}
+
+/* Cards are tech panels: no radius, black keyline, hard drop, hazard tape
+   across the head and machined brackets in the corners. */
+.theme-cyberpunk:not(.dark) .card {
+  border-radius: 0;
+  border: 1.5px solid var(--cp-black);
+  background:
+    linear-gradient(180deg, #ffffff 0%, var(--glass) 62%, #f2efe4 100%);
+  -webkit-backdrop-filter: none;
+          backdrop-filter: none;
+  padding-top: 1.6rem;
+}
+/* globals uses ::before as the glass edge-light ring (masked, inset 0). Here
+   it is re-purposed as the warning stripe that caps every panel. */
+.theme-cyberpunk:not(.dark) .card::before {
+  inset: 0 0 auto 0;
+  height: 6px;
+  padding: 0;
+  border-radius: 0;
+  opacity: 1;
+  -webkit-mask: none;
+          mask: none;
+  background: repeating-linear-gradient(45deg,
+    var(--cp-black) 0 7px, var(--cp-acid) 7px 14px);
+  box-shadow: 0 1.5px 0 var(--cp-black);
+}
+/* …and ::after stops being the hover bloom and becomes corner brackets. */
+.theme-cyberpunk:not(.dark) .card::after {
+  inset: 4px;
+  opacity: 1;
+  border-radius: 0;
+  transition: none;
+  background:
+    linear-gradient(var(--cp-black) 0 0) 0 8px       / 13px 2px,
+    linear-gradient(var(--cp-black) 0 0) 0 8px       / 2px 13px,
+    linear-gradient(var(--cp-black) 0 0) 100% 8px    / 13px 2px,
+    linear-gradient(var(--cp-black) 0 0) 100% 8px    / 2px 13px,
+    linear-gradient(var(--cp-black) 0 0) 0 100%      / 13px 2px,
+    linear-gradient(var(--cp-black) 0 0) 0 100%      / 2px 13px,
+    linear-gradient(var(--cp-acid) 0 0) 100% 100%    / 13px 2px,
+    linear-gradient(var(--cp-acid) 0 0) 100% 100%    / 2px 13px;
+  background-repeat: no-repeat;
+}
+.theme-cyberpunk:not(.dark) .card:hover {
+  border-color: var(--cp-black);
+  transform: translate(-1px, -1px);
+}
+
+/* Header rule: black bar with an acid segment burned into the left end. */
+.theme-cyberpunk:not(.dark) .headrule {
+  border-bottom: 0;
+  padding-bottom: .6rem;
+  background:
+    linear-gradient(var(--cp-acid) 0 0) 0 100% / 62px 3px no-repeat,
+    linear-gradient(var(--cp-black) 0 0) 0 100% / 100% 3px no-repeat;
+}
+/* Status pip: an acid lozenge in a black bezel. */
+.theme-cyberpunk:not(.dark) .dot {
+  width: 9px; height: 9px;
+  border-radius: 0;
+  transform: rotate(45deg);
+  background: var(--cp-acid);
+  box-shadow: 0 0 0 1.5px var(--cp-black);
+}
+/* Chips and buttons are stamped parts — corners cut off the die. */
+.theme-cyberpunk:not(.dark) .chip {
+  border-radius: 0;
+  border: 1.5px solid var(--cp-black);
+  background: var(--paper-2);
+  color: var(--ink-soft);
+  -webkit-backdrop-filter: none;
+          backdrop-filter: none;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+.theme-cyberpunk:not(.dark) .chip:hover {
+  background: var(--cp-acid);
+  color: var(--cp-black);
+  border-color: var(--cp-black);
+}
+.theme-cyberpunk:not(.dark) .chip-active {
+  background: var(--cp-acid);
+  color: var(--cp-black);
+  border-color: var(--cp-black);
+  font-weight: 800;
+  box-shadow: none;
+}
+.theme-cyberpunk:not(.dark) .btn-ghost {
+  border-radius: 0;
+  border: 1.5px solid var(--cp-black);
+  background: var(--paper-2);
+  color: var(--ink);
+  -webkit-backdrop-filter: none;
+          backdrop-filter: none;
+  clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 9px 100%, 0 calc(100% - 9px));
+}
+.theme-cyberpunk:not(.dark) .btn-ghost:hover {
+  background: var(--cp-acid);
+  border-color: var(--cp-black);
+  color: var(--cp-black);
+  box-shadow: none;
+}
+.theme-cyberpunk:not(.dark) .btn-primary {
+  border-radius: 0;
+  background: var(--cp-acid);
+  color: var(--cp-black);
+  box-shadow: 3px 3px 0 var(--cp-black);
+}
+.theme-cyberpunk:not(.dark) .card-bare {
+  border-radius: 0;
+  border: 1.5px solid var(--rule-soft);
+  background: rgba(255, 255, 255, 0.5);
+}
+/* Micro-type is silkscreened onto the panel: tight, uppercase, black. */
+.theme-cyberpunk:not(.dark) .label {
+  color: var(--ink-soft);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+.theme-cyberpunk:not(.dark) .metalabel {
+  color: var(--muted);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+.theme-cyberpunk:not(.dark) .font-display {
+  font-weight: 800;
+  letter-spacing: -0.028em;
+}
+/* The masthead glitches: black type, cyan and acid ghosts either side of it,
+   snapping out of register for two frames every few seconds. */
+.theme-cyberpunk:not(.dark) .text-gradient {
+  background: linear-gradient(100deg, var(--cp-black) 0%, var(--cp-black) 58%, #7d7400 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  animation: cpGlitchText 5.5s steps(1, end) infinite;
+  text-shadow: 1.5px 0 0 rgba(0, 240, 255, 0.55), -1.5px 0 0 rgba(252, 238, 10, 0.85);
+}
+@keyframes cpGlitchText {
+  0%, 90%, 100% { text-shadow: 1.5px 0 0 rgba(0, 240, 255, 0.55), -1.5px 0 0 rgba(252, 238, 10, 0.85); transform: translateX(0); }
+  92%           { text-shadow: -5px 0 0 rgba(255, 0, 60, 0.75), 5px 0 0 rgba(0, 240, 255, 0.75); transform: translateX(2px); }
+  94%           { text-shadow: 4px 0 0 rgba(252, 238, 10, 0.9), -4px 0 0 rgba(0, 240, 255, 0.6); transform: translateX(-2px); }
+  96%           { text-shadow: 1.5px 0 0 rgba(0, 240, 255, 0.55), -1.5px 0 0 rgba(252, 238, 10, 0.85); transform: translateX(0); }
+}
+.theme-cyberpunk:not(.dark) ::selection { background: var(--cp-acid); color: var(--cp-black); }
+.theme-cyberpunk:not(.dark) *:focus-visible { outline-color: var(--cp-black); }
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-cyberpunk:not(.dark) body::after,
+  .theme-cyberpunk:not(.dark) .text-gradient { animation: none; }
+}

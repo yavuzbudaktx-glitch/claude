@@ -1,2 +1,164 @@
 /* forest — theme upgrades. Loaded AFTER globals.css (see src/app/layout.tsx),
    so equal-specificity rules here win over the base definitions. */
+
+/* ---------------------------------------------------------------------------
+   FOREST — DAY MODE
+   The base sheet switches the whole atmosphere off in light mode
+   (`.theme-forest:not(.dark) body::before { background: none; animation: none }`),
+   which left a flat pale-green page with none of the woodland the theme
+   promises. Rebuilt here as actual daylight under a canopy: a warm canopy wash
+   on the canvas, sun shafts raking down through the leaves, dappled leaf light
+   moving over everything, and a slow fall of pollen and leaf motes.
+
+   Every rule is :not(.dark) — forest's night mode is untouched.
+--------------------------------------------------------------------------- */
+
+/* The canvas: sun burning through the canopy top-right, cool leaf shadow
+   top-left, moss coming up off the forest floor. Fixed so it stays put while
+   the page scrolls over it. Slightly deeper than the old flat --bg on purpose,
+   so the sun shafts above it have something to be brighter than. */
+:root.theme-forest:not(.dark) {
+  background-color: #e7f0dc;
+  background-image:
+    radial-gradient(88% 58% at 82% -8%, rgba(255, 250, 208, 0.92), transparent 62%),
+    radial-gradient(66% 52% at 4% 2%, rgba(168, 205, 158, 0.55), transparent 68%),
+    radial-gradient(120% 66% at 50% 112%, rgba(140, 178, 128, 0.52), transparent 72%),
+    linear-gradient(180deg, #e9f2dc 0%, #dfebcf 48%, #d2e2c0 100%);
+  background-attachment: fixed;
+}
+
+/* Layer 1 (z -3) — sun shafts. Two repeating sheets at slightly different
+   angles and spacings so the beams never look mechanically parallel, masked to
+   fade out before they reach the lower third where the cards live. They creep
+   sideways and brighten over half a minute, the way light does when the canopy
+   moves. */
+:root.theme-forest:not(.dark)::before {
+  content: "";
+  position: fixed;
+  inset: -20% -28%;
+  z-index: -3;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(107deg,
+      rgba(58, 96, 56, 0.11) 0 20px,
+      rgba(58, 96, 56, 0.025) 34px,
+      rgba(255, 252, 214, 0.78) 46px,
+      rgba(255, 248, 190, 0.96) 53px,
+      rgba(255, 252, 214, 0.66) 62px,
+      rgba(58, 96, 56, 0.025) 78px,
+      rgba(58, 96, 56, 0.11) 98px 158px),
+    repeating-linear-gradient(99deg,
+      rgba(255, 255, 238, 0) 0 96px,
+      rgba(255, 255, 232, 0.30) 126px,
+      rgba(255, 255, 238, 0) 172px 312px);
+  -webkit-mask-image: linear-gradient(167deg, #000 0%, rgba(0, 0, 0, 0.72) 32%, rgba(0, 0, 0, 0.28) 62%, transparent 90%);
+          mask-image: linear-gradient(167deg, #000 0%, rgba(0, 0, 0, 0.72) 32%, rgba(0, 0, 0, 0.28) 62%, transparent 90%);
+  filter: blur(5px);
+  animation: forestDayShafts 38s ease-in-out infinite alternate;
+}
+@keyframes forestDayShafts {
+  from { transform: translate3d(-1.5%, 0, 0) skewX(0deg);   opacity: 0.58; }
+  to   { transform: translate3d(1.5%, 0, 0) skewX(0.7deg);  opacity: 0.95; }
+}
+
+/* Layer 2 (z -2) — dappled leaf light. A tiled field of soft warm blobs, the
+   gaps between leaves. Blurred hard so it reads as light rather than shapes,
+   and it breathes (a 5% scale) instead of sliding, which is what dapple
+   actually does when there is no wind to speak of. */
+:root.theme-forest:not(.dark)::after {
+  content: "";
+  position: fixed;
+  inset: -14%;
+  z-index: -2;
+  pointer-events: none;
+  background-repeat: repeat;
+  background-size: 760px 560px;
+  background-image:
+    radial-gradient(46px 30px at 11% 14%, rgba(255, 251, 206, 0.95), transparent 66%),
+    radial-gradient(62px 40px at 33% 6%,  rgba(226, 246, 186, 0.72), transparent 70%),
+    radial-gradient(34px 24px at 55% 22%, rgba(255, 253, 220, 0.88), transparent 66%),
+    radial-gradient(74px 46px at 79% 12%, rgba(238, 250, 198, 0.62), transparent 72%),
+    radial-gradient(50px 32px at 21% 46%, rgba(255, 250, 204, 0.70), transparent 68%),
+    radial-gradient(38px 26px at 44% 58%, rgba(255, 252, 214, 0.58), transparent 68%),
+    radial-gradient(66px 42px at 68% 50%, rgba(232, 248, 194, 0.55), transparent 72%),
+    radial-gradient(42px 28px at 90% 64%, rgba(255, 251, 208, 0.62), transparent 68%),
+    radial-gradient(56px 36px at 8% 78%,  rgba(240, 250, 202, 0.48), transparent 70%),
+    radial-gradient(30px 22px at 60% 88%, rgba(255, 253, 222, 0.52), transparent 66%);
+  filter: blur(10px);
+  animation: forestDapple 34s ease-in-out infinite alternate;
+}
+@keyframes forestDapple {
+  from { transform: translate3d(-0.7%, -0.5%, 0) scale(1);    opacity: 0.40; }
+  to   { transform: translate3d(0.7%, 0.5%, 0) scale(1.055);  opacity: 0.66; }
+}
+
+/* Layer 3 (z -1) — canopy depth. Colour only, no detail: leaf shadow in the
+   top corners, warm ground bounce along the bottom. Kept weak so the masthead
+   never loses contrast. */
+.theme-forest:not(.dark) body::before {
+  background:
+    radial-gradient(56% 44% at 2% -6%, rgba(48, 86, 50, 0.34), transparent 72%),
+    radial-gradient(50% 40% at 99% 2%, rgba(120, 150, 66, 0.24), transparent 72%),
+    radial-gradient(88% 50% at 50% 110%, rgba(66, 100, 56, 0.32), transparent 74%);
+  filter: blur(72px) saturate(118%);
+  opacity: 0.85;
+  animation: forestCanopy 50s ease-in-out infinite alternate;
+}
+@keyframes forestCanopy {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(-1%, 0.8%, 0) scale(1.05); }
+}
+
+/* Layer 4 (z -1, on top) — the drift. Mostly small olive leaf specks, which is
+   what actually shows against a pale daylight page; a handful of bright cream
+   motes catch the shafts. The whole tiled field translates by exactly one tile
+   in each axis, so the loop is seamless and it is one composited transform
+   rather than a repaint. Two minutes for a full pass — you have to look for it. */
+.theme-forest:not(.dark) body::after {
+  inset: -600px;   /* bleed must exceed the 540px loop translate, or the edge shows */
+  opacity: 1;
+  mix-blend-mode: normal;
+  /* the base sheet masks this element for the night-mode shafts — clear it */
+  -webkit-mask-image: none;
+          mask-image: none;
+  background-repeat: repeat;
+  background-size: 540px 540px;
+  background-image:
+    radial-gradient(3px 2px at 6% 9%,     rgba(88, 120, 66, 0.30), transparent 62%),
+    radial-gradient(2px 3px at 23% 27%,   rgba(104, 134, 74, 0.26), transparent 62%),
+    radial-gradient(4px 2.5px at 41% 6%,  rgba(122, 146, 78, 0.24), transparent 62%),
+    radial-gradient(2px 2px at 58% 39%,   rgba(255, 250, 206, 0.92), transparent 62%),
+    radial-gradient(3px 2px at 77% 17%,   rgba(94, 126, 70, 0.28), transparent 62%),
+    radial-gradient(2.5px 3.5px at 13% 51%, rgba(110, 138, 76, 0.22), transparent 62%),
+    radial-gradient(2px 2px at 33% 67%,   rgba(255, 252, 214, 0.82), transparent 62%),
+    radial-gradient(3.5px 2px at 52% 61%, rgba(100, 130, 70, 0.26), transparent 62%),
+    radial-gradient(2px 3px at 70% 79%,   rgba(116, 142, 78, 0.22), transparent 62%),
+    radial-gradient(2px 2px at 89% 55%,   rgba(255, 249, 200, 0.72), transparent 62%),
+    radial-gradient(3px 2px at 39% 88%,   rgba(96, 128, 68, 0.24), transparent 62%),
+    radial-gradient(2.5px 2px at 84% 93%, rgba(108, 136, 74, 0.20), transparent 62%),
+    radial-gradient(2px 2.5px at 64% 24%, rgba(112, 140, 76, 0.20), transparent 62%),
+    radial-gradient(3px 2px at 17% 78%,   rgba(92, 124, 68, 0.22), transparent 62%),
+    radial-gradient(2px 2px at 95% 34%,   rgba(255, 251, 210, 0.62), transparent 62%);
+  animation: forestMotes 120s linear infinite;
+}
+@keyframes forestMotes {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-540px, 540px, 0); }
+}
+
+/* Cards get a moss-lit top edge over the existing bark grain, so they read as
+   something cut from the wood rather than white boxes dropped on it. */
+.theme-forest:not(.dark) .card {
+  box-shadow: var(--shadow-card),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9),
+              inset 0 3px 14px -10px rgba(47, 125, 79, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root.theme-forest:not(.dark)::before,
+  :root.theme-forest:not(.dark)::after,
+  .theme-forest:not(.dark) body::before,
+  .theme-forest:not(.dark) body::after {
+    animation: none;
+  }
+}
