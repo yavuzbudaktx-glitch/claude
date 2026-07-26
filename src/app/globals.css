@@ -254,9 +254,14 @@ main { position: relative; z-index: 1; }
    and need nothing here — but the heavily patterned concepts (mosaic tilework,
    comic halftone) swallow small text, so there it becomes a soft paper plate
    with just enough tint and blur to lift the type off the pattern. */
+/* Sized to its CONTENT, not to the column — as a full-width bar it read as a
+   big empty slab with a few words floating in it. */
 .readable-plate { display: block; }
 .theme-mosaic .readable-plate,
 .theme-comic .readable-plate {
+  display: inline-block;
+  width: auto;
+  max-width: 100%;
   background: var(--paper-2);
   -webkit-backdrop-filter: blur(7px) saturate(120%);
           backdrop-filter: blur(7px) saturate(120%);

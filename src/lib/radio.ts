@@ -493,6 +493,26 @@ export async function playRadioSource(source: RadioSource) {
     // Remember it so a second pick reshuffles the same library instantly
     // instead of re-hitting the route.
     if (!quranLib && (lib.ids.length || lib.uploads)) quranLib = lib;
+
+    // PREFER THE UPLOADS PLAYLIST. Our own server-side enumeration of the
+    // channel is throttled by YouTube from a datacenter IP and typically comes
+    // back with only a handful of videos — which is exactly why this kept
+    // cycling the same five recitations. Handing YouTube the channel's uploads
+    // playlist makes IT expand the full channel from the user's own browser,
+    // and setShuffle then draws from everything the channel has.
+    if (lib.uploads) {
+      lastPlayedUrl = "ytquran";
+      // Start deep in the list when we know it's long, so the shuffle isn't
+      // seeded from the same corner of the channel every time.
+      const span = lib.ids.length > 5 ? lib.ids.length : 40;
+      const startAt = Math.floor(Math.random() * span);
+      const ok = ytApplyAndPlay((p) => {
+        p.loadPlaylist({ list: lib.uploads, listType: "playlist", index: startAt });
+        try { p.setShuffle?.(true); p.setLoop?.(true); } catch { /* noop */ }
+      });
+      if (ok) { setStatus("playing"); return; }
+    }
+
     const ids = shuffled(lib.ids);
     if (ids.length) {
       lastPlayedUrl = "ytquran";
@@ -510,21 +530,6 @@ export async function playRadioSource(source: RadioSource) {
       await playUrl(ytEmbedUrl(src));            // fallback embed
       setStatus("playing");
       return;
-    }
-
-    // The server couldn't enumerate the channel (YouTube rate-limits Vercel's
-    // datacenter IPs). Second chance: hand the channel's *uploads playlist* to
-    // the player and let IT do the fetching — that request comes from the
-    // user's own browser, which isn't blocked. Random index = a different
-    // recitation each time.
-    if (lib.uploads) {
-      lastPlayedUrl = "ytquran";
-      const startAt = Math.floor(Math.random() * 30);
-      const ok = ytApplyAndPlay((p) => {
-        p.loadPlaylist({ list: lib.uploads, listType: "playlist", index: startAt });
-        try { p.setShuffle?.(true); p.setLoop?.(true); } catch { /* noop */ }
-      });
-      if (ok) { setStatus("playing"); return; }
     }
 
     // Library unavailable — fall back to the live Kral broadcast so the button

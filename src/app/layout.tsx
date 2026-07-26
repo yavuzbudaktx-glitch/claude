@@ -1,5 +1,25 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+// Per-theme upgrade sheets. These load AFTER globals.css so a rule here beats
+// the base definition at equal specificity — each theme owns one file, which
+// also keeps globals.css from growing without bound.
+import "./themes/newspaper.css";
+import "./themes/blueprint.css";
+import "./themes/mono.css";
+import "./themes/comic.css";
+import "./themes/terminal.css";
+import "./themes/stainedglass.css";
+import "./themes/cyberpunk.css";
+import "./themes/subway.css";
+import "./themes/renaissance.css";
+import "./themes/deco.css";
+import "./themes/marble.css";
+import "./themes/galaxy.css";
+import "./themes/aurora.css";
+import "./themes/forest.css";
+import "./themes/water.css";
+import "./themes/sunset.css";
+import "./themes/rain.css";
 import { PrefsProvider } from "@/components/PrefsProvider";
 import { CommandPalette } from "@/components/CommandPalette";
 import { FocusMode } from "@/components/FocusMode";

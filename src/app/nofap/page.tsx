@@ -30,7 +30,7 @@ export default function NofapPage() {
           <StreakCard />
         </Card>
 
-        <Card id="nofap.quotes" title="No mercy">
+        <Card id="nofap.quotes" title="Words">
           <QuotesCard />
         </Card>
 

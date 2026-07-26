@@ -4,10 +4,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
 import { Card } from "@/components/Card";
 import { localDateKey, localDateKeyAt } from "@/lib/local-date";
-import {
-  LiftTracker, coerceLifts, unionLifts, parsePlanExercises,
-  type LiftSet, type PlanId,
-} from "./LiftTracker";
 import { createClient } from "@/lib/supabase/client";
 import { usePref } from "@/components/PrefsProvider";
 import {
@@ -247,6 +243,9 @@ function HabitTracker() {
 //   localStorage and synced across devices via Supabase when signed in.
 // ============================================================================
 
+// Which of the two workout templates is showing.
+type PlanId = "A" | "B";
+
 interface WeightEntry { date: string; weight: number }
 interface BodyState {
   entries: WeightEntry[];
@@ -257,12 +256,11 @@ interface BodyState {
   calsDate: string;          // localDateKey the calsTotal + proteinTotal apply to
   calsTotal: number;         // calories logged "today"
   proteinTotal: number;      // protein (g) logged "today"
-  lifts: LiftSet[];          // every logged set, see LiftTracker
   plan: PlanId;              // which workout template is currently active
 }
 
 const KEY = "morning.body.v1";
-const DEFAULT: BodyState = { entries: [], calorieGoal: "", proteinGoal: "", workoutA: "", workoutB: "", calsDate: "", calsTotal: 0, proteinTotal: 0, lifts: [], plan: "A" };
+const DEFAULT: BodyState = { entries: [], calorieGoal: "", proteinGoal: "", workoutA: "", workoutB: "", calsDate: "", calsTotal: 0, proteinTotal: 0, plan: "A" };
 const STEP = 0.2;
 const SEED_WEIGHT = 180;
 
@@ -282,9 +280,6 @@ function coerce(raw: unknown): BodyState {
     calsDate: typeof o.calsDate === "string" ? o.calsDate : "",
     calsTotal: typeof o.calsTotal === "number" ? o.calsTotal : 0,
     proteinTotal: typeof o.proteinTotal === "number" ? o.proteinTotal : 0,
-    // Lifts are validated set-by-set: a single malformed record can't take the
-    // rest of the log (or the weight history) down with it.
-    lifts: coerceLifts(o.lifts),
     plan: o.plan === "B" ? "B" : "A",
   };
 }
@@ -301,13 +296,7 @@ function mergeBody(remote: BodyState, local: BodyState): BodyState {
   const entries = Array.from(byDate.entries())
     .map(([date, weight]) => ({ date, weight }))
     .sort((a, b) => a.date.localeCompare(b.date));
-  // Lifts get the same protection as weight history, but per SET rather than
-  // per day: `unionLifts` keeps every set id from both sides and resolves any
-  // set present on both by its own modified stamp. Logging at the rack on your
-  // phone can therefore never be clobbered by a laptop tab left open since
-  // this morning — the one failure mode that would actually lose training data.
-  const lifts = unionLifts(remote.lifts, local.lifts);
-  return { ...local, entries, lifts };
+  return { ...local, entries };
 }
 
 function loadLocal(): BodyState {
@@ -853,27 +842,15 @@ export function BodyCard() {
           <AutoTextarea
             value={state.plan === "A" ? state.workoutA : state.workoutB}
             placeholder={state.plan === "A"
-              ? "e.g.\nBench 4×8\nRows 4×10\nOHP 3×10"
-              : "e.g.\nSquat 4×6\nDeadlift 3×5\nCurls 3×12"}
+              ? "Bench 4×8 · 185\nRows 4×10 · 135\nOHP 3×10 · 95"
+              : "Squat 4×6 · 275\nDeadlift 3×5 · 315\nCurls 3×12 · 40"}
             onChange={(e) => setState((s) => (
               s.plan === "A" ? { ...s, workoutA: e.target.value } : { ...s, workoutB: e.target.value }
             ))}
-            rows={4}
-            className={fieldClass + " !text-[13px]"}
+            rows={3}
+            className={fieldClass + " !text-[13px] !leading-[1.7]"}
           />
-          <p className="metalabel mt-1.5">exercise names here become one-tap buttons in the log</p>
         </div>
-      </div>
-
-      {/* ---- Lift log ------------------------------------------------------ */}
-      <div className="mt-5 pt-4 border-t rule">
-        <LiftTracker
-          lifts={state.lifts}
-          onLifts={(update) => setState((s) => ({ ...s, lifts: update(s.lifts) }))}
-          plan={state.plan}
-          planExercises={parsePlanExercises(state.plan === "A" ? state.workoutA : state.workoutB)}
-          today={today}
-        />
       </div>
     </Card>
   );

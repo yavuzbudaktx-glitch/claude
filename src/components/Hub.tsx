@@ -1295,10 +1295,27 @@ export function RedditFeedSection() {
   useEffect(() => { setOffset(0); }, [sub]);
 
   const all = useMemo(() => data?.posts ?? [], [data]);
-  const subList = useMemo(
-    () => data?.subs ?? Array.from(new Set(all.map((p) => p.subreddit))),
-    [data, all],
-  );
+  // Chips are built from the subs that ACTUALLY returned posts, not from the
+  // five we asked for. Showing all five regardless is what made this look
+  // permanently broken: four of them were dead chips that opened an empty
+  // list. If Reddit only serves one sub, the box just shows that one sub.
+  const subList = useMemo(() => {
+    const present = Array.from(new Set(all.map((p) => p.subreddit)));
+    const order = (data?.subs ?? []).map((s) => s.toLowerCase());
+    const rank = (s: string) => {
+      const i = order.indexOf(s.toLowerCase());
+      return i < 0 ? 999 : i;
+    };
+    return present.sort((a, b) => rank(a) - rank(b));
+  }, [data, all]);
+
+  // If the selected sub vanishes from a later fetch, fall back to "all" so the
+  // feed can never get stuck on an empty filter.
+  useEffect(() => {
+    if (sub !== "all" && !subList.some((s) => s.toLowerCase() === sub.toLowerCase())) {
+      setSub("all");
+    }
+  }, [subList, sub]);
   const posts = useMemo(() => {
     const pool = sub === "all" ? all : all.filter((p) => p.subreddit.toLowerCase() === sub.toLowerCase());
     if (pool.length === 0) return pool;
@@ -1321,7 +1338,8 @@ export function RedditFeedSection() {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-1.5 flex-wrap">
-        {["all", ...subList].map((key) => {
+        {/* "All" is pointless when only one sub came back. */}
+        {(subList.length > 1 ? ["all", ...subList] : subList).map((key) => {
           const on = sub === key;
           return (
             <button
