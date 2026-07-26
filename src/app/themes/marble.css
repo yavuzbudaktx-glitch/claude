@@ -1,2 +1,111 @@
 /* marble — theme upgrades. Loaded AFTER globals.css (see src/app/layout.tsx),
    so equal-specificity rules here win over the base definitions. */
+
+/* =======================================================================
+   MARBLE — refinements, not a redesign
+
+   The character stays exactly as it was: Carrara, near-black ink, one gold
+   accent. What changes is depth. Three additions:
+     · real mineral veining (turbulence stretched along the vein direction)
+       under the existing hairline streaks, plus a finer set of capillaries;
+     · a polished sheen — one broad, very soft specular sweep across the
+       slab, and a matching one on each card face;
+     · gold leaf carried round the whole card edge and under the header
+       rules instead of only across the top.
+   Plus one fix: the dark variant never redefined --rule / --up / --down, so
+   it inherited the light values and its hairlines and figures went dark on
+   dark. They now mirror the light slab instead.
+======================================================================= */
+
+/* the dark slab's hairlines and figures, cut from stone instead of ink */
+:root.theme-marble.dark {
+  --rule:        rgba(235, 229, 214, 0.16);
+  --rule-soft:   rgba(235, 229, 214, 0.055);
+  --hl:          rgba(235, 229, 214, 0.06);
+  --muted-2:     #7e7660;
+  --up:          #8fbf6a;
+  --down:        #e0785e;
+}
+
+/* ---------- the slab ----------
+   Layer order, top-down: the polished sheen, the two original hairline
+   vein sets, a third finer set of capillaries at a shallower angle, the
+   mineral mottle, and the gold bloom at the head of the page. */
+.theme-marble body::after {
+  opacity: 1;
+  mix-blend-mode: normal;
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  background-image:
+    /* polished sheen — a wide, low specular sweep across the stone */
+    linear-gradient(104deg, transparent 0 32%, rgba(255, 255, 255, 0.30) 46%,
+      rgba(255, 255, 255, 0.10) 55%, transparent 68%),
+    /* the original veins, unchanged */
+    repeating-linear-gradient(115deg, transparent 0 60px, rgba(26,24,20,0.04) 60px 61px, transparent 61px 140px),
+    repeating-linear-gradient(155deg, transparent 0 80px, rgba(26,24,20,0.03) 80px 81px, transparent 81px 180px),
+    /* capillaries — a finer third set, shallower and much closer together */
+    repeating-linear-gradient(99deg, transparent 0 26px, rgba(26,24,20,0.022) 26px 26.6px, transparent 26.6px 74px),
+    /* mineral mottle — fractal noise stretched along the vein direction, so
+       it clouds rather than speckles */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='mv'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.008 0.055' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.10 0 0 0 0 0.10 0 0 0 0 0.09 0.30 0 0 0 -0.24'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23mv)'/%3E%3C/svg%3E"),
+    radial-gradient(80% 60% at 50% 0%, rgba(201,162,74,0.05), transparent 70%);
+  background-size: auto, auto, auto, auto, 320px 320px, auto;
+  background-repeat: no-repeat, repeat, repeat, repeat, repeat, no-repeat;
+}
+/* The same slab quarried dark: veins and mottle in light instead of ink,
+   the sheen pulled right down so it reads as polish, not haze. */
+.theme-marble.dark body::after {
+  background-image:
+    linear-gradient(104deg, transparent 0 32%, rgba(255, 255, 255, 0.07) 46%,
+      rgba(255, 255, 255, 0.025) 55%, transparent 68%),
+    repeating-linear-gradient(115deg, transparent 0 60px, rgba(235,229,214,0.04) 60px 61px, transparent 61px 140px),
+    repeating-linear-gradient(155deg, transparent 0 80px, rgba(235,229,214,0.03) 80px 81px, transparent 81px 180px),
+    repeating-linear-gradient(99deg, transparent 0 26px, rgba(235,229,214,0.02) 26px 26.6px, transparent 26.6px 74px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='mvd'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.008 0.055' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.92 0 0 0 0 0.90 0 0 0 0 0.83 0.26 0 0 0 -0.21'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23mvd)'/%3E%3C/svg%3E"),
+    radial-gradient(80% 60% at 50% 0%, rgba(201,162,74,0.08), transparent 70%);
+  background-size: auto, auto, auto, auto, 320px 320px, auto;
+  background-repeat: no-repeat, repeat, repeat, repeat, repeat, no-repeat;
+}
+
+/* ---------- the cards ----------
+   Each card becomes a cut piece of the same stone: the sheen and a whisper
+   of the mottle go into the card's own background (behind the content, so
+   nothing washes over the type), and the gold hairline that used to sit
+   only on the top edge now runs round all four. */
+.theme-marble .card {
+  background-image:
+    linear-gradient(126deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.06) 34%, transparent 58%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='mc'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.010 0.06' numOctaves='4' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.10 0 0 0 0 0.10 0 0 0 0 0.09 0.24 0 0 0 -0.19'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23mc)'/%3E%3C/svg%3E");
+  background-size: auto, 320px 320px;
+  box-shadow:
+    var(--shadow-card),
+    inset 0  1px 0 var(--accent-2),                  /* gold leaf, top edge */
+    inset  1px 0 0 rgba(201, 162, 74, 0.30),         /* …carried down the sides */
+    inset -1px 0 0 rgba(201, 162, 74, 0.30),
+    inset 0 -1px 0 rgba(201, 162, 74, 0.18);
+}
+.theme-marble.dark .card {
+  background-image:
+    linear-gradient(126deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 34%, transparent 58%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='mcd'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.010 0.06' numOctaves='4' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.92 0 0 0 0 0.90 0 0 0 0 0.83 0.22 0 0 0 -0.18'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23mcd)'/%3E%3C/svg%3E");
+  background-size: auto, 320px 320px;
+}
+/* the bare panels get the gold hairline too, just quieter */
+.theme-marble .card-bare {
+  border-radius: 4px;
+  box-shadow: inset 0 1px 0 rgba(201, 162, 74, 0.35);
+}
+/* a gilt rule under each header, fading out to the right the way an inlaid
+   strip catches the light along its length */
+.theme-marble .headrule {
+  padding-bottom: .5rem;
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg,
+    rgba(201, 162, 74, 0.55) 0%, rgba(201, 162, 74, 0.18) 55%, transparent 100%) 1;
+}
+/* the dot becomes a small bead of gold leaf rather than a flat gold disc */
+.theme-marble .dot {
+  background: radial-gradient(circle at 32% 30%, #f6e6b4, #c9a24a 58%, #8a6522);
+  box-shadow: 0 0 0 1.5px var(--accent), 0 0 10px var(--glow);
+}

@@ -1,2 +1,54 @@
 /* deco — theme upgrades. Loaded AFTER globals.css (see src/app/layout.tsx),
    so equal-specificity rules here win over the base definitions. */
+
+/* =======================================================================
+   ART DECO — two towers, one on each side
+
+   The skyline used to be a 260px strip repeated along the whole bottom
+   edge, so buildings marched across the middle of the page and none of
+   them actually landed on an edge. It is now exactly TWO buildings: one
+   stepped Deco tower anchored flush to the bottom-LEFT corner and its
+   mirror image flush to the bottom-RIGHT, with the centre left clear for
+   the content. Same drawing both sides — the right copy is the left one
+   through `scale(-1 1)` — so the page is symmetric about its axis.
+
+   The gold pinstripe frame is unchanged, and the big central sunburst
+   stays gone.
+======================================================================= */
+
+/* One fixed layer at z-index -1, promoted with translateZ so it paints on
+   the first frame. Read the background-image stack top-down:
+     · the double gold hairline frame, inset from each page edge;
+     · the left tower — a straight outer wall flush to the page edge with
+       setbacks cascading down towards the centre, a chevron-capped spire,
+       vertical mullions and floor bands;
+     · the same tower mirrored against the right edge. */
+.theme-deco body::before {
+  inset: 0;
+  filter: none;
+  animation: none;
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  background-color: transparent;
+  background-image:
+    /* gold pinstripe frame — a double hairline inset from each page edge */
+    linear-gradient(to right,  transparent 0 10px, var(--deco-pin) 10px 11px, transparent 11px 14px, var(--deco-pin) 14px 15px, transparent 15px),
+    linear-gradient(to left,   transparent 0 10px, var(--deco-pin) 10px 11px, transparent 11px 14px, var(--deco-pin) 14px 15px, transparent 15px),
+    linear-gradient(to bottom, transparent 0 10px, var(--deco-pin) 10px 11px, transparent 11px 14px, var(--deco-pin) 14px 15px, transparent 15px),
+    linear-gradient(to top,    transparent 0 10px, var(--deco-pin) 10px 11px, transparent 11px 14px, var(--deco-pin) 14px 15px, transparent 15px),
+    /* LEFT tower — bottom-left, stepping down toward the centre */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='420'%3E%3Cg fill='none' stroke='%23b08d2a' stroke-linecap='square'%3E%3Cpath d='M0 420V46h30v50h22v54h24v64h28v74h34v132' stroke-width='2' opacity='.5'/%3E%3Cpath d='M6 46 15 20 24 46M15 20V4' stroke-width='1.6' opacity='.44'/%3E%3Cpath d='M10 420V60M20 420V60M31 420V102M41 420V102M53 420V156M64 420V156M77 420V220M90 420V220M105 420V294M121 420V294' stroke-width='1' opacity='.26'/%3E%3Cpath d='M0 74h30M0 104h52M0 134h52M0 164h76M0 194h76M0 228h104M0 258h104M0 302h138M0 332h138M0 362h138M0 392h138' stroke-width='1' opacity='.2'/%3E%3C/g%3E%3C/svg%3E"),
+    /* RIGHT tower — the identical drawing flipped through its own axis */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='420'%3E%3Cg transform='translate(200 0) scale(-1 1)'%3E%3Cg fill='none' stroke='%23b08d2a' stroke-linecap='square'%3E%3Cpath d='M0 420V46h30v50h22v54h24v64h28v74h34v132' stroke-width='2' opacity='.5'/%3E%3Cpath d='M6 46 15 20 24 46M15 20V4' stroke-width='1.6' opacity='.44'/%3E%3Cpath d='M10 420V60M20 420V60M31 420V102M41 420V102M53 420V156M64 420V156M77 420V220M90 420V220M105 420V294M121 420V294' stroke-width='1' opacity='.26'/%3E%3Cpath d='M0 74h30M0 104h52M0 134h52M0 164h76M0 194h76M0 228h104M0 258h104M0 302h138M0 332h138M0 362h138M0 392h138' stroke-width='1' opacity='.2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+  background-size: auto, auto, auto, auto, 200px 420px, 200px 420px;
+  background-position: 0 0, 0 0, 0 0, 0 0, left bottom, right bottom;
+}
+/* On a narrow screen two 200px towers would meet in the middle, so they
+   shrink to keep the centre channel open. */
+@media (max-width: 780px) {
+  .theme-deco body::before {
+    background-size: auto, auto, auto, auto, 124px 260px, 124px 260px;
+  }
+}

@@ -1,2 +1,213 @@
 /* renaissance — theme upgrades. Loaded AFTER globals.css (see src/app/layout.tsx),
    so equal-specificity rules here win over the base definitions. */
+
+/* =======================================================================
+   RENAISSANCE — one theme, two lightings
+
+   Day and night used to be two different designs: day was a painting in a
+   gilt frame, night was a plain dark card deck. They are now the SAME room
+   at two times of day — the same backdrop painting, the same mitred
+   gold-leaf frames, the same corner volutes and gilt header rules, just on
+   a darker canvas after dusk.
+
+   Three things happen in this file:
+     1. the varnish "stain" over the day backdrop comes off;
+     2. the backdrop painting gets hung in dark mode too;
+     3. every day-mode frame treatment gets a night counterpart.
+======================================================================= */
+
+/* ---------- 1 · the varnish stain comes off ----------
+   The day ::after used to stack a warm centre-bloom falling away to a deep
+   sienna vignette, plus a craquelure turbulence blotch, on top of the
+   painting — which read as dirt on the picture rather than age. What is
+   left is only the linen weave of the canvas: an even, unaccented grain at
+   the same strength everywhere, so the painting reads clean edge to edge. */
+.theme-renaissance:not(.dark) body::after {
+  opacity: 1;
+  mix-blend-mode: normal;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(60, 34, 14, 0.035) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(0deg,  rgba(60, 34, 14, 0.030) 0 1px, transparent 1px 3px);
+  background-size: auto, auto;
+}
+/* Night gets the identical weave, threads picked out in light instead of
+   dark. No vignette here either — same surface, opposite lighting. */
+.theme-renaissance.dark body::after {
+  opacity: 1;
+  mix-blend-mode: normal;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(243, 229, 197, 0.030) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(0deg,  rgba(243, 229, 197, 0.026) 0 1px, transparent 1px 3px);
+  background-size: auto, auto;
+}
+
+/* ---------- 2 · the painting, cleaned and re-hung ----------
+   With the varnish gone the day picture can come up a little and lose most
+   of its sepia cast. It is a painting on the wall now, not a stain. */
+.theme-renaissance:not(.dark) body::before {
+  inset: 0;
+  background: none;
+  background-image: url("https://s.hdnux.com/photos/01/55/16/21/28632153/3/rawImage.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  filter: sepia(0.16) saturate(0.94) contrast(0.97) brightness(1.02);
+  opacity: 0.32;
+  animation: none;
+  transform: translateZ(0);
+}
+/* The same canvas after dark: the gallery lights are down, so the painting
+   is dimmed and cooled rather than removed. Night and day are now
+   recognisably the same wall. If the image ever fails to load, the aged
+   --bg and the weave still carry the theme on their own. */
+.theme-renaissance.dark body::before {
+  inset: 0;
+  background: none;
+  background-image: url("https://s.hdnux.com/photos/01/55/16/21/28632153/3/rawImage.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  filter: sepia(0.30) saturate(0.80) contrast(1.02) brightness(0.52);
+  opacity: 0.34;
+  animation: none;
+  transform: translateZ(0);
+}
+
+/* ---------- 3 · night palette, re-cut to match the day ----------
+   Day reads accent = venetian red, accent-2 = gold leaf. Night had those
+   two roles swapped, which is why its chips, rules and frames looked like
+   another theme entirely. Same roles now, each colour lifted just enough to
+   hold on a dark ground — plus the gold-leaf moulding gradient the day
+   frames are built from, mixed for lamplight. */
+:root.theme-renaissance.dark {
+  color-scheme: dark;
+  --bg:           #191009;             /* the unlit gallery wall */
+  --paper:        rgba(244, 234, 208, 0.07);
+  --paper-2:      rgba(244, 234, 208, 0.11);
+  --ink:          #f4e7c9;
+  --ink-soft:     #cdb896;
+  --muted:        #a08a67;
+  --muted-2:      #6f5d3f;
+  --rule:         rgba(243, 229, 197, 0.18);
+  --rule-soft:    rgba(243, 229, 197, 0.08);
+  --accent:       #d1502f;             /* venetian red, lit */
+  --accent-soft:  rgba(209, 80, 47, 0.16);
+  --accent-2:     #cfa552;             /* gold leaf */
+  --hl:           rgba(209, 80, 47, 0.12);
+  --up:           #8fb85a;
+  --down:         #d1502f;
+  --grad-from:    #8a5a2e;
+  --grad-via:     #d1502f;
+  --grad-to:      #edd18a;
+  --glass:        rgba(30, 21, 13, 0.86);
+  --glass-border: rgba(207, 165, 82, 0.42);
+  --glow:         rgba(207, 165, 82, 0.28);
+  --shadow-card:  0 2px 0 rgba(255, 240, 205, 0.06),
+                  0 16px 30px -14px rgba(0, 0, 0, 0.72),
+                  0 40px 70px -34px rgba(0, 0, 0, 0.80);
+  --shadow-hover: 0 2px 0 rgba(255, 240, 205, 0.10),
+                  0 22px 40px -14px rgba(0, 0, 0, 0.78),
+                  0 54px 90px -38px rgba(0, 0, 0, 0.86);
+  /* the same beaten-gold moulding as the day frames, one stop darker so it
+     reads as metal under lamplight instead of a glowing strip */
+  --gilt: linear-gradient(138deg,
+            #e8d29a 0%, #b78e3c 16%, #6d4f18 34%,
+            #cdaa5e 52%, #8d691d 74%, #553d12 100%);
+}
+
+/* Night card = the day card's panel-in-a-mitred-frame, identical in
+   construction: an 8px transparent border painted with the gold-leaf
+   gradient (border-box) over a panel face (padding-box). The face stays
+   slightly translucent and blurs what is behind it, so the painting
+   whispers through the way it does between the frames in day mode. */
+.theme-renaissance.dark .card {
+  border: 8px solid transparent;
+  border-radius: 2px;
+  /* longhands only — `.is-collapsed` must keep control of padding-bottom */
+  padding-top: 1.25rem;
+  padding-left: 1.35rem;
+  padding-right: 1.35rem;
+  background:
+    linear-gradient(178deg, rgba(38, 27, 16, 0.90) 0%, rgba(24, 17, 10, 0.92) 100%) padding-box,
+    var(--gilt) border-box;
+  outline: 1px solid rgba(0, 0, 0, 0.55);
+  box-shadow: var(--shadow-card);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+          backdrop-filter: blur(14px) saturate(120%);
+}
+.theme-renaissance.dark .card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+/* The corner volutes, carved into the moulding itself — the same four
+   scrolls as day mode, each rotated into its corner. */
+.theme-renaissance.dark .card::before {
+  display: block;
+  content: "";
+  position: absolute;
+  inset: -8px;                          /* = the moulding, i.e. the border box */
+  pointer-events: none;
+  /* the base .card::before is a 1px gradient RING (padding + xor mask); the
+     flourishes need the whole box, so both are switched off here */
+  padding: 0;
+  border-radius: 3px;
+  -webkit-mask: none;
+          mask: none;
+  -webkit-mask-composite: add;
+          mask-composite: add;
+  background-repeat: no-repeat;
+  background-size: 26px 26px;
+  background-position: left top, right top, right bottom, left bottom;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cg fill='none' stroke='%23f3e2ab' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M2 12.5C2 6.7 6.7 2 12.5 2'/%3E%3Cpath d='M2 21C2 10.5 10.5 2 21 2'/%3E%3Cpath d='M6.4 6.4 2.6 2.6'/%3E%3Cpath d='M11.4 5.2 10 2.2'/%3E%3Cpath d='M5.2 11.4 2.2 10'/%3E%3C/g%3E%3Ccircle cx='7.4' cy='7.4' r='2.2' fill='%238a6522'/%3E%3Ccircle cx='6.8' cy='6.8' r='1.1' fill='%23f8eec8'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cg transform='rotate(90 13 13)'%3E%3Cg fill='none' stroke='%23f3e2ab' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M2 12.5C2 6.7 6.7 2 12.5 2'/%3E%3Cpath d='M2 21C2 10.5 10.5 2 21 2'/%3E%3Cpath d='M6.4 6.4 2.6 2.6'/%3E%3Cpath d='M11.4 5.2 10 2.2'/%3E%3Cpath d='M5.2 11.4 2.2 10'/%3E%3C/g%3E%3Ccircle cx='7.4' cy='7.4' r='2.2' fill='%238a6522'/%3E%3Ccircle cx='6.8' cy='6.8' r='1.1' fill='%23f8eec8'/%3E%3C/g%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cg transform='rotate(180 13 13)'%3E%3Cg fill='none' stroke='%23f3e2ab' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M2 12.5C2 6.7 6.7 2 12.5 2'/%3E%3Cpath d='M2 21C2 10.5 10.5 2 21 2'/%3E%3Cpath d='M6.4 6.4 2.6 2.6'/%3E%3Cpath d='M11.4 5.2 10 2.2'/%3E%3Cpath d='M5.2 11.4 2.2 10'/%3E%3C/g%3E%3Ccircle cx='7.4' cy='7.4' r='2.2' fill='%238a6522'/%3E%3Ccircle cx='6.8' cy='6.8' r='1.1' fill='%23f8eec8'/%3E%3C/g%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cg transform='rotate(270 13 13)'%3E%3Cg fill='none' stroke='%23f3e2ab' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M2 12.5C2 6.7 6.7 2 12.5 2'/%3E%3Cpath d='M2 21C2 10.5 10.5 2 21 2'/%3E%3Cpath d='M6.4 6.4 2.6 2.6'/%3E%3Cpath d='M11.4 5.2 10 2.2'/%3E%3Cpath d='M5.2 11.4 2.2 10'/%3E%3C/g%3E%3Ccircle cx='7.4' cy='7.4' r='2.2' fill='%238a6522'/%3E%3Ccircle cx='6.8' cy='6.8' r='1.1' fill='%23f8eec8'/%3E%3C/g%3E%3C/svg%3E");
+  opacity: .8;
+}
+/* the rabbet — the dark line where the panel drops behind the moulding,
+   plus the shadow the frame throws across the top of the picture */
+.theme-renaissance.dark .card::after {
+  display: block;
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 1;
+  background: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.55),
+    inset 0 4px 14px -4px rgba(0, 0, 0, 0.45);
+}
+.theme-renaissance.dark .card-bare {
+  border-radius: 2px;
+  border: 1px solid var(--rule);
+  background: rgba(243, 229, 197, 0.05);
+}
+/* the gilt rule under each header, brightest at its centre like a lit
+   moulding — same construction as day */
+.theme-renaissance.dark .headrule {
+  padding-bottom: .55rem;
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg,
+    transparent 0%, #8d691d 10%, #e2c88c 50%, #8d691d 90%, transparent 100%) 1;
+}
+/* Painted lettering, not pressed type — the same inscriptional tracking and
+   old-style figures as day, with the highlight flipped to a cast shadow. */
+.theme-renaissance.dark .font-display {
+  letter-spacing: 0.04em;
+  font-variant-numeric: oldstyle-nums proportional-nums;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.55);
+}
+.theme-renaissance.dark .label,
+.theme-renaissance.dark .metalabel {
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  color: var(--muted);
+}
+.theme-renaissance.dark .dot {
+  width: 10px; height: 10px;
+  background: radial-gradient(circle at 32% 30%, #fdf1c8, #c9a24a 55%, #6e4a1e);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 0 10px var(--glow);
+}
