@@ -446,6 +446,73 @@ function WeightChart({ entries }: { entries: WeightEntry[] }) {
   );
 }
 
+// A compact progress ring for an intake counter. It replaces the old
+// full-width bar: same information, a fraction of the vertical space, which is
+// what keeps the card from regrowing the empty strip at its foot. Clicking it
+// reveals a small goal field, since the goal is otherwise set in another app
+// and there'd be no way to correct a stale one.
+function IntakeRing({
+  value, goal, over, onGoal, unit, tone = "var(--accent)",
+}: {
+  value: number;
+  goal: number;
+  over: boolean;
+  onGoal: (v: string) => void;
+  unit: string;
+  tone?: string;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState("");
+  const has = Number.isFinite(goal) && goal > 0;
+  const pct = has ? Math.min(100, (value / goal) * 100) : 0;
+  const colour = over ? "var(--down)" : tone;
+
+  if (editing) {
+    return (
+      <form
+        onSubmit={(e) => { e.preventDefault(); onGoal(draft.trim()); setEditing(false); }}
+        className="flex items-center gap-1"
+      >
+        <input
+          autoFocus
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={() => { onGoal(draft.trim()); setEditing(false); }}
+          placeholder={unit === "g" ? "160" : "2200"}
+          inputMode="numeric"
+          className="w-14 bg-[var(--rule-soft)] rounded-lg px-2 py-1 font-mono tabular-nums text-[12px] text-ink focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+          aria-label={`Goal (${unit})`}
+        />
+      </form>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => { setDraft(has ? String(goal) : ""); setEditing(true); }}
+      title={has ? `Goal ${goal} ${unit} — click to change` : `Set a ${unit} goal`}
+      aria-label={has ? `Goal ${goal} ${unit}` : `Set a ${unit} goal`}
+      className="relative h-9 w-9 shrink-0 rounded-full transition hover:opacity-80"
+      style={{
+        background: has
+          ? `conic-gradient(${colour} ${pct * 3.6}deg, var(--rule-soft) ${pct * 3.6}deg)`
+          : "var(--rule-soft)",
+      }}
+    >
+      {/* Punch the middle out so the ring is a ring, not a pie. */}
+      <span
+        className="absolute inset-[3.5px] rounded-full grid place-items-center"
+        style={{ background: "var(--paper)" }}
+      >
+        <span className="font-mono text-[9px] tabular-nums" style={{ color: has ? colour : "var(--muted-2)" }}>
+          {has ? `${Math.round(pct)}` : "–"}
+        </span>
+      </span>
+    </button>
+  );
+}
+
 export function BodyCard() {
   const supabase = useMemo(() => createClient(), []);
   const [state, setState] = useState<BodyState>(DEFAULT);
@@ -489,6 +556,54 @@ export function BodyCard() {
     })();
     return () => { cancelled = true; };
   }, [supabase]);
+
+  // Realtime can MISS an update: the socket drops when a phone sleeps or the
+  // tab is backgrounded, and anything written while it was down never arrives —
+  // which is why a weight entered on another device sometimes never showed up.
+  // Re-read the row whenever the tab becomes visible or regains focus, so a
+  // device always catches up on whatever it slept through.
+  useEffect(() => {
+    if (!userId) return;
+    let cancelled = false;
+    const resync = async () => {
+      if (document.hidden) return;
+      const { data, error } = await supabase
+        .from("body_profile")
+        .select("data,updated_at")
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (cancelled || error || !data?.data) return;
+      // Ignore the echo of our own most recent write.
+      if (data.updated_at && data.updated_at === lastOwnUpdate.current) return;
+      const remote = coerce(data.data);
+      // NOTE the merge direction. `mergeBody` deliberately keeps the LOCAL
+      // scalars, because during normal editing this device is the source of
+      // truth for the field it just changed. A resync is the opposite case:
+      // we're catching up on what ANOTHER device did, so the remote scalars
+      // win. Weight entries are still unioned by date either way, so nothing
+      // logged offline is lost.
+      setState((local) => ({ ...mergeBody(local, remote), ...{
+        calorieGoal: remote.calorieGoal,
+        proteinGoal: remote.proteinGoal,
+        workoutA: remote.workoutA,
+        workoutB: remote.workoutB,
+        plan: remote.plan,
+        calsDate: remote.calsDate,
+        calsTotal: remote.calsTotal,
+        proteinTotal: remote.proteinTotal,
+      } }));
+      if (data.updated_at) lastOwnUpdate.current = data.updated_at;
+    };
+    const onVis = () => { if (!document.hidden) resync(); };
+    document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("focus", resync);
+    resync();
+    return () => {
+      cancelled = true;
+      document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("focus", resync);
+    };
+  }, [supabase, userId]);
 
   // Realtime: when Device A writes, B picks it up here without a refresh.
   useEffect(() => {
@@ -588,6 +703,15 @@ export function BodyCard() {
   const calsToday = state.calsDate === today ? state.calsTotal : 0;
   const proteinToday = state.calsDate === today ? state.proteinTotal : 0;
 
+  // Goals are no longer edited here (they live in the nutrition app), but the
+  // stored values still drive the ring and the "X left" readout.
+  const goalNum = Number(state.calorieGoal);
+  const hasGoal = Number.isFinite(goalNum) && goalNum > 0;
+  const proteinGoalNum = Number(state.proteinGoal);
+  const hasProteinGoal = Number.isFinite(proteinGoalNum) && proteinGoalNum > 0;
+  const calsOver = hasGoal ? Math.max(0, calsToday - goalNum) : 0;
+  const proteinOver = hasProteinGoal ? Math.max(0, proteinToday - proteinGoalNum) : 0;
+
   function addCals(e: React.FormEvent) {
     e.preventDefault();
     const raw = calDraft.trim();
@@ -684,21 +808,32 @@ export function BodyCard() {
         <HabitTracker />
       </div>
 
-      {/* Intake — ONE compact row. Goals were removed (they're set in the
-          user's nutrition app now), which also removed the progress bars and
-          the whole third column of workout templates. What's left is just the
-          two counters and their + inputs, on a single line, so the card ends
-          right after them instead of trailing empty space. */}
+      {/* Intake — one compact row, with each counter's ring and remaining
+          count restored to its LEFT. The goal fields themselves stay gone (set
+          in the nutrition app), so the goal is read from whatever is already
+          stored in the blob; click the ring to correct it if it ever drifts.
+          The ring replaces the old full-width bar deliberately — it carries
+          the same information in a fraction of the height, which is what keeps
+          the card from growing dead space at the bottom again. */}
       <div className="mt-4 pt-3.5 border-t rule flex flex-wrap items-center gap-x-7 gap-y-3">
-        <div className="flex items-baseline gap-2">
-          <span className="label">Today</span>
-        </div>
+        <span className="label">Today</span>
 
         {/* Calories */}
         <div className="flex items-center gap-2.5">
+          <IntakeRing
+            value={calsToday}
+            goal={goalNum}
+            over={calsOver > 0}
+            onGoal={(v) => setState((st) => ({ ...st, calorieGoal: v }))}
+            unit="kcal"
+          />
           <div className="flex items-baseline gap-1.5">
             <span className="font-mono tabular-nums text-xl text-ink leading-none">{calsToday.toLocaleString()}</span>
-            <span className="font-mono text-[11px] uppercase tracking-wider text-muted">kcal</span>
+            <span className={`font-mono text-[11px] uppercase tracking-wider ${calsOver > 0 ? "text-down font-semibold" : "text-muted"}`}>
+              {!hasGoal ? "kcal" : calsOver > 0
+                ? `${calsOver.toLocaleString()} over`
+                : `${(goalNum - calsToday).toLocaleString()} left`}
+            </span>
           </div>
           <form onSubmit={addCals} className="flex items-center gap-1">
             <input
@@ -719,9 +854,21 @@ export function BodyCard() {
 
         {/* Protein */}
         <div className="flex items-center gap-2.5">
+          <IntakeRing
+            value={proteinToday}
+            goal={proteinGoalNum}
+            over={false}
+            tone="var(--up)"
+            onGoal={(v) => setState((st) => ({ ...st, proteinGoal: v }))}
+            unit="g"
+          />
           <div className="flex items-baseline gap-1.5">
             <span className="font-mono tabular-nums text-xl text-ink leading-none">{proteinToday}</span>
-            <span className="font-mono text-[11px] uppercase tracking-wider text-muted">g protein</span>
+            <span className={`font-mono text-[11px] uppercase tracking-wider ${proteinOver > 0 ? "text-up font-semibold" : "text-muted"}`}>
+              {!hasProteinGoal ? "g protein" : proteinOver > 0
+                ? `${proteinOver} g over`
+                : `${proteinGoalNum - proteinToday} g left`}
+            </span>
           </div>
           <form onSubmit={addProtein} className="flex items-center gap-1">
             <input

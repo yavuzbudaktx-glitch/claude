@@ -164,12 +164,18 @@
   padding-bottom: .5rem;
 }
 
-/* The header dot becomes a scarab. */
+/* The header dot is a PYRAMID — the one silhouette that says Egypt instantly,
+   and a shape no other theme uses. Drawn with a clip-path rather than an image
+   so it takes the accent colour and needs no asset. */
 .theme-subway .dot {
-  width: 11px; height: 9px;
-  border-radius: 46% 46% 40% 40% / 60% 60% 40% 40%;
-  background: linear-gradient(180deg, var(--accent-2), color-mix(in srgb, var(--accent-2) 55%, var(--ink)));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 45%, transparent), 0 0 10px var(--glow);
+  width: 13px;
+  height: 11px;
+  border-radius: 0;
+  background: linear-gradient(100deg,
+    var(--accent-2) 0 50%,
+    color-mix(in srgb, var(--accent-2) 62%, var(--ink)) 50% 100%);
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  box-shadow: none;
 }
 
 /* Inscriptional caps for headings — carved, not printed. */

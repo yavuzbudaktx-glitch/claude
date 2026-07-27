@@ -284,30 +284,52 @@
 .theme-newspaper.dark .btn-ghost:hover { background: rgba(244, 237, 224, 0.08); }
 
 /* ---- nameplate ----------------------------------------------------------
-   The Zaman Gazetesi wordmark, set where a newspaper actually puts its
-   nameplate: centred across the very top of the page, above the greeting,
-   with the kicker rule beneath it. An earlier version hung it beside the name
-   inline, but a wide wordmark at 0.26em just read as a caption — a masthead
-   has to span the measure to feel like a masthead.
+   The Zaman Gazetesi wordmark sits on the RIGHT of the greeting row, opposite
+   the name and in line with the clock — where a paper puts the publisher's
+   mark beside the headline. Two earlier placements were wrong: inline after
+   the name (far too small to read as a masthead) and centred above it (it
+   just looked like a banner ad).
 
-   It rides on `header::before` because the h1's own pseudo-elements are
-   already the kicker rule and the folio line. `background-size: contain` keeps
-   the wordmark's aspect ratio whatever its intrinsic dimensions are. */
-.theme-newspaper header::before {
-  content: "";
-  display: block;
-  height: 58px;
-  margin: 0 auto 0.55rem;
+   It rides on `header` as a background rather than a pseudo-element so it can
+   sit at full height without joining the flex row, and the header gets
+   right-padding so the greeting can never run underneath it. */
+.theme-newspaper header {
   background-image: url("https://images.seeklogo.com/logo-png/22/2/zaman-gazetesi-logo-png_seeklogo-224128.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: contain;
+  background-position: right top 6px;
+  background-size: auto 74px;
+  padding-right: 260px;
+  min-height: 86px;
 }
-/* The wordmark is dark ink on transparent, so on the night palette it would
-   disappear into the page — invert it to newsprint white. */
-.theme-newspaper.dark header::before {
-  filter: invert(1) brightness(1.6);
+/* Dark ink on transparent vanishes on the night palette, so it has to be
+   inverted — but `filter` on the header would invert the greeting with it.
+   The night version therefore moves to a pseudo-element carrying only the
+   logo, and the header's own background image is switched off. */
+.theme-newspaper.dark header {
+  background-image: none;
+  position: relative;
 }
-@media (max-width: 640px) {
-  .theme-newspaper header::before { height: 40px; }
+.theme-newspaper.dark header::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  right: 0;
+  width: 240px;
+  height: 74px;
+  background-image: url("https://images.seeklogo.com/logo-png/22/2/zaman-gazetesi-logo-png_seeklogo-224128.png");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: auto 74px;
+  filter: invert(1) brightness(1.7);
+  pointer-events: none;
 }
+/* No room beside the greeting on a phone — drop it rather than let it collide. */
+@media (max-width: 900px) {
+  .theme-newspaper header {
+    background-image: none;
+    padding-right: 0;
+    min-height: 0;
+  }
+  .theme-newspaper.dark header::after { display: none; }
+}
+

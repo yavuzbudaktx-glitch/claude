@@ -71,7 +71,18 @@ export function getTheme(): ThemeId {
 
 export function applyTheme(id: ThemeId) {
   applyThemeDom(id);
+  setThemeLocal(id);
+}
+
+// Write ONLY the paint cache. The cross-device source of truth is the `theme`
+// key in the synced prefs blob (see ThemeRestorer); this is what the inline
+// boot script reads to avoid a flash of the default theme on next load.
+export function setThemeLocal(id: ThemeId) {
   try { localStorage.setItem(KEY, id); } catch { /* noop */ }
+}
+
+export function isThemeId(v: unknown): v is ThemeId {
+  return typeof v === "string" && (VALID as string[]).includes(v);
 }
 
 // Apply theme to the DOM without writing to localStorage. Used for hover

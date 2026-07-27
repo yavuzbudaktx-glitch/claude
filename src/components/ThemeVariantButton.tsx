@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Palette, Check, Sparkles, SwatchBook } from "lucide-react";
 import { applyTheme, applyThemeDom, getTheme, THEMES, type ThemeId } from "@/lib/theme";
+import { usePref } from "@/components/PrefsProvider";
 
 const SWATCHES: Record<ThemeId, string[]> = {
   aurora:     ["#0284c7", "#22d3ee", "#d97706"],
@@ -36,6 +37,9 @@ export function ThemeVariantButton() {
   // render — so a mouse-leave from a hover preview restores the SAVED theme.
   const [theme, setTheme] = useState<ThemeId>(() => (typeof window === "undefined" ? "aurora" : getTheme()));
   const wrapRef = useRef<HTMLDivElement>(null);
+  // Picking a theme writes to the synced prefs blob as well as the local paint
+  // cache, so the choice follows you to every other device.
+  const [, setThemePref] = usePref<ThemeId | "">("theme", "");
 
   // Open the picker into whichever section the saved theme belongs to.
   useEffect(() => {
@@ -59,7 +63,8 @@ export function ThemeVariantButton() {
   }, [open]);
 
   function choose(id: ThemeId) {
-    applyTheme(id);
+    applyTheme(id);      // paints now + caches locally for the next boot
+    setThemePref(id);    // …and syncs to every other device
     setTheme(id);
     setOpen(false);
   }

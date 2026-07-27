@@ -234,6 +234,25 @@
 /* …except things that carry their own surface, which stay dark-on-light. */
 :root.theme-mono .headrule .btn-ghost,
 :root.theme-mono .headrule .chip { color: var(--ink); }
+/* Inactive tabs sit ON the ink slab, so they need the paper card under them
+   to stay legible — and a visible edge against that slab. */
+:root.theme-mono .headrule .chip {
+  background: var(--paper);
+  border-color: var(--bg);
+}
+/* …but an ACTIVE chip in that slab has to knock out the other way. The rule
+   above is `.headrule .chip` at specificity (0,4,0), which outranks the plain
+   `.chip-active` rule at (0,3,0) — so the selected tab was being painted ink
+   text on its own ink background, i.e. invisible. That's the calendar tab bug:
+   the card's tab row lives inside the header slab. */
+:root.theme-mono .headrule .chip-active {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--bg);
+  box-shadow: 2px 2px 0 var(--mono-ghost);
+}
+:root.theme-mono .headrule .chip-active:hover { color: var(--bg); }
+
 :root.theme-mono .headrule .btn-ghost { box-shadow: 2px 2px 0 var(--bg); }
 /* Title text in the slab: caps, letterspaced, heavy. Reads as a masthead slug. */
 :root.theme-mono .headrule > span {
