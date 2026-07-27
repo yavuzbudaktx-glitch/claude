@@ -110,6 +110,7 @@ export function TerminalFx() {
     let w = 0, h = 0, dpr = 1, cellW = 0, cellH = 0, rows = 0, size = 0;
     let steps = 0;
     let last = 0;
+    let idle = 0;                     // columns currently waiting to start
 
     const isTerminal = () => root.getAttribute("data-theme") === "terminal";
     const isLight = () => !root.classList.contains("dark");
@@ -149,20 +150,26 @@ export function TerminalFx() {
     }
 
     function respawn(c: Col, anywhere: boolean) {
-      const cl = CLASSES[(c.cls = pickClass())];
+      c.cls = pickClass();
+      const cl = CLASSES[c.cls];
       c.spd = rnd(cl.spd[0], cl.spd[1]);
       c.tail = Math.round(rnd(7, Math.min(22, Math.max(8, rows * 0.55))));
       c.acc = Math.random();
       if (anywhere) {
         // First frame: the field should already be running, not starting.
         c.row = Math.round(rnd(-c.tail, rows));
-        c.wait = Math.random() < 0.28 ? Math.round(rnd(4, 70)) : 0;
+        c.wait = Math.random() < 0.3 ? Math.round(rnd(2, 34)) : 0;
       } else {
         c.row = -Math.round(rnd(0, 5));
         // The idle gap between runs is what keeps the density modest — without
         // it every column is always busy and the page turns into wallpaper.
-        c.wait = Math.round(rnd(6, 95));
+        // But the gaps have to be SHORT, and there is a floor on how many
+        // columns may idle at once: the seeded columns finish their first
+        // (partial) run at roughly the same time, and without the floor the
+        // whole field went blank a few seconds after the theme loaded.
+        c.wait = idle > cols.length * 0.4 ? Math.round(rnd(0, 7)) : Math.round(rnd(3, 40));
       }
+      if (c.wait > 0) idle++;
     }
 
     function layout() {
@@ -178,7 +185,7 @@ export function TerminalFx() {
       // Cells are wider than the glyphs so the columns sit apart — an airier
       // grid than the movie's, which is what makes it liveable behind text.
       size = w < 560 ? 12 : w < 1100 ? 13 : 14;
-      cellW = Math.round(size * 1.62);
+      cellW = Math.round(size * 1.45);
       cellH = Math.round(size * 1.25);
       rows = Math.ceil(h / cellH);
 
@@ -189,6 +196,7 @@ export function TerminalFx() {
 
       const n = Math.max(1, Math.floor(w / cellW));
       const pad = (w - (n - 1) * cellW) / 2;
+      idle = 0;
       cols = Array.from({ length: n }, (_, i) => {
         const c: Col = { x: Math.round(pad + i * cellW), row: 0, acc: 0, spd: 0, tail: 0, cls: 0, wait: 0 };
         respawn(c, true);
@@ -202,7 +210,7 @@ export function TerminalFx() {
       for (let k = 0; k < n; k++) {
         for (let i = 0; i < cols.length; i++) {
           const c = cols[i];
-          if (c.wait > 0) { c.wait--; continue; }
+          if (c.wait > 0) { c.wait--; if (c.wait === 0) idle--; continue; }
           c.acc += c.spd;
           while (c.acc >= 1) {
             c.acc -= 1;
@@ -260,9 +268,8 @@ export function TerminalFx() {
         ctx = c.getContext("2d");
       }
       layout();
-      if (reduce) {
-        paint();
-      } else {
+      paint();                      // the field is already running on frame one
+      if (!reduce) {
         last = 0;
         raf = requestAnimationFrame(step);
       }
@@ -292,7 +299,9 @@ export function TerminalFx() {
     const mo = new MutationObserver(sync);
     mo.observe(root, { attributes: true, attributeFilter: ["data-theme", "class"] });
 
-    const onResize = () => { if (active) { layout(); if (reduce) paint(); } };
+    // Resizing a canvas wipes it, so paint the new grid straight away rather
+    // than leaving the backdrop blank until the next tick lands.
+    const onResize = () => { if (active) { layout(); paint(); } };
     const onVis = () => {
       if (document.hidden) {
         if (raf != null) { cancelAnimationFrame(raf); raf = null; }

@@ -1,2 +1,372 @@
 /* mono — theme upgrades. Loaded AFTER globals.css (see src/app/layout.tsx),
    so equal-specificity rules here win over the base definitions. */
+
+/* ---------------------------------------------------------------------------
+   MONO — THE PRESS PROOF
+
+   The base mono is honest brutalism: black, white, 2px rules, hard shadows.
+   Correct, but too plain — it reads as "unstyled" rather than "designed". So
+   this keeps the constraint that IS the identity (no colour at all, ever, only
+   black / white / grey) and spends everything on print craft instead:
+
+     · a fixed slug bar top and bottom and registration targets at the four page
+       corners, so the whole viewport reads as a plate on press;
+     · newsprint paper tooth + a faint crosshatch under everything;
+     · a risograph halftone wash rising out of the bottom-right of the page, and
+       a second halftone wedge inside each card corner;
+     · a STARK inverted header block bleeding to the card's frame edges;
+     · hairline against heavy: a 2.5px ink frame with a 1px keyline set inside
+       it, and a two-pass offset shadow (ink, then a grey second impression) so
+       every panel looks slightly misregistered;
+     · registration-target status dots and press-down chips/buttons.
+
+   Hand-drawn ink energy is welcome here, but this is NOT the comic theme —
+   there is no colour, no outline lettering and no speech-balloon geometry.
+--------------------------------------------------------------------------- */
+
+/* Greyscale-only palette extras. Everything decorative below pulls from these,
+   which is how the theme stays strictly monochrome in both modes. */
+:root.theme-mono {
+  --mono-hair:     rgba(0, 0, 0, 0.30);      /* the hairline half of the contrast */
+  --mono-hatch:    rgba(0, 0, 0, 0.055);     /* crosshatch under the page */
+  --mono-dot:      rgba(0, 0, 0, 0.55);      /* halftone screen */
+  --mono-ghost:    #c9c9c9;                  /* the misregistered second impression */
+  --mono-plate:    rgba(0, 0, 0, 0.04);      /* paper falloff inside a panel */
+}
+:root.theme-mono.dark {
+  --mono-hair:     rgba(255, 255, 255, 0.32);
+  --mono-hatch:    rgba(255, 255, 255, 0.05);
+  --mono-dot:      rgba(255, 255, 255, 0.42);
+  --mono-ghost:    #4d4d4d;
+  --mono-plate:    rgba(255, 255, 255, 0.04);
+}
+
+/* ---------------------------------------------------------------------------
+   THE PAGE AS A PLATE
+   Two things in globals.css have to be undone first. It blanks body::before for
+   mono but leaves the aurora blur(80px) on it, so the filter and inset get
+   reset below or every texture turns to soup. And it paints body itself opaque
+   — which buries a z-index:-1 pseudo, because body is not a stacking context so
+   the layer escapes to the root and lands BEHIND body's own background. html
+   already carries var(--bg), so body goes back to transparent.
+--------------------------------------------------------------------------- */
+:root.theme-mono body { background: transparent; }
+
+:root.theme-mono body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  filter: none;
+  animation: none;
+  opacity: 1;
+  background-color: transparent;
+  background-image:
+    /* 1 — heavy slug bar across the top of the plate */
+    linear-gradient(var(--ink), var(--ink)),
+    /* 2 — and a hairline just under it: the whole heavy/thin idea in 8px */
+    linear-gradient(var(--mono-hair), var(--mono-hair)),
+    /* 3 — thin bar closing the plate at the bottom */
+    linear-gradient(var(--ink), var(--ink)),
+    /* 4-7 — registration targets pinned at the four corners. Mid-grey stroke
+       so one data URI serves both light and dark without changing colour. */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cg fill='none' stroke='%23909090' stroke-width='1'%3E%3Cpath d='M10 0v6M10 14v6M0 10h6M14 10h6'/%3E%3Ccircle cx='10' cy='10' r='4.5'/%3E%3C/g%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cg fill='none' stroke='%23909090' stroke-width='1'%3E%3Cpath d='M10 0v6M10 14v6M0 10h6M14 10h6'/%3E%3Ccircle cx='10' cy='10' r='4.5'/%3E%3C/g%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cg fill='none' stroke='%23909090' stroke-width='1'%3E%3Cpath d='M10 0v6M10 14v6M0 10h6M14 10h6'/%3E%3Ccircle cx='10' cy='10' r='4.5'/%3E%3C/g%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cg fill='none' stroke='%23909090' stroke-width='1'%3E%3Cpath d='M10 0v6M10 14v6M0 10h6M14 10h6'/%3E%3Ccircle cx='10' cy='10' r='4.5'/%3E%3C/g%3E%3C/svg%3E"),
+    /* 8-9 — crosshatch. Two 1px passes at ±45°, barely there; it gives the
+       white a direction so it stops looking like an empty div. */
+    repeating-linear-gradient(45deg, var(--mono-hatch) 0 1px, transparent 1px 10px),
+    repeating-linear-gradient(-45deg, var(--mono-hatch) 0 1px, transparent 1px 10px),
+    /* 10 — newsprint tooth */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='170' height='170' filter='url(%23p)' opacity='0.09'/%3E%3C/svg%3E");
+  background-repeat:
+    no-repeat, no-repeat, no-repeat,
+    no-repeat, no-repeat, no-repeat, no-repeat,
+    repeat, repeat, repeat;
+  background-size:
+    100% 8px,
+    100% 1px,
+    100% 3px,
+    20px 20px, 20px 20px, 20px 20px, 20px 20px,
+    auto, auto,
+    170px 170px;
+  background-position:
+    0 0,
+    0 13px,
+    0 100%,
+    28px 34px,
+    right 28px top 34px,
+    left 28px bottom 30px,
+    right 28px bottom 30px,
+    0 0, 0 0, 0 0;
+}
+
+/* The risograph wash. A 45° halftone screen — two offset dot grids — masked so
+   it blooms out of the bottom-right corner and is gone by mid-page. This is the
+   one gesture that makes mono look printed rather than rendered. */
+:root.theme-mono body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  mix-blend-mode: normal;
+  opacity: 0.85;
+  background-image:
+    radial-gradient(var(--mono-dot) 0.9px, transparent 1.2px),
+    radial-gradient(var(--mono-dot) 0.9px, transparent 1.2px);
+  background-size: 7px 7px, 7px 7px;
+  background-position: 0 0, 3.5px 3.5px;
+  -webkit-mask-image: radial-gradient(118% 66% at 84% 112%, #000 0%, rgba(0, 0, 0, 0.45) 36%, transparent 72%);
+          mask-image: radial-gradient(118% 66% at 84% 112%, #000 0%, rgba(0, 0, 0, 0.45) 36%, transparent 72%);
+}
+
+/* ---------------------------------------------------------------------------
+   PANELS
+--------------------------------------------------------------------------- */
+:root.theme-mono .card {
+  /* `isolation` makes the card a stacking context so the halftone wedge in
+     ::after can sit at z-index -1 — above the panel's own paper, below every
+     word of text. Legibility is not negotiable. */
+  isolation: isolate;
+  border: 2.5px solid var(--ink);
+  border-radius: 0;
+  background-color: var(--paper);
+  background-image:
+    /* plate mark, bottom-left — the little target a printer trims to */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14'%3E%3Cg fill='none' stroke='%23909090' stroke-width='0.9'%3E%3Cpath d='M7 0v4M7 10v4M0 7h4M10 7h4'/%3E%3Ccircle cx='7' cy='7' r='3'/%3E%3C/g%3E%3C/svg%3E"),
+    /* paper tooth inside the panel */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='q'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='150' height='150' filter='url(%23q)' opacity='0.07'/%3E%3C/svg%3E"),
+    /* the sheet sits a touch heavier at the foot */
+    linear-gradient(180deg, transparent 55%, var(--mono-plate));
+  background-repeat: no-repeat, repeat, no-repeat;
+  background-size: 14px 14px, 150px 150px, 100% 100%;
+  background-position: left 9px bottom 9px, 0 0, 0 0;
+  /* Two impressions: solid ink, then a grey ghost offset further out. That is
+     what misregistration actually looks like, and it is why the panel reads as
+     printed instead of merely bordered. */
+  box-shadow:
+    5px 5px 0 0 var(--ink),
+    10px 10px 0 0 var(--mono-ghost);
+  transition: transform .12s steps(2, end), box-shadow .12s steps(2, end);
+}
+
+/* The 1px keyline set inside the 2.5px frame. globals.css hides this pseudo for
+   mono and leaves a mask-composite ring on it, so all of that gets undone. */
+:root.theme-mono .card::before {
+  display: block;
+  content: "";
+  position: absolute;
+  inset: 6px;
+  padding: 0;
+  border: 1px solid var(--mono-hair);
+  border-radius: 0;
+  background: none;
+  -webkit-mask: none;
+          mask: none;
+  -webkit-mask-composite: source-over;
+          mask-composite: add;
+  opacity: 1;
+  pointer-events: none;
+}
+
+/* Halftone wedge in the panel's bottom-right, same screen as the page wash but
+   finer. Behind the text (z-index -1), never over it. */
+:root.theme-mono .card::after {
+  display: block;
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    radial-gradient(var(--mono-dot) 0.8px, transparent 1.1px),
+    radial-gradient(var(--mono-dot) 0.8px, transparent 1.1px);
+  background-size: 6px 6px, 6px 6px;
+  background-position: 0 0, 3px 3px;
+  -webkit-mask-image: radial-gradient(48% 62% at 100% 100%, #000 0%, rgba(0, 0, 0, 0.38) 42%, transparent 78%);
+          mask-image: radial-gradient(48% 62% at 100% 100%, #000 0%, rgba(0, 0, 0, 0.38) 42%, transparent 78%);
+  transition: opacity .2s ease;
+}
+/* Hover lifts the sheet off the bed; the two impressions spread apart. The
+   stepped timing is deliberate — ink either lands or it doesn't. */
+:root.theme-mono .card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow:
+    8px 8px 0 0 var(--ink),
+    15px 15px 0 0 var(--mono-ghost);
+}
+:root.theme-mono .card:hover::after { opacity: 0.8; }
+/* Press: straight down onto the paper, both impressions collapse to nothing. */
+:root.theme-mono .card:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 0 var(--ink), 0 0 0 0 var(--mono-ghost);
+}
+
+/* ---------------------------------------------------------------------------
+   THE INVERTED HEADER BLOCK
+   Bleeds past the card padding to the inside of the 2.5px frame, so it is a
+   solid ink slab with knocked-out type — the single loudest thing in the theme.
+--------------------------------------------------------------------------- */
+:root.theme-mono .headrule {
+  position: relative;
+  z-index: 1;                       /* over the keyline pseudo */
+  background: var(--ink);
+  color: var(--bg);
+  margin: -1.45rem -1.55rem 1.15rem;
+  padding: 0.5rem 1.55rem 0.45rem;
+  gap: 0.6rem;
+  border-bottom: 2.5px solid var(--ink);
+}
+/* Knock every descendant out to paper — the header's children come from
+   Card.tsx with their own colour classes (text-ink, text-muted-2, …) and would
+   otherwise vanish into the ink. */
+:root.theme-mono .headrule,
+:root.theme-mono .headrule * { color: var(--bg); }
+/* …except things that carry their own surface, which stay dark-on-light. */
+:root.theme-mono .headrule .btn-ghost,
+:root.theme-mono .headrule .chip { color: var(--ink); }
+:root.theme-mono .headrule .btn-ghost { box-shadow: 2px 2px 0 var(--bg); }
+/* Title text in the slab: caps, letterspaced, heavy. Reads as a masthead slug. */
+:root.theme-mono .headrule > span {
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-weight: 800;
+}
+:root.theme-mono .headrule .label { color: var(--bg); opacity: 0.72; }
+/* Collapsed cards tuck the slab back against the body (globals.css does this
+   with a lower-specificity rule that the margin above would otherwise beat). */
+:root.theme-mono .is-collapsed .headrule { margin-bottom: 0; }
+
+/* ---------------------------------------------------------------------------
+   TYPE — hairline against heavy, and a second grey impression
+--------------------------------------------------------------------------- */
+:root.theme-mono .font-display {
+  font-weight: 800;
+  letter-spacing: -0.055em;
+  /* the ghost impression, again — offset display type is the theme's signature */
+  text-shadow: 3px 3px 0 var(--mono-ghost);
+}
+/* No gradient in a monochrome theme; the masthead gets the offset instead. */
+:root.theme-mono .text-gradient {
+  background: none;
+  color: var(--ink);
+  -webkit-text-fill-color: var(--ink);
+  animation: none;
+  text-shadow: 3px 3px 0 var(--mono-ghost);
+}
+/* Small caps metadata, pushed to full brutalist tracking. */
+:root.theme-mono .label {
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  font-size: 10px;
+  color: var(--ink-soft);
+}
+/* The technical caption gets real fixed-width cells — it is the one place a
+   monospace belongs, and JetBrains Mono is already imported by globals.css. */
+:root.theme-mono .metalabel {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------------------
+   CONTROLS — everything presses into the paper
+--------------------------------------------------------------------------- */
+:root.theme-mono .dot {
+  width: 13px; height: 13px;
+  border-radius: 0;
+  box-shadow: none;
+  /* A registration target, not a glow dot: crosshair through an open ring.
+     Drawn in currentColor so it flips to paper automatically inside the
+     inverted header block, with no second definition to keep in sync. */
+  background-color: transparent;
+  background-image:
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(currentColor, currentColor),
+    radial-gradient(circle, transparent 0 3px, currentColor 3px 4.6px, transparent 4.6px);
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-size: 100% 1.6px, 1.6px 100%, 100% 100%;
+  background-position: center, center, center;
+}
+
+:root.theme-mono .chip {
+  border-radius: 0;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-family: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 5px 12px;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  box-shadow: 2px 2px 0 0 var(--ink);
+  transition: transform .1s steps(2, end), box-shadow .1s steps(2, end), background .1s ease, color .1s ease;
+}
+:root.theme-mono .chip:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 0 var(--ink);
+}
+:root.theme-mono .chip:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 0 var(--ink);
+}
+:root.theme-mono .chip-active {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+  box-shadow: 3px 3px 0 0 var(--mono-ghost);
+}
+:root.theme-mono .chip-active:hover {
+  color: var(--bg);
+  box-shadow: 5px 5px 0 0 var(--mono-ghost);
+}
+
+:root.theme-mono .btn-ghost {
+  border-radius: 0;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  box-shadow: 3px 3px 0 0 var(--ink);
+  transition: transform .1s steps(2, end), box-shadow .1s steps(2, end), background .1s ease, color .1s ease;
+}
+:root.theme-mono .btn-ghost:hover {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 0 var(--mono-ghost);
+}
+:root.theme-mono .btn-ghost:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 0 var(--ink);
+}
+
+/* Bare cards keep the plain heavy frame — no ghost, no halftone. They are the
+   quiet member of the family and the theme needs one. */
+:root.theme-mono .card-bare {
+  border-radius: 0;
+  border: 2px solid var(--mono-hair);
+  background: transparent;
+}
+:root.theme-mono .card-bare:hover { border-color: var(--ink); }
+
+/* Selection is ink, not accent — the palette has no accent to give. */
+:root.theme-mono ::selection { background: var(--ink); color: var(--bg); }
+
+@media (prefers-reduced-motion: reduce) {
+  :root.theme-mono .card,
+  :root.theme-mono .chip,
+  :root.theme-mono .btn-ghost { transition: none; }
+}

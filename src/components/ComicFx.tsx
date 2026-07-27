@@ -216,7 +216,12 @@ export function ComicFx() {
       // Nothing below this line touches the event: no preventDefault, no
       // stopPropagation, and the listener is registered passive so it
       // couldn't cancel anything even by mistake.
-      if (node && !reduce) watch(node);
+      if (node && !reduce) {
+        downX = e.clientX;
+        downY = e.clientY;
+        downAt = now;
+        watch(node);
+      }
     };
 
     // ---------- activation ----------
