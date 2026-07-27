@@ -51,7 +51,7 @@ export function TaskItem({
     overdue
       ? {
           spine: "var(--down)",
-          pill: "bg-[var(--down)] text-white",
+          pill: "bg-[var(--down)] text-on-accent",
           text: "var(--down)",
           bg: "color-mix(in srgb, var(--down) 8%, transparent)",
           label: daysLate === 1 ? "1 day late" : `${daysLate} days late`,
@@ -59,7 +59,7 @@ export function TaskItem({
       : today
         ? {
             spine: "var(--accent)",
-            pill: "bg-[var(--accent)] text-white",
+            pill: "bg-[var(--accent)] text-on-accent",
             text: "var(--accent)",
             bg: "color-mix(in srgb, var(--accent) 7%, transparent)",
             label: "today",

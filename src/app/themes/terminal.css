@@ -19,40 +19,59 @@
    the light/dark toggle could never override it and "day" was just night
    again. The fix is a light block at (0,3,0) via `:not(.dark)`, below. */
 
+/* Filled pills knock out to the page colour, not to white: this theme's accent
+   is bright phosphor green in BOTH modes, and white-on-#22ff77 is unreadable. */
+:root.theme-terminal { --on-accent: var(--bg); }
+
 :root.theme-terminal:not(.dark) {
   color-scheme: light;
-  --bg:           #e8e3d3;                  /* fanfold paper stock */
-  --paper:        #fbf9f1;
-  --paper-2:      #f2eddd;
-  --ink:          #16281d;                  /* ink green, near-black */
-  --ink-soft:     #2b4a37;
-  --muted:        #5a7565;
-  --muted-2:      #93a596;
-  --rule:         rgba(22, 40, 29, 0.30);
-  --rule-soft:    rgba(22, 40, 29, 0.10);
-  --accent:       #0f6b34;                  /* dark phosphor — 5.9:1 on paper */
-  --accent-soft:  rgba(15, 107, 52, 0.12);
-  --accent-2:     #9a5406;                  /* amber ribbon, second pass */
-  --hl:           rgba(15, 107, 52, 0.10);
-  --up:           #0f6b34;
-  --down:         #a3231b;
-  --grad-from:    #0f6b34;
-  --grad-via:     #0f6b34;
-  --grad-to:      #9a5406;
-  --glass:        #fbf9f1;
-  --glass-border: rgba(22, 40, 29, 0.32);
-  --glow:         rgba(15, 107, 52, 0.18);
-  /* Print has no bloom: a hairline of contact shadow, nothing else. */
-  --shadow-card:  0 1px 0 rgba(22, 40, 29, 0.10),
-                  0 12px 26px -22px rgba(22, 40, 29, 0.55);
-  --shadow-hover: 0 1px 0 rgba(22, 40, 29, 0.16),
-                  0 20px 40px -24px rgba(22, 40, 29, 0.62);
-  --aurora-1:     rgba(15, 107, 52, 0.05);
-  --aurora-2:     rgba(154, 84, 6, 0.05);
-  --aurora-3:     rgba(15, 107, 52, 0.04);
+  /* Day mode is a WHITE terminal, not beige fanfold paper — the paper stock
+     read as "old printout" rather than "terminal in a bright room". White
+     ground, green phosphor ink, green rules; the digital rain in TerminalFx
+     picks its colour up from --accent, so it turns green here automatically. */
+  --bg:           #ffffff;
+  --paper:        #ffffff;
+  --paper-2:      #f2fbf5;
+  --ink:          #08160d;                  /* near-black with a green cast */
+  --ink-soft:     #14522e;
+  --muted:        #3f7a56;
+  --muted-2:      #86ab96;
+  --rule:         rgba(13, 122, 61, 0.42);  /* green borders, per the brief */
+  --rule-soft:    rgba(13, 122, 61, 0.16);
+  --accent:       #0b7a3d;                  /* phosphor green, 5.2:1 on white */
+  --accent-soft:  rgba(11, 122, 61, 0.12);
+  --accent-2:     #067a5e;
+  --hl:           rgba(11, 122, 61, 0.10);
+  --up:           #0b7a3d;
+  --down:         #b3241a;
+  --grad-from:    #0b7a3d;
+  --grad-via:     #0b7a3d;
+  --grad-to:      #067a5e;
+  --glass:        #ffffff;
+  --glass-border: rgba(13, 122, 61, 0.45);
+  --glow:         rgba(11, 122, 61, 0.20);
+  /* A terminal window on a white desktop: a crisp edge, no bloom. */
+  --shadow-card:  0 1px 0 rgba(11, 122, 61, 0.10),
+                  0 10px 22px -20px rgba(8, 22, 13, 0.45);
+  --shadow-hover: 0 1px 0 rgba(11, 122, 61, 0.18),
+                  0 18px 36px -22px rgba(8, 22, 13, 0.5);
+  --aurora-1:     transparent;
+  --aurora-2:     transparent;
+  --aurora-3:     transparent;
   --aurora-4:     transparent;
-  --grain:        0.03;
+  --grain:        0.015;
 }
+/* Keep the white truly white — globals' aurora mesh would tint it. */
+.theme-terminal:not(.dark) body::before { background: none; animation: none; filter: none; }
+/* Green boxes: a solid 1px green rule all round instead of the glass border. */
+.theme-terminal:not(.dark) .card {
+  border: 1px solid var(--rule);
+  background: #ffffff;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+.theme-terminal:not(.dark) .card-bare,
+.theme-terminal:not(.dark) .btn-ghost,
+.theme-terminal:not(.dark) .chip { border-color: var(--rule); }
 
 /* ---------------------------------------------------------------------------
    THE TYPING LINE (greeting)

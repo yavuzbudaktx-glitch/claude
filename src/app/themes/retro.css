@@ -1,0 +1,437 @@
+/* retro — theme. Loaded AFTER globals.css (see src/app/layout.tsx),
+   so equal-specificity rules here win over the base definitions. */
+
+/* =======================================================================
+   RETRO PC — a beige box, 1993
+
+   Every card is a window: raised plastic face, four-line hard bevel (white
+   and light-grey top-left, grey and near-black bottom-right), a gradient
+   title bar with minimise / maximise / close boxes, and a sunken status bar
+   with a resize grip at the foot. Buttons and chips are chunky raised
+   plastic that physically sink on :active. The page behind them is a
+   dithered desktop pattern inside a CRT bezel, with the faintest scanlines
+   over the glass.
+
+   There is no pixel webfont to load, so the "pixel" look is a tight
+   monospace set uppercase with antialiasing switched OFF — Chromium renders
+   it with hard, aliased edges, which is exactly the 1993 texture. The small
+   chrome (window buttons, grip, window icon) is drawn as inline SVG at
+   exact pixel coordinates.
+
+   Light is the beige desk lamp version, dark is the same hardware at night
+   in a dark OS skin. Both are written out in full.
+======================================================================= */
+
+/* ---------- palette: beige plastic under a desk lamp ---------- */
+:root.theme-retro:not(.dark) {
+  color-scheme: light;
+  --bg:           #a89f8a;                 /* the desktop, not the window */
+  --paper:        #d9d2c0;                 /* window face */
+  --paper-2:      #e6e0d0;
+  --ink:          #14120c;
+  --ink-soft:     #33302a;
+  --muted:        #5f5a4c;
+  --muted-2:      #857f6d;
+  --rule:         rgba(20, 18, 12, 0.34);
+  --rule-soft:    rgba(20, 18, 12, 0.14);
+  --accent:       #000080;                 /* title-bar navy */
+  --accent-soft:  rgba(0, 0, 128, 0.12);
+  --accent-2:     #0a7c74;                 /* desktop teal */
+  --hl:           rgba(0, 0, 128, 0.10);
+  --up:           #10662f;
+  --down:         #9e1b1b;
+  --grad-from:    #000080;                 /* the title bar gradient IS the
+                                              theme gradient */
+  --grad-via:     #1084d0;
+  --grad-to:      #57a9e6;
+  --glass:        #d9d2c0;                 /* opaque plastic, never frosted */
+  --glass-border: #ffffff;
+  --glow:         rgba(0, 0, 128, 0.18);
+  --shadow-card:  none;                    /* the bevel does the work */
+  --shadow-hover: none;
+  --aurora-1: transparent; --aurora-2: transparent;
+  --aurora-3: transparent; --aurora-4: transparent;
+  --grain:        0;
+
+  /* hardware tones — the four bevel lines, the cast shadow, the desktop */
+  --r-face:  #d9d2c0;
+  --r-lt:    #ffffff;                      /* outer highlight  (top-left) */
+  --r-lt2:   #efeadb;                      /* inner highlight  (top-left) */
+  --r-dk2:   #8d8672;                      /* inner shadow (bottom-right) */
+  --r-dk:    #23201a;                      /* outer shadow (bottom-right) */
+  --r-cast:  rgba(20, 18, 12, 0.28);       /* hard drop shadow under a window */
+  --r-desk2: rgba(255, 255, 255, 0.09);    /* the dither dot on the desktop */
+  --r-scan:  rgba(20, 18, 12, 0.05);
+  --r-title: #ffffff;                      /* type on the title bar */
+  --r-title-dim: rgba(255, 255, 255, 0.72);
+
+  /* window chrome, drawn at exact pixel coordinates */
+  --r-btns: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='14'%3E%3Cg%3E%3Crect x='0' y='0' width='16' height='14' fill='%23d9d2c0'/%3E%3Crect x='0' y='0' width='16' height='1' fill='%23ffffff'/%3E%3Crect x='0' y='0' width='1' height='14' fill='%23ffffff'/%3E%3Crect x='0' y='13' width='16' height='1' fill='%2323201a'/%3E%3Crect x='15' y='0' width='1' height='14' fill='%2323201a'/%3E%3Crect x='4' y='9' width='8' height='2' fill='%2314120c'/%3E%3C/g%3E%3Cg%3E%3Crect x='17' y='0' width='16' height='14' fill='%23d9d2c0'/%3E%3Crect x='17' y='0' width='16' height='1' fill='%23ffffff'/%3E%3Crect x='17' y='0' width='1' height='14' fill='%23ffffff'/%3E%3Crect x='17' y='13' width='16' height='1' fill='%2323201a'/%3E%3Crect x='32' y='0' width='1' height='14' fill='%2323201a'/%3E%3Crect x='21' y='3' width='9' height='8' fill='none' stroke='%2314120c' stroke-width='1'/%3E%3Crect x='21' y='3' width='9' height='2' fill='%2314120c'/%3E%3C/g%3E%3Cg%3E%3Crect x='36' y='0' width='16' height='14' fill='%23d9d2c0'/%3E%3Crect x='36' y='0' width='16' height='1' fill='%23ffffff'/%3E%3Crect x='36' y='0' width='1' height='14' fill='%23ffffff'/%3E%3Crect x='36' y='13' width='16' height='1' fill='%2323201a'/%3E%3Crect x='51' y='0' width='1' height='14' fill='%2323201a'/%3E%3Cpath d='M40 4.5 46.5 11 M46.5 4.5 40 11' stroke='%2314120c' stroke-width='1.6'/%3E%3C/g%3E%3C/svg%3E");
+  --r-grip: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13'%3E%3Cg fill='%23ffffff'%3E%3Crect x='8' y='0' width='2' height='2'/%3E%3Crect x='8' y='4' width='2' height='2'/%3E%3Crect x='4' y='4' width='2' height='2'/%3E%3Crect x='8' y='8' width='2' height='2'/%3E%3Crect x='4' y='8' width='2' height='2'/%3E%3Crect x='0' y='8' width='2' height='2'/%3E%3C/g%3E%3Cg fill='%238d8672'%3E%3Crect x='10' y='2' width='2' height='2'/%3E%3Crect x='10' y='6' width='2' height='2'/%3E%3Crect x='6' y='6' width='2' height='2'/%3E%3Crect x='10' y='10' width='2' height='2'/%3E%3Crect x='6' y='10' width='2' height='2'/%3E%3Crect x='2' y='10' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E");
+  --r-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14'%3E%3Crect x='0.5' y='0.5' width='13' height='13' fill='%23efeadb' stroke='%2314120c'/%3E%3Crect x='1' y='1' width='12' height='3' fill='%23000080'/%3E%3Cg fill='%235f5a4c'%3E%3Crect x='3' y='6' width='8' height='1'/%3E%3Crect x='3' y='8' width='8' height='1'/%3E%3Crect x='3' y='10' width='5' height='1'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ---------- palette: the same box at 2am, dark OS skin ---------- */
+:root.theme-retro.dark {
+  color-scheme: dark;
+  --bg:           #121319;                 /* unlit desktop */
+  --paper:        #3a3a42;                 /* graphite plastic */
+  --paper-2:      #45454f;
+  --ink:          #eae7dc;
+  --ink-soft:     #c9c5b9;
+  --muted:        #948f85;
+  --muted-2:      #6d6a63;
+  --rule:         rgba(234, 231, 220, 0.28);
+  --rule-soft:    rgba(234, 231, 220, 0.12);
+  --accent:       #4f9df0;                 /* the blue the OS still glows */
+  --accent-soft:  rgba(79, 157, 240, 0.16);
+  --accent-2:     #2fb3a3;
+  --hl:           rgba(79, 157, 240, 0.14);
+  --up:           #4cc27a;
+  --down:         #ef6b5e;
+  --grad-from:    #101044;
+  --grad-via:     #2a5fa8;
+  --grad-to:      #4f9df0;
+  --glass:        #3a3a42;
+  --glass-border: #7c7d8c;
+  --glow:         rgba(79, 157, 240, 0.22);
+  --shadow-card:  none;
+  --shadow-hover: none;
+  --aurora-1: transparent; --aurora-2: transparent;
+  --aurora-3: transparent; --aurora-4: transparent;
+  --grain:        0;
+
+  --r-face:  #3a3a42;
+  --r-lt:    #83848f;
+  --r-lt2:   #575863;
+  --r-dk2:   #24242b;
+  --r-dk:    #0a0a0e;
+  --r-cast:  rgba(0, 0, 0, 0.55);
+  --r-desk2: rgba(255, 255, 255, 0.045);
+  --r-scan:  rgba(0, 0, 0, 0.16);
+  --r-title: #f2f0ea;
+  --r-title-dim: rgba(242, 240, 234, 0.70);
+
+  --r-btns: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='14'%3E%3Cg%3E%3Crect x='0' y='0' width='16' height='14' fill='%233a3a42'/%3E%3Crect x='0' y='0' width='16' height='1' fill='%2383848f'/%3E%3Crect x='0' y='0' width='1' height='14' fill='%2383848f'/%3E%3Crect x='0' y='13' width='16' height='1' fill='%230a0a0e'/%3E%3Crect x='15' y='0' width='1' height='14' fill='%230a0a0e'/%3E%3Crect x='4' y='9' width='8' height='2' fill='%23eae7dc'/%3E%3C/g%3E%3Cg%3E%3Crect x='17' y='0' width='16' height='14' fill='%233a3a42'/%3E%3Crect x='17' y='0' width='16' height='1' fill='%2383848f'/%3E%3Crect x='17' y='0' width='1' height='14' fill='%2383848f'/%3E%3Crect x='17' y='13' width='16' height='1' fill='%230a0a0e'/%3E%3Crect x='32' y='0' width='1' height='14' fill='%230a0a0e'/%3E%3Crect x='21' y='3' width='9' height='8' fill='none' stroke='%23eae7dc' stroke-width='1'/%3E%3Crect x='21' y='3' width='9' height='2' fill='%23eae7dc'/%3E%3C/g%3E%3Cg%3E%3Crect x='36' y='0' width='16' height='14' fill='%233a3a42'/%3E%3Crect x='36' y='0' width='16' height='1' fill='%2383848f'/%3E%3Crect x='36' y='0' width='1' height='14' fill='%2383848f'/%3E%3Crect x='36' y='13' width='16' height='1' fill='%230a0a0e'/%3E%3Crect x='51' y='0' width='1' height='14' fill='%230a0a0e'/%3E%3Cpath d='M40 4.5 46.5 11 M46.5 4.5 40 11' stroke='%23eae7dc' stroke-width='1.6'/%3E%3C/g%3E%3C/svg%3E");
+  --r-grip: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13'%3E%3Cg fill='%2383848f'%3E%3Crect x='8' y='0' width='2' height='2'/%3E%3Crect x='8' y='4' width='2' height='2'/%3E%3Crect x='4' y='4' width='2' height='2'/%3E%3Crect x='8' y='8' width='2' height='2'/%3E%3Crect x='4' y='8' width='2' height='2'/%3E%3Crect x='0' y='8' width='2' height='2'/%3E%3C/g%3E%3Cg fill='%2324242b'%3E%3Crect x='10' y='2' width='2' height='2'/%3E%3Crect x='10' y='6' width='2' height='2'/%3E%3Crect x='6' y='6' width='2' height='2'/%3E%3Crect x='10' y='10' width='2' height='2'/%3E%3Crect x='6' y='10' width='2' height='2'/%3E%3Crect x='2' y='10' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E");
+  --r-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14'%3E%3Crect x='0.5' y='0.5' width='13' height='13' fill='%23575863' stroke='%230a0a0e'/%3E%3Crect x='1' y='1' width='12' height='3' fill='%232a5fa8'/%3E%3Cg fill='%23c9c5b9'%3E%3Crect x='3' y='6' width='8' height='1'/%3E%3Crect x='3' y='8' width='8' height='1'/%3E%3Crect x='3' y='10' width='5' height='1'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ---------- type: aliased monospace, i.e. "pixels" ---------- */
+.theme-retro body {
+  font-family: "JetBrains Mono", ui-monospace, "Courier New", monospace;
+  /* the whole trick: no antialiasing, so every glyph edge lands on a whole
+     pixel and the type reads as a bitmap font */
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+  letter-spacing: 0;
+}
+.theme-retro .font-display {
+  font-family: "JetBrains Mono", ui-monospace, "Courier New", monospace !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.02em !important;
+}
+.theme-retro .label,
+.theme-retro .metalabel {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+}
+/* No gradient text on a 16-colour machine — a solid label with a hard
+   one-pixel-grid drop shadow, the way 90s software drew its splash type. */
+.theme-retro .text-gradient {
+  background: none !important;
+  -webkit-text-fill-color: var(--ink);
+  color: var(--ink);
+  text-shadow: 3px 3px 0 var(--r-cast);
+  animation: none;
+}
+
+/* ---------- the desktop ---------- */
+/* Opaque body would paint over the fixed backdrop layers; the desk colour
+   lives on <html> via --bg. */
+.theme-retro body { background: transparent; }
+
+/* Layer one: the tiled desktop pattern (a 4px two-tone dither, the pattern
+   every one of these machines shipped with) inside a sunken CRT bezel —
+   two hairlines inset from each page edge, dark then light, so the whole
+   page reads as a screen recessed into the plastic. */
+.theme-retro body::before {
+  inset: 0;
+  filter: none;
+  animation: none;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  background-color: transparent;
+  background-image:
+    linear-gradient(to right,  var(--r-dk) 0 1px, var(--r-lt) 1px 2px, transparent 2px),
+    linear-gradient(to left,   var(--r-lt) 0 1px, var(--r-dk) 1px 2px, transparent 2px),
+    linear-gradient(to bottom, var(--r-dk) 0 1px, var(--r-lt) 1px 2px, transparent 2px),
+    linear-gradient(to top,    var(--r-lt) 0 1px, var(--r-dk) 1px 2px, transparent 2px),
+    linear-gradient(45deg, var(--r-desk2) 25%, transparent 25% 75%, var(--r-desk2) 75%),
+    linear-gradient(45deg, var(--r-desk2) 25%, transparent 25% 75%, var(--r-desk2) 75%);
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat;
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 4px 4px, 4px 4px;
+  background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 2px 2px;
+}
+
+/* Layer two: the glass. A 3px scanline comb plus a soft corner vignette —
+   both kept very low so nothing loses contrast. */
+.theme-retro body::after {
+  opacity: 1;
+  mix-blend-mode: normal;
+  transform: translateZ(0);
+  background-image:
+    repeating-linear-gradient(to bottom, var(--r-scan) 0 1px, transparent 1px 3px),
+    radial-gradient(120% 100% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.22) 100%);
+  background-size: auto, auto;
+}
+
+/* ---------- cards are windows ---------- */
+/* Four inset lines = the classic raised bevel: white then light-grey on the
+   top-left, grey then near-black on the bottom-right. A hard offset cast
+   shadow lifts the window off the desktop. Padding leaves room for the
+   title bar above and the status bar below. */
+.theme-retro .card {
+  background: var(--r-face);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  border: 0;
+  border-radius: 0;
+  padding: 3px 12px 26px;
+  box-shadow:
+    inset -1px -1px 0 var(--r-dk),
+    inset  1px  1px 0 var(--r-lt),
+    inset -2px -2px 0 var(--r-dk2),
+    inset  2px  2px 0 var(--r-lt2),
+    4px 4px 0 var(--r-cast);
+  transition: none;
+}
+.theme-retro .card:hover {
+  transform: none;
+  box-shadow:
+    inset -1px -1px 0 var(--r-dk),
+    inset  1px  1px 0 var(--r-lt),
+    inset -2px -2px 0 var(--r-dk2),
+    inset  2px  2px 0 var(--r-lt2),
+    4px 4px 0 var(--r-cast);
+}
+.theme-retro .card::before { display: none; }
+
+/* The status bar along the foot of every window: a sunken well with the
+   resize grip pinned to its right corner. */
+.theme-retro .card::after {
+  content: "";
+  display: block;
+  position: absolute;
+  inset: auto 3px 3px 3px;
+  height: 18px;
+  border-radius: 0;
+  opacity: 1;
+  z-index: 0;
+  background-color: var(--r-face);
+  background-image: var(--r-grip);
+  background-repeat: no-repeat;
+  background-position: right 3px bottom 3px;
+  box-shadow:
+    inset  1px  1px 0 var(--r-dk2),
+    inset -1px -1px 0 var(--r-lt);
+}
+.theme-retro .card:hover::after { opacity: 1; }
+/* Content sits above the chrome. */
+.theme-retro .card > * { position: relative; z-index: 1; }
+
+.theme-retro .card-bare {
+  border: 0;
+  border-radius: 0;
+  background: var(--r-face);
+  padding: 1rem 1.1rem;
+  /* sunken, like a group box or a list well */
+  box-shadow:
+    inset  1px  1px 0 var(--r-dk2),
+    inset -1px -1px 0 var(--r-lt),
+    inset  2px  2px 0 var(--r-dk),
+    inset -2px -2px 0 var(--r-lt2);
+}
+
+/* ---------- the header row IS the title bar ---------- */
+.theme-retro .headrule {
+  margin: 0 -9px 14px;
+  padding: 3px 3px 3px 5px;
+  min-height: 22px;
+  gap: 6px;
+  background: linear-gradient(90deg, var(--grad-from), var(--grad-via) 62%, var(--grad-to));
+  border: 0;
+}
+.theme-retro .headrule > * { color: var(--r-title); }
+.theme-retro .headrule .font-display,
+.theme-retro .headrule h2,
+.theme-retro .headrule h3 {
+  color: var(--r-title);
+  font-size: 12.5px;
+  line-height: 16px;
+  letter-spacing: 0.06em !important;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35);
+}
+.theme-retro .headrule .label,
+.theme-retro .headrule .metalabel,
+.theme-retro .headrule .text-muted,
+.theme-retro .headrule .text-muted-2 { color: var(--r-title-dim); }
+/* minimise · maximise · close, riding at the right end of the bar */
+.theme-retro .headrule::after {
+  content: "";
+  flex: none;
+  margin-left: auto;
+  width: 52px; height: 14px;
+  background: var(--r-btns) no-repeat center / 52px 14px;
+  pointer-events: none;
+}
+/* A collapsed card is a window rolled up into its title bar. */
+.theme-retro .is-collapsed { padding-bottom: 3px; }
+.theme-retro .is-collapsed::after { display: none; }
+
+/* ---------- the window icon (the dot) ---------- */
+.theme-retro .dot {
+  width: 14px; height: 14px;
+  border-radius: 0;
+  background: var(--r-icon) no-repeat center / 14px 14px;
+  box-shadow: none;
+  flex: none;
+}
+
+/* ---------- chunky plastic controls ---------- */
+.theme-retro .btn-ghost,
+.theme-retro .chip {
+  border: 0;
+  border-radius: 0;
+  background: var(--r-face);
+  color: var(--ink);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  box-shadow:
+    inset -1px -1px 0 var(--r-dk),
+    inset  1px  1px 0 var(--r-lt),
+    inset -2px -2px 0 var(--r-dk2),
+    inset  2px  2px 0 var(--r-lt2);
+  transition: none;
+}
+.theme-retro .chip {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 12px;
+}
+.theme-retro .chip:hover { color: var(--ink); }
+/* Pressed in, and filled with a 50% dither the way a latched toolbar
+   button was drawn when there were only sixteen colours. */
+.theme-retro .chip-active,
+.theme-retro .chip-active:hover {
+  color: var(--ink);
+  background-color: var(--r-face);
+  background-image:
+    linear-gradient(45deg, var(--r-lt) 25%, transparent 25% 75%, var(--r-lt) 75%),
+    linear-gradient(45deg, var(--r-lt) 25%, transparent 25% 75%, var(--r-lt) 75%);
+  background-size: 2px 2px, 2px 2px;
+  background-position: 0 0, 1px 1px;
+  box-shadow:
+    inset  1px  1px 0 var(--r-dk2),
+    inset -1px -1px 0 var(--r-lt),
+    inset  2px  2px 0 var(--r-dk),
+    inset -2px -2px 0 var(--r-lt2);
+}
+/* Every control physically sinks: the bevel inverts and the face shifts one
+   pixel down and right. */
+.theme-retro .btn-ghost:active,
+.theme-retro .chip:active {
+  transform: translate(1px, 1px);
+  box-shadow:
+    inset  1px  1px 0 var(--r-dk2),
+    inset -1px -1px 0 var(--r-lt),
+    inset  2px  2px 0 var(--r-dk),
+    inset -2px -2px 0 var(--r-lt2);
+}
+.theme-retro .btn-ghost:hover {
+  background: var(--r-face);
+  color: var(--ink);
+  transform: none;
+  box-shadow:
+    inset -1px -1px 0 var(--r-dk),
+    inset  1px  1px 0 var(--r-lt),
+    inset -2px -2px 0 var(--r-dk2),
+    inset  2px  2px 0 var(--r-lt2);
+}
+.theme-retro .btn-primary {
+  border-radius: 0;
+  color: var(--ink);
+  background: var(--r-face);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  /* the default button carries an extra black keyline, as it always did */
+  box-shadow:
+    0 0 0 1px var(--r-dk),
+    inset -1px -1px 0 var(--r-dk),
+    inset  1px  1px 0 var(--r-lt),
+    inset -2px -2px 0 var(--r-dk2),
+    inset  2px  2px 0 var(--r-lt2);
+}
+.theme-retro .btn-primary:hover { filter: none; transform: none; }
+.theme-retro .btn-primary:active {
+  transform: translate(1px, 1px);
+  box-shadow:
+    0 0 0 1px var(--r-dk),
+    inset  1px  1px 0 var(--r-dk2),
+    inset -1px -1px 0 var(--r-lt),
+    inset  2px  2px 0 var(--r-dk),
+    inset -2px -2px 0 var(--r-lt2);
+}
+.theme-retro .kbd {
+  border-radius: 0;
+  border: 0;
+  color: var(--ink);
+  background: var(--r-face);
+  box-shadow:
+    inset -1px -1px 0 var(--r-dk),
+    inset  1px  1px 0 var(--r-lt),
+    inset -2px -2px 0 var(--r-dk2),
+    inset  2px  2px 0 var(--r-lt2);
+}
+.theme-retro .skeleton { border-radius: 0; }
+
+/* ---------- selection + focus ---------- */
+.theme-retro ::selection { background: var(--accent); color: #ffffff; }
+/* the dotted marching rectangle, drawn inside the control */
+.theme-retro *:focus-visible {
+  outline: 1px dotted var(--ink);
+  outline-offset: -4px;
+  border-radius: 0;
+}
+
+/* ---------- scrollbars: tracked, bevelled, square ---------- */
+.theme-retro ::-webkit-scrollbar { width: 15px; height: 15px; }
+.theme-retro ::-webkit-scrollbar-track {
+  background-color: var(--r-face);
+  background-image:
+    linear-gradient(45deg, var(--r-lt) 25%, transparent 25% 75%, var(--r-lt) 75%),
+    linear-gradient(45deg, var(--r-lt) 25%, transparent 25% 75%, var(--r-lt) 75%);
+  background-size: 2px 2px;
+  background-position: 0 0, 1px 1px;
+}
+.theme-retro ::-webkit-scrollbar-thumb {
+  border-radius: 0;
+  background: var(--r-face);
+  box-shadow:
+    inset -1px -1px 0 var(--r-dk),
+    inset  1px  1px 0 var(--r-lt),
+    inset -2px -2px 0 var(--r-dk2),
+    inset  2px  2px 0 var(--r-lt2);
+}
+.theme-retro ::-webkit-scrollbar-thumb:hover { background: var(--r-face); }
+
+/* Nothing here moves, but kill anything inherited for people who ask. */
+@media (prefers-reduced-motion: reduce) {
+  .theme-retro body::before,
+  .theme-retro body::after,
+  .theme-retro .text-gradient { animation: none; }
+}

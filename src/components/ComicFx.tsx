@@ -96,11 +96,12 @@ export function ComicFx() {
       const vw = window.innerWidth;
       const vh = window.innerHeight;
 
-      // Scale with the smaller viewport edge so a phone doesn't get a burst
-      // that covers the screen, then clamp both ends.
-      const size = Math.round(Math.max(116, Math.min(206, Math.min(vw, vh) * 0.3)));
-      const scale = 0.88 + Math.random() * 0.26;
-      const rot = (Math.random() * 2 - 1) * 13;
+      // SMALL. The first version was ~30% of the viewport, which the user found
+      // obtrusive rather than fun — this is a little confetti-sized mark near
+      // the cursor, not a full-screen event.
+      const size = Math.round(Math.max(46, Math.min(74, Math.min(vw, vh) * 0.075)));
+      const scale = 0.92 + Math.random() * 0.16;
+      const rot = (Math.random() * 2 - 1) * 8;
       const word = pick();
 
       // A star hanging half off the edge reads as a bug, so pull it inside.
@@ -112,7 +113,8 @@ export function ComicFx() {
 
       // Reduced motion gets a short static mark; comic.css swaps the
       // animation, this just makes it leave sooner.
-      const dur = reduce ? 320 : 620 + Math.round(Math.random() * 270);
+      // Quick, too: in and gone before it can distract from what you clicked.
+      const dur = reduce ? 240 : 380 + Math.round(Math.random() * 140);
 
       const node = document.createElement("div");
       node.className = "cfx-burst";
@@ -127,7 +129,7 @@ export function ComicFx() {
       node.style.setProperty("--cfx-dur", `${dur}ms`);
       // THWACK has to fit the same inner star as POW, so the type size comes
       // down with the letter count instead of spilling over the ink.
-      node.style.setProperty("--cfx-fs", `${(size * (0.325 - word.length * 0.021)).toFixed(1)}px`);
+      node.style.setProperty("--cfx-fs", `${(size * (0.40 - word.length * 0.023)).toFixed(1)}px`);
 
       // Paint order is DOM order: lines, ink rim, star, inner rim, core, word.
       part(node, "cfx-rays");

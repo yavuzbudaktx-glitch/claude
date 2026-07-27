@@ -110,7 +110,7 @@ export function EisenhowerMatrix({ userId }: { userId: string }) {
     <span className="inline-flex items-center gap-1.5">
       {overdueCount > 0 && (
         <span
-          className="inline-flex items-center gap-1 rounded-full px-2 py-[2px] font-mono text-[10px] uppercase tracking-wider text-white"
+          className="inline-flex items-center gap-1 rounded-full px-2 py-[2px] font-mono text-[10px] uppercase tracking-wider text-on-accent"
           style={{ background: "var(--down)" }}
           title={`${overdueCount} overdue`}
         >
@@ -178,7 +178,7 @@ export function EisenhowerMatrix({ userId }: { userId: string }) {
                   <span className="ml-auto inline-flex items-center gap-1">
                     {late > 0 && (
                       <span
-                        className="rounded-full px-1.5 font-mono text-[9.5px] text-white"
+                        className="rounded-full px-1.5 font-mono text-[9.5px] text-on-accent"
                         style={{ background: "var(--down)" }}
                         title={`${late} overdue here`}
                       >

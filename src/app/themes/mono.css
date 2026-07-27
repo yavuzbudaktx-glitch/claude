@@ -27,6 +27,10 @@
 /* Greyscale-only palette extras. Everything decorative below pulls from these,
    which is how the theme stays strictly monochrome in both modes. */
 :root.theme-mono {
+  /* The knockout colour for filled pills. In this theme --accent is pure black
+     in day and pure WHITE at night, so a hardcoded white label vanished at
+     night; --bg is always the exact opposite of --accent here. */
+  --on-accent:     var(--bg);
   --mono-hair:     rgba(0, 0, 0, 0.30);      /* the hairline half of the contrast */
   --mono-hatch:    rgba(0, 0, 0, 0.055);     /* crosshatch under the page */
   --mono-dot:      rgba(0, 0, 0, 0.55);      /* halftone screen */

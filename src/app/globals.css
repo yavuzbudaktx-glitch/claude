@@ -34,6 +34,11 @@
   --hl:           rgba(14, 116, 144, 0.10);
   --up:           #047857;
   --down:         #b91c1c;
+  /* Foreground for text sitting ON a filled --accent/--down surface (pills,
+     badges, active chips). Hardcoding `text-white` there breaks any theme
+     whose accent is itself light — mono's dark mode has --accent: #ffffff,
+     which made those labels white-on-white. */
+  --on-accent:    #ffffff;
 
   --grad-from:    #0c4a6e;                  /* sky-900 (deep navy) */
   --grad-via:     #0e7490;                  /* cyan-700 */
@@ -75,6 +80,7 @@
   --hl:           rgba(34, 211, 238, 0.13);
   --up:           #34d399;
   --down:         #f87171;
+  --on-accent:    #ffffff;
 
   --grad-from:    #0284c7;                  /* sky-600 */
   --grad-via:     #22d3ee;                  /* cyan-400 */
@@ -213,6 +219,7 @@ main { position: relative; z-index: 1; }
 .text-accent   { color: var(--accent); }
 .text-accent-2 { color: var(--accent-2); }
 .text-up       { color: var(--up); }
+.text-on-accent{ color: var(--on-accent); }
 .text-down     { color: var(--down); }
 
 .bg-paper      { background: var(--paper); }
@@ -257,7 +264,7 @@ main { position: relative; z-index: 1; }
 /* Sized to its CONTENT, not to the column — as a full-width bar it read as a
    big empty slab with a few words floating in it. */
 .readable-plate { display: block; }
-.theme-mosaic .readable-plate,
+.theme-ottoman .readable-plate,
 .theme-comic .readable-plate {
   /* It lives in a flex COLUMN, and a flex item is stretched to the full track
      width by default — which is why `inline-block` alone did nothing and the
@@ -764,7 +771,7 @@ main { position: relative; z-index: 1; }
    paints immediately and stays painted. (Galaxy / Mosaic / Stained Glass set
    no transform animation, so they need this explicitly.) */
 .theme-galaxy body::after,
-.theme-mosaic body::after,
+.theme-ottoman body::after,
 .theme-stainedglass body::after {
   transform: translateZ(0);
   will-change: transform;
@@ -1635,7 +1642,7 @@ main { position: relative; z-index: 1; }
    Light variant is the daylit panel; dark variant is the same panel on a
    midnight-blue wall, lit by one lamp.
 ======================================================================= */
-:root.theme-mosaic {
+:root.theme-ottoman {
   color-scheme: light;
   --bg:           #f5f5ef;             /* white glaze ground */
   --paper:        #ffffff;             /* clean tile face */
@@ -1667,7 +1674,7 @@ main { position: relative; z-index: 1; }
   --tile-glaze:   rgba(255, 255, 255, 0.62);
   --tile-craze:   rgba(19, 31, 44, 0.03);
 }
-:root.theme-mosaic.dark {
+:root.theme-ottoman.dark {
   color-scheme: dark;
   --bg:           #0b1421;             /* midnight wall behind the panel */
   --paper:        #121f30;
@@ -1694,7 +1701,7 @@ main { position: relative; z-index: 1; }
   --tile-glaze:   rgba(11, 20, 33, 0.72);
   --tile-craze:   rgba(232, 241, 246, 0.03);
 }
-.theme-mosaic body { background: transparent; }
+.theme-ottoman body { background: transparent; }
 /* The tile field. One 160px çini tile drawn as an inline SVG so the motif is
    actually a motif — grout joint, corner quarter-stars in turquoise, cobalt
    strapwork interlacing two squares, four coral carnation sprigs, and the
@@ -1703,7 +1710,7 @@ main { position: relative; z-index: 1; }
    so the pattern is symmetric about the page. (translateZ promotes the fixed
    layer so it paints on the first frame instead of after a scroll — same
    reason galaxy/stained glass do it on ::after.) */
-.theme-mosaic body::before {
+.theme-ottoman body::before {
   inset: 0;
   filter: none;
   animation: none;
@@ -1718,7 +1725,7 @@ main { position: relative; z-index: 1; }
    page-level type never has to compete with a star, plus the fine crazing
    you get in an old glaze. Same layer in both modes — only the veil colour
    flips, via --tile-glaze. */
-.theme-mosaic body::after {
+.theme-ottoman body::after {
   opacity: 1;
   mix-blend-mode: normal;
   background-image:
@@ -1730,8 +1737,8 @@ main { position: relative; z-index: 1; }
 }
 /* Dark: the same fired tile, but under a lamp — brighten the glaze colours so
    cobalt and turquoise still read as cobalt and turquoise on a night wall. */
-.theme-mosaic.dark body::before { filter: brightness(1.75) saturate(0.95); }
-.theme-mosaic .card {
+.theme-ottoman.dark body::before { filter: brightness(1.75) saturate(0.95); }
+.theme-ottoman .card {
   border-radius: 10px;
   background: var(--paper);
   -webkit-backdrop-filter: none; backdrop-filter: none;
@@ -1741,25 +1748,25 @@ main { position: relative; z-index: 1; }
   box-shadow: var(--shadow-card), inset 0 0 0 1px rgba(255, 255, 255, 0.6);
 }
 /* on the night wall the bevel is a glint off the glaze, not a white line */
-.theme-mosaic.dark .card {
+.theme-ottoman.dark .card {
   box-shadow: var(--shadow-card), inset 0 0 0 1px rgba(232, 241, 246, 0.10);
 }
-.theme-mosaic .card::before { display: none; }
-.theme-mosaic .card::after { display: none; }
-.theme-mosaic .card:hover { transform: none; box-shadow: var(--shadow-hover); border-color: var(--accent); }
-.theme-mosaic .card-bare {
+.theme-ottoman .card::before { display: none; }
+.theme-ottoman .card::after { display: none; }
+.theme-ottoman .card:hover { transform: none; box-shadow: var(--shadow-hover); border-color: var(--accent); }
+.theme-ottoman .card-bare {
   border-radius: 8px;
   background: var(--paper-2);
   border: 1.5px solid var(--rule);
 }
-.theme-mosaic .btn-ghost { border-radius: 8px; background: var(--paper); border: 1.5px solid var(--rule); }
-.theme-mosaic .chip { border-radius: 6px; border: 1.5px solid var(--rule); background: var(--paper); padding: 3px 9px; font-weight: 600; }
-.theme-mosaic .chip-active { background: var(--accent); color: #fff; border-color: var(--accent); }
-.theme-mosaic .headrule {
+.theme-ottoman .btn-ghost { border-radius: 8px; background: var(--paper); border: 1.5px solid var(--rule); }
+.theme-ottoman .chip { border-radius: 6px; border: 1.5px solid var(--rule); background: var(--paper); padding: 3px 9px; font-weight: 600; }
+.theme-ottoman .chip-active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.theme-ottoman .headrule {
   border-bottom: 1px dashed var(--rule);
   padding-bottom: .55rem;
 }
-.theme-mosaic .dot {
+.theme-ottoman .dot {
   width: 10px; height: 10px; border-radius: 2px;       /* a tiny ceramic chip */
   background:
     conic-gradient(from 45deg at 50% 50%,
@@ -1769,8 +1776,8 @@ main { position: relative; z-index: 1; }
       var(--accent-2) 270deg 360deg);
   box-shadow: 0 0 0 1.5px rgba(19,31,44,0.45);
 }
-.theme-mosaic .font-display { letter-spacing: -0.02em; font-weight: 800; }
-.theme-mosaic .text-gradient {
+.theme-ottoman .font-display { letter-spacing: -0.02em; font-weight: 800; }
+.theme-ottoman .text-gradient {
   background: linear-gradient(118deg, var(--accent), var(--accent-2) 50%, #c4402c);
   -webkit-background-clip: text; background-clip: text;
   animation: none;

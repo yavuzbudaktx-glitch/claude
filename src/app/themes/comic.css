@@ -101,8 +101,10 @@
    mask hides the middle, where the lines would otherwise converge into a
    solid ink blob under the star. `from var(--cfx-spin)` gives every burst a
    different line phase. */
+/* Speed lines pulled right in and faded down: at the new small size the old
+   long spokes were most of the visual noise the user objected to. */
 .cfx-rays {
-  inset: -34%;
+  inset: -18%;
   background: repeating-conic-gradient(
     from var(--cfx-spin),
     var(--cfx-ink, #111) 0 1.5deg,
@@ -112,7 +114,7 @@
       transparent 0 62%, #000 70%, #000 90%, transparent 100%);
           mask: radial-gradient(closest-side,
       transparent 0 62%, #000 70%, #000 90%, transparent 100%);
-  opacity: .8;
+  opacity: .42;
   animation: cfx-rays var(--cfx-dur) ease-out both;
 }
 

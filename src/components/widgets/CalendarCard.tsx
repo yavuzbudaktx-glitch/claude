@@ -420,14 +420,14 @@ export function CalendarCard() {
           {unreadCount > 0 && (
             <span
               aria-hidden
-              className={`absolute -top-[3px] -right-[3px] h-1.5 w-1.5 rounded-full ${tab === "inbox" ? "bg-white" : "bg-accent"}`}
+              className={`absolute -top-[3px] -right-[3px] h-1.5 w-1.5 rounded-full ${tab === "inbox" ? "bg-[var(--on-accent)]" : "bg-accent"}`}
               style={{ boxShadow: tab === "inbox" ? "none" : "0 0 6px var(--glow)" }}
             />
           )}
         </span>
         Inbox
         {unreadCount > 0 && (
-          <span className={`font-mono text-[10px] tabular-nums ${tab === "inbox" ? "text-white/90" : "text-accent"}`}>
+          <span className={`font-mono text-[10px] tabular-nums ${tab === "inbox" ? "text-on-accent" : "text-accent"}`}>
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         )}
