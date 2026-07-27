@@ -1,51 +1,64 @@
 /* galaxy — loaded AFTER globals.css, so equal-specificity rules win.
 
-   DAY MODE. Two problems were fixed here.
+   DAY MODE — "the last of the blue hour, seen from altitude".
 
-   1. It didn't exist. `:root.theme-galaxy` declares the night palette at
-      specificity (0,2,0), which outranks the global `.dark` block at (0,1,0),
-      so the light/dark toggle could never override it and "day" was just the
-      night sky again. The `:not(.dark)` block below sits at (0,3,0) and wins.
+   Three previous attempts and what killed each: a peach dawn with an orrery,
+   constellations and sparkles (childish); an engraved coordinate plate in
+   violet (wrong palette); the same plate in glacier blue (still a plate). The
+   chart idea is retired. This is a SKY, not a diagram — nothing is drawn on
+   it, nothing sparkles, and there is no instrument-panel furniture anywhere.
 
-   2. The COLOUR was wrong twice over. First attempt: a peach dawn with an
-      orrery and sparkles — too playful. Second: the same violet/lavender family
-      as night, which just read as a washed-out version of the dark theme.
-      This one drops purple entirely and goes cold — glacier blue and steel with
-      a near-black navy ink, the palette of an observatory dome at first light
-      rather than a nebula poster. Structure comes from an engraved coordinate
-      plate, not from decoration.
+   The scene: twenty minutes before sunrise at thirty-five thousand feet. The
+   air is deepest in the top-right corner, where a handful of stars have not
+   quite gone out; it thins down and across into clean high-altitude blue and
+   then into a wide band of airglow low on the page, where the sun is still
+   below the horizon and only throwing light up. The Milky Way survives as a
+   soft veil across the upper left — a haze, never a band with edges. That
+   veil is the only "galaxy" motif and it is deliberately almost subliminal.
 
-   Night mode is untouched. */
+   Legibility drove the composition: the header sits top-LEFT, so the deep air
+   is anchored top-RIGHT. The page never darkens under running text.
+
+   Night mode is untouched.
+
+   1. It also didn't exist until recently. `:root.theme-galaxy` declares the
+      night palette at specificity (0,2,0), which outranks the global `.dark`
+      block at (0,1,0), so the light/dark toggle could never override it. The
+      `:not(.dark)` block below sits at (0,3,0) and wins.
+
+   2. And there was a real rendering bug — see the long note at body::after. */
 
 :root.theme-galaxy:not(.dark) {
   color-scheme: light;
-  --bg:           #dfe7f0;                   /* glacier light */
-  --paper:        rgba(255, 255, 255, 0.72);
-  --paper-2:      rgba(255, 255, 255, 0.88);
-  --ink:          #0d1a2b;                   /* navy, near-black */
-  --ink-soft:     #2b4058;
-  --muted:        #5d7288;
-  --muted-2:      #93a5b8;
-  --rule:         rgba(13, 26, 43, 0.15);
-  --rule-soft:    rgba(13, 26, 43, 0.06);
-  --accent:       #0f6b8f;                   /* deep cerulean */
-  --accent-soft:  rgba(15, 107, 143, 0.12);
-  --accent-2:     #3d6b8a;                   /* steel */
-  --hl:           rgba(15, 107, 143, 0.09);
-  --up:           #0f6b5a;
-  --down:         #a83a3a;
-  --grad-from:    #123a5c;
-  --grad-via:     #0f6b8f;
-  --grad-to:      #7fa8c4;
-  --glass:        rgba(255, 255, 255, 0.64);
-  --glass-border: rgba(255, 255, 255, 0.86);
-  --glow:         rgba(15, 107, 143, 0.22);
-  --shadow-card:  0 12px 36px -18px rgba(13, 26, 43, 0.30),
-                  0 1px 2px rgba(13, 26, 43, 0.06),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.76);
-  --shadow-hover: 0 26px 60px -22px rgba(13, 26, 43, 0.38),
-                  0 3px 8px rgba(13, 26, 43, 0.10),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  --bg:           #dbe6f1;                   /* high air */
+  --paper:        rgba(255, 255, 255, 0.74);
+  --paper-2:      rgba(255, 255, 255, 0.90);
+  --ink:          #101c2e;                   /* night navy, near-black */
+  --ink-soft:     #2c405a;
+  --muted:        #4d6480;
+  --muted-2:      #33485e;                   /* dark enough to survive the sky */
+  --rule:         rgba(16, 28, 46, 0.15);
+  --rule-soft:    rgba(16, 28, 46, 0.06);
+  --accent:       #23518f;                   /* deep azure — the daylight
+                                                cousin of the night violet */
+  --accent-soft:  rgba(35, 81, 143, 0.12);
+  --accent-2:     #4a6f9c;                   /* steel */
+  --hl:           rgba(35, 81, 143, 0.09);
+  --up:           #16624f;
+  --down:         #a2373c;
+  --grad-from:    #141f45;                   /* zenith */
+  --grad-via:     #23518f;                   /* azure */
+  --grad-to:      #86aad0;                   /* thin air */
+  --glass:        rgba(255, 255, 255, 0.70);
+  --glass-border: rgba(255, 255, 255, 0.88);
+  --glow:         rgba(35, 81, 143, 0.22);
+  --shadow-card:  0 14px 40px -20px rgba(16, 28, 46, 0.34),
+                  0 1px 2px rgba(16, 28, 46, 0.07),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.80);
+  --shadow-hover: 0 28px 64px -24px rgba(16, 28, 46, 0.42),
+                  0 3px 8px rgba(16, 28, 46, 0.10),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.94);
+  /* the four-lobe aurora mesh is off; the sky below replaces it entirely */
   --aurora-1:     transparent;
   --aurora-2:     transparent;
   --aurora-3:     transparent;
@@ -53,76 +66,208 @@
   --grain:        0.03;
 }
 
-/* ---------- the sky ----------
-   A plain graded sky, painted not blurred (night leans on a 110px blur; these
-   gradients are already soft, so the filter and the nebula drift are off).
-   Cool the whole way down — the warm horizon was most of what read as twee. */
+/* ---------- the air ----------
+   Painted, not blurred: night leans on `filter: blur(110px)` plus the nebula
+   drift, and both are switched off here — these gradients are already soft and
+   the blur only cost a compositor layer. Three passes, back to front:
+
+     4  the air column   — a gentle vertical thinning, the base tone
+     3  the airglow      — an enormous flattened lobe centred below the fold;
+                            the sun is under the horizon and this is all you
+                            get of it. A whisper of warmth, no peach.
+     2  the Milky Way    — a broad, edgeless diagonal veil, barely a tone above
+                            the sky it lies on, leaning very slightly blue-
+                            violet so the night palette is still in the room.
+     1  the zenith       — deep air anchored off the top-right corner. This is
+                            the only saturated thing on the page and it sits
+                            where nothing is ever written. */
 .theme-galaxy:not(.dark) body::before {
   inset: 0;
   filter: none;
-  animation: none;
   transform: translateZ(0);
   background-color: transparent;
   background-image:
-    linear-gradient(180deg,
-      #b9cbdd 0%,
-      #cfdce8 30%,
-      #e2eaf2 62%,
-      #eef3f8 100%),
-    radial-gradient(78% 44% at 50% -8%, rgba(38, 74, 110, 0.26), transparent 72%);
+    radial-gradient(94% 80% at 90% -18%,
+      rgba(20, 54, 104, 0.66) 0%,
+      rgba(40, 82, 136, 0.42) 25%,
+      rgba(82, 124, 174, 0.19) 47%,
+      rgba(142, 176, 212, 0.05) 66%,
+      transparent 80%),
+    linear-gradient(114deg,
+      transparent 4%,
+      rgba(255, 255, 255, 0.10) 14%,
+      rgba(234, 239, 255, 0.34) 24%,
+      rgba(247, 250, 255, 0.46) 30%,
+      rgba(230, 237, 255, 0.30) 37%,
+      rgba(255, 255, 255, 0.08) 48%,
+      transparent 60%),
+    radial-gradient(155% 58% at 44% 118%,
+      rgba(255, 252, 246, 0.94) 0%,
+      rgba(230, 240, 250, 0.62) 30%,
+      rgba(210, 228, 244, 0.22) 52%,
+      transparent 70%),
+    linear-gradient(178deg,
+      #a9c2dc 0%,
+      #bbd0e4 24%,
+      #cfdeed 50%,
+      #e1ebf5 76%,
+      #eef4fa 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: 50% 0, 50% 0, 50% 118%, 50% 0;
+  animation: galaxyDayAir 96s ease-in-out infinite alternate;
 }
 
-/* ---------- the chart ----------
-   The curved grid of an old coordinate plate: meridians bowing away from a
-   pole off the top-right, parallels running across. Hairlines at very low
-   alpha, so it reads as an engraving under the content rather than a grid on
-   top of it. Star dust is drawn in indigo — white stars simply vanish on a
-   pale sky, which is why the night field can't just be reused. */
+/* The airglow breathes — and ONLY the airglow. A background-position keyframe
+   moves every layer in the list, so both frames restate all three positions
+   and change exactly one of them. Six percent of viewport height over a minute
+   and a half; you will never catch it moving. */
+@keyframes galaxyDayAir {
+  from { background-position: 50% 0, 50% 0, 50% 118%, 50% 0; }
+  to   { background-position: 50% 0, 50% 0, 50% 112%, 50% 0; }
+}
+
+/* ---------- the last stars ----------
+   THE BUG LIVED HERE. The old light rule replaced this element's
+   `background-image` and `background-repeat` and nothing else, so two things
+   leaked out of the night starfield rule in globals.css:
+
+     · `background-size`. The night rule declares a 32-entry list — 560px tiles
+       for the near stars, 260px for the mid layer, 130px for the far dust. CSS
+       pairs background layers with sizes BY INDEX, so the day theme's fifteen
+       layers were each crushed into a 560px or 260px box. Combined with the
+       day rule's own `background-repeat: no-repeat`, every layer painted once,
+       at star-tile scale, in the top-left corner: that hard-edged block of
+       stranded arcs was the "chart" fitting itself into a 260px square.
+
+     · `animation: starfield 200s linear infinite, twinkle 5.5s …`. starfield
+       animates `background-position` from `0 0` to `520px 900px`. Tiled layers
+       wrap and read as parallax; NO-REPEAT layers just walk off the page. So
+       the corner block also crawled down-and-right forever, while `twinkle`
+       breathed the whole page's opacity between 0.7 and 1.
+
+   Hence: background-size, -position, -repeat, animation, opacity and blend are
+   all stated explicitly below. The lesson generalises — overriding
+   `background-image` alone leaves every sibling longhand from the night rule
+   in force, and they are matched to the new layers by index.
+
+   (Two things that were NOT the cause and were checked: `.theme-galaxy body`
+   is already `background: transparent` in globals.css, so the fixed z-index:-1
+   pseudo-layers are not painted over; and `body::before`'s 110px blur is
+   correctly cancelled above.)
+
+   The design: two tiled depths of white pinpricks plus three brighter stars
+   with a soft bloom, all masked to the same top-right lobe as the deep air.
+   Where the sky brightens, the stars are already gone. */
 .theme-galaxy:not(.dark) body::after {
   opacity: 1;
   mix-blend-mode: normal;
   background-image:
-    /* the galactic band, laid across the plate at a shallow angle */
-    linear-gradient(102deg,
-      transparent 34%,
-      rgba(96, 130, 162, 0.14) 44%,
-      rgba(120, 156, 186, 0.20) 50%,
-      rgba(96, 130, 162, 0.14) 56%,
-      transparent 66%),
-    /* star dust — four sizes, sparse, all cool and dark enough to register */
-    radial-gradient(1.6px 1.6px at 12% 22%, rgba(16, 38, 62, 0.58), transparent 60%),
-    radial-gradient(1.2px 1.2px at 27% 61%, rgba(16, 38, 62, 0.44), transparent 60%),
-    radial-gradient(1.9px 1.9px at 44% 15%, rgba(16, 38, 62, 0.51), transparent 60%),
-    radial-gradient(1.1px 1.1px at 58% 74%, rgba(16, 38, 62, 0.37), transparent 60%),
-    radial-gradient(1.7px 1.7px at 71% 34%, rgba(16, 38, 62, 0.51), transparent 60%),
-    radial-gradient(1.2px 1.2px at 86% 58%, rgba(16, 38, 62, 0.41), transparent 60%),
-    radial-gradient(1.4px 1.4px at 93% 18%, rgba(16, 38, 62, 0.44), transparent 60%),
-    radial-gradient(1.1px 1.1px at 34% 88%, rgba(16, 38, 62, 0.34), transparent 60%),
-    radial-gradient(1.5px 1.5px at 65% 94%, rgba(16, 38, 62, 0.37), transparent 60%),
-    /* parallels */
-    repeating-linear-gradient(0deg,
-      transparent 0 118px,
-      rgba(18, 42, 68, 0.11) 118.4px 119.2px,
-      transparent 119.6px),
-    /* meridians, bowed by the ellipse so the plate has curvature */
-    radial-gradient(150% 150% at 118% -34%, transparent 0 30%, rgba(18, 42, 68,0.085) 30% 30.5%, transparent 30.5% 42%),
-    radial-gradient(150% 150% at 118% -34%, transparent 0 47%, rgba(18, 42, 68,0.085) 47% 47.5%, transparent 47.5% 60%),
-    radial-gradient(150% 150% at 118% -34%, transparent 0 64%, rgba(18, 42, 68,0.085) 64% 64.5%, transparent 64.5% 78%),
-    radial-gradient(150% 150% at 118% -34%, transparent 0 82%, rgba(18, 42, 68,0.075) 82% 82.5%, transparent 82.5% 96%);
-  background-repeat: no-repeat;
+    /* three that are still properly bright, each with its own halo */
+    radial-gradient(2.6px 2.6px at 74% 13%, rgba(255,255,255,0.98) 40%, transparent 100%),
+    radial-gradient(26px 26px at 74% 13%, rgba(255,255,255,0.26), transparent 62%),
+    radial-gradient(2.2px 2.2px at 91% 31%, rgba(244,248,255,0.92) 40%, transparent 100%),
+    radial-gradient(22px 22px at 91% 31%, rgba(255,255,255,0.20), transparent 62%),
+    radial-gradient(2.4px 2.4px at 58% 25%, rgba(255,255,255,0.90) 40%, transparent 100%),
+    radial-gradient(22px 22px at 58% 25%, rgba(255,255,255,0.18), transparent 62%),
+    /* near field — sparse, 480px tile */
+    radial-gradient(1.7px 1.7px at 14% 21%, rgba(255,255,255,0.90) 45%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 63% 8%,  rgba(255,255,255,0.84) 45%, transparent 100%),
+    radial-gradient(1.8px 1.8px at 37% 47%, rgba(255,255,255,0.88) 45%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 84% 62%, rgba(240,246,255,0.82) 45%, transparent 100%),
+    radial-gradient(1.6px 1.6px at 8%  74%, rgba(255,255,255,0.80) 45%, transparent 100%),
+    radial-gradient(1.4px 1.4px at 52% 88%, rgba(255,255,255,0.78) 45%, transparent 100%),
+    radial-gradient(1.7px 1.7px at 92% 36%, rgba(255,255,255,0.86) 45%, transparent 100%),
+    /* far dust — 240px tile, denser, dimmer */
+    radial-gradient(1.1px 1.1px at 11% 42%, rgba(255,255,255,0.62) 45%, transparent 100%),
+    radial-gradient(1.0px 1.0px at 33% 12%, rgba(255,255,255,0.54) 45%, transparent 100%),
+    radial-gradient(1.1px 1.1px at 57% 33%, rgba(255,255,255,0.58) 45%, transparent 100%),
+    radial-gradient(1.0px 1.0px at 78% 19%, rgba(255,255,255,0.50) 45%, transparent 100%),
+    radial-gradient(1.1px 1.1px at 24% 68%, rgba(255,255,255,0.56) 45%, transparent 100%),
+    radial-gradient(1.0px 1.0px at 66% 79%, rgba(255,255,255,0.48) 45%, transparent 100%),
+    radial-gradient(1.1px 1.1px at 89% 88%, rgba(255,255,255,0.54) 45%, transparent 100%),
+    radial-gradient(1.0px 1.0px at 45% 57%, rgba(255,255,255,0.46) 45%, transparent 100%);
+  background-repeat:
+    no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat,
+    repeat, repeat, repeat, repeat, repeat, repeat, repeat,
+    repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat;
+  background-size:
+    100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%,
+    480px 480px, 480px 480px, 480px 480px, 480px 480px, 480px 480px, 480px 480px, 480px 480px,
+    240px 240px, 240px 240px, 240px 240px, 240px 240px, 240px 240px, 240px 240px, 240px 240px, 240px 240px;
+  background-position: 0 0;
+  /* Only where the air is deep. The mask is the same lobe as the zenith
+     gradient, so the stars end exactly where the sky starts to wash out. */
+  -webkit-mask-image: radial-gradient(104% 88% at 84% -10%, #000 0%, rgba(0,0,0,0.78) 34%, rgba(0,0,0,0.28) 58%, transparent 80%);
+          mask-image: radial-gradient(104% 88% at 84% -10%, #000 0%, rgba(0,0,0,0.78) 34%, rgba(0,0,0,0.28) 58%, transparent 80%);
+  /* 480px over five and a half minutes — about a pixel and a half a second.
+     Both tile sizes divide 480, so it wraps seamlessly and never walks. The
+     six fixed layers are the named stars and stay put by being no-repeat at
+     100% size, so a position shift of one tile leaves them off-frame — which
+     is why they sit FIRST in the list and get their own `0 0` below. */
+  animation: galaxyDayStars 330s linear infinite;
+}
+@keyframes galaxyDayStars {
+  from {
+    background-position:
+      0 0, 0 0, 0 0, 0 0, 0 0, 0 0,
+      0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0,
+      0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
+  }
+  to {
+    background-position:
+      0 0, 0 0, 0 0, 0 0, 0 0, 0 0,
+      480px 480px, 480px 480px, 480px 480px, 480px 480px, 480px 480px, 480px 480px, 480px 480px,
+      480px 480px, 480px 480px, 480px 480px, 480px 480px, 480px 480px, 480px 480px, 480px 480px, 480px 480px;
+  }
 }
 
-/* Headline keeps the violet→cyan sweep, just deeper so it doesn't glow. */
+/* ---------- the furniture ----------
+   Everything below is deliberately quiet. The sky is the idea; the UI is a set
+   of clean white plates laid on it. */
+
+/* Zenith → azure → thin air. Same three tones as the sky, read top-down. */
 .theme-galaxy:not(.dark) .text-gradient {
-  background: linear-gradient(118deg, #123a5c, #0f6b8f 48%, #7fa8c4);
+  background: linear-gradient(118deg, #141f45, #23518f 46%, #6d95c0);
   -webkit-background-clip: text; background-clip: text;
 }
-/* Cards sit on the chart like a plate laid over it: crisp, low-lift, no bloom. */
+
+/* Plates, not glass boxes: a crisp white sheet with a cool shadow so it reads
+   as sitting a few millimetres above the air rather than dissolving into it. */
 .theme-galaxy:not(.dark) .card {
   border-radius: 18px;
-  background-image: linear-gradient(180deg, rgba(255,255,255,0.42), transparent 46%);
+  background-image: linear-gradient(178deg,
+    rgba(255, 255, 255, 0.50) 0%,
+    rgba(255, 255, 255, 0.10) 42%,
+    rgba(214, 228, 243, 0.16) 100%);
+  box-shadow:
+    0 1px 1px rgba(16, 28, 46, 0.06),
+    0 16px 42px -22px rgba(16, 28, 46, 0.36),
+    0 40px 70px -46px rgba(35, 81, 143, 0.40),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
 }
+.theme-galaxy:not(.dark) .card:hover {
+  box-shadow:
+    0 1px 1px rgba(16, 28, 46, 0.07),
+    0 28px 62px -24px rgba(16, 28, 46, 0.40),
+    0 56px 88px -48px rgba(35, 81, 143, 0.52),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+/* The header dot keeps the ringed-planet idea from night, lit from the same
+   direction as the sky and in the day palette. */
 .theme-galaxy:not(.dark) .dot {
-  background: radial-gradient(circle at 34% 30%, #ffffff, #0f6b8f 58%, #0d1a2b);
-  box-shadow: 0 0 0 3px rgba(15,107,143,0.14);
+  background: radial-gradient(circle at 34% 28%, #ffffff, #4a7cb4 46%, #141f45);
+  box-shadow:
+    0 0 0 1px rgba(35, 81, 143, 0.28),
+    0 0 0 3.5px rgba(35, 81, 143, 0.10),
+    0 1px 3px rgba(16, 28, 46, 0.22);
+}
+
+/* Motion off on request — the sky and the stars stay exactly where they are. */
+@media (prefers-reduced-motion: reduce) {
+  .theme-galaxy:not(.dark) body::before,
+  .theme-galaxy:not(.dark) body::after {
+    animation: none;
+  }
 }
