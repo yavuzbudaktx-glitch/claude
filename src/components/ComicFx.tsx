@@ -135,9 +135,21 @@ export function ComicFx() {
       part(node, "cfx-star");
       part(node, "cfx-core-shell");
       part(node, "cfx-core");
-      part(node, "cfx-word").textContent = word;
+      const text = document.createElement("i");
+      text.className = "cfx-text";
+      text.textContent = word;
+      part(node, "cfx-word").appendChild(text);
 
       layer.appendChild(node);
+
+      // Which face actually rendered depends on the machine — Impact is
+      // narrow, the fallbacks are not — so the only reliable way to keep a
+      // long word inside its star is to measure what we got and condense it.
+      // Costs one forced layout per burst, at most a few times a second, and
+      // it happens before the first painted frame so nothing jumps.
+      const fits = size * 0.8;
+      const got = text.offsetWidth;
+      if (got > fits) node.style.setProperty("--cfx-fit", (fits / got).toFixed(3));
 
       // A timer, not `animationend`: animationend never arrives if the
       // animation is interrupted or the tab is hidden mid-flight, and a timer

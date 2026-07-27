@@ -1,2 +1,269 @@
 /* comic — theme upgrades. Loaded AFTER globals.css (see src/app/layout.tsx),
    so equal-specificity rules here win over the base definitions. */
+
+/* =======================================================================
+   CLICK BURST — the "POW!" that fires on every tap while the comic theme
+   is on. The nodes are built imperatively by src/components/ComicFx.tsx;
+   everything about how they LOOK lives here so the theme owns its own ink.
+
+   A burst is four clipped layers plus the word, painted in DOM order (no
+   z-index anywhere — siblings paint in order, which is exactly the stack
+   we want):
+
+     .cfx-rays        radiating speed lines, masked to a ring so they only
+                      exist OUTSIDE the star
+     .cfx-shell       the ink outline: same polygon as the star, inset -5%,
+                      so it peeks out all the way round as a bold rim
+     .cfx-star        the big 13-spike star in accent red, with a halftone
+                      dot screen over it
+     .cfx-core-shell  ink rim for the inner star
+     .cfx-core        an 11-spike inner star in comic yellow, so the word
+                      sits on its own plate instead of on the red
+     .cfx-word        heavy condensed type, hard 8-way ink outline plus an
+                      offset drop shadow
+
+   The two polygons are irregular on purpose — even spike lengths read as a
+   gear, not an impact. They are vars so each shape is written once and
+   reused by its ink layer.
+
+   Deliberately NOT scoped under .theme-comic: the class names are unique to
+   this effect, and if the palette were scoped, the half-frame between a
+   theme switch and the observer tearing the layer down could leave an
+   unpositioned block in the page. Unscoped `position: fixed` can never
+   shift layout. The colours below still come from the comic palette, with
+   literal fallbacks so a burst is never invisible.
+======================================================================= */
+
+.theme-comic {
+  --cfx-ink:      #111111;               /* structural outline = theme ink */
+  --cfx-star:     var(--accent);         /* KAPOW red */
+  --cfx-core:     #f4c84a;               /* comic yellow plate */
+  --cfx-word:     #ffffff;
+  --cfx-word-out: #111111;
+  --cfx-dots:     rgba(17, 17, 17, 0.34);
+}
+.theme-comic.dark {
+  --cfx-ink:      #fff8e6;               /* cream ink, same as dark borders */
+  --cfx-word:     #fff8e6;
+  --cfx-word-out: #14141a;
+  --cfx-dots:     rgba(20, 20, 26, 0.36);
+}
+
+/* Full-viewport, never interactive, above cards (z 40s) and below every
+   popover/menu (58+). overflow:hidden is the guarantee that a burst near an
+   edge can't add a scrollbar. */
+.cfx-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+
+.cfx-burst {
+  --cfx-rot: 0deg;
+  --cfx-scale: 1;
+  --cfx-spin: 0deg;
+  --cfx-dur: 760ms;
+  --cfx-fs: 44px;
+  /* 13 spikes, jittered in angle and length */
+  --cfx-poly-a: polygon(
+    94.0% 48.7%, 74.7% 56.8%, 90.2% 71.4%, 73.1% 67.6%, 79.0% 85.7%, 60.8% 73.3%,
+    56.5% 98.4%, 48.5% 76.7%, 31.4% 96.0%, 33.7% 73.0%, 15.4% 76.0%, 25.1% 61.2%,
+    8.2% 63.0%, 18.5% 51.0%, 3.8% 41.2%, 25.5% 36.4%, 17.7% 20.9%, 33.3% 29.3%,
+    35.0% 6.5%, 45.5% 20.7%, 55.1% 5.2%, 62.3% 22.0%, 75.0% 10.2%, 74.0% 28.9%,
+    90.6% 30.6%, 75.6% 45.9%
+  );
+  /* 11 spikes — a different count so the inner star never lines up with the
+     outer one and the silhouette stays busy. */
+  --cfx-poly-b: polygon(
+    95.8% 46.9%, 75.1% 58.1%, 90.7% 73.0%, 66.1% 71.1%, 67.4% 88.2%, 56.1% 74.9%,
+    43.5% 90.1%, 38.5% 71.8%, 25.2% 81.9%, 24.9% 62.8%, 5.8% 59.5%, 24.8% 52.4%,
+    10.7% 38.5%, 29.8% 34.3%, 16.9% 16.7%, 35.8% 24.2%, 43.2% 5.8%, 52.9% 23.8%,
+    64.4% 12.4%, 67.5% 32.6%, 86.4% 29.4%, 78.7% 44.4%
+  );
+
+  position: absolute;
+  /* left/top are the click point; the -50% centres the star on it. */
+  transform: translate(-50%, -50%) rotate(var(--cfx-rot)) scale(var(--cfx-scale));
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+  animation: cfx-pop var(--cfx-dur) cubic-bezier(.2, .85, .3, 1) both;
+}
+
+.cfx-burst > * {
+  position: absolute;
+  display: block;
+}
+
+/* Speed lines. A repeating conic gradient IS a radial line burst; the ring
+   mask hides the middle, where the lines would otherwise converge into a
+   solid ink blob under the star. `from var(--cfx-spin)` gives every burst a
+   different line phase. */
+.cfx-rays {
+  inset: -34%;
+  background: repeating-conic-gradient(
+    from var(--cfx-spin),
+    var(--cfx-ink, #111) 0 1.5deg,
+    transparent 1.5deg 13deg
+  );
+  -webkit-mask: radial-gradient(closest-side,
+      transparent 0 62%, #000 70%, #000 90%, transparent 100%);
+          mask: radial-gradient(closest-side,
+      transparent 0 62%, #000 70%, #000 90%, transparent 100%);
+  opacity: .8;
+  animation: cfx-rays var(--cfx-dur) ease-out both;
+}
+
+.cfx-shell {
+  inset: -5%;
+  background: var(--cfx-ink, #111);
+  -webkit-clip-path: var(--cfx-poly-a);
+          clip-path: var(--cfx-poly-a);
+}
+
+.cfx-star {
+  inset: 0;
+  background-color: var(--cfx-star, #ff2d2d);
+  /* halftone screen — the single cheapest thing that says "printed comic" */
+  background-image: radial-gradient(var(--cfx-dots, rgba(17,17,17,.34)) 1.1px, transparent 1.4px);
+  background-size: 6px 6px;
+  -webkit-clip-path: var(--cfx-poly-a);
+          clip-path: var(--cfx-poly-a);
+}
+
+.cfx-core-shell {
+  inset: 15%;
+  background: var(--cfx-ink, #111);
+  -webkit-clip-path: var(--cfx-poly-b);
+          clip-path: var(--cfx-poly-b);
+}
+
+.cfx-core {
+  inset: 20%;
+  background-color: var(--cfx-core, #f4c84a);
+  background-image: radial-gradient(var(--cfx-dots, rgba(17,17,17,.34)) 1px, transparent 1.3px);
+  background-size: 7px 7px;
+  -webkit-clip-path: var(--cfx-poly-b);
+          clip-path: var(--cfx-poly-b);
+}
+
+/* The lettering. Impact and friends are the real comic-adjacent faces that
+   ship with an OS — no webfont to load, and every fallback in the list is
+   heavy, so the word is never spindly. The 8-way text-shadow is the outline
+   (bulletproof, unlike -webkit-text-stroke which eats into the glyph), and
+   the 9th, bigger shadow is the classic offset ink drop. */
+.cfx-word {
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black",
+               "Space Grotesk", system-ui, sans-serif;
+  font-weight: 900;
+  font-stretch: condensed;
+  font-size: var(--cfx-fs);
+  line-height: 1;
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  text-transform: uppercase;
+  color: var(--cfx-word, #fff);
+  text-shadow:
+     0.055em  0.055em 0 var(--cfx-word-out, #111),
+    -0.055em  0.055em 0 var(--cfx-word-out, #111),
+     0.055em -0.055em 0 var(--cfx-word-out, #111),
+    -0.055em -0.055em 0 var(--cfx-word-out, #111),
+     0       0.06em  0 var(--cfx-word-out, #111),
+     0      -0.06em  0 var(--cfx-word-out, #111),
+     0.06em  0       0 var(--cfx-word-out, #111),
+    -0.06em  0       0 var(--cfx-word-out, #111),
+     0.13em  0.15em  0 var(--cfx-word-out, #111);
+  transform: skewX(-7deg);
+  animation: cfx-word var(--cfx-dur) cubic-bezier(.18, .9, .3, 1) both;
+}
+
+/* Condensing the word to fit its star (ComicFx measures the rendered width
+   and sets --cfx-fit). It squeezes horizontally rather than shrinking, which
+   is what a real letterer does — the type stays as tall and heavy as the
+   short words next to it. Kept on its own element so it never fights the
+   animated transform on .cfx-word. */
+.cfx-text {
+  display: block;
+  font-style: normal;
+  transform: scaleX(var(--cfx-fit, 1));
+  transform-origin: 50% 50%;
+}
+
+/* Punch in over the first ~15% (overshoot, small settle-back, hold), then
+   drift up and fade. Every step restates the full transform because the
+   rotation and the base scale are per-burst vars. */
+@keyframes cfx-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--cfx-rot)) scale(calc(var(--cfx-scale) * 0.16));
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--cfx-rot)) scale(calc(var(--cfx-scale) * 1.2));
+  }
+  27% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--cfx-rot)) scale(calc(var(--cfx-scale) * 0.93));
+  }
+  38% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--cfx-rot)) scale(var(--cfx-scale));
+  }
+  70% {
+    opacity: 1;
+    transform: translate(-50%, -54%) rotate(var(--cfx-rot)) scale(calc(var(--cfx-scale) * 1.03));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -66%) rotate(var(--cfx-rot)) scale(calc(var(--cfx-scale) * 1.14));
+  }
+}
+
+/* The lines are the impact itself, so they flash out and are gone well
+   before the star is — a lingering ray halo looks like a sun, not a hit. */
+@keyframes cfx-rays {
+  0%   { opacity: 0;  transform: rotate(0deg)  scale(0.35); }
+  12%  { opacity: .85; transform: rotate(3deg) scale(1.02); }
+  45%  { opacity: .35; transform: rotate(6deg) scale(1.16); }
+  70%  { opacity: 0;   transform: rotate(8deg) scale(1.24); }
+  100% { opacity: 0;   transform: rotate(8deg) scale(1.24); }
+}
+
+/* The word lands a beat after the star so you read the shape, then the
+   shout. */
+@keyframes cfx-word {
+  0%   { opacity: 0; transform: skewX(-7deg) scale(0.4) rotate(-4deg); }
+  18%  { opacity: 1; transform: skewX(-7deg) scale(1.12) rotate(1.5deg); }
+  32%  { opacity: 1; transform: skewX(-7deg) scale(0.97); }
+  46%  { opacity: 1; transform: skewX(-7deg) scale(1); }
+  100% { opacity: 1; transform: skewX(-7deg) scale(1); }
+}
+
+/* Reduced motion: one static mark that fades. No punch, no overshoot, no
+   ray sweep — the shape appears at its final size and leaves. ComicFx also
+   shortens the lifetime so it clears fast. */
+@media (prefers-reduced-motion: reduce) {
+  .cfx-burst { animation: cfx-fade var(--cfx-dur) ease-out both; }
+  .cfx-rays  { animation: none; opacity: .5; }
+  .cfx-word  { animation: none; }
+  @keyframes cfx-fade {
+    0%, 55% { opacity: 1; }
+    100%    { opacity: 0; }
+  }
+}
+
+/* =======================================================================
+   Small ink-press touches, so clicking a control feels as hard-edged as
+   the panel it sits in. The theme's resting look is untouched.
+======================================================================= */
+.theme-comic .btn-ghost:active,
+.theme-comic .chip:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}

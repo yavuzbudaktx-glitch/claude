@@ -2,23 +2,46 @@
    so equal-specificity rules here win over the base definitions. */
 
 /* ---------------------------------------------------------------------------
-   AURORA GLASS — DAY MODE
+   AURORA GLASS — REAL GLASS
+
    Aurora is the DEFAULT theme, so applyThemeDom() (src/lib/theme.ts) never puts
    a `theme-aurora` class on <html>; it only sets data-theme="aurora". The
-   attribute selector below is therefore the ONLY correct way to scope to
-   aurora — a bare `:root:not(.dark)` would leak into every other light theme.
+   attribute selector is therefore the ONLY correct way to scope to aurora — a
+   bare `:root` or `:root:not(.dark)` rule would restyle every other theme.
 
-   The old light mode was just the four-blob mesh on a grey-blue field, which
-   read as "unstyled". This adds three quiet things: a refracted light ribbon,
-   a glass caustic, and prismatic colour in the card edge. It is still the most
-   restrained theme in the set — it is what you look at all day. Aurora's dark
-   mode is deliberately untouched.
+   The brief: it should feel like you are touching glass, not looking at a grey
+   box with a border. Glass is not "translucent + blurred", it is a set of
+   optical facts, and each one gets its own layer here:
+
+     1. specular   — a bright rake across the TOP edge where light enters the
+                     slab, and a second dimmer one on the BOTTOM edge where it
+                     exits.
+     2. bevel      — a 1px inner edge that is light on top and dark underneath,
+                     so the panel reads as having real thickness.
+     3. dispersion — the faintest cool fringe on one rim and warm on the other,
+                     the way a bevelled pane splits light.
+     4. caustic    — a bright pool cast onto the surface *behind* the pane, done
+                     as a tinted outer shadow (light focused through glass).
+     5. frost      — micro etch + grain inside the panel so it isn't clean
+                     plastic.
+     6. touch      — the sheen re-positions on hover and the bevel flips on
+                     :active, so pressing it feels like a finger on the pane.
+
+   Everything optical lives in the card's own `background-image` stack (which
+   always paints BEHIND text, so contrast is never at risk) and in box-shadow.
+   No JS, so "touch" is a background-position + box-shadow transition.
+
+   Restraint still matters: this is the theme you look at all day.
 --------------------------------------------------------------------------- */
+
+/* ===========================================================================
+   DAY — page atmosphere
+   =========================================================================== */
 
 /* Layer 1 (z -3) — the ribbon. One broad band of refracted light raked across
    the upper page and blurred until it has no edges at all. Masked to a soft
    lobe so it never reaches the bottom of the page, where the content is
-   densest. This is the signature: big, slow, and almost subliminal. */
+   densest. Big, slow, almost subliminal — and it is what the cards catch. */
 :root[data-theme="aurora"]:not(.dark)::before {
   content: "";
   position: fixed;
@@ -46,7 +69,7 @@
   to   { transform: translate3d(2.4%, 1.4%, 0) rotate(1.1deg) scaleY(1.07); }
 }
 
-/* Layer 2 (z -2) — the caustic. Two crossed sheets of hairline light, the
+/* Layer 2 (z -2) — page caustics. Two crossed sheets of hairline light, the
    pattern you get when sun passes through a thick bevelled pane. Soft-light
    blended and masked to one lobe so it only ever brightens; you should notice
    it as surface, never as stripes. */
@@ -77,32 +100,413 @@
   to   { transform: translate3d(1.2%, 0.8%, 0) scale(1.04); }
 }
 
-/* Prismatic edge. The base card ring is pure white; in day mode it now splits
-   into cyan at the top-left and a warm copper at the far corner, the way real
-   glass fringes light. A couple of percent of colour — no more. */
-:root[data-theme="aurora"]:not(.dark) .card::before {
-  background: linear-gradient(
-    155deg,
-    rgba(255, 255, 255, 0.88) 0%,
-    rgba(186, 230, 253, 0.62) 15%,
-    rgba(255, 255, 255, 0.10) 38%,
-    transparent 58%,
-    rgba(253, 224, 176, 0.34) 84%,
-    rgba(255, 255, 255, 0.44) 100%
-  );
-  opacity: 0.92;
+/* ===========================================================================
+   DAY — the pane itself
+   =========================================================================== */
+
+/* Thicker optics through the slab. More blur than the base 22px plus a touch of
+   brightness and contrast: a thick pane doesn't just blur what's behind it, it
+   lifts and separates it. */
+:root[data-theme="aurora"]:not(.dark) .card {
+  -webkit-backdrop-filter: blur(28px) saturate(185%) brightness(1.07) contrast(1.04);
+          backdrop-filter: blur(28px) saturate(185%) brightness(1.07) contrast(1.04);
+
+  /* The optical stack, front-to-back in source order:
+       1  sheen    — narrow diagonal band; MOVES on hover (the "touch")
+       2  specular — bright rake along the TOP edge (light entering)
+       3  exit     — dimmer rake along the BOTTOM edge (light leaving)
+       4  caustic  — focused pool low-left; drifts with the sheen
+       5  etch     — hairline frost striations
+       6  grain    — frost speckle so it isn't clean plastic
+       7  body     — faint vertical falloff, thicker glass reads darker low
+  */
+  background-image:
+    linear-gradient(101deg,
+      transparent 34%,
+      rgba(255, 255, 255, 0.30) 44%,
+      rgba(255, 255, 255, 0.58) 50%,
+      rgba(255, 255, 255, 0.30) 56%,
+      transparent 66%),
+    radial-gradient(125% 100% at 26% 0%, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.10) 62%, transparent 100%),
+    radial-gradient(115% 100% at 66% 100%, rgba(255, 255, 255, 0.52), transparent 78%),
+    radial-gradient(46% 40% at 30% 82%, rgba(255, 252, 240, 0.42), rgba(214, 244, 255, 0.16) 52%, transparent 76%),
+    repeating-linear-gradient(101deg,
+      rgba(255, 255, 255, 0.055) 0 1px,
+      rgba(255, 255, 255, 0) 1px 5px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='150' height='150' filter='url(%23f)' opacity='0.075'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(8, 14, 30, 0.035));
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat, no-repeat;
+  background-size:
+    230% 100%,
+    100% 26px,
+    100% 15px,
+    100% 100%,
+    auto,
+    150px 150px,
+    100% 100%;
+  background-position:
+    82% 0,     /* sheen parked near the right rim at rest */
+    0 0,       /* top specular */
+    0 100%,    /* bottom exit highlight */
+    0 0,       /* caustic pool */
+    0 0, 0 0, 0 0;
+
+  /* 2 + 3: the bevel and the dispersion, all in insets.
+     top    — 1px bright: the lit face of the edge
+     bottom — 1px dark then a bright hairline just outside it: the far face of
+              the slab seen through its own thickness
+     sides  — cool on the left, warm on the right: chromatic split at the rim
+     inner  — a soft dark gradient hugging the bottom, which is what actually
+              makes the panel read as a SLAB rather than a sheet
+     outer  — the caustic pool: a tinted (not grey) shadow, i.e. light focused
+              through the pane onto the surface behind it */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.98),
+    inset 0 -1px 0 rgba(14, 26, 48, 0.16),
+    inset 1px 0 0 rgba(186, 236, 255, 0.62),
+    inset -1px 0 0 rgba(255, 231, 186, 0.58),
+    inset 0 -18px 26px -22px rgba(14, 26, 48, 0.40),
+    inset 0 22px 30px -30px rgba(255, 255, 255, 0.90),
+    0 1px 0 rgba(255, 255, 255, 0.72),
+    0 2px 3px rgba(10, 18, 38, 0.06),
+    0 16px 34px -20px rgba(10, 18, 38, 0.30),
+    0 34px 56px -34px rgba(120, 205, 235, 0.55);
+
+  transition: box-shadow .5s cubic-bezier(.16,.84,.34,1),
+              background-position .85s cubic-bezier(.16,.84,.34,1),
+              border-color .35s ease,
+              transform .45s cubic-bezier(.16,.84,.34,1);
 }
 
-/* A single soft sheen inside the card's top-left corner so the glass reads as
-   a physical pane catching the ribbon behind it. */
-:root[data-theme="aurora"]:not(.dark) .card {
-  background-image: radial-gradient(120% 70% at 4% -12%, rgba(255, 255, 255, 0.55), transparent 62%);
+/* The refracted EDGE. The base ring is a single white gradient; here it is two
+   stacked gradients: vertical (bright where light enters the top, medium where
+   it leaves the bottom) and horizontal (cool left rim, warm right rim). That
+   horizontal pass is the chromatic dispersion — a couple of percent of colour,
+   no more, but it is the thing that stops the border looking drawn-on. */
+:root[data-theme="aurora"]:not(.dark) .card::before {
+  padding: 1.2px;
+  background:
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(255, 255, 255, 0.20) 24%,
+      rgba(255, 255, 255, 0.04) 52%,
+      rgba(255, 255, 255, 0.62) 100%),
+    linear-gradient(90deg,
+      rgba(160, 232, 255, 0.90) 0%,
+      rgba(255, 255, 255, 0) 20%,
+      rgba(255, 255, 255, 0) 80%,
+      rgba(255, 214, 150, 0.85) 100%);
+  opacity: 0.95;
+}
+
+/* Bloom behind the pane — the base hover glow, retuned to read as the caustic
+   flaring when you come near, rather than a coloured halo. */
+:root[data-theme="aurora"]:not(.dark) .card::after {
+  background: radial-gradient(78% 62% at 34% 8%, rgba(255, 255, 255, 0.85), transparent 72%);
+}
+:root[data-theme="aurora"]:not(.dark) .card:hover::after { opacity: .5; }
+
+/* TOUCH — hover. The sheen sweeps from the right rim toward the middle and the
+   caustic pool slides with it, as if the pane tilted a degree under your hand.
+   The bevel brightens and the pool under the card opens up. */
+:root[data-theme="aurora"]:not(.dark) .card:hover {
+  border-color: rgba(255, 255, 255, 0.92);
+  background-position:
+    18% 0,
+    0 0,
+    0 100%,
+    18% 0,
+    0 0, 0 0, 0 0;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(14, 26, 48, 0.14),
+    inset 1px 0 0 rgba(186, 236, 255, 0.80),
+    inset -1px 0 0 rgba(255, 231, 186, 0.76),
+    inset 0 -20px 30px -22px rgba(14, 26, 48, 0.34),
+    inset 0 26px 34px -30px rgba(255, 255, 255, 1),
+    0 1px 0 rgba(255, 255, 255, 0.85),
+    0 3px 6px rgba(10, 18, 38, 0.07),
+    0 26px 52px -22px rgba(10, 18, 38, 0.34),
+    0 48px 74px -36px rgba(120, 205, 235, 0.72);
+  transform: translateY(-1.5px);
+}
+
+/* TOUCH — press. Everything inverts: the top specular collapses, the BOTTOM
+   edge lights up instead (the slab has been pushed down toward the surface),
+   the caustic tightens because the gap between glass and page just closed, and
+   the sheen jumps past your finger. Fast transition so it feels like contact. */
+:root[data-theme="aurora"]:not(.dark) .card:active {
+  background-position:
+    -14% 0,
+    0 -8px,
+    0 100%,
+    -6% 0,
+    0 0, 0 0, 0 0;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.85),
+    inset 1px 0 0 rgba(186, 236, 255, 0.45),
+    inset -1px 0 0 rgba(255, 231, 186, 0.42),
+    inset 0 14px 22px -18px rgba(14, 26, 48, 0.34),
+    inset 0 -16px 24px -26px rgba(255, 255, 255, 0.90),
+    0 1px 0 rgba(255, 255, 255, 0.60),
+    0 1px 2px rgba(10, 18, 38, 0.10),
+    0 6px 14px -10px rgba(10, 18, 38, 0.28),
+    0 10px 20px -14px rgba(120, 205, 235, 0.60);
+  transform: translateY(0.5px) scale(0.998);
+  transition: box-shadow .12s ease, background-position .28s ease, transform .12s ease;
+}
+
+/* Small glass — chips and the ghost buttons get the same three facts (top
+   specular, bottom exit, cool/warm rim) at miniature scale, so the whole UI
+   feels cut from one material instead of cards-on-a-page. */
+:root[data-theme="aurora"]:not(.dark) .chip,
+:root[data-theme="aurora"]:not(.dark) .btn-ghost {
+  background-image:
+    radial-gradient(120% 100% at 30% 0%, rgba(255, 255, 255, 0.85), transparent 70%),
+    radial-gradient(120% 100% at 62% 100%, rgba(255, 255, 255, 0.40), transparent 74%);
+  background-repeat: no-repeat, no-repeat;
+  background-size: 100% 60%, 100% 40%;
+  background-position: 0 0, 0 100%;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(14, 26, 48, 0.10),
+    inset 1px 0 0 rgba(186, 236, 255, 0.55),
+    inset -1px 0 0 rgba(255, 231, 186, 0.50),
+    0 1px 0 rgba(255, 255, 255, 0.60),
+    0 6px 14px -10px rgba(10, 18, 38, 0.26);
+}
+:root[data-theme="aurora"]:not(.dark) .btn-ghost:active,
+:root[data-theme="aurora"]:not(.dark) .chip:active {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.80),
+    inset 0 8px 12px -10px rgba(14, 26, 48, 0.30),
+    0 1px 2px rgba(10, 18, 38, 0.14);
+}
+/* The active chip is solid gradient, so it gets the bevel only — no white
+   wash over it, which would kill the contrast of the white label. */
+:root[data-theme="aurora"]:not(.dark) .chip-active {
+  background-image:
+    linear-gradient(135deg, var(--grad-from), var(--grad-via));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+    0 8px 22px -8px var(--glow);
+}
+
+/* ===========================================================================
+   NIGHT — page atmosphere
+   Same optics, inverted intent: at night the pane is a dark slab and the light
+   is a thin cold rim rather than a broad wash. Kept dimmer than day so the
+   theme still reads calm.
+   =========================================================================== */
+
+/* A single cold shaft, very soft, well under the aurora mesh. */
+:root[data-theme="aurora"].dark::before {
+  content: "";
+  position: fixed;
+  inset: -20% -14%;
+  z-index: -3;
+  pointer-events: none;
+  background-image: linear-gradient(
+    104deg,
+    transparent 10%,
+    rgba(34, 211, 238, 0.16) 30%,
+    rgba(190, 240, 255, 0.24) 40%,
+    rgba(129, 140, 248, 0.14) 54%,
+    rgba(217, 119, 6, 0.10) 68%,
+    transparent 86%
+  );
+  -webkit-mask-image: radial-gradient(110% 70% at 40% 2%, #000 0%, rgba(0, 0, 0, 0.55) 42%, transparent 82%);
+          mask-image: radial-gradient(110% 70% at 40% 2%, #000 0%, rgba(0, 0, 0, 0.55) 42%, transparent 82%);
+  filter: blur(52px);
+  opacity: 0.75;
+  animation: auroraRibbon 52s ease-in-out infinite alternate;
+}
+
+/* Night caustics — screen-blended hairlines so they only ever add light. Half
+   the opacity of the day pass. */
+:root[data-theme="aurora"].dark::after {
+  content: "";
+  position: fixed;
+  inset: -8%;
+  z-index: -2;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.16;
+  background-image:
+    repeating-linear-gradient(37deg,
+      rgba(190, 245, 255, 0) 0 52px,
+      rgba(190, 245, 255, 0.70) 62px,
+      rgba(190, 245, 255, 0) 72px 140px),
+    repeating-linear-gradient(-51deg,
+      rgba(190, 245, 255, 0) 0 78px,
+      rgba(190, 245, 255, 0.45) 88px,
+      rgba(190, 245, 255, 0) 98px 196px);
+  -webkit-mask-image: radial-gradient(74% 58% at 66% 22%, #000 0%, rgba(0, 0, 0, 0.45) 44%, transparent 76%);
+          mask-image: radial-gradient(74% 58% at 66% 22%, #000 0%, rgba(0, 0, 0, 0.45) 44%, transparent 76%);
+  filter: blur(3px);
+  animation: auroraCaustic 78s ease-in-out infinite alternate;
+}
+
+/* ===========================================================================
+   NIGHT — the pane itself
+   =========================================================================== */
+:root[data-theme="aurora"].dark .card {
+  -webkit-backdrop-filter: blur(30px) saturate(175%) brightness(1.04) contrast(1.05);
+          backdrop-filter: blur(30px) saturate(175%) brightness(1.04) contrast(1.05);
+
+  /* Same seven layers as day, with the alphas pulled right down — on a dark
+     slab a 6% white wash is already a visible highlight. */
+  background-image:
+    linear-gradient(101deg,
+      transparent 34%,
+      rgba(255, 255, 255, 0.06) 44%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.06) 56%,
+      transparent 66%),
+    radial-gradient(125% 100% at 26% 0%, rgba(255, 255, 255, 0.30), rgba(255, 255, 255, 0.03) 60%, transparent 100%),
+    radial-gradient(115% 100% at 66% 100%, rgba(190, 240, 255, 0.13), transparent 78%),
+    radial-gradient(46% 40% at 30% 82%, rgba(34, 211, 238, 0.13), rgba(255, 240, 214, 0.05) 54%, transparent 78%),
+    repeating-linear-gradient(101deg,
+      rgba(255, 255, 255, 0.030) 0 1px,
+      rgba(255, 255, 255, 0) 1px 5px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='150' height='150' filter='url(%23f)' opacity='0.10'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(0, 0, 0, 0.14));
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat, no-repeat;
+  background-size:
+    230% 100%,
+    100% 24px,
+    100% 14px,
+    100% 100%,
+    auto,
+    150px 150px,
+    100% 100%;
+  background-position:
+    82% 0, 0 0, 0 100%, 0 0, 0 0, 0 0, 0 0;
+
+  /* Bevel: bright hairline on top, black hairline under it, then a faint white
+     line OUTSIDE the bottom edge — you are seeing the far face of the slab
+     through its own thickness. Cool cyan left rim, warm amber right rim for
+     the dispersion. Outer: a cyan pool = light focused through the pane. */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.55),
+    inset 1px 0 0 rgba(103, 232, 249, 0.24),
+    inset -1px 0 0 rgba(253, 210, 141, 0.20),
+    inset 0 -20px 28px -24px rgba(0, 0, 0, 0.70),
+    inset 0 24px 32px -30px rgba(255, 255, 255, 0.32),
+    0 1px 0 rgba(255, 255, 255, 0.07),
+    0 2px 4px rgba(0, 0, 0, 0.40),
+    0 18px 40px -18px rgba(0, 0, 0, 0.70),
+    0 40px 62px -38px rgba(34, 211, 238, 0.34);
+
+  transition: box-shadow .5s cubic-bezier(.16,.84,.34,1),
+              background-position .85s cubic-bezier(.16,.84,.34,1),
+              border-color .35s ease,
+              transform .45s cubic-bezier(.16,.84,.34,1);
+}
+
+/* Night edge — same two-pass ring (vertical bevel + horizontal dispersion),
+   dimmer, and the cool rim slightly stronger than the warm one because the
+   night palette is cyan-led. */
+:root[data-theme="aurora"].dark .card::before {
+  padding: 1.2px;
+  background:
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(255, 255, 255, 0.09) 26%,
+      rgba(255, 255, 255, 0.02) 56%,
+      rgba(255, 255, 255, 0.20) 100%),
+    linear-gradient(90deg,
+      rgba(103, 232, 249, 0.55) 0%,
+      rgba(255, 255, 255, 0) 22%,
+      rgba(255, 255, 255, 0) 78%,
+      rgba(251, 191, 36, 0.38) 100%);
+  opacity: 1;
+}
+
+:root[data-theme="aurora"].dark .card::after {
+  background: radial-gradient(78% 60% at 34% 4%, rgba(190, 245, 255, 0.30), transparent 72%);
+}
+:root[data-theme="aurora"].dark .card:hover::after { opacity: .55; }
+
+:root[data-theme="aurora"].dark .card:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  background-position:
+    18% 0, 0 0, 0 100%, 18% 0, 0 0, 0 0, 0 0;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.46),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.55),
+    inset 1px 0 0 rgba(103, 232, 249, 0.38),
+    inset -1px 0 0 rgba(253, 210, 141, 0.30),
+    inset 0 -22px 32px -24px rgba(0, 0, 0, 0.66),
+    inset 0 28px 36px -30px rgba(255, 255, 255, 0.42),
+    0 1px 0 rgba(255, 255, 255, 0.10),
+    0 3px 8px rgba(0, 0, 0, 0.45),
+    0 28px 58px -20px rgba(0, 0, 0, 0.72),
+    0 54px 80px -40px rgba(34, 211, 238, 0.50);
+  transform: translateY(-1.5px);
+}
+
+:root[data-theme="aurora"].dark .card:active {
+  background-position:
+    -14% 0, 0 -8px, 0 100%, -6% 0, 0 0, 0 0, 0 0;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.28),
+    inset 1px 0 0 rgba(103, 232, 249, 0.16),
+    inset -1px 0 0 rgba(253, 210, 141, 0.14),
+    inset 0 16px 24px -18px rgba(0, 0, 0, 0.75),
+    inset 0 -18px 26px -26px rgba(255, 255, 255, 0.28),
+    0 1px 0 rgba(255, 255, 255, 0.05),
+    0 1px 3px rgba(0, 0, 0, 0.55),
+    0 6px 16px -10px rgba(0, 0, 0, 0.60),
+    0 12px 22px -16px rgba(34, 211, 238, 0.34);
+  transform: translateY(0.5px) scale(0.998);
+  transition: box-shadow .12s ease, background-position .28s ease, transform .12s ease;
+}
+
+/* Small glass, night. */
+:root[data-theme="aurora"].dark .chip,
+:root[data-theme="aurora"].dark .btn-ghost {
+  background-image:
+    radial-gradient(120% 100% at 30% 0%, rgba(255, 255, 255, 0.14), transparent 72%),
+    radial-gradient(120% 100% at 62% 100%, rgba(190, 240, 255, 0.08), transparent 74%);
+  background-repeat: no-repeat, no-repeat;
+  background-size: 100% 60%, 100% 40%;
+  background-position: 0 0, 0 100%;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.20),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.45),
+    inset 1px 0 0 rgba(103, 232, 249, 0.18),
+    inset -1px 0 0 rgba(253, 210, 141, 0.14),
+    0 1px 0 rgba(255, 255, 255, 0.05),
+    0 6px 16px -10px rgba(0, 0, 0, 0.55);
+}
+:root[data-theme="aurora"].dark .btn-ghost:active,
+:root[data-theme="aurora"].dark .chip:active {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 8px 14px -10px rgba(0, 0, 0, 0.70),
+    0 1px 2px rgba(0, 0, 0, 0.50);
+}
+:root[data-theme="aurora"].dark .chip-active {
+  background-image: linear-gradient(135deg, var(--grad-from), var(--grad-via));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.30),
+    0 8px 24px -8px var(--glow);
 }
 
 /* Motion off for anyone who asked for it — the layers stay, they just hold. */
 @media (prefers-reduced-motion: reduce) {
   :root[data-theme="aurora"]:not(.dark)::before,
-  :root[data-theme="aurora"]:not(.dark)::after {
+  :root[data-theme="aurora"]:not(.dark)::after,
+  :root[data-theme="aurora"].dark::before,
+  :root[data-theme="aurora"].dark::after {
     animation: none;
   }
 }

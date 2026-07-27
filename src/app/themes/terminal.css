@@ -8,6 +8,12 @@
    rather than a full block, and the registration ticks that pass put in the
    card corners are removed.
 
+   THIS PASS: the only blink left on the page is the one beside the greeting,
+   which now types its line in and blinks on a real VT cadence; the flashing
+   prompt block on every card is off. The background is a canvas of falling
+   glyph columns (TerminalFx.tsx) rather than anything declared here, so the
+   restraint above still holds — no new CSS backdrop layers.
+
    WHY DAY MODE WAS BROKEN: `:root.theme-terminal` declares the dark palette at
    specificity (0,2,0), which outranks the global `.dark` block at (0,1,0) — so
    the light/dark toggle could never override it and "day" was just night
@@ -48,20 +54,56 @@
   --grain:        0.03;
 }
 
-/* The cursor beside the greeting: a full block was too heavy, so the same
-   glyph is squeezed horizontally — full height, a third of the width. */
+/* ---------------------------------------------------------------------------
+   THE TYPING LINE (greeting)
+
+   The ask was for this to read like a real terminal line rather than a
+   decorative blob, so two things changed. The caret now blinks on the classic
+   VT cadence — 530ms lit, 530ms dark, hard on/off, no fade — and it is a bar
+   with some body to it instead of a hairline, with just enough phosphor bloom
+   to look like it is being emitted rather than printed.
+
+   And the line types itself in, ONCE, by wiping a clip-path across the heading
+   in character-sized steps. Doing it with clip means the real text is in the
+   DOM the whole time: screen readers read the greeting normally, nothing is
+   re-measured, and there is no layout shift because clipping never touches
+   layout. It runs on the element, not on a React value, so it plays when the
+   heading first appears (or when you switch INTO the theme) and never again.
+   No clip-path is declared outside the keyframes, so if animations are off the
+   heading is simply visible — never stuck half-wiped.
+--------------------------------------------------------------------------- */
+.theme-terminal h1.font-display {
+  animation: termType 760ms steps(22, end) 160ms backwards;
+}
 .theme-terminal h1.font-display::after {
   content: "\2588";
   display: inline-block;
-  transform: scaleX(0.3);
+  transform: scaleX(0.42);
   transform-origin: left center;
-  margin-left: 0.1em;
+  margin-left: 0.08em;
   color: var(--accent);
-  animation: termBlink 1.05s steps(2, end) infinite;
+  /* Starts lit the instant the wipe uncovers it, then blinks from there. */
+  animation: termCaret 1.06s steps(1, end) 920ms infinite;
 }
-@keyframes termBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+.theme-terminal.dark h1.font-display::after {
+  text-shadow: 0 0 12px var(--glow), 0 0 26px var(--glow);
+}
+@keyframes termCaret { 0%, 49.9% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes termType {
+  from { clip-path: inset(-0.35em 100% -0.35em 0); }
+  to   { clip-path: inset(-0.35em 0 -0.35em 0); }
+}
 
-/* No corner ticks on the cards — globals hides `.card::after`; keep it hidden. */
+/* Cards: no blinking anything. globals turns `.card::before` into a prompt
+   block that flashes on every card at once, which is the one thing the user
+   asked to lose — it has to be `!important` here because globals sets
+   `display: block !important` on it. `.card::after` stays hidden too, and the
+   16px indent globals added to make room for the prompt goes with it. */
+.theme-terminal .card::before {
+  display: none !important;
+  content: none !important;
+  animation: none !important;
+}
 .theme-terminal .card::after { display: none; }
 
 .theme-terminal .label,
@@ -83,9 +125,42 @@
   border-color: var(--accent);
   box-shadow: none;
 }
+/* Inverse video, both modes — globals' `::selection` puts white on the accent,
+   which on a green CRT is unreadable. */
 .theme-terminal ::selection { background: var(--accent); color: var(--bg); }
-.theme-terminal .headrule { border-bottom: 1px dashed var(--rule); padding-bottom: .5rem; }
+.theme-terminal .headrule {
+  border-bottom: 1px dashed var(--rule);
+  padding-bottom: .5rem;
+  padding-left: 0;              /* the prompt block it made room for is gone */
+}
+/* Boot-log flavour where it costs nothing: the card's meta count reads as a
+   field, not a caption. Direct children only, so labels inside a card's action
+   slot (which are often flex rows with icons) are left alone. */
+.theme-terminal .headrule > .label::before { content: "["; opacity: .6; }
+.theme-terminal .headrule > .label::after  { content: "]"; opacity: .6; }
+
+/* Phosphor is emitted light, so it blooms — but only in night mode, and only
+   on display-sized ink, where the glyphs can carry it. Deliberately NOT on
+   `.text-gradient`: that one paints its colour through transparent glyphs, so
+   a shadow behind it reads as a smudge rather than a glow. */
+.theme-terminal.dark .font-display .text-ink {
+  text-shadow: 0 0 18px rgba(34, 255, 119, 0.20), 0 0 3px rgba(34, 255, 119, 0.28);
+}
+/* Day mode is INK on paper, and ink does not glow: globals' `.text-ink` halo is
+   a night-mode effect that turned every heading fuzzy on the light palette. */
+.theme-terminal:not(.dark) .text-ink { text-shadow: none; }
+
+/* Hover on a card should register. globals hovers the border to `--rule`,
+   which for this theme is what the border already is, so nothing happened. */
+.theme-terminal.dark .card:hover { border-color: rgba(34, 255, 119, 0.42); }
+.theme-terminal:not(.dark) .card:hover { border-color: rgba(15, 107, 52, 0.55); }
+
+/* Nothing in a terminal has a radius: square off the two rounded things the
+   base sheet still owns. */
+.theme-terminal *:focus-visible { border-radius: 0; outline-offset: 1px; }
+.theme-terminal ::-webkit-scrollbar-thumb { border-radius: 0; }
 
 @media (prefers-reduced-motion: reduce) {
+  .theme-terminal h1.font-display,
   .theme-terminal h1.font-display::after { animation: none; }
 }
