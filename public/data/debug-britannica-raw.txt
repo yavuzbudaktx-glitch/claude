@@ -1,14 +1,14 @@
 # Britannica scrape debug dump
-# generated: 2026-07-26T20:34:18.496Z
-# url:       https://www.britannica.com/on-this-day/july-26
+# generated: 2026-07-27T11:37:28.054Z
+# url:       https://www.britannica.com/on-this-day/july-27
 # fetcher:   Jina Reader
 # kind:      markdown
-# length:    23208
+# length:    20449
 # parsed:    NO
 # -----------------------------------------------------------------
 Title: On This Day - What Happened Today In History | Britannica
 
-URL Source: https://www.britannica.com/on-this-day/july-26
+URL Source: https://www.britannica.com/on-this-day/july-27
 
 Markdown Content:
 [**🧩 Tagline** - A new word game from Merriam-Webster! 🧩](https://www.merriam-webster.com/games/tagline?utm_source=premium&utm_medium=desk-toupee&utm_campaign=tagline)
@@ -35,7 +35,7 @@ Login
 
 [Home](https://www.britannica.com/) Today in History ![Image 3: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-193/images/shared/tih-logo.png?v=3.193.1)
 
-![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-193/images/shared/tih-star.svg?v=3.193.1)July 26
+![Image 4: Today In History Star](https://cdn.britannica.com/mendel-resources/3-193/images/shared/tih-star.svg?v=3.193.1)July 27
 
 ![Image 5: Today In History Phone](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-phone.png?v=3.189.7)
 
@@ -61,7 +61,7 @@ June
 
 [22](https://www.britannica.com/on-this-day/June-22)[23](https://www.britannica.com/on-this-day/June-23)[24](https://www.britannica.com/on-this-day/June-24)[25](https://www.britannica.com/on-this-day/June-25)[26](https://www.britannica.com/on-this-day/June-26)[27](https://www.britannica.com/on-this-day/June-27)[28](https://www.britannica.com/on-this-day/June-28)
 
-[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-26)[](https://www.britannica.com/on-this-day/july-26)[](https://www.britannica.com/on-this-day/july-26)[](https://www.britannica.com/on-this-day/july-26)[](https://www.britannica.com/on-this-day/july-26)
+[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-27)[](https://www.britannica.com/on-this-day/july-27)[](https://www.britannica.com/on-this-day/july-27)[](https://www.britannica.com/on-this-day/july-27)[](https://www.britannica.com/on-this-day/july-27)
 
 July
 
@@ -73,7 +73,7 @@ July
 
 [22](https://www.britannica.com/on-this-day/July-22)[23](https://www.britannica.com/on-this-day/July-23)[24](https://www.britannica.com/on-this-day/July-24)[25](https://www.britannica.com/on-this-day/July-25)[26](https://www.britannica.com/on-this-day/July-26)[27](https://www.britannica.com/on-this-day/July-27)[28](https://www.britannica.com/on-this-day/July-28)
 
-[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-26)[](https://www.britannica.com/on-this-day/july-26)[](https://www.britannica.com/on-this-day/july-26)[](https://www.britannica.com/on-this-day/july-26)
+[29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-27)[](https://www.britannica.com/on-this-day/july-27)[](https://www.britannica.com/on-this-day/july-27)[](https://www.britannica.com/on-this-day/july-27)
 
 August
 
@@ -85,7 +85,7 @@ August
 
 [22](https://www.britannica.com/on-this-day/August-22)[23](https://www.britannica.com/on-this-day/August-23)[24](https://www.britannica.com/on-this-day/August-24)[25](https://www.britannica.com/on-this-day/August-25)[26](https://www.britannica.com/on-this-day/August-26)[27](https://www.britannica.com/on-this-day/August-27)[28](https://www.britannica.com/on-this-day/August-28)
 
-[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-26)[](https://www.britannica.com/on-this-day/july-26)[](https://www.britannica.com/on-this-day/july-26)[](https://www.britannica.com/on-this-day/july-26)
+[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-27)[](https://www.britannica.com/on-this-day/july-27)[](https://www.britannica.com/on-this-day/july-27)[](https://www.britannica.com/on-this-day/july-27)
 
 August
 
@@ -95,25 +95,25 @@ August
 
 [Go to Today's Date](https://www.britannica.com/on-this-day)
 
- 1775: The USPS’s revolutionary origins
+ 1377: The world’s first quarantine begins
 
- As the [American Revolution](https://www.britannica.com/event/American-Revolution) loomed, the rebelling colonists had a problem. Reliable communication was vital to the war effort, but under British rule, mail was not private.In 1774 William Goddard,[Benjamin Franklin](https://www.britannica.com/biography/Benjamin-Franklin)’s former publishing partner, came up with a solution: He created an independent mail system with trusted riders who transported mail under lock and key. On this day in 1775, the [Second Continental Congress](https://www.britannica.com/topic/Continental-Congress) adopted Goddard’s system, creating what became the [U.S. Postal Service](https://www.britannica.com/topic/United-States-Postal-Service), and appointed Franklin postmaster general.
+ On this day in 1377, lawmakers in Ragusa—the Adriatic merchant republic we now call [Dubrovnik](https://www.britannica.com/place/Dubrovnik)— instituted the first [quarantine](https://www.britannica.com/science/quarantine-preventive-medicine) in the world so as to manage the spread of the [Black Death](https://www.britannica.com/event/Black-Death). Anyone arriving from a plague-stricken place, whether on foot or by sea, would be made to wait 30 days (later extended to 40) in isolation before entering the city. The quarantine was a success—Ragusa passed a full 44 years without any instances of the plague and shook off outbreaks that decimated the population of other regions.
 
-[READ MORE](https://www.britannica.com/today-in-history/July-26-1775-Origin-of-US-Postal-Service)
+[READ MORE](https://www.britannica.com/today-in-history/July-27-When-and-Where-the-Worlds-First-Quarantine-Began)
 
-![Image 6: July 26, 1775: The road to independence ran through the post office](https://cdn.britannica.com/31/289331-050-2D36E0A8/today-in-history-US-Postal-Service-Forms.jpg?w=530&h=300&c=crop)
+![Image 6: July 27, 1377: Break the quarantine and lose an ear: This is the story of Ragusa](https://cdn.britannica.com/32/289332-050-F599207E/today-in-history-Law-of-Ragusa-worlds-first-quarantine.jpg?w=530&h=300&c=crop)
 
- Smithsonian National Postal Museum, Washington, D.C. (npm_2011.2004.14); Photo Illustration Encyclopædia Britannica, Inc.
+ © The Print Collector/Heritage Images—Hulton Archive/Getty Images; Photo Illustration Encyclopædia Britannica, Inc.
 
  Featured Event 
 
-![Image 7: Suez Canal](https://cdn.britannica.com/90/5390-050-D179CC90/Cargo-ship-Suez-Canal-Egypt-Ismailia.jpg?w=356&h=200&c=crop)
+![Image 7: Atlanta Olympic Games bombing of 1996](https://cdn.britannica.com/23/74223-050-6696EDC5/Centennial-Olympic-Park-Investigators-scene-pipe-bomb-July-27-1996.jpg?w=356&h=200&c=crop)
 
- Hubertus Kauns/SuperStock
+ Eric Draper—AP/Shutterstock.com
 
-[Suez Canal seized](https://www.britannica.com/event/Suez-Crisis)
+Terrorist attack at Atlanta Olympics
 
- On this day in 1956, Egyptian President [Gamal Abdel Nasser](https://www.britannica.com/biography/Gamal-Abdel-Nasser) seized control of the [Suez Canal](https://www.britannica.com/topic/Suez-Canal) and nationalized it, sparking a [crisis](https://www.britannica.com/event/Suez-Crisis) that later resulted in French, British, and Israeli forces briefly occupying parts of Egypt. _[[How much do you know about Egyptian history?](https://www.britannica.com/quiz/egyptian-history-quiz)]_
+ On this day in 1996, a pipe bomb exploded in Olympic Centennial Park in [Atlanta](https://www.britannica.com/event/Atlanta-1996-Olympic-Games), Georgia, killing 1 person and injuring 111 in the first [terrorist attack](https://www.britannica.com/topic/terrorism) at the [Olympics](https://www.britannica.com/sports/Olympic-Games) since the [1972 Games in Munich](https://www.britannica.com/event/Munich-1972-Olympic-Games), West Germany. In 2025 domestic terrorist [Eric Rudolph](https://www.britannica.com/biography/Eric-Rudolph) pleaded guilty to this attack and three others. He was sentenced to four consecutive life sentences.
 
 Featured Biography
 
@@ -121,159 +121,123 @@ Featured Biography
 
  Featured Biography 
 
-[![Image 8: John Howard](https://cdn.britannica.com/66/72766-004-5A961711/John-Winston-Howard.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/John-Winston-Howard)
+[![Image 8: Charlotte Corday](https://cdn.britannica.com/85/7785-004-F819D9A3/Charlotte-Corday-engraving-portrait-E-L-Baudran-J-J.jpg?w=356&h=200&c=crop)](https://www.britannica.com/biography/Charlotte-Corday)
 
- Copyright Commonwealth of Australia
+ Courtesy of the Bibliothèque Nationale, Paris
 
-John Howard
+Charlotte Corday
 
-[Liberal](https://www.britannica.com/topic/Liberal-Party-of-Australia) leader [John Howard](https://www.britannica.com/biography/John-Winston-Howard), born this day in 1939, became prime minister of [Australia](https://www.britannica.com/place/Australia) in 1996, and his policies, including his strict immigration stance, proved popular with voters, who elected him to a fourth term in 2004.
+> I told my plans to no one. I was not killing a man, but a wild beast that was devouring the French people.
+> 
+> Charlotte Corday
+
+[Charlotte Corday](https://www.britannica.com/biography/Charlotte-Corday)—a young [Girondin](https://www.britannica.com/topic/Girondin) conservative who assassinated the French revolutionary [Jean-Paul Marat](https://www.britannica.com/biography/Jean-Paul-Marat) in 1793 while he was bathing and who was subsequently tried, convicted, and guillotined—was born this day in 1768.
 
 Famous Birthdays
 
-1956
+1972
 
-[Andy Goldsworthy](https://www.britannica.com/topic/Andy-Goldsworthy)
+[Sheikh Muszaphar Shukor](https://www.britannica.com/biography/Sheikh-Muszaphar-Shukor)
 
-British sculptor, artist, and photographer
+Malaysian orthopedic surgeon
 
-1922
+1905
 
-[Hoyt Wilhelm](https://www.britannica.com/biography/Hoyt-Wilhelm)
+[Leo Durocher](https://www.britannica.com/biography/Leo-Durocher)
 
-American baseball player
+American baseball player and manager
 
-1919
+1867
 
-[James Lovelock](https://www.britannica.com/biography/James-Lovelock)
+[Enrique Granados](https://www.britannica.com/biography/Enrique-Granados)
 
-English chemist, doctor, and author
+Spanish composer
 
-1893
+1824
 
-[George Grosz](https://www.britannica.com/biography/George-Grosz)
+[Alexandre Dumas, fils](https://www.britannica.com/biography/Alexandre-Dumas-fils)
 
-German artist
+French author [1824–1895]
 
-[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-26)
+[MORE BIRTHDAYS](https://www.britannica.com/more-on-this-day/July-27)
 
-## More on July 26
+## More on July 27
 
-![Image 9: Montgomery Clift and Olivia de Havilland in period costume stand in an ornate room, with Clift gesturing toward de Havilland, in a scene from The Heiress (1949).](https://cdn.britannica.com/18/90618-050-C4C7FB07/Montgomery-Clift-Olivia-de-Havilland-The-Heiress.jpg?w=260&h=196&c=crop)
+![Image 9: Sam Shepard](https://cdn.britannica.com/79/161579-004-83C8E3D9/Sam-Shepard-filming-Stealth.jpg?w=260&h=196&c=crop)
 
- © 1949 Paramount Pictures Corporation; photograph from a private collection
+ Petty Officer 3rd Class Tyler J. Clements/U.S. Navy
 
-2020
+2017
 
- American actress [Olivia de Havilland](https://www.britannica.com/biography/Olivia-de-Havilland), who won [Academy Awards](https://www.britannica.com/art/Academy-Award) for her performances in To Each His Own and The Heiress, died at age 104. _[[Test your knowledge of movies](https://www.britannica.com/quiz/everything-about-movies-quiz).]_
+ American playwright and actor [Sam Shepard](https://www.britannica.com/biography/Sam-Shepard)—whose plays adroitly blend images of the American West, Pop motifs, [science fiction](https://www.britannica.com/art/science-fiction), and other elements of popular and youth culture—died at age 73. _[[Take our history of theatre quiz](https://www.britannica.com/quiz/a-history-of-theatre-quiz).]_
 
-![Image 10: Hillary Clinton smiling and wearing a dark jacket with a white collar, standing on stage with a microphone headset during a Democratic presidential debate.](https://cdn.britannica.com/99/190899-050-4465D54C/Hillary-Clinton-debate-Democratic-Las-Vegas-October-13-2015.jpg?w=260&h=196&c=crop)
+![Image 10: Bob Hope](https://cdn.britannica.com/88/66188-050-A228A788/Bob-Hope-1957.jpg?w=260&h=196&c=crop)
 
- © Joseph Sohm/Shutterstock.com
+ Hulton Archive/Getty Images
 
-2016
+2003
 
- At the [Democratic National Convention](https://www.britannica.com/topic/Democratic-National-Convention), [Hillary Clinton](https://www.britannica.com/biography/Hillary-Clinton) was officially nominated for [president](https://www.britannica.com/topic/Presidents-of-the-United-States-1846696), becoming the first woman to top the presidential ticket of a major party in the [United States](https://www.britannica.com/place/United-States). _[[Discover more firsts achieved by women in U.S. politics](https://www.britannica.com/list/7-female-firsts-in-us-politics).]_
+ British-born American entertainer and comic actor [Bob Hope](https://www.britannica.com/biography/Bob-Hope), who was known for his rapid-fire delivery of jokes and one-liners, died at age 100. _[[Test your knowledge of actors and acting](https://www.britannica.com/quiz/actors-and-acting-quiz).]_
 
-![Image 11: Map of Sudan highlighting the non-administrative region of Darfur in the country's west, shaded in light color. The map shows international borders, major cities such as Al-Fashir and Nyala, physical features like the Marrah Mountains and Libyan Desert, and neighboring countries. An inset locator map marks Darfur's position within Sudan and northeastern Africa.](https://cdn.britannica.com/18/100118-050-15F2E037/region-Darfur.jpg?w=260&h=196&c=crop)
+![Image 11: Korean War armistice agreement](https://cdn.britannica.com/37/151337-050-05082BB7/Lieut-Gen-William-K-Harrison-Jr-UN-July-27-1953.jpg?w=260&h=196&c=crop)
 
- Encyclopædia Britannica, Inc.
-
-2004
-
- In response to an explosion of violence in the [Darfur](https://www.britannica.com/place/Darfur) region, the [European Union](https://www.britannica.com/topic/European-Union) advocated that the [United Nations](https://www.britannica.com/topic/United-Nations) institute economic sanctions against [Sudan](https://www.britannica.com/place/Sudan).
-
-![Image 12: Kargil War Memorial in Dras, India](https://cdn.britannica.com/04/233004-050-15B23A1C/Kargil-War-Memorial-Dras-India.jpg?w=260&h=196&c=crop)
-
- Neel Dass/Alamy
-
-1999
-
- The [Kargil War](https://www.britannica.com/event/Kargil-War), a conflict between Pakistan and India over a sector of the disputed [Kashmir](https://www.britannica.com/place/Kashmir-region-Indian-subcontinent) region, officially ended.
-
-![Image 13: Americans with Disabilities Act (1990)](https://cdn.britannica.com/18/142518-050-D3CF6FF3/Pres-George-HW-Bush-Americans-with-Disabilities-July-26-1990.jpg?w=260&h=196&c=crop)
-
- George Bush Library/NARA
-
-1990
-
- The [Americans with Disabilities Act](https://www.britannica.com/topic/Americans-with-Disabilities-Act), which provided [civil rights](https://www.britannica.com/topic/civil-rights) protections to individuals with physical and mental disabilities, was signed into law by President [George H.W. Bush](https://www.britannica.com/biography/George-H-W-Bush).
-
-![Image 14: “The Butcher of Plainfield”](https://cdn.britannica.com/31/199331-050-EB6EF6AC/Ed-Gein-1957.jpg?w=260&h=196&c=crop)
-
- Wisconsin State Journal/AP Images
-
-1984
-
- The notorious murderer [Ed Gein](https://www.britannica.com/biography/Ed-Gein)—who inspired numerous books and films, including _[Psycho](https://www.britannica.com/topic/Psycho-film-1960)_ and _[The Silence of the Lambs](https://www.britannica.com/topic/The-Silence-of-the-Lambs)_—died in a mental hospital as a result of lung cancer.
-
-![Image 15: Diane Arbus](https://cdn.britannica.com/35/252935-050-380F4315/Photographer-Diane-Arbus-portrait-in-the-Automat-at-Sixth-Avenue-between-41st-42nd-Street-in-New-York-New-York-portraits-of-people-from-the-edges-of-society.jpg?w=260&h=196&c=crop)
-
- © Roz Kelly—Michael Ochs Archives/Getty Images
-
-1971
-
- American photographer [Diane Arbus](https://www.britannica.com/biography/Diane-Arbus)—who was best known for her compelling, often disturbing, portraits of people from the edges of society—died by suicide at age 48. _[[Test your knowledge of famous photographers](https://www.britannica.com/quiz/know-your-photographers).]_
-
-![Image 16: Maldives](https://cdn.britannica.com/80/2280-050-322910B4/Flag-Maldives.jpg?w=260&h=196&c=crop)
-
- Encyclopædia Britannica, Inc.
-
-1965
-
- The [Republic of Maldives](https://www.britannica.com/place/Maldives) gained its independence from [Britain](https://www.britannica.com/place/United-Kingdom).
-
-![Image 17: The Blind Side](https://cdn.britannica.com/55/137455-050-05F499A9/Sandra-Bullock-The-Blind-Side.jpg?w=260&h=196&c=crop)
-
- © 2009 Warner Brothers, Inc.
-
-1964
-
-[Sandra Bullock](https://www.britannica.com/biography/Sandra-Bullock)—known for her charismatic energy and wit on-screen, especially as girl-next-door characters in [romantic comedies](https://www.britannica.com/art/romantic-comedy-film)—was born in Arlington, Virginia.
-
-![Image 18: Andrea Doria](https://cdn.britannica.com/62/134662-050-6E51C657/Andrea-Doria-coast-Stockholm-Nantucket-Massachusetts-July-1956.jpg?w=260&h=196&c=crop)
-
- U.S. Coast Guard Photograph
-
-1956
-
- The Italian passenger liner [Andrea Doria](https://www.britannica.com/topic/Andrea-Doria-Italian-ship) sank after colliding with the Stockholm off the coast of [Nantucket](https://www.britannica.com/place/Nantucket) in the [Atlantic Ocean](https://www.britannica.com/place/Atlantic-Ocean); 51 people were killed. _[[Read about seven of the world’s deadliest shipwrecks](https://www.britannica.com/list/7-of-the-worlds-deadliest-shipwrecks).]_
-
-![Image 19: Fidel Castro](https://cdn.britannica.com/75/44175-050-3A072862/Fidel-Castro-1964.jpg?w=260&h=196&c=crop)
-
- Elliott Erwitt/Magnum Photos
+ U.S. Department of Defense
 
 1953
 
-[Fidel Castro](https://www.britannica.com/biography/Fidel-Castro) attacked the Moncada military fortress in Santiago de Cuba, and, although unsuccessful, the event later inspired the [26th of July Movement](https://www.britannica.com/topic/26th-of-July-Movement), which culminated in the overthrow of [Fulgencio Batista](https://www.britannica.com/biography/Fulgencio-Batista)’s regime in [Cuba](https://www.britannica.com/place/Cuba). _[[Take our quiz about the United States and Cuba](https://www.britannica.com/quiz/us-and-cuba).]_
+ The armistice agreement ending the [Korean War](https://www.britannica.com/event/Korean-War) was signed at [P’anmunjŏm](https://www.britannica.com/place/Panmunjom) in central Korea. _[[Sort fact from fiction in our quiz about Korea](https://www.britannica.com/quiz/exploring-korea-fact-or-fiction).]_
 
-![Image 20: Executive Order 9981](https://cdn.britannica.com/24/143124-050-5380C764/page-Pres-Executive-Order-9981-Harry-Truman-July-26-1948.jpg?w=260&h=196&c=crop)
+![Image 12: Gertrude Stein](https://cdn.britannica.com/81/146481-050-7563FFD5/Gertrude-Stein-Carl-Van-Vechten-1934.jpg?w=260&h=196&c=crop)
 
- NARA
+ Carl Van Vechten/Library of Congress, Washington, D.C. (LC-USZ62-103678)
 
-1948
+1946
 
- U.S. President [Harry S. Truman](https://www.britannica.com/biography/Harry-S-Truman) signed [Executive Order 9981](https://www.britannica.com/topic/Executive-Order-9981), which abolished [racial segregation](https://www.britannica.com/topic/racial-segregation) in the U.S. military. _[[Read more about this and nine other milestones in U.S. civil rights history](https://www.britannica.com/list/riding-freedom-10-milestones-in-us-civil-rights-history).]_
+ Avant-garde writer [Gertrude Stein](https://www.britannica.com/biography/Gertrude-Stein), whose Paris home was a salon for leading artists and writers, died at age 72. _[[Take our famous authors quiz](https://www.britannica.com/quiz/famous-authors).]_
 
-![Image 21: Los Angeles smog](https://cdn.britannica.com/43/234143-050-B7C53E59/Smog-Los-Angeles-California-2019.jpg?w=260&h=196&c=crop)
+![Image 13: Looney Tunes characters](https://cdn.britannica.com/45/143145-050-755F6847/characters-Sylvester-Warner-Brothers-Tasmanian-Devil-theme.jpg?w=260&h=196&c=crop)
 
- Mario Tama/Getty Images
+ PRNewsFoto/Six Flags Great Adventure/AP Images
 
-1943
+1940
 
-[Los Angeles](https://www.britannica.com/place/Los-Angeles-California) experienced its first major [smog](https://www.britannica.com/science/smog) as a “hellish cloud” descended on the city, limiting visibility to three blocks; the noxious smog was later blamed, in part, on the exhaust from vehicles. _[[Test your knowledge of pollution](https://www.britannica.com/quiz/pollution).]_
+[Warner Brothers](https://www.britannica.com/topic/Warner-Brothers) released the [Looney Tunes](https://www.britannica.com/topic/Looney-Tunes) animated short film A Wild Hare, featuring the debut of [Bugs Bunny](https://www.britannica.com/topic/Bugs-Bunny) in his familiar incarnation; embryonic versions of the character had appeared in earlier cartoons. _[[Watch a clip from Fresh Hare (1942), featuring Bugs Bunny and Elmer Fudd](https://www.britannica.com/video/133692/Fresh-Hare-Excerpt-Warner-Brothers-Bugs-Bunny).]_
 
-![Image 22: Aldous Huxley](https://cdn.britannica.com/53/10853-004-4C47ABBC/Aldous-Huxley-1959.jpg?w=260&h=196&c=crop)
+![Image 14: Red Summer](https://cdn.britannica.com/33/185333-050-8D6C89AF/African-Americans-beach-whites-Lake-Michigan-Chicago-1919.jpg?w=260&h=196&c=crop)
 
- Robert M. Quittner/Black Star
+ © Historica Graphica Collection—Heritage Images/Getty Images
 
-1894
+1919
 
-[Aldous Huxley](https://www.britannica.com/biography/Aldous-Huxley), whose deep distrust of 20th-century trends in both politics and technology found expression in his novel [Brave New World](https://www.britannica.com/topic/Brave-New-World) (1932), was born in Godalming, Surrey. _[[Take our quiz about authors of classic literature](https://www.britannica.com/quiz/authors-of-classic-literature).]_
+ The [Chicago Race Riot of 1919](https://www.britannica.com/event/Chicago-Race-Riot-of-1919) was ignited after a young Black man was stoned and drowned in [Lake Michigan](https://www.britannica.com/place/Lake-Michigan) for swimming in an area reserved for whites. _[[Read more about this and nine other riots in U.S. history](https://www.britannica.com/list/theres-a-riot-goin-on-riots-in-us-history-part-two).]_
+
+![Image 15: Orville and Wilbur Wright](https://cdn.britannica.com/10/69210-050-33BA2D24/Orville-Wright-1910.jpg?w=260&h=196&c=crop)
+
+ Library of Congress, Washington, D.C. (digital file no. cph 3a08822)
+
+1909
+
+ The world’s [first military airplane](https://www.britannica.com/topic/Wright-military-flyer-of-1909) completed one of the final qualifying flights for its sale to the U.S. Army Signal Corps by [Wilbur and Orville Wright](https://www.britannica.com/biography/Wright-brothers). _[[Test your knowledge of early aviation](https://www.britannica.com/quiz/early-aviation).]_
+
+![Image 16: Charles X](https://cdn.britannica.com/63/140663-050-4F707686/Charles-X.jpg?w=260&h=196&c=crop)
+
+ Gianni Dagli Orti/Shutterstock.com
+
+1830
+
+ The [July Revolution](https://www.britannica.com/event/July-Revolution) began in [France](https://www.britannica.com/place/France), leading to the abdication of [Charles X](https://www.britannica.com/biography/Charles-X) and bringing [Louis-Philippe](https://www.britannica.com/biography/Louis-Philippe) to the throne. _[[How much do you know about French history?](https://www.britannica.com/quiz/france-a-history-quiz)]_
+
+![Image 17: Maximilien Robespierre](https://cdn.britannica.com/40/184740-050-781F76B3/Maximilien-Robespierre.jpg?w=260&h=196&c=crop)
+
+ @ DEA/G.DAGLI ORTI—De Agostini Editorial/Getty Images
+
+1794
+
+[Antoine-Christophe Merlin](https://www.britannica.com/biography/Antoine-Christophe-Merlin) and other conspirators initiated the [Thermidorian Reaction](https://www.britannica.com/event/Thermidorian-Reaction), a revolt that ultimately resulted in the fall of [Maximilien de Robespierre](https://www.britannica.com/biography/Maximilien-Robespierre) and the end of the [Reign of Terror](https://www.britannica.com/event/Reign-of-Terror) during the [French Revolution](https://www.britannica.com/event/French-Revolution). _[[Take our quiz about plots and revolutions](https://www.britannica.com/quiz/plots-and-revolutions-quiz).]_
 
 SIGN UP FOR
 
-![Image 23: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 24: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
+![Image 18: Today In History Logo](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-logo.png?v=3.189.7)![Image 19: Today In History](https://cdn.britannica.com/mendel-resources/3-189/images/shared/tih-subscribe-side.png?v=3.189.7&w=800)
 
 History's Biggest Headlines
 
@@ -283,4 +247,4 @@ SIGN UP
 
 ### Thank you for signing up!
 
-![Image 26](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=138&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-26&s=9A41798D-508A-4380-AFB0-223DECE2FB9E&json=%20)![Image 27: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=0941d578-eb84-9b75-9d5f-03dc8e31639d&iiqpciddate=1785097976584&tsrnd=328_1785097976670&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 28](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001785097979-EB5ZCDPD-ZMBO)![Image 29](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001785097979-EB5ZCDPD-ZMBO&adnxs_id=$UID&gdpr=0)![Image 30](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001785097979-EB5ZCDPD-ZMBO%26auid%3DAU1D-0100-001785097979-EB5ZCDPD-ZMBO&gdpr=0)![Image 31](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001785097979-EB5ZCDPD-ZMBO&gdpr=0)![Image 32](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001785097979-EB5ZCDPD-ZMBO&gdpr=0)![Image 33](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001785097979-EB5ZCDPD-ZMBO&gdpr=0)![Image 34](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001785097979-EB5ZCDPD-ZMBO&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001785097979-EB5ZCDPD-ZMBO%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 35](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4NTA5Nzk3OS1FQjVaQ0RQRC1aTUJP&id=AU1D-0100-001785097979-EB5ZCDPD-ZMBO&gdpr=0)![Image 36](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001785097979-EB5ZCDPD-ZMBO)![Image 37](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001785097979-EB5ZCDPD-ZMBO&uid=[UID]&gdpr=0)![Image 38](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001785097979-EB5ZCDPD-ZMBO%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
+![Image 21](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=130&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-27&s=B462A451-FF94-412A-BD2D-68EC00CA78CC&json=%20)![Image 22: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=5cab9150-d416-17fe-4198-edc53b6eb927&iiqpciddate=1785152153012&tsrnd=595_1785152153018&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 23](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001785152155-46TOBNTN-0ZQ1)![Image 24](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001785152155-46TOBNTN-0ZQ1&adnxs_id=$UID&gdpr=0)![Image 25](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001785152155-46TOBNTN-0ZQ1%26auid%3DAU1D-0100-001785152155-46TOBNTN-0ZQ1&gdpr=0)![Image 26](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001785152155-46TOBNTN-0ZQ1&gdpr=0)![Image 27](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001785152155-46TOBNTN-0ZQ1&gdpr=0)![Image 28](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001785152155-46TOBNTN-0ZQ1&gdpr=0)![Image 29](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001785152155-46TOBNTN-0ZQ1&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001785152155-46TOBNTN-0ZQ1%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 30](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4NTE1MjE1NS00NlRPQk5UTi0wWlEx&id=AU1D-0100-001785152155-46TOBNTN-0ZQ1&gdpr=0)![Image 31](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001785152155-46TOBNTN-0ZQ1)![Image 32](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001785152155-46TOBNTN-0ZQ1&uid=[UID]&gdpr=0)![Image 33](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001785152155-46TOBNTN-0ZQ1%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
