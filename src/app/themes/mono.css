@@ -251,6 +251,12 @@
   /* the ghost impression, again — offset display type is the theme's signature */
   text-shadow: 3px 3px 0 var(--mono-ghost);
 }
+/* The ghost offset is a big-headline effect. Applied to the small card-title
+   text sitting on the SOLID ink slab it doesn't read as a second impression —
+   it reads as smeared, illegible text. Card headers stay clean. */
+:root.theme-mono .headrule .font-display {
+  text-shadow: none;
+}
 /* No gradient in a monochrome theme; the masthead gets the offset instead. */
 :root.theme-mono .text-gradient {
   background: none;
