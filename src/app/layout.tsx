@@ -20,12 +20,15 @@ import "./themes/forest.css";
 import "./themes/water.css";
 import "./themes/sunset.css";
 import "./themes/rain.css";
+import "./themes/mosaic.css";
 import { PrefsProvider } from "@/components/PrefsProvider";
 import { CommandPalette } from "@/components/CommandPalette";
 import { FocusMode } from "@/components/FocusMode";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { ThemeRestorer } from "@/components/ThemeRestorer";
 import { WeatherFx } from "@/components/WeatherFx";
+import { TerminalFx } from "@/components/TerminalFx";
+import { ComicFx } from "@/components/ComicFx";
 import { CURRENT } from "@/lib/app-config";
 import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 
@@ -73,6 +76,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <PrefsProvider>
           <ThemeRestorer />
           <WeatherFx />
+          <TerminalFx />
+          <ComicFx />
           <ScrollProgress />
           {children}
           <CommandPalette />

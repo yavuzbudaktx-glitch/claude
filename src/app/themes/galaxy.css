@@ -7,44 +7,46 @@
       so the light/dark toggle could never override it and "day" was just the
       night sky again. The `:not(.dark)` block below sits at (0,3,0) and wins.
 
-   2. The first attempt at a day sky was too playful — a peach dawn, an orrery
-      of orbital rings, joined-up constellations and sparkles. This is the
-      restrained version: an engraved celestial chart. A cool graded sky, the
-      fine curved grid of a coordinate plate, and sparse star dust in indigo.
-      No mascots, no sparkle, nothing cartoon.
+   2. The COLOUR was wrong twice over. First attempt: a peach dawn with an
+      orrery and sparkles — too playful. Second: the same violet/lavender family
+      as night, which just read as a washed-out version of the dark theme.
+      This one drops purple entirely and goes cold — glacier blue and steel with
+      a near-black navy ink, the palette of an observatory dome at first light
+      rather than a nebula poster. Structure comes from an engraved coordinate
+      plate, not from decoration.
 
    Night mode is untouched. */
 
 :root.theme-galaxy:not(.dark) {
   color-scheme: light;
-  --bg:           #e6e8f6;                   /* pre-sunrise sky */
-  --paper:        rgba(255, 255, 255, 0.68);
-  --paper-2:      rgba(255, 255, 255, 0.86);
-  --ink:          #191434;                   /* deep indigo-black */
-  --ink-soft:     #3c3567;
-  --muted:        #6e6695;
-  --muted-2:      #a49dc4;
-  --rule:         rgba(76, 29, 149, 0.16);
-  --rule-soft:    rgba(76, 29, 149, 0.07);
-  --accent:       #6d28d9;                   /* violet-700 */
-  --accent-soft:  rgba(109, 40, 217, 0.11);
-  --accent-2:     #0e7490;                   /* cyan-700 */
-  --hl:           rgba(109, 40, 217, 0.09);
-  --up:           #047857;
-  --down:         #be185d;
-  --grad-from:    #4338ca;
-  --grad-via:     #7c3aed;
-  --grad-to:      #0e7490;
-  --glass:        rgba(255, 255, 255, 0.60);
-  --glass-border: rgba(255, 255, 255, 0.85);
-  --glow:         rgba(109, 40, 217, 0.24);
-  --shadow-card:  0 12px 36px -18px rgba(41, 26, 90, 0.34),
-                  0 1px 2px rgba(41, 26, 90, 0.07),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.72);
-  --shadow-hover: 0 26px 60px -22px rgba(41, 26, 90, 0.42),
-                  0 3px 8px rgba(41, 26, 90, 0.10),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.90);
-  --aurora-1:     transparent;               /* the sky below replaces the mesh */
+  --bg:           #dfe7f0;                   /* glacier light */
+  --paper:        rgba(255, 255, 255, 0.72);
+  --paper-2:      rgba(255, 255, 255, 0.88);
+  --ink:          #0d1a2b;                   /* navy, near-black */
+  --ink-soft:     #2b4058;
+  --muted:        #5d7288;
+  --muted-2:      #93a5b8;
+  --rule:         rgba(13, 26, 43, 0.15);
+  --rule-soft:    rgba(13, 26, 43, 0.06);
+  --accent:       #0f6b8f;                   /* deep cerulean */
+  --accent-soft:  rgba(15, 107, 143, 0.12);
+  --accent-2:     #3d6b8a;                   /* steel */
+  --hl:           rgba(15, 107, 143, 0.09);
+  --up:           #0f6b5a;
+  --down:         #a83a3a;
+  --grad-from:    #123a5c;
+  --grad-via:     #0f6b8f;
+  --grad-to:      #7fa8c4;
+  --glass:        rgba(255, 255, 255, 0.64);
+  --glass-border: rgba(255, 255, 255, 0.86);
+  --glow:         rgba(15, 107, 143, 0.22);
+  --shadow-card:  0 12px 36px -18px rgba(13, 26, 43, 0.30),
+                  0 1px 2px rgba(13, 26, 43, 0.06),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.76);
+  --shadow-hover: 0 26px 60px -22px rgba(13, 26, 43, 0.38),
+                  0 3px 8px rgba(13, 26, 43, 0.10),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  --aurora-1:     transparent;
   --aurora-2:     transparent;
   --aurora-3:     transparent;
   --aurora-4:     transparent;
@@ -63,11 +65,11 @@
   background-color: transparent;
   background-image:
     linear-gradient(180deg,
-      #cfd6ef 0%,
-      #dee3f4 34%,
-      #e9ecf8 66%,
-      #f1f2fa 100%),
-    radial-gradient(80% 46% at 50% -6%, rgba(99, 102, 190, 0.22), transparent 70%);
+      #b9cbdd 0%,
+      #cfdce8 30%,
+      #e2eaf2 62%,
+      #eef3f8 100%),
+    radial-gradient(78% 44% at 50% -8%, rgba(38, 74, 110, 0.26), transparent 72%);
 }
 
 /* ---------- the chart ----------
@@ -83,36 +85,36 @@
     /* the galactic band, laid across the plate at a shallow angle */
     linear-gradient(102deg,
       transparent 34%,
-      rgba(88, 76, 158, 0.10) 44%,
-      rgba(108, 96, 176, 0.14) 50%,
-      rgba(88, 76, 158, 0.10) 56%,
+      rgba(96, 130, 162, 0.14) 44%,
+      rgba(120, 156, 186, 0.20) 50%,
+      rgba(96, 130, 162, 0.14) 56%,
       transparent 66%),
     /* star dust — four sizes, sparse, all cool and dark enough to register */
-    radial-gradient(1.6px 1.6px at 12% 22%, rgba(35, 30, 82, 0.58), transparent 60%),
-    radial-gradient(1.2px 1.2px at 27% 61%, rgba(35, 30, 82, 0.44), transparent 60%),
-    radial-gradient(1.9px 1.9px at 44% 15%, rgba(35, 30, 82, 0.51), transparent 60%),
-    radial-gradient(1.1px 1.1px at 58% 74%, rgba(35, 30, 82, 0.37), transparent 60%),
-    radial-gradient(1.7px 1.7px at 71% 34%, rgba(35, 30, 82, 0.51), transparent 60%),
-    radial-gradient(1.2px 1.2px at 86% 58%, rgba(35, 30, 82, 0.41), transparent 60%),
-    radial-gradient(1.4px 1.4px at 93% 18%, rgba(35, 30, 82, 0.44), transparent 60%),
-    radial-gradient(1.1px 1.1px at 34% 88%, rgba(35, 30, 82, 0.34), transparent 60%),
-    radial-gradient(1.5px 1.5px at 65% 94%, rgba(35, 30, 82, 0.37), transparent 60%),
+    radial-gradient(1.6px 1.6px at 12% 22%, rgba(16, 38, 62, 0.58), transparent 60%),
+    radial-gradient(1.2px 1.2px at 27% 61%, rgba(16, 38, 62, 0.44), transparent 60%),
+    radial-gradient(1.9px 1.9px at 44% 15%, rgba(16, 38, 62, 0.51), transparent 60%),
+    radial-gradient(1.1px 1.1px at 58% 74%, rgba(16, 38, 62, 0.37), transparent 60%),
+    radial-gradient(1.7px 1.7px at 71% 34%, rgba(16, 38, 62, 0.51), transparent 60%),
+    radial-gradient(1.2px 1.2px at 86% 58%, rgba(16, 38, 62, 0.41), transparent 60%),
+    radial-gradient(1.4px 1.4px at 93% 18%, rgba(16, 38, 62, 0.44), transparent 60%),
+    radial-gradient(1.1px 1.1px at 34% 88%, rgba(16, 38, 62, 0.34), transparent 60%),
+    radial-gradient(1.5px 1.5px at 65% 94%, rgba(16, 38, 62, 0.37), transparent 60%),
     /* parallels */
     repeating-linear-gradient(0deg,
       transparent 0 118px,
-      rgba(41, 34, 92, 0.11) 118.4px 119.2px,
+      rgba(18, 42, 68, 0.11) 118.4px 119.2px,
       transparent 119.6px),
     /* meridians, bowed by the ellipse so the plate has curvature */
-    radial-gradient(150% 150% at 118% -34%, transparent 0 30%, rgba(41,34,92,0.085) 30% 30.5%, transparent 30.5% 42%),
-    radial-gradient(150% 150% at 118% -34%, transparent 0 47%, rgba(41,34,92,0.085) 47% 47.5%, transparent 47.5% 60%),
-    radial-gradient(150% 150% at 118% -34%, transparent 0 64%, rgba(41,34,92,0.085) 64% 64.5%, transparent 64.5% 78%),
-    radial-gradient(150% 150% at 118% -34%, transparent 0 82%, rgba(41,34,92,0.075) 82% 82.5%, transparent 82.5% 96%);
+    radial-gradient(150% 150% at 118% -34%, transparent 0 30%, rgba(18, 42, 68,0.085) 30% 30.5%, transparent 30.5% 42%),
+    radial-gradient(150% 150% at 118% -34%, transparent 0 47%, rgba(18, 42, 68,0.085) 47% 47.5%, transparent 47.5% 60%),
+    radial-gradient(150% 150% at 118% -34%, transparent 0 64%, rgba(18, 42, 68,0.085) 64% 64.5%, transparent 64.5% 78%),
+    radial-gradient(150% 150% at 118% -34%, transparent 0 82%, rgba(18, 42, 68,0.075) 82% 82.5%, transparent 82.5% 96%);
   background-repeat: no-repeat;
 }
 
 /* Headline keeps the violet→cyan sweep, just deeper so it doesn't glow. */
 .theme-galaxy:not(.dark) .text-gradient {
-  background: linear-gradient(118deg, #3730a3, #6d28d9 48%, #0e7490);
+  background: linear-gradient(118deg, #123a5c, #0f6b8f 48%, #7fa8c4);
   -webkit-background-clip: text; background-clip: text;
 }
 /* Cards sit on the chart like a plate laid over it: crisp, low-lift, no bloom. */
@@ -121,6 +123,6 @@
   background-image: linear-gradient(180deg, rgba(255,255,255,0.42), transparent 46%);
 }
 .theme-galaxy:not(.dark) .dot {
-  background: radial-gradient(circle at 34% 30%, #ffffff, #6d28d9 58%, #312e81);
-  box-shadow: 0 0 0 3px rgba(109,40,217,0.12);
+  background: radial-gradient(circle at 34% 30%, #ffffff, #0f6b8f 58%, #0d1a2b);
+  box-shadow: 0 0 0 3px rgba(15,107,143,0.14);
 }

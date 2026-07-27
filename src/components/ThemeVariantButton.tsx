@@ -17,7 +17,7 @@ const SWATCHES: Record<ThemeId, string[]> = {
   cyberpunk:  ["#0a0014", "#ff2a6d", "#22d3ee"],
   renaissance:["#cbb287", "#8f2f1c", "#b0862c"],
   marble:     ["#f6f3ee", "#1a1814", "#c9a24a"],
-  subway:     ["#f6f3eb", "#0d3b66", "#c9a24a"],
+  subway:     ["#ded0b0", "#1b4f8f", "#b8892b"],
   terminal:   ["#000000", "#22ff77", "#ffb454"],
   mono:       ["#ffffff", "#000000", "#737373"],
   newspaper:  ["#f7f3e8", "#111111", "#9a1010"],

@@ -282,3 +282,40 @@
 }
 .theme-newspaper.dark .card-bare { background: rgba(244, 237, 224, 0.05); }
 .theme-newspaper.dark .btn-ghost:hover { background: rgba(244, 237, 224, 0.08); }
+
+/* ---- nameplate ----------------------------------------------------------
+   A masthead wordmark set beside the greeting, the way a paper's nameplate
+   sits at the top of page one. It hangs off the name span rather than the h1
+   because the h1's own ::before/::after are already the kicker rule and the
+   folio line.
+
+   Two things need care: `.text-gradient` paints the name with
+   `background-clip: text` and `color: transparent`, so a pseudo-element inside
+   it inherits a transparent fill and would render invisible — hence the
+   explicit `-webkit-text-fill-color` and `background: none`. And it is set in
+   Playfair (already imported for this theme) at high weight with a rule to its
+   left, which is what reads as engraved nameplate rather than a caption. */
+.theme-newspaper header > div > h1.font-display .text-gradient::after {
+  content: "Zaman Gazetesi";
+  display: inline-block;
+  vertical-align: 0.55em;
+  margin-left: 0.42em;
+  padding-left: 0.42em;
+  border-left: 2px solid var(--ink);
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-size: 0.26em;
+  font-weight: 900;
+  font-style: normal;
+  letter-spacing: 0.015em;
+  line-height: 1.1;
+  text-transform: none;
+  white-space: nowrap;
+  background: none;
+  color: var(--ink);
+  -webkit-text-fill-color: var(--ink);
+}
+/* On a phone the nameplate would push the greeting into a second line, and a
+   masthead that wraps looks like a mistake — drop it there. */
+@media (max-width: 640px) {
+  .theme-newspaper header > div > h1.font-display .text-gradient::after { display: none; }
+}

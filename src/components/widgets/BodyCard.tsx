@@ -243,9 +243,6 @@ function HabitTracker() {
 //   localStorage and synced across devices via Supabase when signed in.
 // ============================================================================
 
-// Which of the two workout templates is showing.
-type PlanId = "A" | "B";
-
 interface WeightEntry { date: string; weight: number }
 interface BodyState {
   entries: WeightEntry[];
@@ -256,7 +253,7 @@ interface BodyState {
   calsDate: string;          // localDateKey the calsTotal + proteinTotal apply to
   calsTotal: number;         // calories logged "today"
   proteinTotal: number;      // protein (g) logged "today"
-  plan: PlanId;              // which workout template is currently active
+  plan: "A" | "B";           // legacy: kept so saved data round-trips untouched
 }
 
 const KEY = "morning.body.v1";
@@ -325,20 +322,6 @@ function smoothPath(pts: Array<[number, number]>): string {
     d += ` C ${c1x.toFixed(2)},${c1y.toFixed(2)} ${c2x.toFixed(2)},${c2y.toFixed(2)} ${p2[0].toFixed(2)},${p2[1].toFixed(2)}`;
   }
   return d;
-}
-
-// A textarea that grows with its content instead of scrolling.
-function AutoTextarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  const ref = useRef<HTMLTextAreaElement>(null);
-  const resize = () => {
-    const el = ref.current;
-    if (el) {
-      el.style.height = "auto";
-      el.style.height = `${el.scrollHeight}px`;
-    }
-  };
-  useEffect(() => { resize(); }, [props.value]);
-  return <textarea ref={ref} onInput={resize} {...props} />;
 }
 
 function fmtDate(key: string): string {
@@ -604,16 +587,6 @@ export function BodyCard() {
   const today = localDateKeyAt(rolloverHour);
   const calsToday = state.calsDate === today ? state.calsTotal : 0;
   const proteinToday = state.calsDate === today ? state.proteinTotal : 0;
-  const goalNum = Number(state.calorieGoal);
-  const hasGoal = Number.isFinite(goalNum) && goalNum > 0;
-  const calPct = hasGoal ? Math.min(100, (calsToday / goalNum) * 100) : 0;
-  const proteinGoalNum = Number(state.proteinGoal);
-  const hasProteinGoal = Number.isFinite(proteinGoalNum) && proteinGoalNum > 0;
-  const proteinPct = hasProteinGoal ? Math.min(100, (proteinToday / proteinGoalNum) * 100) : 0;
-  // Overshoot. Calories over goal is a warning (red); protein over goal is a
-  // win (green) — you're trying to *exceed* a protein target.
-  const calsOver = hasGoal ? Math.max(0, calsToday - goalNum) : 0;
-  const proteinOver = hasProteinGoal ? Math.max(0, proteinToday - proteinGoalNum) : 0;
 
   function addCals(e: React.FormEvent) {
     e.preventDefault();
@@ -646,11 +619,6 @@ export function BodyCard() {
     }
     setProteinDraft("");
   }
-
-  const fieldClass =
-    "w-full rounded-xl px-3 py-2 text-[13px] leading-relaxed text-ink resize-none overflow-hidden transition " +
-    "bg-[var(--rule-soft)] border border-transparent opacity-75 placeholder:text-muted-2 " +
-    "hover:opacity-100 focus:opacity-100 focus:bg-[var(--paper)] focus:border-[var(--accent)] focus:outline-none";
 
   // Today's gym plan, from the weekly schedule set in dashboard settings.
   const [gym] = usePref<GymSchedule>(GYM_PREF_KEY, DEFAULT_GYM);
@@ -716,140 +684,58 @@ export function BodyCard() {
         <HabitTracker />
       </div>
 
-      {/* Bottom strip — compact intake pair on the left (+ inputs hugging the
-          counts), the two workout textareas share the remaining width. */}
-      <div className="mt-5 pt-4 border-t rule grid grid-cols-1 md:grid-cols-[235px_235px_minmax(0,1fr)] gap-x-6 gap-y-4">
-        {/* Calories — goal, today's count, +input, progress bar */}
-        <div>
-          <div className="label mb-2">Calorie goal</div>
-          <div className="group/cal flex items-baseline gap-2 opacity-60 hover:opacity-100 focus-within:opacity-100 transition">
-            <input
-              type="number"
-              inputMode="numeric"
-              value={state.calorieGoal}
-              placeholder="2200"
-              onChange={(e) => setState((s) => ({ ...s, calorieGoal: e.target.value }))}
-              className="w-20 bg-transparent border-b border-[var(--rule)] focus:border-[var(--accent)] focus:outline-none font-mono tabular-nums text-lg text-ink pb-1 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
-            />
-            <span className="font-mono text-[11px] uppercase tracking-wider text-muted">kcal / day</span>
-          </div>
-          <div className="label mb-1.5 mt-4">Today&rsquo;s intake</div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-baseline gap-2">
-              <span className="font-mono tabular-nums text-lg text-ink">{calsToday.toLocaleString()}</span>
-              <span className={`font-mono text-[11px] uppercase tracking-wider ${calsOver > 0 ? "text-down font-semibold" : "text-muted"}`}>
-                {!hasGoal ? "kcal" : calsOver > 0
-                  ? `${calsOver.toLocaleString()} over`
-                  : `${(goalNum - calsToday).toLocaleString()} left`}
-              </span>
-            </div>
-            <form onSubmit={addCals} className="flex items-center gap-1.5">
-              <input
-                value={calDraft}
-                onChange={(e) => setCalDraft(e.target.value)}
-                placeholder="+ 250"
-                inputMode="numeric"
-                className="w-16 bg-[var(--rule-soft)] rounded-lg px-2 py-1.5 font-mono tabular-nums text-[12.5px] text-ink focus:outline-none focus:bg-[var(--paper)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-muted-2"
-                aria-label="Add calories"
-              />
-              <button type="submit" className="btn-ghost !h-8 !w-8" aria-label="Add to today's intake">
-                <Plus className="h-4 w-4" />
-              </button>
-            </form>
-          </div>
-          {hasGoal && (
-            <div className="h-1.5 w-full rounded-full bg-[var(--rule)] overflow-hidden mt-2.5">
-              <div
-                className="h-full rounded-full transition-[width] duration-500"
-                style={{
-                  width: `${calPct}%`,
-                  background: calsOver > 0
-                    ? "linear-gradient(90deg, var(--down), var(--down))"
-                    : "linear-gradient(90deg, var(--grad-from), var(--grad-via), var(--grad-to))",
-                }}
-              />
-            </div>
-          )}
+      {/* Intake — ONE compact row. Goals were removed (they're set in the
+          user's nutrition app now), which also removed the progress bars and
+          the whole third column of workout templates. What's left is just the
+          two counters and their + inputs, on a single line, so the card ends
+          right after them instead of trailing empty space. */}
+      <div className="mt-4 pt-3.5 border-t rule flex flex-wrap items-center gap-x-7 gap-y-3">
+        <div className="flex items-baseline gap-2">
+          <span className="label">Today</span>
         </div>
 
-        {/* Protein — same shape as calories so the eye reads them as a pair */}
-        <div>
-          <div className="label mb-2">Protein goal</div>
-          <div className="group/p flex items-baseline gap-2 opacity-60 hover:opacity-100 focus-within:opacity-100 transition">
+        {/* Calories */}
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-baseline gap-1.5">
+            <span className="font-mono tabular-nums text-xl text-ink leading-none">{calsToday.toLocaleString()}</span>
+            <span className="font-mono text-[11px] uppercase tracking-wider text-muted">kcal</span>
+          </div>
+          <form onSubmit={addCals} className="flex items-center gap-1">
             <input
-              type="number"
+              value={calDraft}
+              onChange={(e) => setCalDraft(e.target.value)}
+              placeholder="+250"
               inputMode="numeric"
-              value={state.proteinGoal}
-              placeholder="160"
-              onChange={(e) => setState((s) => ({ ...s, proteinGoal: e.target.value }))}
-              className="w-20 bg-transparent border-b border-[var(--rule)] focus:border-[var(--accent)] focus:outline-none font-mono tabular-nums text-lg text-ink pb-1 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-14 bg-[var(--rule-soft)] rounded-lg px-2 py-1 font-mono tabular-nums text-[12.5px] text-ink focus:outline-none focus:bg-[var(--paper)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-muted-2"
+              aria-label="Add calories"
             />
-            <span className="font-mono text-[11px] uppercase tracking-wider text-muted">g / day</span>
-          </div>
-          <div className="label mb-1.5 mt-4">Today&rsquo;s protein</div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-baseline gap-2">
-              <span className="font-mono tabular-nums text-lg text-ink">{proteinToday}</span>
-              <span className={`font-mono text-[11px] uppercase tracking-wider ${proteinOver > 0 ? "text-up font-semibold" : "text-muted"}`}>
-                {!hasProteinGoal ? "grams" : proteinOver > 0
-                  ? `${proteinOver} g over`
-                  : `${proteinGoalNum - proteinToday} g left`}
-              </span>
-            </div>
-            <form onSubmit={addProtein} className="flex items-center gap-1.5">
-              <input
-                value={proteinDraft}
-                onChange={(e) => setProteinDraft(e.target.value)}
-                placeholder="+ 30"
-                inputMode="numeric"
-                className="w-14 bg-[var(--rule-soft)] rounded-lg px-2 py-1.5 font-mono tabular-nums text-[12.5px] text-ink focus:outline-none focus:bg-[var(--paper)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-muted-2"
-                aria-label="Add protein"
-              />
-              <button type="submit" className="btn-ghost !h-8 !w-8" aria-label="Add to today's protein">
-                <Plus className="h-4 w-4" />
-              </button>
-            </form>
-          </div>
-          {hasProteinGoal && (
-            <div className="h-1.5 w-full rounded-full bg-[var(--rule)] overflow-hidden mt-2.5">
-              <div
-                className="h-full rounded-full transition-[width] duration-500"
-                style={{ width: `${proteinPct}%`, background: "linear-gradient(90deg, var(--up), var(--accent), var(--accent-2))" }}
-              />
-            </div>
-          )}
+            <button type="submit" className="btn-ghost !h-7 !w-7" aria-label="Add to today's intake">
+              <Plus className="h-3.5 w-3.5" />
+            </button>
+          </form>
         </div>
 
-        {/* Workout plan — one template at a time, switched by the A/B toggle
-            below, so the plan you're looking at is the plan you're logging
-            against instead of two textareas competing for attention. */}
-        <div>
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="label">Plan · {state.plan}</span>
-            <span className="ml-auto inline-flex items-center gap-1">
-              {(["A", "B"] as PlanId[]).map((p) => (
-                <button
-                  key={p}
-                  onClick={() => setState((s) => ({ ...s, plan: p }))}
-                  className={`chip normal-case !px-2.5 !py-0.5 !text-[11px] ${state.plan === p ? "chip-active" : ""}`}
-                  title={`Workout ${p}`}
-                >
-                  {p}
-                </button>
-              ))}
-            </span>
+        <span className="hidden sm:block h-6 w-px bg-[var(--rule-soft)]" aria-hidden />
+
+        {/* Protein */}
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-baseline gap-1.5">
+            <span className="font-mono tabular-nums text-xl text-ink leading-none">{proteinToday}</span>
+            <span className="font-mono text-[11px] uppercase tracking-wider text-muted">g protein</span>
           </div>
-          <AutoTextarea
-            value={state.plan === "A" ? state.workoutA : state.workoutB}
-            placeholder={state.plan === "A"
-              ? "Bench 4×8 · 185\nRows 4×10 · 135\nOHP 3×10 · 95"
-              : "Squat 4×6 · 275\nDeadlift 3×5 · 315\nCurls 3×12 · 40"}
-            onChange={(e) => setState((s) => (
-              s.plan === "A" ? { ...s, workoutA: e.target.value } : { ...s, workoutB: e.target.value }
-            ))}
-            rows={3}
-            className={fieldClass + " !text-[13px] !leading-[1.7]"}
-          />
+          <form onSubmit={addProtein} className="flex items-center gap-1">
+            <input
+              value={proteinDraft}
+              onChange={(e) => setProteinDraft(e.target.value)}
+              placeholder="+30"
+              inputMode="numeric"
+              className="w-14 bg-[var(--rule-soft)] rounded-lg px-2 py-1 font-mono tabular-nums text-[12.5px] text-ink focus:outline-none focus:bg-[var(--paper)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-muted-2"
+              aria-label="Add protein"
+            />
+            <button type="submit" className="btn-ghost !h-7 !w-7" aria-label="Add to today's protein">
+              <Plus className="h-3.5 w-3.5" />
+            </button>
+          </form>
         </div>
       </div>
     </Card>
