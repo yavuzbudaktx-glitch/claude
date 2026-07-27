@@ -71,10 +71,16 @@
    drift, and both are switched off here — these gradients are already soft and
    the blur only cost a compositor layer. Three passes, back to front:
 
-     4  the air column   — a gentle vertical thinning, the base tone
-     3  the airglow      — an enormous flattened lobe centred below the fold;
+     5  the air column   — a gentle vertical thinning, the base tone
+     4  the airglow      — an enormous flattened lobe centred below the fold;
                             the sun is under the horizon and this is all you
                             get of it. A whisper of warmth, no peach.
+     3  the limb         — the atmosphere seen edge-on. A colossal ellipse
+                            centred a page and a half below the fold, so the
+                            bright ring crosses the lower page almost flat:
+                            thirty pixels of sag over a 1140px viewport. This
+                            is the one line in the design, and it is the thing
+                            that says ALTITUDE rather than "blue gradient".
      2  the Milky Way    — a broad, edgeless diagonal veil, barely a tone above
                             the sky it lies on, leaning very slightly blue-
                             violet so the night palette is still in the room.
@@ -87,11 +93,11 @@
   transform: translateZ(0);
   background-color: transparent;
   background-image:
-    radial-gradient(94% 80% at 90% -18%,
-      rgba(20, 54, 104, 0.66) 0%,
-      rgba(40, 82, 136, 0.42) 25%,
-      rgba(82, 124, 174, 0.19) 47%,
-      rgba(142, 176, 212, 0.05) 66%,
+    radial-gradient(92% 82% at 92% -6%,
+      rgba(14, 44, 94, 0.76) 0%,
+      rgba(34, 74, 128, 0.50) 24%,
+      rgba(76, 118, 170, 0.23) 46%,
+      rgba(142, 176, 212, 0.07) 66%,
       transparent 80%),
     linear-gradient(114deg,
       transparent 4%,
@@ -101,20 +107,28 @@
       rgba(230, 237, 255, 0.30) 37%,
       rgba(255, 255, 255, 0.08) 48%,
       transparent 60%),
+    radial-gradient(200% 86% at 50% 150%,
+      transparent 56%,
+      rgba(255, 253, 247, 0.38) 65%,
+      rgba(255, 255, 255, 0.92) 71%,
+      rgba(231, 241, 251, 0.58) 76%,
+      rgba(202, 222, 242, 0.16) 86%,
+      transparent 96%),
     radial-gradient(155% 58% at 44% 118%,
-      rgba(255, 252, 246, 0.94) 0%,
-      rgba(230, 240, 250, 0.62) 30%,
-      rgba(210, 228, 244, 0.22) 52%,
+      rgba(255, 252, 246, 0.90) 0%,
+      rgba(228, 239, 250, 0.58) 30%,
+      rgba(206, 226, 243, 0.20) 52%,
       transparent 70%),
     linear-gradient(178deg,
-      #a9c2dc 0%,
-      #bbd0e4 24%,
-      #cfdeed 50%,
-      #e1ebf5 76%,
-      #eef4fa 100%);
+      #a4bed9 0%,
+      #b7cde3 24%,
+      #ccdcec 50%,
+      #dfe9f4 74%,
+      #e7eff7 88%,
+      #d9e5f1 100%);
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  background-position: 50% 0, 50% 0, 50% 118%, 50% 0;
+  background-position: 50% 0, 50% 0, 50% 0, 50% 118%, 50% 0;
   animation: galaxyDayAir 96s ease-in-out infinite alternate;
 }
 
@@ -123,8 +137,8 @@
    and change exactly one of them. Six percent of viewport height over a minute
    and a half; you will never catch it moving. */
 @keyframes galaxyDayAir {
-  from { background-position: 50% 0, 50% 0, 50% 118%, 50% 0; }
-  to   { background-position: 50% 0, 50% 0, 50% 112%, 50% 0; }
+  from { background-position: 50% 0, 50% 0, 50% 0, 50% 118%, 50% 0; }
+  to   { background-position: 50% 0, 50% 0, 50% 0, 50% 112%, 50% 0; }
 }
 
 /* ---------- the last stars ----------

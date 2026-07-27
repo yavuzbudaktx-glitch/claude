@@ -62,17 +62,24 @@
      horizon line, and the abrupt light→dark→light jump across it is what the
      eye reads as polished metal. --- */
   --chrome-text: linear-gradient(180deg,
-                 #fdfeff 0%, #dbeafa 13%, #a8c8e6 26%, #5f88b4 40%,
-                 #34567e 49.5%, #0f2742 50%, #4b7ba8 50.6%, #93bfe0 60%,
-                 #e8f4ff 71%, #ffffff 80%, #b5d2ec 92%, #86abcd 100%);
+                 #a9c6e2 0%, #ffffff 9%, #ffffff 16%, #cfe0f0 25%,
+                 #7196bd 36%, #1d3d61 45%, #16324f 50%,
+                 #d2e8fb 50.01%, #7fadd4 58%, #eef8ff 68%, #ffffff 78%,
+                 #9dbcd8 89%, #52789c 100%);
+  --chrome-edge: rgba(11, 33, 60, 0.50);   /* the dark outline around chrome */
   --chrome-bar:  linear-gradient(180deg,
-                 #ffffff 0%, #eaf4ff 17%, #b6d1eb 44%, #7ba3c7 49.5%,
-                 #cfe4f7 50.5%, #ffffff 63%, #cddff0 85%, #8fb2d2 100%);
+                 #ffffff 0 17%, #d5e5f4 17% 33%, #6d94ba 33% 44%,
+                 #24405f 44% 50%, #f6fbff 50% 67%, #b7cfe6 67% 84%,
+                 #7fa2c2 84% 100%);
   /* the candy shell of every large surface: white cap, hard equator, bounce */
   --candy:       linear-gradient(180deg,
-                 rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.72) 45%,
-                 rgba(206,230,252,0.34) 50%, rgba(255,255,255,0.10) 62%,
-                 rgba(174,214,252,0.40) 100%);
+                 rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.70) 44%,
+                 rgba(186,220,250,0.44) 50%, rgba(214,236,255,0.22) 64%,
+                 rgba(150,200,248,0.46) 100%);
+  /* Bubbles on a pale sky need a tinted rim — a white rim on white is nothing.
+     A url() cannot take var() substitutions inside it, so each mode carries
+     its own whole bubble. */
+  --y2k-bubble:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cdefs%3E%3CradialGradient id='g' cx='0.36' cy='0.30' r='0.78'%3E%3Cstop offset='0' stop-color='%23ffffff' stop-opacity='0.80'/%3E%3Cstop offset='0.34' stop-color='%23bfe2ff' stop-opacity='0.24'/%3E%3Cstop offset='0.72' stop-color='%236fb0f0' stop-opacity='0.16'/%3E%3Cstop offset='0.92' stop-color='%234f9ce4' stop-opacity='0.30'/%3E%3Cstop offset='1' stop-color='%23ffffff' stop-opacity='0.55'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='110' cy='110' r='104' fill='url(%23g)'/%3E%3Ccircle cx='110' cy='110' r='103' fill='none' stroke='%235aa6e2' stroke-opacity='0.40' stroke-width='1.8'/%3E%3Ccircle cx='110' cy='110' r='100' fill='none' stroke='%23ffffff' stroke-opacity='0.55' stroke-width='1.6'/%3E%3Cellipse cx='76' cy='58' rx='30' ry='17' fill='%23ffffff' fill-opacity='0.92' transform='rotate(-26 76 58)'/%3E%3Cellipse cx='150' cy='168' rx='34' ry='14' fill='%23aad8ff' fill-opacity='0.38'/%3E%3C/svg%3E");
 }
 
 /* Night: frutiger aero. Same chrome, same gloss — but the plastic is now
@@ -85,7 +92,7 @@
   --ink:          #e9f6ff;
   --ink-soft:     #b3d8f5;
   --muted:        #7aa4c9;
-  --muted-2:      #4d7398;
+  --muted-2:      #6f96bb;
   --rule:         rgba(140, 205, 255, 0.22);
   --rule-soft:    rgba(140, 205, 255, 0.09);
   --accent:       #4ad2ff;                 /* backlit cyan */
@@ -117,29 +124,27 @@
   --grain:        0.05;
 
   --chrome-text: linear-gradient(180deg,
-                 #ffffff 0%, #ddf0ff 12%, #9bc7ea 26%, #4a79a8 40%,
-                 #1b3e66 49.5%, #050f1e 50%, #3d7bb0 50.6%, #8ec8f2 60%,
-                 #eafaff 71%, #ffffff 82%, #a5d3f4 93%, #6b9dc7 100%);
+                 #8bb6dd 0%, #ffffff 9%, #ffffff 16%, #c2ddf2 25%,
+                 #5480ac 36%, #123a5e 45%, #08192b 50%,
+                 #c7e6ff 50.01%, #6ba7d8 58%, #eafaff 68%, #ffffff 78%,
+                 #8fc0e4 89%, #40709a 100%);
+  --chrome-edge: rgba(3, 16, 31, 0.55);
   --chrome-bar:  linear-gradient(180deg,
-                 #f4fbff 0%, #cfe7fa 17%, #7ba5c9 44%, #3f6488 49.5%,
-                 #9fcbea 50.5%, #eaf7ff 63%, #a4c8e4 85%, #5d84a8 100%);
+                 #f8fdff 0 17%, #c2dcf0 17% 33%, #55809f 33% 44%,
+                 #0a1c2e 44% 50%, #e6f5ff 50% 67%, #8db3d2 67% 84%,
+                 #446b8c 84% 100%);
   --candy:       linear-gradient(180deg,
                  rgba(255,255,255,0.30) 0%, rgba(180,226,255,0.16) 45%,
                  rgba(20,90,160,0.20) 50%, rgba(255,255,255,0.04) 62%,
                  rgba(74,210,255,0.18) 100%);
+  /* At night the bubbles are lit from behind, so the rim goes white again. */
+  --y2k-bubble:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cdefs%3E%3CradialGradient id='g' cx='0.36' cy='0.30' r='0.78'%3E%3Cstop offset='0' stop-color='%23ffffff' stop-opacity='0.62'/%3E%3Cstop offset='0.35' stop-color='%23cfeaff' stop-opacity='0.14'/%3E%3Cstop offset='0.72' stop-color='%238fc4ff' stop-opacity='0.10'/%3E%3Cstop offset='0.93' stop-color='%23ffffff' stop-opacity='0.40'/%3E%3Cstop offset='1' stop-color='%23ffffff' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='110' cy='110' r='104' fill='url(%23g)'/%3E%3Ccircle cx='110' cy='110' r='103' fill='none' stroke='%23ffffff' stroke-opacity='0.42' stroke-width='1.6'/%3E%3Cellipse cx='76' cy='58' rx='30' ry='17' fill='%23ffffff' fill-opacity='0.80' transform='rotate(-26 76 58)'/%3E%3Cellipse cx='150' cy='168' rx='34' ry='14' fill='%23dff2ff' fill-opacity='0.30'/%3E%3C/svg%3E");
 }
 
 /* ---- the backdrop -------------------------------------------------------
    An opaque body would paint over the fixed z-index:-1 pseudo layers, so the
    body stays transparent and `html` keeps var(--bg). */
 .theme-y2k body { background: transparent; }
-
-/* One bubble, drawn once and reused seven times at different sizes below.
-   A real bubble is not a flat circle: soft interior falloff, a bright thin
-   rim, an off-centre specular blob up top and a dimmer bounce spot below. */
-.theme-y2k {
-  --y2k-bubble: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cdefs%3E%3CradialGradient id='g' cx='0.36' cy='0.30' r='0.78'%3E%3Cstop offset='0' stop-color='%23ffffff' stop-opacity='0.62'/%3E%3Cstop offset='0.35' stop-color='%23cfeaff' stop-opacity='0.14'/%3E%3Cstop offset='0.72' stop-color='%238fc4ff' stop-opacity='0.10'/%3E%3Cstop offset='0.93' stop-color='%23ffffff' stop-opacity='0.40'/%3E%3Cstop offset='1' stop-color='%23ffffff' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='110' cy='110' r='104' fill='url(%23g)'/%3E%3Ccircle cx='110' cy='110' r='103' fill='none' stroke='%23ffffff' stroke-opacity='0.42' stroke-width='1.6'/%3E%3Cellipse cx='76' cy='58' rx='30' ry='17' fill='%23ffffff' fill-opacity='0.80' transform='rotate(-26 76 58)'/%3E%3Cellipse cx='150' cy='168' rx='34' ry='14' fill='%23dff2ff' fill-opacity='0.30'/%3E%3C/svg%3E");
-}
 
 /* Layer 1 — the bubble field over a sky wash, with a lens flare in the
    top-right corner and two chromatic ghosts running down the diagonal from
@@ -202,11 +207,12 @@
 }
 
 /* ---- type ---------------------------------------------------------------
-   Big display text is filled with liquid chrome; small display text keeps a
-   solid colour plus a 1px white emboss so it stays crisp at 15px. The
-   masthead's `.text-ink` span inherits the transparent text-fill, so the
-   chrome painted on the <h1> shows through its glyphs; the `.text-gradient`
-   span paints its own hologram on top of that. */
+   Liquid chrome goes on the masthead ONLY. It was on every large heading at
+   first, and a chrome figure on a white glossy card is unreadable — the
+   gradient's light half disappears into the surface under it. So headings and
+   figures keep solid ink with a 1px white emboss, and the <h1> carries the
+   metal. A dark 0.7px outline holds the chrome together against a pale sky;
+   without it the top half of every letter dissolves. */
 .theme-y2k .font-display {
   font-weight: 700;
   letter-spacing: -0.03em;
@@ -214,35 +220,31 @@
 }
 .theme-y2k.dark .font-display { text-shadow: 0 1px 0 rgba(190, 235, 255, 0.16); }
 
-.theme-y2k h1.font-display,
-.theme-y2k .font-display.text-3xl,
-.theme-y2k .font-display.text-4xl,
-.theme-y2k .font-display.text-5xl,
-.theme-y2k .font-display.text-6xl {
+.theme-y2k h1.font-display {
   background-image: var(--chrome-text);
-  background-size: 100% 1.06em;          /* one chrome band per line of type */
+  background-size: 100% 1em;             /* one chrome band per line of type */
   background-repeat: repeat;
   -webkit-background-clip: text;
           background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 0.7px var(--chrome-edge);
   text-shadow: none;
-  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.85))
-          drop-shadow(0 6px 12px rgba(10, 45, 95, 0.32));
+  filter: drop-shadow(0 2px 0 rgba(255, 255, 255, 0.85))
+          drop-shadow(0 6px 12px rgba(10, 45, 95, 0.38));
 }
-.theme-y2k.dark h1.font-display,
-.theme-y2k.dark .font-display.text-3xl,
-.theme-y2k.dark .font-display.text-4xl,
-.theme-y2k.dark .font-display.text-5xl,
-.theme-y2k.dark .font-display.text-6xl {
-  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.22))
-          drop-shadow(0 4px 18px rgba(74, 210, 255, 0.40));
+.theme-y2k.dark h1.font-display {
+  filter: drop-shadow(0 2px 0 rgba(180, 232, 255, 0.30))
+          drop-shadow(0 5px 20px rgba(74, 210, 255, 0.45));
 }
 /* the greeting half of the masthead — let the parent's chrome through */
 .theme-y2k h1.font-display .text-ink {
   color: transparent;
   -webkit-text-fill-color: transparent;
 }
+/* …but the name keeps its own hologram, so it must not inherit the chrome's
+   dark outline. */
+.theme-y2k h1.font-display .text-gradient { -webkit-text-stroke: 0; }
 
 /* Hologram: cyan → violet → pink, sweeping slowly. Keeps the base
    animation but widens the ramp so the colour actually travels. */
@@ -349,7 +351,7 @@
   background-image: var(--chrome-bar);
   background-repeat: no-repeat;
   background-position: 0 100%;
-  background-size: 100% 5px;
+  background-size: 100% 6px;
   border-radius: 3px;
 }
 

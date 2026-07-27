@@ -140,6 +140,8 @@
 /* The composition. Read the stack top-down:
      · the construction grid — a faint 72px module the whole layout sits on;
      · a red disc bleeding off the right edge, high up;
+     · a heavy ring struck over the square, half of it running behind the
+       cards — overlapping planes, the way the posters were built;
      · a cobalt square anchored to the bottom-left corner;
      · a chrome-yellow right triangle at the bottom-right;
      · a thick black diagonal bar cutting the top-left corner.
@@ -155,24 +157,27 @@
     linear-gradient(var(--bh-grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--bh-grid) 1px, transparent 1px),
     radial-gradient(circle 190px at 100% 0, var(--bh-red) 0 189px, transparent 190px),
+    radial-gradient(circle 95px at 50% 50%, transparent 0 78px, var(--bh-line) 78px 95px, transparent 95px),
     linear-gradient(var(--bh-blue), var(--bh-blue)),
     linear-gradient(to top left, transparent 0 50%, var(--bh-yellow) 50% 100%),
     linear-gradient(-45deg, transparent 0 44%, var(--bh-line) 44% 56%, transparent 56%);
-  background-repeat: repeat, repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+  background-repeat: repeat, repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
   background-size:
     100% 72px,
     72px 100%,
     380px 380px,
+    190px 190px,
     150px 150px,
     210px 170px,
-    300px 300px;
+    420px 420px;
   background-position:
     0 0,
     0 0,
     right -110px top 60px,
+    left 56px bottom 46px,
     left -40px bottom -40px,
     right bottom,
-    left -150px top -150px;
+    left -190px top -190px;
 }
 
 /* The left margin band — red, yellow, blue in equal thirds down the full
@@ -201,8 +206,16 @@
 }
 
 /* ---------- cards: flat panels under a colour band ---------- */
+/* The quarter-disc in the bottom-right corner is painted by the card's own
+   background rather than a pseudo-element: clipped to the padding box it can
+   never spill over the black rule, and it needs no stacking fixes. */
 .theme-bauhaus .card {
-  background: var(--bh-face);
+  background:
+    radial-gradient(circle 56px at 100% 100%, var(--bh-blue) 0 55px, transparent 56px)
+      right bottom / 56px 56px no-repeat,
+    var(--bh-face);
+  background-origin: padding-box;
+  background-clip: padding-box;
   -webkit-backdrop-filter: none; backdrop-filter: none;
   border: 3px solid var(--bh-line);
   border-top: 14px solid var(--bh-red);   /* the poster band, cycled below */
@@ -211,38 +224,32 @@
   padding: 1.35rem 1.45rem 1.5rem;
   transition: border-color .18s linear;
 }
-.theme-bauhaus .card:nth-of-type(3n+2) { border-top-color: var(--bh-blue); }
-.theme-bauhaus .card:nth-of-type(3n+3) { border-top-color: var(--bh-yellow); }
+.theme-bauhaus .card:nth-of-type(3n+2) {
+  border-top-color: var(--bh-blue);
+  background:
+    radial-gradient(circle 56px at 100% 100%, var(--bh-yellow) 0 55px, transparent 56px)
+      right bottom / 56px 56px no-repeat,
+    var(--bh-face);
+  background-origin: padding-box;
+  background-clip: padding-box;
+}
+.theme-bauhaus .card:nth-of-type(3n+3) {
+  border-top-color: var(--bh-yellow);
+  background:
+    radial-gradient(circle 56px at 100% 100%, var(--bh-red) 0 55px, transparent 56px)
+      right bottom / 56px 56px no-repeat,
+    var(--bh-face);
+  background-origin: padding-box;
+  background-clip: padding-box;
+}
 .theme-bauhaus .card:hover { transform: none; box-shadow: none; border-color: var(--bh-line); }
 .theme-bauhaus .card:nth-of-type(3n+1):hover { border-top-color: var(--bh-red); }
 .theme-bauhaus .card:nth-of-type(3n+2):hover { border-top-color: var(--bh-blue); }
 .theme-bauhaus .card:nth-of-type(3n+3):hover { border-top-color: var(--bh-yellow); }
 
-/* The glass ring becomes a hard quarter-disc in the bottom-right corner —
-   a geometric mark doing the job the highlight used to do, cycled through
-   the primaries so no two neighbouring cards match. */
-.theme-bauhaus .card::before {
-  inset: auto 0 0 auto;
-  width: 56px; height: 56px;
-  padding: 0;
-  border-radius: 0;
-  opacity: 1;
-  z-index: 0;
-  -webkit-mask: none; mask: none;
-  background: radial-gradient(circle 56px at 100% 100%,
-              var(--bh-blue) 0 55px, transparent 56px);
-}
-.theme-bauhaus .card:nth-of-type(3n+2)::before {
-  background: radial-gradient(circle 56px at 100% 100%,
-              var(--bh-yellow) 0 55px, transparent 56px);
-}
-.theme-bauhaus .card:nth-of-type(3n+3)::before {
-  background: radial-gradient(circle 56px at 100% 100%,
-              var(--bh-red) 0 55px, transparent 56px);
-}
-.theme-bauhaus .card::after { display: none; }
-/* …and the content rides above the mark. */
-.theme-bauhaus .card > * { position: relative; z-index: 1; }
+/* No frosted edge, no hover bloom — the card is a flat plane. */
+.theme-bauhaus .card::before { display: none; }
+.theme-bauhaus .card::after  { display: none; }
 
 .theme-bauhaus .card-bare {
   border: 3px solid var(--bh-line);

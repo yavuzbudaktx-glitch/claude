@@ -1,2 +1,212 @@
-/* ottoman — theme. Loaded AFTER globals.css (see src/app/layout.tsx),
-   so equal-specificity rules here win over the base definitions. */
+/* ottoman — the imperial court, at full intensity.
+
+   This replaces a "Türkiye" attempt that was rejected outright: the tulips
+   read as ugly, the line-border on the cards was noise, and it didn't feel
+   Turkish so much as generically patterned. The base Iznik tile inherited
+   from globals.css is overridden here entirely.
+
+   The vocabulary is military-court rather than decorative-floral, because the
+   brief was to feel like a yeniçeri:
+
+     · ÇINTEMANI — three balls over two wavy "tiger stripes". The pattern that
+       covered janissary kaftans and imperial silk. It is the field this whole
+       theme sits on, and it is the single most Ottoman thing on the page.
+     · TUĞRA — the sultan's calligraphic monogram, as a large watermark seal.
+     · CRESCENT & STAR — worked in as the header dot and a standard on the
+       page edge, since the previous attempt was called out for having no flag.
+     · OTAĞ — the scalloped valance of an imperial campaign tent, hung across
+       the top of the page.
+     · Gold cartouche rules on the cards; crimson silk and gold leaf throughout.
+
+   No pictogram icons in the card corners — that was an explicit note.
+--------------------------------------------------------------------------- */
+
+/* ---- palette: crimson silk, gold leaf, emerald, ivory -------------------- */
+:root.theme-ottoman:not(.dark) {
+  color-scheme: light;
+  --bg:           #e9d2ac;                 /* raw silk, deepened — ivory read pink */
+  --paper:        #fdf4e4;
+  --paper-2:      #f6e7cd;
+  --ink:          #2a0d10;                 /* near-black, blood-red cast */
+  --ink-soft:     #5c2320;
+  --muted:        #8a5a44;
+  --muted-2:      #b08b6e;
+  --rule:         rgba(122, 15, 31, 0.34);
+  --rule-soft:    rgba(122, 15, 31, 0.13);
+  --accent:       #8e0f22;                 /* imperial crimson — deep, not pink */
+  --accent-soft:  rgba(142, 15, 34, 0.13);
+  --accent-2:     #9a7420;                 /* gold leaf, darkened to read on ivory */
+  --hl:           rgba(142, 15, 34, 0.10);
+  --up:           #0d5c4a;                 /* emerald */
+  --down:         #a3201b;
+  --grad-from:    #6d0b1a;
+  --grad-via:     #a8231f;
+  --grad-to:      #c9a227;
+  --glass:        #fbf1e0;
+  --glass-border: rgba(122, 15, 31, 0.38);
+  --glow:         rgba(201, 162, 39, 0.30);
+  --shadow-card:  0 1px 0 rgba(42,13,16,0.10), 0 16px 34px -20px rgba(42, 13, 16, 0.45);
+  --shadow-hover: 0 2px 5px rgba(42,13,16,0.14), 0 26px 52px -22px rgba(42, 13, 16, 0.55);
+  --aurora-1:     rgba(142, 15, 34, 0.10);
+  --aurora-2:     rgba(201, 162, 39, 0.09);
+  --aurora-3:     rgba(13, 92, 74, 0.06);
+  --aurora-4:     transparent;
+  --grain:        0.05;
+  --ott-gold:     #9a7420;
+  --ott-gold-hi:  #c9a227;
+  --ott-ink:      #2a0d10;
+}
+/* Night: the throne room by lamplight — deep oxblood walls, gold catching. */
+:root.theme-ottoman.dark {
+  color-scheme: dark;
+  --bg:           #190508;
+  --paper:        rgba(201, 162, 39, 0.055);
+  --paper-2:      rgba(201, 162, 39, 0.10);
+  --ink:          #f7e6c8;
+  --ink-soft:     #dcc199;
+  --muted:        #a4805a;
+  --muted-2:      #6d5236;
+  --rule:         rgba(201, 162, 39, 0.30);
+  --rule-soft:    rgba(201, 162, 39, 0.12);
+  --accent:       #c9a227;                 /* gold leads at night */
+  --accent-soft:  rgba(201, 162, 39, 0.16);
+  --accent-2:     #d4453a;                 /* crimson, lifted so it reads */
+  --hl:           rgba(201, 162, 39, 0.13);
+  --up:           #34a383;
+  --down:         #e0645a;
+  --grad-from:    #7a0f1f;
+  --grad-via:     #c9a227;
+  --grad-to:      #f0d68a;
+  --glass:        rgba(46, 10, 14, 0.66);
+  --glass-border: rgba(201, 162, 39, 0.32);
+  --glow:         rgba(201, 162, 39, 0.40);
+  --shadow-card:  0 18px 44px -18px rgba(0,0,0,0.85), inset 0 1px 0 rgba(201,162,39,0.12);
+  --shadow-hover: 0 30px 68px -24px rgba(0,0,0,0.9), inset 0 1px 0 rgba(201,162,39,0.20);
+  --aurora-1:     rgba(122, 15, 31, 0.50);
+  --aurora-2:     rgba(201, 162, 39, 0.22);
+  --aurora-3:     rgba(13, 92, 74, 0.20);
+  --aurora-4:     rgba(12, 3, 5, 0.7);
+  --grain:        0.06;
+  --ott-gold:     #c9a227;
+  --ott-gold-hi:  #f0d68a;
+  --ott-ink:      #190508;
+}
+
+/* ---- the silk field -----------------------------------------------------
+   ÇINTEMANI on a woven ground. The tile is 132px so the motif is legible at a
+   glance rather than dissolving into texture, and it is drawn in gold on
+   crimson — the actual colourway of janissary and sultan's silks. */
+.theme-ottoman body { background: transparent; }
+.theme-ottoman body::before {
+  inset: 0;
+  filter: none;
+  animation: none;
+  transform: translateZ(0);
+  background-color: transparent;
+  background-image:
+    /* çintemani: three discs above two tiger stripes, offset row to row */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='132' height='132'%3E%3Cg fill='none' stroke='%237a0f1f' stroke-width='2.6' opacity='.46'%3E%3Ccircle cx='33' cy='26' r='9'/%3E%3Ccircle cx='57' cy='26' r='9'/%3E%3Ccircle cx='45' cy='46' r='9'/%3E%3Cpath d='M18 64q9-7 18 0t18 0t18 0' stroke-width='2.6'/%3E%3Cpath d='M18 73q9-7 18 0t18 0t18 0' stroke-width='2.6'/%3E%3Ccircle cx='99' cy='92' r='9'/%3E%3Ccircle cx='123' cy='92' r='9'/%3E%3Ccircle cx='111' cy='112' r='9'/%3E%3Cpath d='M84 130q9-7 18 0t18 0t18 0' stroke-width='2.6'/%3E%3Cpath d='M84 121q9-7 18 0t18 0t18 0' stroke-width='2.6'/%3E%3C/g%3E%3C/svg%3E"),
+    /* woven silk: a fine warp/weft so the ground isn't flat colour */
+    repeating-linear-gradient(90deg, rgba(42,13,16,0.05) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(0deg,  rgba(42,13,16,0.04) 0 1px, transparent 1px 4px),
+    /* lamplight from above */
+    radial-gradient(130% 80% at 50% -10%, rgba(122,15,31,0.22), transparent 62%);
+  background-repeat: repeat, repeat, repeat, no-repeat;
+  background-size: 132px 132px, 4px 4px, 4px 4px, 100% 100%;
+}
+.theme-ottoman.dark body::before {
+  filter: none;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='132' height='132'%3E%3Cg fill='none' stroke='%23c9a227' stroke-width='2.2' opacity='.26'%3E%3Ccircle cx='33' cy='26' r='9'/%3E%3Ccircle cx='57' cy='26' r='9'/%3E%3Ccircle cx='45' cy='46' r='9'/%3E%3Cpath d='M18 64q9-7 18 0t18 0t18 0' stroke-width='2.6'/%3E%3Cpath d='M18 73q9-7 18 0t18 0t18 0' stroke-width='2.6'/%3E%3Ccircle cx='99' cy='92' r='9'/%3E%3Ccircle cx='123' cy='92' r='9'/%3E%3Ccircle cx='111' cy='112' r='9'/%3E%3Cpath d='M84 130q9-7 18 0t18 0t18 0' stroke-width='2.6'/%3E%3Cpath d='M84 121q9-7 18 0t18 0t18 0' stroke-width='2.6'/%3E%3C/g%3E%3C/svg%3E"),
+    repeating-linear-gradient(90deg, rgba(201,162,39,0.045) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(0deg,  rgba(201,162,39,0.035) 0 1px, transparent 1px 4px),
+    radial-gradient(130% 80% at 50% -10%, rgba(201,162,39,0.16), transparent 62%);
+  background-repeat: repeat, repeat, repeat, no-repeat;
+  background-size: 132px 132px, 4px 4px, 4px 4px, 100% 100%;
+}
+
+/* ---- tent valance, tuğra seal, standard ---------------------------------
+   ::after carries the three set-pieces. The otağ valance hangs across the top
+   (above the content, but behind it in z-order), the tuğra sits as a large
+   seal low-right, and a crescent-and-star standard marks the left edge. */
+.theme-ottoman body::after {
+  opacity: 1;
+  mix-blend-mode: normal;
+  background-image:
+    /* otağ — scalloped campaign-tent valance */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='54'%3E%3Cpath d='M0 0h150v18q-18.75 0-18.75 14t-18.75 14T93.75 32 75 46 56.25 32 37.5 18 18.75 32 0 18z' fill='%237a0f1f' fill-opacity='.42'/%3E%3Cpath d='M0 18q18.75 0 18.75 14T37.5 18t18.75 14T75 46l18.75-14T112.5 18l18.75 14T150 18' fill='none' stroke='%23c9a227' stroke-width='2' opacity='.5'/%3E%3Ccircle cx='37.5' cy='34' r='2.6' fill='%23c9a227' opacity='.6'/%3E%3Ccircle cx='75' cy='48' r='2.6' fill='%23c9a227' opacity='.6'/%3E%3Ccircle cx='112.5' cy='34' r='2.6' fill='%23c9a227' opacity='.6'/%3E%3C/svg%3E"),
+    /* tuğra — the sultan's monogram: three elifs, the sweeping sword stroke,
+       the twin egg-loops to the left, the flourish trailing right */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='230'%3E%3Cg fill='none' stroke='%237a0f1f' stroke-width='3.4' opacity='.20' stroke-linecap='round'%3E%3Cpath d='M150 214V52M172 214V64M194 214V56'/%3E%3Cpath d='M150 52q0-22 22-22t22 26'/%3E%3Cpath d='M194 214q40-6 46-46t-24-52'/%3E%3Cpath d='M150 150q-52 10-80-22t10-68q31-31 62 3t-22 62q-25 19-40-3'/%3E%3Cpath d='M150 174q-62 12-96-25'/%3E%3Cpath d='M194 116q34-9 52 12t-9 46'/%3E%3Cpath d='M92 96q15-12 28 3'/%3E%3Cpath d='M216 62q22-10 34 6'/%3E%3C/g%3E%3C/svg%3E"),
+    /* crescent-and-star standard */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='96'%3E%3Cg fill='none' stroke='%23c9a227' stroke-width='2.6' opacity='.42'%3E%3Cpath d='M40 30a15 15 0 1 0 0 26 18 18 0 1 1 0-26z'/%3E%3Cpath d='m46 36 2.4 5 5.4.6-4 3.7 1.1 5.3-4.9-2.7-4.9 2.7 1.1-5.3-4-3.7 5.4-.6z'/%3E%3Cpath d='M20 96V8' stroke-width='3'/%3E%3Ccircle cx='20' cy='6' r='3.4'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat-x, no-repeat, no-repeat;
+  background-position: center top, right 40px bottom 60px, left 14px top 96px;
+  background-size: 150px 54px, 300px 230px, 60px 96px;
+}
+.theme-ottoman.dark body::after {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='54'%3E%3Cpath d='M0 0h150v18q-18.75 0-18.75 14t-18.75 14T93.75 32 75 46 56.25 32 37.5 18 18.75 32 0 18z' fill='%237a0f1f' fill-opacity='.42'/%3E%3Cpath d='M0 18q18.75 0 18.75 14T37.5 18t18.75 14T75 46l18.75-14T112.5 18l18.75 14T150 18' fill='none' stroke='%23c9a227' stroke-width='2' opacity='.62'/%3E%3Ccircle cx='37.5' cy='34' r='2.6' fill='%23f0d68a' opacity='.7'/%3E%3Ccircle cx='75' cy='48' r='2.6' fill='%23f0d68a' opacity='.7'/%3E%3Ccircle cx='112.5' cy='34' r='2.6' fill='%23f0d68a' opacity='.7'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='230'%3E%3Cg fill='none' stroke='%23c9a227' stroke-width='3.4' opacity='.15' stroke-linecap='round'%3E%3Cpath d='M150 214V52M172 214V64M194 214V56'/%3E%3Cpath d='M150 52q0-22 22-22t22 26'/%3E%3Cpath d='M194 214q40-6 46-46t-24-52'/%3E%3Cpath d='M150 150q-52 10-80-22t10-68q31-31 62 3t-22 62q-25 19-40-3'/%3E%3Cpath d='M150 174q-62 12-96-25'/%3E%3Cpath d='M194 116q34-9 52 12t-9 46'/%3E%3Cpath d='M92 96q15-12 28 3'/%3E%3Cpath d='M216 62q22-10 34 6'/%3E%3C/g%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='96'%3E%3Cg fill='none' stroke='%23f0d68a' stroke-width='2.6' opacity='.46'%3E%3Cpath d='M40 30a15 15 0 1 0 0 26 18 18 0 1 1 0-26z'/%3E%3Cpath d='m46 36 2.4 5 5.4.6-4 3.7 1.1 5.3-4.9-2.7-4.9 2.7 1.1-5.3-4-3.7 5.4-.6z'/%3E%3Cpath d='M20 96V8' stroke-width='3'/%3E%3Ccircle cx='20' cy='6' r='3.4'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat-x, no-repeat, no-repeat;
+  background-position: center top, right 40px bottom 60px, left 14px top 96px;
+  background-size: 150px 54px, 300px 230px, 60px 96px;
+}
+/* On a phone the seal and the standard have nowhere to live. */
+@media (max-width: 900px) {
+  .theme-ottoman body::after,
+  .theme-ottoman.dark body::after {
+    background-repeat: repeat-x;
+    background-position: center top;
+    background-size: 150px 54px;
+  }
+}
+
+/* ---- cards: silk panels in a gold cartouche ------------------------------
+   A double gold frame (outer rule + inset keyline) is the cartouche that
+   surrounds an imperial inscription. No corner pictograms — the frame and the
+   header rule carry it. */
+.theme-ottoman .card {
+  border-radius: 10px;
+  border: 1.5px solid var(--ott-gold);
+  background-image: linear-gradient(180deg, color-mix(in srgb, var(--ott-gold) 9%, transparent), transparent 44%);
+  box-shadow: var(--shadow-card), inset 0 0 0 1px color-mix(in srgb, var(--ott-gold) 26%, transparent);
+}
+.theme-ottoman .card::before { display: none; }
+.theme-ottoman .card::after { display: none; }
+.theme-ottoman .card:hover {
+  border-color: var(--ott-gold-hi);
+  box-shadow: var(--shadow-hover), inset 0 0 0 1px color-mix(in srgb, var(--ott-gold-hi) 42%, transparent);
+}
+
+/* Header rule as a gold cartouche band, heavier on top than beneath. */
+.theme-ottoman .headrule {
+  border-bottom: 2px solid var(--ott-gold);
+  box-shadow: 0 4px 0 -3px color-mix(in srgb, var(--ott-gold) 60%, transparent);
+  padding-bottom: .55rem;
+}
+
+/* Crescent and star for the header dot — the flag the last attempt lacked. */
+.theme-ottoman .dot {
+  position: relative;
+  overflow: visible;
+  background: none;
+  box-shadow: none;
+  width: 13px; height: 13px;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13'%3E%3Cg fill='none' stroke='%23c9a227' stroke-width='1.5'%3E%3Cpath d='M9 2.4a4.6 4.6 0 1 0 0 8.2 5.6 5.6 0 1 1 0-8.2z'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 13px 13px;
+}
+
+/* Filled pills knock out to the page colour: at night --accent IS gold, and
+   white on gold doesn't read. */
+:root.theme-ottoman.dark { --on-accent: #190508; }
+.theme-ottoman .chip-active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+
+/* Inscriptional display type — imperial, not decorative. */
+.theme-ottoman .font-display { letter-spacing: -0.012em; font-weight: 800; }
+.theme-ottoman .label,
+.theme-ottoman .metalabel { letter-spacing: 0.15em; }

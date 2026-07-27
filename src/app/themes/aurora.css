@@ -32,7 +32,52 @@
    No JS, so "touch" is a background-position + box-shadow transition.
 
    Restraint still matters: this is the theme you look at all day.
+
+   ---------------------------------------------------------------------------
+   WHY DAY IS HARDER, AND WHAT CHANGED
+
+   Night was easy: a bright edge on a dark field is legible at 3% alpha. On a
+   pale page every one of those tricks lands on white-over-white and vanishes,
+   which is exactly why day used to read as a plain card with a faint border.
+   Light-on-light needs a different rulebook, and the day block below now
+   follows it:
+
+     · the pane is COOLER AND SLIGHTLY DARKER than the page, not whiter. Real
+       glass laid on white paper is not brighter than the paper. Tinting the
+       slab down is what buys the highlights somewhere to go.
+     · every highlight is FLANKED BY A DARK EDGE. A white band next to a faint
+       slate band reads twice as bright as the same band alone; this is most of
+       the perceived specular.
+     · the specular has HARD STOPS. A soft fade on light just looks like an
+       uneven wash — a reflection needs an edge.
+     · the border is LIT DIRECTIONALLY, per side: near-white on top, pale cool
+       on the left, mid-cool on the right, dark slate underneath. One
+       declaration, and it is the single biggest change in here.
+     · the caustics are CAST BELOW THE PANE onto the page, in saturated cyan
+       and amber, because that is the only place they can be seen.
+     · the page itself carries real chroma now (see the --aurora-* overrides),
+       because glass over flat white has nothing to bend.
 --------------------------------------------------------------------------- */
+
+/* ===========================================================================
+   DAY — the page has to have something IN it
+   The base day mesh is four dark colours at ~0.25 alpha, which over #e9ebf2
+   with an 80px blur resolves to a very slightly dirty grey. Restated here as
+   four LIGHT, saturated fields: same softness, actual colour. This is the
+   substance the panes refract, and every optical layer below depends on it.
+   =========================================================================== */
+:root[data-theme="aurora"]:not(.dark) {
+  --aurora-1:     rgba(56, 152, 214, 0.42);   /* sky */
+  --aurora-2:     rgba(38, 198, 196, 0.34);   /* aqua */
+  --aurora-3:     rgba(246, 176, 92, 0.34);   /* warm sand */
+  --aurora-4:     rgba(142, 134, 232, 0.32);  /* periwinkle */
+  /* Thinner glass fill: more of that colour has to survive the pane, or the
+     refraction is invisible. The tint that makes it read as a slab is applied
+     per-card below, where it can be directional. */
+  --glass:        rgba(255, 255, 255, 0.52);
+  --glass-border: rgba(255, 255, 255, 0.85);
+  --glow:         rgba(14, 116, 144, 0.30);
+}
 
 /* ===========================================================================
    DAY — page atmosphere
@@ -41,7 +86,10 @@
 /* Layer 1 (z -3) — the ribbon. One broad band of refracted light raked across
    the upper page and blurred until it has no edges at all. Masked to a soft
    lobe so it never reaches the bottom of the page, where the content is
-   densest. Big, slow, almost subliminal — and it is what the cards catch. */
+   densest. Big, slow, almost subliminal — and it is what the cards catch.
+   Chroma raised to match the mesh: the point of this layer is to give the top
+   of the page a direction and a colour temperature gradient, so panes sitting
+   at different heights catch visibly different light. */
 :root[data-theme="aurora"]:not(.dark)::before {
   content: "";
   position: fixed;
@@ -50,18 +98,18 @@
   pointer-events: none;
   background-image: linear-gradient(
     104deg,
-    transparent 6%,
-    rgba(125, 211, 252, 0.30) 24%,
-    rgba(255, 255, 255, 0.62) 36%,
-    rgba(94, 234, 212, 0.26) 47%,
-    rgba(196, 181, 253, 0.22) 58%,
-    rgba(253, 224, 176, 0.18) 68%,
+    transparent 4%,
+    rgba(96, 196, 250, 0.46) 22%,
+    rgba(255, 255, 255, 0.70) 35%,
+    rgba(70, 226, 205, 0.40) 46%,
+    rgba(178, 166, 252, 0.36) 57%,
+    rgba(253, 206, 138, 0.32) 68%,
     transparent 84%
   );
-  -webkit-mask-image: radial-gradient(115% 72% at 44% 4%, #000 0%, rgba(0, 0, 0, 0.6) 44%, transparent 84%);
-          mask-image: radial-gradient(115% 72% at 44% 4%, #000 0%, rgba(0, 0, 0, 0.6) 44%, transparent 84%);
+  -webkit-mask-image: radial-gradient(115% 78% at 44% 4%, #000 0%, rgba(0, 0, 0, 0.62) 46%, transparent 88%);
+          mask-image: radial-gradient(115% 78% at 44% 4%, #000 0%, rgba(0, 0, 0, 0.62) 46%, transparent 88%);
   filter: blur(44px);
-  opacity: 0.88;
+  opacity: 0.9;
   animation: auroraRibbon 52s ease-in-out infinite alternate;
 }
 @keyframes auroraRibbon {
@@ -108,38 +156,83 @@
    brightness and contrast: a thick pane doesn't just blur what's behind it, it
    lifts and separates it. */
 :root[data-theme="aurora"]:not(.dark) .card {
-  -webkit-backdrop-filter: blur(28px) saturate(185%) brightness(1.07) contrast(1.04);
-          backdrop-filter: blur(28px) saturate(185%) brightness(1.07) contrast(1.04);
+  -webkit-backdrop-filter: blur(26px) saturate(200%) brightness(1.05) contrast(1.05);
+          backdrop-filter: blur(26px) saturate(200%) brightness(1.05) contrast(1.05);
+
+  /* THE DIRECTIONAL BORDER. One declaration, four sides, and it does more for
+     the "sheet of glass" read than everything else on this element combined:
+     the top face is lit near-white, the left rim is a pale cool, the right rim
+     steps down, and the bottom is a genuine dark slate — that dark line is the
+     THICKNESS of the slab, seen from slightly above. The 22px radius miters the
+     four colours into each other around the corners, which is exactly how a
+     rounded bevel actually shades. */
+  border-color:
+    rgba(255, 255, 255, 0.97)
+    rgba(122, 150, 188, 0.52)
+    rgba(58, 84, 124, 0.56)
+    rgba(226, 240, 253, 0.82);
 
   /* The optical stack, front-to-back in source order:
-       1  sheen    — narrow diagonal band; MOVES on hover (the "touch")
-       2  specular — bright rake along the TOP edge (light entering)
-       3  exit     — dimmer rake along the BOTTOM edge (light leaving)
-       4  caustic  — focused pool low-left; drifts with the sheen
+       1  sheen    — hard-stopped double specular, each band FLANKED by a thin
+                     cool-dark line so it reads bright on a pale page; MOVES on
+                     hover (the "touch")
+       2  specular — bright rake along the TOP edge with a dark line under it
+       3  exit     — the far face of the slab, seen through its own thickness:
+                     a bright hairline sitting just above the dark bottom edge
+       4  caustic  — focused pool low-left, amber core / cyan skirt; drifts
+                     with the sheen
        5  etch     — hairline frost striations
        6  grain    — frost speckle so it isn't clean plastic
-       7  body     — faint vertical falloff, thicker glass reads darker low
+       7  body     — THE TINT. Near-white at the top-left corner falling to a
+                     cool slate at the bottom-right. This is the layer that
+                     makes the pane darker than the page, which is both what
+                     real glass on white paper does and the only way the
+                     highlights above it have anywhere to go.
   */
   background-image:
     linear-gradient(101deg,
-      transparent 34%,
-      rgba(255, 255, 255, 0.30) 44%,
-      rgba(255, 255, 255, 0.58) 50%,
-      rgba(255, 255, 255, 0.30) 56%,
-      transparent 66%),
-    radial-gradient(125% 100% at 26% 0%, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.10) 62%, transparent 100%),
-    radial-gradient(115% 100% at 66% 100%, rgba(255, 255, 255, 0.52), transparent 78%),
-    radial-gradient(46% 40% at 30% 82%, rgba(255, 252, 240, 0.42), rgba(214, 244, 255, 0.16) 52%, transparent 76%),
+      rgba(255, 255, 255, 0) 0 35%,
+      rgba(34, 58, 96, 0.10) 36.2%,
+      rgba(255, 255, 255, 0.34) 37.4%,
+      rgba(255, 255, 255, 0.94) 39%,
+      rgba(255, 255, 255, 1) 42%,
+      rgba(255, 255, 255, 0.36) 42.8%,
+      rgba(34, 58, 96, 0.12) 44%,
+      rgba(255, 255, 255, 0) 45.6% 47%,
+      rgba(255, 255, 255, 0.62) 47.8%,
+      rgba(255, 255, 255, 0.70) 49%,
+      rgba(255, 255, 255, 0.06) 49.8%,
+      rgba(28, 50, 86, 0.07) 50.6%,
+      rgba(255, 255, 255, 0) 52% 100%),
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.98) 0 1.4px,
+      rgba(255, 255, 255, 0.42) 1.4px 3px,
+      rgba(40, 64, 104, 0.11) 3px 4.4px,
+      rgba(255, 255, 255, 0) 4.4px),
+    linear-gradient(0deg,
+      rgba(30, 52, 90, 0.09) 0 1.6px,
+      rgba(255, 255, 255, 0.95) 1.6px 3.1px,
+      rgba(255, 255, 255, 0.34) 3.1px 4.6px,
+      rgba(255, 255, 255, 0) 4.6px),
+    radial-gradient(48% 42% at 26% 84%,
+      rgba(255, 244, 206, 0.55),
+      rgba(150, 226, 255, 0.34) 46%,
+      transparent 76%),
     repeating-linear-gradient(101deg,
-      rgba(255, 255, 255, 0.055) 0 1px,
-      rgba(255, 255, 255, 0) 1px 5px),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='150' height='150' filter='url(%23f)' opacity='0.075'/%3E%3C/svg%3E"),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(8, 14, 30, 0.035));
+      rgba(255, 255, 255, 0.10) 0 1px,
+      rgba(46, 70, 108, 0.030) 1px 2px,
+      rgba(255, 255, 255, 0) 2px 6px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='150' height='150' filter='url(%23f)' opacity='0.085'/%3E%3C/svg%3E"),
+    linear-gradient(163deg,
+      rgba(255, 255, 255, 0.68) 0%,
+      rgba(240, 246, 253, 0.18) 26%,
+      rgba(156, 186, 220, 0.19) 62%,
+      rgba(112, 148, 194, 0.30) 100%);
   background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat, no-repeat;
   background-size:
     230% 100%,
-    100% 26px,
-    100% 15px,
+    100% 5px,
+    100% 5px,
     100% 100%,
     auto,
     150px 150px,
@@ -147,30 +240,35 @@
   background-position:
     82% 0,     /* sheen parked near the right rim at rest */
     0 0,       /* top specular */
-    0 100%,    /* bottom exit highlight */
+    0 100%,    /* bottom exit hairline */
     0 0,       /* caustic pool */
     0 0, 0 0, 0 0;
 
-  /* 2 + 3: the bevel and the dispersion, all in insets.
-     top    — 1px bright: the lit face of the edge
-     bottom — 1px dark then a bright hairline just outside it: the far face of
-              the slab seen through its own thickness
-     sides  — cool on the left, warm on the right: chromatic split at the rim
-     inner  — a soft dark gradient hugging the bottom, which is what actually
-              makes the panel read as a SLAB rather than a sheet
-     outer  — the caustic pool: a tinted (not grey) shadow, i.e. light focused
-              through the pane onto the surface behind it */
+  /* The bevel, the thickness and the cast light, all in shadows.
+     insets  — 1.5px bright top face; 1.5px dark bottom face; saturated cyan on
+               the left rim and amber on the right (dispersion has to be REAL
+               colour on a light page, pastels just disappear); then a short
+               dark gradient hugging the bottom and the right, which is the
+               body of the slab shading away from the light.
+     outers  — first a tight, genuinely dark contact shadow (a millimetre of
+               air, no more), then the two caustics: a cyan pool thrown down
+               and left and an amber one down and right. Those are the pane
+               splitting light onto the page underneath it, and on a pale
+               background they are the only caustics you can actually see. */
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.98),
-    inset 0 -1px 0 rgba(14, 26, 48, 0.16),
-    inset 1px 0 0 rgba(186, 236, 255, 0.62),
-    inset -1px 0 0 rgba(255, 231, 186, 0.58),
-    inset 0 -18px 26px -22px rgba(14, 26, 48, 0.40),
-    inset 0 22px 30px -30px rgba(255, 255, 255, 0.90),
-    0 1px 0 rgba(255, 255, 255, 0.72),
-    0 2px 3px rgba(10, 18, 38, 0.06),
-    0 16px 34px -20px rgba(10, 18, 38, 0.30),
-    0 34px 56px -34px rgba(120, 205, 235, 0.55);
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 0 rgba(30, 52, 90, 0.36),
+    inset 1.5px 0 0 rgba(126, 218, 255, 0.40),
+    inset -1.5px 0 0 rgba(255, 198, 116, 0.36),
+    inset 0 -24px 28px -24px rgba(22, 42, 76, 0.50),
+    inset -22px 0 30px -28px rgba(22, 42, 76, 0.32),
+    inset 0 26px 30px -30px rgba(255, 255, 255, 1),
+    0 1px 1px rgba(10, 20, 42, 0.10),
+    0 3px 5px -1px rgba(10, 20, 42, 0.15),
+    0 10px 16px -8px rgba(10, 20, 42, 0.16),
+    -16px 30px 34px -26px rgba(20, 176, 226, 0.70),
+    18px 26px 36px -28px rgba(255, 166, 52, 0.48),
+    0 34px 54px -30px rgba(10, 20, 42, 0.26);
 
   transition: box-shadow .5s cubic-bezier(.16,.84,.34,1),
               background-position .85s cubic-bezier(.16,.84,.34,1),
@@ -178,39 +276,49 @@
               transform .45s cubic-bezier(.16,.84,.34,1);
 }
 
-/* The refracted EDGE. The base ring is a single white gradient; here it is two
-   stacked gradients: vertical (bright where light enters the top, medium where
-   it leaves the bottom) and horizontal (cool left rim, warm right rim). That
-   horizontal pass is the chromatic dispersion — a couple of percent of colour,
-   no more, but it is the thing that stops the border looking drawn-on. */
+/* The refracted EDGE, just inside the border. Two stacked gradients, and the
+   order matters: the horizontal DISPERSION pass is first so it paints on top
+   at the two rims, and the vertical bevel pass runs underneath it — white
+   where the light enters at the top, sliding to a cool slate at the bottom
+   where you are looking through the slab at its far face. On night this is a
+   couple of percent of colour; here the rims are properly saturated, because
+   anything less than that is invisible against a light page. */
 :root[data-theme="aurora"]:not(.dark) .card::before {
-  padding: 1.2px;
+  padding: 1px;
   background:
+    linear-gradient(90deg,
+      rgba(64, 194, 244, 0.62) 0%,
+      rgba(154, 224, 250, 0.22) 7%,
+      rgba(255, 255, 255, 0) 16%,
+      rgba(255, 255, 255, 0) 84%,
+      rgba(255, 214, 148, 0.24) 93%,
+      rgba(252, 180, 78, 0.58) 100%),
     linear-gradient(180deg,
       rgba(255, 255, 255, 1) 0%,
-      rgba(255, 255, 255, 0.20) 24%,
-      rgba(255, 255, 255, 0.04) 52%,
-      rgba(255, 255, 255, 0.62) 100%),
-    linear-gradient(90deg,
-      rgba(160, 232, 255, 0.90) 0%,
-      rgba(255, 255, 255, 0) 20%,
-      rgba(255, 255, 255, 0) 80%,
-      rgba(255, 214, 150, 0.85) 100%);
-  opacity: 0.95;
+      rgba(255, 255, 255, 0.30) 16%,
+      rgba(96, 126, 168, 0.08) 48%,
+      rgba(56, 84, 126, 0.32) 84%,
+      rgba(38, 62, 102, 0.46) 100%);
+  opacity: 1;
 }
 
-/* Bloom behind the pane — the base hover glow, retuned to read as the caustic
-   flaring when you come near, rather than a coloured halo. */
+/* Bloom behind the pane — on day this is not a white halo (invisible) but the
+   caustic flaring cyan as you come near. */
 :root[data-theme="aurora"]:not(.dark) .card::after {
-  background: radial-gradient(78% 62% at 34% 8%, rgba(255, 255, 255, 0.85), transparent 72%);
+  background: radial-gradient(80% 64% at 34% 6%, rgba(96, 214, 250, 0.40), transparent 74%);
 }
-:root[data-theme="aurora"]:not(.dark) .card:hover::after { opacity: .5; }
+:root[data-theme="aurora"]:not(.dark) .card:hover::after { opacity: .55; }
 
 /* TOUCH — hover. The sheen sweeps from the right rim toward the middle and the
    caustic pool slides with it, as if the pane tilted a degree under your hand.
-   The bevel brightens and the pool under the card opens up. */
+   The top face brightens, the bottom bevel deepens (you are now seeing more of
+   the slab's edge), and the two pools underneath open up and separate. */
 :root[data-theme="aurora"]:not(.dark) .card:hover {
-  border-color: rgba(255, 255, 255, 0.92);
+  border-color:
+    rgba(255, 255, 255, 1)
+    rgba(112, 142, 182, 0.58)
+    rgba(48, 74, 114, 0.62)
+    rgba(236, 247, 255, 0.92);
   background-position:
     18% 0,
     0 0,
@@ -218,24 +326,33 @@
     18% 0,
     0 0, 0 0, 0 0;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 1),
-    inset 0 -1px 0 rgba(14, 26, 48, 0.14),
-    inset 1px 0 0 rgba(186, 236, 255, 0.80),
-    inset -1px 0 0 rgba(255, 231, 186, 0.76),
-    inset 0 -20px 30px -22px rgba(14, 26, 48, 0.34),
-    inset 0 26px 34px -30px rgba(255, 255, 255, 1),
-    0 1px 0 rgba(255, 255, 255, 0.85),
-    0 3px 6px rgba(10, 18, 38, 0.07),
-    0 26px 52px -22px rgba(10, 18, 38, 0.34),
-    0 48px 74px -36px rgba(120, 205, 235, 0.72);
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 0 rgba(30, 52, 90, 0.42),
+    inset 1.5px 0 0 rgba(126, 218, 255, 0.56),
+    inset -1.5px 0 0 rgba(255, 198, 116, 0.50),
+    inset 0 -28px 34px -24px rgba(22, 42, 76, 0.46),
+    inset -26px 0 34px -28px rgba(22, 42, 76, 0.30),
+    inset 0 30px 34px -30px rgba(255, 255, 255, 1),
+    0 1px 1px rgba(10, 20, 42, 0.10),
+    0 4px 7px -1px rgba(10, 20, 42, 0.16),
+    0 16px 26px -10px rgba(10, 20, 42, 0.18),
+    -26px 44px 46px -28px rgba(20, 176, 226, 0.82),
+    28px 38px 48px -30px rgba(255, 166, 52, 0.60),
+    0 48px 74px -32px rgba(10, 20, 42, 0.28);
   transform: translateY(-1.5px);
 }
 
-/* TOUCH — press. Everything inverts: the top specular collapses, the BOTTOM
-   edge lights up instead (the slab has been pushed down toward the surface),
-   the caustic tightens because the gap between glass and page just closed, and
-   the sheen jumps past your finger. Fast transition so it feels like contact. */
+/* TOUCH — press. Everything inverts: the top face goes dull, the BOTTOM edge
+   lights up instead (the slab has been pushed down toward the page), the
+   caustics collapse to almost nothing because the gap they were focusing
+   through just closed, and the sheen jumps past your finger. Fast transition
+   so it reads as contact rather than animation. */
 :root[data-theme="aurora"]:not(.dark) .card:active {
+  border-color:
+    rgba(196, 214, 236, 0.85)
+    rgba(150, 176, 208, 0.42)
+    rgba(255, 255, 255, 0.90)
+    rgba(170, 194, 222, 0.55);
   background-position:
     -14% 0,
     0 -8px,
@@ -243,56 +360,83 @@
     -6% 0,
     0 0, 0 0, 0 0;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.85),
-    inset 1px 0 0 rgba(186, 236, 255, 0.45),
-    inset -1px 0 0 rgba(255, 231, 186, 0.42),
-    inset 0 14px 22px -18px rgba(14, 26, 48, 0.34),
-    inset 0 -16px 24px -26px rgba(255, 255, 255, 0.90),
-    0 1px 0 rgba(255, 255, 255, 0.60),
-    0 1px 2px rgba(10, 18, 38, 0.10),
-    0 6px 14px -10px rgba(10, 18, 38, 0.28),
-    0 10px 20px -14px rgba(120, 205, 235, 0.60);
+    inset 0 1.5px 0 rgba(46, 72, 112, 0.26),
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.92),
+    inset 1.5px 0 0 rgba(126, 218, 255, 0.34),
+    inset -1.5px 0 0 rgba(255, 198, 116, 0.30),
+    inset 0 20px 26px -20px rgba(22, 42, 76, 0.44),
+    inset 0 -18px 26px -26px rgba(255, 255, 255, 0.95),
+    0 1px 1px rgba(10, 20, 42, 0.16),
+    0 2px 3px rgba(10, 20, 42, 0.14),
+    -5px 7px 9px -8px rgba(20, 176, 226, 0.55),
+    6px 6px 10px -9px rgba(255, 166, 52, 0.40),
+    0 8px 16px -12px rgba(10, 20, 42, 0.24);
   transform: translateY(0.5px) scale(0.998);
-  transition: box-shadow .12s ease, background-position .28s ease, transform .12s ease;
+  transition: box-shadow .12s ease, background-position .28s ease,
+              border-color .12s ease, transform .12s ease;
 }
 
-/* Small glass — chips and the ghost buttons get the same three facts (top
-   specular, bottom exit, cool/warm rim) at miniature scale, so the whole UI
-   feels cut from one material instead of cards-on-a-page. */
+/* Small glass — chips and the ghost buttons get the same facts at miniature
+   scale (lit top face, dark underside, cool/warm rims, one hard specular), so
+   the whole UI feels cut from one material instead of cards-on-a-page. */
 :root[data-theme="aurora"]:not(.dark) .chip,
 :root[data-theme="aurora"]:not(.dark) .btn-ghost {
+  border-color:
+    rgba(255, 255, 255, 0.96)
+    rgba(130, 156, 192, 0.46)
+    rgba(70, 96, 136, 0.48)
+    rgba(230, 243, 254, 0.80);
   background-image:
-    radial-gradient(120% 100% at 30% 0%, rgba(255, 255, 255, 0.85), transparent 70%),
-    radial-gradient(120% 100% at 62% 100%, rgba(255, 255, 255, 0.40), transparent 74%);
-  background-repeat: no-repeat, no-repeat;
-  background-size: 100% 60%, 100% 40%;
-  background-position: 0 0, 0 100%;
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.95) 0 1px,
+      rgba(255, 255, 255, 0.40) 1px 2.2px,
+      rgba(40, 64, 104, 0.09) 2.2px 3.2px,
+      rgba(255, 255, 255, 0) 3.2px),
+    radial-gradient(130% 110% at 28% 0%, rgba(255, 255, 255, 0.88), transparent 66%),
+    linear-gradient(168deg,
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(236, 244, 252, 0.10) 40%,
+      rgba(122, 156, 200, 0.28) 100%);
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-size: 100% 4px, 100% 70%, 100% 100%;
+  background-position: 0 0, 0 0, 0 0;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    inset 0 -1px 0 rgba(14, 26, 48, 0.10),
-    inset 1px 0 0 rgba(186, 236, 255, 0.55),
-    inset -1px 0 0 rgba(255, 231, 186, 0.50),
-    0 1px 0 rgba(255, 255, 255, 0.60),
-    0 6px 14px -10px rgba(10, 18, 38, 0.26);
+    inset 0 -1.2px 0 rgba(30, 52, 90, 0.28),
+    inset 1.2px 0 0 rgba(126, 218, 255, 0.34),
+    inset -1.2px 0 0 rgba(255, 198, 116, 0.30),
+    inset 0 -8px 10px -9px rgba(22, 42, 76, 0.42),
+    0 1px 1px rgba(10, 20, 42, 0.10),
+    0 4px 8px -4px rgba(10, 20, 42, 0.20),
+    -4px 8px 10px -8px rgba(20, 176, 226, 0.34),
+    5px 7px 10px -8px rgba(255, 166, 52, 0.24);
 }
 :root[data-theme="aurora"]:not(.dark) .btn-ghost:active,
 :root[data-theme="aurora"]:not(.dark) .chip:active {
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.80),
-    inset 0 8px 12px -10px rgba(14, 26, 48, 0.30),
-    0 1px 2px rgba(10, 18, 38, 0.14);
+    inset 0 1.2px 0 rgba(46, 72, 112, 0.24),
+    inset 0 -1.2px 0 rgba(255, 255, 255, 0.85),
+    inset 0 8px 12px -9px rgba(22, 42, 76, 0.42),
+    0 1px 2px rgba(10, 20, 42, 0.16);
 }
 /* The active chip is solid gradient, so it gets the bevel only — no white
-   wash over it, which would kill the contrast of the white label. */
+   wash over it, which would kill the contrast of the white label.
+   background-size and -repeat are restated deliberately: the rule above sets a
+   three-entry list (`100% 4px, 100% 70%, 100% 100%`) and CSS matches sizes to
+   layers by INDEX, so a lone replacement image would inherit `100% 4px` and
+   paint the gradient as a 4px strip across the top of the pill with bare
+   --paper under the white label. Same trap as the galaxy starfield. */
 :root[data-theme="aurora"]:not(.dark) .chip-active {
+  border-color: transparent;
   background-image:
     linear-gradient(135deg, var(--grad-from), var(--grad-via));
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: 0 0;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
-    0 8px 22px -8px var(--glow);
+    inset 0 1.2px 0 rgba(255, 255, 255, 0.50),
+    inset 0 -1.2px 0 rgba(0, 0, 0, 0.26),
+    0 1px 2px rgba(10, 20, 42, 0.18),
+    0 8px 20px -8px var(--glow);
 }
 
 /* ===========================================================================

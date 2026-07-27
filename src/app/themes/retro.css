@@ -60,7 +60,8 @@
   --r-dk2:   #8d8672;                      /* inner shadow (bottom-right) */
   --r-dk:    #23201a;                      /* outer shadow (bottom-right) */
   --r-cast:  rgba(20, 18, 12, 0.28);       /* hard drop shadow under a window */
-  --r-desk2: rgba(255, 255, 255, 0.09);    /* the dither dot on the desktop */
+  --r-desk2: rgba(255, 255, 255, 0.16);    /* the dither dot on the desktop */
+  --r-weave: rgba(20, 18, 12, 0.055);      /* the wallpaper hatch */
   --r-scan:  rgba(20, 18, 12, 0.05);
   --r-title: #ffffff;                      /* type on the title bar */
   --r-title-dim: rgba(255, 255, 255, 0.72);
@@ -69,6 +70,9 @@
   --r-btns: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='14'%3E%3Cg%3E%3Crect x='0' y='0' width='16' height='14' fill='%23d9d2c0'/%3E%3Crect x='0' y='0' width='16' height='1' fill='%23ffffff'/%3E%3Crect x='0' y='0' width='1' height='14' fill='%23ffffff'/%3E%3Crect x='0' y='13' width='16' height='1' fill='%2323201a'/%3E%3Crect x='15' y='0' width='1' height='14' fill='%2323201a'/%3E%3Crect x='4' y='9' width='8' height='2' fill='%2314120c'/%3E%3C/g%3E%3Cg%3E%3Crect x='17' y='0' width='16' height='14' fill='%23d9d2c0'/%3E%3Crect x='17' y='0' width='16' height='1' fill='%23ffffff'/%3E%3Crect x='17' y='0' width='1' height='14' fill='%23ffffff'/%3E%3Crect x='17' y='13' width='16' height='1' fill='%2323201a'/%3E%3Crect x='32' y='0' width='1' height='14' fill='%2323201a'/%3E%3Crect x='21' y='3' width='9' height='8' fill='none' stroke='%2314120c' stroke-width='1'/%3E%3Crect x='21' y='3' width='9' height='2' fill='%2314120c'/%3E%3C/g%3E%3Cg%3E%3Crect x='36' y='0' width='16' height='14' fill='%23d9d2c0'/%3E%3Crect x='36' y='0' width='16' height='1' fill='%23ffffff'/%3E%3Crect x='36' y='0' width='1' height='14' fill='%23ffffff'/%3E%3Crect x='36' y='13' width='16' height='1' fill='%2323201a'/%3E%3Crect x='51' y='0' width='1' height='14' fill='%2323201a'/%3E%3Cpath d='M40 4.5 46.5 11 M46.5 4.5 40 11' stroke='%2314120c' stroke-width='1.6'/%3E%3C/g%3E%3C/svg%3E");
   --r-grip: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13'%3E%3Cg fill='%23ffffff'%3E%3Crect x='8' y='0' width='2' height='2'/%3E%3Crect x='8' y='4' width='2' height='2'/%3E%3Crect x='4' y='4' width='2' height='2'/%3E%3Crect x='8' y='8' width='2' height='2'/%3E%3Crect x='4' y='8' width='2' height='2'/%3E%3Crect x='0' y='8' width='2' height='2'/%3E%3C/g%3E%3Cg fill='%238d8672'%3E%3Crect x='10' y='2' width='2' height='2'/%3E%3Crect x='10' y='6' width='2' height='2'/%3E%3Crect x='6' y='6' width='2' height='2'/%3E%3Crect x='10' y='10' width='2' height='2'/%3E%3Crect x='6' y='10' width='2' height='2'/%3E%3Crect x='2' y='10' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E");
   --r-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14'%3E%3Crect x='0.5' y='0.5' width='13' height='13' fill='%23efeadb' stroke='%2314120c'/%3E%3Crect x='1' y='1' width='12' height='3' fill='%23000080'/%3E%3Cg fill='%235f5a4c'%3E%3Crect x='3' y='6' width='8' height='1'/%3E%3Crect x='3' y='8' width='8' height='1'/%3E%3Crect x='3' y='10' width='5' height='1'/%3E%3C/g%3E%3C/svg%3E");
+  /* desktop furniture: a machine, a text file and a floppy, with outlined
+     labels so they hold up over any patch of wallpaper */
+  --r-icons: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='212'%3E%3Cg stroke='%2323201a' stroke-width='1'%3E%3Crect x='26.5' y='6.5' width='31' height='23' fill='%23d9d2c0'/%3E%3Crect x='29.5' y='9.5' width='25' height='15' fill='%231084d0' stroke='none'/%3E%3Crect x='37.5' y='30.5' width='9' height='4' fill='%23d9d2c0'/%3E%3Crect x='30.5' y='34.5' width='23' height='4' fill='%23d9d2c0'/%3E%3C/g%3E%3Cg transform='translate(0 68)' stroke='%2323201a' stroke-width='1'%3E%3Cpath d='M29.5 6.5h17l8 8v24h-25z' fill='%23f6f2e6'/%3E%3Cpath d='M46.5 6.5v8h8' fill='none'/%3E%3Cg fill='%235f5a4c' stroke='none'%3E%3Crect x='33' y='20' width='16' height='1.5'/%3E%3Crect x='33' y='24' width='16' height='1.5'/%3E%3Crect x='33' y='28' width='11' height='1.5'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(0 136)' stroke='%2323201a' stroke-width='1'%3E%3Crect x='28.5' y='6.5' width='27' height='27' fill='%232f2f34'/%3E%3Crect x='34.5' y='6.5' width='15' height='11' fill='%23c9c2b0'/%3E%3Crect x='43' y='8' width='4' height='8' fill='%236e6a5c' stroke='none'/%3E%3Crect x='33.5' y='21.5' width='17' height='12' fill='%23e8e3d3'/%3E%3C/g%3E%3Cg font-family='monospace' font-size='9' text-anchor='middle' fill='%23ffffff' stroke='%2323201a' stroke-width='2.4' paint-order='stroke'%3E%3Ctext x='42' y='50'%3EComputer%3C/text%3E%3Ctext x='42' y='118'%3ENotes.txt%3C/text%3E%3Ctext x='42' y='186'%3EDisk A:%3C/text%3E%3C/g%3E%3C/svg%3E");
 }
 
 /* ---------- palette: the same box at 2am, dark OS skin ---------- */
@@ -107,7 +111,8 @@
   --r-dk2:   #24242b;
   --r-dk:    #0a0a0e;
   --r-cast:  rgba(0, 0, 0, 0.55);
-  --r-desk2: rgba(255, 255, 255, 0.045);
+  --r-desk2: rgba(255, 255, 255, 0.055);
+  --r-weave: rgba(255, 255, 255, 0.030);
   --r-scan:  rgba(0, 0, 0, 0.16);
   --r-title: #f2f0ea;
   --r-title-dim: rgba(242, 240, 234, 0.70);
@@ -115,6 +120,8 @@
   --r-btns: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='14'%3E%3Cg%3E%3Crect x='0' y='0' width='16' height='14' fill='%233a3a42'/%3E%3Crect x='0' y='0' width='16' height='1' fill='%2383848f'/%3E%3Crect x='0' y='0' width='1' height='14' fill='%2383848f'/%3E%3Crect x='0' y='13' width='16' height='1' fill='%230a0a0e'/%3E%3Crect x='15' y='0' width='1' height='14' fill='%230a0a0e'/%3E%3Crect x='4' y='9' width='8' height='2' fill='%23eae7dc'/%3E%3C/g%3E%3Cg%3E%3Crect x='17' y='0' width='16' height='14' fill='%233a3a42'/%3E%3Crect x='17' y='0' width='16' height='1' fill='%2383848f'/%3E%3Crect x='17' y='0' width='1' height='14' fill='%2383848f'/%3E%3Crect x='17' y='13' width='16' height='1' fill='%230a0a0e'/%3E%3Crect x='32' y='0' width='1' height='14' fill='%230a0a0e'/%3E%3Crect x='21' y='3' width='9' height='8' fill='none' stroke='%23eae7dc' stroke-width='1'/%3E%3Crect x='21' y='3' width='9' height='2' fill='%23eae7dc'/%3E%3C/g%3E%3Cg%3E%3Crect x='36' y='0' width='16' height='14' fill='%233a3a42'/%3E%3Crect x='36' y='0' width='16' height='1' fill='%2383848f'/%3E%3Crect x='36' y='0' width='1' height='14' fill='%2383848f'/%3E%3Crect x='36' y='13' width='16' height='1' fill='%230a0a0e'/%3E%3Crect x='51' y='0' width='1' height='14' fill='%230a0a0e'/%3E%3Cpath d='M40 4.5 46.5 11 M46.5 4.5 40 11' stroke='%23eae7dc' stroke-width='1.6'/%3E%3C/g%3E%3C/svg%3E");
   --r-grip: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13'%3E%3Cg fill='%2383848f'%3E%3Crect x='8' y='0' width='2' height='2'/%3E%3Crect x='8' y='4' width='2' height='2'/%3E%3Crect x='4' y='4' width='2' height='2'/%3E%3Crect x='8' y='8' width='2' height='2'/%3E%3Crect x='4' y='8' width='2' height='2'/%3E%3Crect x='0' y='8' width='2' height='2'/%3E%3C/g%3E%3Cg fill='%2324242b'%3E%3Crect x='10' y='2' width='2' height='2'/%3E%3Crect x='10' y='6' width='2' height='2'/%3E%3Crect x='6' y='6' width='2' height='2'/%3E%3Crect x='10' y='10' width='2' height='2'/%3E%3Crect x='6' y='10' width='2' height='2'/%3E%3Crect x='2' y='10' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E");
   --r-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14'%3E%3Crect x='0.5' y='0.5' width='13' height='13' fill='%23575863' stroke='%230a0a0e'/%3E%3Crect x='1' y='1' width='12' height='3' fill='%232a5fa8'/%3E%3Cg fill='%23c9c5b9'%3E%3Crect x='3' y='6' width='8' height='1'/%3E%3Crect x='3' y='8' width='8' height='1'/%3E%3Crect x='3' y='10' width='5' height='1'/%3E%3C/g%3E%3C/svg%3E");
+  /* the same three icons, unlit */
+  --r-icons: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='212'%3E%3Cg stroke='%230a0a0e' stroke-width='1'%3E%3Crect x='26.5' y='6.5' width='31' height='23' fill='%233a3a42'/%3E%3Crect x='29.5' y='9.5' width='25' height='15' fill='%232a5fa8' stroke='none'/%3E%3Crect x='37.5' y='30.5' width='9' height='4' fill='%233a3a42'/%3E%3Crect x='30.5' y='34.5' width='23' height='4' fill='%233a3a42'/%3E%3C/g%3E%3Cg transform='translate(0 68)' stroke='%230a0a0e' stroke-width='1'%3E%3Cpath d='M29.5 6.5h17l8 8v24h-25z' fill='%23575863'/%3E%3Cpath d='M46.5 6.5v8h8' fill='none'/%3E%3Cg fill='%23c9c5b9' stroke='none'%3E%3Crect x='33' y='20' width='16' height='1.5'/%3E%3Crect x='33' y='24' width='16' height='1.5'/%3E%3Crect x='33' y='28' width='11' height='1.5'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(0 136)' stroke='%230a0a0e' stroke-width='1'%3E%3Crect x='28.5' y='6.5' width='27' height='27' fill='%231b1b21'/%3E%3Crect x='34.5' y='6.5' width='15' height='11' fill='%23575863'/%3E%3Crect x='43' y='8' width='4' height='8' fill='%2324242b' stroke='none'/%3E%3Crect x='33.5' y='21.5' width='17' height='12' fill='%23a9a5a0'/%3E%3C/g%3E%3Cg font-family='monospace' font-size='9' text-anchor='middle' fill='%23d8d4c9' stroke='%230a0a0e' stroke-width='2.4' paint-order='stroke'%3E%3Ctext x='42' y='50'%3EComputer%3C/text%3E%3Ctext x='42' y='118'%3ENotes.txt%3C/text%3E%3Ctext x='42' y='186'%3EDisk A:%3C/text%3E%3C/g%3E%3C/svg%3E");
 }
 
 /* ---------- type: aliased monospace, i.e. "pixels" ---------- */
@@ -153,10 +160,15 @@
    lives on <html> via --bg. */
 .theme-retro body { background: transparent; }
 
-/* Layer one: the tiled desktop pattern (a 4px two-tone dither, the pattern
-   every one of these machines shipped with) inside a sunken CRT bezel —
-   two hairlines inset from each page edge, dark then light, so the whole
-   page reads as a screen recessed into the plastic. */
+/* Layer one, read top-down:
+     · the sunken CRT bezel — a dark then light hairline inset from each page
+       edge, so the whole page reads as a screen recessed into the plastic;
+     · three desktop icons parked in the left margin. They are furniture: a
+       window that covers them is a window covering desktop icons, which is
+       exactly right, so nothing breaks when the page gets long;
+     · a woven 24px hatch — the "straw mat" wallpaper every one of these
+       machines shipped with;
+     · a 2px 50% dither underneath it, the era's answer to a gradient. */
 .theme-retro body::before {
   inset: 0;
   filter: none;
@@ -169,11 +181,30 @@
     linear-gradient(to left,   var(--r-lt) 0 1px, var(--r-dk) 1px 2px, transparent 2px),
     linear-gradient(to bottom, var(--r-dk) 0 1px, var(--r-lt) 1px 2px, transparent 2px),
     linear-gradient(to top,    var(--r-lt) 0 1px, var(--r-dk) 1px 2px, transparent 2px),
+    var(--r-icons),
+    repeating-linear-gradient(45deg,  var(--r-weave) 0 1px, transparent 1px 12px),
+    repeating-linear-gradient(-45deg, var(--r-weave) 0 1px, transparent 1px 12px),
     linear-gradient(45deg, var(--r-desk2) 25%, transparent 25% 75%, var(--r-desk2) 75%),
     linear-gradient(45deg, var(--r-desk2) 25%, transparent 25% 75%, var(--r-desk2) 75%);
-  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat;
-  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 4px 4px, 4px 4px;
-  background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 2px 2px;
+  background-repeat:
+    no-repeat, no-repeat, no-repeat, no-repeat,
+    no-repeat, repeat, repeat, repeat, repeat;
+  background-size:
+    100% 100%, 100% 100%, 100% 100%, 100% 100%,
+    0 0, auto, auto, 2px 2px, 2px 2px;
+  background-position:
+    0 0, 0 0, 0 0, 0 0,
+    left 10px top 26px, 0 0, 0 0, 0 0, 1px 1px;
+}
+/* The icons only appear once the page is wide enough to have a real left
+   margin (the dashboard column tops out at 1480px). Below that they would
+   sit behind the masthead, so they stay at zero size. */
+@media (min-width: 1620px) {
+  .theme-retro body::before {
+    background-size:
+      100% 100%, 100% 100%, 100% 100%, 100% 100%,
+      84px 212px, auto, auto, 2px 2px, 2px 2px;
+  }
 }
 
 /* Layer two: the glass. A 3px scanline comb plus a soft corner vignette —
@@ -330,8 +361,8 @@
   color: var(--ink);
   background-color: var(--r-face);
   background-image:
-    linear-gradient(45deg, var(--r-lt) 25%, transparent 25% 75%, var(--r-lt) 75%),
-    linear-gradient(45deg, var(--r-lt) 25%, transparent 25% 75%, var(--r-lt) 75%);
+    linear-gradient(45deg, var(--r-lt2) 25%, transparent 25% 75%, var(--r-lt2) 75%),
+    linear-gradient(45deg, var(--r-lt2) 25%, transparent 25% 75%, var(--r-lt2) 75%);
   background-size: 2px 2px, 2px 2px;
   background-position: 0 0, 1px 1px;
   box-shadow:
