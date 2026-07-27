@@ -92,75 +92,61 @@
   --ott-ink:      #190508;
 }
 
-/* ---- the silk field -----------------------------------------------------
-   ÇINTEMANI on a woven ground. The tile is 132px so the motif is legible at a
-   glance rather than dissolving into texture, and it is drawn in gold on
-   crimson — the actual colourway of janissary and sultan's silks. */
+/* ---- the wall ------------------------------------------------------------
+   An actual Ottoman wallpaper photograph, handled the same way the Renaissance
+   theme handles its painting: covered, faded well back, and warmed into the
+   palette so it reads as the WALL of a room rather than a picture pasted
+   behind the dashboard.
+
+   The drawn çintemani/tuğra/valance layers that used to live here are gone —
+   they were the "ugly" part, and a real textile does the job better. What is
+   kept from the old build is only what the image can't do: the lamplight
+   gradient and the gold cartouche card frames.
+
+   If the image ever fails to load, --bg plus the lamplight wash still carry
+   the theme, so nothing breaks. */
 .theme-ottoman body { background: transparent; }
 .theme-ottoman body::before {
   inset: 0;
-  filter: none;
+  filter: sepia(0.30) saturate(1.05) contrast(0.95) brightness(1.02);
+  opacity: 0.40;
   animation: none;
   transform: translateZ(0);
   background-color: transparent;
-  background-image:
-    /* çintemani: three discs above two tiger stripes, offset row to row */
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='132' height='132'%3E%3Cg fill='none' stroke='%237a0f1f' stroke-width='2.6' opacity='.46'%3E%3Ccircle cx='33' cy='26' r='9'/%3E%3Ccircle cx='57' cy='26' r='9'/%3E%3Ccircle cx='45' cy='46' r='9'/%3E%3Cpath d='M18 64q9-7 18 0t18 0t18 0' stroke-width='2.6'/%3E%3Cpath d='M18 73q9-7 18 0t18 0t18 0' stroke-width='2.6'/%3E%3Ccircle cx='99' cy='92' r='9'/%3E%3Ccircle cx='123' cy='92' r='9'/%3E%3Ccircle cx='111' cy='112' r='9'/%3E%3Cpath d='M84 130q9-7 18 0t18 0t18 0' stroke-width='2.6'/%3E%3Cpath d='M84 121q9-7 18 0t18 0t18 0' stroke-width='2.6'/%3E%3C/g%3E%3C/svg%3E"),
-    /* woven silk: a fine warp/weft so the ground isn't flat colour */
-    repeating-linear-gradient(90deg, rgba(42,13,16,0.05) 0 1px, transparent 1px 4px),
-    repeating-linear-gradient(0deg,  rgba(42,13,16,0.04) 0 1px, transparent 1px 4px),
-    /* lamplight from above */
-    radial-gradient(130% 80% at 50% -10%, rgba(122,15,31,0.22), transparent 62%);
-  background-repeat: repeat, repeat, repeat, no-repeat;
-  background-size: 132px 132px, 4px 4px, 4px 4px, 100% 100%;
+  background-image: url("https://static.ticimax.cloud/cdn-cgi/image/width=-,quality=85/49761/uploads/urunresimleri/buyuk/osmanli-duvar-kagidiosmanli-duvar-kagi-8297f2.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
 }
+/* Night: the same wall with the lamps down. */
 .theme-ottoman.dark body::before {
-  filter: none;
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='132' height='132'%3E%3Cg fill='none' stroke='%23c9a227' stroke-width='2.2' opacity='.26'%3E%3Ccircle cx='33' cy='26' r='9'/%3E%3Ccircle cx='57' cy='26' r='9'/%3E%3Ccircle cx='45' cy='46' r='9'/%3E%3Cpath d='M18 64q9-7 18 0t18 0t18 0' stroke-width='2.6'/%3E%3Cpath d='M18 73q9-7 18 0t18 0t18 0' stroke-width='2.6'/%3E%3Ccircle cx='99' cy='92' r='9'/%3E%3Ccircle cx='123' cy='92' r='9'/%3E%3Ccircle cx='111' cy='112' r='9'/%3E%3Cpath d='M84 130q9-7 18 0t18 0t18 0' stroke-width='2.6'/%3E%3Cpath d='M84 121q9-7 18 0t18 0t18 0' stroke-width='2.6'/%3E%3C/g%3E%3C/svg%3E"),
-    repeating-linear-gradient(90deg, rgba(201,162,39,0.045) 0 1px, transparent 1px 4px),
-    repeating-linear-gradient(0deg,  rgba(201,162,39,0.035) 0 1px, transparent 1px 4px),
-    radial-gradient(130% 80% at 50% -10%, rgba(201,162,39,0.16), transparent 62%);
-  background-repeat: repeat, repeat, repeat, no-repeat;
-  background-size: 132px 132px, 4px 4px, 4px 4px, 100% 100%;
+  filter: sepia(0.45) saturate(0.95) contrast(1.05) brightness(0.42);
+  opacity: 0.55;
+  background-image: url("https://static.ticimax.cloud/cdn-cgi/image/width=-,quality=85/49761/uploads/urunresimleri/buyuk/osmanli-duvar-kagidiosmanli-duvar-kagi-8297f2.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
 }
 
-/* ---- tent valance, tuğra seal, standard ---------------------------------
-   ::after carries the three set-pieces. The otağ valance hangs across the top
-   (above the content, but behind it in z-order), the tuğra sits as a large
-   seal low-right, and a crescent-and-star standard marks the left edge. */
+/* Lamplight from above and a soft vignette, so the wall has depth and the
+   content sits in the lit part of the room. */
 .theme-ottoman body::after {
   opacity: 1;
   mix-blend-mode: normal;
   background-image:
-    /* otağ — scalloped campaign-tent valance */
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='54'%3E%3Cpath d='M0 0h150v18q-18.75 0-18.75 14t-18.75 14T93.75 32 75 46 56.25 32 37.5 18 18.75 32 0 18z' fill='%237a0f1f' fill-opacity='.42'/%3E%3Cpath d='M0 18q18.75 0 18.75 14T37.5 18t18.75 14T75 46l18.75-14T112.5 18l18.75 14T150 18' fill='none' stroke='%23c9a227' stroke-width='2' opacity='.5'/%3E%3Ccircle cx='37.5' cy='34' r='2.6' fill='%23c9a227' opacity='.6'/%3E%3Ccircle cx='75' cy='48' r='2.6' fill='%23c9a227' opacity='.6'/%3E%3Ccircle cx='112.5' cy='34' r='2.6' fill='%23c9a227' opacity='.6'/%3E%3C/svg%3E"),
-    /* tuğra — the sultan's monogram: three elifs, the sweeping sword stroke,
-       the twin egg-loops to the left, the flourish trailing right */
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='230'%3E%3Cg fill='none' stroke='%237a0f1f' stroke-width='3.4' opacity='.20' stroke-linecap='round'%3E%3Cpath d='M150 214V52M172 214V64M194 214V56'/%3E%3Cpath d='M150 52q0-22 22-22t22 26'/%3E%3Cpath d='M194 214q40-6 46-46t-24-52'/%3E%3Cpath d='M150 150q-52 10-80-22t10-68q31-31 62 3t-22 62q-25 19-40-3'/%3E%3Cpath d='M150 174q-62 12-96-25'/%3E%3Cpath d='M194 116q34-9 52 12t-9 46'/%3E%3Cpath d='M92 96q15-12 28 3'/%3E%3Cpath d='M216 62q22-10 34 6'/%3E%3C/g%3E%3C/svg%3E"),
-    /* crescent-and-star standard */
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='96'%3E%3Cg fill='none' stroke='%23c9a227' stroke-width='2.6' opacity='.42'%3E%3Cpath d='M40 30a15 15 0 1 0 0 26 18 18 0 1 1 0-26z'/%3E%3Cpath d='m46 36 2.4 5 5.4.6-4 3.7 1.1 5.3-4.9-2.7-4.9 2.7 1.1-5.3-4-3.7 5.4-.6z'/%3E%3Cpath d='M20 96V8' stroke-width='3'/%3E%3Ccircle cx='20' cy='6' r='3.4'/%3E%3C/g%3E%3C/svg%3E");
-  background-repeat: repeat-x, no-repeat, no-repeat;
-  background-position: center top, right 40px bottom 60px, left 14px top 96px;
-  background-size: 150px 54px, 300px 230px, 60px 96px;
+    radial-gradient(120% 74% at 50% -8%, rgba(201,162,39,0.20), transparent 60%),
+    radial-gradient(130% 92% at 50% 42%, transparent 52%, rgba(60,8,14,0.30) 100%);
+  background-repeat: no-repeat, no-repeat;
+  background-position: center top, center center;
+  background-size: 100% 100%, 100% 100%;
 }
 .theme-ottoman.dark body::after {
   background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='54'%3E%3Cpath d='M0 0h150v18q-18.75 0-18.75 14t-18.75 14T93.75 32 75 46 56.25 32 37.5 18 18.75 32 0 18z' fill='%237a0f1f' fill-opacity='.42'/%3E%3Cpath d='M0 18q18.75 0 18.75 14T37.5 18t18.75 14T75 46l18.75-14T112.5 18l18.75 14T150 18' fill='none' stroke='%23c9a227' stroke-width='2' opacity='.62'/%3E%3Ccircle cx='37.5' cy='34' r='2.6' fill='%23f0d68a' opacity='.7'/%3E%3Ccircle cx='75' cy='48' r='2.6' fill='%23f0d68a' opacity='.7'/%3E%3Ccircle cx='112.5' cy='34' r='2.6' fill='%23f0d68a' opacity='.7'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='230'%3E%3Cg fill='none' stroke='%23c9a227' stroke-width='3.4' opacity='.15' stroke-linecap='round'%3E%3Cpath d='M150 214V52M172 214V64M194 214V56'/%3E%3Cpath d='M150 52q0-22 22-22t22 26'/%3E%3Cpath d='M194 214q40-6 46-46t-24-52'/%3E%3Cpath d='M150 150q-52 10-80-22t10-68q31-31 62 3t-22 62q-25 19-40-3'/%3E%3Cpath d='M150 174q-62 12-96-25'/%3E%3Cpath d='M194 116q34-9 52 12t-9 46'/%3E%3Cpath d='M92 96q15-12 28 3'/%3E%3Cpath d='M216 62q22-10 34 6'/%3E%3C/g%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='96'%3E%3Cg fill='none' stroke='%23f0d68a' stroke-width='2.6' opacity='.46'%3E%3Cpath d='M40 30a15 15 0 1 0 0 26 18 18 0 1 1 0-26z'/%3E%3Cpath d='m46 36 2.4 5 5.4.6-4 3.7 1.1 5.3-4.9-2.7-4.9 2.7 1.1-5.3-4-3.7 5.4-.6z'/%3E%3Cpath d='M20 96V8' stroke-width='3'/%3E%3Ccircle cx='20' cy='6' r='3.4'/%3E%3C/g%3E%3C/svg%3E");
-  background-repeat: repeat-x, no-repeat, no-repeat;
-  background-position: center top, right 40px bottom 60px, left 14px top 96px;
-  background-size: 150px 54px, 300px 230px, 60px 96px;
-}
-/* On a phone the seal and the standard have nowhere to live. */
-@media (max-width: 900px) {
-  .theme-ottoman body::after,
-  .theme-ottoman.dark body::after {
-    background-repeat: repeat-x;
-    background-position: center top;
-    background-size: 150px 54px;
-  }
+    radial-gradient(120% 74% at 50% -8%, rgba(201,162,39,0.16), transparent 58%),
+    radial-gradient(130% 92% at 50% 42%, transparent 44%, rgba(0,0,0,0.62) 100%);
+  background-repeat: no-repeat, no-repeat;
+  background-position: center top, center center;
+  background-size: 100% 100%, 100% 100%;
 }
 
 /* ---- cards: silk panels in a gold cartouche ------------------------------

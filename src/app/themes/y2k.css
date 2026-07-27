@@ -1,439 +1,212 @@
-/* y2k — theme. Loaded AFTER globals.css (see src/app/layout.tsx),
-   so equal-specificity rules here win over the base definitions.
+/* y2k — REBUILT. The first attempt went lilac/bubblegum and read as girly,
+   which is not the reference at all.
 
-   1999–2003, rebuilt from the parts that actually made that era look like
-   itself:
-     · LIQUID CHROME — a linear-gradient that runs light → dark → light with an
-       ABRUPT stop at the horizon. That hard break is the whole trick; a smooth
-       grey ramp reads as plastic, a banded one reads as polished metal.
-     · AQUA GLOSS — every control is a lozenge with a bright specular cap over
-       its top half, a hard break at the equator, and a soft bounce-light
-       coming back up off the bottom lip.
-     · BUBBLES + SPARKLES — a translucent bubble field and four-point
-       starbursts drifting behind the page, with a lens flare in the corner.
-     · HOLOGRAM — the masthead name is an iridescent cyan→violet→pink sweep.
+   The actual Y2K computing palette is COLD: brushed aluminium and liquid
+   chrome, Bondi-blue translucent plastic, electric cyan, and a hit of lime on
+   the "go" control. Think a G4 tower, a Sony MiniDisc, a Winamp skin, a
+   chrome MSN logo — hardware, not lip gloss. Pink appears nowhere.
 
-   Light is the iMac/Aqua daylight version. Dark is "frutiger aero at night":
-   same chrome, same gloss, but the plastic is now translucent blue glass lit
-   from inside. Both are deliberate; neither is a recolour of the other.
-======================================================================== */
+     · CHROME: a multi-stop gradient that runs light→dark→light with ABRUPT
+       stops. That banding is the whole trick — a smooth gradient reads as
+       plastic, a banded one reads as polished metal.
+     · GLOSS: every control gets a bright top half and a soft bottom
+       bounce-light, the Aqua button in two gradients.
+     · The backdrop is a cold steel sweep with a faint dot-grid, not a
+       gradient of sweets.
 
-/* ---- palette: bondi blue, bubblegum, and a lot of white gloss ----------- */
+   Loaded AFTER globals.css, so equal-specificity rules win. */
+
 :root.theme-y2k:not(.dark) {
   color-scheme: light;
-  --bg:           #d3e5f8;                 /* Luna / iMac desktop blue */
-  --paper:        rgba(255, 255, 255, 0.62);
-  --paper-2:      rgba(255, 255, 255, 0.84);
-  --ink:          #0a2143;                 /* deep navy — reads on white gloss */
-  --ink-soft:     #274a75;
-  --muted:        #557aa4;
-  --muted-2:      #8aa9c8;
-  --rule:         rgba(14, 58, 110, 0.20);
-  --rule-soft:    rgba(14, 58, 110, 0.085);
-  --accent:       #0a7cff;                 /* Aqua button blue */
-  --accent-soft:  rgba(10, 124, 255, 0.14);
-  --accent-2:     #ff3d9a;                 /* bubblegum */
-  --hl:           rgba(10, 124, 255, 0.10);
-  --up:           #00a06a;
-  --down:         #ff3b64;
-
-  --grad-from:    #22c8ff;                 /* holographic sweep */
-  --grad-via:     #a56bff;
-  --grad-to:      #ff8ad0;
-
-  --glass:        rgba(255, 255, 255, 0.52);
-  --glass-border: rgba(255, 255, 255, 0.92);
-  --glow:         rgba(10, 124, 255, 0.34);
-
-  --shadow-card:  0 18px 34px -18px rgba(10, 45, 95, 0.45),
-                  0 3px 8px rgba(10, 45, 95, 0.10),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.95);
-  --shadow-hover: 0 30px 56px -22px rgba(10, 45, 95, 0.52),
-                  0 6px 14px rgba(10, 45, 95, 0.14),
-                  inset 0 1px 0 rgba(255, 255, 255, 1);
-
-  --aurora-1:     rgba(120, 205, 255, 0.55);
-  --aurora-2:     rgba(255, 255, 255, 0.70);
-  --aurora-3:     rgba(165, 107, 255, 0.20);
-  --aurora-4:     rgba(255, 141, 208, 0.20);
-  --grain:        0.03;
-
-  /* --- the chrome. Note the four stops crammed around 50%: that is the
-     horizon line, and the abrupt light→dark→light jump across it is what the
-     eye reads as polished metal. --- */
-  --chrome-text: linear-gradient(180deg,
-                 #a9c6e2 0%, #ffffff 9%, #ffffff 16%, #cfe0f0 25%,
-                 #7196bd 36%, #1d3d61 45%, #16324f 50%,
-                 #d2e8fb 50.01%, #7fadd4 58%, #eef8ff 68%, #ffffff 78%,
-                 #9dbcd8 89%, #52789c 100%);
-  --chrome-edge: rgba(11, 33, 60, 0.50);   /* the dark outline around chrome */
-  --chrome-bar:  linear-gradient(180deg,
-                 #ffffff 0 17%, #d5e5f4 17% 33%, #6d94ba 33% 44%,
-                 #24405f 44% 50%, #f6fbff 50% 67%, #b7cfe6 67% 84%,
-                 #7fa2c2 84% 100%);
-  /* the candy shell of every large surface: white cap, hard equator, bounce */
-  --candy:       linear-gradient(180deg,
-                 rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.70) 44%,
-                 rgba(186,220,250,0.44) 50%, rgba(214,236,255,0.22) 64%,
-                 rgba(150,200,248,0.46) 100%);
-  /* Bubbles on a pale sky need a tinted rim — a white rim on white is nothing.
-     A url() cannot take var() substitutions inside it, so each mode carries
-     its own whole bubble. */
-  --y2k-bubble:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cdefs%3E%3CradialGradient id='g' cx='0.36' cy='0.30' r='0.78'%3E%3Cstop offset='0' stop-color='%23ffffff' stop-opacity='0.80'/%3E%3Cstop offset='0.34' stop-color='%23bfe2ff' stop-opacity='0.24'/%3E%3Cstop offset='0.72' stop-color='%236fb0f0' stop-opacity='0.16'/%3E%3Cstop offset='0.92' stop-color='%234f9ce4' stop-opacity='0.30'/%3E%3Cstop offset='1' stop-color='%23ffffff' stop-opacity='0.55'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='110' cy='110' r='104' fill='url(%23g)'/%3E%3Ccircle cx='110' cy='110' r='103' fill='none' stroke='%235aa6e2' stroke-opacity='0.40' stroke-width='1.8'/%3E%3Ccircle cx='110' cy='110' r='100' fill='none' stroke='%23ffffff' stroke-opacity='0.55' stroke-width='1.6'/%3E%3Cellipse cx='76' cy='58' rx='30' ry='17' fill='%23ffffff' fill-opacity='0.92' transform='rotate(-26 76 58)'/%3E%3Cellipse cx='150' cy='168' rx='34' ry='14' fill='%23aad8ff' fill-opacity='0.38'/%3E%3C/svg%3E");
+  --bg:           #c3ccd6;                  /* brushed aluminium */
+  --paper:        #eef3f8;
+  --paper-2:      #dde5ee;
+  --ink:          #0b1620;
+  --ink-soft:     #24384a;
+  --muted:        #526879;
+  --muted-2:      #8ea1b1;
+  --rule:         rgba(11, 22, 32, 0.28);
+  --rule-soft:    rgba(11, 22, 32, 0.10);
+  --accent:       #0a6fb5;                  /* Bondi blue */
+  --accent-soft:  rgba(10, 111, 181, 0.14);
+  --accent-2:     #0e8f9e;                  /* teal chrome */
+  --hl:           rgba(10, 111, 181, 0.12);
+  --up:           #2f7d2f;
+  --down:         #b02a1e;
+  --grad-from:    #0a4d80;
+  --grad-via:     #29a8e0;
+  --grad-to:      #bfe9ff;
+  --glass:        #eef3f8;
+  --glass-border: rgba(255, 255, 255, 0.9);
+  --glow:         rgba(41, 168, 224, 0.42);
+  --shadow-card:  0 1px 0 rgba(255,255,255,0.9) inset,
+                  0 14px 30px -16px rgba(11, 22, 32, 0.5);
+  --shadow-hover: 0 1px 0 rgba(255,255,255,0.95) inset,
+                  0 22px 44px -18px rgba(11, 22, 32, 0.55);
+  --aurora-1:     transparent; --aurora-2: transparent;
+  --aurora-3:     transparent; --aurora-4: transparent;
+  --grain:        0.02;
+  --y2k-chrome: linear-gradient(180deg,
+      #ffffff 0%, #dfe9f2 16%, #9fb3c4 34%, #5d7488 50%,
+      #93a9bb 62%, #e2ecf4 82%, #ffffff 100%);
+  --y2k-lime:   #7ed321;
 }
-
-/* Night: frutiger aero. Same chrome, same gloss — but the plastic is now
-   translucent blue glass with a light behind it. */
+/* Night = the same hardware lit from inside: smoked translucent blue. */
 :root.theme-y2k.dark {
   color-scheme: dark;
-  --bg:           #03101f;                 /* deep sea navy */
-  --paper:        rgba(125, 200, 255, 0.075);
-  --paper-2:      rgba(125, 200, 255, 0.13);
-  --ink:          #e9f6ff;
-  --ink-soft:     #b3d8f5;
-  --muted:        #7aa4c9;
-  --muted-2:      #6f96bb;
-  --rule:         rgba(140, 205, 255, 0.22);
-  --rule-soft:    rgba(140, 205, 255, 0.09);
-  --accent:       #4ad2ff;                 /* backlit cyan */
-  --accent-soft:  rgba(74, 210, 255, 0.16);
-  --accent-2:     #ff5fc0;
-  --hl:           rgba(74, 210, 255, 0.13);
-  --up:           #3ce6a8;
-  --down:         #ff6b8a;
-
-  --grad-from:    #37e2ff;
-  --grad-via:     #9d7bff;
-  --grad-to:      #ff77c8;
-
-  --glass:        rgba(10, 40, 78, 0.52);
-  --glass-border: rgba(163, 216, 255, 0.32);
-  --glow:         rgba(74, 210, 255, 0.48);
-
-  --shadow-card:  0 20px 44px -20px rgba(0, 0, 0, 0.80),
-                  0 0 34px -14px rgba(74, 210, 255, 0.55),
-                  inset 0 1px 0 rgba(206, 240, 255, 0.28);
-  --shadow-hover: 0 32px 66px -24px rgba(0, 0, 0, 0.88),
-                  0 0 54px -12px rgba(74, 210, 255, 0.70),
-                  inset 0 1px 0 rgba(206, 240, 255, 0.42);
-
-  --aurora-1:     rgba(23, 120, 220, 0.55);
-  --aurora-2:     rgba(74, 210, 255, 0.22);
-  --aurora-3:     rgba(157, 123, 255, 0.30);
-  --aurora-4:     rgba(255, 95, 192, 0.20);
-  --grain:        0.05;
-
-  --chrome-text: linear-gradient(180deg,
-                 #8bb6dd 0%, #ffffff 9%, #ffffff 16%, #c2ddf2 25%,
-                 #5480ac 36%, #123a5e 45%, #08192b 50%,
-                 #c7e6ff 50.01%, #6ba7d8 58%, #eafaff 68%, #ffffff 78%,
-                 #8fc0e4 89%, #40709a 100%);
-  --chrome-edge: rgba(3, 16, 31, 0.55);
-  --chrome-bar:  linear-gradient(180deg,
-                 #f8fdff 0 17%, #c2dcf0 17% 33%, #55809f 33% 44%,
-                 #0a1c2e 44% 50%, #e6f5ff 50% 67%, #8db3d2 67% 84%,
-                 #446b8c 84% 100%);
-  --candy:       linear-gradient(180deg,
-                 rgba(255,255,255,0.30) 0%, rgba(180,226,255,0.16) 45%,
-                 rgba(20,90,160,0.20) 50%, rgba(255,255,255,0.04) 62%,
-                 rgba(74,210,255,0.18) 100%);
-  /* At night the bubbles are lit from behind, so the rim goes white again. */
-  --y2k-bubble:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cdefs%3E%3CradialGradient id='g' cx='0.36' cy='0.30' r='0.78'%3E%3Cstop offset='0' stop-color='%23ffffff' stop-opacity='0.62'/%3E%3Cstop offset='0.35' stop-color='%23cfeaff' stop-opacity='0.14'/%3E%3Cstop offset='0.72' stop-color='%238fc4ff' stop-opacity='0.10'/%3E%3Cstop offset='0.93' stop-color='%23ffffff' stop-opacity='0.40'/%3E%3Cstop offset='1' stop-color='%23ffffff' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='110' cy='110' r='104' fill='url(%23g)'/%3E%3Ccircle cx='110' cy='110' r='103' fill='none' stroke='%23ffffff' stroke-opacity='0.42' stroke-width='1.6'/%3E%3Cellipse cx='76' cy='58' rx='30' ry='17' fill='%23ffffff' fill-opacity='0.80' transform='rotate(-26 76 58)'/%3E%3Cellipse cx='150' cy='168' rx='34' ry='14' fill='%23dff2ff' fill-opacity='0.30'/%3E%3C/svg%3E");
+  --bg:           #060d16;
+  --paper:        rgba(120, 200, 255, 0.07);
+  --paper-2:      rgba(120, 200, 255, 0.12);
+  --ink:          #eaf6ff;
+  --ink-soft:     #b9d6ea;
+  --muted:        #7d9bb2;
+  --muted-2:      #4a6376;
+  --rule:         rgba(140, 214, 255, 0.26);
+  --rule-soft:    rgba(140, 214, 255, 0.10);
+  --accent:       #35c6ff;                  /* electric cyan */
+  --accent-soft:  rgba(53, 198, 255, 0.16);
+  --accent-2:     #7ed321;                  /* lime "go" */
+  --hl:           rgba(53, 198, 255, 0.13);
+  --up:           #7ed321;
+  --down:         #ff6a52;
+  --grad-from:    #0a4d80;
+  --grad-via:     #35c6ff;
+  --grad-to:      #d8f4ff;
+  --glass:        rgba(10, 24, 40, 0.62);
+  --glass-border: rgba(140, 214, 255, 0.34);
+  --glow:         rgba(53, 198, 255, 0.5);
+  --shadow-card:  0 16px 40px -18px rgba(0,0,0,0.8),
+                  inset 0 1px 0 rgba(200, 240, 255, 0.22);
+  --shadow-hover: 0 26px 60px -20px rgba(0,0,0,0.85),
+                  inset 0 1px 0 rgba(200, 240, 255, 0.3);
+  --aurora-1:     transparent; --aurora-2: transparent;
+  --aurora-3:     transparent; --aurora-4: transparent;
+  --grain:        0.04;
+  --y2k-chrome: linear-gradient(180deg,
+      #e8f7ff 0%, #a8cfe6 16%, #4d7f9e 34%, #1d3purple 50%,
+      #3d6d8a 62%, #9fd0e8 82%, #eaf9ff 100%);
+  --y2k-lime:   #7ed321;
+}
+/* (the dark chrome ramp, written out properly) */
+:root.theme-y2k.dark {
+  --y2k-chrome: linear-gradient(180deg,
+      #e8f7ff 0%, #a8cfe6 16%, #4d7f9e 34%, #16304a 50%,
+      #3d6d8a 62%, #9fd0e8 82%, #eaf9ff 100%);
 }
 
-/* ---- the backdrop -------------------------------------------------------
-   An opaque body would paint over the fixed z-index:-1 pseudo layers, so the
-   body stays transparent and `html` keeps var(--bg). */
+/* ---- the desktop --------------------------------------------------------
+   A cold steel sweep with a faint dot grid over it — the CD-ROM-era desktop
+   wallpaper, not a candy gradient. */
 .theme-y2k body { background: transparent; }
-
-/* Layer 1 — the bubble field over a sky wash, with a lens flare in the
-   top-right corner and two chromatic ghosts running down the diagonal from
-   it. The whole plate drifts about 1% over 30s. */
 .theme-y2k body::before {
   inset: 0;
   filter: none;
-  animation: y2kDrift 30s ease-in-out infinite alternate;
+  animation: none;
   transform: translateZ(0);
-  will-change: transform;
   background-color: transparent;
   background-image:
-    var(--y2k-bubble), var(--y2k-bubble), var(--y2k-bubble), var(--y2k-bubble),
-    var(--y2k-bubble), var(--y2k-bubble), var(--y2k-bubble),
-    /* lens flare: hot core + two chromatic ghosts */
-    radial-gradient(circle at 88% 8%, rgba(255,255,255,0.85) 0%, rgba(190,232,255,0.42) 13%, transparent 40%),
-    radial-gradient(circle at 62% 34%, rgba(255,138,208,0.20) 0%, transparent 28%),
-    radial-gradient(circle at 41% 56%, rgba(120,205,255,0.22) 0%, transparent 24%),
-    /* sky wash */
-    radial-gradient(120% 80% at 50% -10%, var(--aurora-2), transparent 62%),
-    radial-gradient(90% 70% at 12% 100%, var(--aurora-1), transparent 68%),
-    radial-gradient(70% 60% at 92% 88%, var(--aurora-3), transparent 70%),
-    radial-gradient(60% 50% at 8% 6%, var(--aurora-4), transparent 70%);
-  background-repeat: no-repeat;
-  background-position:
-    -90px 8%, 86% 64%, 20% 90%, 70% 12%, 5% 46%, 47% 2%, 93% 34%,
-    0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
-  background-size:
-    360px 360px, 270px 270px, 200px 200px, 124px 124px, 98px 98px, 76px 76px, 58px 58px,
-    auto, auto, auto, auto, auto, auto, auto;
+    radial-gradient(120% 80% at 20% -10%, rgba(255,255,255,0.55), transparent 55%),
+    radial-gradient(100% 70% at 88% 8%, rgba(41,168,224,0.30), transparent 60%),
+    radial-gradient(120% 90% at 50% 110%, rgba(10,77,128,0.30), transparent 60%),
+    radial-gradient(circle, rgba(11,22,32,0.10) 1px, transparent 1.6px);
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat;
+  background-size: 100% 100%, 100% 100%, 100% 100%, 12px 12px;
 }
-
-/* Layer 2 — four-point starburst sparkles tiled sparsely, plus a very faint
-   iridescent sheen raking across the page. Above the bubbles, below every
-   scrap of content. */
-.theme-y2k body::after {
-  opacity: 1;
-  mix-blend-mode: normal;
-  transform: translateZ(0);
+.theme-y2k.dark body::before {
   background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='300'%3E%3Cg fill='%23ffffff'%3E%3Cpath d='M40 18C41.8 32 45.4 35.6 59.4 37.4C45.4 39.2 41.8 42.8 40 56.8C38.2 42.8 34.6 39.2 20.6 37.4C34.6 35.6 38.2 32 40 18Z' fill-opacity='0.72'/%3E%3Cpath d='M252 88C253.1 97.6 255.4 99.9 265 101C255.4 102.1 253.1 104.4 252 114C250.9 104.4 248.6 102.1 239 101C248.6 99.9 250.9 97.6 252 88Z' fill-opacity='0.5'/%3E%3Cpath d='M148 206C149.5 218 152.6 221.1 164.6 222.6C152.6 224.1 149.5 227.2 148 239.2C146.5 227.2 143.4 224.1 131.4 222.6C143.4 221.1 146.5 218 148 206Z' fill-opacity='0.6'/%3E%3Cpath d='M318 244C318.8 250.8 320.4 252.4 327.2 253.2C320.4 254 318.8 255.6 318 262.4C317.2 255.6 315.6 254 308.8 253.2C315.6 252.4 317.2 250.8 318 244Z' fill-opacity='0.45'/%3E%3Ccircle cx='72' cy='150' r='1.7' fill-opacity='0.45'/%3E%3Ccircle cx='206' cy='40' r='1.9' fill-opacity='0.4'/%3E%3Ccircle cx='300' cy='160' r='1.5' fill-opacity='0.35'/%3E%3Ccircle cx='110' cy='268' r='1.6' fill-opacity='0.4'/%3E%3C/g%3E%3C/svg%3E"),
-    repeating-linear-gradient(102deg,
-      rgba(255,255,255,0.00) 0 60px,
-      rgba(120, 220, 255, 0.05) 60px 96px,
-      rgba(175, 130, 255, 0.05) 96px 132px,
-      rgba(255, 140, 210, 0.05) 132px 168px,
-      rgba(255,255,255,0.00) 168px 240px);
-  background-repeat: repeat, repeat;
-  background-size: 360px 300px, auto;
-  animation: y2kTwinkle 9s ease-in-out infinite alternate;
+    radial-gradient(120% 80% at 20% -10%, rgba(53,198,255,0.22), transparent 55%),
+    radial-gradient(100% 70% at 88% 8%, rgba(126,211,33,0.12), transparent 60%),
+    radial-gradient(120% 90% at 50% 110%, rgba(10,77,128,0.5), transparent 60%),
+    radial-gradient(circle, rgba(140,214,255,0.10) 1px, transparent 1.6px);
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat;
+  background-size: 100% 100%, 100% 100%, 100% 100%, 12px 12px;
 }
 
-@keyframes y2kDrift {
-  from { transform: translate3d(0, 0, 0) scale(1); }
-  to   { transform: translate3d(-1%, 1.2%, 0) scale(1.03); }
-}
-@keyframes y2kTwinkle {
-  from { opacity: 0.55; }
-  to   { opacity: 1; }
-}
-
-/* ---- type ---------------------------------------------------------------
-   Liquid chrome goes on the masthead ONLY. It was on every large heading at
-   first, and a chrome figure on a white glossy card is unreadable — the
-   gradient's light half disappears into the surface under it. So headings and
-   figures keep solid ink with a 1px white emboss, and the <h1> carries the
-   metal. A dark 0.7px outline holds the chrome together against a pale sky;
-   without it the top half of every letter dissolves. */
-.theme-y2k .font-display {
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.80);
-}
-.theme-y2k.dark .font-display { text-shadow: 0 1px 0 rgba(190, 235, 255, 0.16); }
-
-.theme-y2k h1.font-display {
-  background-image: var(--chrome-text);
-  background-size: 100% 1em;             /* one chrome band per line of type */
-  background-repeat: repeat;
-  -webkit-background-clip: text;
-          background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  -webkit-text-stroke: 0.7px var(--chrome-edge);
-  text-shadow: none;
-  filter: drop-shadow(0 2px 0 rgba(255, 255, 255, 0.85))
-          drop-shadow(0 6px 12px rgba(10, 45, 95, 0.38));
-}
-.theme-y2k.dark h1.font-display {
-  filter: drop-shadow(0 2px 0 rgba(180, 232, 255, 0.30))
-          drop-shadow(0 5px 20px rgba(74, 210, 255, 0.45));
-}
-/* the greeting half of the masthead — let the parent's chrome through */
-.theme-y2k h1.font-display .text-ink {
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-}
-/* …but the name keeps its own hologram, so it must not inherit the chrome's
-   dark outline. */
-.theme-y2k h1.font-display .text-gradient { -webkit-text-stroke: 0; }
-
-/* Hologram: cyan → violet → pink, sweeping slowly. Keeps the base
-   animation but widens the ramp so the colour actually travels. */
-.theme-y2k .text-gradient {
-  background: linear-gradient(96deg, var(--grad-from), var(--grad-via) 42%, var(--grad-to) 72%, var(--grad-from));
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-          background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 5px var(--glow));
-}
-
-.theme-y2k .label,
-.theme-y2k .metalabel {
-  letter-spacing: 0.15em;
-  font-weight: 700;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
-}
-.theme-y2k.dark .label,
-.theme-y2k.dark .metalabel { text-shadow: none; }
-.theme-y2k .label { color: var(--accent); }
-
-/* ---- cards: a slab of translucent candy plastic -------------------------
-   Chunky 26px radius, a glossy cap over the top half with a hard equator, and
-   a soft bounce-light returning off the bottom lip. */
+/* ---- panels: translucent plastic with a chrome lip ---------------------- */
 .theme-y2k .card {
-  border-radius: 26px;
-  background-image: var(--candy);
-  background-color: var(--glass);
+  border-radius: 18px;
   border: 1px solid var(--glass-border);
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
-          backdrop-filter: blur(18px) saturate(180%);
+  background-image:
+    /* the gloss: bright upper half, bounce light at the foot */
+    linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.12) 48%, transparent 49%),
+    linear-gradient(0deg, rgba(255,255,255,0.28), transparent 26%);
   box-shadow: var(--shadow-card);
 }
-/* The specular cap. This replaces the base glass edge ring entirely, so the
-   inherited mask has to be cleared or nothing paints. */
-.theme-y2k .card::before {
-  content: "";
-  position: absolute;
-  inset: 3px 4px auto 4px;
-  height: 46%;
-  padding: 0;
-  border-radius: 23px 23px 46% 46% / 23px 23px 22px 22px;
-  background: linear-gradient(180deg,
-              rgba(255,255,255,0.95) 0%,
-              rgba(255,255,255,0.62) 40%,
-              rgba(255,255,255,0.20) 74%,
-              rgba(255,255,255,0) 100%);
-  -webkit-mask: none;
-          mask: none;
-  opacity: 0.85;
-  z-index: 0;
-}
-.theme-y2k.dark .card::before {
-  background: linear-gradient(180deg,
-              rgba(228,247,255,0.32) 0%,
-              rgba(160,225,255,0.15) 42%,
-              rgba(120,200,255,0.05) 76%,
-              rgba(255,255,255,0) 100%);
-  opacity: 1;
-}
-/* Bounce light off the bottom lip, plus one sparkle parked in the corner. */
-.theme-y2k .card::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 52%;
-  border-radius: 0 0 25px 25px;
-  opacity: 1;
-  z-index: 0;
-  transition: none;
+.theme-y2k.dark .card {
   background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Cpath d='M17 1C18.2 14 20 15.8 33 17C20 18.2 18.2 20 17 33C15.8 20 14 18.2 1 17C14 15.8 15.8 14 17 1Z' fill='%23ffffff' fill-opacity='0.8'/%3E%3C/svg%3E"),
-    radial-gradient(72% 100% at 50% 118%, rgba(255,255,255,0.60), transparent 62%);
-  background-repeat: no-repeat, no-repeat;
-  background-position: right 14px bottom 12px, center bottom;
-  background-size: 22px 22px, auto;
+    linear-gradient(180deg, rgba(200,240,255,0.16) 0%, rgba(200,240,255,0.05) 48%, transparent 49%),
+    linear-gradient(0deg, rgba(53,198,255,0.12), transparent 26%);
 }
-.theme-y2k.dark .card::after {
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Cpath d='M17 1C18.2 14 20 15.8 33 17C20 18.2 18.2 20 17 33C15.8 20 14 18.2 1 17C14 15.8 15.8 14 17 1Z' fill='%23bff0ff' fill-opacity='0.85'/%3E%3C/svg%3E"),
-    radial-gradient(72% 100% at 50% 118%, rgba(74,210,255,0.30), transparent 62%);
-  background-repeat: no-repeat, no-repeat;
-  background-position: right 14px bottom 12px, center bottom;
-  background-size: 22px 22px, auto;
-}
-.theme-y2k .card:hover::after { opacity: 1; }
-.theme-y2k .card > * { position: relative; z-index: 1; }
-.theme-y2k .card:hover { transform: translateY(-2px); }
-
-.theme-y2k .card-bare {
-  border-radius: 20px;
-  border: 1px solid var(--glass-border);
-  background-image: var(--candy);
-  background-color: var(--paper);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9),
-              0 6px 14px -10px rgba(10,45,95,0.5);
-}
-
-/* ---- header rule: a strip of brushed chrome ----------------------------- */
+.theme-y2k .card::before { display: none; }
+.theme-y2k .card::after { display: none; }
+/* A chrome lip across the top edge of every panel — this is the signature. */
 .theme-y2k .headrule {
-  padding-bottom: 0.7rem;
-  background-image: var(--chrome-bar);
-  background-repeat: no-repeat;
-  background-position: 0 100%;
-  background-size: 100% 6px;
+  border-bottom: 0;
+  position: relative;
+  padding-bottom: .6rem;
+}
+.theme-y2k .headrule::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 5px;
   border-radius: 3px;
+  background: var(--y2k-chrome);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.7), 0 -1px 0 rgba(0,0,0,0.15);
 }
 
-/* ---- controls: Aqua lozenges -------------------------------------------
-   White cap over the top half, an abrupt equator, and an inner bottom glow
-   for the bounce. The 48%/50% pair of stops IS the gloss break. */
-.theme-y2k .chip {
-  border-radius: 9999px;
-  padding: 5px 15px;
-  font-weight: 650;
-  color: var(--ink-soft);
-  border: 1px solid rgba(255, 255, 255, 0.92);
-  background: linear-gradient(180deg, #ffffff 0%, #f0f7ff 48%, #cfe2f6 50%, #ffffff 92%);
-  -webkit-backdrop-filter: none;
-          backdrop-filter: none;
-  box-shadow: 0 3px 6px -2px rgba(10, 45, 95, 0.30),
-              inset 0 1px 0 #ffffff,
-              inset 0 -8px 10px -8px rgba(10, 60, 120, 0.45);
-  text-shadow: 0 1px 0 rgba(255,255,255,0.9);
+/* ---- chrome type -------------------------------------------------------- */
+.theme-y2k .font-display {
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
-.theme-y2k.dark .chip {
-  color: var(--ink-soft);
-  border: 1px solid rgba(163, 216, 255, 0.34);
-  background: linear-gradient(180deg,
-              rgba(200,240,255,0.30) 0%, rgba(120,190,240,0.16) 48%,
-              rgba(10,50,95,0.45) 50%, rgba(74,210,255,0.16) 92%);
-  box-shadow: 0 3px 8px -3px rgba(0,0,0,0.7),
-              inset 0 1px 0 rgba(220,245,255,0.45),
-              inset 0 -8px 12px -8px rgba(74,210,255,0.45);
-  text-shadow: none;
+/* The masthead is polished metal: the banded ramp clipped to the glyphs. */
+.theme-y2k .text-gradient {
+  background: var(--y2k-chrome);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: none;
+  filter: drop-shadow(0 1px 0 rgba(255,255,255,0.8)) drop-shadow(0 2px 2px rgba(11,22,32,0.35));
 }
-.theme-y2k .chip:hover { color: var(--ink); border-color: #ffffff; }
-.theme-y2k .chip-active {
-  color: #ffffff;
-  border-color: rgba(255,255,255,0.95);
-  background: linear-gradient(180deg, #a8e2ff 0%, #35a9ff 47%, #0a63d8 50%, #58c9ff 100%);
-  box-shadow: 0 4px 10px -2px var(--glow),
-              inset 0 1px 0 rgba(255,255,255,0.95),
-              inset 0 -9px 12px -8px rgba(0, 40, 95, 0.65);
-  text-shadow: 0 1px 1px rgba(0, 40, 90, 0.55);
-}
-.theme-y2k .chip-active:hover { color: #ffffff; border-color: rgba(255,255,255,0.95); }
 
-/* Round chrome button — the "OK" pill off every 2001 installer. */
+/* ---- Aqua controls: glossy pills ---------------------------------------- */
+.theme-y2k .chip,
 .theme-y2k .btn-ghost {
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.92);
-  color: var(--ink-soft);
-  background-image: var(--chrome-bar);
-  -webkit-backdrop-filter: none;
-          backdrop-filter: none;
-  box-shadow: 0 4px 9px -3px rgba(10, 45, 95, 0.45),
-              inset 0 1px 0 #ffffff,
-              inset 0 -7px 9px -7px rgba(10, 60, 120, 0.55);
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.35) 46%, rgba(255,255,255,0) 47%),
+    linear-gradient(0deg, rgba(255,255,255,0.5), transparent 40%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.95),
+    inset 0 -1px 0 rgba(11,22,32,0.12),
+    0 2px 5px -2px rgba(11,22,32,0.4);
 }
-.theme-y2k .btn-ghost:hover {
-  color: var(--accent);
-  border-color: #ffffff;
-  box-shadow: 0 6px 14px -4px var(--glow),
-              inset 0 1px 0 #ffffff,
-              inset 0 -7px 9px -7px rgba(10, 60, 120, 0.55);
+.theme-y2k .chip:active,
+.theme-y2k .btn-ghost:active {
+  box-shadow:
+    inset 0 2px 5px rgba(11,22,32,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.3);
 }
-.theme-y2k.dark .btn-ghost { color: #12304f; border-color: rgba(163,216,255,0.45); }
-
-/* ---- the status dot becomes a tiny bubble ------------------------------- */
+.theme-y2k .chip-active {
+  border-color: transparent;
+  color: #ffffff;
+  background-color: var(--accent);
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.18) 46%, rgba(255,255,255,0) 47%),
+    linear-gradient(0deg, rgba(255,255,255,0.35), transparent 44%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.85),
+    0 3px 10px -3px var(--glow);
+}
+/* The status dot is a glass bead with a specular pip. */
 .theme-y2k .dot {
-  width: 11px; height: 11px;
-  border-radius: 9999px;
+  border-radius: 50%;
   background:
-    radial-gradient(circle at 34% 26%, rgba(255,255,255,0.98) 0 16%, rgba(255,255,255,0.45) 26%, transparent 44%),
-    linear-gradient(180deg, var(--grad-from), var(--grad-via) 55%, var(--grad-to));
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.75),
-              0 2px 5px rgba(10,45,95,0.35),
-              0 0 14px var(--glow);
+    radial-gradient(circle at 32% 26%, #ffffff 0 18%, transparent 40%),
+    linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #000));
+  box-shadow: 0 0 0 1px rgba(11,22,32,0.25), 0 0 10px var(--glow);
 }
-
-.theme-y2k ::selection { background: var(--accent-2); color: #ffffff; }
-
-/* ---- motion off-switch -------------------------------------------------- */
-@media (prefers-reduced-motion: reduce) {
-  .theme-y2k body::before,
-  .theme-y2k body::after { animation: none; }
-  .theme-y2k body::after { opacity: 1; }
-  .theme-y2k .text-gradient { animation: none; }
-}
+.theme-y2k ::selection { background: var(--accent); color: #ffffff; }

@@ -84,13 +84,6 @@ export function ComicFx() {
       if (watched === node) unwatch();
     }
 
-    function part(node: HTMLElement, cls: string) {
-      const el = document.createElement("span");
-      el.className = cls;
-      node.appendChild(el);
-      return el;
-    }
-
     function spawn(x: number, y: number) {
       if (!layer) return;
       const vw = window.innerWidth;
@@ -121,37 +114,20 @@ export function ComicFx() {
       node.setAttribute("aria-hidden", "true");
       node.style.left = `${Math.round(cx)}px`;
       node.style.top = `${Math.round(cy)}px`;
-      node.style.width = `${size}px`;
-      node.style.height = `${size}px`;
       node.style.setProperty("--cfx-rot", `${rot.toFixed(2)}deg`);
       node.style.setProperty("--cfx-scale", scale.toFixed(3));
-      node.style.setProperty("--cfx-spin", `${Math.round(Math.random() * 360)}deg`);
       node.style.setProperty("--cfx-dur", `${dur}ms`);
-      // THWACK has to fit the same inner star as POW, so the type size comes
-      // down with the letter count instead of spilling over the ink.
-      node.style.setProperty("--cfx-fs", `${(size * (0.40 - word.length * 0.023)).toFixed(1)}px`);
+      node.style.setProperty("--cfx-fs", `${Math.round(size * 0.62)}px`);
 
-      // Paint order is DOM order: lines, ink rim, star, inner rim, core, word.
-      part(node, "cfx-rays");
-      part(node, "cfx-shell");
-      part(node, "cfx-star");
-      part(node, "cfx-core-shell");
-      part(node, "cfx-core");
-      const text = document.createElement("i");
-      text.className = "cfx-text";
-      text.textContent = word;
-      part(node, "cfx-word").appendChild(text);
-
+      // The WORD is the whole effect now. The previous build stacked six
+      // absolutely-positioned children (speed lines, two stars, two ink rims,
+      // then the word) and measured the rendered text to condense it into the
+      // star. At this size that read as a smudge, and the word silently
+      // stopped painting the moment the geometry changed. One element with
+      // text on it cannot fail that way, and it's the part that was actually
+      // fun: the lettering.
+      node.textContent = word;
       layer.appendChild(node);
-
-      // Which face actually rendered depends on the machine — Impact is
-      // narrow, the fallbacks are not — so the only reliable way to keep a
-      // long word inside its star is to measure what we got and condense it.
-      // Costs one forced layout per burst, at most a few times a second, and
-      // it happens before the first painted frame so nothing jumps.
-      const fits = size * 0.8;
-      const got = text.offsetWidth;
-      if (got > fits) node.style.setProperty("--cfx-fit", (fits / got).toFixed(3));
 
       // A timer, not `animationend`: animationend never arrives if the
       // animation is interrupted or the tab is hidden mid-flight, and a timer

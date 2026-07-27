@@ -269,3 +269,52 @@
   transform: translate(1px, 1px);
   box-shadow: 1px 1px 0 0 var(--ink);
 }
+
+/* ===========================================================================
+   CLICK BURST v3 — just the lettering.
+
+   v1 was a 13-spike star with a halftone screen, an inner star, speed lines
+   and outlined type. Shrunk to ~60px none of that read as anything, and the
+   nested geometry is what stopped the word painting at all. So the effect is
+   now ONE element with text on it: a heavy comic word that punches in, holds,
+   and lifts away. Fewer moving parts, and it's the part that was actually fun.
+
+   Every child rule above is inert now (the burst has no children).
+=========================================================================== */
+.cfx-burst {
+  width: auto !important;
+  height: auto !important;
+  display: block;
+  white-space: nowrap;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black",
+               "Space Grotesk", system-ui, sans-serif;
+  font-weight: 900;
+  font-size: var(--cfx-fs, 34px);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--cfx-face, #ffe14d);
+  /* A hard ink outline in eight directions plus an offset drop — the classic
+     comic letterform, and the reason it stays legible over any card. */
+  text-shadow:
+     0.05em  0.05em 0 var(--cfx-ink, #111),
+    -0.05em  0.05em 0 var(--cfx-ink, #111),
+     0.05em -0.05em 0 var(--cfx-ink, #111),
+    -0.05em -0.05em 0 var(--cfx-ink, #111),
+     0      0.06em  0 var(--cfx-ink, #111),
+     0     -0.06em  0 var(--cfx-ink, #111),
+     0.06em 0       0 var(--cfx-ink, #111),
+    -0.06em 0       0 var(--cfx-ink, #111),
+     0.11em 0.13em  0 var(--cfx-ink, #111);
+  animation: cfx-hit var(--cfx-dur, 440ms) cubic-bezier(.2, .9, .25, 1) both;
+}
+/* Punch in past full size, settle, then lift and fade. No spin, no strobe. */
+@keyframes cfx-hit {
+  0%   { opacity: 0; transform: translate(-50%, -50%) rotate(var(--cfx-rot)) scale(calc(var(--cfx-scale) * 0.45)); }
+  35%  { opacity: 1; transform: translate(-50%, -50%) rotate(var(--cfx-rot)) scale(calc(var(--cfx-scale) * 1.08)); }
+  52%  { transform: translate(-50%, -50%) rotate(var(--cfx-rot)) scale(var(--cfx-scale)); }
+  100% { opacity: 0; transform: translate(-50%, -125%) rotate(var(--cfx-rot)) scale(var(--cfx-scale)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cfx-burst { animation: cfx-fade var(--cfx-dur) ease-out both; }
+}
