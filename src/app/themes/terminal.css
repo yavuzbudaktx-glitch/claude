@@ -1,21 +1,18 @@
-/* terminal — theme upgrades. Loaded AFTER globals.css (see src/app/layout.tsx),
-   so equal-specificity rules here win over the base definitions. */
+/* terminal — loaded AFTER globals.css, so equal-specificity rules win.
 
-/* =======================================================================
-   THE DAY-MODE BUG
-   globals.css declared exactly one block for this theme — `:root.theme-terminal`
-   with `color-scheme: dark` and the green-on-black palette — and never a
-   `:not(.dark)` counterpart. `:root.theme-terminal` (0,2,0) outranks `.dark`
-   (0,1,0) AND applies with or without it, so day mode inherited every single
-   night value: flipping the toggle changed nothing. The fix is the light
-   variant below, which is a different machine rather than a washed-out CRT.
-======================================================================= */
+   SCOPE, after feedback: terminal's DAY MODE was missing entirely, so the
+   light palette below stays. The decorative backdrops an earlier pass added
+   (a paper vignette + printout header line in day, a rolling scanline field
+   in night) are GONE — the user liked the original background and those were
+   not asked for. The blinking cursor beside the greeting stays, but thin
+   rather than a full block, and the registration ticks that pass put in the
+   card corners are removed.
 
-/* ============== TERMINAL · DAY — the line printer ==============
-   Not a CRT with the brightness turned up: a hard-copy terminal. Warm fanfold
-   paper, ink-green type, amber annotations, tractor-feed perforations down
-   both margins, and the pale ruled bands of continuous stationery. Same
-   monospace grid, same 2px corners, so it still reads as terminal. */
+   WHY DAY MODE WAS BROKEN: `:root.theme-terminal` declares the dark palette at
+   specificity (0,2,0), which outranks the global `.dark` block at (0,1,0) — so
+   the light/dark toggle could never override it and "day" was just night
+   again. The fix is a light block at (0,3,0) via `:not(.dark)`, below. */
+
 :root.theme-terminal:not(.dark) {
   color-scheme: light;
   --bg:           #e8e3d3;                  /* fanfold paper stock */
@@ -51,128 +48,22 @@
   --grain:        0.03;
 }
 
-/* Day backdrop: the sheet itself. A warm vignette so the paper curls at the
-   edges, plus the header line every printout carries. */
-:root.theme-terminal:not(.dark) body::before {
-  content: "brief.log  ·  hard copy  ·  page 001  ·  end of feed";
-  inset: 0;
-  filter: none;
-  animation: none;
-  display: flex;
-  align-items: flex-end;
-  padding: 0 0 22px 48px;
-  font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 10.5px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgba(22, 40, 29, 0.26);
-  background:
-    radial-gradient(120% 80% at 50% 0%, rgba(255, 253, 245, 0.9), transparent 60%),
-    radial-gradient(90% 70% at 50% 110%, rgba(22, 40, 29, 0.10), transparent 65%);
-}
-
-/* Ruled bands + tractor-feed perforations. The scanlines of night mode are
-   dialled all the way out — paper does not refresh at 60Hz. */
-:root.theme-terminal:not(.dark) body::after {
-  opacity: 1;
-  mix-blend-mode: normal;
-  animation: none;
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='36' viewBox='0 0 26 36'%3E%3Ccircle cx='13' cy='18' r='4.2' fill='rgba(24,54,38,.10)'/%3E%3Ccircle cx='13' cy='18' r='4.2' fill='none' stroke='rgba(24,54,38,.20)' stroke-width='1'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='36' viewBox='0 0 26 36'%3E%3Ccircle cx='13' cy='18' r='4.2' fill='rgba(24,54,38,.10)'/%3E%3Ccircle cx='13' cy='18' r='4.2' fill='none' stroke='rgba(24,54,38,.20)' stroke-width='1'/%3E%3C/svg%3E"),
-    linear-gradient(90deg, transparent 0 44px, rgba(22, 40, 29, 0.13) 44px 45px, transparent 45px),
-    linear-gradient(270deg, transparent 0 44px, rgba(22, 40, 29, 0.13) 44px 45px, transparent 45px),
-    repeating-linear-gradient(to bottom,
-      transparent 0, transparent 26px,
-      rgba(22, 40, 29, 0.035) 27px, rgba(22, 40, 29, 0.035) 29px,
-      transparent 30px, transparent 56px);
-  background-repeat: repeat-y, repeat-y, no-repeat, no-repeat, repeat;
-  background-position: 12px 0, right 12px top, left top, right top, 0 0;
-  background-size: 26px 36px, 26px 36px, auto, auto, auto;
-}
-
-/* Paper cards: opaque stock, no frost, corner registration ticks. */
-:root.theme-terminal:not(.dark) .card {
-  background: var(--paper);
-  -webkit-backdrop-filter: none;
-          backdrop-filter: none;
-  border: 1px solid var(--rule);
-}
-:root.theme-terminal:not(.dark) .text-ink { text-shadow: none; }
-:root.theme-terminal:not(.dark) .btn-ghost:hover { box-shadow: none; }
-
-/* ============== TERMINAL · NIGHT — upgrades ==============
-   The user likes night mode, so nothing here changes its colour or layout:
-   it only adds the two things a real CRT has that a div does not — a tube
-   vignette and a refresh roll — plus the boot log burned into the wallpaper. */
-.theme-terminal.dark body::before {
-  content: "[  ok  ] mounted /dev/brief\A[  ok  ] started phosphor.service\A[  ok  ] reached target dashboard\A[  ok  ] link up — 1000 Mb/s\A> _";
-  white-space: pre;
-  inset: 0;
-  filter: none;
-  animation: none;
-  display: flex;
-  align-items: flex-end;
-  padding: 0 0 26px 28px;
-  font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 11px;
-  line-height: 1.85;
-  color: rgba(34, 255, 119, 0.085);
-  /* the tube: bloom at the top, glass falloff at the corners */
-  background:
-    radial-gradient(120% 85% at 50% -8%, rgba(34, 255, 119, 0.10), transparent 62%),
-    radial-gradient(150% 110% at 50% 50%, transparent 42%, rgba(0, 0, 0, 0.55) 88%),
-    radial-gradient(60% 60% at 0% 0%, rgba(0, 0, 0, 0.5), transparent 70%),
-    radial-gradient(60% 60% at 100% 100%, rgba(0, 0, 0, 0.5), transparent 70%);
-}
-/* Scanlines as before + a slow refresh band rolling down the tube. */
-.theme-terminal.dark body::after {
-  background-image:
-    linear-gradient(to bottom, transparent, rgba(34, 255, 119, 0.055) 45%, transparent),
-    repeating-linear-gradient(to bottom, rgba(34, 255, 119, 0.06) 0 1px, transparent 1px 3px),
-    radial-gradient(120% 90% at 50% 0%, rgba(34, 255, 119, 0.06), transparent 60%);
-  background-size: 100% 180px, auto, auto;
-  background-repeat: no-repeat, repeat, no-repeat;
-  animation: termRoll 7.5s linear infinite;
-}
-@keyframes termRoll {
-  from { background-position: 0 -20vh, 0 0,   50% 0; }
-  to   { background-position: 0 120vh, 0 6px, 50% 0; }
-}
-
-/* ============== BOTH MODES ============== */
-
-/* The masthead ends in a block cursor, the way a prompt does. */
+/* The cursor beside the greeting: a full block was too heavy, so the same
+   glyph is squeezed horizontally — full height, a third of the width. */
 .theme-terminal h1.font-display::after {
   content: "\2588";
-  margin-left: 0.12em;
+  display: inline-block;
+  transform: scaleX(0.3);
+  transform-origin: left center;
+  margin-left: 0.1em;
   color: var(--accent);
   animation: termBlink 1.05s steps(2, end) infinite;
 }
+@keyframes termBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-/* Registration ticks in the card corners — the console-window frame that the
-   single top-left prompt block only hinted at. (globals hides ::after; it is
-   re-enabled here and pinned on, so hover never blooms it.) */
-.theme-terminal .card::after {
-  display: block;
-  opacity: 1;
-  inset: 5px;
-  border-radius: 0;
-  transition: none;
-  background:
-    linear-gradient(var(--rule) 0 0) 0 0        / 11px 1px,
-    linear-gradient(var(--rule) 0 0) 0 0        / 1px 11px,
-    linear-gradient(var(--rule) 0 0) 100% 0     / 11px 1px,
-    linear-gradient(var(--rule) 0 0) 100% 0     / 1px 11px,
-    linear-gradient(var(--rule) 0 0) 0 100%     / 11px 1px,
-    linear-gradient(var(--rule) 0 0) 0 100%     / 1px 11px,
-    linear-gradient(var(--rule) 0 0) 100% 100%  / 11px 1px,
-    linear-gradient(var(--rule) 0 0) 100% 100%  / 1px 11px;
-  background-repeat: no-repeat;
-}
+/* No corner ticks on the cards — globals hides `.card::after`; keep it hidden. */
+.theme-terminal .card::after { display: none; }
 
-/* Micro-type goes back to real character cells here — this is the one theme
-   whose whole identity is the fixed-width grid. */
 .theme-terminal .label,
 .theme-terminal .metalabel {
   font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -196,7 +87,5 @@
 .theme-terminal .headrule { border-bottom: 1px dashed var(--rule); padding-bottom: .5rem; }
 
 @media (prefers-reduced-motion: reduce) {
-  .theme-terminal h1.font-display::after,
-  .theme-terminal .card::before { animation: none; }
-  .theme-terminal.dark body::after { animation: none; }
+  .theme-terminal h1.font-display::after { animation: none; }
 }

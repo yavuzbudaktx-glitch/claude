@@ -1,201 +1,170 @@
-/* subway — theme upgrades. Loaded AFTER globals.css (see src/app/layout.tsx),
-   so equal-specificity rules here win over the base definitions. */
+/* subway — reimagined as EGYPTIAN, by request. The tile-and-grout base already
+   read as an ancient wall, so this leans all the way in: limestone block
+   masonry instead of subway tile, a carved hieroglyph frieze, papyrus-toned
+   cards edged in gold leaf, lotus corner motifs, and a scarab for the header
+   dot. The owl pass is gone.
 
-/* =======================================================================
-   SUBWAY · "OWL STREET" STATION
-   The old version was a grid of hairlines standing in for tile — no bond, no
-   bevel, no station. This rebuilds it as a real IRT platform wall: bevelled
-   3x6 tile in running bond, a Greek-key mosaic border course running head
-   height around the room, and the thing every 1904 station has that no other
-   theme does — a tesserae animal plaque. Ours is an owl: hand-laid in a 21x21
-   tile map, amber eyes, brass beak, navy-and-cream rings, four tones per
-   colour so it reads as cut glass rather than clip art. The plaque watermarks
-   the wall, a small enamel roundel of it fronts the masthead, and a 16px
-   version of it is the status dot on every card header.
-======================================================================= */
-:root.theme-subway {
-  --bg:           #e4dfd0;                  /* grout and plaster */
-  --paper:        #f7f4ec;
-  --paper-2:      #efe9d9;
-  --rule:         rgba(12, 19, 32, 0.24);
-  --accent-2:     #b8892f;                  /* brass, deepened for contrast */
-  --glow:         rgba(184, 137, 47, 0.28);
-  --sb-brass:     #b8892f;
-  --sb-tile:      #fbf9f3;
-  /* The station's artwork, declared once and swapped wholesale at night:
-     the tile wall, the Greek-key border course, the owl plaque, the roundel. */
-  --sb-wall:      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='64' viewBox='0 0 128 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fdfcf7'/%3E%3Cstop offset='1' stop-color='%23eee9dc'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='128' height='64' fill='%23cdc5b2'/%3E%3Crect x='1' y='1' width='62' height='30' rx='2' fill='url(%2523g)'/%3E%3Cpath d='M1.6 31.4V1.6h60.8' fill='none' stroke='rgba(255,255,255,.95)' stroke-width='1.4'/%3E%3Cpath d='M1.6 31.4h60.8V1.6' fill='none' stroke='rgba(60,52,38,.18)' stroke-width='1.4'/%3E%3Crect x='65' y='1' width='62' height='30' rx='2' fill='url(%2523g)'/%3E%3Cpath d='M65.6 31.4V1.6h60.8' fill='none' stroke='rgba(255,255,255,.95)' stroke-width='1.4'/%3E%3Cpath d='M65.6 31.4h60.8V1.6' fill='none' stroke='rgba(60,52,38,.18)' stroke-width='1.4'/%3E%3Crect x='-31' y='33' width='62' height='30' rx='2' fill='url(%2523g)'/%3E%3Cpath d='M-30.4 63.4V33.6h60.8' fill='none' stroke='rgba(255,255,255,.95)' stroke-width='1.4'/%3E%3Cpath d='M-30.4 63.4h60.8V33.6' fill='none' stroke='rgba(60,52,38,.18)' stroke-width='1.4'/%3E%3Crect x='33' y='33' width='62' height='30' rx='2' fill='url(%2523g)'/%3E%3Cpath d='M33.6 63.4V33.6h60.8' fill='none' stroke='rgba(255,255,255,.95)' stroke-width='1.4'/%3E%3Cpath d='M33.6 63.4h60.8V33.6' fill='none' stroke='rgba(60,52,38,.18)' stroke-width='1.4'/%3E%3Crect x='97' y='33' width='62' height='30' rx='2' fill='url(%2523g)'/%3E%3Cpath d='M97.6 63.4V33.6h60.8' fill='none' stroke='rgba(255,255,255,.95)' stroke-width='1.4'/%3E%3Cpath d='M97.6 63.4h60.8V33.6' fill='none' stroke='rgba(60,52,38,.18)' stroke-width='1.4'/%3E%3C/svg%3E");
-  --sb-band:      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='26' viewBox='0 0 72 26'%3E%3Crect width='72' height='26' fill='rgba(0,0,0,0)'/%3E%3Crect width='72' height='3' fill='%230d3b66'/%3E%3Crect y='23' width='72' height='3' fill='%230d3b66'/%3E%3Crect y='3.6' width='72' height='1.4' fill='%23c9a24a'/%3E%3Crect y='21' width='72' height='1.4' fill='%23c9a24a'/%3E%3Cpath fill='%230d3b66' d='M6 7h24v3H9v7h15v-4h-9v-3h12v10H6z M42 7h24v12H42v-3h21v-7H48v4h9v3H45v-9z'/%3E%3C/svg%3E");
-  --sb-owl:       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='348' height='348' viewBox='0 0 348 348'%3E%3Ccircle cx='174' cy='174' r='173' fill='%23b8ad96'/%3E%3Cpath fill='%230d3b66' d='M132 0h11v11h-11zM144 0h11v11h-11zM96 12h11v11h-11zM132 12h11v11h-11zM144 12h11v11h-11zM180 12h11v11h-11zM204 12h11v11h-11zM228 12h11v11h-11zM84 24h11v11h-11zM108 24h11v11h-11zM84 36h11v11h-11zM264 36h11v11h-11zM276 36h11v11h-11zM60 48h11v11h-11zM300 60h11v11h-11zM300 84h11v11h-11zM12 120h11v11h-11zM336 132h11v11h-11zM336 144h11v11h-11zM0 156h11v11h-11zM12 156h11v11h-11zM0 168h11v11h-11zM336 168h11v11h-11zM336 180h11v11h-11zM12 192h11v11h-11zM324 204h11v11h-11zM336 204h11v11h-11zM12 216h11v11h-11zM324 216h11v11h-11zM324 240h11v11h-11zM36 276h11v11h-11zM48 276h11v11h-11zM300 276h11v11h-11zM48 288h11v11h-11zM276 288h11v11h-11zM288 288h11v11h-11zM60 300h11v11h-11zM228 312h11v11h-11zM240 312h11v11h-11zM252 312h11v11h-11zM156 324h11v11h-11zM180 324h11v11h-11zM204 324h11v11h-11zM216 324h11v11h-11zM132 336h11v11h-11zM180 336h11v11h-11z'/%3E%3Cpath fill='%230a3159' d='M156 0h11v11h-11zM168 0h11v11h-11zM120 12h11v11h-11zM156 12h11v11h-11zM240 12h11v11h-11zM96 24h11v11h-11zM228 24h11v11h-11zM240 24h11v11h-11zM60 36h11v11h-11zM72 36h11v11h-11zM48 48h11v11h-11zM276 48h11v11h-11zM288 48h11v11h-11zM48 60h11v11h-11zM24 84h11v11h-11zM36 84h11v11h-11zM24 96h11v11h-11zM312 96h11v11h-11zM12 108h11v11h-11zM312 108h11v11h-11zM324 108h11v11h-11zM0 132h11v11h-11zM12 132h11v11h-11zM0 144h11v11h-11zM12 144h11v11h-11zM324 156h11v11h-11zM336 156h11v11h-11zM324 168h11v11h-11zM0 180h11v11h-11zM324 180h11v11h-11zM324 192h11v11h-11zM24 228h11v11h-11zM312 228h11v11h-11zM324 228h11v11h-11zM24 240h11v11h-11zM24 252h11v11h-11zM36 252h11v11h-11zM312 252h11v11h-11zM300 264h11v11h-11zM288 276h11v11h-11zM84 300h11v11h-11zM252 300h11v11h-11zM264 300h11v11h-11zM96 312h11v11h-11zM108 312h11v11h-11zM96 324h11v11h-11zM108 324h11v11h-11zM120 324h11v11h-11zM132 324h11v11h-11zM156 336h11v11h-11zM168 336h11v11h-11zM192 336h11v11h-11zM204 336h11v11h-11z'/%3E%3Cpath fill='%2312467a' d='M180 0h11v11h-11zM192 0h11v11h-11zM204 0h11v11h-11zM108 12h11v11h-11zM168 12h11v11h-11zM192 12h11v11h-11zM216 12h11v11h-11zM252 24h11v11h-11zM252 36h11v11h-11zM36 60h11v11h-11zM288 60h11v11h-11zM36 72h11v11h-11zM300 72h11v11h-11zM312 84h11v11h-11zM12 96h11v11h-11zM324 96h11v11h-11zM24 108h11v11h-11zM324 120h11v11h-11zM324 132h11v11h-11zM324 144h11v11h-11zM12 168h11v11h-11zM12 180h11v11h-11zM0 192h11v11h-11zM336 192h11v11h-11zM0 204h11v11h-11zM12 204h11v11h-11zM12 228h11v11h-11zM12 240h11v11h-11zM312 240h11v11h-11zM300 252h11v11h-11zM36 264h11v11h-11zM60 288h11v11h-11zM72 300h11v11h-11zM276 300h11v11h-11zM84 312h11v11h-11zM144 324h11v11h-11zM168 324h11v11h-11zM192 324h11v11h-11zM228 324h11v11h-11zM240 324h11v11h-11zM144 336h11v11h-11z'/%3E%3Cpath fill='%23c9a24a' d='M120 24h11v11h-11zM132 24h11v11h-11zM144 24h11v11h-11zM180 24h11v11h-11zM96 36h11v11h-11zM240 36h11v11h-11zM72 48h11v11h-11zM60 60h11v11h-11zM288 84h11v11h-11zM24 120h11v11h-11zM24 132h11v11h-11zM312 132h11v11h-11zM24 144h11v11h-11zM24 192h11v11h-11zM312 216h11v11h-11zM300 240h11v11h-11zM60 264h11v11h-11zM72 276h11v11h-11zM72 288h11v11h-11zM84 288h11v11h-11zM108 300h11v11h-11zM228 300h11v11h-11zM132 312h11v11h-11zM144 312h11v11h-11z'/%3E%3Cpath fill='%23d4b164' d='M156 24h11v11h-11zM204 24h11v11h-11zM216 24h11v11h-11zM108 36h11v11h-11zM264 48h11v11h-11zM48 72h11v11h-11zM276 72h11v11h-11zM48 84h11v11h-11zM36 96h11v11h-11zM300 96h11v11h-11zM36 108h11v11h-11zM312 120h11v11h-11zM312 156h11v11h-11zM24 168h11v11h-11zM312 168h11v11h-11zM24 180h11v11h-11zM312 180h11v11h-11zM312 192h11v11h-11zM288 264h11v11h-11zM252 288h11v11h-11zM240 300h11v11h-11zM120 312h11v11h-11zM180 312h11v11h-11zM192 312h11v11h-11zM204 312h11v11h-11z'/%3E%3Cpath fill='%23bd9440' d='M168 24h11v11h-11zM192 24h11v11h-11zM228 36h11v11h-11zM276 60h11v11h-11zM60 72h11v11h-11zM288 72h11v11h-11zM300 108h11v11h-11zM312 144h11v11h-11zM24 156h11v11h-11zM24 204h11v11h-11zM312 204h11v11h-11zM24 216h11v11h-11zM36 228h11v11h-11zM300 228h11v11h-11zM36 240h11v11h-11zM48 252h11v11h-11zM288 252h11v11h-11zM48 264h11v11h-11zM276 264h11v11h-11zM60 276h11v11h-11zM264 276h11v11h-11zM276 276h11v11h-11zM264 288h11v11h-11zM96 300h11v11h-11zM156 312h11v11h-11zM168 312h11v11h-11zM216 312h11v11h-11z'/%3E%3Cpath fill='%23e8e0cc' d='M120 36h11v11h-11zM168 36h11v11h-11zM180 36h11v11h-11zM192 36h11v11h-11zM144 48h11v11h-11zM168 48h11v11h-11zM204 48h11v11h-11zM216 48h11v11h-11zM144 60h11v11h-11zM168 60h11v11h-11zM180 60h11v11h-11zM204 60h11v11h-11zM180 72h11v11h-11zM48 96h11v11h-11zM288 96h11v11h-11zM48 108h11v11h-11zM300 120h11v11h-11zM36 144h11v11h-11zM288 156h11v11h-11zM288 168h11v11h-11zM36 180h11v11h-11zM288 192h11v11h-11zM48 228h11v11h-11zM288 228h11v11h-11zM264 264h11v11h-11zM108 276h11v11h-11zM228 276h11v11h-11zM240 276h11v11h-11zM96 288h11v11h-11zM168 288h11v11h-11zM180 288h11v11h-11zM240 288h11v11h-11zM144 300h11v11h-11zM180 300h11v11h-11z'/%3E%3Cpath fill='%23efe8d6' d='M132 36h11v11h-11zM144 36h11v11h-11zM192 48h11v11h-11zM156 72h11v11h-11zM288 108h11v11h-11zM36 120h11v11h-11zM36 132h11v11h-11zM48 132h11v11h-11zM288 132h11v11h-11zM300 144h11v11h-11zM48 156h11v11h-11zM300 156h11v11h-11zM36 168h11v11h-11zM288 204h11v11h-11zM300 204h11v11h-11zM36 216h11v11h-11zM300 216h11v11h-11zM288 240h11v11h-11zM96 276h11v11h-11zM252 276h11v11h-11zM108 288h11v11h-11zM120 288h11v11h-11zM216 288h11v11h-11zM228 288h11v11h-11zM192 300h11v11h-11zM204 300h11v11h-11z'/%3E%3Cpath fill='%23f4eee0' d='M156 36h11v11h-11zM204 36h11v11h-11zM216 36h11v11h-11zM120 48h11v11h-11zM132 48h11v11h-11zM156 48h11v11h-11zM180 48h11v11h-11zM132 60h11v11h-11zM156 60h11v11h-11zM192 60h11v11h-11zM168 72h11v11h-11zM48 120h11v11h-11zM288 120h11v11h-11zM300 132h11v11h-11zM48 144h11v11h-11zM288 144h11v11h-11zM36 156h11v11h-11zM48 168h11v11h-11zM300 168h11v11h-11zM48 180h11v11h-11zM288 180h11v11h-11zM300 180h11v11h-11zM36 192h11v11h-11zM48 192h11v11h-11zM300 192h11v11h-11zM36 204h11v11h-11zM48 204h11v11h-11zM48 216h11v11h-11zM288 216h11v11h-11zM48 240h11v11h-11zM60 252h11v11h-11zM276 252h11v11h-11zM72 264h11v11h-11zM84 276h11v11h-11zM156 288h11v11h-11zM120 300h11v11h-11zM132 300h11v11h-11zM156 300h11v11h-11zM168 300h11v11h-11zM216 300h11v11h-11z'/%3E%3Cpath fill='%231b2937' d='M84 48h11v11h-11zM96 48h11v11h-11zM72 60h11v11h-11zM108 60h11v11h-11zM108 72h11v11h-11zM132 72h11v11h-11zM192 72h11v11h-11zM216 72h11v11h-11zM72 84h11v11h-11zM120 84h11v11h-11zM132 84h11v11h-11zM144 84h11v11h-11zM180 84h11v11h-11zM192 84h11v11h-11zM60 108h11v11h-11zM264 108h11v11h-11zM264 120h11v11h-11zM60 132h11v11h-11zM72 132h11v11h-11zM60 156h11v11h-11zM276 168h11v11h-11zM72 180h11v11h-11zM264 180h11v11h-11zM264 204h11v11h-11zM264 216h11v11h-11zM264 240h11v11h-11zM276 240h11v11h-11zM84 252h11v11h-11zM264 252h11v11h-11zM108 264h11v11h-11zM228 264h11v11h-11zM240 264h11v11h-11zM252 264h11v11h-11zM120 276h11v11h-11zM168 276h11v11h-11zM180 276h11v11h-11z'/%3E%3Cpath fill='%23243447' d='M108 48h11v11h-11zM84 60h11v11h-11zM216 60h11v11h-11zM228 60h11v11h-11zM240 60h11v11h-11zM252 60h11v11h-11zM84 72h11v11h-11zM204 72h11v11h-11zM228 72h11v11h-11zM60 84h11v11h-11zM108 84h11v11h-11zM156 84h11v11h-11zM168 84h11v11h-11zM204 84h11v11h-11zM216 84h11v11h-11zM228 84h11v11h-11zM240 84h11v11h-11zM252 84h11v11h-11zM276 96h11v11h-11zM72 108h11v11h-11zM276 108h11v11h-11zM276 120h11v11h-11zM276 132h11v11h-11zM60 144h11v11h-11zM72 144h11v11h-11zM264 144h11v11h-11zM72 156h11v11h-11zM276 156h11v11h-11zM60 168h11v11h-11zM72 168h11v11h-11zM264 168h11v11h-11zM60 180h11v11h-11zM276 180h11v11h-11zM60 192h11v11h-11zM72 192h11v11h-11zM276 204h11v11h-11zM60 216h11v11h-11zM276 216h11v11h-11zM96 264h11v11h-11zM216 264h11v11h-11zM144 276h11v11h-11zM156 276h11v11h-11zM192 276h11v11h-11zM216 276h11v11h-11z'/%3E%3Cpath fill='%232c3e52' d='M228 48h11v11h-11zM240 48h11v11h-11zM252 48h11v11h-11zM96 60h11v11h-11zM120 60h11v11h-11zM264 60h11v11h-11zM72 72h11v11h-11zM96 72h11v11h-11zM120 72h11v11h-11zM144 72h11v11h-11zM240 72h11v11h-11zM252 72h11v11h-11zM264 72h11v11h-11zM84 84h11v11h-11zM96 84h11v11h-11zM264 84h11v11h-11zM276 84h11v11h-11zM60 96h11v11h-11zM72 96h11v11h-11zM264 96h11v11h-11zM60 120h11v11h-11zM72 120h11v11h-11zM264 132h11v11h-11zM276 144h11v11h-11zM264 156h11v11h-11zM264 192h11v11h-11zM276 192h11v11h-11zM60 204h11v11h-11zM72 204h11v11h-11zM72 216h11v11h-11zM60 228h11v11h-11zM72 228h11v11h-11zM264 228h11v11h-11zM276 228h11v11h-11zM60 240h11v11h-11zM72 240h11v11h-11zM72 252h11v11h-11zM252 252h11v11h-11zM84 264h11v11h-11zM120 264h11v11h-11zM132 276h11v11h-11zM204 276h11v11h-11z'/%3E%3Cpath fill='%23f7efdd' d='M84 96h11v11h-11zM108 96h11v11h-11zM168 96h11v11h-11zM204 96h11v11h-11zM216 96h11v11h-11zM228 96h11v11h-11zM84 108h11v11h-11zM156 108h11v11h-11zM168 108h11v11h-11zM252 108h11v11h-11zM84 120h11v11h-11zM168 120h11v11h-11zM180 120h11v11h-11zM204 120h11v11h-11zM252 120h11v11h-11zM84 132h11v11h-11zM204 132h11v11h-11zM96 144h11v11h-11zM108 144h11v11h-11zM204 144h11v11h-11zM228 144h11v11h-11zM240 144h11v11h-11zM108 156h11v11h-11zM132 156h11v11h-11zM180 156h11v11h-11zM216 156h11v11h-11zM228 156h11v11h-11zM108 168h11v11h-11zM120 168h11v11h-11zM132 168h11v11h-11zM144 168h11v11h-11zM156 168h11v11h-11zM168 168h11v11h-11zM192 168h11v11h-11zM204 168h11v11h-11zM144 180h11v11h-11zM156 180h11v11h-11zM180 180h11v11h-11zM204 180h11v11h-11zM228 180h11v11h-11zM132 192h11v11h-11zM168 192h11v11h-11zM132 204h11v11h-11zM156 204h11v11h-11zM180 204h11v11h-11zM204 204h11v11h-11zM180 216h11v11h-11z'/%3E%3Cpath fill='%23e7dcc2' d='M96 96h11v11h-11zM120 96h11v11h-11zM132 96h11v11h-11zM156 96h11v11h-11zM240 96h11v11h-11zM252 96h11v11h-11zM132 108h11v11h-11zM144 108h11v11h-11zM180 108h11v11h-11zM192 108h11v11h-11zM144 120h11v11h-11zM156 120h11v11h-11zM192 120h11v11h-11zM144 132h11v11h-11zM192 132h11v11h-11zM84 144h11v11h-11zM132 144h11v11h-11zM156 144h11v11h-11zM180 144h11v11h-11zM84 156h11v11h-11zM96 156h11v11h-11zM240 156h11v11h-11zM252 156h11v11h-11zM96 168h11v11h-11zM180 168h11v11h-11zM228 168h11v11h-11zM240 168h11v11h-11zM108 180h11v11h-11zM132 180h11v11h-11zM168 180h11v11h-11zM120 192h11v11h-11zM156 192h11v11h-11zM204 192h11v11h-11zM192 204h11v11h-11zM156 216h11v11h-11zM168 216h11v11h-11zM192 216h11v11h-11zM156 228h11v11h-11zM168 228h11v11h-11z'/%3E%3Cpath fill='%23f0e6d0' d='M144 96h11v11h-11zM180 96h11v11h-11zM192 96h11v11h-11zM204 108h11v11h-11zM132 120h11v11h-11zM132 132h11v11h-11zM252 132h11v11h-11zM120 144h11v11h-11zM144 144h11v11h-11zM192 144h11v11h-11zM216 144h11v11h-11zM252 144h11v11h-11zM120 156h11v11h-11zM144 156h11v11h-11zM156 156h11v11h-11zM168 156h11v11h-11zM192 156h11v11h-11zM204 156h11v11h-11zM216 168h11v11h-11zM120 180h11v11h-11zM192 180h11v11h-11zM216 180h11v11h-11zM144 192h11v11h-11zM180 192h11v11h-11zM192 192h11v11h-11zM216 192h11v11h-11zM144 204h11v11h-11zM168 204h11v11h-11zM144 216h11v11h-11zM180 228h11v11h-11z'/%3E%3Cpath fill='%23d49629' d='M96 108h11v11h-11zM228 108h11v11h-11zM240 108h11v11h-11zM216 120h11v11h-11zM108 132h11v11h-11z'/%3E%3Cpath fill='%23eab04a' d='M108 108h11v11h-11zM120 108h11v11h-11zM216 108h11v11h-11zM96 120h11v11h-11zM120 120h11v11h-11zM96 132h11v11h-11zM120 132h11v11h-11zM216 132h11v11h-11zM228 132h11v11h-11z'/%3E%3Cpath fill='%2314202e' d='M108 120h11v11h-11z'/%3E%3Cpath fill='%230d1620' d='M228 120h11v11h-11z'/%3E%3Cpath fill='%23e0a33a' d='M240 120h11v11h-11zM240 132h11v11h-11z'/%3E%3Cpath fill='%23b98526' d='M156 132h11v11h-11zM168 132h11v11h-11zM180 132h11v11h-11zM144 288h11v11h-11z'/%3E%3Cpath fill='%23c9922f' d='M168 144h11v11h-11zM132 288h11v11h-11zM192 288h11v11h-11zM204 288h11v11h-11z'/%3E%3Cpath fill='%238a6b45' d='M84 168h11v11h-11zM252 168h11v11h-11zM252 180h11v11h-11zM108 192h11v11h-11zM108 204h11v11h-11zM120 204h11v11h-11zM216 204h11v11h-11zM228 204h11v11h-11zM240 204h11v11h-11zM240 216h11v11h-11zM252 216h11v11h-11zM84 228h11v11h-11zM96 228h11v11h-11zM108 228h11v11h-11zM144 228h11v11h-11zM192 228h11v11h-11zM228 228h11v11h-11zM240 228h11v11h-11zM96 240h11v11h-11zM108 240h11v11h-11zM156 240h11v11h-11zM192 240h11v11h-11zM240 240h11v11h-11zM252 240h11v11h-11zM216 252h11v11h-11zM192 264h11v11h-11z'/%3E%3Cpath fill='%237d5f3c' d='M84 180h11v11h-11zM96 180h11v11h-11zM240 180h11v11h-11zM84 192h11v11h-11zM96 192h11v11h-11zM228 192h11v11h-11zM240 192h11v11h-11zM96 204h11v11h-11zM84 216h11v11h-11zM108 216h11v11h-11zM120 216h11v11h-11zM216 216h11v11h-11zM228 216h11v11h-11zM120 228h11v11h-11zM132 228h11v11h-11zM204 228h11v11h-11zM216 228h11v11h-11zM252 228h11v11h-11zM132 240h11v11h-11zM168 240h11v11h-11zM180 240h11v11h-11zM204 240h11v11h-11zM216 240h11v11h-11zM120 252h11v11h-11zM156 252h11v11h-11zM192 252h11v11h-11zM204 252h11v11h-11zM228 252h11v11h-11zM144 264h11v11h-11zM156 264h11v11h-11zM204 264h11v11h-11z'/%3E%3Cpath fill='%2396774f' d='M252 192h11v11h-11zM84 204h11v11h-11zM252 204h11v11h-11zM96 216h11v11h-11zM132 216h11v11h-11zM204 216h11v11h-11zM84 240h11v11h-11zM120 240h11v11h-11zM144 240h11v11h-11zM228 240h11v11h-11zM96 252h11v11h-11zM108 252h11v11h-11zM132 252h11v11h-11zM144 252h11v11h-11zM168 252h11v11h-11zM180 252h11v11h-11zM240 252h11v11h-11zM132 264h11v11h-11zM168 264h11v11h-11zM180 264h11v11h-11z'/%3E%3C/svg%3E");
-  --sb-roundel:   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='19' fill='%230d3b66'/%3E%3Ccircle cx='20' cy='20' r='19' fill='none' stroke='%23c9a24a' stroke-width='2'/%3E%3Cpath d='M8.5 13.5 L12.5 8 L15.5 12.5 Z M31.5 13.5 L27.5 8 L24.5 12.5 Z' fill='%23f0e6d0'/%3E%3Cpath d='M20 8.5c7.2 0 11.8 5 11.8 11.4 0 6.6-5.1 11.6-11.8 11.6S8.2 26.5 8.2 19.9C8.2 13.5 12.8 8.5 20 8.5z' fill='%23f0e6d0'/%3E%3Ccircle cx='14.4' cy='18.4' r='4.6' fill='%2316202c'/%3E%3Ccircle cx='25.6' cy='18.4' r='4.6' fill='%2316202c'/%3E%3Ccircle cx='14.4' cy='18.4' r='2.5' fill='%23d9a441'/%3E%3Ccircle cx='25.6' cy='18.4' r='2.5' fill='%23d9a441'/%3E%3Ccircle cx='14.4' cy='18.4' r='1.15' fill='%2316202c'/%3E%3Ccircle cx='25.6' cy='18.4' r='1.15' fill='%2316202c'/%3E%3Cpath d='M20 20.6 L22.4 24.4 L20 27.8 L17.6 24.4 Z' fill='%23d9a441'/%3E%3Cpath d='M12.6 27.6c2.2 2.2 4.6 3.2 7.4 3.2s5.2-1 7.4-3.2' fill='none' stroke='%2316202c' stroke-width='1.1' opacity='.5'/%3E%3C/svg%3E");
+   Loaded AFTER globals.css, so equal-specificity rules here win. */
+
+/* ---- palette: limestone, lapis, gold leaf, carnelian --------------------- */
+:root.theme-subway:not(.dark) {
+  color-scheme: light;
+  --bg:           #ded0b0;                 /* sun-bleached limestone */
+  --paper:        #f4e9cf;                 /* papyrus */
+  --paper-2:      #ecdfbe;
+  --ink:          #241a0e;                 /* carbon-black ink on papyrus */
+  --ink-soft:     #4b3a22;
+  --muted:        #7d6844;
+  --muted-2:      #a8926a;
+  --rule:         rgba(36, 26, 14, 0.26);
+  --rule-soft:    rgba(36, 26, 14, 0.10);
+  --accent:       #1b4f8f;                 /* lapis lazuli */
+  --accent-soft:  rgba(27, 79, 143, 0.12);
+  --accent-2:     #b8892b;                 /* gold leaf */
+  --hl:           rgba(184, 137, 43, 0.14);
+  --up:           #2f6b45;                 /* malachite */
+  --down:         #a8321f;                 /* carnelian */
+  --grad-from:    #1b4f8f;
+  --grad-via:     #b8892b;
+  --grad-to:      #d8bd6a;
+  --glass:        #f4e9cf;
+  --glass-border: rgba(36, 26, 14, 0.30);
+  --glow:         rgba(184, 137, 43, 0.26);
+  --shadow-card:  0 1px 0 rgba(36,26,14,0.12), 0 14px 30px -18px rgba(36, 26, 14, 0.42);
+  --shadow-hover: 0 2px 4px rgba(36,26,14,0.14), 0 24px 48px -22px rgba(36, 26, 14, 0.5);
+  --aurora-1:     rgba(184, 137, 43, 0.10);
+  --aurora-2:     rgba(27, 79, 143, 0.07);
+  --aurora-3:     rgba(168, 50, 31, 0.05);
+  --aurora-4:     transparent;
+  --grain:        0.05;
 }
+/* Night: the same tomb by lamplight — deep bitumen walls, gold picking out
+   the carving, lapis holding its saturation. */
 :root.theme-subway.dark {
-  --bg:           #0a0d16;                  /* platform at night */
-  --paper:        #161c2c;
-  --paper-2:      #1c2438;
-  --rule:         rgba(160, 190, 255, 0.18);
-  --accent-2:     #c9a24a;
-  --glow:         rgba(201, 162, 74, 0.30);
-  --sb-brass:     #c9a24a;
-  --sb-tile:      #1b2133;
-  --sb-wall:      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='64' viewBox='0 0 128 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%231b2133'/%3E%3Cstop offset='1' stop-color='%23141927'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='128' height='64' fill='%230a0d16'/%3E%3Crect x='1' y='1' width='62' height='30' rx='2' fill='url(%2523g)'/%3E%3Cpath d='M1.6 31.4V1.6h60.8' fill='none' stroke='rgba(160,190,255,.10)' stroke-width='1.4'/%3E%3Cpath d='M1.6 31.4h60.8V1.6' fill='none' stroke='rgba(0,0,0,.45)' stroke-width='1.4'/%3E%3Crect x='65' y='1' width='62' height='30' rx='2' fill='url(%2523g)'/%3E%3Cpath d='M65.6 31.4V1.6h60.8' fill='none' stroke='rgba(160,190,255,.10)' stroke-width='1.4'/%3E%3Cpath d='M65.6 31.4h60.8V1.6' fill='none' stroke='rgba(0,0,0,.45)' stroke-width='1.4'/%3E%3Crect x='-31' y='33' width='62' height='30' rx='2' fill='url(%2523g)'/%3E%3Cpath d='M-30.4 63.4V33.6h60.8' fill='none' stroke='rgba(160,190,255,.10)' stroke-width='1.4'/%3E%3Cpath d='M-30.4 63.4h60.8V33.6' fill='none' stroke='rgba(0,0,0,.45)' stroke-width='1.4'/%3E%3Crect x='33' y='33' width='62' height='30' rx='2' fill='url(%2523g)'/%3E%3Cpath d='M33.6 63.4V33.6h60.8' fill='none' stroke='rgba(160,190,255,.10)' stroke-width='1.4'/%3E%3Cpath d='M33.6 63.4h60.8V33.6' fill='none' stroke='rgba(0,0,0,.45)' stroke-width='1.4'/%3E%3Crect x='97' y='33' width='62' height='30' rx='2' fill='url(%2523g)'/%3E%3Cpath d='M97.6 63.4V33.6h60.8' fill='none' stroke='rgba(160,190,255,.10)' stroke-width='1.4'/%3E%3Cpath d='M97.6 63.4h60.8V33.6' fill='none' stroke='rgba(0,0,0,.45)' stroke-width='1.4'/%3E%3C/svg%3E");
-  --sb-band:      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='26' viewBox='0 0 72 26'%3E%3Crect width='72' height='26' fill='rgba(0,0,0,0)'/%3E%3Crect width='72' height='3' fill='%236aa6ff'/%3E%3Crect y='23' width='72' height='3' fill='%236aa6ff'/%3E%3Crect y='3.6' width='72' height='1.4' fill='%23c9a24a'/%3E%3Crect y='21' width='72' height='1.4' fill='%23c9a24a'/%3E%3Cpath fill='%236aa6ff' d='M6 7h24v3H9v7h15v-4h-9v-3h12v10H6z M42 7h24v12H42v-3h21v-7H48v4h9v3H45v-9z'/%3E%3C/svg%3E");
-  --sb-owl:       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='348' height='348' viewBox='0 0 348 348'%3E%3Ccircle cx='174' cy='174' r='173' fill='%232a2f3d'/%3E%3Cpath fill='%236aa6ff' d='M132 0h11v11h-11zM144 0h11v11h-11zM96 12h11v11h-11zM132 12h11v11h-11zM144 12h11v11h-11zM180 12h11v11h-11zM204 12h11v11h-11zM228 12h11v11h-11zM84 24h11v11h-11zM108 24h11v11h-11zM84 36h11v11h-11zM264 36h11v11h-11zM276 36h11v11h-11zM60 48h11v11h-11zM300 60h11v11h-11zM300 84h11v11h-11zM12 120h11v11h-11zM336 132h11v11h-11zM336 144h11v11h-11zM0 156h11v11h-11zM12 156h11v11h-11zM0 168h11v11h-11zM336 168h11v11h-11zM336 180h11v11h-11zM12 192h11v11h-11zM324 204h11v11h-11zM336 204h11v11h-11zM12 216h11v11h-11zM324 216h11v11h-11zM324 240h11v11h-11zM36 276h11v11h-11zM48 276h11v11h-11zM300 276h11v11h-11zM48 288h11v11h-11zM276 288h11v11h-11zM288 288h11v11h-11zM60 300h11v11h-11zM228 312h11v11h-11zM240 312h11v11h-11zM252 312h11v11h-11zM156 324h11v11h-11zM180 324h11v11h-11zM204 324h11v11h-11zM216 324h11v11h-11zM132 336h11v11h-11zM180 336h11v11h-11z'/%3E%3Cpath fill='%237cb2ff' d='M156 0h11v11h-11zM168 0h11v11h-11zM120 12h11v11h-11zM156 12h11v11h-11zM240 12h11v11h-11zM96 24h11v11h-11zM228 24h11v11h-11zM240 24h11v11h-11zM60 36h11v11h-11zM72 36h11v11h-11zM48 48h11v11h-11zM276 48h11v11h-11zM288 48h11v11h-11zM48 60h11v11h-11zM24 84h11v11h-11zM36 84h11v11h-11zM24 96h11v11h-11zM312 96h11v11h-11zM12 108h11v11h-11zM312 108h11v11h-11zM324 108h11v11h-11zM0 132h11v11h-11zM12 132h11v11h-11zM0 144h11v11h-11zM12 144h11v11h-11zM324 156h11v11h-11zM336 156h11v11h-11zM324 168h11v11h-11zM0 180h11v11h-11zM324 180h11v11h-11zM324 192h11v11h-11zM24 228h11v11h-11zM312 228h11v11h-11zM324 228h11v11h-11zM24 240h11v11h-11zM24 252h11v11h-11zM36 252h11v11h-11zM312 252h11v11h-11zM300 264h11v11h-11zM288 276h11v11h-11zM84 300h11v11h-11zM252 300h11v11h-11zM264 300h11v11h-11zM96 312h11v11h-11zM108 312h11v11h-11zM96 324h11v11h-11zM108 324h11v11h-11zM120 324h11v11h-11zM132 324h11v11h-11zM156 336h11v11h-11zM168 336h11v11h-11zM192 336h11v11h-11zM204 336h11v11h-11z'/%3E%3Cpath fill='%235a93e8' d='M180 0h11v11h-11zM192 0h11v11h-11zM204 0h11v11h-11zM108 12h11v11h-11zM168 12h11v11h-11zM192 12h11v11h-11zM216 12h11v11h-11zM252 24h11v11h-11zM252 36h11v11h-11zM36 60h11v11h-11zM288 60h11v11h-11zM36 72h11v11h-11zM300 72h11v11h-11zM312 84h11v11h-11zM12 96h11v11h-11zM324 96h11v11h-11zM24 108h11v11h-11zM324 120h11v11h-11zM324 132h11v11h-11zM324 144h11v11h-11zM12 168h11v11h-11zM12 180h11v11h-11zM0 192h11v11h-11zM336 192h11v11h-11zM0 204h11v11h-11zM12 204h11v11h-11zM12 228h11v11h-11zM12 240h11v11h-11zM312 240h11v11h-11zM300 252h11v11h-11zM36 264h11v11h-11zM60 288h11v11h-11zM72 300h11v11h-11zM276 300h11v11h-11zM84 312h11v11h-11zM144 324h11v11h-11zM168 324h11v11h-11zM192 324h11v11h-11zM228 324h11v11h-11zM240 324h11v11h-11zM144 336h11v11h-11z'/%3E%3Cpath fill='%23c9a24a' d='M120 24h11v11h-11zM132 24h11v11h-11zM144 24h11v11h-11zM180 24h11v11h-11zM96 36h11v11h-11zM240 36h11v11h-11zM72 48h11v11h-11zM60 60h11v11h-11zM288 84h11v11h-11zM24 120h11v11h-11zM24 132h11v11h-11zM312 132h11v11h-11zM24 144h11v11h-11zM24 192h11v11h-11zM312 216h11v11h-11zM300 240h11v11h-11zM60 264h11v11h-11zM72 276h11v11h-11zM72 288h11v11h-11zM84 288h11v11h-11zM108 300h11v11h-11zM228 300h11v11h-11zM132 312h11v11h-11zM144 312h11v11h-11z'/%3E%3Cpath fill='%23b8913c' d='M156 24h11v11h-11zM204 24h11v11h-11zM216 24h11v11h-11zM108 36h11v11h-11zM264 48h11v11h-11zM48 72h11v11h-11zM276 72h11v11h-11zM48 84h11v11h-11zM36 96h11v11h-11zM300 96h11v11h-11zM36 108h11v11h-11zM312 120h11v11h-11zM312 156h11v11h-11zM24 168h11v11h-11zM312 168h11v11h-11zM24 180h11v11h-11zM312 180h11v11h-11zM312 192h11v11h-11zM288 264h11v11h-11zM252 288h11v11h-11zM240 300h11v11h-11zM120 312h11v11h-11zM180 312h11v11h-11zM192 312h11v11h-11zM204 312h11v11h-11z'/%3E%3Cpath fill='%23d6b25e' d='M168 24h11v11h-11zM192 24h11v11h-11zM228 36h11v11h-11zM276 60h11v11h-11zM60 72h11v11h-11zM288 72h11v11h-11zM300 108h11v11h-11zM312 144h11v11h-11zM24 156h11v11h-11zM24 204h11v11h-11zM312 204h11v11h-11zM24 216h11v11h-11zM36 228h11v11h-11zM300 228h11v11h-11zM36 240h11v11h-11zM48 252h11v11h-11zM288 252h11v11h-11zM48 264h11v11h-11zM276 264h11v11h-11zM60 276h11v11h-11zM264 276h11v11h-11zM276 276h11v11h-11zM264 288h11v11h-11zM96 300h11v11h-11zM156 312h11v11h-11zM168 312h11v11h-11zM216 312h11v11h-11z'/%3E%3Cpath fill='%23333b48' d='M120 36h11v11h-11zM168 36h11v11h-11zM180 36h11v11h-11zM192 36h11v11h-11zM144 48h11v11h-11zM168 48h11v11h-11zM204 48h11v11h-11zM216 48h11v11h-11zM144 60h11v11h-11zM168 60h11v11h-11zM180 60h11v11h-11zM204 60h11v11h-11zM180 72h11v11h-11zM48 96h11v11h-11zM288 96h11v11h-11zM48 108h11v11h-11zM300 120h11v11h-11zM36 144h11v11h-11zM288 156h11v11h-11zM288 168h11v11h-11zM36 180h11v11h-11zM288 192h11v11h-11zM48 228h11v11h-11zM288 228h11v11h-11zM264 264h11v11h-11zM108 276h11v11h-11zM228 276h11v11h-11zM240 276h11v11h-11zM96 288h11v11h-11zM168 288h11v11h-11zM180 288h11v11h-11zM240 288h11v11h-11zM144 300h11v11h-11zM180 300h11v11h-11z'/%3E%3Cpath fill='%2339414f' d='M132 36h11v11h-11zM144 36h11v11h-11zM192 48h11v11h-11zM156 72h11v11h-11zM288 108h11v11h-11zM36 120h11v11h-11zM36 132h11v11h-11zM48 132h11v11h-11zM288 132h11v11h-11zM300 144h11v11h-11zM48 156h11v11h-11zM300 156h11v11h-11zM36 168h11v11h-11zM288 204h11v11h-11zM300 204h11v11h-11zM36 216h11v11h-11zM300 216h11v11h-11zM288 240h11v11h-11zM96 276h11v11h-11zM252 276h11v11h-11zM108 288h11v11h-11zM120 288h11v11h-11zM216 288h11v11h-11zM228 288h11v11h-11zM192 300h11v11h-11zM204 300h11v11h-11z'/%3E%3Cpath fill='%23404857' d='M156 36h11v11h-11zM204 36h11v11h-11zM216 36h11v11h-11zM120 48h11v11h-11zM132 48h11v11h-11zM156 48h11v11h-11zM180 48h11v11h-11zM132 60h11v11h-11zM156 60h11v11h-11zM192 60h11v11h-11zM168 72h11v11h-11zM48 120h11v11h-11zM288 120h11v11h-11zM300 132h11v11h-11zM48 144h11v11h-11zM288 144h11v11h-11zM36 156h11v11h-11zM48 168h11v11h-11zM300 168h11v11h-11zM48 180h11v11h-11zM288 180h11v11h-11zM300 180h11v11h-11zM36 192h11v11h-11zM48 192h11v11h-11zM300 192h11v11h-11zM36 204h11v11h-11zM48 204h11v11h-11zM48 216h11v11h-11zM288 216h11v11h-11zM48 240h11v11h-11zM60 252h11v11h-11zM276 252h11v11h-11zM72 264h11v11h-11zM84 276h11v11h-11zM156 288h11v11h-11zM120 300h11v11h-11zM132 300h11v11h-11zM156 300h11v11h-11zM168 300h11v11h-11zM216 300h11v11h-11z'/%3E%3Cpath fill='%23111823' d='M84 48h11v11h-11zM96 48h11v11h-11zM72 60h11v11h-11zM108 60h11v11h-11zM108 72h11v11h-11zM132 72h11v11h-11zM192 72h11v11h-11zM216 72h11v11h-11zM72 84h11v11h-11zM120 84h11v11h-11zM132 84h11v11h-11zM144 84h11v11h-11zM180 84h11v11h-11zM192 84h11v11h-11zM60 108h11v11h-11zM264 108h11v11h-11zM264 120h11v11h-11zM60 132h11v11h-11zM72 132h11v11h-11zM60 156h11v11h-11zM276 168h11v11h-11zM72 180h11v11h-11zM264 180h11v11h-11zM264 204h11v11h-11zM264 216h11v11h-11zM264 240h11v11h-11zM276 240h11v11h-11zM84 252h11v11h-11zM264 252h11v11h-11zM108 264h11v11h-11zM228 264h11v11h-11zM240 264h11v11h-11zM252 264h11v11h-11zM120 276h11v11h-11zM168 276h11v11h-11zM180 276h11v11h-11z'/%3E%3Cpath fill='%23171f2b' d='M108 48h11v11h-11zM84 60h11v11h-11zM216 60h11v11h-11zM228 60h11v11h-11zM240 60h11v11h-11zM252 60h11v11h-11zM84 72h11v11h-11zM204 72h11v11h-11zM228 72h11v11h-11zM60 84h11v11h-11zM108 84h11v11h-11zM156 84h11v11h-11zM168 84h11v11h-11zM204 84h11v11h-11zM216 84h11v11h-11zM228 84h11v11h-11zM240 84h11v11h-11zM252 84h11v11h-11zM276 96h11v11h-11zM72 108h11v11h-11zM276 108h11v11h-11zM276 120h11v11h-11zM276 132h11v11h-11zM60 144h11v11h-11zM72 144h11v11h-11zM264 144h11v11h-11zM72 156h11v11h-11zM276 156h11v11h-11zM60 168h11v11h-11zM72 168h11v11h-11zM264 168h11v11h-11zM60 180h11v11h-11zM276 180h11v11h-11zM60 192h11v11h-11zM72 192h11v11h-11zM276 204h11v11h-11zM60 216h11v11h-11zM276 216h11v11h-11zM96 264h11v11h-11zM216 264h11v11h-11zM144 276h11v11h-11zM156 276h11v11h-11zM192 276h11v11h-11zM216 276h11v11h-11z'/%3E%3Cpath fill='%231d2632' d='M228 48h11v11h-11zM240 48h11v11h-11zM252 48h11v11h-11zM96 60h11v11h-11zM120 60h11v11h-11zM264 60h11v11h-11zM72 72h11v11h-11zM96 72h11v11h-11zM120 72h11v11h-11zM144 72h11v11h-11zM240 72h11v11h-11zM252 72h11v11h-11zM264 72h11v11h-11zM84 84h11v11h-11zM96 84h11v11h-11zM264 84h11v11h-11zM276 84h11v11h-11zM60 96h11v11h-11zM72 96h11v11h-11zM264 96h11v11h-11zM60 120h11v11h-11zM72 120h11v11h-11zM264 132h11v11h-11zM276 144h11v11h-11zM264 156h11v11h-11zM264 192h11v11h-11zM276 192h11v11h-11zM60 204h11v11h-11zM72 204h11v11h-11zM72 216h11v11h-11zM60 228h11v11h-11zM72 228h11v11h-11zM264 228h11v11h-11zM276 228h11v11h-11zM60 240h11v11h-11zM72 240h11v11h-11zM72 252h11v11h-11zM252 252h11v11h-11zM84 264h11v11h-11zM120 264h11v11h-11zM132 276h11v11h-11zM204 276h11v11h-11z'/%3E%3Cpath fill='%23e6dbc2' d='M84 96h11v11h-11zM108 96h11v11h-11zM168 96h11v11h-11zM204 96h11v11h-11zM216 96h11v11h-11zM228 96h11v11h-11zM84 108h11v11h-11zM156 108h11v11h-11zM168 108h11v11h-11zM252 108h11v11h-11zM84 120h11v11h-11zM168 120h11v11h-11zM180 120h11v11h-11zM204 120h11v11h-11zM252 120h11v11h-11zM84 132h11v11h-11zM204 132h11v11h-11zM96 144h11v11h-11zM108 144h11v11h-11zM204 144h11v11h-11zM228 144h11v11h-11zM240 144h11v11h-11zM108 156h11v11h-11zM132 156h11v11h-11zM180 156h11v11h-11zM216 156h11v11h-11zM228 156h11v11h-11zM108 168h11v11h-11zM120 168h11v11h-11zM132 168h11v11h-11zM144 168h11v11h-11zM156 168h11v11h-11zM168 168h11v11h-11zM192 168h11v11h-11zM204 168h11v11h-11zM144 180h11v11h-11zM156 180h11v11h-11zM180 180h11v11h-11zM204 180h11v11h-11zM228 180h11v11h-11zM132 192h11v11h-11zM168 192h11v11h-11zM132 204h11v11h-11zM156 204h11v11h-11zM180 204h11v11h-11zM204 204h11v11h-11zM180 216h11v11h-11z'/%3E%3Cpath fill='%23d0c3a6' d='M96 96h11v11h-11zM120 96h11v11h-11zM132 96h11v11h-11zM156 96h11v11h-11zM240 96h11v11h-11zM252 96h11v11h-11zM132 108h11v11h-11zM144 108h11v11h-11zM180 108h11v11h-11zM192 108h11v11h-11zM144 120h11v11h-11zM156 120h11v11h-11zM192 120h11v11h-11zM144 132h11v11h-11zM192 132h11v11h-11zM84 144h11v11h-11zM132 144h11v11h-11zM156 144h11v11h-11zM180 144h11v11h-11zM84 156h11v11h-11zM96 156h11v11h-11zM240 156h11v11h-11zM252 156h11v11h-11zM96 168h11v11h-11zM180 168h11v11h-11zM228 168h11v11h-11zM240 168h11v11h-11zM108 180h11v11h-11zM132 180h11v11h-11zM168 180h11v11h-11zM120 192h11v11h-11zM156 192h11v11h-11zM204 192h11v11h-11zM192 204h11v11h-11zM156 216h11v11h-11zM168 216h11v11h-11zM192 216h11v11h-11zM156 228h11v11h-11zM168 228h11v11h-11z'/%3E%3Cpath fill='%23ddd0b4' d='M144 96h11v11h-11zM180 96h11v11h-11zM192 96h11v11h-11zM204 108h11v11h-11zM132 120h11v11h-11zM132 132h11v11h-11zM252 132h11v11h-11zM120 144h11v11h-11zM144 144h11v11h-11zM192 144h11v11h-11zM216 144h11v11h-11zM252 144h11v11h-11zM120 156h11v11h-11zM144 156h11v11h-11zM156 156h11v11h-11zM168 156h11v11h-11zM192 156h11v11h-11zM204 156h11v11h-11zM216 168h11v11h-11zM120 180h11v11h-11zM192 180h11v11h-11zM216 180h11v11h-11zM144 192h11v11h-11zM180 192h11v11h-11zM192 192h11v11h-11zM216 192h11v11h-11zM144 204h11v11h-11zM168 204h11v11h-11zM144 216h11v11h-11zM180 228h11v11h-11z'/%3E%3Cpath fill='%23d89c30' d='M96 108h11v11h-11zM108 108h11v11h-11zM120 108h11v11h-11zM216 108h11v11h-11zM240 108h11v11h-11zM96 120h11v11h-11zM120 120h11v11h-11zM216 120h11v11h-11zM96 132h11v11h-11zM108 132h11v11h-11zM120 132h11v11h-11zM216 132h11v11h-11zM228 132h11v11h-11z'/%3E%3Cpath fill='%23e8ae44' d='M228 108h11v11h-11zM240 120h11v11h-11zM240 132h11v11h-11z'/%3E%3Cpath fill='%230b1119' d='M108 120h11v11h-11z'/%3E%3Cpath fill='%23070d13' d='M228 120h11v11h-11z'/%3E%3Cpath fill='%23bd8e2c' d='M156 132h11v11h-11zM168 132h11v11h-11zM180 132h11v11h-11zM144 288h11v11h-11z'/%3E%3Cpath fill='%23d0a03a' d='M168 144h11v11h-11zM132 288h11v11h-11zM192 288h11v11h-11zM204 288h11v11h-11z'/%3E%3Cpath fill='%237d6242' d='M84 168h11v11h-11zM252 168h11v11h-11zM252 180h11v11h-11zM108 192h11v11h-11zM108 204h11v11h-11zM120 204h11v11h-11zM216 204h11v11h-11zM228 204h11v11h-11zM240 204h11v11h-11zM240 216h11v11h-11zM252 216h11v11h-11zM84 228h11v11h-11zM96 228h11v11h-11zM108 228h11v11h-11zM144 228h11v11h-11zM192 228h11v11h-11zM228 228h11v11h-11zM240 228h11v11h-11zM96 240h11v11h-11zM108 240h11v11h-11zM156 240h11v11h-11zM192 240h11v11h-11zM240 240h11v11h-11zM252 240h11v11h-11zM216 252h11v11h-11zM192 264h11v11h-11z'/%3E%3Cpath fill='%236d5438' d='M84 180h11v11h-11zM96 180h11v11h-11zM240 180h11v11h-11zM84 192h11v11h-11zM96 192h11v11h-11zM228 192h11v11h-11zM240 192h11v11h-11zM96 204h11v11h-11zM84 216h11v11h-11zM108 216h11v11h-11zM120 216h11v11h-11zM216 216h11v11h-11zM228 216h11v11h-11zM120 228h11v11h-11zM132 228h11v11h-11zM204 228h11v11h-11zM216 228h11v11h-11zM252 228h11v11h-11zM132 240h11v11h-11zM168 240h11v11h-11zM180 240h11v11h-11zM204 240h11v11h-11zM216 240h11v11h-11zM120 252h11v11h-11zM156 252h11v11h-11zM192 252h11v11h-11zM204 252h11v11h-11zM228 252h11v11h-11zM144 264h11v11h-11zM156 264h11v11h-11zM204 264h11v11h-11z'/%3E%3Cpath fill='%238a6d4b' d='M252 192h11v11h-11zM84 204h11v11h-11zM252 204h11v11h-11zM96 216h11v11h-11zM132 216h11v11h-11zM204 216h11v11h-11zM84 240h11v11h-11zM120 240h11v11h-11zM144 240h11v11h-11zM228 240h11v11h-11zM96 252h11v11h-11zM108 252h11v11h-11zM132 252h11v11h-11zM144 252h11v11h-11zM168 252h11v11h-11zM180 252h11v11h-11zM240 252h11v11h-11zM132 264h11v11h-11zM168 264h11v11h-11zM180 264h11v11h-11z'/%3E%3C/svg%3E");
-  --sb-roundel:   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='19' fill='%23101726'/%3E%3Ccircle cx='20' cy='20' r='19' fill='none' stroke='%23c9a24a' stroke-width='2'/%3E%3Cpath d='M8.5 13.5 L12.5 8 L15.5 12.5 Z M31.5 13.5 L27.5 8 L24.5 12.5 Z' fill='%23dfd3b6'/%3E%3Cpath d='M20 8.5c7.2 0 11.8 5 11.8 11.4 0 6.6-5.1 11.6-11.8 11.6S8.2 26.5 8.2 19.9C8.2 13.5 12.8 8.5 20 8.5z' fill='%23dfd3b6'/%3E%3Ccircle cx='14.4' cy='18.4' r='4.6' fill='%230a0f18'/%3E%3Ccircle cx='25.6' cy='18.4' r='4.6' fill='%230a0f18'/%3E%3Ccircle cx='14.4' cy='18.4' r='2.5' fill='%23e0ab45'/%3E%3Ccircle cx='25.6' cy='18.4' r='2.5' fill='%23e0ab45'/%3E%3Ccircle cx='14.4' cy='18.4' r='1.15' fill='%230a0f18'/%3E%3Ccircle cx='25.6' cy='18.4' r='1.15' fill='%230a0f18'/%3E%3Cpath d='M20 20.6 L22.4 24.4 L20 27.8 L17.6 24.4 Z' fill='%23e0ab45'/%3E%3Cpath d='M12.6 27.6c2.2 2.2 4.6 3.2 7.4 3.2s5.2-1 7.4-3.2' fill='none' stroke='%230a0f18' stroke-width='1.1' opacity='.5'/%3E%3C/svg%3E");
-  --shadow-card:  0 1px 0 rgba(0, 0, 0, 0.5), 0 16px 34px -20px rgba(0, 0, 0, 0.85);
-  --shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.55), 0 26px 52px -22px rgba(0, 0, 0, 0.9);
+  color-scheme: dark;
+  --bg:           #14100a;
+  --paper:        rgba(214, 178, 106, 0.055);
+  --paper-2:      rgba(214, 178, 106, 0.10);
+  --ink:          #f2e6cd;
+  --ink-soft:     #d3c1a0;
+  --muted:        #9a8865;
+  --muted-2:      #6b5d42;
+  --rule:         rgba(214, 178, 106, 0.24);
+  --rule-soft:    rgba(214, 178, 106, 0.10);
+  --accent:       #d8bd6a;                 /* gold in lamplight */
+  --accent-soft:  rgba(216, 189, 106, 0.16);
+  --accent-2:     #4f8fd0;                 /* lapis, lifted so it reads */
+  --hl:           rgba(216, 189, 106, 0.13);
+  --up:           #57a97a;
+  --down:         #e0705a;
+  --grad-from:    #8a6a1f;
+  --grad-via:     #d8bd6a;
+  --grad-to:      #4f8fd0;
+  --glass:        rgba(30, 23, 13, 0.62);
+  --glass-border: rgba(216, 189, 106, 0.26);
+  --glow:         rgba(216, 189, 106, 0.34);
+  --shadow-card:  0 16px 40px -18px rgba(0,0,0,0.8), inset 0 1px 0 rgba(216,189,106,0.10);
+  --shadow-hover: 0 28px 64px -24px rgba(0,0,0,0.88), inset 0 1px 0 rgba(216,189,106,0.16);
+  --aurora-1:     rgba(138, 106, 31, 0.34);
+  --aurora-2:     rgba(27, 79, 143, 0.22);
+  --aurora-3:     rgba(168, 50, 31, 0.18);
+  --aurora-4:     rgba(10, 8, 5, 0.6);
+  --grain:        0.06;
 }
 
-/* The wall. Real running bond with a bevelled edge on every tile, drawn as an
-   inline SVG so the highlight and shadow stay crisp at any zoom — the old
-   two-gradient grid had no offset courses and no bevel, which is why it read
-   as graph paper. Masked so the tile fades as it goes down the platform.
-   The wall goes on ::before and the mosaic on ::after, because ::after paints
-   over ::before and the plaque has to sit ON the tile, not behind it. */
+/* ---- the wall ------------------------------------------------------------
+   Ashlar masonry: staggered limestone blocks with recessed joints, done as two
+   offset row bands so the courses break like real stonework. */
+.theme-subway body { background: transparent; }
 .theme-subway body::before {
   inset: 0;
   filter: none;
   animation: none;
   transform: translateZ(0);
-  will-change: transform;
-  backface-visibility: hidden;
-  background-image: var(--sb-wall);
-  background-repeat: repeat;
-  background-size: 176px 88px;
-  background-position: 0 0;
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.95), rgba(0,0,0,0.55));
-          mask-image: linear-gradient(to bottom, rgba(0,0,0,0.95), rgba(0,0,0,0.55));
-}
-.theme-subway.dark body::before {
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.45));
-          mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.45));
+  background-color: transparent;
+  background-image:
+    /* Ashlar in running bond: an SVG tile of two courses, the lower one offset
+       by half a block, so the head joints stagger like real stonework. A pair
+       of plain repeating gradients (which is what this was) just draws a grid
+       and reads as graph paper. */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='132'%3E%3Cg fill='none' stroke='%23241a0e' stroke-width='1.4' opacity='.13'%3E%3Cpath d='M0 65.5h260M0 131.5h260'/%3E%3Cpath d='M0 0v66M130 0v66M260 0v66'/%3E%3Cpath d='M65 66v66M195 66v66'/%3E%3C/g%3E%3Cg fill='none' stroke='%23f6efdc' stroke-width='1' opacity='.16'%3E%3Cpath d='M0 67h260M0 1h260'/%3E%3C/g%3E%3C/svg%3E"),
+    /* faint mineral mottle so the stone isn't flat */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.035' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.24 0 0 0 0 0.18 0 0 0 0 0.09 0.30 0 0 0 -0.18'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23s)'/%3E%3C/svg%3E"),
+    /* a warm wash from above, like light down a shaft */
+    radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--accent-2) 13%, transparent), transparent 62%);
+  background-repeat: repeat, repeat, no-repeat;
+  background-size: 260px 132px, 180px 180px, 100% 100%;
 }
 
-/* Mosaic border course top and bottom, the owl plaque set into the wall on
-   the right, and the warm pool of a platform lamp overhead. */
+/* ---- hieroglyph frieze --------------------------------------------------
+   A carved register band across the top and bottom of the page: cartouche,
+   ankh, eye of Horus, lotus, feather, water ripple, sun disc. Drawn as strokes
+   so it reads as incised relief rather than clip-art. */
 .theme-subway body::after {
-  opacity: 0.92;
+  opacity: 1;
   mix-blend-mode: normal;
-  transform: translateZ(0);
-  will-change: transform;
-  backface-visibility: hidden;
   background-image:
-    var(--sb-band),
-    var(--sb-band),
-    var(--sb-owl),
-    radial-gradient(60% 34% at 50% 0%, rgba(255, 236, 190, 0.55), transparent 72%);
-  background-repeat: repeat-x, repeat-x, no-repeat, no-repeat;
-  background-position: left top, left bottom, right -96px bottom -84px, 50% 0;
-  background-size: 144px 52px, 144px 52px, 460px 460px, auto;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='46'%3E%3Cg fill='none' stroke='%23241a0e' stroke-width='1.6' opacity='.30' stroke-linecap='round'%3E%3Crect x='4' y='7' width='30' height='32' rx='15'/%3E%3Cpath d='M19 12v22M13 20h12'/%3E%3Cpath d='M52 34V20a8 8 0 1 1 16 0v14'/%3E%3Cpath d='M52 27h16'/%3E%3Cpath d='M86 26q10-12 22 0q-11 9-22 0z'/%3E%3Ccircle cx='97' cy='26' r='3.2'/%3E%3Cpath d='M92 33l-4 6M104 33l5 6'/%3E%3Cpath d='M128 38V24M121 24q7-10 14 0M124 20q4-6 8 0'/%3E%3Cpath d='M154 38q0-16 8-24q8 8 8 24'/%3E%3Cpath d='M162 14v24'/%3E%3Cpath d='M186 22q5-4 10 0t10 0M186 30q5-4 10 0t10 0'/%3E%3Ccircle cx='232' cy='24' r='9'/%3E%3Cpath d='M232 9v-4M232 43v-4M217 24h-4M251 24h-4'/%3E%3Cpath d='M268 38V16M262 16h12M265 12h6'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat-x, repeat-x;
+  background-position: center top, center bottom;
+  background-size: 300px 46px, 300px 46px;
 }
 .theme-subway.dark body::after {
   background-image:
-    var(--sb-band), var(--sb-band), var(--sb-owl),
-    radial-gradient(46% 30% at 50% 0%, rgba(255, 198, 112, 0.22), transparent 72%);
-  opacity: 0.85;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='46'%3E%3Cg fill='none' stroke='%23d8bd6a' stroke-width='1.6' opacity='.34' stroke-linecap='round'%3E%3Crect x='4' y='7' width='30' height='32' rx='15'/%3E%3Cpath d='M19 12v22M13 20h12'/%3E%3Cpath d='M52 34V20a8 8 0 1 1 16 0v14'/%3E%3Cpath d='M52 27h16'/%3E%3Cpath d='M86 26q10-12 22 0q-11 9-22 0z'/%3E%3Ccircle cx='97' cy='26' r='3.2'/%3E%3Cpath d='M92 33l-4 6M104 33l5 6'/%3E%3Cpath d='M128 38V24M121 24q7-10 14 0M124 20q4-6 8 0'/%3E%3Cpath d='M154 38q0-16 8-24q8 8 8 24'/%3E%3Cpath d='M162 14v24'/%3E%3Cpath d='M186 22q5-4 10 0t10 0M186 30q5-4 10 0t10 0'/%3E%3Ccircle cx='232' cy='24' r='9'/%3E%3Cpath d='M232 9v-4M232 43v-4M217 24h-4M251 24h-4'/%3E%3Cpath d='M268 38V16M262 16h12M265 12h6'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat-x, repeat-x;
+  background-position: center top, center bottom;
+  background-size: 300px 46px, 300px 46px;
 }
 
-/* Cards are the enamel station signs bolted to the tile: dark keyline, cream
-   reveal, brass hairline, and a navy sign-plate strip across the head. */
+/* ---- cards: papyrus panels in a gold register --------------------------- */
 .theme-subway .card {
   border-radius: 3px;
-  border: 2px solid var(--rule);
-  background: var(--paper);
-  padding-top: 1.65rem;
-  box-shadow: var(--shadow-card),
-              inset 0 0 0 3px var(--paper),
-              inset 0 0 0 4.5px var(--sb-brass);
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow-card), inset 0 0 0 1px color-mix(in srgb, var(--accent-2) 30%, transparent);
+  background-image: linear-gradient(180deg, color-mix(in srgb, var(--accent-2) 7%, transparent), transparent 42%);
 }
-.theme-subway .card::before {
+.theme-subway .card::before { display: none; }
+/* Lotus flourishes in the top corners of every card — the register mark that
+   sits at the head of a painted panel. */
+.theme-subway .card::after {
   display: block;
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 7px;
-  padding: 0;
-  border-radius: 3px 3px 0 0;
   opacity: 1;
-  -webkit-mask: none;
-          mask: none;
-  background: linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 72%, #000));
-  box-shadow: 0 1px 0 var(--sb-brass);
+  inset: 0;
+  border-radius: inherit;
+  transition: none;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='20'%3E%3Cg fill='none' stroke='%23b8892b' stroke-width='1.5' opacity='.55' stroke-linecap='round'%3E%3Cpath d='M13 19V9'/%3E%3Cpath d='M13 9q-8 1-11-6q7-1 11 6z'/%3E%3Cpath d='M13 9q8 1 11-6q-7-1-11 6z'/%3E%3Cpath d='M13 8q0-6 0-7'/%3E%3C/g%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='20'%3E%3Cg transform='translate(26 0) scale(-1 1)'%3E%3Cg fill='none' stroke='%23b8892b' stroke-width='1.5' opacity='.55' stroke-linecap='round'%3E%3Cpath d='M13 19V9'/%3E%3Cpath d='M13 9q-8 1-11-6q7-1 11 6z'/%3E%3Cpath d='M13 9q8 1 11-6q-7-1-11 6z'/%3E%3Cpath d='M13 8q0-6 0-7'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat, no-repeat;
+  background-position: 8px 6px, right 8px top 6px;
+  background-size: 26px 20px, 26px 20px;
 }
-.theme-subway .card::after { display: none; }
+.theme-subway .card:hover::after { opacity: 1; }
+.theme-subway .card-bare { border-radius: 2px; border: 1px solid var(--rule); }
+.theme-subway .btn-ghost { border-radius: 2px; border: 1px solid var(--rule); background: var(--paper); }
+.theme-subway .chip { border-radius: 2px; border: 1px solid var(--rule); background: var(--paper); font-weight: 600; letter-spacing: 0.04em; }
+.theme-subway .chip-active { background: var(--accent); color: #f4e9cf; border-color: var(--accent); }
 
-/* Header rule becomes a course of tesserae with a brass line under it. */
+/* Header rule as a double register line, the way a painted band is bounded. */
 .theme-subway .headrule {
-  border-bottom: 0;
-  padding-bottom: .62rem;
-  background:
-    repeating-linear-gradient(90deg,
-      var(--accent) 0 7px, transparent 7px 9px) 0 calc(100% - 3px) / 100% 5px repeat-x,
-    linear-gradient(var(--sb-brass) 0 0) 0 100% / 100% 2px no-repeat;
+  border-bottom: 1px solid var(--accent-2);
+  box-shadow: 0 3px 0 -2px color-mix(in srgb, var(--accent-2) 55%, transparent);
+  padding-bottom: .5rem;
 }
 
-/* The owl. A 16px enamel roundel where every other theme puts a glowing dot. */
+/* The header dot becomes a scarab. */
 .theme-subway .dot {
-  width: 17px; height: 17px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--sb-roundel) center / 100% 100% no-repeat;
-  box-shadow: 0 1px 2px rgba(12, 19, 32, 0.35);
-}
-.theme-subway.dark .dot { box-shadow: 0 0 0 1px rgba(201, 162, 74, 0.35); }
-
-/* …and the full mosaic plaque fronts the masthead, the way a station name is
-   always preceded by its medallion. */
-.theme-subway h1.font-display {
-  text-transform: uppercase;
-  letter-spacing: 0.012em;
-  font-weight: 800;
-}
-.theme-subway h1.font-display::before {
-  content: "";
-  display: inline-block;
-  vertical-align: -0.14em;
-  width: 0.92em; height: 0.92em;
-  margin-right: 0.28em;
-  border-radius: 999px;
-  background: var(--sb-owl) center / 100% 100% no-repeat;
-  box-shadow: 0 2px 6px rgba(12, 19, 32, 0.30), 0 0 0 2px var(--sb-brass);
-}
-.theme-subway.dark h1.font-display::before {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 0 2px var(--sb-brass);
+  width: 11px; height: 9px;
+  border-radius: 46% 46% 40% 40% / 60% 60% 40% 40%;
+  background: linear-gradient(180deg, var(--accent-2), color-mix(in srgb, var(--accent-2) 55%, var(--ink)));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 45%, transparent), 0 0 10px var(--glow);
 }
 
-/* Signage type: the platform is all caps and letter-spaced. */
-.theme-subway .label,
-.theme-subway .metalabel {
-  letter-spacing: 0.17em;
+/* Inscriptional caps for headings — carved, not printed. */
+.theme-subway .font-display {
+  letter-spacing: 0.008em;
   font-weight: 700;
 }
-/* Chips are enamel line bullets; buttons are single glazed tiles. */
-.theme-subway .chip { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6); }
-.theme-subway .chip-active {
-  background: var(--accent);
-  color: #fdfbf4;
-  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25), 0 0 0 1.5px var(--sb-brass);
-}
-.theme-subway .btn-ghost {
-  border-radius: 3px;
-  border: 1.5px solid var(--rule);
-  background: linear-gradient(180deg, var(--sb-tile), var(--paper-2));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85),
-              inset 0 -1px 0 rgba(12, 19, 32, 0.12);
-}
-.theme-subway .btn-ghost:hover {
-  border-color: var(--sb-brass);
-  color: var(--accent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 0 0 1px var(--glow);
-}
-.theme-subway .card-bare {
-  border-radius: 3px;
-  border: 1px solid var(--rule);
-  background: var(--paper-2);
-}
-.theme-subway .text-gradient {
-  background: linear-gradient(100deg, var(--accent), var(--grad-via) 46%, var(--sb-brass));
-  -webkit-background-clip: text;
-          background-clip: text;
-  animation: none;
-}
+.theme-subway .label,
+.theme-subway .metalabel { letter-spacing: 0.16em; }

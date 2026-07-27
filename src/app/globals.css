@@ -259,8 +259,13 @@ main { position: relative; z-index: 1; }
 .readable-plate { display: block; }
 .theme-mosaic .readable-plate,
 .theme-comic .readable-plate {
-  display: inline-block;
-  width: auto;
+  /* It lives in a flex COLUMN, and a flex item is stretched to the full track
+     width by default — which is why `inline-block` alone did nothing and the
+     plate stayed a full-width slab. `align-self: flex-start` + fit-content is
+     what actually shrinks it to the words inside. */
+  display: table;
+  align-self: flex-start;
+  width: fit-content;
   max-width: 100%;
   background: var(--paper-2);
   -webkit-backdrop-filter: blur(7px) saturate(120%);

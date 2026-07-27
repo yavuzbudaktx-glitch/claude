@@ -43,7 +43,11 @@
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='420'%3E%3Cg transform='translate(200 0) scale(-1 1)'%3E%3Cg fill='none' stroke='%23b08d2a' stroke-linecap='square'%3E%3Cpath d='M0 420V46h30v50h22v54h24v64h28v74h34v132' stroke-width='2' opacity='.5'/%3E%3Cpath d='M6 46 15 20 24 46M15 20V4' stroke-width='1.6' opacity='.44'/%3E%3Cpath d='M10 420V60M20 420V60M31 420V102M41 420V102M53 420V156M64 420V156M77 420V220M90 420V220M105 420V294M121 420V294' stroke-width='1' opacity='.26'/%3E%3Cpath d='M0 74h30M0 104h52M0 134h52M0 164h76M0 194h76M0 228h104M0 258h104M0 302h138M0 332h138M0 362h138M0 392h138' stroke-width='1' opacity='.2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
   background-size: auto, auto, auto, auto, 200px 420px, 200px 420px;
-  background-position: 0 0, 0 0, 0 0, 0 0, left bottom, right bottom;
+  /* The towers are inset 15px so their outer wall and their base land exactly
+     on the frame's INNER hairline (the frame draws at 10-11px and 14-15px), and
+     the architecture reads as standing inside the border instead of crossing
+     it. */
+  background-position: 0 0, 0 0, 0 0, 0 0, left 15px bottom 15px, right 15px bottom 15px;
 }
 /* On a narrow screen two 200px towers would meet in the middle, so they
    shrink to keep the centre channel open. */

@@ -55,7 +55,7 @@ const MIST_TEX = 0.3;     // mist is nothing but soft edges, so 30% is plenty
 const LIT_TEX = 0.5;      // the lightning mask only needs to be roughly right
 const SKY_FRAC = 0.42;    // clouds own roughly the top 42% of the viewport
 const STRIKE_MS = 2600;   // one strike, leader through final fade
-const WIND_DIV = 6.5;     // wind → sideways drift; also sets the streak tilt
+const WIND_DIV = 5.2;     // wind → sideways drift; also sets the streak tilt
 const MAX_MARKS = 96;     // ring buffer for the trails sliding droplets leave
 
 // Cloud layers, far → near. Nearer layers are smaller-featured, denser,
@@ -235,7 +235,12 @@ export function WeatherFx() {
       b.a = rnd(0.5, 1);
       b.x = rnd(0.02, 0.98) * w;
       b.y = anywhere ? Math.random() * h * 0.9 : rnd(-0.02, 0.55) * h;
-      if (anywhere) b.r = rnd(0.9, b.max);
+      if (anywhere) {
+        // The first frame shouldn't look like the glass just got wet: give the
+        // starting set random sizes and put some of them already on the move.
+        b.r = rnd(0.9, b.max);
+        if (Math.random() < 0.35) b.vy = rnd(0.3, 1.6);
+      }
     }
 
     function addMark(x: number, y: number, r: number, a: number) {
@@ -390,38 +395,46 @@ export function WeatherFx() {
       });
     }
 
-    // A bead of water on glass: a rim where the curve bends light away, a
-    // bright crescent low down where it comes back out, and a small specular
-    // dot up-left. Rendered once and scaled — it never needs to be sharp.
+    // A bead of water on glass. A drop is a lens: it darkens slightly in the
+    // middle, it gathers light into a bright ring at its edge, the light it
+    // gathers leaves through the BOTTOM (so that edge is always the brightest
+    // part), and there's a small specular dot where the sky reflects off the
+    // top-left. Four gradients, rendered once, then scaled — it is never more
+    // than a few pixels across so it never needs to be sharp.
     function buildBead() {
       const t = tone();
-      const S = 40, c = document.createElement("canvas");
+      const S = 44, c = document.createElement("canvas");
       c.width = S; c.height = S;
       const g = c.getContext("2d");
       if (g) {
         const m = S / 2, R = m - 1;
         let gr = g.createRadialGradient(m, m, 0, m, m, R);
-        gr.addColorStop(0, `rgba(${t.rim},0.1)`);
-        gr.addColorStop(0.5, `rgba(${t.rim},0.2)`);
-        gr.addColorStop(0.84, `rgba(${t.rim},0.46)`);
-        gr.addColorStop(0.97, `rgba(${t.rim},0.2)`);
+        gr.addColorStop(0, `rgba(${t.rim},0.16)`);
+        gr.addColorStop(0.6, `rgba(${t.rim},0.26)`);
+        gr.addColorStop(0.88, `rgba(${t.rim},0.44)`);
         gr.addColorStop(1, `rgba(${t.rim},0)`);
         g.fillStyle = gr;
         g.beginPath(); g.arc(m, m, R, 0, TAU); g.fill();
 
-        // Whatever is behind the page comes back out through the bottom of the
-        // bead, so that edge is always the bright one.
         g.globalCompositeOperation = "lighter";
-        gr = g.createRadialGradient(m, m + R * 0.4, 0, m, m + R * 0.4, R * 0.66);
-        gr.addColorStop(0, `rgba(${t.spec},0.44)`);
-        gr.addColorStop(0.55, `rgba(${t.spec},0.15)`);
+        gr = g.createRadialGradient(m, m, R * 0.55, m, m, R);
+        gr.addColorStop(0, `rgba(${t.spec},0)`);
+        gr.addColorStop(0.78, `rgba(${t.spec},0.2)`);
+        gr.addColorStop(0.93, `rgba(${t.spec},0.55)`);
+        gr.addColorStop(1, `rgba(${t.spec},0)`);
+        g.fillStyle = gr;
+        g.beginPath(); g.arc(m, m, R, 0, TAU); g.fill();
+
+        gr = g.createRadialGradient(m, m + R * 0.45, 0, m, m + R * 0.45, R * 0.7);
+        gr.addColorStop(0, `rgba(${t.spec},0.5)`);
+        gr.addColorStop(0.55, `rgba(${t.spec},0.17)`);
         gr.addColorStop(1, `rgba(${t.spec},0)`);
         g.fillStyle = gr;
         g.beginPath(); g.arc(m, m, R * 0.99, 0, TAU); g.fill();
 
-        const hx = m - R * 0.3, hy = m - R * 0.32, hr = R * 0.32;
+        const hx = m - R * 0.3, hy = m - R * 0.34, hr = R * 0.3;
         gr = g.createRadialGradient(hx, hy, 0, hx, hy, hr);
-        gr.addColorStop(0, `rgba(${t.spec},0.6)`);
+        gr.addColorStop(0, `rgba(${t.spec},0.7)`);
         gr.addColorStop(1, `rgba(${t.spec},0)`);
         g.fillStyle = gr;
         g.beginPath(); g.arc(hx, hy, hr, 0, TAU); g.fill();
@@ -622,7 +635,7 @@ export function WeatherFx() {
         reset(d, true);
         return d;
       });
-      const nb = Math.max(7, Math.min(18, Math.round((w * h) / 62000)));
+      const nb = Math.max(10, Math.min(26, Math.round((w * h) / 44000)));
       beads = Array.from({ length: nb }, () => {
         const b: Bead = { x: 0, y: 0, r: 0, max: 0, vy: 0, ph: 0, sway: 0, since: 0, a: 1 };
         resetBead(b, true);
@@ -766,21 +779,22 @@ export function WeatherFx() {
       for (const b of beads) {
         b.since += dt;
         if (b.vy === 0) {
-          // Hanging: swell until surface tension gives out. The wait is
-          // randomised by `max` so they never let go together.
-          b.r += 0.00045 * dt * b.max;
+          // Hanging: swell for the best part of ten seconds until surface
+          // tension gives out. The wait is randomised by `max` so they never
+          // let go together — a synchronised release is instantly fake.
+          b.r += 0.00009 * dt * b.max;
           if (b.r >= b.max) b.vy = 0.04;
         } else {
-          b.vy = Math.min(3.4, b.vy + 0.0016 * dt * (b.r / 3));
+          b.vy = Math.min(2.3, b.vy + 0.0012 * dt * (b.r / 4));
           const prev = b.y;
           b.y += b.vy * f;
           // The track wobbles because the glass is never evenly wet.
           b.x += Math.sin(b.y * 0.055 + b.ph) * b.sway * 0.09 * f;
           // Shed a little of itself as it goes; when there's nothing left it
           // stops being a drop.
-          b.r -= 0.0009 * dt * b.vy;
+          b.r -= 0.00035 * dt * b.vy;
           if (b.y - prev > 0 && Math.random() < 0.05 * f && b.r > 1) {
-            addMark(b.x + rnd(-0.6, 0.6), b.y - b.r * 1.4, b.r * rnd(0.24, 0.44), b.a * 0.5);
+            addMark(b.x + rnd(-0.6, 0.6), b.y - b.r * 1.4, b.r * rnd(0.26, 0.46), b.a * 0.5);
           }
           if (b.y - b.r > h || b.r < 0.8) resetBead(b, false);
         }
@@ -825,7 +839,7 @@ export function WeatherFx() {
       // Rain almost never falls dead vertical, and a sheet with no lean is the
       // giveaway that it was drawn rather than photographed — so start with a
       // real breeze already blowing and let it wander from there.
-      windTarget = (Math.random() < 0.5 ? -1 : 1) * rnd(0.5, 1.25);
+      windTarget = (Math.random() < 0.5 ? -1 : 1) * rnd(0.75, 1.4);
       wind = windTarget;
       ensureCanvas();
       resize();
