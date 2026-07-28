@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-07-28T11:38:26.414Z
+# generated: 2026-07-28T13:02:11.821Z
 # url:       https://www.britannica.com/on-this-day/july-28
 # fetcher:   Wayback Machine
 # kind:      html
