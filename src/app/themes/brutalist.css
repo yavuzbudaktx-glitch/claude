@@ -189,3 +189,12 @@
   .theme-brutalist .chip,
   .theme-brutalist .btn-ghost { transition: none; }
 }
+
+/* Tab chips in a card header need to be tighter than standalone controls. */
+.theme-brutalist .headrule .chip {
+  padding: 3px 8px;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  border-width: 2px;
+  box-shadow: 2px 2px 0 0 var(--ink);
+}

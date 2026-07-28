@@ -114,7 +114,9 @@
   font-weight: 700 !important;
   font-synthesis: none;
   letter-spacing: -0.045em !important;
-  text-transform: lowercase;
+  /* !important because the Mac render was correct (lowercase) and Windows was
+     coming out all caps — nothing else may win this. */
+  text-transform: lowercase !important;
 }
 .theme-bauhaus .label {
   font-weight: 700;
@@ -364,4 +366,13 @@
   .theme-bauhaus body::before,
   .theme-bauhaus body::after,
   .theme-bauhaus .text-gradient { animation: none; }
+}
+
+/* Tab chips were overflowing their row: this theme's chip padding and tracking
+   are set for standalone buttons, not for four tabs sharing a card header. */
+.theme-bauhaus .headrule .chip {
+  padding: 3px 8px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  border-width: 2px;
 }

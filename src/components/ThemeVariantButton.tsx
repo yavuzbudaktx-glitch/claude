@@ -12,7 +12,7 @@ const SWATCHES: Record<ThemeId, string[]> = {
   water:      ["#04212e", "#34d3e0", "#7fe7d9"],
   rain:       ["#0a0f16", "#6db3e6", "#cfe4f5"],
   sunset:     ["#3a0e22", "#ff7a59", "#ffd17a"],
-  ottoman:    ["#7a0f1f", "#d4af37", "#0d5c4a"],
+  ottoman:    ["#f5f5ef", "#1b4f9c", "#14837e"],
   y2k:        ["#c9d6e4", "#7f5af0", "#ff6ad5"],
   brutalist:  ["#8c8c88", "#1a1a18", "#d94f2b"],
   bauhaus:    ["#f0ece4", "#d81e05", "#1058a8"],

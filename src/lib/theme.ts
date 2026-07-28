@@ -28,7 +28,7 @@ export const THEMES: Array<{
   { id: "comic",        label: "Comic",        kind: "concept", description: "Halftone dots, ink-line panels, KAPOW red, offset hard shadows — your dashboard as a comic book." },
   { id: "blueprint",    label: "Blueprint",    kind: "concept", description: "Architect's drafting page — white technical strokes on cyan, corner brackets, drafting grid." },
   { id: "terminal",     label: "Terminal",     kind: "concept", description: "Mono-typography, sharp corners, green phosphor, CRT scanlines — day or night." },
-  { id: "ottoman",      label: "Ottoman",      kind: "concept", description: "The imperial court — tuğra, crimson and gold, çintemani, campaign tents and janissary drums." },
+  { id: "ottoman",      label: "Mosaic",       kind: "concept", description: "Iznik çini — cobalt and turquoise tilework, coral carnations, eight-pointed stars, hand-laid grout." },
   { id: "stainedglass", label: "Stained Glass",kind: "concept", description: "Leaded cathedral panes — jewel reds, sapphire, emerald, with light spilling through the glazing." },
   { id: "deco",         label: "Art Deco",     kind: "concept", description: "1920s glamour — gold geometry on deep emerald & black, sunburst-crowned cards, high-contrast serif." },
   { id: "cyberpunk",    label: "Cyberpunk",    kind: "concept", description: "Neon at midnight — hot pink + electric cyan over deep indigo, scanlines, holographic shimmer." },

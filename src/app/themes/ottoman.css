@@ -1,206 +1,109 @@
-/* ottoman — the imperial court, at full intensity.
+/* MOSAIC (id: ottoman) — back to the original Iznik çini, upgraded.
 
-   This replaces a "Türkiye" attempt that was rejected outright: the tulips
-   read as ugly, the line-border on the cards was noise, and it didn't feel
-   Turkish so much as generically patterned. The base Iznik tile inherited
-   from globals.css is overridden here entirely.
+   The Ottoman-court direction was scrapped: crimson silk, tuğra seals, tent
+   valances and a wallpaper photograph all landed as "useless" and "ugly". The
+   design this returns to is the one that worked — Iznik tilework, which is
+   still Turkish and still the right idea, just executed as ceramic rather than
+   as heraldry.
 
-   The vocabulary is military-court rather than decorative-floral, because the
-   brief was to feel like a yeniçeri:
+   globals.css holds the base tile under `.theme-ottoman` (renamed from
+   `.theme-mosaic` when the ids moved). This file keeps that and adds the
+   things that make it read as GLAZED CERAMIC instead of printed pattern:
 
-     · ÇINTEMANI — three balls over two wavy "tiger stripes". The pattern that
-       covered janissary kaftans and imperial silk. It is the field this whole
-       theme sits on, and it is the single most Ottoman thing on the page.
-     · TUĞRA — the sultan's calligraphic monogram, as a large watermark seal.
-     · CRESCENT & STAR — worked in as the header dot and a standard on the
-       page edge, since the previous attempt was called out for having no flag.
-     · OTAĞ — the scalloped valance of an imperial campaign tent, hung across
-       the top of the page.
-     · Gold cartouche rules on the cards; crimson silk and gold leaf throughout.
+     · a glaze bloom — the wet specular sheen sitting on top of the tiles
+     · crazing — the fine crackle that develops in an old glaze
+     · grout depth — a soft inner shadow at the tile joins so the surface has
+       relief instead of being flat
+     · cards as single large tiles: a thin cobalt rim, a soft glaze highlight
+       raking across the top, and a hand-painted rule under each header
+*/
 
-   No pictogram icons in the card corners — that was an explicit note.
---------------------------------------------------------------------------- */
-
-/* ---- palette: crimson silk, gold leaf, emerald, ivory -------------------- */
-:root.theme-ottoman:not(.dark) {
-  color-scheme: light;
-  --bg:           #e9d2ac;                 /* raw silk, deepened — ivory read pink */
-  --paper:        #fdf4e4;
-  --paper-2:      #f6e7cd;
-  --ink:          #2a0d10;                 /* near-black, blood-red cast */
-  --ink-soft:     #5c2320;
-  --muted:        #8a5a44;
-  --muted-2:      #b08b6e;
-  --rule:         rgba(122, 15, 31, 0.34);
-  --rule-soft:    rgba(122, 15, 31, 0.13);
-  --accent:       #8e0f22;                 /* imperial crimson — deep, not pink */
-  --accent-soft:  rgba(142, 15, 34, 0.13);
-  --accent-2:     #9a7420;                 /* gold leaf, darkened to read on ivory */
-  --hl:           rgba(142, 15, 34, 0.10);
-  --up:           #0d5c4a;                 /* emerald */
-  --down:         #a3201b;
-  --grad-from:    #6d0b1a;
-  --grad-via:     #a8231f;
-  --grad-to:      #c9a227;
-  --glass:        #fbf1e0;
-  --glass-border: rgba(122, 15, 31, 0.38);
-  --glow:         rgba(201, 162, 39, 0.30);
-  --shadow-card:  0 1px 0 rgba(42,13,16,0.10), 0 16px 34px -20px rgba(42, 13, 16, 0.45);
-  --shadow-hover: 0 2px 5px rgba(42,13,16,0.14), 0 26px 52px -22px rgba(42, 13, 16, 0.55);
-  --aurora-1:     rgba(142, 15, 34, 0.10);
-  --aurora-2:     rgba(201, 162, 39, 0.09);
-  --aurora-3:     rgba(13, 92, 74, 0.06);
-  --aurora-4:     transparent;
-  --grain:        0.05;
-  --ott-gold:     #9a7420;
-  --ott-gold-hi:  #c9a227;
-  --ott-ink:      #2a0d10;
-}
-/* Night: the throne room by lamplight — deep oxblood walls, gold catching. */
-:root.theme-ottoman.dark {
-  color-scheme: dark;
-  --bg:           #190508;
-  --paper:        rgba(201, 162, 39, 0.055);
-  --paper-2:      rgba(201, 162, 39, 0.10);
-  --ink:          #f7e6c8;
-  --ink-soft:     #dcc199;
-  --muted:        #a4805a;
-  --muted-2:      #6d5236;
-  --rule:         rgba(201, 162, 39, 0.30);
-  --rule-soft:    rgba(201, 162, 39, 0.12);
-  --accent:       #c9a227;                 /* gold leads at night */
-  --accent-soft:  rgba(201, 162, 39, 0.16);
-  --accent-2:     #d4453a;                 /* crimson, lifted so it reads */
-  --hl:           rgba(201, 162, 39, 0.13);
-  --up:           #34a383;
-  --down:         #e0645a;
-  --grad-from:    #7a0f1f;
-  --grad-via:     #c9a227;
-  --grad-to:      #f0d68a;
-  --glass:        rgba(46, 10, 14, 0.66);
-  --glass-border: rgba(201, 162, 39, 0.32);
-  --glow:         rgba(201, 162, 39, 0.40);
-  --shadow-card:  0 18px 44px -18px rgba(0,0,0,0.85), inset 0 1px 0 rgba(201,162,39,0.12);
-  --shadow-hover: 0 30px 68px -24px rgba(0,0,0,0.9), inset 0 1px 0 rgba(201,162,39,0.20);
-  --aurora-1:     rgba(122, 15, 31, 0.50);
-  --aurora-2:     rgba(201, 162, 39, 0.22);
-  --aurora-3:     rgba(13, 92, 74, 0.20);
-  --aurora-4:     rgba(12, 3, 5, 0.7);
-  --grain:        0.06;
-  --ott-gold:     #c9a227;
-  --ott-gold-hi:  #f0d68a;
-  --ott-ink:      #190508;
-}
-
-/* ---- the wall ------------------------------------------------------------
-   An actual Ottoman wallpaper photograph, handled the same way the Renaissance
-   theme handles its painting: covered, faded well back, and warmed into the
-   palette so it reads as the WALL of a room rather than a picture pasted
-   behind the dashboard.
-
-   The drawn çintemani/tuğra/valance layers that used to live here are gone —
-   they were the "ugly" part, and a real textile does the job better. What is
-   kept from the old build is only what the image can't do: the lamplight
-   gradient and the gold cartouche card frames.
-
-   If the image ever fails to load, --bg plus the lamplight wash still carry
-   the theme, so nothing breaks. */
-.theme-ottoman body { background: transparent; }
-.theme-ottoman body::before {
-  inset: 0;
-  filter: sepia(0.30) saturate(1.05) contrast(0.95) brightness(1.02);
-  opacity: 0.40;
-  animation: none;
-  transform: translateZ(0);
-  background-color: transparent;
-  background-image:
-    url("https://static.ticimax.cloud/cdn-cgi/image/width=-,quality=85/49761/uploads/urunresimleri/buyuk/osmanli-duvar-kagidiosmanli-duvar-kagi-8297f2.jpg"),
-    /* A woven damask UNDER the photograph. The theme had no attributes of its
-       own once the drawn motifs came out, so if the image is slow or blocked
-       there was nothing left — this always paints. */
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Cg fill='none' stroke='%237a0f1f' stroke-width='1.7' opacity='.30'%3E%3Cpath d='M48 6c14 10 14 26 0 36-14-10-14-26 0-36z'/%3E%3Cpath d='M0 54c14 10 14 26 0 36M96 54c-14 10-14 26 0 36'/%3E%3Ccircle cx='48' cy='24' r='4'/%3E%3Cpath d='M24 72q12-10 24 0t24 0'/%3E%3C/g%3E%3C/svg%3E");
-  background-size: cover, 96px 96px;
-  background-position: center center, 0 0;
-  background-repeat: no-repeat, repeat;
-}
-/* Night: the same wall with the lamps down. */
-.theme-ottoman.dark body::before {
-  filter: sepia(0.45) saturate(0.95) contrast(1.05) brightness(0.42);
-  opacity: 0.55;
-  background-image:
-    url("https://static.ticimax.cloud/cdn-cgi/image/width=-,quality=85/49761/uploads/urunresimleri/buyuk/osmanli-duvar-kagidiosmanli-duvar-kagi-8297f2.jpg"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Cg fill='none' stroke='%23c9a227' stroke-width='1.7' opacity='.26'%3E%3Cpath d='M48 6c14 10 14 26 0 36-14-10-14-26 0-36z'/%3E%3Cpath d='M0 54c14 10 14 26 0 36M96 54c-14 10-14 26 0 36'/%3E%3Ccircle cx='48' cy='24' r='4'/%3E%3Cpath d='M24 72q12-10 24 0t24 0'/%3E%3C/g%3E%3C/svg%3E");
-  background-size: cover, 96px 96px;
-  background-position: center center, 0 0;
-  background-repeat: no-repeat, repeat;
-}
-
-/* Lamplight from above and a soft vignette, so the wall has depth and the
-   content sits in the lit part of the room. */
+/* The glaze: a broad wet sheen plus fine crackle over the whole field. */
 .theme-ottoman body::after {
   opacity: 1;
   mix-blend-mode: normal;
   background-image:
-    radial-gradient(120% 74% at 50% -8%, rgba(201,162,39,0.20), transparent 60%),
-    radial-gradient(130% 92% at 50% 42%, transparent 52%, rgba(60,8,14,0.30) 100%);
-  background-repeat: no-repeat, no-repeat;
-  background-position: center top, center center;
-  background-size: 100% 100%, 100% 100%;
+    /* specular bloom — light lying on a curved glazed surface */
+    radial-gradient(120% 62% at 26% 0%, rgba(255,255,255,0.55), transparent 62%),
+    radial-gradient(90% 50% at 82% 8%, rgba(255,255,255,0.30), transparent 66%),
+    /* crazing */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='cz'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='4' seed='5'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.10 0 0 0 0 0.16 0 0 0 0 0.32 0.55 0 0 0 -0.34'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23cz)'/%3E%3C/svg%3E"),
+    /* grout shadow at the tile joins, on the same 96px rhythm as the tile */
+    repeating-linear-gradient(0deg,  rgba(20,40,80,0.10) 0 2px, transparent 2px 96px),
+    repeating-linear-gradient(90deg, rgba(20,40,80,0.10) 0 2px, transparent 2px 96px);
+  background-repeat: no-repeat, no-repeat, repeat, repeat, repeat;
+  background-size: 100% 100%, 100% 100%, 220px 220px, auto, auto;
 }
 .theme-ottoman.dark body::after {
   background-image:
-    radial-gradient(120% 74% at 50% -8%, rgba(201,162,39,0.16), transparent 58%),
-    radial-gradient(130% 92% at 50% 42%, transparent 44%, rgba(0,0,0,0.62) 100%);
-  background-repeat: no-repeat, no-repeat;
-  background-position: center top, center center;
-  background-size: 100% 100%, 100% 100%;
+    radial-gradient(120% 62% at 26% 0%, rgba(120,190,255,0.16), transparent 62%),
+    radial-gradient(90% 50% at 82% 8%, rgba(120,190,255,0.10), transparent 66%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='cz2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='4' seed='5'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.55 0 0 0 0 0.75 0 0 0 0 1 0.40 0 0 0 -0.28'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23cz2)'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(0deg,  rgba(0,0,0,0.28) 0 2px, transparent 2px 96px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.28) 0 2px, transparent 2px 96px);
+  background-repeat: no-repeat, no-repeat, repeat, repeat, repeat;
+  background-size: 100% 100%, 100% 100%, 220px 220px, auto, auto;
 }
 
-/* ---- cards: silk panels in a gold cartouche ------------------------------
-   A double gold frame (outer rule + inset keyline) is the cartouche that
-   surrounds an imperial inscription. No corner pictograms — the frame and the
-   header rule carry it. */
+/* A card is one large glazed tile: thin cobalt rim, wet highlight across the
+   top, and the soft shadow a raised tile casts into its grout. */
 .theme-ottoman .card {
-  border-radius: 10px;
-  border: 1.5px solid var(--ott-gold);
-  background-image: linear-gradient(180deg, color-mix(in srgb, var(--ott-gold) 9%, transparent), transparent 44%);
-  box-shadow: var(--shadow-card), inset 0 0 0 1px color-mix(in srgb, var(--ott-gold) 26%, transparent);
+  border-radius: 4px;
+  border: 1.5px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.10) 22%, transparent 40%);
+  box-shadow:
+    var(--shadow-card),
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    inset 0 0 0 1px rgba(255,255,255,0.35);
+}
+.theme-ottoman.dark .card {
+  background-image:
+    linear-gradient(180deg, rgba(150,205,255,0.14) 0%, rgba(150,205,255,0.04) 22%, transparent 40%);
+  box-shadow:
+    var(--shadow-card),
+    inset 0 1px 0 rgba(150,205,255,0.18),
+    inset 0 0 0 1px rgba(150,205,255,0.10);
 }
 .theme-ottoman .card::before { display: none; }
 .theme-ottoman .card::after { display: none; }
-.theme-ottoman .card:hover {
-  border-color: var(--ott-gold-hi);
-  box-shadow: var(--shadow-hover), inset 0 0 0 1px color-mix(in srgb, var(--ott-gold-hi) 42%, transparent);
-}
 
-/* Header rule as a gold cartouche band, heavier on top than beneath. */
+/* Header rule painted like a cobalt brushline: heavier in the middle, thinner
+   at the ends, the way a loaded brush leaves it. */
 .theme-ottoman .headrule {
-  border-bottom: 2px solid var(--ott-gold);
-  box-shadow: 0 4px 0 -3px color-mix(in srgb, var(--ott-gold) 60%, transparent);
+  border-bottom: 0;
+  position: relative;
   padding-bottom: .55rem;
 }
-
-/* Crescent and star for the header dot — the flag the last attempt lacked. */
-.theme-ottoman .dot {
-  position: relative;
-  overflow: visible;
-  background: none;
-  box-shadow: none;
-  width: 13px; height: 13px;
-  /* FILLED crescent — the outlined one read as a broken ring. */
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13'%3E%3Cpath d='M9.6 1.6a5.7 5.7 0 1 0 0 9.8 4.6 4.6 0 1 1 0-9.8z' fill='%23c9a227'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 13px 13px;
+.theme-ottoman .headrule::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%, var(--accent) 12%, var(--accent) 88%, transparent 100%);
+  opacity: 0.75;
 }
 
-/* Filled pills knock out to the page colour: at night --accent IS gold, and
-   white on gold doesn't read. */
-:root.theme-ottoman.dark { --on-accent: #190508; }
-.theme-ottoman .chip-active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+/* An eight-pointed star (rub el hizb) for the status dot — the motif at the
+   centre of the tile itself, so the furniture matches the field. */
+.theme-ottoman .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--accent);
+  clip-path: polygon(
+    50% 0%, 62% 26%, 88% 15%, 79% 41%, 100% 50%, 79% 59%,
+    88% 85%, 62% 74%, 50% 100%, 38% 74%, 12% 85%, 21% 59%,
+    0% 50%, 21% 41%, 12% 15%, 38% 26%);
+}
 
-/* Inscriptional display type — imperial, not decorative. */
-.theme-ottoman .font-display { letter-spacing: -0.012em; font-weight: 800; }
-.theme-ottoman .label,
-.theme-ottoman .metalabel { letter-spacing: 0.15em; }
+/* Tab chips: tighter, and shaped like small tiles rather than pills. */
+.theme-ottoman .headrule .chip {
+  border-radius: 3px;
+  padding: 3px 8px;
+  font-size: 10.5px;
+  letter-spacing: 0.03em;
+}

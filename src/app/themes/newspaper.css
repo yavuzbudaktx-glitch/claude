@@ -300,19 +300,22 @@
   position: absolute;
   top: -2px;
   right: 0;
-  height: 92px;
-  width: auto;
-  max-width: 46%;
-  object-fit: contain;
+  /* Sized with !important and NO max-width cap: the previous rule let
+     max-width win on narrow rows, which is why it kept rendering tiny while
+     the reserved padding still made a gap. */
+  height: 104px !important;
+  width: auto !important;
+  max-width: none !important;
   pointer-events: none;
 }
-/* The greeting must not run under it, and the row needs to be tall enough to
-   hold it. Scoped with :not([class]) so it can only match Masthead's own
-   <header> — every card header carries a class. */
-.theme-newspaper header:not([class]) {
-  position: relative;
-  padding-right: 300px;
-  min-height: 96px;
+/* The greeting must not run under it. Scoped with :not([class]) so it can only
+   match Masthead's own <header> — every card header carries a class.
+   The space is reserved with :has(), so when the image fails to load and
+   removes itself there is no leftover gap. */
+.theme-newspaper header:not([class]) { position: relative; }
+.theme-newspaper header:not([class]):has(.masthead-logo) {
+  padding-right: 320px;
+  min-height: 108px;
 }
 /* Dark ink on transparent disappears on the night palette. */
 .theme-newspaper.dark .masthead-logo {

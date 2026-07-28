@@ -13,3 +13,67 @@
   text-transform: none;
   letter-spacing: 0.002em;
 }
+
+/* ===========================================================================
+   INTENSITY PASS
+
+   The greeting fix stays as it was. What's added is depth, not furniture —
+   the earlier attempt bolted on a title block and revision clouds and that was
+   rejected. This is the same drafting page, pushed harder: a denser grid with
+   a heavy every-fifth line, cyan glow on the strokes, edge rulers with tick
+   marks, and corner registration brackets.
+=========================================================================== */
+.theme-blueprint body { background: transparent; }
+.theme-blueprint body::before {
+  inset: 0;
+  filter: none;
+  animation: none;
+  transform: translateZ(0);
+  background-color: transparent;
+  background-image:
+    /* corner registration brackets */
+    linear-gradient(#7fc6ff, #7fc6ff), linear-gradient(#7fc6ff, #7fc6ff),
+    linear-gradient(#7fc6ff, #7fc6ff), linear-gradient(#7fc6ff, #7fc6ff),
+    /* edge rulers: fine ticks along the top and left */
+    repeating-linear-gradient(90deg, rgba(190,235,255,0.55) 0 1px, transparent 1px 12px),
+    repeating-linear-gradient(0deg,  rgba(190,235,255,0.55) 0 1px, transparent 1px 12px),
+    /* heavy every-fifth grid line */
+    repeating-linear-gradient(0deg,  rgba(190,235,255,0.20) 0 1px, transparent 1px 100px),
+    repeating-linear-gradient(90deg, rgba(190,235,255,0.20) 0 1px, transparent 1px 100px),
+    /* fine grid */
+    repeating-linear-gradient(0deg,  rgba(190,235,255,0.09) 0 1px, transparent 1px 20px),
+    repeating-linear-gradient(90deg, rgba(190,235,255,0.09) 0 1px, transparent 1px 20px),
+    /* paper wash */
+    radial-gradient(130% 100% at 50% 0%, rgba(120,200,255,0.16), transparent 70%);
+  background-repeat:
+    no-repeat, no-repeat, no-repeat, no-repeat,
+    repeat-x, repeat-y,
+    repeat, repeat, repeat, repeat, no-repeat;
+  background-size:
+    58px 2px, 2px 58px, 58px 2px, 2px 58px,
+    100% 7px, 7px 100%,
+    auto, auto, auto, auto, 100% 100%;
+  background-position:
+    22px 22px, 22px 22px, right 22px bottom 22px, right 22px bottom 22px,
+    0 0, 0 0,
+    0 0, 0 0, 0 0, 0 0, 0 0;
+}
+/* Strokes on a real blueprint are printed, and printed cyan blooms slightly. */
+.theme-blueprint .card {
+  box-shadow: var(--shadow-card), 0 0 0 1px rgba(127,198,255,0.28), 0 0 34px -12px rgba(127,198,255,0.4);
+}
+.theme-blueprint .font-display { text-shadow: 0 0 18px rgba(127,198,255,0.35); }
+.theme-blueprint .headrule { border-bottom: 1px dashed rgba(190,235,255,0.6); }
+.theme-blueprint .dot {
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  width: 11px; height: 11px;
+  background-image:
+    linear-gradient(#7fc6ff, #7fc6ff), linear-gradient(#7fc6ff, #7fc6ff);
+  background-size: 100% 1.6px, 1.6px 100%;
+  background-position: center, center;
+  background-repeat: no-repeat;
+  outline: 1.4px solid rgba(127,198,255,0.75);
+  outline-offset: 1px;
+}
