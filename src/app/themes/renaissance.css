@@ -211,3 +211,23 @@
   background: radial-gradient(circle at 32% 30%, #fdf1c8, #c9a24a 55%, #6e4a1e);
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 0 10px var(--glow);
 }
+
+/* The greeting's name uses `.text-gradient`, which paints a gradient through
+   transparent glyphs. On this theme's aged-canvas ground the gradient's light
+   end all but vanished, so the name was unreadable. Solid ink instead — gold
+   at night, deep venetian red by day — with a faint lift so it still reads as
+   inscribed rather than flat. */
+.theme-renaissance .text-gradient {
+  background: none;
+  -webkit-background-clip: border-box;
+          background-clip: border-box;
+  color: #7c2216;
+  -webkit-text-fill-color: #7c2216;
+  animation: none;
+  text-shadow: 0 1px 0 rgba(255, 246, 224, 0.55);
+}
+.theme-renaissance.dark .text-gradient {
+  color: #e8c579;
+  -webkit-text-fill-color: #e8c579;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}

@@ -749,7 +749,7 @@ export function BodyCard() {
   const todayGym = (gym ?? DEFAULT_GYM)[new Date().getDay()] ?? "off";
   const gymBadge = (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ${
+      className={`gym-badge inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ${
         isGymDay(todayGym)
           ? "text-white"
           : "text-muted border border-[var(--rule)]"

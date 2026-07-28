@@ -101,14 +101,16 @@ export function Card({
           {title && <span className="text-[14px] font-semibold tracking-tight text-ink">{title}</span>}
           {meta && <span className={title ? "ml-1.5 label" : "label"}>{meta}</span>}
           <div className={`${hasContent ? "ml-auto" : ""} flex items-center gap-2`}>
-            {status && <FreshPill status={status} />}
+            {/* `card-fresh` is a theming hook: the Retro PC concept hides the
+                relative-time text to keep its title bars authentic. */}
+            {status && <span className="card-fresh inline-flex"><FreshPill status={status} /></span>}
             {action}
             {collapsible && (
               <button
                 onClick={() => setCollapsed(!collapsed)}
                 aria-label={collapsed ? "Expand card" : "Collapse card"}
                 title={collapsed ? "Expand" : "Collapse"}
-                className="text-muted-2 hover:text-accent transition"
+                className="card-collapse text-muted-2 hover:text-accent transition"
               >
                 <ChevronDown
                   className="h-4 w-4 transition-transform"

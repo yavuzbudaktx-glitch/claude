@@ -114,6 +114,11 @@ export function ComicFx() {
       node.setAttribute("aria-hidden", "true");
       node.style.left = `${Math.round(cx)}px`;
       node.style.top = `${Math.round(cy)}px`;
+      // The word no longer straddles the cursor. It hangs off ONE bottom
+      // corner — left or right at random — so the pointer sits at the corner of
+      // the lettering and the text never covers what you just clicked.
+      const side = Math.random() < 0.5 ? "0%" : "-100%";
+      node.style.setProperty("--cfx-tx", side);
       node.style.setProperty("--cfx-rot", `${rot.toFixed(2)}deg`);
       node.style.setProperty("--cfx-scale", scale.toFixed(3));
       node.style.setProperty("--cfx-dur", `${dur}ms`);

@@ -106,12 +106,19 @@
    lowercase is the single most Bauhaus thing the type can do. */
 .theme-bauhaus .font-display {
   font-family: "Space Grotesk", "Inter", ui-sans-serif, sans-serif !important;
-  font-weight: 800 !important;
+  /* 800 is NOT one of the weights globals.css imports for Space Grotesk
+     (400/500/600/700), so Mac and Windows were each SYNTHESISING a fake bold
+     from 700 — with different algorithms, which is exactly why the type looked
+     right on one and wrong on the other. Pinning to a real imported weight and
+     switching synthesis off makes it identical everywhere. */
+  font-weight: 700 !important;
+  font-synthesis: none;
   letter-spacing: -0.045em !important;
   text-transform: lowercase;
 }
 .theme-bauhaus .label {
-  font-weight: 800;
+  font-weight: 700;
+  font-synthesis: none;
   letter-spacing: 0.20em;
   color: var(--ink);
 }

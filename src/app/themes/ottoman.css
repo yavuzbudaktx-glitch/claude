@@ -113,19 +113,26 @@
   animation: none;
   transform: translateZ(0);
   background-color: transparent;
-  background-image: url("https://static.ticimax.cloud/cdn-cgi/image/width=-,quality=85/49761/uploads/urunresimleri/buyuk/osmanli-duvar-kagidiosmanli-duvar-kagi-8297f2.jpg");
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
+  background-image:
+    url("https://static.ticimax.cloud/cdn-cgi/image/width=-,quality=85/49761/uploads/urunresimleri/buyuk/osmanli-duvar-kagidiosmanli-duvar-kagi-8297f2.jpg"),
+    /* A woven damask UNDER the photograph. The theme had no attributes of its
+       own once the drawn motifs came out, so if the image is slow or blocked
+       there was nothing left — this always paints. */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Cg fill='none' stroke='%237a0f1f' stroke-width='1.7' opacity='.30'%3E%3Cpath d='M48 6c14 10 14 26 0 36-14-10-14-26 0-36z'/%3E%3Cpath d='M0 54c14 10 14 26 0 36M96 54c-14 10-14 26 0 36'/%3E%3Ccircle cx='48' cy='24' r='4'/%3E%3Cpath d='M24 72q12-10 24 0t24 0'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: cover, 96px 96px;
+  background-position: center center, 0 0;
+  background-repeat: no-repeat, repeat;
 }
 /* Night: the same wall with the lamps down. */
 .theme-ottoman.dark body::before {
   filter: sepia(0.45) saturate(0.95) contrast(1.05) brightness(0.42);
   opacity: 0.55;
-  background-image: url("https://static.ticimax.cloud/cdn-cgi/image/width=-,quality=85/49761/uploads/urunresimleri/buyuk/osmanli-duvar-kagidiosmanli-duvar-kagi-8297f2.jpg");
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
+  background-image:
+    url("https://static.ticimax.cloud/cdn-cgi/image/width=-,quality=85/49761/uploads/urunresimleri/buyuk/osmanli-duvar-kagidiosmanli-duvar-kagi-8297f2.jpg"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Cg fill='none' stroke='%23c9a227' stroke-width='1.7' opacity='.26'%3E%3Cpath d='M48 6c14 10 14 26 0 36-14-10-14-26 0-36z'/%3E%3Cpath d='M0 54c14 10 14 26 0 36M96 54c-14 10-14 26 0 36'/%3E%3Ccircle cx='48' cy='24' r='4'/%3E%3Cpath d='M24 72q12-10 24 0t24 0'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: cover, 96px 96px;
+  background-position: center center, 0 0;
+  background-repeat: no-repeat, repeat;
 }
 
 /* Lamplight from above and a soft vignette, so the wall has depth and the
@@ -180,8 +187,9 @@
   background: none;
   box-shadow: none;
   width: 13px; height: 13px;
+  /* FILLED crescent — the outlined one read as a broken ring. */
   background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13'%3E%3Cg fill='none' stroke='%23c9a227' stroke-width='1.5'%3E%3Cpath d='M9 2.4a4.6 4.6 0 1 0 0 8.2 5.6 5.6 0 1 1 0-8.2z'/%3E%3C/g%3E%3C/svg%3E");
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13'%3E%3Cpath d='M9.6 1.6a5.7 5.7 0 1 0 0 9.8 4.6 4.6 0 1 1 0-9.8z' fill='%23c9a227'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 13px 13px;

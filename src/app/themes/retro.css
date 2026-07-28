@@ -466,3 +466,71 @@
   .theme-retro body::after,
   .theme-retro .text-gradient { animation: none; }
 }
+
+/* ===========================================================================
+   AUTHENTIC WINDOW CHROME
+
+   Three asks, all about making a card behave like a real 1993 window rather
+   than a modern card wearing a beige skin:
+     1. the collapse control becomes a title-bar box button
+     2. cards that can refresh get a matching box button
+     3. the chatty modern text on the title bar goes ("7h ago", "Today · Gym")
+
+   The hooks: Card.tsx puts `.card-collapse` on its chevron button and wraps
+   its freshness indicator in `.card-fresh`; BodyCard's training pill carries
+   `.gym-badge`.
+=========================================================================== */
+
+/* 1 + 2 — box buttons. The classic bevel: light on the top-left, dark on the
+   bottom-right, inverted while pressed so the button physically sinks. */
+.theme-retro .card-collapse,
+.theme-retro .card-fresh button {
+  width: 18px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  border-radius: 0;
+  color: var(--ink);
+  background: var(--paper-2);
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #6f6a5c;
+  border-bottom: 2px solid #6f6a5c;
+  box-shadow: 1px 1px 0 0 #3a362e;
+  transition: none;
+}
+.theme-retro .card-collapse:hover,
+.theme-retro .card-fresh button:hover { color: var(--ink); background: var(--paper); }
+.theme-retro .card-collapse:active,
+.theme-retro .card-fresh button:active {
+  border-top-color: #6f6a5c;
+  border-left-color: #6f6a5c;
+  border-right-color: #ffffff;
+  border-bottom-color: #ffffff;
+  box-shadow: none;
+}
+/* The chevron inside is squared off so it reads as a glyph painted on a
+   button, not a modern icon. */
+.theme-retro .card-collapse svg {
+  width: 9px;
+  height: 9px;
+  stroke-width: 3.2;
+}
+.theme-retro.dark .card-collapse,
+.theme-retro.dark .card-fresh button {
+  background: #2f2b24;
+  border-top-color: #6d6656;
+  border-left-color: #6d6656;
+  border-right-color: #14120e;
+  border-bottom-color: #14120e;
+  box-shadow: 1px 1px 0 0 #000000;
+}
+
+/* 3 — strip the modern furniture off the title bar. The relative-time readout
+   ("7h ago") and the training pill ("Today · Gym day") are useful on a
+   dashboard and wrong on a window frame, so both go for this concept only.
+   Hiding the whole indicator rather than trying to hide the text inside it:
+   its contents change between a time, a spinner and a retry button, and a
+   selector that reaches into that would break the moment it re-renders. */
+.theme-retro .card-fresh { display: none; }
+.theme-retro .gym-badge { display: none; }

@@ -284,52 +284,41 @@
 .theme-newspaper.dark .btn-ghost:hover { background: rgba(244, 237, 224, 0.08); }
 
 /* ---- nameplate ----------------------------------------------------------
-   The Zaman Gazetesi wordmark sits on the RIGHT of the greeting row, opposite
-   the name and in line with the clock — where a paper puts the publisher's
-   mark beside the headline. Two earlier placements were wrong: inline after
-   the name (far too small to read as a masthead) and centred above it (it
-   just looked like a banner ad).
+   The wordmark is an <img class="masthead-logo"> rendered by Masthead.tsx
+   (see there for why it is an element and not a background image). It is
+   hidden for every theme except this one.
 
-   It rides on `header` as a background rather than a pseudo-element so it can
-   sit at full height without joining the flex row, and the header gets
-   right-padding so the greeting can never run underneath it. */
-.theme-newspaper header {
-  background-image: url("https://images.seeklogo.com/logo-png/22/2/zaman-gazetesi-logo-png_seeklogo-224128.png");
-  background-repeat: no-repeat;
-  background-position: right top 6px;
-  background-size: auto 74px;
-  padding-right: 260px;
-  min-height: 86px;
-}
-/* Dark ink on transparent vanishes on the night palette, so it has to be
-   inverted — but `filter` on the header would invert the greeting with it.
-   The night version therefore moves to a pseudo-element carrying only the
-   logo, and the header's own background image is switched off. */
-.theme-newspaper.dark header {
-  background-image: none;
-  position: relative;
-}
-.theme-newspaper.dark header::after {
-  content: "";
+   THREE earlier placements were wrong: inline after the name (too small to
+   read as a masthead), centred above it (read as a banner ad), and as a
+   background on `header` — which hit EVERY CARD, because Card.tsx renders a
+   <header> for each one. Targeting the img means it can only ever appear once.
+
+   It sits at the right end of the greeting row, in line with the clock. */
+.masthead-logo { display: none; }
+.theme-newspaper .masthead-logo {
+  display: block;
   position: absolute;
-  top: 6px;
+  top: -2px;
   right: 0;
-  width: 240px;
-  height: 74px;
-  background-image: url("https://images.seeklogo.com/logo-png/22/2/zaman-gazetesi-logo-png_seeklogo-224128.png");
-  background-repeat: no-repeat;
-  background-position: right center;
-  background-size: auto 74px;
-  filter: invert(1) brightness(1.7);
+  height: 92px;
+  width: auto;
+  max-width: 46%;
+  object-fit: contain;
   pointer-events: none;
 }
-/* No room beside the greeting on a phone — drop it rather than let it collide. */
-@media (max-width: 900px) {
-  .theme-newspaper header {
-    background-image: none;
-    padding-right: 0;
-    min-height: 0;
-  }
-  .theme-newspaper.dark header::after { display: none; }
+/* The greeting must not run under it, and the row needs to be tall enough to
+   hold it. Scoped with :not([class]) so it can only match Masthead's own
+   <header> — every card header carries a class. */
+.theme-newspaper header:not([class]) {
+  position: relative;
+  padding-right: 300px;
+  min-height: 96px;
 }
-
+/* Dark ink on transparent disappears on the night palette. */
+.theme-newspaper.dark .masthead-logo {
+  filter: invert(1) brightness(1.7);
+}
+@media (max-width: 900px) {
+  .theme-newspaper .masthead-logo { display: none; }
+  .theme-newspaper header:not([class]) { padding-right: 0; min-height: 0; }
+}

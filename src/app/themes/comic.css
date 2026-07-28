@@ -306,14 +306,17 @@
      0.06em 0       0 var(--cfx-ink, #111),
     -0.06em 0       0 var(--cfx-ink, #111),
      0.11em 0.13em  0 var(--cfx-ink, #111);
-  animation: cfx-hit var(--cfx-dur, 440ms) cubic-bezier(.2, .9, .25, 1) both;
+  transform-origin: var(--cfx-org, left bottom);
+  animation: cfx-hit var(--cfx-dur, 440ms) cubic-bezier(.22, .7, .3, 1) both;
 }
-/* Punch in past full size, settle, then lift and fade. No spin, no strobe. */
+/* Lands BIG at the cursor's corner and shrinks away as it lifts — reading as
+   the sound receding rather than a pop. `--cfx-tx` is 0% or -100%, which is
+   what puts the pointer at the bottom-left or bottom-right of the lettering
+   instead of in the middle of it; the -104% keeps it just clear of the cursor. */
 @keyframes cfx-hit {
-  0%   { opacity: 0; transform: translate(-50%, -50%) rotate(var(--cfx-rot)) scale(calc(var(--cfx-scale) * 0.45)); }
-  35%  { opacity: 1; transform: translate(-50%, -50%) rotate(var(--cfx-rot)) scale(calc(var(--cfx-scale) * 1.08)); }
-  52%  { transform: translate(-50%, -50%) rotate(var(--cfx-rot)) scale(var(--cfx-scale)); }
-  100% { opacity: 0; transform: translate(-50%, -125%) rotate(var(--cfx-rot)) scale(var(--cfx-scale)); }
+  0%   { opacity: 0; transform: translate(var(--cfx-tx, 0%), -104%) rotate(var(--cfx-rot)) scale(calc(var(--cfx-scale) * 1.35)); }
+  18%  { opacity: 1; transform: translate(var(--cfx-tx, 0%), -104%) rotate(var(--cfx-rot)) scale(calc(var(--cfx-scale) * 1.18)); }
+  100% { opacity: 0; transform: translate(var(--cfx-tx, 0%), -150%) rotate(var(--cfx-rot)) scale(calc(var(--cfx-scale) * 0.62)); }
 }
 @media (prefers-reduced-motion: reduce) {
   .cfx-burst { animation: cfx-fade var(--cfx-dur) ease-out both; }

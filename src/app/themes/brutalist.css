@@ -91,9 +91,11 @@
   transform: translateZ(0);
   background-color: transparent;
   background-image:
-    /* hazard tape, top and bottom */
-    repeating-linear-gradient(135deg, var(--br-tape) 0 14px, transparent 14px 28px),
-    repeating-linear-gradient(135deg, var(--br-tape) 0 14px, transparent 14px 28px),
+    /* No hazard/caution striping — it was the first thing the user asked to
+       lose. The floor now reads through material alone: a single machined
+       edge-line top and bottom, then the mat. */
+    linear-gradient(var(--rule), var(--rule)),
+    linear-gradient(var(--rule), var(--rule)),
     /* mat seams — 240px tiles */
     repeating-linear-gradient(0deg,  var(--rule-soft) 0 2px, transparent 2px 240px),
     repeating-linear-gradient(90deg, var(--rule-soft) 0 2px, transparent 2px 240px),
@@ -101,7 +103,7 @@
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23r)' opacity='0.16'/%3E%3C/svg%3E");
   background-repeat: repeat-x, repeat-x, repeat, repeat, repeat;
   background-position: 0 0, 0 100%, 0 0, 0 0, 0 0;
-  background-size: auto 9px, auto 9px, auto, auto, 160px 160px;
+  background-size: 100% 2px, 100% 2px, auto, auto, 160px 160px;
 }
 
 /* ---- plates -------------------------------------------------------------
@@ -147,7 +149,7 @@
 /* The header rule is a loaded bar: a heavy band with collars at each end. */
 .theme-brutalist .headrule {
   border-bottom: 4px solid var(--ink);
-  box-shadow: 0 6px 0 -4px var(--accent);
+  box-shadow: 0 6px 0 -5px var(--accent);
   padding-bottom: .5rem;
 }
 
