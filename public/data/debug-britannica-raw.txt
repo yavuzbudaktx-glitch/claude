@@ -1,9 +1,9 @@
 # Britannica scrape debug dump
-# generated: 2026-07-29T14:57:19.398Z
+# generated: 2026-07-29T15:59:32.168Z
 # url:       https://www.britannica.com/on-this-day/july-29
 # fetcher:   Jina Reader
 # kind:      markdown
-# length:    21721
+# length:    18570
 # parsed:    NO
 # -----------------------------------------------------------------
 Title: On This Day - What Happened Today In History | Britannica
@@ -51,17 +51,15 @@ SIGN UP
 
 June
 
-June
+[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)
 
-[1](https://www.britannica.com/on-this-day/June-1)[2](https://www.britannica.com/on-this-day/June-2)[3](https://www.britannica.com/on-this-day/June-3)[4](https://www.britannica.com/on-this-day/June-4)[5](https://www.britannica.com/on-this-day/June-5)[6](https://www.britannica.com/on-this-day/June-6)[7](https://www.britannica.com/on-this-day/June-7)
+[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)
 
-[8](https://www.britannica.com/on-this-day/June-8)[9](https://www.britannica.com/on-this-day/June-9)[10](https://www.britannica.com/on-this-day/June-10)[11](https://www.britannica.com/on-this-day/June-11)[12](https://www.britannica.com/on-this-day/June-12)[13](https://www.britannica.com/on-this-day/June-13)[14](https://www.britannica.com/on-this-day/June-14)
+[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)
 
-[15](https://www.britannica.com/on-this-day/June-15)[16](https://www.britannica.com/on-this-day/June-16)[17](https://www.britannica.com/on-this-day/June-17)[18](https://www.britannica.com/on-this-day/June-18)[19](https://www.britannica.com/on-this-day/June-19)[20](https://www.britannica.com/on-this-day/June-20)[21](https://www.britannica.com/on-this-day/June-21)
+[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)
 
-[22](https://www.britannica.com/on-this-day/June-22)[23](https://www.britannica.com/on-this-day/June-23)[24](https://www.britannica.com/on-this-day/June-24)[25](https://www.britannica.com/on-this-day/June-25)[26](https://www.britannica.com/on-this-day/June-26)[27](https://www.britannica.com/on-this-day/June-27)[28](https://www.britannica.com/on-this-day/June-28)
-
-[29](https://www.britannica.com/on-this-day/June-29)[30](https://www.britannica.com/on-this-day/June-30)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)
+[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)
 
 July
 
@@ -75,17 +73,15 @@ July
 
 [29](https://www.britannica.com/on-this-day/July-29)[30](https://www.britannica.com/on-this-day/July-30)[31](https://www.britannica.com/on-this-day/July-31)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)
 
-August
+[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)
 
-[1](https://www.britannica.com/on-this-day/August-1)[2](https://www.britannica.com/on-this-day/August-2)[3](https://www.britannica.com/on-this-day/August-3)[4](https://www.britannica.com/on-this-day/August-4)[5](https://www.britannica.com/on-this-day/August-5)[6](https://www.britannica.com/on-this-day/August-6)[7](https://www.britannica.com/on-this-day/August-7)
+[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)
 
-[8](https://www.britannica.com/on-this-day/August-8)[9](https://www.britannica.com/on-this-day/August-9)[10](https://www.britannica.com/on-this-day/August-10)[11](https://www.britannica.com/on-this-day/August-11)[12](https://www.britannica.com/on-this-day/August-12)[13](https://www.britannica.com/on-this-day/August-13)[14](https://www.britannica.com/on-this-day/August-14)
+[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)
 
-[15](https://www.britannica.com/on-this-day/August-15)[16](https://www.britannica.com/on-this-day/August-16)[17](https://www.britannica.com/on-this-day/August-17)[18](https://www.britannica.com/on-this-day/August-18)[19](https://www.britannica.com/on-this-day/August-19)[20](https://www.britannica.com/on-this-day/August-20)[21](https://www.britannica.com/on-this-day/August-21)
+[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)
 
-[22](https://www.britannica.com/on-this-day/August-22)[23](https://www.britannica.com/on-this-day/August-23)[24](https://www.britannica.com/on-this-day/August-24)[25](https://www.britannica.com/on-this-day/August-25)[26](https://www.britannica.com/on-this-day/August-26)[27](https://www.britannica.com/on-this-day/August-27)[28](https://www.britannica.com/on-this-day/August-28)
-
-[29](https://www.britannica.com/on-this-day/August-29)[30](https://www.britannica.com/on-this-day/August-30)[31](https://www.britannica.com/on-this-day/August-31)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)
+[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)[](https://www.britannica.com/on-this-day/july-29)
 
 August
 
@@ -270,5 +266,3 @@ Discover the fascinating events that shaped the world, straight from our editors
 SIGN UP
 
 ### Thank you for signing up!
-
-![Image 24](https://webstats.eb.com/webstats/stats.gif?a=-1&ac=%20&d=www.britannica.com&od=www.britannica.com&h=135&rf=&rq=https%3A%2F%2Fwww.britannica.com%2Fon-this-day%2Fjuly-29&s=9A7E85DE-4400-490C-BA5A-E9829EA7CECA&json=%20)![Image 25: iiq_pixel](https://sync.intentiq.com/profiles_engine/ProfilesEngineServlet?at=20&mi=10&secure=1&dpi=390912691&iiqidtype=2&iiqpcid=5108aa85-b7a5-3ade-65f9-841c4bd58a01&iiqpciddate=1785336981796&tsrnd=682_1785336981802&jsver=6.253&testPercentage=95&testGroup=A&uh=%7B%220%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150%5C%22%22%2C%221%22%3A%22%3F0%22%2C%222%22%3A%22%5C%22Linux%5C%22%22%2C%223%22%3A%22%5C%22x86%5C%22%22%2C%224%22%3A%22%5C%2264%5C%22%22%2C%227%22%3A%22%3F0%22%2C%228%22%3A%22%5C%22Not%3BA%3DBrand%5C%22%3Bv%3D%5C%228.0.0.0%5C%22%2C%20%5C%22Chromium%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%2C%20%5C%22Google%20Chrome%5C%22%3Bv%3D%5C%22150.0.7871.114%5C%22%22%7D&vrref=britannica.com&gdpr_consent=undefined&us_privacy=1YNY&gpc=undefined&gdpr=0)![Image 26](https://ids4.ad.gt/api/v1/ip_match?id=AU1D-0100-001785336983-K3DAGGLZ-QUSN)![Image 27](https://secure.adnxs.com/getuid?https://ids.ad.gt/api/v1/match?id=AU1D-0100-001785336983-K3DAGGLZ-QUSN&adnxs_id=$UID&gdpr=0)![Image 28](https://u.openx.net/w/1.0/cm?id=998eaf06-9905-4eae-9e26-9fac75960c53&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fopenx%3Fopenx_id%3D%7BOPENX_ID%7D%26id%3DAU1D-0100-001785336983-K3DAGGLZ-QUSN%26auid%3DAU1D-0100-001785336983-K3DAGGLZ-QUSN&gdpr=0)![Image 29](https://image2.pubmatic.com/AdServer/UCookieSetPug?rd=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fpbm_match%3Fpbm%3D%23PM_USER_ID%26id%3DAU1D-0100-001785336983-K3DAGGLZ-QUSN&gdpr=0)![Image 30](https://token.rubiconproject.com/token?pid=50242&puid=AU1D-0100-001785336983-K3DAGGLZ-QUSN&gdpr=0)![Image 31](https://match.adsrvr.org/track/cmf/generic?ttd_pid=8gkxb6n&ttd_tpi=1&ttd_puid=AU1D-0100-001785336983-K3DAGGLZ-QUSN&gdpr=0)![Image 32](https://pixel.tapad.com/idsync/ex/receive?partner_id=3185&partner_device_id=AU1D-0100-001785336983-K3DAGGLZ-QUSN&partner_url=https://ids.ad.gt%2Fapi%2Fv1%2Ftapad_match%3Fid%3DAU1D-0100-001785336983-K3DAGGLZ-QUSN%26tapad_id%3D%24%7BTA_DEVICE_ID%7D&gdpr=0)![Image 33](https://cm.g.doubleclick.net/pixel?google_cm&google_nid=audigent_dmp&google_hm=QVUxRC0wMTAwLTAwMTc4NTMzNjk4My1LM0RBR0dMWi1RVVNO&id=AU1D-0100-001785336983-K3DAGGLZ-QUSN&gdpr=0)![Image 34](https://d.turn.com/r/dd/id/L2NzaWQvMS9jaWQvMTc0ODI0MTY1OC90LzA/url/https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Famo_match%3Fturn_id%3D%24!%7BTURN_UUID%7D%26id%3DAU1D-0100-001785336983-K3DAGGLZ-QUSN)![Image 35](https://sync.go.sonobi.com/us?https://ids.ad.gt/api/v1/son_match?id=AU1D-0100-001785336983-K3DAGGLZ-QUSN&uid=[UID]&gdpr=0)![Image 36](https://ad.360yield.com/ux?&publisher_dmp_id=15&r=https%3A%2F%2Fids.ad.gt%2Fapi%2Fv1%2Fimpr_match%3Fid%3DAU1D-0100-001785336983-K3DAGGLZ-QUSN%26impr_uid%3D%7BPUB_USER_ID%7D&gdpr=0)
