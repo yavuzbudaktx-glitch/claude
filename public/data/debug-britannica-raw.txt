@@ -1,9 +1,9 @@
 # Britannica scrape debug dump
-# generated: 2026-07-28T20:48:01.592Z
-# url:       https://www.britannica.com/on-this-day/july-28
+# generated: 2026-07-29T08:03:40.814Z
+# url:       https://www.britannica.com/on-this-day/july-29
 # fetcher:   Wayback Machine
 # kind:      html
-# length:    74823
+# length:    75651
 # parsed:    NO
 # -----------------------------------------------------------------
 
@@ -94,9 +94,9 @@
 
     
 
-    <meta name="description" content="On This Day In History - July 28: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences." />
+    <meta name="description" content="On This Day In History - July 29: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences." />
     <meta name="keywords" content="today in history, anniversary, daily events, today’s historical events, today’s birthdays, born today, on this date, this day in history" />
-    <link rel="canonical" href="https://www.britannica.com/on-this-day/July-28" />
+    <link rel="canonical" href="https://www.britannica.com/on-this-day/July-29" />
 
     
 
@@ -113,7 +113,7 @@
 
     
 
-    <title>On This Day - What Happened on July 28 | Britannica</title>
+    <title>On This Day - What Happened on July 29 | Britannica</title>
 
     
 
@@ -126,7 +126,7 @@
 
 
 <script   class="analytics-metadata" type="application/json">
-{"adLeg":"D","leg":"A","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+{"adLeg":"D","leg":"B","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
 </script>
 
 
@@ -273,20 +273,20 @@
             "videoPlayerId" : "UyMCoK2v",
       		"domain": "britannica.com",
 			"page": "TodayInHistory",
-			"sharedUrl": "https://www.britannica.com/on-this-day/July-28",
+			"sharedUrl": "https://www.britannica.com/on-this-day/July-29",
 			"amuselabsUrl": "https://cdn3.amuselabs.com",
 	    	"resourcesPrefixUrl": "https://cdn.britannica.com/mendel-resources/3-190/[url]?v=3.190.3",
-			"date": 20260705,
+			"date": 20260706,
 			"userInfo": { "type": "ANONYMOUS"
 										,"currency": "USD"
 										,"country": "CA"
 										,"state": "XX"
 										,"timezone": "America/Toronto"
-										,"bcomId": "-2856279315159506516"
+										,"bcomId": "4287059268840940036"
 										,"adProvider": "ay"
 										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":false,"showConsent":false}
 										,"hasAds": true
-										,"testVersion": "A"
+										,"testVersion": "B"
 										,"adsTestVersion": "D"
 										,"consumerId": ""
 										,"instId": ""
@@ -305,12 +305,12 @@
 	        "fetchOffset": 800,
 			
 			"mendelCookieName": "__mendel",
-			"mendelCookie": {"currentDate":20260705,"lti":0,"surveyShown":false,"ts":0},
+			"mendelCookie": {"currentDate":20260706,"lti":0,"surveyShown":false,"ts":0},
 			
 
-			"autocompleteToSearchPage": false,"pagesInfo": [{"url":"July-28","title":"On This Day - What Happened on July 28"},{"url":"July-29","title":"On This Day - What Happened on July 29"},{"url":"July-30","title":"On This Day - What Happened on July 30"},{"url":"July-31","title":"On This Day - What Happened on July 31"},{"url":"August-1","title":"On This Day - What Happened on August 1"},{"url":"August-2","title":"On This Day - What Happened on August 2"},{"url":"August-3","title":"On This Day - What Happened on August 3"},{"url":"August-4","title":"On This Day - What Happened on August 4"},{"url":"August-5","title":"On This Day - What Happened on August 5"},{"url":"August-6","title":"On This Day - What Happened on August 6"}]
+			"autocompleteToSearchPage": false,"pagesInfo": [{"url":"July-29","title":"On This Day - What Happened on July 29"},{"url":"July-30","title":"On This Day - What Happened on July 30"},{"url":"July-31","title":"On This Day - What Happened on July 31"},{"url":"August-1","title":"On This Day - What Happened on August 1"},{"url":"August-2","title":"On This Day - What Happened on August 2"},{"url":"August-3","title":"On This Day - What Happened on August 3"},{"url":"August-4","title":"On This Day - What Happened on August 4"},{"url":"August-5","title":"On This Day - What Happened on August 5"},{"url":"August-6","title":"On This Day - What Happened on August 6"},{"url":"August-7","title":"On This Day - What Happened on August 7"}]
 		},
-        "GA": {"adLeg":"D","leg":"A","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+        "GA": {"adLeg":"D","leg":"B","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
     };
 
 	</script>
@@ -323,23 +323,23 @@
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:site" content="@britannica" />
-<meta name="twitter:image" content="https://cdn.britannica.com/28/60728-050-CA6992FF/infantrymen-German-Maxim-World-War-I-machine.jpg" />
-<meta name="twitter:description" content="On This Day In History - July 28: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
+<meta name="twitter:image" content="https://cdn.britannica.com/82/71282-050-0BA83678/launch-space-shuttle-liftoff-Challenger-success-programs-June-18-1983.jpg" />
+<meta name="twitter:description" content="On This Day In History - July 29: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
 
 <meta property="og:type"  content="WEBSITE"/>
-<meta property="og:title" content="On This Day - What Happened on July 28 | Britannica"/>
-<meta property="og:description" content="On This Day In History - July 28: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
+<meta property="og:title" content="On This Day - What Happened on July 29 | Britannica"/>
+<meta property="og:description" content="On This Day In History - July 29: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
 <meta property="og:site_name" content="Encyclopedia Britannica" />
-<meta property="og:url" content="https://www.britannica.com/on-this-day/July-28"/>
-<meta property="og:image" content="https://cdn.britannica.com/28/60728-050-CA6992FF/infantrymen-German-Maxim-World-War-I-machine.jpg" />
+<meta property="og:url" content="https://www.britannica.com/on-this-day/July-29"/>
+<meta property="og:image" content="https://cdn.britannica.com/82/71282-050-0BA83678/launch-space-shuttle-liftoff-Challenger-success-programs-June-18-1983.jpg" />
 
 <script type="text/javascript" data-type="init opengraph">
 Mendel.openGraph = {
     "type": "WEBSITE",
-    "title": "On This Day - What Happened on July 28",
-    "description": "On This Day In History - July 28: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences.",
-    "imageUrl": "https://cdn.britannica.com/28/60728-050-CA6992FF/infantrymen-German-Maxim-World-War-I-machine.jpg",
-    "pageUrl": "https://www.britannica.com/on-this-day/July-28"
+    "title": "On This Day - What Happened on July 29",
+    "description": "On This Day In History - July 29: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences.",
+    "imageUrl": "https://cdn.britannica.com/82/71282-050-0BA83678/launch-space-shuttle-liftoff-Challenger-success-programs-June-18-1983.jpg",
+    "pageUrl": "https://www.britannica.com/on-this-day/July-29"
 }
 </script>
 
@@ -415,7 +415,7 @@ Mendel.openGraph = {
 
 </head>
 
-<body data-leg="A" class="today-in-history user-ANONYMOUS  user-ads   md-desktop    leg-a ">
+<body data-leg="B" class="today-in-history user-ANONYMOUS  user-ads   md-desktop    leg-b ">
 
 
 
@@ -916,9 +916,9 @@ Ask the Chatbot</a>
 
 <script   class="otd-json-info" type="application/json">
 {
-        "calendarInfo": {"day":28,"month":7,"monthName":"July","nbDays":31,"nextMonth":8,"nextMonthName":"August","previousMonth":6,"previousMonthName":"June"},
-        "url": "/on-this-day/July/28",
-	    "title": "On This Day - What Happened on July 28"
+        "calendarInfo": {"day":29,"month":7,"monthName":"July","nbDays":31,"nextMonth":8,"nextMonthName":"August","previousMonth":6,"previousMonthName":"June"},
+        "url": "/on-this-day/July/29",
+	    "title": "On This Day - What Happened on July 29"
     }
 </script>
 
@@ -1019,7 +1019,7 @@ Ask the Chatbot</a>
 <img class="tw:pb-2 tw:max-md:pb-4" src="https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-logo.png?v=3.190.3" alt="Today In History Logo" width="397px" height="52px"/>    
           <div class="d-flex align-items-center tw:gap-2 tw:max-md:mb-0 tw:mb-3">
             <img src="https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-star.svg?v=3.190.3" alt="Today In History Star" width="24" height="24"/>
-            <span class="font-oswald tw:text-[var(--tan-date-text-tih)] tw:text-lg text-uppercase cursor-pointer tih-transparent" data-popover=".md-history-calendar-popover">July&nbsp;28</span>
+            <span class="font-oswald tw:text-[var(--tan-date-text-tih)] tw:text-lg text-uppercase cursor-pointer tih-transparent" data-popover=".md-history-calendar-popover">July&nbsp;29</span>
         </div>
         </div>
 
@@ -1190,15 +1190,15 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/28/60728-050-CA6992FF/infantrymen-German-Maxim-World-War-I-machine.jpg?w=356&h=200&c=crop" alt="World War I: German infantrymen" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/82/71282-050-0BA83678/launch-space-shuttle-liftoff-Challenger-success-programs-June-18-1983.jpg?w=356&h=200&c=crop" alt="Challenger" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:mb-3 tw:mt-2 tw:text-black/40 font-newsreader">
-        Imperial War Museum</div>
+        NASA</div>
 
-    <div class="tw:text-2xl! tw:mb-2 tw:text-[var(--black-tih)] font-lora">Beginning of World War I</div>
+    <div class="tw:text-2xl! tw:mb-2 tw:text-[var(--black-tih)] font-lora">National Aeronautics and Space Administration established</div>
     <div class="tw:text-base/6! font-newsreader tw:[&_blockquote]:hidden tw:[&_p.topic-paragraph]:text-base! tw:[&_p.topic-paragraph]:leading-6!">
-    Using the assassination of the Austrian archduke <a href="https://www.britannica.com/biography/Franz-Ferdinand-Archduke-of-Austria-Este" class="md-crosslink " data-show-preview="true">Franz Ferdinand</a> as a pretext to present <a href="https://www.britannica.com/place/Serbia" class="md-crosslink " data-show-preview="true">Serbia</a> with an unacceptable ultimatum, <a href="https://www.britannica.com/place/Austria-Hungary" class="md-crosslink " data-show-preview="true">Austria-Hungary</a> declared war on the Slavic country on this day in 1914, sparking <a href="https://www.britannica.com/event/World-War-I" class="md-crosslink " data-show-preview="true">World War I</a>. <em>[<a href="https://www.britannica.com/quiz/world-war-i-quiz" class="md-crosslink " data-show-preview="true">How much do you know about World War I?</a>]</em></div>
+    Criticized for allowing the <a href="https://www.britannica.com/place/Soviet-Union" class="md-crosslink " data-show-preview="true">Soviet Union</a> to launch the first man-made satellite to orbit <a href="https://www.britannica.com/place/Earth" class="md-crosslink " data-show-preview="true">Earth</a> (<a href="https://www.britannica.com/technology/Sputnik" class="md-crosslink " data-show-preview="true">Sputnik</a> 1, on October 4, 1957), U.S. President <a href="https://www.britannica.com/biography/Dwight-D-Eisenhower" class="md-crosslink " data-show-preview="true">Dwight D. Eisenhower</a> signed legislation this day in 1958 that created <a href="https://www.britannica.com/topic/NASA" class="md-crosslink " data-show-preview="true">NASA</a>. <em>[<a href="https://www.britannica.com/quiz/space-exploration" class="md-crosslink " data-show-preview="true">Take our quiz about space exploration</a>.]</em></div>
 </div></div>
             <div class="tw:basis-2/3 tw:flex tw:flex-col tw:pb-4 tw:max-md:basis-full">
                 <div class="tw:flex tw:flex-row tw:justify-between tw:mb-4 tw:border-b-[1px] tw:border-[var(--gray-300-tih)] tw:pb-4">
@@ -1218,7 +1218,7 @@ Ask the Chatbot</a>
                         </div>
                         <div class="day-in-history-card tw:flex tw:flex-col tw:flex-1"> 
     <div class="tw:w-89 tw:h-50 tw:max-md:w-full tw:flex tw:flex-col tw:items-center tw:justify-center">
-        <a href="/biography/Jacqueline-Kennedy-Onassis?utm_source=otd" class="tw:w-full tw:h-full">
+        <a href="/biography/Benito-Mussolini?utm_source=otd" class="tw:w-full tw:h-full">
                     
 
 
@@ -1258,16 +1258,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/48/146448-050-CF271A31/John-F-Kennedy-Jacqueline-May-3-1961.jpg?w=356&h=200&c=crop" alt="John F. Kennedy and Jacqueline Kennedy" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/91/9891-050-DC25B5E5/Benito-Mussolini.jpg?w=356&h=200&c=crop" alt="Benito Mussolini" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </a>
             </div>
     <div class="tw:text-xs tw:italic tw:mb-3 tw:mt-2 tw:text-black/40 font-newsreader">
-        Abbie Rowe—National Park Service/John F. Kennedy Presidential Library</div>
+        H. Roger-Viollet</div>
 
-    <div class="tw:text-2xl! tw:mb-2 tw:text-[var(--black-tih)] font-lora">Jacqueline Kennedy Onassis</div>
+    <div class="tw:text-2xl! tw:mb-2 tw:text-[var(--black-tih)] font-lora">Benito Mussolini</div>
     <div class="tw:text-base/6! font-newsreader tw:[&_blockquote]:hidden tw:[&_p.topic-paragraph]:text-base! tw:[&_p.topic-paragraph]:leading-6!">
-      <p class="topic-paragraph">Born this day in 1929 was <a href="https://www.britannica.com/biography/Jacqueline-Kennedy-Onassis" class="md-crosslink " data-show-preview="true">Jacqueline Kennedy Onassis</a>, who redefined the role of U.S. <a href="https://www.britannica.com/topic/first-lady-United-States-title" class="md-crosslink " data-show-preview="true">first lady</a> with her elegance, charm, and especially her composure after the <a href="https://www.britannica.com/event/assassination-of-John-F-Kennedy" class="md-crosslink " data-show-preview="true">1963 assassination</a> of her husband, President <a href="https://www.britannica.com/biography/John-F-Kennedy" class="md-crosslink " data-show-preview="true">John F. Kennedy</a>.</p> </div>
+       <blockquote> <p>From today onwards we are all Italians and nothing but Italians. Now that steel has met steel, one single cry comes from our hearts—Viva l’Italia!</p> <footer>Benito Mussolini</footer> </blockquote> <p class="topic-paragraph">Born this day in 1883, <a href="https://www.britannica.com/biography/Benito-Mussolini" class="md-crosslink " data-show-preview="true">Benito Mussolini</a> was the first of 20th-century Europe’s <a href="https://www.britannica.com/topic/fascism" class="md-crosslink " data-show-preview="true">fascist</a> dictators, assuming absolute power of Italy in 1922, and his harsh rule and involvement in <a href="https://www.britannica.com/event/World-War-II" class="md-crosslink " data-show-preview="true">World War II</a> led to his death in 1945.</p> </div>
 </div></div>
                     <div class="tw:flex tw:flex-col tw:flex-1">
                         <div class="tw:flex tw:min-md:hidden tw:flex-row tw:justify-between tw:mb-4 tw:border-b-[1px] tw:border-[var(--gray-300-tih)] tw:pb-4">
@@ -1276,27 +1276,27 @@ Ask the Chatbot</a>
                         <div class="tw:w-full tw:flex tw:flex-col tw:items-center tw:bg-[var(--tan-light-tih)] tw:border-[var(--tan-default-tih)] tw:border-[1px] tw:py-8 tw:px-6">
                             <div class="tw:grid tw:grid-cols-2 tw:gap-4 tw:max-md:gap-2">
                                 <div class="tw:flex tw:flex-col tw:items-center tw:mb-2">
-                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1941</div>
-                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Riccardo-Muti?utm_source=otd">Riccardo Muti</a>
-                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">Italian conductor</div>
+                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1950</div>
+                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Jenny-Holzer?utm_source=otd">Jenny Holzer</a>
+                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">American conceptual artist</div>
                                     </div>
                                 <div class="tw:flex tw:flex-col tw:items-center tw:mb-2">
-                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1938</div>
-                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Robert-Hughes?utm_source=otd">Robert Hughes</a>
-                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">Australian art critic and television personality</div>
+                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1903</div>
+                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Diana-Vreeland?utm_source=otd">Diana Vreeland</a>
+                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">American editor and fashion expert</div>
                                     </div>
                                 <div class="tw:flex tw:flex-col tw:items-center tw:mb-2">
-                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1937</div>
-                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/John-Walker-American-spy?utm_source=otd">John Walker</a>
-                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">American spy</div>
+                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1820</div>
+                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Clement-L-Vallandigham?utm_source=otd">Clement L. Vallandigham</a>
+                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">American politician</div>
                                     </div>
                                 <div class="tw:flex tw:flex-col tw:items-center tw:mb-2">
-                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1879</div>
-                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Lucy-Burns?utm_source=otd">Lucy Burns</a>
-                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">American suffragist</div>
+                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1672</div>
+                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Charles-Lennox-1st-Duke-of-Richmond?utm_source=otd">Charles Lennox, 1st Duke of Richmond</a>
+                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">English noble [1672-1723]</div>
                                     </div>
                                 </div>
-                            <a href="/more-on-this-day/July-28" class="tw:rounded-full tw:mt-6 tw:py-3 tw:px-15 font-oswald tw:text-base tw:bg-[var(--tan-lighter-tih)] tw:border-[1px] tw:border-[var(--tan-dark-tih)] tw:no-underline! tw:text-[var(--black-tih)]!">MORE&nbsp;BIRTHDAYS</a>
+                            <a href="/more-on-this-day/July-29" class="tw:rounded-full tw:mt-6 tw:py-3 tw:px-15 font-oswald tw:text-base tw:bg-[var(--tan-lighter-tih)] tw:border-[1px] tw:border-[var(--tan-dark-tih)] tw:no-underline! tw:text-[var(--black-tih)]!">MORE&nbsp;BIRTHDAYS</a>
                         </div>
                     </div>
                 </div>
@@ -1307,7 +1307,7 @@ Ask the Chatbot</a>
             <div class="py-30">
                 <div class="grid">
                     <div class="tw:flex tw:flex-col col-100 col-sm">
-                        <h2 class="tw:uppercase font-oswald font-2xl tw:text-[var(--black-tih)] tw:pb-4 tw:border-b-[1px] tw:border-[var(--gray-300-tih)]">More on July&nbsp;28</h2>
+                        <h2 class="tw:uppercase font-oswald font-2xl tw:text-[var(--black-tih)] tw:pb-4 tw:border-b-[1px] tw:border-[var(--gray-300-tih)]">More on July&nbsp;29</h2>
                         <div class="tw:w-full tw:gap-8 tw:flex tw:flex-col">
                             <div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1351,16 +1351,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/55/205055-050-42D82D67/IRA-container-Northern-Ireland-Derry.jpg?w=260&h=196&c=crop" alt="IRA graffiti" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/18/127118-050-346C260E/Eris-right-artist-Sun-rendering.jpg?w=260&h=196&c=crop" alt="Eris" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        © Attila Jandi/Dreamstime.com</div>
+        NASA/JPL—Caltech</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
     <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">2005</div>
       <div class="tw:text-base/6 font-newsreader">
-      The <a href="https://www.britannica.com/topic/Irish-Republican-Army" class="md-crosslink " data-show-preview="true">Irish Republican Army</a> announced that it had ended its armed campaign and instead would pursue only peaceful means to achieve its objectives.</div>
+      Planetary scientists formally announced the discovery of what was believed to be the 10th <a href="https://www.britannica.com/science/planet" class="md-crosslink " data-show-preview="true">planet</a>; it was later designated a <a href="https://www.britannica.com/science/dwarf-planet" class="md-crosslink " data-show-preview="true">dwarf planet</a> and given the name <a href="https://www.britannica.com/topic/Eris-Greek-and-Roman-mythology" class="md-crosslink " data-show-preview="true">Eris</a>. <em>[<a href="https://www.britannica.com/list/our-5-dwarf-planets" class="md-crosslink " data-show-preview="true">Read more about Eris and four other dwarf planets</a>.]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1404,16 +1404,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/67/4367-050-0CE2596E/Miguel-Indurain-stage-1993-Tour-de-France-1993.jpg?w=260&h=196&c=crop" alt="Miguel Indurain" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/70/207570-050-BCCA7714/Charles-princess-Diana-Wales-Buckingham-Palace-wedding-July-29-1981.jpg?w=260&h=196&c=crop" alt="Prince Charles and Princess Diana" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        AP</div>
+        © Shutterstock.com</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1991</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1981</div>
       <div class="tw:text-base/6 font-newsreader">
-      Spanish cyclist Miguel Indurain won his first of five consecutive <a href="https://www.britannica.com/sports/Tour-de-France" class="md-crosslink " data-show-preview="true">Tour de France</a> titles. <em>[<a href="https://www.britannica.com/quiz/tour-de-france-fact-or-fiction" class="md-crosslink " data-show-preview="true">Sort fact from fiction in our Tour de France quiz</a>.]</em></div>
+      <a href="https://www.britannica.com/biography/Charles-III-king-of-the-United-Kingdom" class="md-crosslink " data-show-preview="true">Prince Charles</a> and <a href="https://www.britannica.com/biography/Diana-princess-of-Wales" class="md-crosslink " data-show-preview="true">Lady Diana Spencer</a> were married in St. Paul’s Cathedral in London. <em>[<a href="https://www.britannica.com/quiz/princess-diana" class="md-crosslink " data-show-preview="true">How much do you know about Princess Diana?</a>]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1457,16 +1457,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/53/142853-050-1C941DB5/Map-intensity-earthquake-Tangshan-July-28-1976.jpg?w=260&h=196&c=crop" alt="Tangshan earthquake of 1976" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/49/124849-004-9CD4174F/headquarters-International-Atomic-Energy-Agency-Vienna.jpg?w=260&h=196&c=crop" alt="International Atomic Energy Agency (IAEA) headquarters" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        Encyclopædia Britannica, Inc.</div>
+        Sarajevo-x</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1976</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1957</div>
       <div class="tw:text-base/6 font-newsreader">
-      An <a href="https://www.britannica.com/event/Tangshan-earthquake-of-1976" class="md-crosslink " data-show-preview="true">earthquake</a> in the industrial city of <a href="https://www.britannica.com/place/Tangshan" class="md-crosslink " data-show-preview="true">Tangshan</a>, China, killed more than 240,000 people. <em>[<a href="https://www.britannica.com/list/6-deadliest-earthquakes" class="md-crosslink " data-show-preview="true">Find out more about the deadliest earthquakes since 1950</a>.]</em></div>
+      The <a href="https://www.britannica.com/topic/International-Atomic-Energy-Agency" class="md-crosslink " data-show-preview="true">International Atomic Energy Agency</a> was created. <em>[<a href="https://www.britannica.com/quiz/world-organizations-fact-or-fiction" class="md-crosslink " data-show-preview="true">Sort fact from fiction in our quiz about world organizations</a>.]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1510,16 +1510,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/89/77089-050-4523B481/Eva-Marie-Saint-scene-On-the-Waterfront.jpg?w=260&h=196&c=crop" alt="On the Waterfront" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/50/175050-050-09E67583/riders-Mumakil-The-Lord-of-the-Rings.jpg?w=260&h=196&c=crop" alt="The Lord of the Rings: The Return of the King" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        © 1969 Columbia Pictures Corporation, all rights reserved.</div>
+        © 2003 New Line Cinema Productions, Inc.</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
     <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1954</div>
       <div class="tw:text-base/6 font-newsreader">
-      The classic film <a href="https://www.britannica.com/topic/On-the-Waterfront" class="md-crosslink " data-show-preview="true">On the Waterfront</a>—directed by <a href="https://www.britannica.com/biography/Elia-Kazan" class="md-crosslink " data-show-preview="true">Elia Kazan</a> and featuring one of <a href="https://www.britannica.com/biography/Marlon-Brando" class="md-crosslink " data-show-preview="true">Marlon Brando</a>’s most iconic performances—was released in the United States. <em>[<a href="https://www.britannica.com/quiz/everything-about-movies-quiz" class="md-crosslink " data-show-preview="true">How much do you know about movies?</a>]</em></div>
+      The first part of <a href="https://www.britannica.com/biography/J-R-R-Tolkien" class="md-crosslink " data-show-preview="true">J.R.R. Tolkien</a>’s fantasy epic <a href="https://www.britannica.com/topic/The-Lord-of-the-Rings" class="md-crosslink " data-show-preview="true">The Lord of the Rings</a>—which became a sociocultural phenomenon and was adapted into a series of blockbuster films in the early 2000s—was published. <em>[<a href="https://www.britannica.com/quiz/fantasy-lands" class="md-crosslink " data-show-preview="true">Test your knowledge of fantasy lands</a>.]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1563,228 +1563,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/15/264615-050-A2C4664B/firemen-clear-debris-at-the-empire-state-building-after-bomber-crashed-into-it-july-28-1945.jpg?w=260&h=196&c=crop" alt="Aftermath of the Empire State Building B-25 crash" class="tw:object-cover tw:w-full tw:h-full"   />
-    
-</div>
-    <div class="tw:text-xs tw:italic tw:text-black/40">
-        ©  Keystone-France—Gamma-Keystone/Getty Images</div>
-  </div>
-  <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1945</div>
-      <div class="tw:text-base/6 font-newsreader">
-      A U.S. Army Air Forces&nbsp;B-25&nbsp;bomber <a href="https://www.britannica.com/event/Empire-State-Building-B-25-crash" class="md-crosslink " data-show-preview="true">crashed into the Empire State Building</a> after its pilot became disoriented in thick fog. The accident killed 14 people and injured 26.</div>
-  </div>
-</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
-  <div class="tw:flex tw:flex-col tw:gap-2">
-  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-        <img loading="lazy" src="https://cdn.britannica.com/86/163386-050-13BF7A9C/Frederick-Peters-White-Zombie-scene-Bela-Lugosi.jpg?w=260&h=196&c=crop" alt="White Zombie" class="tw:object-cover tw:w-full tw:h-full"   />
-    
-</div>
-    <div class="tw:text-xs tw:italic tw:text-black/40">
-        Copyright © 1932 United Artists Corporation</div>
-  </div>
-  <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1932</div>
-      <div class="tw:text-base/6 font-newsreader">
-      The first feature-length <a href="https://www.britannica.com/topic/zombie-fictional-creature" class="md-crosslink " data-show-preview="true">zombie</a> film, White Zombie—inspired by the book and by a stage play called Zombie—was released in New York City; it starred <a href="https://www.britannica.com/biography/Bela-Lugosi" class="md-crosslink " data-show-preview="true">Bela Lugosi</a>. <em>[<a href="https://www.britannica.com/quiz/film-buff" class="md-crosslink " data-show-preview="true">Take our film buff quiz</a>.]</em></div>
-  </div>
-</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
-  <div class="tw:flex tw:flex-col tw:gap-2">
-  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-        <img loading="lazy" src="https://cdn.britannica.com/85/142485-050-C3EECA7A/page-Fourteenth-Amendment-to-the-Constitution-of.jpg?w=260&h=196&c=crop" alt="Fourteenth Amendment" class="tw:object-cover tw:w-full tw:h-full"   />
-    
-</div>
-    <div class="tw:text-xs tw:italic tw:text-black/40">
-        National Archives, Washington, D.C.</div>
-  </div>
-  <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1868</div>
-      <div class="tw:text-base/6 font-newsreader">
-      The <a href="https://www.britannica.com/topic/Fourteenth-Amendment" class="md-crosslink " data-show-preview="true">Fourteenth Amendment</a> to the <a href="https://www.britannica.com/topic/Constitution-of-the-United-States-of-America" class="md-crosslink " data-show-preview="true">U.S. Constitution</a>—which granted citizenship and equal civil and legal rights to Black Americans and enslaved people who had been emancipated after the <a href="https://www.britannica.com/event/American-Civil-War" class="md-crosslink " data-show-preview="true">Civil War</a>—entered into force. <em>[<a href="https://www.britannica.com/quiz/amendments-to-the-us-constitution" class="md-crosslink " data-show-preview="true">Test your knowledge of amendments to the U.S. Constitution</a>.]</em></div>
-  </div>
-</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
-  <div class="tw:flex tw:flex-col tw:gap-2">
-  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-        <img loading="lazy" src="https://cdn.britannica.com/36/10936-004-AED5CA4D/Gerard-Manley-Hopkins-detail-portrait-Harry-Ellis.jpg?w=260&h=196&c=crop" alt="Gerard Manley Hopkins" class="tw:object-cover tw:w-full tw:h-full"   />
-    
-</div>
-    <div class="tw:text-xs tw:italic tw:text-black/40">
-        Image: Encyclopædia Britannica, Inc.</div>
-  </div>
-  <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1844</div>
-      <div class="tw:text-base/6 font-newsreader">
-      <a href="https://www.britannica.com/biography/Gerard-Manley-Hopkins" class="md-crosslink " data-show-preview="true">Gerard Manley Hopkins</a>, who was one of the most individual of Victorian writers and who influenced many leading 20th-century poets, was born in Stratford, Essex, England. <em>[<a href="https://www.britannica.com/quiz/the-literary-world-authors-poets" class="md-crosslink " data-show-preview="true">Take our authors and poets quiz</a>.]</em></div>
-  </div>
-</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
-  <div class="tw:flex tw:flex-col tw:gap-2">
-  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-        <img loading="lazy" src="https://cdn.britannica.com/48/3448-050-1EFC8CF3/Flag-Peru.jpg?w=260&h=196&c=crop" alt="Peru" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/00/6200-050-2E25CE97/Flag-Albania.jpg?w=260&h=196&c=crop" alt="Albania" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
         Encyclopædia Britannica, Inc.</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1821</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1913</div>
       <div class="tw:text-base/6 font-newsreader">
-      <a href="https://www.britannica.com/place/Peru" class="md-crosslink " data-show-preview="true">Peru</a> declared its independence from <a href="https://www.britannica.com/place/Spain" class="md-crosslink " data-show-preview="true">Spain</a>. <em>[<a href="https://www.britannica.com/quiz/south-america-fact-or-fiction" class="md-crosslink " data-show-preview="true">Sort fact from fiction in our South America quiz</a>.]</em></div>
+      <a href="https://www.britannica.com/place/Albania" class="md-crosslink " data-show-preview="true">Albania</a> was formally recognized by the major European powers as an independent principality following the issuance of the <a href="https://www.britannica.com/event/Vlore-proclamation" class="md-crosslink " data-show-preview="true">Vlorë proclamation</a>. <em>[<a href="https://www.britannica.com/quiz/european-history" class="md-crosslink " data-show-preview="true">Take our quiz about European history</a>.]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1828,16 +1616,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/94/192994-050-080A6AAC/Maximilien-Robespierre-guillotine-July-28-1794.jpg?w=260&h=196&c=crop" alt="Engraving of Maximilien Robespierre being positioned at the guillotine by two men, with a crowd and Parisian buildings in the background, titled &quot;The Death of Robespierre.&quot;" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/77/199877-050-E46CA5B5/Dag-Hammarskjold-1959.jpg?w=260&h=196&c=crop" alt="Dag Hammarskjöld" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        © Heritage Images—Hulton Archive/Getty Images</div>
+        JO/UN Photo</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1794</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1905</div>
       <div class="tw:text-base/6 font-newsreader">
-      <a href="https://www.britannica.com/biography/Maximilien-Robespierre" class="md-crosslink " data-show-preview="true">Maximilien Robespierre</a>, a radical Jacobin leader and one of the principal figures in the <a href="https://www.britannica.com/event/French-Revolution" class="md-crosslink " data-show-preview="true">French Revolution</a>, was guillotined before a cheering mob on the Place de la Révolution in Paris. <em>[<a href="https://www.britannica.com/quiz/france-a-history-quiz" class="md-crosslink " data-show-preview="true">How much do you know about French history?</a>]</em></div>
+      Swedish economist and statesman <a href="https://www.britannica.com/biography/Dag-Hammarskjold" class="md-crosslink " data-show-preview="true">Dag Hammarskjöld</a>, who served as the second secretary-general (1953–61) of the <a href="https://www.britannica.com/topic/United-Nations" class="md-crosslink " data-show-preview="true">United Nations</a> and received the 1961 <a href="https://www.britannica.com/topic/Winners-of-the-Nobel-Prize-for-Peace-1856940" class="md-crosslink " data-show-preview="true">Nobel Peace Prize</a>, was born. <em>[<a href="https://www.britannica.com/quiz/nobel-prize" class="md-crosslink " data-show-preview="true">Take our Nobel Prize quiz</a>.]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1881,16 +1669,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/61/114461-050-E9206DB5/Johann-Sebastian-Bach-oil-canvas-Elias-Gottlieb-1746.jpg?w=260&h=196&c=crop" alt="Johann Sebastian Bach" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/36/69636-050-81A93193/Self-Portrait-artist-panel-board-Vincent-van-Gogh-1887.jpg?w=260&h=196&c=crop" alt="Vincent van Gogh: Self-Portrait" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        © Photos.com/Getty Images</div>
+        The Art Institute of Chicago, Joseph Winterbotham Collection, reference no. 1954.326 (CC0)</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1750</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1890</div>
       <div class="tw:text-base/6 font-newsreader">
-      <a href="https://www.britannica.com/biography/Johann-Sebastian-Bach" class="md-crosslink " data-show-preview="true">Johann Sebastian Bach</a>, one of the greatest composers of all time, died at age 65. <em>[<a href="https://www.britannica.com/quiz/music-composers-fact-or-fiction" class="md-crosslink " data-show-preview="true">Sort fact from fiction in our music composers quiz</a>.]</em></div>
+      Dutch painter <a href="https://www.britannica.com/biography/Vincent-van-Gogh" class="md-crosslink " data-show-preview="true">Vincent van Gogh</a>, one of the greatest of the <a href="https://www.britannica.com/art/Post-Impressionism" class="md-crosslink " data-show-preview="true">Post-Impressionists</a>, died in Auvers-sur-Oise, France, two days after shooting himself. <em>[<a href="https://www.britannica.com/quiz/which-artist-part-one-quiz" class="md-crosslink " data-show-preview="true">Test your knowledge of artists</a>.]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1934,16 +1722,228 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/75/192075-050-0C3D74AC/oil-Henry-VIII-wood-Hans-Holbein-the.jpg?w=260&h=196&c=crop" alt="Hans Holbein the Younger: Portrait of Henry VIII of England" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/37/145037-050-3D4B63C7/peaks-Teton-Range-Wyoming.jpg?w=260&h=196&c=crop" alt="Teton Range" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        Daderot</div>
+        © Bryant Aardema/Shutterstock.com</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1540</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1872</div>
       <div class="tw:text-base/6 font-newsreader">
-      King <a href="https://www.britannica.com/biography/Henry-VIII-king-of-England" class="md-crosslink " data-show-preview="true">Henry VIII</a> of <a href="https://www.britannica.com/place/England" class="md-crosslink " data-show-preview="true">England</a> privately married his fifth wife, <a href="https://www.britannica.com/biography/Catherine-Howard" class="md-crosslink " data-show-preview="true">Catherine Howard</a>. <em>[<a href="https://www.britannica.com/quiz/henry-viii-and-his-wives" class="md-crosslink " data-show-preview="true">Take our quiz about Henry VIII and his wives</a>.]</em></div>
+      Nathaniel P. Langford and James Stevenson made the first ascent of Grand Teton, the highest peak of the <a href="https://www.britannica.com/place/Teton-Range" class="md-crosslink " data-show-preview="true">Teton Range</a> in <a href="https://www.britannica.com/place/Wyoming-state" class="md-crosslink " data-show-preview="true">Wyoming</a>. <em>[<a href="https://www.britannica.com/quiz/mountains-fact-or-fiction" class="md-crosslink " data-show-preview="true">Sort fact from fiction in our quiz about mountains</a>.]</em></div>
+  </div>
+</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
+  <div class="tw:flex tw:flex-col tw:gap-2">
+  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/86/135586-050-524BC7BB/Townsend-Harris.jpg?w=260&h=196&c=crop" alt="Townsend Harris" class="tw:object-cover tw:w-full tw:h-full"   />
+    
+</div>
+    <div class="tw:text-xs tw:italic tw:text-black/40">
+        Brady-Handy Photograph Collection/Library of Congress, Washington, D.C. (Digital File Number: LC-DIG-cwpbh-01612)</div>
+  </div>
+  <div class="tw:flex tw:flex-col tw:gap-2">
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1858</div>
+      <div class="tw:text-base/6 font-newsreader">
+      <a href="https://www.britannica.com/biography/Townsend-Harris" class="md-crosslink " data-show-preview="true">Townsend Harris</a> persuaded the Japanese to sign the <a href="https://www.britannica.com/event/Harris-Treaty" class="md-crosslink " data-show-preview="true">Harris Treaty</a>, an agreement securing commercial and diplomatic privileges for the <a href="https://www.britannica.com/place/United-States" class="md-crosslink " data-show-preview="true">United States</a> in <a href="https://www.britannica.com/place/Japan" class="md-crosslink " data-show-preview="true">Japan</a>.</div>
+  </div>
+</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
+  <div class="tw:flex tw:flex-col tw:gap-2">
+  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/66/80466-050-2E125F5C/Arc-de-Triomphe-Paris-France.jpg?w=260&h=196&c=crop" alt="Arc de Triomphe" class="tw:object-cover tw:w-full tw:h-full"   />
+    
+</div>
+    <div class="tw:text-xs tw:italic tw:text-black/40">
+        © Corbis</div>
+  </div>
+  <div class="tw:flex tw:flex-col tw:gap-2">
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1836</div>
+      <div class="tw:text-base/6 font-newsreader">
+      The <a href="https://www.britannica.com/topic/Arc-de-Triomphe" class="md-crosslink " data-show-preview="true">Arc de Triomphe</a>, one of the largest <a href="https://www.britannica.com/topic/triumphal-arch" class="md-crosslink " data-show-preview="true">triumphal arches</a> in the world, was officially inaugurated in <a href="https://www.britannica.com/place/Paris" class="md-crosslink " data-show-preview="true">Paris</a>. <em>[<a href="https://www.britannica.com/quiz/paris-at-random" class="md-crosslink " data-show-preview="true">How much do you know about Paris?</a>]</em></div>
+  </div>
+</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
+  <div class="tw:flex tw:flex-col tw:gap-2">
+  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/12/9012-050-1DC777E4/Alexis-de-Tocqueville-detail-oil-painting-Theodore-1850.jpg?w=260&h=196&c=crop" alt="Alexis de Tocqueville" class="tw:object-cover tw:w-full tw:h-full"   />
+    
+</div>
+    <div class="tw:text-xs tw:italic tw:text-black/40">
+        H. Roger-Viollet</div>
+  </div>
+  <div class="tw:flex tw:flex-col tw:gap-2">
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1805</div>
+      <div class="tw:text-base/6 font-newsreader">
+      French political scientist, historian, and politician <a href="https://www.britannica.com/biography/Alexis-de-Tocqueville" class="md-crosslink " data-show-preview="true">Alexis de Tocqueville</a>, who was best known for his Democracy in America, 4 vol. (1835–40), was born. <em>[<a href="https://www.britannica.com/quiz/open-books" class="md-crosslink " data-show-preview="true">Test your knowledge of famous books</a>.]</em></div>
+  </div>
+</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
+  <div class="tw:flex tw:flex-col tw:gap-2">
+  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/91/90491-050-BD6932E6/Drawing-engraving-Invincible-Spanish-Armada-July-1588.jpg?w=260&h=196&c=crop" alt="Spanish Armada" class="tw:object-cover tw:w-full tw:h-full"   />
+    
+</div>
+    <div class="tw:text-xs tw:italic tw:text-black/40">
+        © The British Library/Robana/REX/Shutterstock.com</div>
+  </div>
+  <div class="tw:flex tw:flex-col tw:gap-2">
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1588</div>
+      <div class="tw:text-base/6 font-newsreader">
+      The <a href="https://www.britannica.com/topic/Armada-Spanish-naval-fleet" class="md-crosslink " data-show-preview="true">Spanish Armada</a>, the great fleet sent by King <a href="https://www.britannica.com/biography/Philip-II-king-of-Spain-and-Portugal" class="md-crosslink " data-show-preview="true">Philip II</a> of <a href="https://www.britannica.com/place/Spain" class="md-crosslink " data-show-preview="true">Spain</a> to invade <a href="https://www.britannica.com/place/England" class="md-crosslink " data-show-preview="true">England</a>, was first sighted by the English off Lizard Point, Cornwall. <em>[<a href="https://www.britannica.com/quiz/history-of-warfare" class="md-crosslink " data-show-preview="true">Take our history of warfare quiz</a>.]</em></div>
   </div>
 </div></div>
                     </div>
