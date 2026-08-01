@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-08-01T10:08:33.054Z
+# generated: 2026-08-01T11:05:20.879Z
 # url:       https://www.britannica.com/on-this-day/august-1
 # fetcher:   Wayback Machine
 # kind:      html
