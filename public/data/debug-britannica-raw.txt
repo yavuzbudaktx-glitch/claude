@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-08-02T07:43:46.220Z
+# generated: 2026-08-02T09:01:41.770Z
 # url:       https://www.britannica.com/on-this-day/august-2
 # fetcher:   Wayback Machine
 # kind:      html
