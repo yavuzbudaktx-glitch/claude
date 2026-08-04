@@ -25,6 +25,15 @@ import "./themes/y2k.css";
 import "./themes/brutalist.css";
 import "./themes/bauhaus.css";
 import "./themes/retro.css";
+import "./themes/noir.css";
+import "./themes/steampunk.css";
+import "./themes/vapor.css";
+import "./themes/zen.css";
+import "./themes/circuit.css";
+import "./themes/ember.css";
+import "./themes/arctic.css";
+import "./themes/dune.css";
+import "./themes/sakura.css";
 import { PrefsProvider } from "@/components/PrefsProvider";
 import { CommandPalette } from "@/components/CommandPalette";
 import { FocusMode } from "@/components/FocusMode";
@@ -33,6 +42,7 @@ import { ThemeRestorer } from "@/components/ThemeRestorer";
 import { WeatherFx } from "@/components/WeatherFx";
 import { TerminalFx } from "@/components/TerminalFx";
 import { ComicFx } from "@/components/ComicFx";
+import { ThemeFx } from "@/components/ThemeFx";
 import { CURRENT } from "@/lib/app-config";
 import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 
@@ -82,6 +92,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <WeatherFx />
           <TerminalFx />
           <ComicFx />
+          <ThemeFx />
           <ScrollProgress />
           {children}
           <CommandPalette />

@@ -14,7 +14,9 @@ export type ThemeId =
   | "newspaper" | "blueprint" | "comic"
   | "stainedglass" | "deco" | "cyberpunk"
   | "renaissance" | "marble" | "subway"
-  | "ottoman" | "y2k" | "brutalist" | "bauhaus" | "retro";
+  | "ottoman" | "y2k" | "brutalist" | "bauhaus" | "retro"
+  | "noir" | "steampunk" | "vapor" | "zen" | "circuit"
+  | "ember" | "arctic" | "dune" | "sakura";
 
 export type ThemeKind = "concept" | "theme";
 
@@ -39,6 +41,11 @@ export const THEMES: Array<{
   { id: "brutalist",    label: "Brutalist",    kind: "concept", description: "Raw board-formed concrete, oversized type, heavy slabs — a Soviet monument of a page." },
   { id: "bauhaus",      label: "Bauhaus",      kind: "concept", description: "Primary red, blue and yellow, hard geometry and heavy grotesque type." },
   { id: "retro",        label: "Retro PC",     kind: "concept", description: "Beige hardware, pixel type, chunky window chrome and a CRT desktop." },
+  { id: "noir",         label: "Noir",         kind: "concept", description: "Film noir — venetian blind shadows, cigarette haze, and a follow-spot that tracks your cursor." },
+  { id: "steampunk",    label: "Steampunk",    kind: "concept", description: "Brass, copper and riveted iron — turning gears, pressure gauges, oil-lamp light." },
+  { id: "vapor",        label: "Vaporwave",    kind: "concept", description: "Neon grid horizon, chrome sun, VHS tracking lines and endless magenta dusk." },
+  { id: "zen",          label: "Zen Garden",   kind: "concept", description: "Raked sand that ripples where you move, sumi ink, washi paper and river stones." },
+  { id: "circuit",      label: "Circuit",      kind: "concept", description: "A populated PCB — gold traces, solder pads, and current that pulses along the board." },
   { id: "subway",       label: "Karnak",       kind: "concept", description: "Ancient Egypt — limestone ashlar, carved hieroglyph registers, papyrus panels in gold, lapis and carnelian." },
   // ---- THEMES: atmospheric palettes — same site, different mood/colour.
   { id: "aurora",       label: "Aurora Glass", kind: "theme",   description: "Default — frosted cards, cyan accent, drifting aurora background." },
@@ -47,6 +54,10 @@ export const THEMES: Array<{
   { id: "water",        label: "Water",        kind: "theme",   description: "Submerged in a turquoise sea — flowing caustics, streaming bubbles, deep aqua glow." },
   { id: "rain",         label: "Rain",         kind: "theme",   description: "A storm at the window — slate sky, three parallax sheets of rain streaking down the whole page." },
   { id: "sunset",       label: "Sunset",       kind: "theme",   description: "Golden hour at the coast — peach sky, a slowly sinking sun, long horizon afterglow." },
+  { id: "ember",        label: "Ember",        kind: "theme",   description: "Banked firelight — charcoal, ash and a hearth glow that breathes." },
+  { id: "arctic",       label: "Arctic",       kind: "theme",   description: "Polar white and glacier blue, with a low aurora on the horizon." },
+  { id: "dune",         label: "Dune",         kind: "theme",   description: "Desert noon — sand, terracotta and heat haze over rippled dunes." },
+  { id: "sakura",       label: "Sakura",       kind: "theme",   description: "Cherry blossom — soft pinks, warm paper, and petals drifting down the page." },
 ];
 
 const KEY = "brief.theme.v1";
@@ -58,6 +69,8 @@ const VALID: ThemeId[] = [
   "renaissance", "marble", "subway",
   "terminal", "mono",
   "newspaper", "blueprint", "comic",
+  "noir", "steampunk", "vapor", "zen", "circuit",
+  "ember", "arctic", "dune", "sakura",
 ];
 const NON_DEFAULT = VALID.filter((v) => v !== "aurora");
 
@@ -103,7 +116,7 @@ export const THEME_BOOT_SCRIPT = `
   (function() {
     try {
       var v = localStorage.getItem(${JSON.stringify(KEY)});
-      var ok = ['galaxy','forest','water','rain','sunset','ottoman','stainedglass','deco','cyberpunk','y2k','brutalist','bauhaus','retro','renaissance','marble','subway','terminal','mono','newspaper','blueprint','comic'];
+      var ok = ['galaxy','forest','water','rain','sunset','ottoman','stainedglass','deco','cyberpunk','y2k','brutalist','bauhaus','retro','renaissance','marble','subway','terminal','mono','newspaper','blueprint','comic','noir','steampunk','vapor','zen','circuit','ember','arctic','dune','sakura'];
       var root = document.documentElement;
       var saved = v && ok.indexOf(v) >= 0 ? v : null;
       if (saved) root.classList.add('theme-' + saved);

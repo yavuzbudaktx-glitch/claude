@@ -1,0 +1,26 @@
+/* SAKURA — cherry blossom. Warm paper, soft pinks, and petals that actually
+   fall (ThemeFx draws them on a canvas; they flutter and rock as they drop). */
+:root.theme-sakura:not(.dark){color-scheme:light;
+ --bg:#fbeef1;--paper:#fffafb;--paper-2:#fdf2f5;--ink:#3a2028;--ink-soft:#5f3a45;
+ --muted:#8f6673;--muted-2:#c3a1ac;--rule:rgba(58,32,40,.15);--rule-soft:rgba(58,32,40,.06);
+ --accent:#c25a7d;--accent-soft:rgba(194,90,125,.12);--accent-2:#7a8f5c;--hl:rgba(194,90,125,.09);
+ --up:#5f7a3d;--down:#c2415a;--grad-from:#8f3f5c;--grad-via:#e8879f;--grad-to:#f7d3dc;
+ --glass:rgba(255,250,251,.82);--glass-border:rgba(255,255,255,.9);--glow:rgba(232,135,159,.28);
+ --shadow-card:0 12px 30px -18px rgba(58,32,40,.26);--shadow-hover:0 22px 48px -20px rgba(58,32,40,.34);
+ --aurora-1:rgba(247,211,220,.4);--aurora-2:rgba(232,135,159,.16);--aurora-3:rgba(122,143,92,.1);--aurora-4:transparent;--grain:.04;}
+:root.theme-sakura.dark{color-scheme:dark;
+ --bg:#160d11;--paper:rgba(255,190,210,.06);--paper-2:rgba(255,190,210,.1);--ink:#fbe6ec;--ink-soft:#dcb9c6;
+ --muted:#a37e8c;--muted-2:#674c57;--rule:rgba(255,190,210,.2);--rule-soft:rgba(255,190,210,.08);
+ --accent:#f090ac;--accent-soft:rgba(240,144,172,.15);--accent-2:#9ab87a;--hl:rgba(240,144,172,.12);
+ --up:#9ab87a;--down:#f0707f;--grad-from:#8f3f5c;--grad-via:#f090ac;--grad-to:#ffe3ec;
+ --glass:rgba(30,17,22,.68);--glass-border:rgba(255,190,210,.2);--glow:rgba(240,144,172,.34);
+ --shadow-card:0 18px 40px -18px #000;--shadow-hover:0 28px 58px -20px #000;
+ --aurora-1:rgba(240,144,172,.26);--aurora-2:rgba(154,184,122,.14);--aurora-3:rgba(60,25,38,.5);--aurora-4:rgba(8,4,6,.55);--grain:.05;}
+/* Branch silhouettes reaching in from the top corners — the tree the petals
+   are falling from. */
+.theme-sakura body::after{opacity:1;mix-blend-mode:normal;
+ background-image:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='170'%3E%3Cg fill='none' stroke='%235a3b2a' stroke-width='5' opacity='.3' stroke-linecap='round'%3E%3Cpath d='M-10 12q70 18 120 6t90 26'/%3E%3Cpath d='M60 20q14 26 6 44M140 24q-10 24 2 40M206 34q16 20 10 40'/%3E%3C/g%3E%3Cg fill='%23e8879f' opacity='.42'%3E%3Ccircle cx='66' cy='66' r='5'/%3E%3Ccircle cx='78' cy='58' r='4'/%3E%3Ccircle cx='146' cy='68' r='5'/%3E%3Ccircle cx='214' cy='76' r='4.5'/%3E%3C/g%3E%3C/svg%3E"),
+  radial-gradient(120% 50% at 50% 0%, rgba(255,214,228,.34), transparent 62%);
+ background-repeat:repeat-x,no-repeat; background-position:0 0,0 0; background-size:280px 170px,100% 100%;}
+.theme-sakura .card { border-radius:14px; }

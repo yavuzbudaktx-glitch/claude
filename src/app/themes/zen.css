@@ -1,0 +1,64 @@
+/* ZEN GARDEN — raked sand, sumi ink, river stones.
+   Interactive: ThemeFx draws expanding rake rings on the canvas wherever the
+   pointer travels, so moving across the page disturbs the sand. */
+:root.theme-zen:not(.dark) {
+  color-scheme: light;
+  --bg:#e5ded0; --paper:#f4efe4; --paper-2:#ebe4d6; --ink:#2b271f; --ink-soft:#4e483d;
+  --muted:#7b7263; --muted-2:#a9a191; --rule:rgba(43,39,31,.22); --rule-soft:rgba(43,39,31,.08);
+  --accent:#5c6b52; --accent-soft:rgba(92,107,82,.14); --accent-2:#8c7b5e; --hl:rgba(92,107,82,.1);
+  --up:#5c6b52; --down:#a35a3a; --grad-from:#2b271f; --grad-via:#5c6b52; --grad-to:#8c7b5e;
+  --glass:#f4efe4; --glass-border:rgba(43,39,31,.16); --glow:rgba(92,107,82,.2);
+  --shadow-card:0 1px 0 rgba(43,39,31,.05),0 18px 34px -24px rgba(43,39,31,.5);
+  --shadow-hover:0 2px 3px rgba(43,39,31,.07),0 26px 50px -26px rgba(43,39,31,.55);
+  --aurora-1:transparent;--aurora-2:transparent;--aurora-3:transparent;--aurora-4:transparent;--grain:.05;
+  --zen-rake:rgba(43,39,31,.07); --on-accent:#f4efe4;
+}
+:root.theme-zen.dark {
+  color-scheme: dark;
+  --bg:#14130f; --paper:rgba(230,222,204,.05); --paper-2:rgba(230,222,204,.09); --ink:#ece5d6; --ink-soft:#c8c0ae;
+  --muted:#8d8674; --muted-2:#5a5548; --rule:rgba(230,222,204,.18); --rule-soft:rgba(230,222,204,.07);
+  --accent:#8fa37f; --accent-soft:rgba(143,163,127,.15); --accent-2:#c2ab84; --hl:rgba(143,163,127,.12);
+  --up:#8fa37f; --down:#cf8a63; --grad-from:#ece5d6; --grad-via:#8fa37f; --grad-to:#c2ab84;
+  --glass:rgba(24,22,18,.66); --glass-border:rgba(230,222,204,.14); --glow:rgba(143,163,127,.22);
+  --shadow-card:0 20px 44px -20px #000; --shadow-hover:0 30px 62px -22px #000;
+  --aurora-1:transparent;--aurora-2:transparent;--aurora-3:transparent;--aurora-4:transparent;--grain:.06;
+  --zen-rake:rgba(230,222,204,.05); --on-accent:#14130f;
+}
+.theme-zen body { background: transparent; }
+/* The sand itself: concentric rake lines around two stones, plus the fine
+   grain of the sand. Static — the LIVE ripples are drawn by ThemeFx. */
+.theme-zen body::before {
+  inset:0; filter:none; animation:none; transform:translateZ(0); background-color:transparent;
+  background-image:
+    repeating-radial-gradient(circle at 22% 30%, transparent 0 26px, var(--zen-rake) 26px 28px),
+    repeating-radial-gradient(circle at 78% 72%, transparent 0 22px, var(--zen-rake) 22px 24px),
+    repeating-linear-gradient(96deg, var(--zen-rake) 0 2px, transparent 2px 30px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='150' height='150' filter='url(%23s)' opacity='0.06'/%3E%3C/svg%3E");
+  background-size: auto, auto, auto, 150px 150px;
+}
+/* Two river stones sitting in the sand. */
+.theme-zen body::after {
+  opacity:1; mix-blend-mode:normal;
+  background-image:
+    radial-gradient(58px 42px at 22% 30%, rgba(70,64,54,.55), rgba(70,64,54,.25) 62%, transparent 72%),
+    radial-gradient(40px 30px at 78% 72%, rgba(70,64,54,.5), rgba(70,64,54,.22) 62%, transparent 72%);
+  background-repeat:no-repeat,no-repeat;
+}
+.theme-zen .card {
+  border-radius:2px; border:1px solid var(--rule);
+  /* washi: laid paper with visible fibre */
+  background-image:
+    repeating-linear-gradient(0deg, rgba(43,39,31,.03) 0 1px, transparent 1px 5px),
+    linear-gradient(180deg, rgba(255,255,255,.35), transparent 30%);
+}
+.theme-zen .card::before{display:none;} .theme-zen .card::after{display:none;}
+.theme-zen .font-display { font-weight:500; letter-spacing:.01em; }
+.theme-zen .text-gradient { background:none; color:var(--accent); -webkit-text-fill-color:var(--accent); animation:none; }
+.theme-zen .headrule { border-bottom:1px solid var(--rule-soft); padding-bottom:.6rem; }
+/* An ensō — the single brushed circle. */
+.theme-zen .dot {
+  background:none; box-shadow:none; width:12px; height:12px; border-radius:50%;
+  border:2px solid var(--ink); border-right-color:transparent; transform:rotate(-24deg);
+}
+.theme-zen .chip,.theme-zen .btn-ghost { border-radius:2px; background:var(--paper); border:1px solid var(--rule); }
+.theme-zen .chip-active { background:var(--ink); color:var(--on-accent); border-color:var(--ink); }

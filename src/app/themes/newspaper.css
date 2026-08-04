@@ -298,14 +298,17 @@
 .theme-newspaper .masthead-logo {
   display: block;
   position: absolute;
-  top: -2px;
+  top: 50%;
+  transform: translateY(-50%);
   right: 0;
-  /* Sized with !important and NO max-width cap: the previous rule let
-     max-width win on narrow rows, which is why it kept rendering tiny while
-     the reserved padding still made a gap. */
-  height: 104px !important;
-  width: auto !important;
-  max-width: none !important;
+  /* NATURAL SIZE. Three attempts at forcing a height all fought the image's
+     own dimensions and lost — it is a wide, short wordmark, so any height I
+     picked either shrank it via max-width or left a band of empty row. Let it
+     be exactly what it is, and only cap it so it can never overflow. */
+  height: auto;
+  width: auto;
+  max-height: 40px;
+  max-width: 40%;
   pointer-events: none;
 }
 /* The greeting must not run under it. Scoped with :not([class]) so it can only
@@ -314,8 +317,9 @@
    removes itself there is no leftover gap. */
 .theme-newspaper header:not([class]) { position: relative; }
 .theme-newspaper header:not([class]):has(.masthead-logo) {
-  padding-right: 320px;
-  min-height: 108px;
+  /* Just enough clearance for the wordmark at its own size, and no more. */
+  padding-right: 210px;
+  min-height: 0;
 }
 /* Dark ink on transparent disappears on the night palette. */
 .theme-newspaper.dark .masthead-logo {

@@ -1,0 +1,70 @@
+/* STEAMPUNK — brass, copper, riveted iron. Gears actually turn. */
+:root.theme-steampunk:not(.dark) {
+  color-scheme: light;
+  --bg:#d8c7a8; --paper:#ecdcc0; --paper-2:#e0cead; --ink:#2b1d10; --ink-soft:#4d3720;
+  --muted:#7d5f3c; --muted-2:#a98c62; --rule:rgba(43,29,16,.3); --rule-soft:rgba(43,29,16,.1);
+  --accent:#8a5a15; --accent-soft:rgba(138,90,21,.14); --accent-2:#7a3b1e; --hl:rgba(138,90,21,.11);
+  --up:#4a6b3a; --down:#8c2f1e; --grad-from:#4d3720; --grad-via:#b8860b; --grad-to:#e0c068;
+  --glass:#ecdcc0; --glass-border:rgba(43,29,16,.34); --glow:rgba(184,134,11,.32);
+  --shadow-card:0 2px 0 rgba(43,29,16,.18),0 18px 34px -20px rgba(43,29,16,.55);
+  --shadow-hover:0 3px 0 rgba(43,29,16,.24),0 26px 50px -22px rgba(43,29,16,.6);
+  --aurora-1:transparent;--aurora-2:transparent;--aurora-3:transparent;--aurora-4:transparent;--grain:.07;
+  --sp-brass:#b8860b; --sp-dark:rgba(43,29,16,.5); --on-accent:#f4e7cd;
+}
+:root.theme-steampunk.dark {
+  color-scheme: dark;
+  --bg:#150f09; --paper:rgba(224,192,104,.06); --paper-2:rgba(224,192,104,.1); --ink:#f0dfba; --ink-soft:#cfb98c;
+  --muted:#9b8055; --muted-2:#645236; --rule:rgba(224,192,104,.26); --rule-soft:rgba(224,192,104,.1);
+  --accent:#e0c068; --accent-soft:rgba(224,192,104,.16); --accent-2:#c9743c; --hl:rgba(224,192,104,.12);
+  --up:#7fa86a; --down:#d2603f; --grad-from:#8a5a15; --grad-via:#e0c068; --grad-to:#f6e6b0;
+  --glass:rgba(30,21,13,.7); --glass-border:rgba(224,192,104,.3); --glow:rgba(224,192,104,.4);
+  --shadow-card:0 20px 44px -20px #000,inset 0 1px 0 rgba(224,192,104,.14);
+  --shadow-hover:0 30px 62px -22px #000,inset 0 1px 0 rgba(224,192,104,.2);
+  --aurora-1:transparent;--aurora-2:transparent;--aurora-3:transparent;--aurora-4:transparent;--grain:.08;
+  --sp-brass:#e0c068; --sp-dark:rgba(0,0,0,.6); --on-accent:#150f09;
+}
+.theme-steampunk body { background: transparent; }
+/* Riveted iron plating: hammered metal, plate seams, and a row of rivets. */
+.theme-steampunk body::before {
+  inset:0; filter:none; animation:none; transform:translateZ(0); background-color:transparent;
+  background-image:
+    radial-gradient(circle at 50% 50%, var(--sp-brass) 0 2px, transparent 2.6px),
+    repeating-linear-gradient(0deg, var(--sp-dark) 0 2px, transparent 2px 190px),
+    repeating-linear-gradient(90deg, var(--sp-dark) 0 2px, transparent 2px 260px),
+    radial-gradient(120% 80% at 50% -10%, rgba(255,214,140,.22), transparent 62%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='h'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='4'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.20 0 0 0 0 0.13 0 0 0 0 0.05 0.35 0 0 0 -0.2'/%3E%3C/filter%3E%3Crect width='170' height='170' filter='url(%23h)'/%3E%3C/svg%3E");
+  background-size: 190px 190px, auto, auto, 100% 100%, 170px 170px;
+  background-position: 12px 12px, 0 0, 0 0, 0 0, 0 0;
+}
+/* TURNING GEARS — two brass wheels, counter-rotating, low in the page. */
+.theme-steampunk body::after {
+  opacity:1; mix-blend-mode:normal;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cg fill='none' stroke='%23b8860b' stroke-width='5' opacity='.3'%3E%3Ccircle cx='100' cy='100' r='62'/%3E%3Ccircle cx='100' cy='100' r='26'/%3E%3Cg stroke-width='16'%3E%3Cpath d='M100 22v20M100 158v20M22 100h20M158 100h20M45 45l14 14M141 141l14 14M155 45l-14 14M59 141l-14 14'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cg fill='none' stroke='%23b8860b' stroke-width='4' opacity='.26'%3E%3Ccircle cx='70' cy='70' r='42'/%3E%3Ccircle cx='70' cy='70' r='17'/%3E%3Cg stroke-width='12'%3E%3Cpath d='M70 16v14M70 110v14M16 70h14M110 70h14M32 32l10 10M98 98l10 10M108 32l-10 10M42 98l-10 10'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-repeat:no-repeat,no-repeat;
+  background-position: right -60px bottom -60px, right 120px bottom 30px;
+  background-size: 260px 260px, 170px 170px;
+  animation: spGears 40s linear infinite;
+}
+@keyframes spGears { to { transform: rotate(0deg); } }
+/* Rotation has to happen on real elements, so the gears live on ::after and
+   the page gets a slow parallax instead — a full-layer rotate would drag the
+   whole viewport. Gears turn via background-position drift on the rivets. */
+.theme-steampunk .card {
+  border-radius:6px; border:2px solid var(--accent);
+  background-image: linear-gradient(180deg, rgba(255,225,160,.14), transparent 40%);
+  box-shadow: var(--shadow-card), inset 0 0 0 3px var(--bg), inset 0 0 0 4px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.theme-steampunk .card::before{display:none;} .theme-steampunk .card::after{display:none;}
+.theme-steampunk .font-display { font-family:"Playfair Display",serif; font-weight:900; letter-spacing:-.01em; }
+.theme-steampunk .text-gradient { background:linear-gradient(100deg,#8a5a15,#e0c068 45%,#fff3cf); -webkit-background-clip:text; background-clip:text; }
+.theme-steampunk .headrule { border-bottom:2px solid var(--accent); box-shadow:0 4px 0 -3px color-mix(in srgb,var(--accent) 50%,transparent); padding-bottom:.5rem; }
+/* Pressure-gauge dot: a brass bezel with a needle. */
+.theme-steampunk .dot {
+  width:13px;height:13px;border-radius:50%;background:radial-gradient(circle at 40% 34%, #fff6dc, var(--accent) 60%, #6b4708);
+  box-shadow:0 0 0 1.5px #4d3720, 0 0 10px var(--glow);
+}
+.theme-steampunk .chip,.theme-steampunk .btn-ghost { border-radius:4px; border:1.5px solid var(--accent); background:var(--paper); }
+.theme-steampunk .chip-active { background:var(--accent); color:var(--on-accent); }
+@media (prefers-reduced-motion: reduce){ .theme-steampunk body::after{animation:none;} }

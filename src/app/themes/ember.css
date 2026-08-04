@@ -1,0 +1,31 @@
+/* EMBER — banked firelight. Charcoal, ash, and a hearth glow that breathes. */
+:root.theme-ember:not(.dark){color-scheme:light;
+ --bg:#efe4dc;--paper:#fbf3ec;--paper-2:#f4e8df;--ink:#241611;--ink-soft:#4a2f24;
+ --muted:#7d5748;--muted-2:#ab8878;--rule:rgba(36,22,17,.2);--rule-soft:rgba(36,22,17,.07);
+ --accent:#c2410c;--accent-soft:rgba(194,65,12,.13);--accent-2:#9a3412;--hl:rgba(194,65,12,.1);
+ --up:#3f6212;--down:#b91c1c;--grad-from:#7c2d12;--grad-via:#ea580c;--grad-to:#fbbf24;
+ --glass:#fbf3ec;--glass-border:rgba(255,255,255,.8);--glow:rgba(234,88,12,.28);
+ --shadow-card:0 14px 32px -18px rgba(36,22,17,.4);--shadow-hover:0 24px 50px -20px rgba(36,22,17,.5);
+ --aurora-1:rgba(234,88,12,.16);--aurora-2:rgba(251,191,36,.14);--aurora-3:rgba(124,45,18,.1);--aurora-4:transparent;--grain:.05;}
+:root.theme-ember.dark{color-scheme:dark;
+ --bg:#140b08;--paper:rgba(255,170,90,.06);--paper-2:rgba(255,170,90,.1);--ink:#f8e6d8;--ink-soft:#d9b79c;
+ --muted:#a07862;--muted-2:#664a3a;--rule:rgba(255,170,90,.22);--rule-soft:rgba(255,170,90,.09);
+ --accent:#ff7a35;--accent-soft:rgba(255,122,53,.16);--accent-2:#ffce6b;--hl:rgba(255,122,53,.13);
+ --up:#86c34a;--down:#ff5a4a;--grad-from:#7c2d12;--grad-via:#ff7a35;--grad-to:#ffce6b;
+ --glass:rgba(28,15,10,.68);--glass-border:rgba(255,170,90,.24);--glow:rgba(255,122,53,.45);
+ --shadow-card:0 20px 44px -20px #000,inset 0 1px 0 rgba(255,190,130,.1);
+ --shadow-hover:0 30px 62px -22px #000,inset 0 1px 0 rgba(255,190,130,.16);
+ --aurora-1:rgba(255,122,53,.4);--aurora-2:rgba(255,206,107,.22);--aurora-3:rgba(124,45,18,.4);--aurora-4:rgba(10,5,3,.6);--grain:.06;}
+/* The hearth: a low glow at the foot of the page that swells and settles the
+   way a banked fire does, plus drifting ash. */
+.theme-ember body::after{opacity:1;mix-blend-mode:normal;
+ background-image:
+  radial-gradient(150% 60% at 50% 108%, var(--glow), transparent 66%),
+  radial-gradient(1.5px 1.5px at 18% 72%, rgba(255,200,140,.5), transparent 60%),
+  radial-gradient(1.2px 1.2px at 62% 48%, rgba(255,200,140,.4), transparent 60%),
+  radial-gradient(1.8px 1.8px at 84% 66%, rgba(255,200,140,.45), transparent 60%);
+ background-size:100% 100%,300px 300px,380px 380px,340px 340px;
+ animation: emberBreathe 7s ease-in-out infinite alternate, emberAsh 26s linear infinite;}
+@keyframes emberBreathe{from{opacity:.82}to{opacity:1}}
+@keyframes emberAsh{from{background-position:0 0,0 0,0 0,0 0}to{background-position:0 0,0 -300px,0 -380px,0 -340px}}
+@media (prefers-reduced-motion:reduce){.theme-ember body::after{animation:none}}
