@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-08-04T09:31:22.031Z
+# generated: 2026-08-04T10:49:03.106Z
 # url:       https://www.britannica.com/on-this-day/august-4
 # fetcher:   Wayback Machine
 # kind:      html
