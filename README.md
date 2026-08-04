@@ -60,6 +60,31 @@ Sign in with Google. Your refresh token is stored in `user_settings.google_refre
 - **News feeds**: edit the `FEEDS` array in `src/lib/feeds.ts`.
 - **Quran translation**: change the editions in `src/lib/quran.ts` (e.g. `en.sahih`).
 
+## System map
+
+```bash
+npm run map      # regenerates public/system-map.html from src/
+```
+
+`scripts/system-map.mjs` reads every `src/app/api/**/route.ts`, follows its imports
+through `src/lib`, and writes a single self-contained HTML page listing each route
+with its cache window, auth, env vars and the external hosts it talks to — plus an
+env-var table showing what actually breaks when each one is unset, and a generated
+`.env.local.example` covering every variable the code reads.
+
+Open it at `/system-map.html` on a running server (`http://localhost:3000/system-map.html`,
+or the Vercel URL) and the **Health check** button probes every read-only GET route
+from the page, reporting status and latency. It never calls routes that upload,
+delete, notify, or take a dynamic `[id]`. Opened straight from disk the probe can't
+work — the browser blocks cross-origin requests — but the map itself still reads fine.
+
+Regenerate it after adding routes; it is generated, so don't hand-edit the HTML.
+
+> Because it lives in `public/`, the map is readable by anyone who knows the URL on a
+> deployed build. It exposes route paths, file paths and env var *names* — never any
+> values — but if that bothers you, delete `public/system-map.html` before deploying
+> and generate it only when you need it locally.
+
 ## Verification checklist
 
 - `curl http://localhost:3000/api/weather` → JSON with `current.temperature_2m`.

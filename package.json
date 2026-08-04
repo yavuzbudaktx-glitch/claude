@@ -8,6 +8,7 @@
     "start": "next start",
     "shrink:fighters": "powershell -ExecutionPolicy Bypass -File scripts/shrink-fighters.ps1",
     "lint": "next lint",
+    "map": "node scripts/system-map.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

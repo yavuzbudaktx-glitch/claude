@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>System Map — Rest Area</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  color-scheme:light;
+  --plane:#f9f9f7; --surface:#fcfcfb; --raised:#ffffff;
+  --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7; --ring:rgba(11,11,11,.10);
+  --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4;
+  --accent:#2a78d6;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme:dark;
+    --plane:#0d0d0d; --surface:#1a1a19; --raised:#212120;
+    --ink:#fff; --ink-2:#c3c2b7; --muted:#898781;
+    --grid:#2c2c2a; --axis:#383835; --ring:rgba(255,255,255,.10);
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181;
+    --accent:#3987e5;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --plane:#0d0d0d; --surface:#1a1a19; --raised:#212120;
+  --ink:#fff; --ink-2:#c3c2b7; --muted:#898781;
+  --grid:#2c2c2a; --axis:#383835; --ring:rgba(255,255,255,.10);
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181;
+  --accent:#3987e5;
+}
+html,body{margin:0;padding:0}
+body{background:var(--plane);color:var(--ink);font:15px/1.55 var(--sans);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+#app{max-width:1180px;margin:0 auto;padding:28px 20px 96px}
+a{color:var(--accent)}
+h1,h2,h3{margin:0;font-weight:640;letter-spacing:-.011em}
+button{font:inherit;color:inherit}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.title h1{font-size:24px}
+.title p{margin:6px 0 0;color:var(--ink-2);font-size:13.5px;max-width:62ch}
+.stamp{color:var(--muted);font:12px/1.4 var(--mono)}
+.iconbtn{background:var(--surface);border:1px solid var(--ring);border-radius:9px;
+  padding:7px 11px;cursor:pointer;font-size:12.5px;color:var(--ink-2)}
+.iconbtn:hover{border-color:var(--axis);color:var(--ink)}
+
+/* tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:10px;margin:22px 0}
+.tile{background:var(--surface);border:1px solid var(--ring);border-radius:12px;padding:13px 15px}
+.tile .v{font-size:27px;font-weight:660;letter-spacing:-.02em;line-height:1.15}
+.tile .k{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.055em;margin-top:3px}
+.tile .sub{font-size:11.5px;color:var(--ink-2);margin-top:5px}
+.tile.flag .v{color:var(--critical)}
+
+/* tabs */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--grid);margin:26px 0 0;overflow-x:auto}
+.tab{background:none;border:0;border-bottom:2px solid transparent;padding:9px 13px;cursor:pointer;
+  color:var(--ink-2);font-size:13.5px;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.panel{padding-top:20px}
+.panel[hidden]{display:none}
+
+/* cards */
+.card{background:var(--surface);border:1px solid var(--ring);border-radius:12px;padding:16px 18px;margin-bottom:12px}
+.card h3{font-size:14.5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card p{margin:9px 0 0;color:var(--ink-2);font-size:13.2px;max-width:82ch}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:11px}
+.chip{font:11.5px/1 var(--mono);background:var(--plane);border:1px solid var(--ring);
+  border-radius:6px;padding:5px 7px;color:var(--ink-2)}
+.chip.click{cursor:pointer}
+.chip.click:hover{border-color:var(--accent);color:var(--ink)}
+
+/* status pill: icon + label, never colour alone */
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;
+  border-radius:999px;padding:3px 9px;border:1px solid;white-space:nowrap}
+.pill svg{width:11px;height:11px;flex:none}
+.p-good{color:var(--good);border-color:var(--good)}
+.p-warning{color:#8a6100;border-color:var(--warning)}
+.p-serious{color:#a24d24;border-color:var(--serious)}
+.p-critical{color:var(--critical);border-color:var(--critical)}
+.p-idle{color:var(--muted);border-color:var(--axis)}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])) .p-warning{color:var(--warning)}
+  :root:where(:not([data-theme="light"])) .p-serious{color:var(--serious)}}
+:root[data-theme="dark"] .p-warning{color:var(--warning)}
+:root[data-theme="dark"] .p-serious{color:var(--serious)}
+
+/* segmented bar */
+.segbar{display:flex;height:26px;border-radius:7px;overflow:hidden;gap:2px;background:var(--surface);margin:6px 0 10px}
+.segbar div{height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.swatch{width:10px;height:10px;border-radius:3px;flex:none}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+input[type=text],input[type=url],select{background:var(--surface);color:var(--ink);
+  border:1px solid var(--ring);border-radius:9px;padding:8px 11px;font:13.5px var(--sans);min-width:0}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
+.grow{flex:1 1 210px}
+.btn{background:var(--accent);color:#fff;border:0;border-radius:9px;padding:8px 14px;
+  cursor:pointer;font-size:13.5px;font-weight:560}
+.btn:disabled{opacity:.55;cursor:default}
+.btn.ghost{background:var(--surface);color:var(--ink-2);border:1px solid var(--ring)}
+.btn.ghost:hover:not(:disabled){color:var(--ink);border-color:var(--axis)}
+label.check{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-2);cursor:pointer}
+
+/* table */
+.wrap{overflow-x:auto;border:1px solid var(--ring);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--grid);vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);
+  font-weight:600;position:sticky;top:0;background:var(--surface);cursor:pointer;white-space:nowrap;z-index:1}
+th:hover{color:var(--ink)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--plane)}
+td.path{font-family:var(--mono);font-size:12.3px;white-space:nowrap}
+td.num{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-2)}
+.tag{display:inline-block;font:10.5px/1 var(--mono);padding:3px 5px;border-radius:5px;
+  border:1px solid var(--ring);color:var(--ink-2);margin:1px 2px 1px 0}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.empty{padding:30px;text-align:center;color:var(--muted);font-size:13.5px}
+.muted{color:var(--muted)}
+details.rowx td{background:var(--plane)}
+details summary{cursor:pointer;font-size:12.5px;color:var(--accent);list-style:none}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"▸ ";display:inline-block;transition:transform .12s}
+details[open] summary::before{transform:rotate(90deg)}
+pre.env{background:var(--plane);border:1px solid var(--ring);border-radius:10px;padding:14px;
+  overflow-x:auto;font:12.3px/1.6 var(--mono);color:var(--ink-2);margin:0;white-space:pre}
+.note{font-size:12.5px;color:var(--muted);margin-top:8px}
+.bar{height:5px;border-radius:3px;background:var(--grid);overflow:hidden;min-width:56px;margin-top:5px}
+.bar>i{display:block;height:100%;background:var(--accent)}
+@media (max-width:640px){#app{padding:20px 13px 80px}.tile .v{font-size:23px}.title h1{font-size:20px}}
+@media print{.tabs,.controls,.iconbtn{display:none}.panel[hidden]{display:block!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script id="data" type="application/json">{"generated":"2026-08-04T10:21:20.611Z","routes":[{"path":"/api/agent/changes","file":"src/app/api/agent/changes/route.ts","group":"files","methods":["GET"],"probe":"caution","why":"does real work upstream — opt in to probe","envs":["NEXT_PUBLIC_SUPABASE_URL","SUPABASE_SERVICE_ROLE_KEY"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/agent-auth.ts","src/lib/supabase/service.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":30,"auth":["service-role"]},{"path":"/api/agent/cursor","file":"src/app/api/agent/cursor/route.ts","group":"files","methods":["POST"],"probe":"unsafe","why":"no GET handler (POST)","envs":["NEXT_PUBLIC_SUPABASE_URL","SUPABASE_SERVICE_ROLE_KEY"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/agent-auth.ts","src/lib/supabase/service.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":32,"auth":["service-role"]},{"path":"/api/agent/delete","file":"src/app/api/agent/delete/route.ts","group":"files","methods":["POST"],"probe":"unsafe","why":"no GET handler (POST)","envs":["NEXT_PUBLIC_SUPABASE_URL","SUPABASE_SERVICE_ROLE_KEY"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/agent-auth.ts","src/lib/supabase/service.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":46,"auth":["service-role"]},{"path":"/api/agent/download","file":"src/app/api/agent/download/route.ts","group":"files","methods":["GET"],"probe":"unsafe","why":"side effects or dynamic segment — never probed","envs":["NEXT_PUBLIC_SUPABASE_URL","SUPABASE_SERVICE_ROLE_KEY"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/agent-auth.ts","src/lib/supabase/service.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":37,"auth":["service-role"]},{"path":"/api/agent/upload","file":"src/app/api/agent/upload/route.ts","group":"files","methods":["POST"],"probe":"unsafe","why":"no GET handler (POST)","envs":["NEXT_PUBLIC_SUPABASE_URL","SUPABASE_SERVICE_ROLE_KEY"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/agent-auth.ts","src/lib/supabase/service.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":119,"auth":["service-role"]},{"path":"/api/archive-random","file":"src/app/api/archive-random/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":[],"hosts":["api.allorigins.win","api.codetabs.com","archive.org"],"proxies":["api.allorigins.win","api.codetabs.com"],"mirrors":[],"libs":[],"ttl":null,"dynamic":null,"runtime":null,"maxDuration":30,"loc":106,"auth":[]},{"path":"/api/art-of-day","file":"src/app/api/art-of-day/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":[],"hosts":["api.allorigins.win","api.codetabs.com","collectionapi.metmuseum.org","corsproxy.io","en.wikipedia.org","www.metmuseum.org"],"proxies":["api.allorigins.win","api.codetabs.com","corsproxy.io"],"mirrors":[],"libs":["src/lib/daily-content.ts","src/lib/race-json.ts"],"ttl":null,"dynamic":null,"runtime":null,"maxDuration":30,"loc":211,"auth":[]},{"path":"/api/bird-audio","file":"src/app/api/bird-audio/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":[],"hosts":[],"proxies":[],"mirrors":[],"libs":[],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":30,"loc":63,"auth":[]},{"path":"/api/bird-of-day","file":"src/app/api/bird-of-day/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":[],"hosts":["api.allorigins.win","api.codetabs.com","commons.wikimedia.org","corsproxy.io","en.wikipedia.org","xeno-canto.org"],"proxies":["api.allorigins.win","api.codetabs.com","corsproxy.io"],"mirrors":[],"libs":["src/lib/daily-content.ts","src/lib/race-json.ts"],"ttl":null,"dynamic":null,"runtime":null,"maxDuration":30,"loc":234,"auth":[]},{"path":"/api/cabinet","file":"src/app/api/cabinet/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":[],"hosts":["api.allorigins.win","api.codetabs.com","collectionapi.metmuseum.org","www.metmuseum.org"],"proxies":["api.allorigins.win","api.codetabs.com"],"mirrors":[],"libs":[],"ttl":null,"dynamic":null,"runtime":null,"maxDuration":null,"loc":110,"auth":[]},{"path":"/api/calendar","file":"src/app/api/calendar/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":["GOOGLE_CLIENT_ID","GOOGLE_CLIENT_SECRET","NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL"],"hosts":["oauth2.googleapis.com","www.googleapis.com"],"proxies":[],"mirrors":[],"libs":["src/lib/google/calendar.ts","src/lib/google/refresh.ts","src/lib/supabase/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":36,"auth":["session"]},{"path":"/api/cpa-video","file":"src/app/api/cpa-video/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":["YOUTUBE_API_KEY","YT_API_KEY"],"hosts":["api.allorigins.win","api.codetabs.com","api.piped.private.coffee","i.ytimg.com","inv.nadeko.net","invidious.nerdvpn.de","invidious.privacyredirect.com","pipedapi.adminforge.de","pipedapi.darkness.services","pipedapi.kavin.rocks","pipedapi.reallyaweso.me","www.googleapis.com","www.youtube.com","yewtu.be"],"proxies":["api.allorigins.win","api.codetabs.com"],"mirrors":["api.piped.private.coffee","inv.nadeko.net","invidious.nerdvpn.de","invidious.privacyredirect.com","pipedapi.adminforge.de","pipedapi.darkness.services","pipedapi.kavin.rocks","pipedapi.reallyaweso.me","yewtu.be"],"libs":["src/lib/youtube-library.ts"],"ttl":null,"dynamic":null,"runtime":null,"maxDuration":60,"loc":49,"auth":[]},{"path":"/api/devices","file":"src/app/api/devices/route.ts","group":"files","methods":["GET","POST","DELETE"],"probe":"safe","why":"read-only GET","envs":["NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL","SUPABASE_SERVICE_ROLE_KEY"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/agent-auth.ts","src/lib/supabase/server.ts","src/lib/supabase/service.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":64,"auth":["session"]},{"path":"/api/digest","file":"src/app/api/digest/route.ts","group":"digest","methods":["GET"],"probe":"caution","why":"does real work upstream — opt in to probe","envs":["DIGEST_FROM","DIGEST_TO","DIGEST_USER_ID","RESEND_API_KEY","SUPABASE_SERVICE_KEY","SUPABASE_URL"],"hosts":["api.resend.com","resend.com"],"proxies":[],"mirrors":[],"libs":[],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":349,"auth":["service-role"]},{"path":"/api/digest/daily","file":"src/app/api/digest/daily/route.ts","group":"digest","methods":["GET"],"probe":"caution","why":"does real work upstream — opt in to probe","envs":["CRON_SECRET","DIGEST_FROM","DIGEST_TO","DIGEST_USER_ID","GOOGLE_CLIENT_ID","GOOGLE_CLIENT_SECRET","RESEND_API_KEY","SUPABASE_SERVICE_KEY","SUPABASE_URL"],"hosts":["api.resend.com","oauth2.googleapis.com","resend.com","www.googleapis.com"],"proxies":[],"mirrors":[],"libs":["src/lib/digest/shared.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":30,"loc":127,"auth":["cron","service-role"]},{"path":"/api/digest/weekly","file":"src/app/api/digest/weekly/route.ts","group":"digest","methods":["GET"],"probe":"caution","why":"does real work upstream — opt in to probe","envs":["CRON_SECRET","DIGEST_FROM","DIGEST_TO","DIGEST_USER_ID","GOOGLE_CLIENT_ID","GOOGLE_CLIENT_SECRET","RESEND_API_KEY","SUPABASE_SERVICE_KEY","SUPABASE_URL"],"hosts":["api.resend.com","oauth2.googleapis.com","www.googleapis.com"],"proxies":[],"mirrors":[],"libs":["src/lib/digest/shared.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":30,"loc":134,"auth":["cron","service-role"]},{"path":"/api/drive","file":"src/app/api/drive/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":["GOOGLE_CLIENT_ID","GOOGLE_CLIENT_SECRET","NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL"],"hosts":["drive.google.com","oauth2.googleapis.com","www.googleapis.com"],"proxies":[],"mirrors":[],"libs":["src/lib/google/drive.ts","src/lib/google/refresh.ts","src/lib/supabase/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":40,"auth":["session"]},{"path":"/api/emails","file":"src/app/api/emails/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":["GOOGLE_CLIENT_ID","GOOGLE_CLIENT_SECRET","NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL"],"hosts":["gmail.googleapis.com","oauth2.googleapis.com"],"proxies":[],"mirrors":[],"libs":["src/lib/google/gmail.ts","src/lib/google/refresh.ts","src/lib/supabase/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":44,"auth":["session"]},{"path":"/api/fighter-photo","file":"src/app/api/fighter-photo/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":[],"hosts":["en.wikipedia.org"],"proxies":[],"mirrors":[],"libs":["src/lib/local-fighter-photos.ts"],"ttl":86400,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":47,"auth":[]},{"path":"/api/files/download","file":"src/app/api/files/download/route.ts","group":"files","methods":["GET"],"probe":"unsafe","why":"side effects or dynamic segment — never probed","envs":["NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":34,"auth":["session"]},{"path":"/api/files/list","file":"src/app/api/files/list/route.ts","group":"files","methods":["GET"],"probe":"safe","why":"read-only GET","envs":["NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":21,"auth":["session"]},{"path":"/api/files/search","file":"src/app/api/files/search/route.ts","group":"files","methods":["GET"],"probe":"safe","why":"read-only GET","envs":["NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":27,"auth":["session"]},{"path":"/api/files/upload","file":"src/app/api/files/upload/route.ts","group":"files","methods":["POST"],"probe":"unsafe","why":"no GET handler (POST)","envs":["NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":66,"auth":["session"]},{"path":"/api/hadith","file":"src/app/api/hadith/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":[],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/hadith.ts","src/lib/local-date.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":21,"auth":[]},{"path":"/api/nasa-apod","file":"src/app/api/nasa-apod/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":["NASA_API_KEY"],"hosts":["api.allorigins.win","api.codetabs.com","api.nasa.gov","apod.nasa.gov","corsproxy.io","r.jina.ai","thingproxy.freeboard.io"],"proxies":["api.allorigins.win","api.codetabs.com","corsproxy.io","r.jina.ai","thingproxy.freeboard.io"],"mirrors":[],"libs":["src/lib/daily-content.ts"],"ttl":null,"dynamic":null,"runtime":null,"maxDuration":20,"loc":242,"auth":[]},{"path":"/api/news","file":"src/app/api/news/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":[],"hosts":["feeds.arstechnica.com","feeds.bbci.co.uk","feeds.marketwatch.com","feeds.npr.org","finance.yahoo.com","hnrss.org","rss.nytimes.com","search.cnbc.com","t24.com.tr","techcrunch.com","www.aa.com.tr","www.aljazeera.com","www.cbsnews.com","www.dallasnews.com","www.dmagazine.com","www.ft.com","www.hurriyet.com.tr","www.nbcdfw.com","www.technologyreview.com","www.theguardian.com","www.theverge.com","www.wfaa.com"],"proxies":[],"mirrors":[],"libs":["src/lib/feeds.ts"],"ttl":null,"dynamic":null,"runtime":null,"maxDuration":null,"loc":18,"auth":[]},{"path":"/api/news/category","file":"src/app/api/news/category/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":[],"hosts":["feeds.arstechnica.com","feeds.bbci.co.uk","feeds.marketwatch.com","feeds.npr.org","finance.yahoo.com","hnrss.org","rss.nytimes.com","search.cnbc.com","t24.com.tr","techcrunch.com","www.aa.com.tr","www.aljazeera.com","www.cbsnews.com","www.dallasnews.com","www.dmagazine.com","www.ft.com","www.hurriyet.com.tr","www.nbcdfw.com","www.technologyreview.com","www.theguardian.com","www.theverge.com","www.wfaa.com"],"proxies":[],"mirrors":[],"libs":["src/lib/feeds.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":26,"auth":[]},{"path":"/api/quran","file":"src/app/api/quran/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":[],"hosts":["api.alquran.cloud"],"proxies":[],"mirrors":[],"libs":["src/lib/quran-curated.ts","src/lib/quran.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":32,"auth":[]},{"path":"/api/reddit","file":"src/app/api/reddit/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":["REDDIT_CLIENT_ID","REDDIT_CLIENT_SECRET"],"hosts":["api.allorigins.win","corsproxy.io","oauth.reddit.com","www.reddit.com"],"proxies":["api.allorigins.win","corsproxy.io"],"mirrors":[],"libs":["src/lib/daily-content.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":465,"auth":[]},{"path":"/api/superlig","file":"src/app/api/superlig/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":[],"hosts":["api.sofascore.com","en.wikipedia.org","site.api.espn.com","www.fotmob.com","www.sofascore.com","www.thesportsdb.com"],"proxies":[],"mirrors":[],"libs":[],"ttl":600,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":920,"auth":[]},{"path":"/api/ufc","file":"src/app/api/ufc/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":[],"hosts":["a.espncdn.com","drive.google.com","en.wikipedia.org","lh3.googleusercontent.com","site.api.espn.com","site.web.api.espn.com","www.ufc.com"],"proxies":[],"mirrors":[],"libs":["src/lib/local-fighter-photos.ts","src/lib/ufc-photos.ts"],"ttl":600,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":495,"auth":[]},{"path":"/api/ufc/debug","file":"src/app/api/ufc/debug/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":[],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/local-fighter-photos.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":65,"auth":[]},{"path":"/api/vault/download","file":"src/app/api/vault/download/route.ts","group":"vault","methods":["GET"],"probe":"unsafe","why":"side effects or dynamic segment — never probed","envs":["NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":36,"auth":["session"]},{"path":"/api/vault/items","file":"src/app/api/vault/items/route.ts","group":"vault","methods":["GET","POST"],"probe":"safe","why":"read-only GET","envs":["NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":63,"auth":["session","pin"]},{"path":"/api/vault/items/[id]","file":"src/app/api/vault/items/[id]/route.ts","group":"vault","methods":["PATCH","DELETE"],"probe":"unsafe","why":"no GET handler (PATCH, DELETE)","envs":["NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":56,"auth":["session"]},{"path":"/api/vault/private","file":"src/app/api/vault/private/route.ts","group":"vault","methods":["GET","POST","PUT"],"probe":"safe","why":"read-only GET","envs":["NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":67,"auth":["session","pin"]},{"path":"/api/vault/upload","file":"src/app/api/vault/upload/route.ts","group":"vault","methods":["POST"],"probe":"unsafe","why":"no GET handler (POST)","envs":["NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":52,"auth":["session"]},{"path":"/api/weather","file":"src/app/api/weather/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":[],"hosts":["api.open-meteo.com"],"proxies":[],"mirrors":[],"libs":[],"ttl":600,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":42,"auth":[]},{"path":"/api/wordle","file":"src/app/api/wordle/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":[],"hosts":[],"proxies":[],"mirrors":[],"libs":[],"ttl":null,"dynamic":null,"runtime":null,"maxDuration":null,"loc":81,"auth":[]},{"path":"/api/yt-comments","file":"src/app/api/yt-comments/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":[],"hosts":["api.piped.private.coffee","inv.nadeko.net","invidious.jing.rocks","invidious.nerdvpn.de","pipedapi.adminforge.de","pipedapi.kavin.rocks","pipedapi.reallyaweso.me","yewtu.be"],"proxies":[],"mirrors":["api.piped.private.coffee","inv.nadeko.net","invidious.jing.rocks","invidious.nerdvpn.de","pipedapi.adminforge.de","pipedapi.kavin.rocks","pipedapi.reallyaweso.me","yewtu.be"],"libs":[],"ttl":null,"dynamic":null,"runtime":null,"maxDuration":null,"loc":111,"auth":[]},{"path":"/api/yt-library","file":"src/app/api/yt-library/route.ts","group":"core","methods":["GET"],"probe":"safe","why":"read-only GET","envs":["YOUTUBE_API_KEY","YT_API_KEY"],"hosts":["api.allorigins.win","api.codetabs.com","api.piped.private.coffee","inv.nadeko.net","invidious.nerdvpn.de","invidious.privacyredirect.com","pipedapi.adminforge.de","pipedapi.darkness.services","pipedapi.kavin.rocks","pipedapi.reallyaweso.me","www.googleapis.com","www.youtube.com","yewtu.be"],"proxies":["api.allorigins.win","api.codetabs.com"],"mirrors":["api.piped.private.coffee","inv.nadeko.net","invidious.nerdvpn.de","invidious.privacyredirect.com","pipedapi.adminforge.de","pipedapi.darkness.services","pipedapi.kavin.rocks","pipedapi.reallyaweso.me","yewtu.be"],"libs":["src/lib/youtube-library.ts"],"ttl":null,"dynamic":null,"runtime":null,"maxDuration":60,"loc":83,"auth":[]},{"path":"/api/zuya/auth/register","file":"src/app/api/zuya/auth/register/route.ts","group":"zuya","methods":["POST"],"probe":"unsafe","why":"no GET handler (POST)","envs":["NEXT_PUBLIC_SUPABASE_URL","SUPABASE_SERVICE_ROLE_KEY","ZUYA_SIGNUP_CODE"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/service.ts","src/lib/zuya/config.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":108,"auth":["service-role"]},{"path":"/api/zuya/auth/reset","file":"src/app/api/zuya/auth/reset/route.ts","group":"zuya","methods":["POST"],"probe":"unsafe","why":"no GET handler (POST)","envs":["NEXT_PUBLIC_SUPABASE_URL","SUPABASE_SERVICE_ROLE_KEY","ZUYA_SIGNUP_CODE"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/service.ts","src/lib/zuya/config.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":73,"auth":["service-role"]},{"path":"/api/zuya/auth/status","file":"src/app/api/zuya/auth/status/route.ts","group":"zuya","methods":["GET"],"probe":"safe","why":"read-only GET","envs":["NEXT_PUBLIC_SUPABASE_URL","SUPABASE_SERVICE_ROLE_KEY","ZUYA_SIGNUP_CODE"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/service.ts","src/lib/zuya/config.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":40,"auth":["service-role"]},{"path":"/api/zuya/bereal/tick","file":"src/app/api/zuya/bereal/tick/route.ts","group":"zuya","methods":["GET"],"probe":"unsafe","why":"side effects or dynamic segment — never probed","envs":["NEXT_PUBLIC_SUPABASE_URL","NEXT_PUBLIC_VAPID_PUBLIC_KEY","SUPABASE_SERVICE_ROLE_KEY","VAPID_PRIVATE_KEY"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/service.ts","src/lib/zuya/day.ts","src/lib/zuya/push.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":81,"auth":["service-role"]},{"path":"/api/zuya/calendar","file":"src/app/api/zuya/calendar/route.ts","group":"zuya","methods":["GET"],"probe":"safe","why":"read-only GET","envs":["GOOGLE_CLIENT_ID","GOOGLE_CLIENT_SECRET","NEXT_PUBLIC_SITE_URL","NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL","SUPABASE_SERVICE_ROLE_KEY","ZUYA_GOOGLE_CLIENT_ID","ZUYA_GOOGLE_CLIENT_SECRET","ZUYA_SIGNUP_CODE"],"hosts":["oauth2.googleapis.com","www.googleapis.com"],"proxies":[],"mirrors":[],"libs":["src/lib/google/calendar.ts","src/lib/supabase/service.ts","src/lib/supabase/zuya-server.ts","src/lib/zuya/config.ts","src/lib/zuya/google.ts","src/lib/zuya/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":59,"auth":["zuya","service-role"]},{"path":"/api/zuya/dates","file":"src/app/api/zuya/dates/route.ts","group":"zuya","methods":["GET","POST"],"probe":"safe","why":"read-only GET","envs":["NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL","NEXT_PUBLIC_VAPID_PUBLIC_KEY","SUPABASE_SERVICE_ROLE_KEY","VAPID_PRIVATE_KEY","ZUYA_SIGNUP_CODE"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/service.ts","src/lib/supabase/zuya-server.ts","src/lib/zuya/config.ts","src/lib/zuya/push.ts","src/lib/zuya/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":97,"auth":["zuya","service-role"]},{"path":"/api/zuya/dates/[id]","file":"src/app/api/zuya/dates/[id]/route.ts","group":"zuya","methods":["PATCH"],"probe":"unsafe","why":"no GET handler (PATCH)","envs":["GOOGLE_CLIENT_ID","GOOGLE_CLIENT_SECRET","NEXT_PUBLIC_SITE_URL","NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL","SUPABASE_SERVICE_ROLE_KEY","ZUYA_GOOGLE_CLIENT_ID","ZUYA_GOOGLE_CLIENT_SECRET","ZUYA_SIGNUP_CODE"],"hosts":["oauth2.googleapis.com","www.googleapis.com"],"proxies":[],"mirrors":[],"libs":["src/lib/google/calendar.ts","src/lib/supabase/service.ts","src/lib/supabase/zuya-server.ts","src/lib/zuya/config.ts","src/lib/zuya/google.ts","src/lib/zuya/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":184,"auth":["zuya","service-role"]},{"path":"/api/zuya/google/callback","file":"src/app/api/zuya/google/callback/route.ts","group":"zuya","methods":["GET"],"probe":"unsafe","why":"side effects or dynamic segment — never probed","envs":["GOOGLE_CLIENT_ID","GOOGLE_CLIENT_SECRET","NEXT_PUBLIC_SITE_URL","NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL","SUPABASE_SERVICE_ROLE_KEY","ZUYA_GOOGLE_CLIENT_ID","ZUYA_GOOGLE_CLIENT_SECRET","ZUYA_SIGNUP_CODE"],"hosts":["oauth2.googleapis.com","www.googleapis.com"],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/service.ts","src/lib/supabase/zuya-server.ts","src/lib/zuya/config.ts","src/lib/zuya/google.ts","src/lib/zuya/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":83,"auth":["zuya","service-role"]},{"path":"/api/zuya/google/disconnect","file":"src/app/api/zuya/google/disconnect/route.ts","group":"zuya","methods":["POST"],"probe":"unsafe","why":"no GET handler (POST)","envs":["NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL","SUPABASE_SERVICE_ROLE_KEY","ZUYA_SIGNUP_CODE"],"hosts":["oauth2.googleapis.com"],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/service.ts","src/lib/supabase/zuya-server.ts","src/lib/zuya/config.ts","src/lib/zuya/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":39,"auth":["zuya","service-role"]},{"path":"/api/zuya/google/start","file":"src/app/api/zuya/google/start/route.ts","group":"zuya","methods":["GET"],"probe":"unsafe","why":"side effects or dynamic segment — never probed","envs":["GOOGLE_CLIENT_ID","GOOGLE_CLIENT_SECRET","NEXT_PUBLIC_SITE_URL","NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL","SUPABASE_SERVICE_ROLE_KEY","ZUYA_GOOGLE_CLIENT_ID","ZUYA_GOOGLE_CLIENT_SECRET","ZUYA_SIGNUP_CODE"],"hosts":["accounts.google.com","oauth2.googleapis.com","www.googleapis.com"],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/service.ts","src/lib/supabase/zuya-server.ts","src/lib/zuya/config.ts","src/lib/zuya/google.ts","src/lib/zuya/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":38,"auth":["zuya"]},{"path":"/api/zuya/movie","file":"src/app/api/zuya/movie/route.ts","group":"zuya","methods":["GET"],"probe":"safe","why":"read-only GET","envs":["NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL","OMDB_API_KEY","ZUYA_SIGNUP_CODE"],"hosts":["www.omdbapi.com"],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/zuya-server.ts","src/lib/zuya/config.ts","src/lib/zuya/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":58,"auth":["zuya"]},{"path":"/api/zuya/push/notify","file":"src/app/api/zuya/push/notify/route.ts","group":"zuya","methods":["POST"],"probe":"unsafe","why":"no GET handler (POST)","envs":["NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL","NEXT_PUBLIC_VAPID_PUBLIC_KEY","SUPABASE_SERVICE_ROLE_KEY","VAPID_PRIVATE_KEY","ZUYA_SIGNUP_CODE"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/service.ts","src/lib/supabase/zuya-server.ts","src/lib/zuya/config.ts","src/lib/zuya/push.ts","src/lib/zuya/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":41,"auth":["zuya","service-role"]},{"path":"/api/zuya/push/subscribe","file":"src/app/api/zuya/push/subscribe/route.ts","group":"zuya","methods":["POST","DELETE"],"probe":"unsafe","why":"no GET handler (POST, DELETE)","envs":["NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL","SUPABASE_SERVICE_ROLE_KEY","ZUYA_SIGNUP_CODE"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/service.ts","src/lib/supabase/zuya-server.ts","src/lib/zuya/config.ts","src/lib/zuya/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":47,"auth":["zuya","service-role"]},{"path":"/api/zuya/push/test","file":"src/app/api/zuya/push/test/route.ts","group":"zuya","methods":["POST"],"probe":"unsafe","why":"no GET handler (POST)","envs":["NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL","NEXT_PUBLIC_VAPID_PUBLIC_KEY","SUPABASE_SERVICE_ROLE_KEY","VAPID_PRIVATE_KEY","ZUYA_SIGNUP_CODE"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/service.ts","src/lib/supabase/zuya-server.ts","src/lib/zuya/config.ts","src/lib/zuya/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":82,"auth":["zuya","service-role"]},{"path":"/api/zuya/spotify/callback","file":"src/app/api/zuya/spotify/callback/route.ts","group":"zuya","methods":["GET"],"probe":"unsafe","why":"side effects or dynamic segment — never probed","envs":["NEXT_PUBLIC_SITE_URL","NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL","SPOTIFY_CLIENT_ID","SPOTIFY_CLIENT_SECRET","SUPABASE_SERVICE_ROLE_KEY","ZUYA_SIGNUP_CODE"],"hosts":["accounts.spotify.com","api.spotify.com"],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/service.ts","src/lib/supabase/zuya-server.ts","src/lib/zuya/config.ts","src/lib/zuya/server.ts","src/lib/zuya/spotify.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":40,"auth":["zuya","service-role"]},{"path":"/api/zuya/spotify/disconnect","file":"src/app/api/zuya/spotify/disconnect/route.ts","group":"zuya","methods":["POST"],"probe":"unsafe","why":"no GET handler (POST)","envs":["NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL","SUPABASE_SERVICE_ROLE_KEY","ZUYA_SIGNUP_CODE"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/service.ts","src/lib/supabase/zuya-server.ts","src/lib/zuya/config.ts","src/lib/zuya/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":15,"auth":["zuya","service-role"]},{"path":"/api/zuya/spotify/now","file":"src/app/api/zuya/spotify/now/route.ts","group":"zuya","methods":["GET"],"probe":"safe","why":"read-only GET","envs":["NEXT_PUBLIC_SITE_URL","NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL","SPOTIFY_CLIENT_ID","SPOTIFY_CLIENT_SECRET","SUPABASE_SERVICE_ROLE_KEY","ZUYA_SIGNUP_CODE"],"hosts":["accounts.spotify.com","api.spotify.com"],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/service.ts","src/lib/supabase/zuya-server.ts","src/lib/zuya/config.ts","src/lib/zuya/server.ts","src/lib/zuya/spotify.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":27,"auth":["zuya","service-role"]},{"path":"/api/zuya/spotify/start","file":"src/app/api/zuya/spotify/start/route.ts","group":"zuya","methods":["GET"],"probe":"unsafe","why":"side effects or dynamic segment — never probed","envs":["NEXT_PUBLIC_SITE_URL","NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL","SPOTIFY_CLIENT_ID","SPOTIFY_CLIENT_SECRET","SUPABASE_SERVICE_ROLE_KEY","ZUYA_SIGNUP_CODE"],"hosts":["accounts.spotify.com","api.spotify.com"],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/service.ts","src/lib/supabase/zuya-server.ts","src/lib/zuya/config.ts","src/lib/zuya/server.ts","src/lib/zuya/spotify.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":30,"auth":["zuya"]},{"path":"/api/zuya/thoughts","file":"src/app/api/zuya/thoughts/route.ts","group":"zuya","methods":["GET","POST"],"probe":"safe","why":"read-only GET","envs":["NEXT_PUBLIC_SUPABASE_ANON_KEY","NEXT_PUBLIC_SUPABASE_URL","SUPABASE_SERVICE_ROLE_KEY","ZUYA_SIGNUP_CODE"],"hosts":[],"proxies":[],"mirrors":[],"libs":["src/lib/supabase/service.ts","src/lib/supabase/zuya-server.ts","src/lib/zuya/config.ts","src/lib/zuya/day.ts","src/lib/zuya/server.ts"],"ttl":null,"dynamic":"force-dynamic","runtime":null,"maxDuration":null,"loc":83,"auth":["zuya","service-role"]}],"envs":[{"name":"CRON_SECRET","documented":false,"isPublic":false,"secret":true,"files":["src/app/api/digest/daily/route.ts","src/app/api/digest/weekly/route.ts"],"routes":["/api/digest/daily","/api/digest/weekly"],"note":"Shared secret for manually firing the digest (?token=…)."},{"name":"DIGEST_FROM","documented":false,"isPublic":false,"secret":false,"files":["src/app/api/digest/route.ts","src/lib/digest/shared.ts"],"routes":["/api/digest","/api/digest/daily","/api/digest/weekly"],"note":"Digest sender, e.g. \"Rest Area \u003cdigest@yourdomain.com>\"."},{"name":"DIGEST_TO","documented":false,"isPublic":false,"secret":false,"files":["src/app/api/digest/route.ts","src/lib/digest/shared.ts"],"routes":["/api/digest","/api/digest/daily","/api/digest/weekly"],"note":"Digest recipient address."},{"name":"DIGEST_USER_ID","documented":false,"isPublic":false,"secret":false,"files":["src/app/api/digest/route.ts","src/lib/digest/shared.ts"],"routes":["/api/digest","/api/digest/daily","/api/digest/weekly"],"note":"Supabase auth.users.id the digest reads tasks and prefs for."},{"name":"DOCSYNC_DIR","documented":false,"isPublic":false,"secret":false,"files":["agent/src/config.ts"],"routes":[],"note":"docsync agent: local folder to mirror."},{"name":"DOCSYNC_INTERVAL","documented":false,"isPublic":false,"secret":false,"files":["agent/src/config.ts"],"routes":[],"note":"docsync agent: poll interval in seconds."},{"name":"DOCSYNC_SERVER","documented":false,"isPublic":false,"secret":false,"files":["agent/src/config.ts"],"routes":[],"note":"docsync agent: base URL of this app."},{"name":"DOCSYNC_STATE","documented":false,"isPublic":false,"secret":false,"files":["agent/src/config.ts"],"routes":[],"note":"docsync agent: path to its state file."},{"name":"DOCSYNC_TOKEN","documented":false,"isPublic":false,"secret":true,"files":["agent/src/config.ts"],"routes":[],"note":"docsync agent: device token issued by /api/devices."},{"name":"GOOGLE_CLIENT_ID","documented":true,"isPublic":false,"secret":false,"files":["src/lib/digest/shared.ts","src/lib/google/refresh.ts","src/lib/zuya/google.ts"],"routes":["/api/calendar","/api/digest/daily","/api/digest/weekly","/api/drive","/api/emails","/api/zuya/calendar","/api/zuya/dates/[id]","/api/zuya/google/callback","/api/zuya/google/start"],"note":"Google OAuth client — refreshes Calendar access tokens."},{"name":"GOOGLE_CLIENT_SECRET","documented":true,"isPublic":false,"secret":true,"files":["src/lib/digest/shared.ts","src/lib/google/refresh.ts","src/lib/zuya/google.ts"],"routes":["/api/calendar","/api/digest/daily","/api/digest/weekly","/api/drive","/api/emails","/api/zuya/calendar","/api/zuya/dates/[id]","/api/zuya/google/callback","/api/zuya/google/start"],"note":"Google OAuth client secret."},{"name":"NASA_API_KEY","documented":false,"isPublic":false,"secret":true,"files":["scripts/harvest-daily.mjs","src/app/api/nasa-apod/route.ts"],"routes":["/api/nasa-apod"],"note":"NASA APOD key. Falls back to DEMO_KEY, which is rate-limited hard."},{"name":"NEXT_PUBLIC_APP","documented":false,"isPublic":true,"secret":false,"files":["src/lib/app-config.ts"],"routes":[],"note":"Which sub-app the build targets."},{"name":"NEXT_PUBLIC_SITE_URL","documented":true,"isPublic":true,"secret":false,"files":["src/app/api/zuya/google/callback/route.ts","src/app/api/zuya/spotify/callback/route.ts","src/lib/zuya/google.ts","src/lib/zuya/spotify.ts"],"routes":["/api/zuya/calendar","/api/zuya/dates/[id]","/api/zuya/google/callback","/api/zuya/google/start","/api/zuya/spotify/callback","/api/zuya/spotify/now","/api/zuya/spotify/start"],"note":"Public origin, used to build OAuth redirect URIs."},{"name":"NEXT_PUBLIC_SUPABASE_ANON_KEY","documented":true,"isPublic":true,"secret":false,"files":["src/lib/supabase/client.ts","src/lib/supabase/middleware.ts","src/lib/supabase/server.ts","src/lib/supabase/zuya-client.ts","src/lib/supabase/zuya-middleware.ts","src/lib/supabase/zuya-server.ts"],"routes":["/api/calendar","/api/devices","/api/drive","/api/emails","/api/files/download","/api/files/list","/api/files/search","/api/files/upload","/api/vault/download","/api/vault/items","/api/vault/items/[id]","/api/vault/private","/api/vault/upload","/api/zuya/calendar","/api/zuya/dates","/api/zuya/dates/[id]","/api/zuya/google/callback","/api/zuya/google/disconnect","/api/zuya/google/start","/api/zuya/movie","/api/zuya/push/notify","/api/zuya/push/subscribe","/api/zuya/push/test","/api/zuya/spotify/callback","/api/zuya/spotify/disconnect","/api/zuya/spotify/now","/api/zuya/spotify/start","/api/zuya/thoughts"],"note":"Supabase anon key — safe to expose, RLS enforces access."},{"name":"NEXT_PUBLIC_SUPABASE_URL","documented":true,"isPublic":true,"secret":false,"files":["src/lib/supabase/client.ts","src/lib/supabase/middleware.ts","src/lib/supabase/server.ts","src/lib/supabase/service.ts","src/lib/supabase/zuya-client.ts","src/lib/supabase/zuya-middleware.ts","src/lib/supabase/zuya-server.ts"],"routes":["/api/agent/changes","/api/agent/cursor","/api/agent/delete","/api/agent/download","/api/agent/upload","/api/calendar","/api/devices","/api/drive","/api/emails","/api/files/download","/api/files/list","/api/files/search","/api/files/upload","/api/vault/download","/api/vault/items","/api/vault/items/[id]","/api/vault/private","/api/vault/upload","/api/zuya/auth/register","/api/zuya/auth/reset","/api/zuya/auth/status","/api/zuya/bereal/tick","/api/zuya/calendar","/api/zuya/dates","/api/zuya/dates/[id]","/api/zuya/google/callback","/api/zuya/google/disconnect","/api/zuya/google/start","/api/zuya/movie","/api/zuya/push/notify","/api/zuya/push/subscribe","/api/zuya/push/test","/api/zuya/spotify/callback","/api/zuya/spotify/disconnect","/api/zuya/spotify/now","/api/zuya/spotify/start","/api/zuya/thoughts"],"note":"Supabase project URL. Settings → API."},{"name":"NEXT_PUBLIC_VAPID_PUBLIC_KEY","documented":false,"isPublic":true,"secret":false,"files":["src/app/api/zuya/push/test/route.ts","src/components/zuya/PushToggle.tsx","src/lib/zuya/push.ts"],"routes":["/api/zuya/bereal/tick","/api/zuya/dates","/api/zuya/push/notify","/api/zuya/push/test"],"note":"Web-push public key. Pair with VAPID_PRIVATE_KEY (npx web-push generate-vapid-keys)."},{"name":"OMDB_API_KEY","documented":false,"isPublic":false,"secret":true,"files":["src/app/api/zuya/movie/route.ts"],"routes":["/api/zuya/movie"],"note":"OMDb key for the Zuya movie card."},{"name":"REDDIT_CLIENT_ID","documented":false,"isPublic":false,"secret":false,"files":["scripts/harvest-daily.mjs","src/app/api/reddit/route.ts"],"routes":["/api/reddit"],"note":"Reddit script-app ID. Without it /api/reddit falls back to CORS proxies."},{"name":"REDDIT_CLIENT_SECRET","documented":false,"isPublic":false,"secret":true,"files":["scripts/harvest-daily.mjs","src/app/api/reddit/route.ts"],"routes":["/api/reddit"],"note":"Reddit script-app secret."},{"name":"RESEND_API_KEY","documented":false,"isPublic":false,"secret":true,"files":["src/app/api/digest/route.ts","src/lib/digest/shared.ts"],"routes":["/api/digest","/api/digest/daily","/api/digest/weekly"],"note":"Resend API key for the digest emails."},{"name":"SCRAPINGBEE_API_KEY","documented":false,"isPublic":false,"secret":true,"files":["scripts/scrape-britannica.mjs"],"routes":[],"note":"ScrapingBee key used by scripts/scrape-britannica.mjs to get past the anti-bot wall. The scrape throws without it."},{"name":"SPOTIFY_CLIENT_ID","documented":false,"isPublic":false,"secret":false,"files":["src/lib/zuya/spotify.ts"],"routes":["/api/zuya/spotify/callback","/api/zuya/spotify/now","/api/zuya/spotify/start"],"note":"Spotify app client ID — the Zuya now-playing card."},{"name":"SPOTIFY_CLIENT_SECRET","documented":false,"isPublic":false,"secret":true,"files":["src/lib/zuya/spotify.ts"],"routes":["/api/zuya/spotify/callback","/api/zuya/spotify/now","/api/zuya/spotify/start"],"note":"Spotify app client secret."},{"name":"SUPABASE_SERVICE_KEY","documented":false,"isPublic":false,"secret":true,"files":["src/app/api/digest/route.ts","src/lib/digest/shared.ts"],"routes":["/api/digest","/api/digest/daily","/api/digest/weekly"],"note":"Second name for the service-role key, read only by the digest code."},{"name":"SUPABASE_SERVICE_ROLE_KEY","documented":true,"isPublic":false,"secret":true,"files":["src/lib/supabase/service.ts"],"routes":["/api/agent/changes","/api/agent/cursor","/api/agent/delete","/api/agent/download","/api/agent/upload","/api/devices","/api/zuya/auth/register","/api/zuya/auth/reset","/api/zuya/auth/status","/api/zuya/bereal/tick","/api/zuya/calendar","/api/zuya/dates","/api/zuya/dates/[id]","/api/zuya/google/callback","/api/zuya/google/disconnect","/api/zuya/google/start","/api/zuya/push/notify","/api/zuya/push/subscribe","/api/zuya/push/test","/api/zuya/spotify/callback","/api/zuya/spotify/disconnect","/api/zuya/spotify/now","/api/zuya/spotify/start","/api/zuya/thoughts"],"note":"Service-role key. Bypasses RLS. Server-only, never NEXT_PUBLIC_."},{"name":"SUPABASE_URL","documented":false,"isPublic":false,"secret":false,"files":["src/app/api/digest/route.ts","src/lib/digest/shared.ts"],"routes":["/api/digest","/api/digest/daily","/api/digest/weekly"],"note":"Second name for the project URL, read only by the digest code."},{"name":"VAPID_PRIVATE_KEY","documented":false,"isPublic":false,"secret":true,"files":["src/app/api/zuya/push/test/route.ts","src/lib/zuya/push.ts"],"routes":["/api/zuya/bereal/tick","/api/zuya/dates","/api/zuya/push/notify","/api/zuya/push/test"],"note":"Web-push private key. Without it push silently no-ops."},{"name":"YOUTUBE_API_KEY","documented":true,"isPublic":false,"secret":true,"files":["src/lib/youtube-library.ts"],"routes":["/api/cpa-video","/api/yt-library"],"note":"YouTube Data API v3 key. Without it the video libraries fall back to public mirrors."},{"name":"YT_API_KEY","documented":false,"isPublic":false,"secret":true,"files":["src/lib/youtube-library.ts"],"routes":["/api/cpa-video","/api/yt-library"],"note":"Fallback name for YOUTUBE_API_KEY — either one works."},{"name":"ZUYA_GOOGLE_CLIENT_ID","documented":false,"isPublic":false,"secret":false,"files":["src/lib/zuya/google.ts"],"routes":["/api/zuya/calendar","/api/zuya/dates/[id]","/api/zuya/google/callback","/api/zuya/google/start"],"note":"Separate Google OAuth client for the Zuya calendar."},{"name":"ZUYA_GOOGLE_CLIENT_SECRET","documented":false,"isPublic":false,"secret":true,"files":["src/lib/zuya/google.ts"],"routes":["/api/zuya/calendar","/api/zuya/dates/[id]","/api/zuya/google/callback","/api/zuya/google/start"],"note":"Zuya Google OAuth client secret."},{"name":"ZUYA_SIGNUP_CODE","documented":false,"isPublic":false,"secret":true,"files":["src/lib/zuya/config.ts"],"routes":["/api/zuya/auth/register","/api/zuya/auth/reset","/api/zuya/auth/status","/api/zuya/calendar","/api/zuya/dates","/api/zuya/dates/[id]","/api/zuya/google/callback","/api/zuya/google/disconnect","/api/zuya/google/start","/api/zuya/movie","/api/zuya/push/notify","/api/zuya/push/subscribe","/api/zuya/push/test","/api/zuya/spotify/callback","/api/zuya/spotify/disconnect","/api/zuya/spotify/now","/api/zuya/spotify/start","/api/zuya/thoughts"],"note":"Invite code gating Zuya registration."}],"hosts":[{"host":"oauth2.googleapis.com","kind":"direct","routes":["/api/calendar","/api/digest/daily","/api/digest/weekly","/api/drive","/api/emails","/api/zuya/calendar","/api/zuya/dates/[id]","/api/zuya/google/callback","/api/zuya/google/disconnect","/api/zuya/google/start"]},{"host":"www.googleapis.com","kind":"direct","routes":["/api/calendar","/api/cpa-video","/api/digest/daily","/api/digest/weekly","/api/drive","/api/yt-library","/api/zuya/calendar","/api/zuya/dates/[id]","/api/zuya/google/callback","/api/zuya/google/start"]},{"host":"api.allorigins.win","kind":"proxy","routes":["/api/archive-random","/api/art-of-day","/api/bird-of-day","/api/cabinet","/api/cpa-video","/api/nasa-apod","/api/reddit","/api/yt-library"]},{"host":"api.codetabs.com","kind":"proxy","routes":["/api/archive-random","/api/art-of-day","/api/bird-of-day","/api/cabinet","/api/cpa-video","/api/nasa-apod","/api/yt-library"]},{"host":"en.wikipedia.org","kind":"direct","routes":["/api/art-of-day","/api/bird-of-day","/api/fighter-photo","/api/superlig","/api/ufc"]},{"host":"corsproxy.io","kind":"proxy","routes":["/api/art-of-day","/api/bird-of-day","/api/nasa-apod","/api/reddit"]},{"host":"accounts.spotify.com","kind":"direct","routes":["/api/zuya/spotify/callback","/api/zuya/spotify/now","/api/zuya/spotify/start"]},{"host":"api.piped.private.coffee","kind":"mirror","routes":["/api/cpa-video","/api/yt-comments","/api/yt-library"]},{"host":"api.resend.com","kind":"direct","routes":["/api/digest","/api/digest/daily","/api/digest/weekly"]},{"host":"api.spotify.com","kind":"direct","routes":["/api/zuya/spotify/callback","/api/zuya/spotify/now","/api/zuya/spotify/start"]},{"host":"inv.nadeko.net","kind":"mirror","routes":["/api/cpa-video","/api/yt-comments","/api/yt-library"]},{"host":"invidious.nerdvpn.de","kind":"mirror","routes":["/api/cpa-video","/api/yt-comments","/api/yt-library"]},{"host":"pipedapi.adminforge.de","kind":"mirror","routes":["/api/cpa-video","/api/yt-comments","/api/yt-library"]},{"host":"pipedapi.kavin.rocks","kind":"mirror","routes":["/api/cpa-video","/api/yt-comments","/api/yt-library"]},{"host":"pipedapi.reallyaweso.me","kind":"mirror","routes":["/api/cpa-video","/api/yt-comments","/api/yt-library"]},{"host":"yewtu.be","kind":"mirror","routes":["/api/cpa-video","/api/yt-comments","/api/yt-library"]},{"host":"collectionapi.metmuseum.org","kind":"direct","routes":["/api/art-of-day","/api/cabinet"]},{"host":"drive.google.com","kind":"direct","routes":["/api/drive","/api/ufc"]},{"host":"feeds.arstechnica.com","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"feeds.bbci.co.uk","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"feeds.marketwatch.com","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"feeds.npr.org","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"finance.yahoo.com","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"hnrss.org","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"invidious.privacyredirect.com","kind":"mirror","routes":["/api/cpa-video","/api/yt-library"]},{"host":"pipedapi.darkness.services","kind":"mirror","routes":["/api/cpa-video","/api/yt-library"]},{"host":"resend.com","kind":"direct","routes":["/api/digest","/api/digest/daily"]},{"host":"rss.nytimes.com","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"search.cnbc.com","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"site.api.espn.com","kind":"direct","routes":["/api/superlig","/api/ufc"]},{"host":"t24.com.tr","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"techcrunch.com","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"www.aa.com.tr","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"www.aljazeera.com","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"www.cbsnews.com","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"www.dallasnews.com","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"www.dmagazine.com","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"www.ft.com","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"www.hurriyet.com.tr","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"www.metmuseum.org","kind":"direct","routes":["/api/art-of-day","/api/cabinet"]},{"host":"www.nbcdfw.com","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"www.technologyreview.com","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"www.theguardian.com","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"www.theverge.com","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"www.wfaa.com","kind":"direct","routes":["/api/news","/api/news/category"]},{"host":"www.youtube.com","kind":"direct","routes":["/api/cpa-video","/api/yt-library"]},{"host":"a.espncdn.com","kind":"direct","routes":["/api/ufc"]},{"host":"accounts.google.com","kind":"direct","routes":["/api/zuya/google/start"]},{"host":"api.alquran.cloud","kind":"direct","routes":["/api/quran"]},{"host":"api.nasa.gov","kind":"direct","routes":["/api/nasa-apod"]},{"host":"api.open-meteo.com","kind":"direct","routes":["/api/weather"]},{"host":"api.sofascore.com","kind":"direct","routes":["/api/superlig"]},{"host":"apod.nasa.gov","kind":"direct","routes":["/api/nasa-apod"]},{"host":"archive.org","kind":"direct","routes":["/api/archive-random"]},{"host":"commons.wikimedia.org","kind":"direct","routes":["/api/bird-of-day"]},{"host":"gmail.googleapis.com","kind":"direct","routes":["/api/emails"]},{"host":"i.ytimg.com","kind":"direct","routes":["/api/cpa-video"]},{"host":"invidious.jing.rocks","kind":"mirror","routes":["/api/yt-comments"]},{"host":"lh3.googleusercontent.com","kind":"direct","routes":["/api/ufc"]},{"host":"oauth.reddit.com","kind":"direct","routes":["/api/reddit"]},{"host":"r.jina.ai","kind":"proxy","routes":["/api/nasa-apod"]},{"host":"site.web.api.espn.com","kind":"direct","routes":["/api/ufc"]},{"host":"thingproxy.freeboard.io","kind":"proxy","routes":["/api/nasa-apod"]},{"host":"www.fotmob.com","kind":"direct","routes":["/api/superlig"]},{"host":"www.omdbapi.com","kind":"direct","routes":["/api/zuya/movie"]},{"host":"www.reddit.com","kind":"direct","routes":["/api/reddit"]},{"host":"www.sofascore.com","kind":"direct","routes":["/api/superlig"]},{"host":"www.thesportsdb.com","kind":"direct","routes":["/api/superlig"]},{"host":"www.ufc.com","kind":"direct","routes":["/api/ufc"]},{"host":"xeno-canto.org","kind":"direct","routes":["/api/bird-of-day"]}],"findings":[{"level":"critical","title":"26 env vars are read by the code but missing from .env.local.example","body":"A fresh clone (or a new Vercel environment) comes up with these unset. Most fail quietly — push silently no-ops, the digest email never sends, Spotify and Reddit fall back to flaky public proxies. The Config tab generates a complete replacement file.","items":["CRON_SECRET","DIGEST_FROM","DIGEST_TO","DIGEST_USER_ID","DOCSYNC_DIR","DOCSYNC_INTERVAL","DOCSYNC_SERVER","DOCSYNC_STATE","DOCSYNC_TOKEN","NASA_API_KEY","NEXT_PUBLIC_APP","NEXT_PUBLIC_VAPID_PUBLIC_KEY","OMDB_API_KEY","REDDIT_CLIENT_ID","REDDIT_CLIENT_SECRET","RESEND_API_KEY","SCRAPINGBEE_API_KEY","SPOTIFY_CLIENT_ID","SPOTIFY_CLIENT_SECRET","SUPABASE_SERVICE_KEY","SUPABASE_URL","VAPID_PRIVATE_KEY","YT_API_KEY","ZUYA_GOOGLE_CLIENT_ID","ZUYA_GOOGLE_CLIENT_SECRET","ZUYA_SIGNUP_CODE"]},{"level":"critical","title":"Two different names for the same Supabase service-role key","body":"src/lib/digest/shared.ts reads SUPABASE_SERVICE_KEY (plus SUPABASE_URL), while src/lib/supabase/service.ts and everything else read SUPABASE_SERVICE_ROLE_KEY (plus NEXT_PUBLIC_SUPABASE_URL). Only the second pair is documented, so setting up from the example file leaves the digest unable to reach Supabase — and its failure path is an HTML page saying \"preview unavailable\", not an error anyone gets paged for. Either alias them in digest/shared.ts or set both.","items":["SUPABASE_SERVICE_KEY → /api/digest, /api/digest/daily, /api/digest/weekly","SUPABASE_SERVICE_ROLE_KEY → 24 routes"]},{"level":"serious","title":"9 routes depend on public CORS proxies or Invidious/Piped mirrors","body":"These hosts are volunteer-run and disappear without notice — they are the most likely cause of a card that worked last month and is empty today. Where a first-party key exists (REDDIT_CLIENT_ID, YOUTUBE_API_KEY, NASA_API_KEY) setting it takes the proxy out of the path.","items":["/api/archive-random → 2 proxy/mirror hosts","/api/art-of-day → 3 proxy/mirror hosts","/api/bird-of-day → 3 proxy/mirror hosts","/api/cabinet → 2 proxy/mirror hosts","/api/cpa-video → 11 proxy/mirror hosts","/api/nasa-apod → 5 proxy/mirror hosts","/api/reddit → 2 proxy/mirror hosts","/api/yt-comments → 8 proxy/mirror hosts","/api/yt-library → 11 proxy/mirror hosts"]},{"level":"warning","title":"18 routes call an external host with no revalidate window","body":"Every request hits upstream. Fine for live data, wasteful for anything that changes daily — and on rate-limited APIs it is what burns the quota.","items":["/api/archive-random","/api/art-of-day","/api/bird-of-day","/api/cabinet","/api/calendar","/api/cpa-video","/api/drive","/api/emails","/api/nasa-apod","/api/news","/api/news/category","/api/quran","/api/reddit","/api/yt-comments","/api/yt-library","/api/zuya/calendar","/api/zuya/movie","/api/zuya/spotify/now"]}],"themes":["arctic","aurora","bauhaus","blueprint","brutalist","circuit","comic","cyberpunk","deco","dune","ember","forest","galaxy","marble","mono","newspaper","noir","ottoman","rain","renaissance","retro","sakura","stainedglass","steampunk","subway","sunset","terminal","vapor","water","y2k","zen"],"totals":{"routes":60,"hosts":70,"envs":33,"undocumented":26,"proxied":9,"files":224,"loc":32325,"themes":31}}</script>
+<script>
+const D = JSON.parse(document.getElementById("data").textContent);
+const $ = (s, r) => (r || document).querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const GROUPS = ["core","zuya","files","vault","digest"];
+const GC = { core:"var(--s1)", zuya:"var(--s2)", files:"var(--s3)", vault:"var(--s4)", digest:"var(--s5)" };
+
+const ICON = {
+  good:'<svg viewBox="0 0 16 16" fill="currentColor"><path d="M6.2 11.5 3 8.3l1.1-1.1 2.1 2.1 5.6-5.6L13 4.8z"/></svg>',
+  warning:'<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5 15 14H1zM7.2 6v4h1.6V6zm0 5v1.6h1.6V11z"/></svg>',
+  serious:'<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.8 3h1.6v5H7.2zm0 6.4h1.6V12H7.2z"/></svg>',
+  critical:'<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zM5.4 4.3 8 6.9l2.6-2.6 1.1 1.1L9.1 8l2.6 2.6-1.1 1.1L8 9.1l-2.6 2.6-1.1-1.1L6.9 8 4.3 5.4z"/></svg>',
+  idle:'<svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="3"/></svg>'
+};
+const pill = (lvl, txt) => '<span class="pill p-' + lvl + '">' + (ICON[lvl]||ICON.idle) + esc(txt) + '</span>';
+const fmtTtl = (t) => t == null ? "—" : t >= 3600 ? (t/3600) + "h" : t >= 60 ? (t/60) + "m" : t + "s";
+
+/* ------------------------------------------------------------ shell */
+
+function render() {
+  const t = D.totals;
+  $("#app").innerHTML = ''
+  + '<div class="top"><div class="title">'
+  +   '<h1>System Map</h1>'
+  +   '<p>Every API route in this app, what it needs to work, and what it depends on out on the internet — '
+  +   'read straight from <code>src/</code> by <code>scripts/system-map.mjs</code>. '
+  +   'Open this page from a running server and it can probe the routes too.</p>'
+  + '</div><div style="display:flex;gap:8px;align-items:center">'
+  +   '<button class="iconbtn" id="theme">Theme</button>'
+  +   '<span class="stamp">' + new Date(D.generated).toLocaleString() + '</span>'
+  + '</div></div>'
+
+  + '<div class="tiles">'
+  +   tile(t.routes, "API routes", t.files + " src files · " + t.loc.toLocaleString() + " lines")
+  +   tile(t.hosts, "External hosts", t.proxied + " routes via proxies/mirrors")
+  +   tile(t.envs, "Env vars read", (t.envs - t.undocumented) + " documented")
+  +   tile(t.undocumented, "Undocumented", "missing from .env.local.example", t.undocumented > 0)
+  +   tile(D.routes.filter(r => r.auth.length).length, "Auth-guarded", "of " + t.routes + " routes")
+  +   tile(t.themes, "Themes", "src/app/themes")
+  + '</div>'
+
+  + '<div class="tabs" role="tablist">'
+  +   ["Overview","Routes","Env & config","Dependencies"].map((n,i) =>
+        '<button class="tab" role="tab" data-i="' + i + '" aria-selected="' + (i===0) + '">' + n + '</button>').join("")
+  + '</div>'
+  + [0,1,2,3].map(i => '<div class="panel" id="p' + i + '"' + (i ? " hidden" : "") + '></div>').join("");
+
+  $("#theme").onclick = () => {
+    const r = document.documentElement;
+    const now = r.getAttribute("data-theme");
+    r.setAttribute("data-theme", now === "dark" ? "light" : now === "light" ? "auto" : "dark");
+  };
+  document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
+    document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", x === b));
+    [0,1,2,3].forEach(i => $("#p"+i).hidden = String(i) !== b.dataset.i);
+  });
+
+  overview(); routesPanel(); envPanel(); depsPanel();
+}
+const tile = (v, k, sub, flag) =>
+  '<div class="tile' + (flag ? " flag" : "") + '"><div class="v">' + v + '</div><div class="k">' + esc(k) + '</div>'
+  + (sub ? '<div class="sub">' + esc(sub) + '</div>' : "") + '</div>';
+
+/* --------------------------------------------------------- overview */
+
+function overview() {
+  const counts = GROUPS.map(g => ({ g, n: D.routes.filter(r => r.group === g).length })).filter(x => x.n);
+  const total = counts.reduce((a, b) => a + b.n, 0);
+
+  $("#p0").innerHTML =
+    D.findings.map(f =>
+      '<div class="card"><h3>' + pill(f.level, f.level) + esc(f.title) + '</h3>'
+      + '<p>' + esc(f.body) + '</p>'
+      + '<div class="chips">' + f.items.slice(0, 26).map(i => '<span class="chip">' + esc(i) + '</span>').join("")
+      + (f.items.length > 26 ? '<span class="chip muted">+' + (f.items.length - 26) + ' more</span>' : "")
+      + '</div></div>').join("")
+
+    + '<div class="card"><h3>Routes by area</h3>'
+    + '<div class="segbar">' + counts.map(c =>
+        '<div style="width:' + (c.n / total * 100) + '%;background:' + GC[c.g] + '" title="' + c.g + ': ' + c.n + '"></div>').join("")
+    + '</div><div class="legend">' + counts.map(c =>
+        '<span><i class="swatch" style="background:' + GC[c.g] + '"></i>' + c.g + ' <b>' + c.n + '</b></span>').join("")
+    + '</div>'
+    + '<p>Exact counts are labelled above and every route is listed in the Routes tab — the colour is a '
+    + 'shortcut, not the only way to read this.</p></div>'
+
+    + '<div class="card"><h3>How to use this page</h3><p>'
+    + '<b>Routes</b> lists every endpoint with its cache window, auth, env vars and external hosts — and can '
+    + 'health-check the safe ones against a running server. <b>Env &amp; config</b> shows which features each '
+    + 'variable actually controls, and generates a complete <code>.env.local.example</code>. '
+    + '<b>Dependencies</b> ranks the outside world by how much of this app leans on it. '
+    + 'Regenerate any time with <code>npm run map</code>.</p></div>';
+}
+
+/* ----------------------------------------------------------- routes */
+
+let sortKey = "path", sortAsc = true, health = {};
+
+function routesPanel() {
+  $("#p1").innerHTML =
+      '<div class="controls">'
+    +   '<input type="text" id="q" class="grow" placeholder="Filter by path, host, env var, lib…">'
+    +   '<select id="g"><option value="">All areas</option>' + GROUPS.map(g => '<option>' + g + '</option>').join("") + '</select>'
+    +   '<select id="f"><option value="">All routes</option><option value="proxy">Uses proxy/mirror</option>'
+    +     '<option value="auth">Auth-guarded</option><option value="nocache">No cache window</option>'
+    +     '<option value="env">Needs env vars</option></select>'
+    + '</div>'
+    + '<div class="card" style="padding:14px 16px">'
+    +   '<div class="controls" style="margin:0">'
+    +     '<input type="url" id="base" class="grow" placeholder="http://localhost:3000">'
+    +     '<button class="btn" id="run">Health check</button>'
+    +     '<label class="check"><input type="checkbox" id="caution"> include side-effect-ish routes</label>'
+    +     '<span id="hs" class="muted" style="font-size:12.5px"></span>'
+    +   '</div>'
+    +   '<p class="note" id="hnote">Probes only read-only GET routes. Routes that upload, delete, notify or take a '
+    +   'dynamic <code>[id]</code> are never called. Serve this page from the app itself '
+    +   '(<code>/system-map.html</code>) so requests are same-origin and your login session applies.</p>'
+    + '</div>'
+    + '<div id="tbl"></div>';
+
+  const base = $("#base");
+  base.value = location.protocol.startsWith("http") ? location.origin : "http://localhost:3000";
+  $("#q").oninput = $("#g").onchange = $("#f").onchange = drawTable;
+  $("#run").onclick = runHealth;
+  drawTable();
+}
+
+function filtered() {
+  const q = ($("#q").value || "").toLowerCase().trim();
+  const g = $("#g").value, f = $("#f").value;
+  return D.routes.filter(r => {
+    if (g && r.group !== g) return false;
+    if (f === "proxy" && !r.proxies.length && !r.mirrors.length) return false;
+    if (f === "auth" && !r.auth.length) return false;
+    if (f === "nocache" && (r.ttl != null || !r.hosts.length)) return false;
+    if (f === "env" && !r.envs.length) return false;
+    if (!q) return true;
+    return (r.path + " " + r.hosts.join(" ") + " " + r.envs.join(" ") + " " + r.libs.join(" ") + " " + r.auth.join(" "))
+      .toLowerCase().includes(q);
+  }).sort((a, b) => {
+    const k = sortKey;
+    let x = k === "hosts" ? a.hosts.length : k === "envs" ? a.envs.length : k === "ttl" ? (a.ttl ?? -1) : k === "loc" ? a.loc : a[k];
+    let y = k === "hosts" ? b.hosts.length : k === "envs" ? b.envs.length : k === "ttl" ? (b.ttl ?? -1) : k === "loc" ? b.loc : b[k];
+    if (typeof x === "string") { x = x.toLowerCase(); y = String(y).toLowerCase(); }
+    return (x < y ? -1 : x > y ? 1 : 0) * (sortAsc ? 1 : -1);
+  });
+}
+
+function drawTable() {
+  const rows = filtered();
+  const cols = [["path","Route"],["group","Area"],["ttl","Cache"],["auth","Auth"],["envs","Env"],["hosts","External"],["loc","LOC"]];
+  $("#tbl").innerHTML = rows.length ? '<div class="wrap"><table><thead><tr>'
+    + cols.map(c => '<th data-k="' + c[0] + '">' + c[1] + (sortKey === c[0] ? (sortAsc ? " ↑" : " ↓") : "") + '</th>').join("")
+    + '<th>Status</th></tr></thead><tbody>'
+    + rows.map(rowHtml).join("")
+    + '</tbody></table></div>'
+    : '<div class="wrap"><div class="empty">No routes match that filter.</div></div>';
+
+  document.querySelectorAll("#tbl th[data-k]").forEach(th => th.onclick = () => {
+    const k = th.dataset.k;
+    if (sortKey === k) sortAsc = !sortAsc; else { sortKey = k; sortAsc = true; }
+    drawTable();
+  });
+}
+
+function rowHtml(r) {
+  const h = health[r.path];
+  const risky = [...r.proxies, ...r.mirrors];
+  const status = h ? pill(h.level, h.label)
+    : r.probe === "unsafe" ? '<span class="muted" style="font-size:11.5px" title="' + esc(r.why) + '">not probed</span>'
+    : pill("idle", "unchecked");
+
+  return '<tr>'
+    + '<td class="path"><span class="dot" style="background:' + GC[r.group] + '"></span>' + esc(r.path)
+    +   (r.methods.join() !== "GET" ? ' <span class="tag">' + r.methods.join(" ") + '</span>' : "")
+    +   '<div class="muted" style="font-size:11.5px;margin-top:3px">' + esc(r.file) + '</div>'
+    +   (risky.length ? '<div style="margin-top:5px">' + pill("serious", risky.length + " proxy/mirror") + '</div>' : "")
+    + '</td>'
+    + '<td>' + r.group + '</td>'
+    + '<td class="num">' + fmtTtl(r.ttl) + (r.dynamic ? '<div class="muted" style="font-size:10.5px">' + esc(r.dynamic) + '</div>' : "") + '</td>'
+    + '<td>' + (r.auth.length ? r.auth.map(a => '<span class="tag">' + a + '</span>').join("") : '<span class="muted">public</span>') + '</td>'
+    + '<td>' + (r.envs.length ? '<details><summary>' + r.envs.length + '</summary><div class="chips">'
+        + r.envs.map(e => '<span class="chip">' + esc(e) + '</span>').join("") + '</div></details>' : '<span class="muted">—</span>') + '</td>'
+    + '<td>' + (r.hosts.length ? '<details><summary>' + r.hosts.length + '</summary><div class="chips">'
+        + r.hosts.map(x => '<span class="chip">' + esc(x) + '</span>').join("") + '</div></details>' : '<span class="muted">—</span>') + '</td>'
+    + '<td class="num">' + r.loc + '</td>'
+    + '<td>' + status + (h && h.ms != null ? '<div class="muted" style="font-size:11px;margin-top:3px">' + h.ms + ' ms</div>' : "") + '</td>'
+    + '</tr>';
+}
+
+/* ----------------------------------------------------- health check */
+
+async function runHealth() {
+  const base = $("#base").value.replace(/\/+$/, "");
+  if (!base) return;
+  const includeCaution = $("#caution").checked;
+  const list = D.routes.filter(r => r.probe === "safe" || (includeCaution && r.probe === "caution"));
+  const btn = $("#run"); btn.disabled = true;
+  health = {};
+  let done = 0;
+
+  const one = async (r) => {
+    const t0 = performance.now();
+    try {
+      const res = await fetch(base + r.path, { method: "GET", credentials: "include", redirect: "follow" });
+      const ms = Math.round(performance.now() - t0);
+      const s = res.status;
+      health[r.path] = s < 300 ? { level: "good", label: String(s), ms }
+        : s === 401 || s === 403 ? { level: "warning", label: s + " auth", ms }
+        : s < 500 ? { level: "serious", label: String(s), ms }
+        : { level: "critical", label: String(s), ms };
+    } catch (e) {
+      health[r.path] = { level: "critical", label: "unreachable", ms: Math.round(performance.now() - t0) };
+    }
+    $("#hs").textContent = ++done + " / " + list.length;
+    if (done % 4 === 0 || done === list.length) drawTable();
+  };
+
+  /* Small concurrency pool — these routes fan out to slow upstreams. */
+  const queue = list.slice();
+  await Promise.all(Array.from({ length: 5 }, async () => {
+    while (queue.length) await one(queue.shift());
+  }));
+
+  drawTable();
+  btn.disabled = false;
+  const vals = Object.values(health);
+  const bad = vals.filter(v => v.level === "critical").length;
+  const slow = vals.filter(v => v.ms > 2000).length;
+  $("#hs").textContent = vals.length + " checked · " + bad + " failing · " + slow + " over 2 s";
+  if (bad === vals.length && vals.length > 1) {
+    $("#hnote").innerHTML = '<b>Every route failed.</b> If this page was opened straight from disk '
+      + '(<code>file://</code>), the browser blocks the requests before they leave — serve it from the app at '
+      + '<code>' + esc($("#base").value) + '/system-map.html</code> instead.';
+  }
+}
+
+/* -------------------------------------------------------------- env */
+
+function envPanel() {
+  const undoc = D.envs.filter(e => !e.documented);
+  $("#p2").innerHTML =
+      '<div class="controls"><input type="text" id="eq" class="grow" placeholder="Filter variables…">'
+    + '<button class="btn ghost" id="copyenv">Copy generated .env.local.example</button></div>'
+    + '<div id="etbl"></div>'
+    + '<div class="card"><h3>Generated .env.local.example</h3>'
+    + '<p>Every variable the code actually reads, grouped, with the ' + undoc.length
+    + ' currently-missing ones included. Values are placeholders — copy this over the real file and fill it in.</p>'
+    + '<pre class="env" id="envout">' + esc(envFile()) + '</pre></div>';
+
+  $("#eq").oninput = drawEnv;
+  $("#copyenv").onclick = async (e) => {
+    try { await navigator.clipboard.writeText(envFile()); e.target.textContent = "Copied"; }
+    catch { e.target.textContent = "Select the text below"; }
+    setTimeout(() => { e.target.textContent = "Copy generated .env.local.example"; }, 1800);
+  };
+  drawEnv();
+}
+
+function drawEnv() {
+  const q = ($("#eq").value || "").toLowerCase().trim();
+  const rows = D.envs.filter(e => !q || (e.name + " " + e.note + " " + e.routes.join(" ")).toLowerCase().includes(q));
+  const max = Math.max(1, ...D.envs.map(e => e.routes.length));
+
+  $("#etbl").innerHTML = rows.length ? '<div class="wrap"><table><thead><tr>'
+    + '<th>Variable</th><th>Documented</th><th>What breaks without it</th><th>Routes</th></tr></thead><tbody>'
+    + rows.map(e => '<tr>'
+      + '<td class="path">' + esc(e.name)
+        + (e.isPublic ? ' <span class="tag">public</span>' : e.secret ? ' <span class="tag">secret</span>' : "") + '</td>'
+      + '<td>' + (e.documented ? pill("good", "yes") : pill("critical", "missing")) + '</td>'
+      + '<td style="max-width:40ch">' + (e.note ? esc(e.note) : '<span class="muted">used in ' + e.files.length + ' file(s)</span>')
+        + '<div class="muted" style="font-size:11px;margin-top:4px">' + esc(e.files.slice(0,3).join(", "))
+        + (e.files.length > 3 ? " +" + (e.files.length - 3) : "") + '</div></td>'
+      + '<td class="num">' + (e.routes.length || "—")
+        + (e.routes.length ? '<div class="bar"><i style="width:' + (e.routes.length / max * 100) + '%"></i></div>' : "")
+        + '</td></tr>').join("")
+    + '</tbody></table></div>'
+    : '<div class="wrap"><div class="empty">No variables match.</div></div>';
+}
+
+function envFile() {
+  const S = [
+    ["Supabase", /^(NEXT_PUBLIC_)?SUPABASE/],
+    ["Google OAuth — calendar", /^GOOGLE_/],
+    ["Web push", /VAPID/],
+    ["Daily & weekly digest email", /^(RESEND|DIGEST|CRON)/],
+    ["Zuya", /^ZUYA_/],
+    ["Third-party content APIs", /^(YOUTUBE|YT|NASA|OMDB|REDDIT|SPOTIFY)/],
+    ["docsync agent", /^DOCSYNC_/],
+    ["Build & scrape scripts", /^SCRAPINGBEE/],
+    ["App", /^NEXT_PUBLIC_(SITE_URL|APP)$/],
+  ];
+  const placeholder = (n) => n.endsWith("_URL") ? "https://" : n.includes("INTERVAL") ? "60" : "REPLACE_ME";
+  const used = new Set();
+  let out = "# Generated by scripts/system-map.mjs — every variable the code reads.\n"
+          + "# Regenerate with: npm run map\n";
+
+  for (const [title, re] of S) {
+    const hits = D.envs.filter(e => re.test(e.name) && !used.has(e.name));
+    if (!hits.length) continue;
+    hits.forEach(e => used.add(e.name));
+    out += "\n# " + title + "\n" + "# " + "-".repeat(title.length) + "\n";
+    for (const e of hits) {
+      if (e.note) out += "# " + e.note + "\n";
+      if (!e.documented) out += "# (was missing from the previous example file)\n";
+      out += e.name + "=" + placeholder(e.name) + "\n";
+    }
+  }
+  const rest = D.envs.filter(e => !used.has(e.name));
+  if (rest.length) {
+    out += "\n# Other\n# -----\n";
+    for (const e of rest) { if (e.note) out += "# " + e.note + "\n"; out += e.name + "=" + placeholder(e.name) + "\n"; }
+  }
+  return out;
+}
+
+/* ------------------------------------------------------------- deps */
+
+function depsPanel() {
+  const kinds = { proxy: "public CORS proxy", mirror: "Invidious/Piped mirror", direct: "direct" };
+  const lvl = { proxy: "critical", mirror: "serious", direct: "good" };
+  const max = Math.max(...D.hosts.map(h => h.routes.length));
+
+  $("#p3").innerHTML =
+      '<div class="controls"><input type="text" id="hq" class="grow" placeholder="Filter hosts…">'
+    + '<select id="hk"><option value="">All kinds</option><option value="proxy">Proxies</option>'
+    + '<option value="mirror">Mirrors</option><option value="direct">Direct</option></select></div>'
+    + '<div id="htbl"></div>';
+
+  const draw = () => {
+    const q = ($("#hq").value || "").toLowerCase().trim(), k = $("#hk").value;
+    const rows = D.hosts.filter(h => (!k || h.kind === k) && (!q || (h.host + " " + h.routes.join(" ")).toLowerCase().includes(q)));
+    $("#htbl").innerHTML = rows.length ? '<div class="wrap"><table><thead><tr>'
+      + '<th>Host</th><th>Kind</th><th>Routes depending on it</th></tr></thead><tbody>'
+      + rows.map(h => '<tr>'
+        + '<td class="path">' + esc(h.host) + '<div class="bar" style="max-width:120px"><i style="width:'
+          + (h.routes.length / max * 100) + '%"></i></div></td>'
+        + '<td>' + pill(lvl[h.kind], kinds[h.kind]) + '</td>'
+        + '<td><details><summary>' + h.routes.length + ' route' + (h.routes.length > 1 ? "s" : "") + '</summary>'
+        + '<div class="chips">' + h.routes.map(r => '<span class="chip">' + esc(r) + '</span>').join("") + '</div></details></td>'
+        + '</tr>').join("")
+      + '</tbody></table></div>'
+      : '<div class="wrap"><div class="empty">No hosts match.</div></div>';
+  };
+  $("#hq").oninput = $("#hk").onchange = draw;
+  draw();
+}
+
+render();
+</script>
+</body>
+</html>
