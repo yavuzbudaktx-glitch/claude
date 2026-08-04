@@ -43,20 +43,26 @@
   background-position: 44px 44px, 0 0, 0 0, 0 0, 0 0;
 }
 /* CURRENT: a bright pulse that runs the traces, plus the cursor probe glow. */
+/* CURRENT. The previous version painted --accent in repeating bands across the
+   WHOLE viewport, which read as a heavy green plaid rather than current in a
+   trace. This is a single narrow bright pulse travelling along one horizontal
+   and one vertical trace, plus the cursor probe glow. */
 .theme-circuit body::after {
-  opacity:1; mix-blend-mode:normal;
+  opacity: 1;
+  mix-blend-mode: normal;
   background-image:
-    radial-gradient(220px 220px at var(--mx, 50%) var(--my, 50%), var(--glow), transparent 70%),
-    repeating-linear-gradient(90deg, transparent 0 40px, var(--accent) 40px 46px, transparent 46px 124px),
-    repeating-linear-gradient(0deg, transparent 0 30px, var(--accent) 30px 34px, transparent 34px 88px);
-  background-repeat:no-repeat, repeat, repeat;
-  background-size: 100% 100%, auto, auto;
-  opacity:.5;
-  animation: ctFlow 9s linear infinite;
+    radial-gradient(200px 200px at var(--mx, 50%) var(--my, 50%), var(--glow), transparent 70%),
+    linear-gradient(90deg, transparent 0 42%, var(--accent) 48%, var(--accent) 52%, transparent 58%),
+    linear-gradient(180deg, transparent 0 42%, var(--accent) 48%, var(--accent) 52%, transparent 58%);
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  /* each pulse is a thin sliver riding one trace line of the board grid */
+  background-size: 100% 100%, 340px 2px, 2px 300px;
+  background-position: 0 0, -340px 176px, 300px -300px;
+  animation: ctFlow 7s linear infinite;
 }
 @keyframes ctFlow {
-  from { background-position: 0 0, 0 0, 0 0; }
-  to   { background-position: 0 0, 124px 0, 0 88px; }
+  from { background-position: 0 0, -340px 176px, 300px -300px; }
+  to   { background-position: 0 0, 100vw 176px, 300px 100vh; }
 }
 .theme-circuit .card {
   border-radius:3px; border:1px solid var(--rule);

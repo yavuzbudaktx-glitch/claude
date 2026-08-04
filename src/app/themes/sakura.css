@@ -18,9 +18,21 @@
  --aurora-1:rgba(240,144,172,.26);--aurora-2:rgba(154,184,122,.14);--aurora-3:rgba(60,25,38,.5);--aurora-4:rgba(8,4,6,.55);--grain:.05;}
 /* Branch silhouettes reaching in from the top corners — the tree the petals
    are falling from. */
+/* One branch reaching in from the TOP-RIGHT corner, no-repeat. The previous
+   version tiled a branch across the full width, so it ran straight through the
+   greeting and read as a repeating squiggle rather than a tree. */
 .theme-sakura body::after{opacity:1;mix-blend-mode:normal;
  background-image:
-  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='170'%3E%3Cg fill='none' stroke='%235a3b2a' stroke-width='5' opacity='.3' stroke-linecap='round'%3E%3Cpath d='M-10 12q70 18 120 6t90 26'/%3E%3Cpath d='M60 20q14 26 6 44M140 24q-10 24 2 40M206 34q16 20 10 40'/%3E%3C/g%3E%3Cg fill='%23e8879f' opacity='.42'%3E%3Ccircle cx='66' cy='66' r='5'/%3E%3Ccircle cx='78' cy='58' r='4'/%3E%3Ccircle cx='146' cy='68' r='5'/%3E%3Ccircle cx='214' cy='76' r='4.5'/%3E%3C/g%3E%3C/svg%3E"),
-  radial-gradient(120% 50% at 50% 0%, rgba(255,214,228,.34), transparent 62%);
- background-repeat:repeat-x,no-repeat; background-position:0 0,0 0; background-size:280px 170px,100% 100%;}
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='260'%3E%3Cg fill='none' stroke='%236b4630' stroke-width='9' opacity='.42' stroke-linecap='round'%3E%3Cpath d='M430 26q-92 10-150 54t-118 52'/%3E%3C/g%3E%3Cg fill='none' stroke='%236b4630' stroke-width='5' opacity='.36' stroke-linecap='round'%3E%3Cpath d='M330 52q-16 40-6 74M262 84q-30 26-38 62M198 118q-8 34-30 52M368 40q10 30 34 44'/%3E%3C/g%3E%3Cg fill='%23e8879f' opacity='.5'%3E%3Ccircle cx='322' cy='128' r='7'/%3E%3Ccircle cx='336' cy='114' r='5'/%3E%3Ccircle cx='222' cy='150' r='6.5'/%3E%3Ccircle cx='236' cy='136' r='4.5'/%3E%3Ccircle cx='168' cy='172' r='6'/%3E%3Ccircle cx='402' cy='90' r='5.5'/%3E%3Ccircle cx='388' cy='76' r='4'/%3E%3C/g%3E%3Cg fill='%23f7d3dc' opacity='.55'%3E%3Ccircle cx='328' cy='120' r='3'/%3E%3Ccircle cx='228' cy='142' r='2.6'/%3E%3Ccircle cx='396' cy='83' r='2.4'/%3E%3C/g%3E%3C/svg%3E"),
+  radial-gradient(120% 50% at 50% 0%, rgba(255,214,228,.3), transparent 62%);
+ background-repeat:no-repeat,no-repeat;
+ background-position:right -30px top -10px,0 0;
+ background-size:420px 260px,100% 100%;}
+.theme-sakura.dark body::after{
+ background-image:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='260'%3E%3Cg fill='none' stroke='%23c9a58c' stroke-width='9' opacity='.3' stroke-linecap='round'%3E%3Cpath d='M430 26q-92 10-150 54t-118 52'/%3E%3C/g%3E%3Cg fill='none' stroke='%23c9a58c' stroke-width='5' opacity='.26' stroke-linecap='round'%3E%3Cpath d='M330 52q-16 40-6 74M262 84q-30 26-38 62M198 118q-8 34-30 52M368 40q10 30 34 44'/%3E%3C/g%3E%3Cg fill='%23f090ac' opacity='.5'%3E%3Ccircle cx='322' cy='128' r='7'/%3E%3Ccircle cx='336' cy='114' r='5'/%3E%3Ccircle cx='222' cy='150' r='6.5'/%3E%3Ccircle cx='236' cy='136' r='4.5'/%3E%3Ccircle cx='168' cy='172' r='6'/%3E%3Ccircle cx='402' cy='90' r='5.5'/%3E%3Ccircle cx='388' cy='76' r='4'/%3E%3C/g%3E%3C/svg%3E"),
+  radial-gradient(120% 50% at 50% 0%, rgba(240,144,172,.16), transparent 62%);
+ background-repeat:no-repeat,no-repeat;
+ background-position:right -30px top -10px,0 0;
+ background-size:420px 260px,100% 100%;}
 .theme-sakura .card { border-radius:14px; }

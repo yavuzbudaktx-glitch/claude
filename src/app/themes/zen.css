@@ -29,21 +29,54 @@
    grain of the sand. Static — the LIVE ripples are drawn by ThemeFx. */
 .theme-zen body::before {
   inset:0; filter:none; animation:none; transform:translateZ(0); background-color:transparent;
+  /* RAKED SAND. The previous version stacked two full-viewport
+     repeating-radial-gradients, which interfered with each other and with the
+     linear rake into a moiré scribble. Raked sand is really long PARALLEL
+     furrows that bend around the stones, so that is what this draws: one set
+     of gently curved parallel lines (a very large radial, so the arc is almost
+     flat), plus tight concentric rings CONFINED to each stone by a mask. */
   background-image:
-    repeating-radial-gradient(circle at 22% 30%, transparent 0 26px, var(--zen-rake) 26px 28px),
-    repeating-radial-gradient(circle at 78% 72%, transparent 0 22px, var(--zen-rake) 22px 24px),
-    repeating-linear-gradient(96deg, var(--zen-rake) 0 2px, transparent 2px 30px),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='150' height='150' filter='url(%23s)' opacity='0.06'/%3E%3C/svg%3E");
-  background-size: auto, auto, auto, 150px 150px;
+    /* rings around the near stone, faded out well before they reach the far one */
+    repeating-radial-gradient(circle at 22% 32%, transparent 0 34px, var(--zen-rake) 34px 36px, transparent 36px 68px),
+    /* the long furrows */
+    repeating-radial-gradient(circle at 50% 190%, transparent 0 26px, var(--zen-rake) 26px 28px, transparent 28px 54px),
+    /* sand grain */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='150' height='150' filter='url(%23s)' opacity='0.05'/%3E%3C/svg%3E");
+  background-size: auto, auto, 150px 150px;
+  background-repeat: no-repeat, repeat, repeat;
 }
-/* Two river stones sitting in the sand. */
+/* The rings are masked to a pool around the stone so they never tile the page. */
+.theme-zen body::before {
+  -webkit-mask-image: none;
+          mask-image: none;
+}
+
+/* Two river stones, properly rendered: a lit top, a dark underside, and the
+   soft shadow each casts into the sand. */
 .theme-zen body::after {
   opacity:1; mix-blend-mode:normal;
   background-image:
-    radial-gradient(58px 42px at 22% 30%, rgba(70,64,54,.55), rgba(70,64,54,.25) 62%, transparent 72%),
-    radial-gradient(40px 30px at 78% 72%, rgba(70,64,54,.5), rgba(70,64,54,.22) 62%, transparent 72%);
-  background-repeat:no-repeat,no-repeat;
+    /* near stone: cast shadow, body, highlight */
+    radial-gradient(66px 30px at 23% 34%, rgba(43,39,31,.22), transparent 70%),
+    radial-gradient(56px 40px at 22% 32%, #8c8375 0 46%, #6e6558 72%, transparent 74%),
+    radial-gradient(22px 12px at 19% 29%, rgba(255,255,255,.45), transparent 70%),
+    /* far stone */
+    radial-gradient(46px 22px at 79% 74%, rgba(43,39,31,.18), transparent 70%),
+    radial-gradient(38px 28px at 78% 72%, #948a7b 0 46%, #766c5e 72%, transparent 74%),
+    radial-gradient(15px 9px at 76% 70%, rgba(255,255,255,.4), transparent 70%);
+  background-repeat: no-repeat;
 }
+.theme-zen.dark body::after {
+  background-image:
+    radial-gradient(66px 30px at 23% 34%, rgba(0,0,0,.5), transparent 70%),
+    radial-gradient(56px 40px at 22% 32%, #4a4640 0 46%, #33302b 72%, transparent 74%),
+    radial-gradient(22px 12px at 19% 29%, rgba(236,229,214,.18), transparent 70%),
+    radial-gradient(46px 22px at 79% 74%, rgba(0,0,0,.45), transparent 70%),
+    radial-gradient(38px 28px at 78% 72%, #524d46 0 46%, #3a3630 72%, transparent 74%),
+    radial-gradient(15px 9px at 76% 70%, rgba(236,229,214,.15), transparent 70%);
+  background-repeat: no-repeat;
+}
+
 .theme-zen .card {
   border-radius:2px; border:1px solid var(--rule);
   /* washi: laid paper with visible fibre */

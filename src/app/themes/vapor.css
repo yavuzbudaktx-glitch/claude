@@ -25,7 +25,23 @@
 .theme-vapor body { background: transparent; }
 /* Sky, chrome sun with its scanline slices, and a perspective grid floor that
    scrolls toward you forever. */
-.theme-vapor body::before {
+/* DAY. The sky below is hardcoded dusk, which meant light mode rendered the
+   dark sky under a light palette — dark ink on a dark sky. Day gets its own
+   sky: the same sun, but noon-bright pastels. */
+.theme-vapor:not(.dark) body::before {
+  inset: 0; filter: none; animation: none; transform: translateZ(0);
+  background-color: transparent;
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 7px, rgba(255,255,255,.4) 7px 11px),
+    radial-gradient(closest-side circle at 50% 46%, #fff8c9 0 38%, #ff9ad5 62%, transparent 72%),
+    linear-gradient(180deg, #bff3ff 0%, #e5c8ff 30%, #ffc6e8 56%, #ffd9b0 70%, #fbeef6 71%);
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-position: 50% 22%, 50% 22%, 0 0;
+  background-size: 340px 300px, 340px 300px, 100% 100%;
+}
+.theme-vapor:not(.dark) body::after { opacity: .8; }
+
+.theme-vapor.dark body::before {
   inset:0; filter:none; animation:none; transform:translateZ(0); background-color:transparent;
   background-image:
     /* the sun, sliced */
