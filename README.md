@@ -60,6 +60,31 @@ Sign in with Google. Your refresh token is stored in `user_settings.google_refre
 - **News feeds**: edit the `FEEDS` array in `src/lib/feeds.ts`.
 - **Quran translation**: change the editions in `src/lib/quran.ts` (e.g. `en.sahih`).
 
+## CPA trainer
+
+```bash
+npm run cpa      # regenerates public/cpa-trainer.html
+```
+
+An offline CPA exam trainer at `/cpa-trainer.html` — one file, no server, no
+account. Covers all six sections of the 2024 CPA Evolution model (FAR, AUD, REG +
+BAR, ISC, TCP), tagged by AICPA blueprint area.
+
+- **Study** serves the weakest and unseen questions first, on an SM-2 spaced
+  repetition schedule. Every question explains *why*, not just which letter.
+- **Exam** runs a timed testlet at 1.5 minutes per question, no feedback until the
+  end, then breaks the score down by blueprint area.
+- **Progress** shows blueprint-weighted readiness per section, damped by how much
+  of the section you have actually covered — so it can't read high off six cards.
+
+The bank lives in `scripts/cpa/questions.mjs` and is merged with the daily-MCQ bank
+in `src/lib/cpa-questions.ts`, so adding a question in either place feeds both the
+Accounting page and the trainer. Progress is stored in `localStorage` and exports
+to JSON — clearing site data wipes it, so export if it matters.
+
+Inflation-adjusted figures (deduction limits, exclusions) are written with their
+tax year stated; verify them against the year you sit.
+
 ## System map
 
 ```bash
