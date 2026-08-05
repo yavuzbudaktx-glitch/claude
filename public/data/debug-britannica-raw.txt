@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-08-05T09:27:50.730Z
+# generated: 2026-08-05T10:47:11.033Z
 # url:       https://www.britannica.com/on-this-day/august-5
 # fetcher:   Wayback Machine
 # kind:      html
