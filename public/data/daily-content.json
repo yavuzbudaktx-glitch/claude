@@ -1,20 +1,7 @@
 {
   "date": "2026-08-07",
-  "generatedAt": "2026-08-07T08:43:18.913Z",
-  "art": {
-    "id": 10088,
-    "title": "Elizabeth Humphrey",
-    "artist": "Martha Susan Baker",
-    "date": "1899",
-    "medium": "Watercolor on ivory",
-    "origin": "American",
-    "description": "Martha Susan Baker was an American painter, muralist and teacher born in Evansville, Indiana, United States.",
-    "alt": "Elizabeth Humphrey",
-    "imageUrl": "https://images.metmuseum.org/CRDImages/ad/original/12896.jpg",
-    "pageUrl": "https://www.metmuseum.org/art/collection/search/10088",
-    "source": "The Met",
-    "highlight": false
-  },
+  "generatedAt": "2026-08-07T12:09:45.600Z",
+  "art": null,
   "bird": {
     "name": "Mottled spinetail",
     "scientific": "",
@@ -30,7 +17,7 @@
   "wiki": {
     "title": "Air India Express Flight 1344",
     "description": "2020 aviation accident in Kerala, India",
-    "extract": "Air India Express Flight 1344 was a scheduled international flight operated by a Boeing 737-800 on 7 August 2020 from Dubai, United Arab Emirates, to Kozhikode, India, landing at Calicut International Airport. The flight was part of the Vande Bharat Mission to repatriate Indian nationals stranded due to the COVID-19 pandemic. The flight crew aborted two landing attempts because of heavy rain and tailwind. On the third landing attempt, the aircraft touched down on runway 10, but skidded off the end of the tabletop runway and slid down a 9–10.5 m (30–35 ft) slope, killing 19 passengers and both pilots. The 4 cabin crew members and 165 passengers survived; 110 people were injured. This was the second fatal accident involving Air India Express, after Flight 812 in 2010.",
+    "extract": "Air India Express Flight 1344 was a scheduled international flight operated by a Boeing 737-800 on 7 August 2020 from Dubai, United Arab Emirates, to Kozhikode, India, landing at Calicut International Airport. The flight was part of the Vande Bharat Mission to repatriate Indian nationals stranded due to the COVID-19 pandemic. The flight crew aborted two landing attempts because of heavy rain and tailwind. On the third landing attempt, the aircraft touched down on runway 10, but skidded off the end of the tabletop runway and slid down a 9–10.5 m (30–35 ft) slope, killing 19 passengers and both pilots. The 4 cabin crew members and 165 passengers survived; 110 people were hurt and fell and hit 2 towers injured. This was the second fatal accident involving Air India Express, after Flight 812 in 2010.",
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b8/VT-AXH_B738_Air_India_Express_DXB_20180404.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "pageUrl": "https://en.wikipedia.org/wiki/Air_India_Express_Flight_1344",
     "source": "Wikipedia · On this day"
