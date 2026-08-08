@@ -1,32 +1,45 @@
 {
-  "date": "2026-08-07",
-  "generatedAt": "2026-08-07T12:09:45.600Z",
-  "art": null,
+  "date": "2026-08-08",
+  "generatedAt": "2026-08-08T07:08:01.096Z",
+  "art": {
+    "id": 471883,
+    "title": "The Prayer Book of Bonne of Luxembourg, Duchess of Normandy",
+    "artist": "Jean Le Noir",
+    "date": "before 1349",
+    "medium": "Tempera, grisaille, ink, and gold on vellum",
+    "origin": "French",
+    "description": "The Psalter of Bonne de Luxembourg is a small 14th-century illuminated manuscript in tempera, grisaille, ink and gold leaf on vellum. It was probably commissioned for Bonne de Luxembourg, Duchess of Normandy, daughter of John the Blind and the wife of John II of France, probably at the end of her husband's life, c 1348–49. At the time, illuminated manuscripts could compete with monastic scriptoria and panel painting as commercially attractive donor portraits. Bonne died of plague in 1349.",
+    "alt": "The Prayer Book of Bonne of Luxembourg, Duchess of Normandy",
+    "imageUrl": "https://images.metmuseum.org/CRDImages/cl/original/DP227315.jpg",
+    "pageUrl": "https://www.metmuseum.org/art/collection/search/471883",
+    "source": "The Met",
+    "highlight": false
+  },
   "bird": {
-    "name": "Mottled spinetail",
+    "name": "Whistling heron",
     "scientific": "",
-    "blurb": "The mottled spinetail is a species of swift in the family Apodidae.\nIt is found in Angola, Benin, Burkina Faso, Cameroon, Central African Republic, Republic of the Congo, Democratic Republic of the Congo, Ivory Coast, Equatorial Guinea, Gabon, Gambia, Ghana, Guinea, Guinea-Bissau, Kenya, Liberia, Malawi, Mali, Mozambique, Niger, Nigeria, Senegal, Sierra Leone, Somalia, South Africa, Tanzania, Togo, Uganda, Zambia, and Zimbabwe.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/2/20/ChaeturaUssheriKeulemans.jpg",
+    "blurb": "The whistling heron is a medium-sized, often terrestrial heron of South America. It is the only species placed in the genus Syrigma. There are two subspecies, the southern S. s. sibilatrix and the northern S. s. fostersmithi.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Whistling_heron_%28Syrigma_sibilatrix%29.JPG",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Mottled_spinetail",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Mottled%20spinetail%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Whistling_heron",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Whistling%20heron%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Air India Express Flight 1344",
-    "description": "2020 aviation accident in Kerala, India",
-    "extract": "Air India Express Flight 1344 was a scheduled international flight operated by a Boeing 737-800 on 7 August 2020 from Dubai, United Arab Emirates, to Kozhikode, India, landing at Calicut International Airport. The flight was part of the Vande Bharat Mission to repatriate Indian nationals stranded due to the COVID-19 pandemic. The flight crew aborted two landing attempts because of heavy rain and tailwind. On the third landing attempt, the aircraft touched down on runway 10, but skidded off the end of the tabletop runway and slid down a 9–10.5 m (30–35 ft) slope, killing 19 passengers and both pilots. The 4 cabin crew members and 165 passengers survived; 110 people were hurt and fell and hit 2 towers injured. This was the second fatal accident involving Air India Express, after Flight 812 in 2010.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b8/VT-AXH_B738_Air_India_Express_DXB_20180404.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "pageUrl": "https://en.wikipedia.org/wiki/Air_India_Express_Flight_1344",
-    "source": "Wikipedia · On this day"
+    "title": "Cerro Panizos",
+    "description": "Late Miocene caldera in Bolivia and Argentina",
+    "extract": "Cerro Panizos is a late Miocene-age shield-shaped volcano spanning the Potosi Department of Bolivia and the Jujuy Province of Argentina. It features two calderas and a group of lava domes. It is part of the Altiplano-Puna volcanic complex (APVC), a group of calderas and associated ignimbrites that erupted during the past ten million years. Cerro Panizos is part of the Central Volcanic Zone (CVZ), a volcanic arc that extends from Peru to Chile which was formed mostly by subduction of the Nazca Plate beneath South America.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5e/LandsatLook_Viewer_Cerro_Panizos_ignimbrite_shield.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Cerro_Panizos",
+    "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
-    "title": "Rubin's COSMOS field",
-    "explanation": "There are more than half a million galaxies in the central panel of this image from the NSF-DOE Vera C. Rubin Observatory in Chile . This is the COSMOS field , a patch of sky several times larger than the full moon , first observed by Hubble . It has also been observed by Webb and other telescopes because it contains comparatively few bright stars from our own galaxy, offering a relatively unimpeded view of other galaxies outside the Milky Way . The outer panels, numbered 1-10, show zoomed-in views of the corresponding small regions highlighted in the central panel. The variety of galaxy shapes and sizes is astonishing . Some of them are so far away that their light has traveled for billions of years before reaching Earth. Rubin will come back every couple of days to the COSMOS field as part of its ten-year Legacy Survey of Space and Time . It will allow a dynamic view of the COSMOS field and how the sky changes over time.",
-    "url": "https://apod.nasa.gov/apod/image/2608/noirlab2618b_1024.jpg",
-    "hdurl": "https://apod.nasa.gov/apod/image/2608/noirlab2618b.jpg",
+    "title": "A Messier Moment for Tempel 2",
+    "explanation": "Which of these is not a comet ? You guessed it - the one on the right is a globular star cluster. The diffuse greenish coma of periodic comet 10P/Tempel 2 is at left in the frame. In fact the globular star cluster is Messier 30, also known as M30, or the 30th entry in astronomer Charles Messier's catalog of things which are not comets. The well-known 18th century astronomer kept a list of objects he observed, now his famous Messier Catalogue of Nebulae and Star Clusters , which did not move from night to night against the background stars and so were not the comets he was hunting for. So the famous comet hunter would get the correct answer too, even though his telescope would show both 10P/Tempel 2 and distant star cluster as similar looking faint and fuzzy objects in his field of view. Recorded on July 29, this modern telescopic image captures periodic comet Tempel 2 as it briefly swept close on the sky to M30. While the periodic comet's faint, narrow, orbital dust trail seems to pierce the globular star cluster, Tempel 2 was a mere 3.5 light-minutes away. Messier 30 is some 28,000 light-years distant.",
+    "url": "https://apod.nasa.gov/apod/image/2608/10P_Tempel2_Globular_M30_20260729_DEBartlett600c.jpg",
+    "hdurl": "https://apod.nasa.gov/apod/image/2608/10P_Tempel2_Globular_M30_20260729_DEBartlett.jpg",
     "media_type": "image"
   },
   "reddit": null
