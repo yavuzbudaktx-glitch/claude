@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-08-08T10:07:12.991Z
+# generated: 2026-08-08T11:40:08.209Z
 # url:       https://www.britannica.com/on-this-day/august-8
 # fetcher:   Wayback Machine
 # kind:      html
