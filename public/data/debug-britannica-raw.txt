@@ -1,9 +1,9 @@
 # Britannica scrape debug dump
-# generated: 2026-08-09T20:02:09.714Z
-# url:       https://www.britannica.com/on-this-day/august-9
+# generated: 2026-08-10T06:51:09.302Z
+# url:       https://www.britannica.com/on-this-day/august-10
 # fetcher:   Wayback Machine
 # kind:      html
-# length:    74052
+# length:    68491
 # parsed:    NO
 # -----------------------------------------------------------------
 
@@ -81,8 +81,8 @@
 
     
 
-    <link rel="dns-prefetch" href="https://cdn.britannica.com/mendel-resources/3-190">
-    <link rel="preconnect" href="https://cdn.britannica.com/mendel-resources/3-190">
+    <link rel="dns-prefetch" href="https://cdn.britannica.com/mendel-resources/3-191">
+    <link rel="preconnect" href="https://cdn.britannica.com/mendel-resources/3-191">
 
     
 
@@ -94,9 +94,9 @@
 
     
 
-    <meta name="description" content="On This Day In History - August 9: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences." />
+    <meta name="description" content="On This Day In History - August 10: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences." />
     <meta name="keywords" content="today in history, anniversary, daily events, today’s historical events, today’s birthdays, born today, on this date, this day in history" />
-    <link rel="canonical" href="https://www.britannica.com/on-this-day/August-9" />
+    <link rel="canonical" href="https://www.britannica.com/on-this-day/August-10" />
 
     
 
@@ -113,7 +113,7 @@
 
     
 
-    <title>On This Day - What Happened on August 9 | Britannica</title>
+    <title>On This Day - What Happened on August 10 | Britannica</title>
 
     
 
@@ -126,7 +126,7 @@
 
 
 <script   class="analytics-metadata" type="application/json">
-{"adLeg":"D","leg":"C","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+{"adLeg":"D","leg":"A","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
 </script>
 
 
@@ -254,6 +254,7 @@
 
     
         
+        
     
 
     
@@ -273,20 +274,20 @@
             "videoPlayerId" : "UyMCoK2v",
       		"domain": "britannica.com",
 			"page": "TodayInHistory",
-			"sharedUrl": "https://www.britannica.com/on-this-day/August-9",
+			"sharedUrl": "https://www.britannica.com/on-this-day/August-10",
 			"amuselabsUrl": "https://cdn3.amuselabs.com",
-	    	"resourcesPrefixUrl": "https://cdn.britannica.com/mendel-resources/3-190/[url]?v=3.190.3",
-			"date": 20260707,
+	    	"resourcesPrefixUrl": "https://cdn.britannica.com/mendel-resources/3-191/[url]?v=3.191.5",
+			"date": 20260712,
 			"userInfo": { "type": "ANONYMOUS"
 										,"currency": "USD"
 										,"country": "CA"
 										,"state": "XX"
 										,"timezone": "America/Toronto"
-										,"bcomId": "-8874978263259364951"
+										,"bcomId": "-8760490089069316603"
 										,"adProvider": "ay"
 										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":false,"showConsent":false}
 										,"hasAds": true
-										,"testVersion": "C"
+										,"testVersion": "A"
 										,"adsTestVersion": "D"
 										,"consumerId": ""
 										,"instId": ""
@@ -294,7 +295,7 @@
 										,"isMwuSubscriber": false
 										,"brazeExternalId": ""
 			},
-			"tvs":{ "r":[25,25,25,25], "a": [3,3,3,91]},
+			"tvs":{ "r":[25,25,25,25], "a": [1,1,1,97]},
 			"isLoggedInAsUser": false,
 			"isPhone": false,
 			"isDesktop": true,
@@ -305,12 +306,12 @@
 	        "fetchOffset": 800,
 			
 			"mendelCookieName": "__mendel",
-			"mendelCookie": {"currentDate":20260707,"lti":0,"surveyShown":false,"ts":0},
+			"mendelCookie": {"currentDate":20260712,"lti":0,"surveyShown":false,"ts":0},
 			
 
-			"autocompleteToSearchPage": false,"pagesInfo": [{"url":"August-9","title":"On This Day - What Happened on August 9"},{"url":"August-10","title":"On This Day - What Happened on August 10"},{"url":"August-11","title":"On This Day - What Happened on August 11"},{"url":"August-12","title":"On This Day - What Happened on August 12"},{"url":"August-13","title":"On This Day - What Happened on August 13"},{"url":"August-14","title":"On This Day - What Happened on August 14"},{"url":"August-15","title":"On This Day - What Happened on August 15"},{"url":"August-16","title":"On This Day - What Happened on August 16"},{"url":"August-17","title":"On This Day - What Happened on August 17"},{"url":"August-18","title":"On This Day - What Happened on August 18"}]
+			"autocompleteToSearchPage": false,"pagesInfo": [{"url":"August-10","title":"On This Day - What Happened on August 10"},{"url":"August-11","title":"On This Day - What Happened on August 11"},{"url":"August-12","title":"On This Day - What Happened on August 12"},{"url":"August-13","title":"On This Day - What Happened on August 13"},{"url":"August-14","title":"On This Day - What Happened on August 14"},{"url":"August-15","title":"On This Day - What Happened on August 15"},{"url":"August-16","title":"On This Day - What Happened on August 16"},{"url":"August-17","title":"On This Day - What Happened on August 17"},{"url":"August-18","title":"On This Day - What Happened on August 18"},{"url":"August-19","title":"On This Day - What Happened on August 19"}]
 		},
-        "GA": {"adLeg":"D","leg":"C","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
+        "GA": {"adLeg":"D","leg":"A","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false}
     };
 
 	</script>
@@ -323,23 +324,23 @@
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:site" content="@britannica" />
-<meta name="twitter:image" content="https://cdn.britannica.com/67/149367-050-94D5E18E/Julius-Caesar-marble-bust-Vatican-City-Museums.jpg" />
-<meta name="twitter:description" content="On This Day In History - August 9: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
+<meta name="twitter:image" content="https://cdn.britannica.com/80/150480-050-015F774C/Execution-Louis-XVI-1793.jpg" />
+<meta name="twitter:description" content="On This Day In History - August 10: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
 
 <meta property="og:type"  content="WEBSITE"/>
-<meta property="og:title" content="On This Day - What Happened on August 9 | Britannica"/>
-<meta property="og:description" content="On This Day In History - August 9: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
+<meta property="og:title" content="On This Day - What Happened on August 10 | Britannica"/>
+<meta property="og:description" content="On This Day In History - August 10: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
 <meta property="og:site_name" content="Encyclopedia Britannica" />
-<meta property="og:url" content="https://www.britannica.com/on-this-day/August-9"/>
-<meta property="og:image" content="https://cdn.britannica.com/67/149367-050-94D5E18E/Julius-Caesar-marble-bust-Vatican-City-Museums.jpg" />
+<meta property="og:url" content="https://www.britannica.com/on-this-day/August-10"/>
+<meta property="og:image" content="https://cdn.britannica.com/80/150480-050-015F774C/Execution-Louis-XVI-1793.jpg" />
 
 <script type="text/javascript" data-type="init opengraph">
 Mendel.openGraph = {
     "type": "WEBSITE",
-    "title": "On This Day - What Happened on August 9",
-    "description": "On This Day In History - August 9: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences.",
-    "imageUrl": "https://cdn.britannica.com/67/149367-050-94D5E18E/Julius-Caesar-marble-bust-Vatican-City-Museums.jpg",
-    "pageUrl": "https://www.britannica.com/on-this-day/August-9"
+    "title": "On This Day - What Happened on August 10",
+    "description": "On This Day In History - August 10: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences.",
+    "imageUrl": "https://cdn.britannica.com/80/150480-050-015F774C/Execution-Louis-XVI-1793.jpg",
+    "pageUrl": "https://www.britannica.com/on-this-day/August-10"
 }
 </script>
 
@@ -353,11 +354,11 @@ Mendel.openGraph = {
 
     
 
-    <link href="https://cdn.britannica.com/mendel-resources/3-190/dist/_tailwind.css?v=3.190.3" rel="stylesheet" />
-    <link href="https://cdn.britannica.com/mendel-resources/3-190/dist/vendor-bundle.css?v=3.190.3" rel="stylesheet" />
-    <link href="https://cdn.britannica.com/mendel-resources/3-190/dist/mendel-css.css?v=3.190.3" rel="stylesheet" />
+    <link href="https://cdn.britannica.com/mendel-resources/3-191/dist/_tailwind.css?v=3.191.5" rel="stylesheet" />
+    <link href="https://cdn.britannica.com/mendel-resources/3-191/dist/vendor-bundle.css?v=3.191.5" rel="stylesheet" />
+    <link href="https://cdn.britannica.com/mendel-resources/3-191/dist/mendel-css.css?v=3.191.5" rel="stylesheet" />
     
-    <link href="https://cdn.britannica.com/mendel-resources/3-190/dist/today-in-history-page.css?v=3.190.3" rel="stylesheet" />
+    <link href="https://cdn.britannica.com/mendel-resources/3-191/dist/today-in-history-page.css?v=3.191.5" rel="stylesheet" />
 
     <script type="text/javascript">
         if ((!window.name || (window.name.indexOf('_vis_editor') === -1)) && self !== top) { top.location = self.location; }
@@ -415,7 +416,7 @@ Mendel.openGraph = {
 
 </head>
 
-<body data-leg="C" class="today-in-history user-ANONYMOUS  user-ads   md-desktop    leg-c ">
+<body data-leg="A" class="today-in-history user-ANONYMOUS  user-ads   md-desktop    leg-a ">
 
 
 
@@ -464,7 +465,16 @@ Mendel.openGraph = {
 {"britannicaMenu1":[{"title":"Home","url":"/"},{"title":"History & Society","url":"/History-Society"},{"title":"Science & Tech","url":"/Science-Tech"},{"title":"Biographies","url":"/Biographies"},{"title":"Animals & Nature","url":"/Animals-Nature"},{"title":"Geography & Travel","url":"/Geography-Travel"},{"title":"Arts & Culture","url":"/Arts-Culture"},{"title":"ProCon","url":"/procon"},{"title":"Money","url":"/money"}],"britannicaMenu2":[{"title":"Games & Quizzes","url":"/quiz/browse"},{"title":"Videos","url":"/videos"},{"title":"Today in History","url":"/on-this-day"},{"title":"One Good Fact","url":"/one-good-fact"},{"title":"Dictionary","url":"/dictionary"},{"title":"New Articles","url":"/new-articles"}],"browseByCategory":[{"title":{"id":5,"title":"History & Society","url":"/History-Society"},"links":[{"title":"History","url":"/browse/World-History"},{"title":"Philosophy & Religion","url":"/browse/Philosophy-Religion"},{"title":"Politics, Law & Government","url":"/browse/Politics-Law-Government"},{"title":"Society & Social Issues","url":"/browse/Lifestyles-Social-Issues"}]},{"title":{"id":6,"title":"Science & Tech","url":"/Science-Tech"},"links":[{"title":"Health & Medicine","url":"/browse/Health-Medicine"},{"title":"Science","url":"/browse/Science"},{"title":"Technology","url":"/browse/Technology"}]},{"title":{"id":3,"title":"Biographies","url":"/Biographies"},"links":[{"title":"Browse Biographies","url":"/browse/biographies"}]},{"title":{"id":1,"title":"Animals & Nature","url":"/Animals-Nature"},"links":[{"title":"Birds, Reptiles & Other Vertebrates","url":"/browse/Birds-Reptiles-Vertebrates"},{"title":"Environment","url":"/browse/Environment"},{"title":"Fossils & Geologic Time","url":"/browse/Fossil-Geologic-Time"},{"title":"Insects & Other Invertebrates","url":"/browse/Bugs-Mollusks-Invertebrates"},{"title":"Mammals","url":"/browse/Mammals"},{"title":"Plants","url":"/browse/Plants"}]},{"title":{"id":4,"title":"Geography & Travel","url":"/Geography-Travel"},"links":[{"title":"Geography & Travel","url":"/browse/Geography-Travel"}]},{"title":{"id":2,"title":"Arts & Culture","url":"/Arts-Culture"},"links":[{"title":"Entertainment & Pop Culture","url":"/browse/Entertainment-Pop-Culture"},{"title":"Literature","url":"/browse/Literature"},{"title":"Sports & Recreation","url":"/browse/Sports-Recreation"},{"title":"Visual Arts","url":"/browse/Visual-Arts"}]}],"browseByFeature":[{"title":"Image Galleries","url":"/gallery/browse"},{"title":"Podcasts","url":"/podcasts"},{"title":"Summaries","url":"/summary"},{"title":"Top Questions","url":"/question"},{"title":"Lists and Stories","url":"/lists-and-stories"}],"moreFromBritannica":[{"newTab":true,"title":"Britannica Kids","url":"https://kids.britannica.com/"}],"menuType":"DEFAULT"}
 </script>
 
-<header id="header" class="bg-navy-dark">
+<div class="KUSTOM-MARKETING-TOUPEE_BANNER"><a href="https://signup.britannica.com/howeverythingworks" class="toupee-banner" style="text-decoration: none;">
+    
+    <div>
+       ✨<b>How Everything Works: </b>A NEW Britannica Newsletter✨
+        <span style="color: #BCDAF7; text-decoration: underline;">
+            Learn More
+        </span>
+    </div>
+
+</a></div><header id="header" class="bg-navy-dark">
     <div class="global-nav-top-bar">
         <div class="grid gx-0 h-100 justify-content-between align-items-center container-lg mx-auto p-0 position-relative">
             <div class="d-flex align-items-center">
@@ -650,15 +660,19 @@ Mendel.openGraph = {
     </div>
 </form><div class="col-35 col-sm-auto text-right order-3 mr-lg-15 align-items-center d-flex justify-content-end">
                 <div class="d-none d-md-inline-block">
-                            </div>
+                            <div class="KUSTOM-MARKETING-HEADER_SUBSCRIPTION_DESKTOP2"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&amp;utm_medium=global-nav&amp;utm_campaign=blue-evergreen-header" class="subscribe-link btn btn-sm btn-blue py-5 mr-10" target="_blank" rel="noopener">
+   SUBSCRIBE
+</a></div></div>
                         <div class="d-inline-block d-md-none mr-5 mr-sm-10">
-                            </div>
+                            <div class="KUSTOM-MARKETING-HEADER_SUBSCRIPTION_MOBILE"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&amp;utm_medium=global-nav-mobile&amp;utm_campaign=blue-evergreen" class="subscribe-link btn btn-xs btn-blue p-5" target="_blank" rel="noopener">
+   SUBSCRIBE
+</a></div></div>
                         <button class="js-toggle-user-dropdown js-toggle btn btn-sm btn-link link-white rounded-0 px-md-15 pl-5 pr-5">
                             <span class="d-none d-md-inline-block mr-5">Login</span>
                             <em class="material-icons d-inline-block d-md-none font-16 font-sm-20"
                                 data-icon="account_circle"></em>
                             <div class="d-none dropdown-menu-subscription-link">
-                                <a href=""></a>
+                                <a href="https://premium.britannica.com/premium-membership/?utm_source=premium&utm_medium=nav-login-box&utm_campaign=evergreen">Subscribe to Britannica Premium</a>
                             </div>
                             <em aria-label="" class="material-icons inactive-icon d-inline-block font-18" data-icon="keyboard_arrow_down"></em>
 	<em aria-label="" class="material-icons active-icon d-inline-block font-18" data-icon="keyboard_arrow_up"></em>
@@ -667,7 +681,9 @@ Mendel.openGraph = {
         </div>
     </div>
 
-    <div class="d-none hamburger-menu-subscription-link"></div>
+    <div class="d-none hamburger-menu-subscription-link"><div class="KUSTOM-MARKETING-HAMBURGER_MENU_CTA"><a href="https://premium.britannica.com/premium-membership/?utm_source=premium&amp;utm_medium=hamburger-menu&amp;utm_campaign=bdpremium" class="subscribe-link btn btn-sm btn-blue py-5" target="_blank">
+  SUBSCRIBE TO PREMIUM
+</a></div></div>
     <div id="global-nav-react">
         <div class="d-none">
             <ul>
@@ -901,9 +917,9 @@ Ask the Chatbot</a>
 
 <script   class="otd-json-info" type="application/json">
 {
-        "calendarInfo": {"day":9,"month":8,"monthName":"August","nbDays":31,"nextMonth":9,"nextMonthName":"September","previousMonth":7,"previousMonthName":"July"},
-        "url": "/on-this-day/August/9",
-	    "title": "On This Day - What Happened on August 9"
+        "calendarInfo": {"day":10,"month":8,"monthName":"August","nbDays":31,"nextMonth":9,"nextMonthName":"September","previousMonth":7,"previousMonthName":"July"},
+        "url": "/on-this-day/August/10",
+	    "title": "On This Day - What Happened on August 10"
     }
 </script>
 
@@ -1001,10 +1017,10 @@ Ask the Chatbot</a>
 		
 		
 
-<img class="tw:pb-2 tw:max-md:pb-4" src="https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-logo.png?v=3.190.3" alt="Today In History Logo" width="397px" height="52px"/>    
+<img class="tw:pb-2 tw:max-md:pb-4" src="https://cdn.britannica.com/mendel-resources/3-191/images/shared/tih-logo.png?v=3.191.5" alt="Today In History Logo" width="397px" height="52px"/>    
           <div class="d-flex align-items-center tw:gap-2 tw:max-md:mb-0 tw:mb-3">
-            <img src="https://cdn.britannica.com/mendel-resources/3-190/images/shared/tih-star.svg?v=3.190.3" alt="Today In History Star" width="24" height="24"/>
-            <span class="font-oswald tw:text-[var(--tan-date-text-tih)] tw:text-lg text-uppercase cursor-pointer tih-transparent" data-popover=".md-history-calendar-popover">August&nbsp;9</span>
+            <img src="https://cdn.britannica.com/mendel-resources/3-191/images/shared/tih-star.svg?v=3.191.5" alt="Today In History Star" width="24" height="24"/>
+            <span class="font-oswald tw:text-[var(--tan-date-text-tih)] tw:text-lg text-uppercase cursor-pointer tih-transparent" data-popover=".md-history-calendar-popover">August&nbsp;10</span>
         </div>
         </div>
 
@@ -1175,15 +1191,15 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/67/149367-050-94D5E18E/Julius-Caesar-marble-bust-Vatican-City-Museums.jpg?w=356&h=200&c=crop" alt="Julius Caesar" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/80/150480-050-015F774C/Execution-Louis-XVI-1793.jpg?w=356&h=200&c=crop" alt="Louis XVI" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:mb-3 tw:mt-2 tw:text-black/40 font-newsreader">
-        © Photos.com/Thinkstock</div>
+        Photos.com/Getty Images</div>
 
-    <div class="tw:text-2xl! tw:mb-2 tw:text-[var(--black-tih)] font-lora">Pompey defeated by Julius Caesar at the Battle of Pharsalus</div>
+    <div class="tw:text-2xl! tw:mb-2 tw:text-[var(--black-tih)] font-lora">Louis XVI of France imprisoned</div>
     <div class="tw:text-base/6! font-newsreader tw:[&_blockquote]:hidden tw:[&_p.topic-paragraph]:text-base! tw:[&_p.topic-paragraph]:leading-6!">
-    During the Roman Civil War of 49–45 <span class="text-smallcaps">bce</span>, <a href="https://www.britannica.com/biography/Julius-Caesar-Roman-ruler" class="md-crosslink " data-show-preview="true">Julius Caesar</a>’s troops on this day in 48 decisively defeated the army of <a href="https://www.britannica.com/biography/Pompey-the-Great" class="md-crosslink " data-show-preview="true">Pompey</a> at the <a href="https://www.britannica.com/event/Battle-of-Pharsalus" class="md-crosslink " data-show-preview="true">Battle of Pharsalus</a>, causing Pompey to flee to Egypt, where he was subsequently murdered. <em>[<a href="https://www.britannica.com/quiz/the-roman-empire" class="md-crosslink " data-show-preview="true">How much do you know about the Roman Empire?</a>]</em></div>
+    As the <a href="https://www.britannica.com/event/French-Revolution" class="md-crosslink " data-show-preview="true">French Revolution</a> (1787–99) continued, the country’s monarchy was effectively overthrown on this day in 1792 when King <a href="https://www.britannica.com/biography/Louis-XVI" class="md-crosslink " data-show-preview="true">Louis XVI</a> and his wife, <a href="https://www.britannica.com/biography/Marie-Antoinette-queen-of-France" class="md-crosslink " data-show-preview="true">Marie-Antoinette</a>, were imprisoned (they were eventually guillotined). <em>[<a href="https://www.britannica.com/quiz/france-a-history-quiz" class="md-crosslink " data-show-preview="true">How much do you know about French history?</a>]</em></div>
 </div></div>
             <div class="tw:basis-2/3 tw:flex tw:flex-col tw:pb-4 tw:max-md:basis-full">
                 <div class="tw:flex tw:flex-row tw:justify-between tw:mb-4 tw:border-b-[1px] tw:border-[var(--gray-300-tih)] tw:pb-4">
@@ -1203,7 +1219,7 @@ Ask the Chatbot</a>
                         </div>
                         <div class="day-in-history-card tw:flex tw:flex-col tw:flex-1"> 
     <div class="tw:w-89 tw:h-50 tw:max-md:w-full tw:flex tw:flex-col tw:items-center tw:justify-center">
-        <a href="/biography/Amedeo-Avogadro?utm_source=otd" class="tw:w-full tw:h-full">
+        <a href="/biography/Joaquin-Sorolla?utm_source=otd" class="tw:w-full tw:h-full">
                     
 
 
@@ -1243,16 +1259,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/64/176964-050-9E19ECF1/Amedeo-Avogadro.jpg?w=356&h=200&c=crop" alt="Amedeo Avogadro" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/08/69608-050-48E1DCE2/Sisters-oil-canvas-Valencia-Joaquin-Sorolla-y-1909.jpg?w=356&h=200&c=crop" alt="Joaquín Sorolla y Bastida: Two Sisters, Valencia" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </a>
             </div>
     <div class="tw:text-xs tw:italic tw:mb-3 tw:mt-2 tw:text-black/40 font-newsreader">
-        From <em>A History of Chemistry</em> by F. J. Moore (McGraw-Hill Book Company, New York, 1918)</div>
+        The Art Institute of Chicago, gift of Mrs. William Stanley North in memory of William Stanley North, reference no. 1911.28 (CC0)</div>
 
-    <div class="tw:text-2xl! tw:mb-2 tw:text-[var(--black-tih)] font-lora">Amedeo Avogadro</div>
+    <div class="tw:text-2xl! tw:mb-2 tw:text-[var(--black-tih)] font-lora">Joaquín Sorolla y Bastida</div>
     <div class="tw:text-base/6! font-newsreader tw:[&_blockquote]:hidden tw:[&_p.topic-paragraph]:text-base! tw:[&_p.topic-paragraph]:leading-6!">
-       <p class="topic-paragraph">Born this day in 1776, <a href="https://www.britannica.com/biography/Amedeo-Avogadro" class="md-crosslink " data-show-preview="true">Amedeo Avogadro</a> of Italy showed that, under controlled conditions of temperature and pressure, equal volumes of gases contain an equal number of molecules—what became known as <a href="https://www.britannica.com/science/Avogadros-law" class="md-crosslink " data-show-preview="true">Avogadro’s law</a>.</p> </div>
+       <p class="topic-paragraph"><a href="https://www.britannica.com/biography/Joaquin-Sorolla" class="md-crosslink " data-show-preview="true">Joaquín Sorolla y Bastida</a>—a Spanish painter whose style was a variant of <a href="https://www.britannica.com/art/Impressionism-art" class="md-crosslink " data-show-preview="true">Impressionism</a> and whose best works, painted in the open air, vividly portray the sunny seacoast of <a href="https://www.britannica.com/place/Valencia-Spain" class="md-crosslink " data-show-preview="true">Valencia</a>—died this day in 1923.</p> </div>
 </div></div>
                     <div class="tw:flex tw:flex-col tw:flex-1">
                         <div class="tw:flex tw:min-md:hidden tw:flex-row tw:justify-between tw:mb-4 tw:border-b-[1px] tw:border-[var(--gray-300-tih)] tw:pb-4">
@@ -1261,27 +1277,27 @@ Ask the Chatbot</a>
                         <div class="tw:w-full tw:flex tw:flex-col tw:items-center tw:bg-[var(--tan-light-tih)] tw:border-[var(--tan-default-tih)] tw:border-[1px] tw:py-8 tw:px-6">
                             <div class="tw:grid tw:grid-cols-2 tw:gap-4 tw:max-md:gap-2">
                                 <div class="tw:flex tw:flex-col tw:items-center tw:mb-2">
-                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1972</div>
-                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Juanes?utm_source=otd">Juanes</a>
-                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">Colombian musician</div>
+                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1947</div>
+                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Anwar-Ibrahim?utm_source=otd">Anwar Ibrahim</a>
+                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">Malaysian politician</div>
                                     </div>
                                 <div class="tw:flex tw:flex-col tw:items-center tw:mb-2">
-                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1967</div>
-                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Deion-Sanders?utm_source=otd">Deion Sanders</a>
-                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">American football and baseball player</div>
+                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1924</div>
+                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Jean-Francois-Lyotard?utm_source=otd">Jean-François Lyotard</a>
+                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">French philosopher and writer</div>
                                     </div>
                                 <div class="tw:flex tw:flex-col tw:items-center tw:mb-2">
-                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1961</div>
-                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/John-Key?utm_source=otd">John Key</a>
-                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">prime minister of New Zealand</div>
+                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1894</div>
+                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Varahagiri-Venkata-Giri?utm_source=otd">Varahagiri Venkata Giri</a>
+                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">president of India</div>
                                     </div>
                                 <div class="tw:flex tw:flex-col tw:items-center tw:mb-2">
-                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1928</div>
-                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Bob-Cousy?utm_source=otd">Bob Cousy</a>
-                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">American basketball player and coach</div>
+                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1729</div>
+                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/William-Howe-5th-Viscount-Howe?utm_source=otd">William Howe</a>
+                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">British military commander</div>
                                     </div>
                                 </div>
-                            <a href="/more-on-this-day/August-9" class="tw:rounded-full tw:mt-6 tw:py-3 tw:px-15 font-oswald tw:text-base tw:bg-[var(--tan-lighter-tih)] tw:border-[1px] tw:border-[var(--tan-dark-tih)] tw:no-underline! tw:text-[var(--black-tih)]!">MORE&nbsp;BIRTHDAYS</a>
+                            <a href="/more-on-this-day/August-10" class="tw:rounded-full tw:mt-6 tw:py-3 tw:px-15 font-oswald tw:text-base tw:bg-[var(--tan-lighter-tih)] tw:border-[1px] tw:border-[var(--tan-dark-tih)] tw:no-underline! tw:text-[var(--black-tih)]!">MORE&nbsp;BIRTHDAYS</a>
                         </div>
                     </div>
                 </div>
@@ -1292,7 +1308,7 @@ Ask the Chatbot</a>
             <div class="py-30">
                 <div class="grid">
                     <div class="tw:flex tw:flex-col col-100 col-sm">
-                        <h2 class="tw:uppercase font-oswald font-2xl tw:text-[var(--black-tih)] tw:pb-4 tw:border-b-[1px] tw:border-[var(--gray-300-tih)]">More on August&nbsp;9</h2>
+                        <h2 class="tw:uppercase font-oswald font-2xl tw:text-[var(--black-tih)] tw:pb-4 tw:border-b-[1px] tw:border-[var(--gray-300-tih)]">More on August&nbsp;10</h2>
                         <div class="tw:w-full tw:gap-8 tw:flex tw:flex-col">
                             <div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1336,16 +1352,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/93/255293-050-F1B99076/Umpire-Jen-Pawol-first-MLB-woman-umpire-2024-Spring-Training-Washington-Nationals-Houston-Astros-West-Palm-Beach-Florida.jpg?w=260&h=196&c=crop" alt="One of the crew" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/10/200010-050-B2BB6686/Isaac-Hayes-1973.jpg?w=260&h=196&c=crop" alt="Isaac Hayes" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        © Daniel Shirey—MLB Photos/Getty Images</div>
+        John White—DOCUMERICA/National Archives, Washington, D.C.</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">2025</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">2008</div>
       <div class="tw:text-base/6 font-newsreader">
-      <a href="https://www.britannica.com/biography/Jen-Pawol" class="md-crosslink " data-show-preview="true">Jen Pawol</a> became the first woman to umpire a <a href="https://www.britannica.com/topic/Major-League-Baseball" class="md-crosslink " data-show-preview="true">Major League Baseball</a> game when she worked first base in a game between the Miami Marlins and the Atlanta Braves.</div>
+      American singer-songwriter Isaac Hayes—a pioneering figure in <a href="https://www.britannica.com/art/soul-music" class="md-crosslink " data-show-preview="true">soul music</a> whose recordings influenced the development of such musical genres as <a href="https://www.britannica.com/art/disco" class="md-crosslink " data-show-preview="true">disco</a>, <a href="https://www.britannica.com/art/rap" class="md-crosslink " data-show-preview="true">rap</a>, and urban-contemporary—died at age 65. <em>[<a href="https://www.britannica.com/quiz/music-quiz" class="md-crosslink " data-show-preview="true">Take our music quiz</a>.]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1389,16 +1405,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/27/178527-050-B95B1728/Demonstrators-police-officer-Ferguson-Missouri-Michael-Brown-August-15-2014.jpg?w=260&h=196&c=crop" alt="Demonstrators in Ferguson, Missouri" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/18/19618-050-5BC3848F/Ruth-Bader-Ginsburg.jpg?w=260&h=196&c=crop" alt="Ruth Bader Ginsburg" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        © R. Gino Santa Maria/Shutterstock.com</div>
+        Collection, The Supreme Court of the United States, courtesy of the Supreme Court Historical Society</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">2014</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1993</div>
       <div class="tw:text-base/6 font-newsreader">
-      Michael Brown, an unarmed African American teenager, was fatally shot by a white police officer in <a href="https://www.britannica.com/place/Ferguson" class="md-crosslink " data-show-preview="true">Ferguson</a>, Missouri. Days of civil unrest and protests followed, which contributed to the expansion of the <a href="https://www.britannica.com/topic/Black-Lives-Matter" class="md-crosslink " data-show-preview="true">Black Lives Matter</a> movement.</div>
+      American jurist <a href="https://www.britannica.com/biography/Ruth-Bader-Ginsburg" class="md-crosslink " data-show-preview="true">Ruth Bader Ginsburg</a> was sworn in as an associate justice of the <a href="https://www.britannica.com/topic/Supreme-Court-of-the-United-States" class="md-crosslink " data-show-preview="true">U.S. Supreme Court</a>, becoming the second woman to serve on the court. <em>[<a href="https://www.britannica.com/story/why-are-there-nine-justices-on-the-us-supreme-court" class="md-crosslink " data-show-preview="true">Why are there nine justices on the U.S. Supreme Court?</a>]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1442,16 +1458,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/78/195978-050-505A4590/Jerry-Garcia-Grateful-Dead-1994.jpg?w=260&h=196&c=crop" alt="Jerry Garcia" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/14/199214-050-5E081BBB/David-Berkowitz-1979.jpg?w=260&h=196&c=crop" alt="“Son of Sam”" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        © Northfoto/Shutterstock.com</div>
+        AP Images</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1995</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1977</div>
       <div class="tw:text-base/6 font-newsreader">
-      American musician <a href="https://www.britannica.com/" class="md-crosslink " data-show-preview="true">Jerry Garcia</a>, who personified the <a href="https://www.britannica.com/topic/hippie" class="md-crosslink " data-show-preview="true">hippie</a> counterculture for three decades as the mellow leader of the rock band <a href="https://www.britannica.com/topic/Grateful-Dead" class="md-crosslink " data-show-preview="true">the Grateful Dead</a>, died of a heart attack at age 53. <em>[<a href="https://www.britannica.com/quiz/spotlight-on-musical-groups" class="md-crosslink " data-show-preview="true">Test your knowledge of musical groups</a>.]</em></div>
+      American <a href="https://www.britannica.com/topic/serial-murder" class="md-crosslink " data-show-preview="true">serial killer</a> <a href="https://www.britannica.com/biography/David-Berkowitz" class="md-crosslink " data-show-preview="true">David Berkowitz</a> was arrested after murdering six people in New York City and plunging the city into a panic; he later confessed and was sentenced to 365 years in prison. <em>[<a href="https://www.britannica.com/list/7-of-historys-most-notorious-serial-killers" class="md-crosslink " data-show-preview="true">Read about seven of history’s most notorious serial killers</a>.]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1495,16 +1511,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/02/61102-050-C7C1F92B/Wayne-Gretzky-Denis-Potvin-puck-New-York-1988.jpg?w=260&h=196&c=crop" alt="Wayne Gretzky and Denis Potvin" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/15/222915-050-9218AAD5/The-Doors-Jim-Morrison-John-Densmore-Ray-Manzarek-Robbie-Krieger-undated-photo.jpg?w=260&h=196&c=crop" alt="Jim Morrison with the Doors" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        Wa Funches/AP Images</div>
+        Michael Ochs Archives/Getty Images</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1988</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1970</div>
       <div class="tw:text-base/6 font-newsreader">
-      Canadian hockey player <a href="https://www.britannica.com/biography/Wayne-Gretzky" class="md-crosslink " data-show-preview="true">Wayne Gretzky</a> was traded from the <a href="https://www.britannica.com/topic/Edmonton-Oilers" class="md-crosslink " data-show-preview="true">Edmonton Oilers</a> to the <a href="https://www.britannica.com/topic/Los-Angeles-Kings" class="md-crosslink " data-show-preview="true">Los Angeles Kings</a>, a deal that shocked the sports world and stunned his home country, where he was a national icon. <em>[<a href="https://www.britannica.com/list/10-best-hockey-players-of-all-time" class="md-crosslink " data-show-preview="true">See where Wayne Gretzky ranks on our list of the 10 greatest hockey players of all time</a>.]</em></div>
+      American musician <a href="https://www.britannica.com/biography/Jim-Morrison" class="md-crosslink " data-show-preview="true">Jim Morrison</a>, lead singer of <a href="https://www.britannica.com/topic/The-Doors" class="md-crosslink " data-show-preview="true">the Doors</a>, went on trial in Florida, charged with various crimes after allegedly exposing himself during a Miami concert in 1969; he was later found guilty. <em>[<a href="https://www.britannica.com/quiz/spotlight-on-musical-groups" class="md-crosslink " data-show-preview="true">Test your knowledge of musical groups</a>.]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1548,175 +1564,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/66/666-050-4373B776/Gerald-R-Ford.jpg?w=260&h=196&c=crop" alt="Gerald Ford" class="tw:object-cover tw:w-full tw:h-full"   />
-    
-</div>
-    <div class="tw:text-xs tw:italic tw:text-black/40">
-        The Gerald R. Ford Presidential Library and Museum</div>
-  </div>
-  <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1974</div>
-      <div class="tw:text-base/6 font-newsreader">
-      <a href="https://www.britannica.com/biography/Gerald-Ford" class="md-crosslink " data-show-preview="true">Gerald Ford</a> was sworn in as president of the United States, succeeding <a href="https://www.britannica.com/biography/Richard-Nixon" class="md-crosslink " data-show-preview="true">Richard Nixon</a>, who had <a href="https://www.britannica.com/event/Nixon-resigns-Watergates-legacy" class="md-crosslink " data-show-preview="true">resigned</a>. <em>[<a href="https://www.britannica.com/story/who-becomes-president-after-the-president-and-vice-president" class="md-crosslink " data-show-preview="true">Who becomes president after the president and vice president?</a>]</em></div>
-  </div>
-</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
-  <div class="tw:flex tw:flex-col tw:gap-2">
-  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-        <img loading="lazy" src="https://cdn.britannica.com/74/198774-050-2BFECA93/body-Sharon-Tate-house-others-Los-Angeles-August-1969.jpg?w=260&h=196&c=crop" alt="Two coroner's office personnel wheel a covered body on a stretcher outside Sharon Tate's home, with a man standing by the entrance in the background." class="tw:object-cover tw:w-full tw:h-full"   />
-    
-</div>
-    <div class="tw:text-xs tw:italic tw:text-black/40">
-        © Bettmann/Getty Images</div>
-  </div>
-  <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1969</div>
-      <div class="tw:text-base/6 font-newsreader">
-      Actress <a href="https://www.britannica.com/biography/Sharon-Tate" class="md-crosslink " data-show-preview="true">Sharon Tate</a> and four others were <a href="https://www.britannica.com/event/Tate-murders" class="md-crosslink " data-show-preview="true">murdered</a> by followers of <a href="https://www.britannica.com/biography/Charles-Manson" class="md-crosslink " data-show-preview="true">Charles Manson</a>, leader of a communal religious cult known as the “Family.”</div>
-  </div>
-</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
-  <div class="tw:flex tw:flex-col tw:gap-2">
-  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-        <img loading="lazy" src="https://cdn.britannica.com/20/205720-050-75004DD0/Ruins-atomic-bomb-Nagasaki-Japan-September-16-1945-World-War-II.jpg?w=260&h=196&c=crop" alt="Nagasaki, Japan, 1945, after the atomic bomb" class="tw:object-cover tw:w-full tw:h-full"   />
-    
-</div>
-    <div class="tw:text-xs tw:italic tw:text-black/40">
-        U.S. Army photograph</div>
-  </div>
-  <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1945</div>
-      <div class="tw:text-base/6 font-newsreader">
-      The <a href="https://www.britannica.com/event/atomic-bombings-of-Hiroshima-and-Nagasaki" class="md-crosslink " data-show-preview="true">second atomic bomb</a> dropped on Japan by the United States in <a href="https://www.britannica.com/event/World-War-II" class="md-crosslink " data-show-preview="true">World War II</a> struck the city of <a href="https://www.britannica.com/place/Nagasaki-Japan" class="md-crosslink " data-show-preview="true">Nagasaki</a>.</div>
-  </div>
-</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
-  <div class="tw:flex tw:flex-col tw:gap-2">
-  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-        <img loading="lazy" src="https://cdn.britannica.com/97/1597-050-008F30FA/Flag-India.jpg?w=260&h=196&c=crop" alt="Flag of India" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/17/134717-050-CE909814/Gloria-Swanson-William-Holden-Sunset-Boulevard.jpg?w=260&h=196&c=crop" alt="Sunset Boulevard" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
         Encyclopædia Britannica, Inc.</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1942</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1950</div>
       <div class="tw:text-base/6 font-newsreader">
-      After the arrests of <a href="https://www.britannica.com/biography/Mahatma-Gandhi" class="md-crosslink " data-show-preview="true">Mahatma&nbsp;Gandhi</a> and dozens of other leaders of the <a href="https://www.britannica.com/topic/Indian-National-Congress" class="md-crosslink " data-show-preview="true">Congress Party</a> by British authorities, <a href="https://www.britannica.com/biography/Aruna-Asaf-Ali" class="md-crosslink " data-show-preview="true">Aruna Asaf Ali</a> raised the Indian flag in Bombay, defying British orders and rallying supporters. Her action marked the definitive beginning of the&nbsp;<a href="https://www.britannica.com/event/Quit-India-Movement" class="md-crosslink " data-show-preview="true">Quit India Movement</a>. <em>[<a href="https://www.britannica.com/topic/Timeline-of-the-Indian-Independence-Movement" class="md-crosslink " data-show-preview="true">Explore a timeline of the Indian Independence Movement</a>.]</em></div>
+      <a href="https://www.britannica.com/topic/Sunset-Boulevard-film-1950" class="md-crosslink " data-show-preview="true">Sunset Boulevard</a>, considered one of Hollywood’s greatest films, had its world premiere; the <a href="https://www.britannica.com/art/film-noir" class="md-crosslink " data-show-preview="true">film noir</a> is especially noted for <a href="https://www.britannica.com/biography/Gloria-Swanson" class="md-crosslink " data-show-preview="true">Gloria Swanson</a>’s portrayal of a fading movie star. <em>[<a href="https://www.britannica.com/quiz/women-in-classic-cinema-quiz" class="md-crosslink " data-show-preview="true">Take our quiz about women in classic cinema</a>.]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1760,16 +1617,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/74/10074-050-83C706C4/Leonide-Massine-monte-carlo-ballet-russe.jpg?w=260&h=196&c=crop" alt="Léonide Massine" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/02/121002-050-92DB902F/Louvre-Museum-pyramid-Paris-Pei-IM.jpg?w=260&h=196&c=crop" alt="Louvre Museum" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        © Cecil Beaton—Condé Nast Collection/Getty Images</div>
+        © Michael Mattox/Shutterstock.com</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1896</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1793</div>
       <div class="tw:text-base/6 font-newsreader">
-      Russian dancer and innovative choreographer <a href="https://www.britannica.com/biography/Leonide-Massine" class="md-crosslink " data-show-preview="true">Léonide Massine</a>, one of the most important figures in 20th-century dance, was born in Moscow. <em>[<a href="https://www.britannica.com/quiz/all-about-dance-quiz" class="md-crosslink " data-show-preview="true">Test your knowledge of dance</a>.]</em></div>
+      The <a href="https://www.britannica.com/topic/Louvre-Museum" class="md-crosslink " data-show-preview="true">Louvre</a> opened in Paris, and it later became the most-visited <a href="https://www.britannica.com/topic/museum-cultural-institution" class="md-crosslink " data-show-preview="true">museum</a> in the world. <em>[<a href="https://www.britannica.com/quiz/museums-of-the-western-world" class="md-crosslink " data-show-preview="true">Take our quiz about museums of the Western world</a>.]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1813,122 +1670,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/93/19393-050-F34432E6/Henry-David-Thoreau-edition-illustration-hut-title-1854.jpg?w=260&h=196&c=crop" alt="Henry David Thoreau: Walden Pond cabin" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/06/10906-004-6E5A0067/William-Howe-engraving-5th-Viscount-C-Corbutt-1777.jpg?w=260&h=196&c=crop" alt="William Howe, 5th Viscount Howe" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        From <em>Walden; or, Life in the Woods</em> by Henry David Thoreau, 1854</div>
+        John R. Freeman & Co. Ltd.</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1854</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1729</div>
       <div class="tw:text-base/6 font-newsreader">
-      <a href="https://www.britannica.com/biography/Henry-David-Thoreau" class="md-crosslink " data-show-preview="true">Henry David Thoreau</a>’s <a href="https://www.britannica.com/topic/Walden" class="md-crosslink " data-show-preview="true">Walden</a>, considered his masterwork and a <a href="https://www.britannica.com/event/Transcendentalism-American-movement" class="md-crosslink " data-show-preview="true">Transcendentalist</a> milestone, was published. <em>[<a href="https://www.britannica.com/quiz/famous-authors" class="md-crosslink " data-show-preview="true">Take our quiz about famous authors</a>.]</em></div>
-  </div>
-</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
-  <div class="tw:flex tw:flex-col tw:gap-2">
-  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-        <img loading="lazy" src="https://cdn.britannica.com/25/10725-050-FBD78DEC/Andrew-Jackson-oil-canvas-John-Wesley-Jarvis-1819.jpg?w=260&h=196&c=crop" alt="Andrew Jackson" class="tw:object-cover tw:w-full tw:h-full"   />
-    
-</div>
-    <div class="tw:text-xs tw:italic tw:text-black/40">
-        The Metropolitan Museum of Art, New York, Harris Brisbane Dick Fund, 1964, (64.8), www.metmuseum.org</div>
-  </div>
-  <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1814</div>
-      <div class="tw:text-base/6 font-newsreader">
-      After their defeat by the forces of U.S. General <a href="https://www.britannica.com/biography/Andrew-Jackson" class="md-crosslink " data-show-preview="true">Andrew Jackson</a> in the <a href="https://www.britannica.com/event/Creek-War" class="md-crosslink " data-show-preview="true">Creek War</a>, the <a href="https://www.britannica.com/topic/Muscogee-people" class="md-crosslink " data-show-preview="true">Muscogee people</a> ceded 23 million acres of land, in accordance with the <a href="https://www.britannica.com/event/Creek-War" class="md-crosslink " data-show-preview="true">Treaty of Fort Jackson</a>.</div>
-  </div>
-</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
-  <div class="tw:flex tw:flex-col tw:gap-2">
-  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-        <img loading="lazy" src="https://cdn.britannica.com/88/80588-050-8D944BFE/Leaning-Tower-of-Pisa-Italy.jpg?w=260&h=196&c=crop" alt="Leaning Tower of Pisa" class="tw:object-cover tw:w-full tw:h-full"   />
-    
-</div>
-    <div class="tw:text-xs tw:italic tw:text-black/40">
-        © Corbis</div>
-  </div>
-  <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1173</div>
-      <div class="tw:text-base/6 font-newsreader">
-      In Pisa, Italy, construction began on a bell tower that became internationally famous as the <a href="https://www.britannica.com/topic/Leaning-Tower-of-Pisa" class="md-crosslink " data-show-preview="true">Leaning Tower of Pisa</a>. <em>[<a href="https://www.britannica.com/quiz/iconic-monuments-quiz" class="md-crosslink " data-show-preview="true">Test your knowledge of iconic monuments</a>.]</em></div>
+      <a href="https://www.britannica.com/biography/William-Howe-5th-Viscount-Howe" class="md-crosslink " data-show-preview="true">William Howe, 5th Viscount Howe</a>, commander in chief of the British Army in North America (1776–78) who failed to destroy the Continental Army and stem the <a href="https://www.britannica.com/event/American-Revolution" class="md-crosslink " data-show-preview="true">American Revolution</a>, was born. <em>[<a href="https://www.britannica.com/quiz/the-american-revolution" class="md-crosslink " data-show-preview="true">How much do you know about the American Revolution?</a>]</em></div>
   </div>
 </div></div>
                     </div>
@@ -2064,7 +1815,7 @@ Ask the Chatbot</a>
 
 
 
-<script src="https://cdn.britannica.com/mendel-resources/3-190/js/libs/jquery-3.5.0.min.js?v=3.190.3"></script>
+<script src="https://cdn.britannica.com/mendel-resources/3-191/js/libs/jquery-3.5.0.min.js?v=3.191.5"></script>
 
 
 
@@ -2078,7 +1829,7 @@ Ask the Chatbot</a>
                 $.ajax({
                   dataType: 'script',
                   cache: true,
-                  url: 'https://cdn.britannica.com/mendel-resources/3-190/dist/today-in-history-page.js?v=3.190.3'
+                  url: 'https://cdn.britannica.com/mendel-resources/3-191/dist/today-in-history-page.js?v=3.191.5'
                 });
               })();
             </script>
