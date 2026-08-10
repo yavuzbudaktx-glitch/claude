@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-08-10T08:17:58.891Z
+# generated: 2026-08-10T09:45:29.610Z
 # url:       https://www.britannica.com/on-this-day/august-10
 # fetcher:   Wayback Machine
 # kind:      html
