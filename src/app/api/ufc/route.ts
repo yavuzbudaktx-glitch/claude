@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { findFighterDrivePhoto } from "@/lib/ufc-photos";
 import { findLocalFighterPhoto } from "@/lib/local-fighter-photos";
+import { isBigUfcEvent } from "@/lib/ufc-events";
 
 // UFC schedule + last/next numbered-event fetcher.
 //
@@ -82,14 +83,6 @@ export interface UfcPayload {
 function pad(n: number) { return String(n).padStart(2, "0"); }
 function ymd(d: Date) { return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}`; }
 
-function isNumberedUfc(name: string | undefined): boolean {
-  if (!name) return false;
-  // Match "UFC 312", "UFC 312:", "UFC Freedom 250" — anything with "UFC"
-  // followed by a numeric token. Excludes "UFC Fight Night ..." which
-  // never contains a standalone digit after "UFC".
-  return /^UFC[^:]*\b\d{1,3}\b/i.test(name);
-}
-
 async function jsonFetch<T>(url: string): Promise<T | null> {
   try {
     const res = await fetch(url, {
@@ -105,7 +98,9 @@ async function jsonFetch<T>(url: string): Promise<T | null> {
 
 function parseEvent(e: EspnMmaEvent): UfcEvent | null {
   const shortName = e.shortName ?? e.name ?? "";
-  if (!isNumberedUfc(shortName) && !isNumberedUfc(e.name)) return null;
+  // Numbered cards and the big named specials only. The old local regex here
+  // also accepted "UFC on ESPN 62" — a Fight Night wearing a number.
+  if (!isBigUfcEvent(e.name, shortName)) return null;
   const id = e.id ?? "";
   const date = e.date ?? "";
   if (!date) return null;

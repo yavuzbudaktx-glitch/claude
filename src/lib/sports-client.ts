@@ -15,6 +15,8 @@
 // Everything returns null on any failure so the caller just keeps whatever the
 // server gave it.
 
+import { isBigUfcEvent } from "@/lib/ufc-events";
+
 const ESPN = "https://site.api.espn.com/apis";
 
 function pad(n: number) { return String(n).padStart(2, "0"); }
@@ -73,18 +75,6 @@ function fighterOf(c: EspnCompetitor | undefined): LiteFighter | null {
   };
 }
 
-// Which cards are worth showing. ESPN's scoreboard includes the developmental
-// shows, and picking purely by date meant "Dana White's Contender Series"
-// beat the actual numbered card the user cares about. Ranked: a numbered UFC
-// (UFC 330) wins, then a Fight Night, and the feeder series never wins.
-function eventTier(name: string): number {
-  const n = name.toLowerCase();
-  if (/dana white|contender series|road to ufc|ultimate fighter|tuf /.test(n)) return 0;
-  if (/^ufc\s*\d/.test(n) || /ufc\s+\d{2,3}/.test(n)) return 3;
-  if (/fight night|ufc on |ufc vs/.test(n)) return 2;
-  return 1;
-}
-
 /**
  * Previous + upcoming UFC event, read straight from ESPN in the browser.
  * Only the main event is described — the same shape the card renders.
@@ -103,6 +93,9 @@ export async function fetchUfcFromBrowser(): Promise<{ previous: LiteEvent | nul
   const events: LiteEvent[] = [];
   for (const e of raw) {
     if (!e?.id || !e.date) continue;
+    // Numbered cards and the big specials only — same rule the server route
+    // applies, from the same module, so the two paths can't disagree again.
+    if (!isBigUfcEvent(e.name, e.shortName)) continue;
     // The main event is the LAST competition in ESPN's ordering.
     const comps = Array.isArray(e.competitions) ? e.competitions : [];
     const main = comps[comps.length - 1];
@@ -123,17 +116,12 @@ export async function fetchUfcFromBrowser(): Promise<{ previous: LiteEvent | nul
 
   events.sort((a, b) => +new Date(a.date) - +new Date(b.date));
   const t = now.getTime();
-
-  // Prefer real cards. Fall back to the developmental shows only if there is
-  // genuinely nothing else in the window, so the card is never empty.
-  const pick = (list: LiteEvent[], wantLast: boolean): LiteEvent | null => {
-    const big = list.filter((e) => eventTier(e.name) >= 2);
-    const pool = big.length ? big : list;
-    return wantLast ? (pool[pool.length - 1] ?? null) : (pool[0] ?? null);
-  };
   const past = events.filter((e) => +new Date(e.date) <= t || e.isFinished);
   const future = events.filter((e) => !(+new Date(e.date) <= t || e.isFinished));
-  return { previous: pick(past, true), upcoming: pick(future, false) };
+  return {
+    previous: past[past.length - 1] ?? null,
+    upcoming: future[0] ?? null,
+  };
 }
 
 /* ------------------------------------------------------- SÜPER LIG -------- */

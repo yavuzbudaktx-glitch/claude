@@ -622,8 +622,11 @@ function UfcRankings() {
   }
   if (divisions.length === 0) {
     return (
-      <div className="mt-5 pt-4 border-t rule">
+      <div className="mt-5 pt-4 border-t rule flex items-baseline gap-2">
         <p className="text-muted text-xs italic">Rankings unavailable right now.</p>
+        <a href="/sports-debug" className="font-mono text-[10px] uppercase tracking-wider text-accent hover:underline">
+          why?
+        </a>
       </div>
     );
   }

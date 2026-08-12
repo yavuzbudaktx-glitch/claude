@@ -1,202 +1,126 @@
-// Client-side UFC rankings fetcher.
+// UFC rankings fetcher for the card.
 //
-// The earlier server-side approach failed — datacenter IPs (Vercel) get
-// blocked by both octagon-api and ufc.com. So we fetch from the browser
-// through the same public CORS-proxy chain that already works for the
-// fighter-photo scraper in this app. We try octagon-api's clean JSON
-// first, then fall back to scraping ufc.com/rankings directly.
+// Order matters here, and it's the opposite of what it used to be. This file
+// previously went straight to a chain of public CORS proxies, which is why the
+// rankings section rendered "unavailable": those proxies rot, several now
+// require an API key, and when the whole chain missed there was nothing to
+// show and nothing to debug.
+//
+//   1. /api/ufc-rankings — our own route. No CORS, no proxy, real User-Agent.
+//   2. the proxy chain, unchanged in spirit but with the dead hosts replaced,
+//      for the case where the datacenter IP is the thing being blocked.
+//
+// Parsing lives in ufc-rankings-parse.ts so both paths produce the same shape.
 
-export interface RankedFighter {
-  rank: number;
-  name: string;
-  id: string;
+import {
+  dedupe,
+  normalizeOctagon,
+  parseUfcRankingsHtml,
+  type DivisionRanking,
+  type RankedFighter,
+} from "@/lib/ufc-rankings-parse";
+
+export type { DivisionRanking, RankedFighter };
+
+/** What each source produced, for /sports-debug. Overwritten on every call. */
+export interface RankingsAttempt {
+  source: string;
+  ok: boolean;
+  status: number | string;
+  bytes: number;
+  divisions: number;
+  ms: number;
 }
-export interface DivisionRanking {
-  division: string;
-  champion: string | null;
-  contenders: RankedFighter[];
-}
-
-// All MEN'S UFC divisions, lightest → heaviest (the canonical order).
-// Women's divisions and pound-for-pound are intentionally excluded.
-const WANTED = [
-  "Flyweight",
-  "Bantamweight",
-  "Featherweight",
-  "Lightweight",
-  "Welterweight",
-  "Middleweight",
-  "Light Heavyweight",
-  "Heavyweight",
-] as const;
-
-function decode(s: string): string {
-  return s
-    .replace(/&amp;/g, "&")
-    .replace(/&#0?39;|&apos;|&rsquo;/g, "'")
-    .replace(/&quot;|&#34;/g, '"')
-    .replace(/&nbsp;/g, " ")
-    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
-    .trim();
+let lastAttempts: RankingsAttempt[] = [];
+export function lastRankingsAttempts(): RankingsAttempt[] {
+  return lastAttempts;
 }
 
-function slugToName(slug: string): string {
-  return slug
-    .split(/[-_]+/)
-    .filter(Boolean)
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
+interface ServerResp { divisions?: DivisionRanking[]; attempts?: RankingsAttempt[] }
+
+async function fromServerRoute(): Promise<DivisionRanking[]> {
+  const t0 = Date.now();
+  try {
+    const res = await fetch("/api/ufc-rankings", { signal: AbortSignal.timeout(12000) });
+    if (!res.ok) {
+      lastAttempts.push({ source: "/api/ufc-rankings", ok: false, status: res.status, bytes: 0, divisions: 0, ms: Date.now() - t0 });
+      return [];
+    }
+    const json = (await res.json()) as ServerResp;
+    // The route reports what each of ITS sources did — fold that in so the
+    // diagnostic shows the whole chain, not just our half of it.
+    for (const a of json.attempts ?? []) lastAttempts.push(a);
+    const divisions = json.divisions ?? [];
+    lastAttempts.push({
+      source: "/api/ufc-rankings", ok: divisions.length > 0, status: res.status,
+      bytes: 0, divisions: divisions.length, ms: Date.now() - t0,
+    });
+    return divisions;
+  } catch (e) {
+    lastAttempts.push({
+      source: "/api/ufc-rankings", ok: false,
+      status: e instanceof Error ? e.name : "ERR", bytes: 0, divisions: 0, ms: Date.now() - t0,
+    });
+    return [];
+  }
 }
 
-async function fetchTextViaProxies(target: string): Promise<string | null> {
-  const candidates = [
-    target, // direct first — works when the source sends CORS headers
-    `https://corsproxy.io/?${encodeURIComponent(target)}`,
+// Public read-only proxies, in rough order of how reliable they've been.
+// thingproxy is gone and corsproxy.io changed its parameter to ?url=, both of
+// which were silently failing in the old list.
+function proxied(target: string): string[] {
+  return [
+    target, // direct first — free when the source sends CORS headers
     `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,
     `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(target)}`,
-    `https://thingproxy.freeboard.io/fetch/${target}`,
+    `https://corsproxy.io/?url=${encodeURIComponent(target)}`,
+    `https://api.cors.lol/?url=${encodeURIComponent(target)}`,
   ];
-  for (const url of candidates) {
+}
+
+async function fetchTextViaProxies(target: string, label: string): Promise<string | null> {
+  for (const url of proxied(target)) {
+    const t0 = Date.now();
     try {
-      const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) continue;
-      const text = await res.text();
+      const res = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(9000) });
+      const text = res.ok ? await res.text() : "";
+      const via = url === target ? "direct" : new URL(url).hostname;
+      lastAttempts.push({
+        source: `${label} via ${via}`, ok: res.ok && text.length > 50,
+        status: res.status, bytes: text.length, divisions: 0, ms: Date.now() - t0,
+      });
       if (text && text.length > 50) return text;
-    } catch {
-      // try next proxy
+    } catch (e) {
+      const via = url === target ? "direct" : new URL(url).hostname;
+      lastAttempts.push({
+        source: `${label} via ${via}`, ok: false,
+        status: e instanceof Error ? e.name : "ERR", bytes: 0, divisions: 0, ms: Date.now() - t0,
+      });
     }
   }
   return null;
 }
 
-// ---- Source 1: octagon-api JSON --------------------------------------------
-
-interface RawFighter { id?: string; fighterName?: string; name?: string; rank?: string | number }
-interface RawDivision { categoryName?: string; championId?: string; fighters?: RawFighter[] }
-
-// Match a source's division label to one of our WANTED names, tolerating the
-// "Men's " prefix that ufc.com sometimes adds and the "Pound-for-Pound" rows
-// we don't want. Returns the canonical WANTED name or null.
-function matchDivision(label: string): (typeof WANTED)[number] | null {
-  const norm = label.trim().toLowerCase().replace(/^men'?s\s+/, "");
-  if (/pound.?for.?pound|p4p/.test(norm)) return null;
-  return WANTED.find((w) => w.toLowerCase() === norm) ?? null;
-}
-
-function normalizeOctagon(json: unknown): DivisionRanking[] {
-  const rawDivisions: RawDivision[] = Array.isArray(json)
-    ? (json as RawDivision[])
-    : Object.values((json ?? {}) as Record<string, RawDivision>);
-
-  const byWanted = new Map<string, DivisionRanking>();
-  for (const raw of rawDivisions) {
-    const category = (raw.categoryName ?? "").trim();
-    const wanted = matchDivision(category);
-    if (!wanted) continue;
-
-    let championId = raw.championId?.trim() || null;
-    let championName: string | null = null;
-    const contenders: RankedFighter[] = [];
-
-    for (const f of raw.fighters ?? []) {
-      const id = (f.id ?? "").trim();
-      const name = (f.fighterName ?? f.name ?? "").trim() || (id ? slugToName(id) : "");
-      const isChampLabel = typeof f.rank === "string" && /^(c|champion)$/i.test(f.rank.trim());
-      if (isChampLabel) {
-        championId = championId ?? id;
-        championName = name;
-        continue;
-      }
-      const rankNum = Number(f.rank);
-      if (Number.isFinite(rankNum) && name) contenders.push({ rank: rankNum, name, id: id || name });
-    }
-    if (!championName && championId) championName = slugToName(championId);
-    contenders.sort((a, b) => a.rank - b.rank);
-    if (contenders.length) byWanted.set(wanted, { division: wanted, champion: championName, contenders });
-  }
-  return WANTED.map((w) => byWanted.get(w)).filter((d): d is DivisionRanking => !!d);
+async function fromUfcCom(): Promise<DivisionRanking[]> {
+  const html = await fetchTextViaProxies("https://www.ufc.com/rankings", "ufc.com");
+  if (!html) return [];
+  try { return parseUfcRankingsHtml(html); } catch { return []; }
 }
 
 async function fromOctagon(): Promise<DivisionRanking[]> {
-  const text = await fetchTextViaProxies("https://api.octagon-api.com/rankings");
+  const text = await fetchTextViaProxies("https://api.octagon-api.com/rankings", "octagon-api");
   if (!text) return [];
-  try {
-    return normalizeOctagon(JSON.parse(text));
-  } catch {
-    return [];
-  }
-}
-
-// ---- Source 2: ufc.com/rankings HTML scrape --------------------------------
-
-function parseUfcRankingsHtml(html: string): DivisionRanking[] {
-  const byDivision = new Map<string, DivisionRanking>();
-
-  // Locate each weight-class grouping by its header, then slice the chunk
-  // up to the next header. The page repeats each division name twice (in
-  // the side nav AND in the actual ranking block), so we DEDUPE by division
-  // — keeping the first block that yielded contenders. Without this dedupe
-  // every division was rendering twice in the card.
-  const headerRe = /view-grouping-header"[^>]*>\s*([^<]+?)\s*</gi;
-  const headers: { name: string; index: number }[] = [];
-  let hm: RegExpExecArray | null;
-  while ((hm = headerRe.exec(html))) {
-    headers.push({ name: decode(hm[1]), index: hm.index });
-  }
-
-  for (let i = 0; i < headers.length; i++) {
-    const wanted = matchDivision(headers[i].name);
-    if (!wanted) continue;
-    if (byDivision.has(wanted)) continue; // already filled from an earlier header
-    const chunk = html.slice(headers[i].index, headers[i + 1]?.index ?? html.length);
-
-    // Champion: name link inside the champion block.
-    let champion: string | null = null;
-    const champMatch =
-      chunk.match(/champion[\s\S]{0,400}?href="\/athlete\/[^"]*"[^>]*>\s*([^<]+?)\s*</i) ?? null;
-    if (champMatch) champion = decode(champMatch[1]);
-
-    // Contenders: a rank number followed by the athlete-link name.
-    const contenders: RankedFighter[] = [];
-    const seen = new Set<string>();
-    const rowRe =
-      /weight-class-rank"[^>]*>\s*(?:<span[^>]*>)?\s*(\d{1,2})\s*(?:<\/span>)?[\s\S]*?href="\/athlete\/([^"]+)"[^>]*>\s*([^<]+?)\s*</gi;
-    let rm: RegExpExecArray | null;
-    while ((rm = rowRe.exec(chunk))) {
-      const rank = Number(rm[1]);
-      const id = rm[2];
-      const name = decode(rm[3]);
-      if (!Number.isFinite(rank) || !name || seen.has(id)) continue;
-      seen.add(id);
-      contenders.push({ rank, name, id });
-    }
-    contenders.sort((a, b) => a.rank - b.rank);
-    if (contenders.length) byDivision.set(wanted, { division: wanted, champion, contenders });
-  }
-  return WANTED.map((w) => byDivision.get(w)).filter((d): d is DivisionRanking => !!d);
-}
-
-async function fromUfcCom(): Promise<DivisionRanking[]> {
-  const html = await fetchTextViaProxies("https://www.ufc.com/rankings");
-  if (!html) return [];
-  try {
-    return parseUfcRankingsHtml(html);
-  } catch {
-    return [];
-  }
-}
-
-function dedupe(divisions: DivisionRanking[]): DivisionRanking[] {
-  // Guard against any source returning duplicate division entries — pick the
-  // first occurrence per division name. Without this the card was rendering
-  // each weight class twice in the grid.
-  const seen = new Map<string, DivisionRanking>();
-  for (const d of divisions) if (!seen.has(d.division)) seen.set(d.division, d);
-  return WANTED.map((w) => seen.get(w)).filter((d): d is DivisionRanking => !!d);
+  try { return normalizeOctagon(JSON.parse(text)); } catch { return []; }
 }
 
 export async function fetchUfcRankings(): Promise<DivisionRanking[]> {
-  const fromApi = await fromOctagon();
-  if (fromApi.length) return dedupe(fromApi);
-  return dedupe(await fromUfcCom());
+  lastAttempts = [];
+
+  const fromRoute = await fromServerRoute();
+  if (fromRoute.length) return dedupe(fromRoute);
+
+  const ufc = await fromUfcCom();
+  if (ufc.length) return dedupe(ufc);
+
+  return dedupe(await fromOctagon());
 }

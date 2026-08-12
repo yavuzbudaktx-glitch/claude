@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { fetchUfcRankings, lastRankingsAttempts, type RankingsAttempt } from "@/lib/ufc-rankings-client";
 
 // Side-by-side diagnostic for the Süper Lig + UFC cards.
 //
@@ -149,6 +150,15 @@ export default function SportsDebugPage() {
         <h2 className="font-display text-lg mb-2">3 · What our own routes return</h2>
         <LiveRoutes />
       </section>
+
+      <section className="card">
+        <h2 className="font-display text-lg mb-2">4 · UFC rankings, source by source</h2>
+        <p className="text-[12px] text-muted mb-2">
+          Every source the rankings fetcher tries, in order, with what each one gave back.
+          The first row with divisions &gt; 0 is the one that won.
+        </p>
+        <RankingsProbe />
+      </section>
     </main>
   );
 }
@@ -178,4 +188,43 @@ function LiveRoutes() {
     })();
   }, []);
   return <pre className="font-mono text-[12px] text-ink-soft whitespace-pre-wrap break-all">{out}</pre>;
+}
+
+function RankingsProbe() {
+  const [attempts, setAttempts] = useState<RankingsAttempt[]>([]);
+  const [result, setResult] = useState<string>("Running…");
+  useEffect(() => {
+    (async () => {
+      const t0 = Date.now();
+      const divisions = await fetchUfcRankings();
+      setAttempts(lastRankingsAttempts());
+      setResult(
+        divisions.length
+          ? `${divisions.length} divisions in ${Date.now() - t0}ms · ` +
+            divisions.map((d) => `${d.division}: ${d.champion ?? "no champ"} +${d.contenders.length}`).join(" | ")
+          : `NOTHING — every source failed (${Date.now() - t0}ms)`,
+      );
+    })();
+  }, []);
+  return (
+    <>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left">
+          <thead><tr className="label"><th>Source</th><th>Status</th><th>Bytes</th><th>Divisions</th><th>Time</th></tr></thead>
+          <tbody className="divide-rule">
+            {attempts.map((a, i) => (
+              <tr key={i}>
+                <td className="py-1.5 pr-3 text-[12px] text-ink-soft break-all">{a.source}</td>
+                <td className={`py-1.5 pr-3 font-mono text-[12px] ${a.ok ? "text-up" : "text-down"}`}>{String(a.status)}</td>
+                <td className="py-1.5 pr-3 font-mono text-[12px] tabular-nums text-muted">{a.bytes}</td>
+                <td className="py-1.5 pr-3 font-mono text-[12px] tabular-nums text-ink">{a.divisions}</td>
+                <td className="py-1.5 font-mono text-[11px] tabular-nums text-muted-2">{a.ms}ms</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <pre className="font-mono text-[12px] text-ink-soft whitespace-pre-wrap break-all mt-2">{result}</pre>
+    </>
+  );
 }
