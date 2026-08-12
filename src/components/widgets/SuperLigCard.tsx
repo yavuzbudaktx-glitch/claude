@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 import useSWR from "swr";
-import { fetchSuperLigStandingsFromBrowser, fetchTeamFixturesFromBrowser, fetchSportsDbFixtures } from "@/lib/sports-client";
+import { fetchSuperLigStandingsFromBrowser, fetchTeamFixturesFromBrowser, fetchSportsDbFixtures, type LiteFixture } from "@/lib/sports-client";
 import { useEffect, useMemo, useState } from "react";
 import { differenceInCalendarDays, format, parseISO } from "date-fns";
 import { Card } from "@/components/Card";
@@ -52,6 +52,27 @@ interface Resp {
 // fill in the table and the fixtures itself. Each half is patched
 // independently — a working table shouldn't be thrown away because the fixture
 // lookup failed, or the reverse.
+// The browser fetchers return a LiteFixture, which is deliberately narrower
+// than the route's Match. It used to be cast straight across with
+// `as unknown as Match`, which compiled fine and then rendered every played
+// match as "vs" with no score — because `isFinished` (what MatchBox keys the
+// score off) and `league` (spelled `competition` upstream) simply weren't
+// there. Map the fields explicitly so that can't happen again.
+function liteToMatch(f: LiteFixture | null | undefined): Match | null {
+  if (!f) return null;
+  return {
+    id: `${f.date}-${f.home}-${f.away}`,
+    home: f.home,
+    away: f.away,
+    homeScore: f.homeScore,
+    awayScore: f.awayScore,
+    date: f.date,
+    venue: f.venue,
+    league: f.competition,
+    isFinished: f.isFinished,
+  };
+}
+
 const fetcher = async (url: string): Promise<Resp> => {
   let server: Resp | null = null;
   try {
@@ -70,7 +91,10 @@ const fetcher = async (url: string): Promise<Resp> => {
   // whichever source actually returns a full one.
   const serverRows = server?.standings?.length ?? 0;
   const wantTable = serverRows < 12;
-  const wantFixtures = !server?.last && !server?.next;
+  // Either half missing is enough reason to go look. The old test needed BOTH
+  // to be missing, so a route that found the next fixture but not the last one
+  // left "Last match" permanently empty.
+  const wantFixtures = !server?.last || !server?.next;
 
   const [table, espnFixtures] = await Promise.all([
     wantTable ? fetchSuperLigStandingsFromBrowser() : Promise.resolve(null),
@@ -96,8 +120,10 @@ const fetcher = async (url: string): Promise<Resp> => {
       fixtures ? "fixtures:browser" : null,
     ].filter(Boolean).join("+") || "none",
     standings,
-    last: (fixtures?.last as unknown as Match | null) ?? server?.last ?? null,
-    next: (fixtures?.next as unknown as Match | null) ?? server?.next ?? null,
+    // Prefer whichever half actually carries a result. The route's own answer
+    // wins when it has one; the browser fills the gaps.
+    last: server?.last ?? liteToMatch(fixtures?.last),
+    next: server?.next ?? liteToMatch(fixtures?.next),
   };
 };
 
@@ -129,7 +155,11 @@ function MatchBox({
   let date: Date | null = null;
   try { date = parseISO(match.date); } catch {}
 
-  const finished = !!match.isFinished;
+  // Two independent reasons to show a scoreline: the source said the match is
+  // finished, or it handed us both numbers. Keying on the flag alone meant one
+  // upstream that forgot to set it blanked out a result we already had.
+  const hasScore = match.homeScore != null && match.awayScore != null;
+  const finished = !!match.isFinished || hasScore;
   const daysUntil =
     variant === "next" && date ? differenceInCalendarDays(date, new Date()) : null;
   const dayLabel =
@@ -161,7 +191,7 @@ function MatchBox({
           {match.home}
         </span>
         <span className="font-mono tabular-nums px-2 py-0.5 border rule rounded shrink-0">
-          {finished ? `${match.homeScore ?? "-"} – ${match.awayScore ?? "-"}` : "vs"}
+          {hasScore ? `${match.homeScore} – ${match.awayScore}` : finished ? "FT" : "vs"}
         </span>
         <span className={`flex-1 truncate ${sameTeam(match.away, selectedName) ? "font-medium text-accent" : ""}`}>
           {match.away}

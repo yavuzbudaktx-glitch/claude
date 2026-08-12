@@ -73,6 +73,18 @@ function fighterOf(c: EspnCompetitor | undefined): LiteFighter | null {
   };
 }
 
+// Which cards are worth showing. ESPN's scoreboard includes the developmental
+// shows, and picking purely by date meant "Dana White's Contender Series"
+// beat the actual numbered card the user cares about. Ranked: a numbered UFC
+// (UFC 330) wins, then a Fight Night, and the feeder series never wins.
+function eventTier(name: string): number {
+  const n = name.toLowerCase();
+  if (/dana white|contender series|road to ufc|ultimate fighter|tuf /.test(n)) return 0;
+  if (/^ufc\s*\d/.test(n) || /ufc\s+\d{2,3}/.test(n)) return 3;
+  if (/fight night|ufc on |ufc vs/.test(n)) return 2;
+  return 1;
+}
+
 /**
  * Previous + upcoming UFC event, read straight from ESPN in the browser.
  * Only the main event is described — the same shape the card renders.
@@ -111,13 +123,17 @@ export async function fetchUfcFromBrowser(): Promise<{ previous: LiteEvent | nul
 
   events.sort((a, b) => +new Date(a.date) - +new Date(b.date));
   const t = now.getTime();
-  let previous: LiteEvent | null = null;
-  let upcoming: LiteEvent | null = null;
-  for (const ev of events) {
-    if (+new Date(ev.date) <= t || ev.isFinished) previous = ev;
-    else if (!upcoming) upcoming = ev;
-  }
-  return { previous, upcoming };
+
+  // Prefer real cards. Fall back to the developmental shows only if there is
+  // genuinely nothing else in the window, so the card is never empty.
+  const pick = (list: LiteEvent[], wantLast: boolean): LiteEvent | null => {
+    const big = list.filter((e) => eventTier(e.name) >= 2);
+    const pool = big.length ? big : list;
+    return wantLast ? (pool[pool.length - 1] ?? null) : (pool[0] ?? null);
+  };
+  const past = events.filter((e) => +new Date(e.date) <= t || e.isFinished);
+  const future = events.filter((e) => !(+new Date(e.date) <= t || e.isFinished));
+  return { previous: pick(past, true), upcoming: pick(future, false) };
 }
 
 /* ------------------------------------------------------- SÜPER LIG -------- */
@@ -131,6 +147,9 @@ export interface LiteFixture {
   date: string; competition: string | null; home: string; away: string;
   homeScore: number | null; awayScore: number | null; venue: string | null;
   homeBadge: string | null; awayBadge: string | null;
+  /** The card shows a score ONLY when this is true — without it every played
+   *  match rendered as "vs" with the result hidden. */
+  isFinished: boolean;
 }
 
 interface EspnStatVal { name?: string; abbreviation?: string; value?: number; displayValue?: string }
@@ -249,6 +268,7 @@ export async function fetchTeamFixturesFromBrowser(
           venue: comp?.venue?.fullName ?? null,
           homeBadge: home?.team?.logos?.[0]?.href ?? null,
           awayBadge: away?.team?.logos?.[0]?.href ?? null,
+          isFinished: comp?.status?.type?.completed === true,
         },
         done: comp?.status?.type?.completed === true,
         t: +new Date(e.date),
@@ -326,6 +346,9 @@ export async function fetchSportsDbFixtures(teamName: string): Promise<{ last: L
       venue: e.strVenue ?? null,
       homeBadge: e.strHomeTeamBadge ?? null,
       awayBadge: e.strAwayTeamBadge ?? null,
+      // A fixture counts as played when it has a score, or when its kick-off is
+      // in the past — TheSportsDB fills the scores in some minutes late.
+      isFinished: (hs != null && as != null) || (iso ? Date.parse(iso) < Date.now() : false),
     };
   };
 
@@ -333,8 +356,14 @@ export async function fetchSportsDbFixtures(teamName: string): Promise<{ last: L
     getJson<{ results?: SdbEvent[] }>(`${SDB}/eventslast.php?id=${id}`),
     getJson<{ events?: SdbEvent[] }>(`${SDB}/eventsnext.php?id=${id}`),
   ]);
-  const last = (lastJ?.results ?? []).map(toFixture).filter(Boolean)[0] ?? null;
-  const next = (nextJ?.events ?? []).map(toFixture).filter(Boolean)[0] ?? null;
+  // eventslast/eventsnext return up to five fixtures in no guaranteed order,
+  // so sort rather than trusting index 0: newest for "last", soonest for "next".
+  const lastList = (lastJ?.results ?? []).map(toFixture).filter((f): f is LiteFixture => !!f)
+    .sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
+  const nextList = (nextJ?.events ?? []).map(toFixture).filter((f): f is LiteFixture => !!f)
+    .sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
+  const last = lastList[0] ?? null;
+  const next = nextList[0] ?? null;
   if (!last && !next) return null;
-  return { last: last as LiteFixture | null, next: next as LiteFixture | null };
+  return { last, next };
 }

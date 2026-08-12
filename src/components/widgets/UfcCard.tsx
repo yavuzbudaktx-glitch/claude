@@ -27,10 +27,12 @@ function ufcSlugCandidates(name: string): string[] {
   return [base, `${base}-1`, `${base}-2`];
 }
 
-// Bumped to v2 so any wrong-fighter URLs cached from previous builds
-// get evicted automatically. Also shortened the TTL — a week was too
-// long to live with a bad guess.
-const UFC_PHOTO_CACHE_KEY = "morning.ufc-photo.v2";
+// Bumped to v3 so any wrong-fighter URLs cached from previous builds
+// get evicted automatically — the Wikipedia-guess era left real people's
+// portraits replaced by strangers and statues, and those were sitting in
+// localStorage. Also shortened the TTL — a week was too long to live with
+// a bad guess.
+const UFC_PHOTO_CACHE_KEY = "morning.ufc-photo.v3";
 
 function readPhotoCache(name: string): string | null {
   if (typeof window === "undefined") return null;
@@ -179,10 +181,31 @@ async function searchFighterPhoto(name: string): Promise<string | null> {
   return null;
 }
 
-function useClientUfcPhoto(name: string, serverPrimary: string | null): string | null {
+// The repo carries ~1,900 curated portraits in /public/fighters/. The server
+// route already prefers them, but only inside enrichEvent — which is skipped
+// when the route hits its time budget, and bypassed entirely when the card
+// falls back to reading ESPN from the browser. Both of those paths handed us
+// bare ESPN URLs, and the name-based Wikipedia guess below then "improved" them
+// into whoever else shares the name. So ask for the curated photo directly,
+// every time, from every path. `/api/fighter-photo` is a filesystem lookup —
+// it costs nothing — and a `/fighters/*` answer settles the question.
+function useRepoFighterPhoto(name: string): { local: string | null; wiki: string | null } {
+  const { data } = useSWR<{ url: string | null }>(
+    name ? `/api/fighter-photo?name=${encodeURIComponent(name)}` : null,
+    (u: string) => fetch(u).then((r) => r.json()),
+    { revalidateOnFocus: false, keepPreviousData: true },
+  );
+  const url = data?.url ?? null;
+  // The route answers with a repo file when it has one and a Wikipedia
+  // infobox image otherwise; the prefix is what tells them apart.
+  const isLocal = !!url && url.startsWith("/fighters/");
+  return { local: isLocal ? url : null, wiki: isLocal ? null : url };
+}
+
+function useClientUfcPhoto(name: string, serverPrimary: string | null, skip = false): string | null {
   const [photo, setPhoto] = useState<string | null>(() => readPhotoCache(name));
   useEffect(() => {
-    if (!name) return;
+    if (!name || skip) return;
     // Trust the server's primary URL when it's already a known-good
     // source — a /fighters/* file from the repo, or a UFC Cloudfront
     // URL. No reason to scrape and risk overwriting it with something
@@ -213,7 +236,7 @@ function useClientUfcPhoto(name: string, serverPrimary: string | null): string |
       writePhotoCache(name, found);
     })();
     return () => { cancelled = true; };
-  }, [name, serverPrimary, photo]);
+  }, [name, serverPrimary, photo, skip]);
   return photo;
 }
 
@@ -325,13 +348,21 @@ function FallbackImg({
 // loads. Otherwise we try the client-scraped UFC photo, then anything the
 // server returned (UFC.com / Wikipedia / ESPN URLs), then ESPN CDN
 // variants extracted from the headshot id.
-function headshotCandidates(f: UfcFighter, clientPhoto: string | null): string[] {
+function headshotCandidates(
+  f: UfcFighter,
+  clientPhoto: string | null,
+  repoPhoto: string | null,
+  wikiPhoto: string | null,
+): string[] {
   const urls: string[] = [];
   const isLocal = (u: string | null) => !!u && u.startsWith("/fighters/");
 
-  if (isLocal(f.headshot)) {
+  // The curated portrait is the answer whenever the repo has one, whether it
+  // reached us through the server route or through the direct lookup.
+  if (repoPhoto) urls.push(repoPhoto);
+  if (isLocal(f.headshot) && f.headshot !== repoPhoto) {
     urls.push(f.headshot!);
-  } else {
+  } else if (!isLocal(f.headshot)) {
     if (clientPhoto) urls.push(clientPhoto);
     if (f.headshot && f.headshot !== clientPhoto) {
       urls.push(f.headshot);
@@ -346,12 +377,20 @@ function headshotCandidates(f: UfcFighter, clientPhoto: string | null): string[]
     }
   }
   if (f.headshotFallback && !urls.includes(f.headshotFallback)) urls.push(f.headshotFallback);
+  if (wikiPhoto && !urls.includes(wikiPhoto)) urls.push(wikiPhoto);
   return urls;
 }
 
 function FighterCell({ f, highlight }: { f: UfcFighter | null; highlight: boolean }) {
-  // Hook must run unconditionally; pass empty name when f is null so it no-ops.
-  const clientPhoto = useClientUfcPhoto(f?.name ?? "", f?.headshot ?? null);
+  // Hooks must run unconditionally; pass empty name when f is null so they no-op.
+  const { local: repoPhoto, wiki: wikiPhoto } = useRepoFighterPhoto(f?.name ?? "");
+  // With a curated portrait in hand there is nothing to scrape for, and the
+  // scrape is precisely what was replacing real fighters with strangers.
+  const clientPhoto = useClientUfcPhoto(
+    f?.name ?? "",
+    repoPhoto ?? f?.headshot ?? null,
+    !!repoPhoto,
+  );
   if (!f) {
     return (
       <div className="flex flex-col items-center text-center min-w-0 flex-1">
@@ -360,7 +399,7 @@ function FighterCell({ f, highlight }: { f: UfcFighter | null; highlight: boolea
       </div>
     );
   }
-  const candidates = headshotCandidates(f, clientPhoto);
+  const candidates = headshotCandidates(f, clientPhoto, repoPhoto, wikiPhoto);
   return (
     <div className="flex flex-col items-center text-center min-w-0 flex-1">
       <div
