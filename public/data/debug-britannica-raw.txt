@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-08-12T11:57:57.375Z
+# generated: 2026-08-12T14:06:41.948Z
 # url:       https://www.britannica.com/on-this-day/august-12
 # fetcher:   Wayback Machine
 # kind:      html
