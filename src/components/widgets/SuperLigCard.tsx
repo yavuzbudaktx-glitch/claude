@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 import useSWR from "swr";
-import { fetchSuperLigStandingsFromBrowser, fetchTeamFixturesFromBrowser } from "@/lib/sports-client";
+import { fetchSuperLigStandingsFromBrowser, fetchTeamFixturesFromBrowser, fetchSportsDbFixtures } from "@/lib/sports-client";
 import { useEffect, useMemo, useState } from "react";
 import { differenceInCalendarDays, format, parseISO } from "date-fns";
 import { Card } from "@/components/Card";
@@ -59,22 +59,45 @@ const fetcher = async (url: string): Promise<Resp> => {
     if (r.ok) server = (await r.json()) as Resp;
   } catch { /* fall through */ }
 
-  const needStandings = !server?.standings?.length;
-  const needFixtures = !server?.last && !server?.next;
-  if (!needStandings && !needFixtures) return server as Resp;
-
+  const teamName = decodeURIComponent(new URL(url, window.location.origin).searchParams.get("team") ?? "Beşiktaş");
   const teamId = Number(new URL(url, window.location.origin).searchParams.get("teamId")) || 1895;
-  const [table, fixtures] = await Promise.all([
-    needStandings ? fetchSuperLigStandingsFromBrowser() : Promise.resolve(null),
-    needFixtures ? fetchTeamFixturesFromBrowser(teamId) : Promise.resolve(null),
+
+  // The diagnostic showed ESPN returns 403 to Vercel but 200 to the browser, so
+  // the browser is the reliable path — but the server still "succeeds" with a
+  // junk 5-row TheSportsDB preseason table, which meant a simple
+  // "only fall back when empty" test never fired. The Süper Lig has 18 teams,
+  // so anything under 12 rows is treated as not-a-real-table and we take
+  // whichever source actually returns a full one.
+  const serverRows = server?.standings?.length ?? 0;
+  const wantTable = serverRows < 12;
+  const wantFixtures = !server?.last && !server?.next;
+
+  const [table, espnFixtures] = await Promise.all([
+    wantTable ? fetchSuperLigStandingsFromBrowser() : Promise.resolve(null),
+    wantFixtures ? fetchTeamFixturesFromBrowser(teamId) : Promise.resolve(null),
   ]);
 
+  // ESPN's per-league schedule is empty in the off-season, so fall through to
+  // TheSportsDB — resolved BY NAME, because the hardcoded id in the route
+  // pointed at an English club and was returning its fixtures instead.
+  let fixtures = espnFixtures;
+  if (wantFixtures && !fixtures?.last && !fixtures?.next) {
+    fixtures = await fetchSportsDbFixtures(teamName);
+  }
+
+  const standings = (table && table.length > serverRows)
+    ? (table as unknown as Standing[])
+    : (server?.standings ?? []);
+
   return {
-    source: [server?.source, table ? "table:browser" : null, fixtures ? "fixtures:browser" : null]
-      .filter(Boolean).join("+") || "none",
-    standings: (table as Standing[] | null) ?? server?.standings ?? [],
-    last: (fixtures?.last as Match | null) ?? server?.last ?? null,
-    next: (fixtures?.next as Match | null) ?? server?.next ?? null,
+    source: [
+      server?.source,
+      table && table.length > serverRows ? "table:espn-browser" : null,
+      fixtures ? "fixtures:browser" : null,
+    ].filter(Boolean).join("+") || "none",
+    standings,
+    last: (fixtures?.last as unknown as Match | null) ?? server?.last ?? null,
+    next: (fixtures?.next as unknown as Match | null) ?? server?.next ?? null,
   };
 };
 

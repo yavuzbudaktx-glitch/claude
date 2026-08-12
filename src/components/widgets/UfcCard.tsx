@@ -189,7 +189,14 @@ function useClientUfcPhoto(name: string, serverPrimary: string | null): string |
     // worse.
     if (
       serverPrimary &&
-      (serverPrimary.startsWith("/fighters/") || serverPrimary.includes("dmxg5wxfqgb4u.cloudfront.net"))
+      (serverPrimary.startsWith("/fighters/") ||
+        serverPrimary.includes("dmxg5wxfqgb4u.cloudfront.net") ||
+        // ESPN headshots are addressed by ATHLETE ID, so they are always the
+        // right person. The name-based Wikipedia scrape below is a guess, and
+        // when the browser fallback started supplying ESPN URLs it was
+        // overwriting them with whoever shared a name — which is why a fighter
+        // rendered as a marble statue.
+        serverPrimary.includes("a.espncdn.com"))
     ) {
       return;
     }

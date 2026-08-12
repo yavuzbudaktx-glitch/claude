@@ -267,3 +267,74 @@ export async function fetchTeamFixturesFromBrowser(
   }
   return { last, next };
 }
+
+/* ---------------------------------------------------- TheSportsDB --------- */
+
+// The Süper Lig route had Beşiktaş hardcoded as TheSportsDB id 133611, and the
+// diagnostic proved that id is a DIFFERENT CLUB — asking for its next fixture
+// returned "Norwich City vs West Bromwich Albion". Resolving the id by name
+// instead means it can never silently point at the wrong team again.
+const SDB = "https://www.thesportsdb.com/api/v1/json/3";
+let sdbIdCache: Record<string, string | null> = {};
+
+export async function resolveSportsDbTeamId(teamName: string): Promise<string | null> {
+  if (teamName in sdbIdCache) return sdbIdCache[teamName];
+  const j = await getJson<{ teams?: Array<{ idTeam?: string; strTeam?: string; strLeague?: string }> }>(
+    `${SDB}/searchteams.php?t=${encodeURIComponent(teamName)}`,
+  );
+  const teams = j?.teams ?? [];
+  // Prefer the one actually in the Turkish top flight — searching "Besiktas"
+  // can also return basketball and other sections of the same club.
+  const pick =
+    teams.find((t) => /super lig|süper lig/i.test(t.strLeague ?? "")) ??
+    teams[0];
+  const id = pick?.idTeam ?? null;
+  sdbIdCache = { ...sdbIdCache, [teamName]: id };
+  return id;
+}
+
+/** Last + next fixture from TheSportsDB, by NAME. Covers friendlies and cups. */
+export async function fetchSportsDbFixtures(teamName: string): Promise<{ last: LiteFixture | null; next: LiteFixture | null } | null> {
+  const id = await resolveSportsDbTeamId(teamName);
+  if (!id) return null;
+
+  interface SdbEvent {
+    strEvent?: string; strHomeTeam?: string; strAwayTeam?: string;
+    intHomeScore?: string | null; intAwayScore?: string | null;
+    strTimestamp?: string; dateEvent?: string; strTime?: string;
+    strLeague?: string; strVenue?: string;
+    strHomeTeamBadge?: string; strAwayTeamBadge?: string;
+  }
+  const toFixture = (e: SdbEvent): LiteFixture | null => {
+    const home = e.strHomeTeam ?? "";
+    const away = e.strAwayTeam ?? "";
+    if (!home || !away) return null;
+    const iso = e.strTimestamp
+      ? e.strTimestamp.replace(" ", "T") + (e.strTimestamp.endsWith("Z") ? "" : "Z")
+      : e.dateEvent
+        ? `${e.dateEvent}T${(e.strTime ?? "00:00:00").slice(0, 8)}Z`
+        : "";
+    if (!iso) return null;
+    const hs = e.intHomeScore == null || e.intHomeScore === "" ? null : Number(e.intHomeScore);
+    const as = e.intAwayScore == null || e.intAwayScore === "" ? null : Number(e.intAwayScore);
+    return {
+      date: iso,
+      competition: e.strLeague ?? null,
+      home, away,
+      homeScore: Number.isFinite(hs as number) ? (hs as number) : null,
+      awayScore: Number.isFinite(as as number) ? (as as number) : null,
+      venue: e.strVenue ?? null,
+      homeBadge: e.strHomeTeamBadge ?? null,
+      awayBadge: e.strAwayTeamBadge ?? null,
+    };
+  };
+
+  const [lastJ, nextJ] = await Promise.all([
+    getJson<{ results?: SdbEvent[] }>(`${SDB}/eventslast.php?id=${id}`),
+    getJson<{ events?: SdbEvent[] }>(`${SDB}/eventsnext.php?id=${id}`),
+  ]);
+  const last = (lastJ?.results ?? []).map(toFixture).filter(Boolean)[0] ?? null;
+  const next = (nextJ?.events ?? []).map(toFixture).filter(Boolean)[0] ?? null;
+  if (!last && !next) return null;
+  return { last: last as LiteFixture | null, next: next as LiteFixture | null };
+}
