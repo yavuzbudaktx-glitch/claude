@@ -28,14 +28,6 @@ const SWATCHES: Record<ThemeId, string[]> = {
   newspaper:  ["#f7f3e8", "#111111", "#9a1010"],
   blueprint:  ["#0e3a64", "#ffffff", "#7fc6ff"],
   comic:      ["#fff8e6", "#ff2d2d", "#111111"],
-  noir:       ["#0b0b0d", "#e8e6e0", "#8c8478"],
-  steampunk:  ["#241a12", "#b8860b", "#8c5a2b"],
-  vapor:      ["#1a0b2e", "#ff6ad5", "#05d9e8"],
-  zen:        ["#e8e1d4", "#3b352c", "#8c7b5e"],
-  circuit:    ["#0a1f14", "#39ff88", "#d4a017"],
-  ember:      ["#1a1210", "#ff7a35", "#ffce6b"],
-  arctic:     ["#eaf3fa", "#2f7fb5", "#9fd6ef"],
-  dune:       ["#e6cfa8", "#b5651d", "#7a4a21"],
   sakura:     ["#fdf1f4", "#e8879f", "#7b5c66"],
 };
 

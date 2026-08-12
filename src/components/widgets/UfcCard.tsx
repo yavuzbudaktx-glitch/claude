@@ -10,6 +10,7 @@ import { useRankChanges, RankArrow } from "@/lib/use-rank-changes";
 import { fetchUfcRankings, type DivisionRanking } from "@/lib/ufc-rankings-client";
 import { useFreshAt } from "@/lib/use-fresh";
 import type { UfcEvent, UfcFighter, UfcPayload } from "@/app/api/ufc/route";
+import { fetchUfcFromBrowser } from "@/lib/sports-client";
 
 // Mirror of the slug-candidate helper in /api/ufc/route.ts. Kept inline
 // so the client doesn't have to import a server module.
@@ -209,7 +210,28 @@ function useClientUfcPhoto(name: string, serverPrimary: string | null): string |
   return photo;
 }
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<UfcPayload>);
+// Server route first; if it comes back with nothing (ESPN throttling Vercel's
+// IP, or the route hitting its own deadline) fall back to reading ESPN straight
+// from the browser, which is on a residential IP it will serve. Same trick that
+// fixed the Reddit feed.
+const fetcher = async (url: string): Promise<UfcPayload> => {
+  let server: UfcPayload | null = null;
+  try {
+    const r = await fetch(url);
+    if (r.ok) server = (await r.json()) as UfcPayload;
+  } catch { /* fall through to the browser path */ }
+  if (server?.previous || server?.upcoming) return server;
+
+  const direct = await fetchUfcFromBrowser();
+  if (direct?.previous || direct?.upcoming) {
+    return {
+      previous: direct.previous as unknown as UfcEvent | null,
+      upcoming: direct.upcoming as unknown as UfcEvent | null,
+      source: "espn-browser",
+    };
+  }
+  return server ?? { previous: null, upcoming: null, source: "none" };
+};
 
 // UFC logo with several fallbacks. The Commons URL we tried before doesn't
 // exist (the UFC logo is fair-use on English Wikipedia, not on Commons),

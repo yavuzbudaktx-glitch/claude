@@ -2,6 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 import useSWR from "swr";
+import { fetchSuperLigStandingsFromBrowser, fetchTeamFixturesFromBrowser } from "@/lib/sports-client";
 import { useEffect, useMemo, useState } from "react";
 import { differenceInCalendarDays, format, parseISO } from "date-fns";
 import { Card } from "@/components/Card";
@@ -45,7 +46,37 @@ interface Resp {
   next: Match | null;
 }
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<Resp>);
+// Server route first, then patch any gaps from the browser. The route races a
+// pile of upstreams, but when all of them throttle Vercel's IP it returns empty
+// and the card had nothing. ESPN answers cross-origin GETs, so the browser can
+// fill in the table and the fixtures itself. Each half is patched
+// independently — a working table shouldn't be thrown away because the fixture
+// lookup failed, or the reverse.
+const fetcher = async (url: string): Promise<Resp> => {
+  let server: Resp | null = null;
+  try {
+    const r = await fetch(url);
+    if (r.ok) server = (await r.json()) as Resp;
+  } catch { /* fall through */ }
+
+  const needStandings = !server?.standings?.length;
+  const needFixtures = !server?.last && !server?.next;
+  if (!needStandings && !needFixtures) return server as Resp;
+
+  const teamId = Number(new URL(url, window.location.origin).searchParams.get("teamId")) || 1895;
+  const [table, fixtures] = await Promise.all([
+    needStandings ? fetchSuperLigStandingsFromBrowser() : Promise.resolve(null),
+    needFixtures ? fetchTeamFixturesFromBrowser(teamId) : Promise.resolve(null),
+  ]);
+
+  return {
+    source: [server?.source, table ? "table:browser" : null, fixtures ? "fixtures:browser" : null]
+      .filter(Boolean).join("+") || "none",
+    standings: (table as Standing[] | null) ?? server?.standings ?? [],
+    last: (fixtures?.last as Match | null) ?? server?.last ?? null,
+    next: (fixtures?.next as Match | null) ?? server?.next ?? null,
+  };
+};
 
 // The team whose last/next match is tracked. Synced across devices.
 interface SelectedTeam { name: string; teamId: string }

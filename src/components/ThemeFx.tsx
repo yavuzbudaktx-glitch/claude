@@ -22,8 +22,10 @@ import { useEffect } from "react";
 type Petal = { x: number; y: number; r: number; vy: number; vx: number; sp: number; ph: number; a: number };
 type Ripple = { x: number; y: number; t: number; life: number };
 
-const POINTER_THEMES = new Set(["noir", "circuit"]);
-const CANVAS_THEMES = new Set(["sakura", "zen"]);
+// Nothing needs cursor tracking now that Noir and Circuit are gone; the set
+// stays so a future theme can opt in with one word.
+const POINTER_THEMES = new Set<string>([]);
+const CANVAS_THEMES = new Set(["sakura"]);
 
 export function ThemeFx() {
   useEffect(() => {

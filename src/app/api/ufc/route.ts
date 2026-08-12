@@ -463,15 +463,37 @@ async function fetchScoreboard(from: Date, to: Date): Promise<{ events: UfcEvent
   return { events, rawByEvent };
 }
 
+// Vercel kills the function at its wall-clock limit, and enrichment is the
+// expensive half: it scrapes ufc.com athlete pages and Wikipedia for photos,
+// records and nationality, several fetches per fighter. When those are slow the
+// whole route died and the card showed nothing at all — with no fallback,
+// because ESPN's scoreboard is the only source here.
+//
+// So the route now has a DEADLINE. The scoreboard (the part that actually
+// matters) is fetched first and returned no matter what; enrichment only runs
+// with whatever time is left, and anything that throws or overruns is dropped
+// rather than taking the response with it.
+const BUDGET_MS = 7200;
+
 export async function GET() {
+  const started = Date.now();
+  const left = () => BUDGET_MS - (Date.now() - started);
+
   const now = new Date();
   const from = new Date(now.getTime() - 120 * 86400000);
   const to = new Date(now.getTime() + 180 * 86400000);
 
-  const { events, rawByEvent } = await fetchScoreboard(from, to);
+  let events: UfcEvent[] = [];
+  let rawByEvent = new Map<string, EspnMmaEvent>();
+  try {
+    const got = await fetchScoreboard(from, to);
+    events = got.events;
+    rawByEvent = got.rawByEvent;
+  } catch {
+    events = [];
+  }
 
   const sorted = [...events].sort((a, b) => +new Date(a.date) - +new Date(b.date));
-
   const t = now.getTime();
   let previous: UfcEvent | null = null;
   let upcoming: UfcEvent | null = null;
@@ -481,14 +503,35 @@ export async function GET() {
     else if (!upcoming) upcoming = ev;
   }
 
+  // Enrich only while there's budget, and never let it fail the request. The
+  // un-enriched event still has the names, date, weight class and method —
+  // everything except photos and records — so a partial answer is far better
+  // than the empty card this used to return.
+  async function tryEnrich(ev: UfcEvent | null): Promise<UfcEvent | null> {
+    if (!ev) return null;
+    const raw = rawByEvent.get(ev.id);
+    if (!raw || left() < 1200) return ev;
+    try {
+      return await Promise.race([
+        enrichEvent(ev, raw),
+        new Promise<UfcEvent>((resolve) => setTimeout(() => resolve(ev), Math.max(800, left()))),
+      ]);
+    } catch {
+      return ev;
+    }
+  }
+
   const [enrichedPrev, enrichedNext] = await Promise.all([
-    previous ? enrichEvent(previous, rawByEvent.get(previous.id)!) : Promise.resolve(null),
-    upcoming ? enrichEvent(upcoming, rawByEvent.get(upcoming.id)!) : Promise.resolve(null),
+    tryEnrich(previous),
+    tryEnrich(upcoming),
   ]);
 
-  return NextResponse.json({
-    previous: enrichedPrev,
-    upcoming: enrichedNext,
-    source: "espn",
-  } satisfies UfcPayload);
+  return NextResponse.json(
+    {
+      previous: enrichedPrev,
+      upcoming: enrichedNext,
+      source: events.length ? "espn" : "none",
+    } satisfies UfcPayload,
+    { headers: { "Cache-Control": "s-maxage=600, stale-while-revalidate=3600" } },
+  );
 }

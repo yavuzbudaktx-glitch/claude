@@ -36,3 +36,96 @@
  background-position:right -30px top -10px,0 0;
  background-size:420px 260px,100% 100%;}
 .theme-sakura .card { border-radius:14px; }
+
+/* ===========================================================================
+   SAKURA — upgrade pass.
+
+   The palette and the falling petals were the good part; everything else was
+   default. This gives the theme its own material: washi paper, a hanging
+   branch, and blossom-shaped furniture.
+=========================================================================== */
+
+/* Cards are sheets of washi: laid paper with visible fibre, a soft deckle
+   glow at the top edge, and a petal-pink rim rather than a grey one. */
+.theme-sakura .card {
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--accent) 26%, transparent);
+  background-image:
+    /* paper fibre — short random strokes, not a grid */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cg stroke='%23a87f8c' stroke-width='0.7' opacity='.12'%3E%3Cpath d='M6 18h26M52 9h18M96 22h30M18 46h22M64 52h34M112 60h20M8 78h30M58 84h24M100 92h28M24 110h30M74 118h26M4 130h22'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(180deg, rgba(255,255,255,.6) 0%, rgba(255,255,255,.12) 18%, transparent 34%);
+  background-size: 140px 140px, 100% 100%;
+  box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255,255,255,.7);
+}
+.theme-sakura.dark .card {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cg stroke='%23e8b9c8' stroke-width='0.7' opacity='.10'%3E%3Cpath d='M6 18h26M52 9h18M96 22h30M18 46h22M64 52h34M112 60h20M8 78h30M58 84h24M100 92h28M24 110h30M74 118h26M4 130h22'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(180deg, rgba(255,190,210,.10) 0%, rgba(255,190,210,.03) 18%, transparent 34%);
+  background-size: 140px 140px, 100% 100%;
+  box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255,190,210,.14);
+}
+.theme-sakura .card::before { display: none; }
+.theme-sakura .card::after { display: none; }
+
+/* A FIVE-PETAL BLOSSOM for the status dot — the motif of the whole theme,
+   drawn with a clip-path so it takes the accent colour directly. */
+.theme-sakura .dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 0;
+  box-shadow: none;
+  background: radial-gradient(circle at 50% 58%, #fff3f6 0 16%, var(--accent) 52%);
+  clip-path: polygon(
+    50% 0%, 62% 20%, 84% 12%, 82% 36%, 100% 46%,
+    82% 60%, 90% 84%, 66% 78%, 50% 100%,
+    34% 78%, 10% 84%, 18% 60%, 0% 46%,
+    18% 36%, 16% 12%, 38% 20%);
+}
+
+/* Header rule as a brushed stroke that tapers at both ends — the mark a soft
+   brush leaves, rather than a ruled line. */
+.theme-sakura .headrule {
+  border-bottom: 0;
+  position: relative;
+  padding-bottom: .55rem;
+}
+.theme-sakura .headrule::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%, color-mix(in srgb, var(--accent) 70%, transparent) 14%,
+    color-mix(in srgb, var(--accent) 70%, transparent) 82%, transparent 100%);
+}
+
+/* Petal-shaped controls: rounded on the diagonal so a chip reads as a petal
+   rather than a pill. */
+.theme-sakura .chip,
+.theme-sakura .btn-ghost {
+  border-radius: 14px 4px 14px 4px;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  background: var(--paper);
+}
+.theme-sakura .chip-active {
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 62%, #fff));
+  color: #fff;
+  border-color: transparent;
+}
+.theme-sakura.dark .chip-active { color: #2a1017; }
+/* Tab strips need to stay tight in a card header. */
+.theme-sakura .headrule .chip { border-radius: 10px 3px 10px 3px; padding: 3px 9px; font-size: 10.5px; }
+
+/* Display type: a lighter, more open setting — this theme is delicate, and 800
+   weight fought that. */
+.theme-sakura .font-display { font-weight: 600; letter-spacing: -0.02em; }
+.theme-sakura .text-gradient {
+  background: linear-gradient(112deg, #8f3f5c, #e8879f 52%, #f7c9d6);
+  -webkit-background-clip: text; background-clip: text;
+}
+.theme-sakura.dark .text-gradient {
+  background: linear-gradient(112deg, #f090ac, #ffc4d5 52%, #fff0f4);
+  -webkit-background-clip: text; background-clip: text;
+}
+.theme-sakura ::selection { background: color-mix(in srgb, var(--accent) 40%, transparent); }
