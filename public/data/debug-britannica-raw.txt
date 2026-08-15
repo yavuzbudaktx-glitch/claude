@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-08-15T07:18:30.920Z
+# generated: 2026-08-15T08:43:34.685Z
 # url:       https://www.britannica.com/on-this-day/august-15
 # fetcher:   Wayback Machine
 # kind:      html
