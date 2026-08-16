@@ -1,9 +1,9 @@
 # Britannica scrape debug dump
-# generated: 2026-08-16T14:43:50.372Z
+# generated: 2026-08-16T19:53:06.942Z
 # url:       https://www.britannica.com/on-this-day
 # fetcher:   Wayback Machine
 # kind:      html
-# length:    75033
+# length:    77034
 # parsed:    NO
 # -----------------------------------------------------------------
 
@@ -81,8 +81,8 @@
 
     
 
-    <link rel="dns-prefetch" href="https://cdn.britannica.com/mendel-resources/3-195">
-    <link rel="preconnect" href="https://cdn.britannica.com/mendel-resources/3-195">
+    <link rel="dns-prefetch" href="https://cdn.britannica.com/mendel-resources/3-194">
+    <link rel="preconnect" href="https://cdn.britannica.com/mendel-resources/3-194">
 
     
 
@@ -126,7 +126,7 @@
 
 
 <script   class="analytics-metadata" type="application/json">
-{"adLeg":"D","leg":"B","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false,"isAiQuestionStandalonePage":false}
+{"adLeg":"D","leg":"D","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false,"isAiQuestionStandalonePage":false}
 </script>
 
 
@@ -160,9 +160,9 @@
         'analytics_storage': 'granted',
     });
 
-    window.geoCountry = 'CA';
+    window.geoCountry = 'US';
     window.isGdprCountry = false;
-    window.isCcpaCountry = false;
+    window.isCcpaCountry = true;
     window.geoRegion = 'XX';
 
 </script>
@@ -276,18 +276,18 @@
 			"page": "TodayInHistory",
 			"sharedUrl": "https://www.britannica.com/on-this-day",
 			"amuselabsUrl": "https://cdn3.amuselabs.com",
-	    	"resourcesPrefixUrl": "https://cdn.britannica.com/mendel-resources/3-195/[url]?v=3.195.4",
-			"date": 20260814,
+	    	"resourcesPrefixUrl": "https://cdn.britannica.com/mendel-resources/3-194/[url]?v=3.194.9",
+			"date": 20260811,
 			"userInfo": { "type": "ANONYMOUS"
 										,"currency": "USD"
-										,"country": "CA"
+										,"country": "US"
 										,"state": "XX"
-										,"timezone": "America/Toronto"
-										,"bcomId": "-3262732705419554828"
+										,"timezone": "America/Chicago"
+										,"bcomId": "1645337205588712293"
 										,"adProvider": "ay"
-										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":false,"showConsent":false}
+										,"privacyInfo": {"inGdprCountry":false,"inCcpaState":true,"showConsent":true}
 										,"hasAds": true
-										,"testVersion": "B"
+										,"testVersion": "D"
 										,"adsTestVersion": "D"
 										,"consumerId": ""
 										,"instId": ""
@@ -306,12 +306,12 @@
 	        "fetchOffset": 800,
             
 			"mendelCookieName": "__mendel",
-			"mendelCookie": {"currentDate":20260814,"lti":0,"surveyShown":false,"ts":0},
+			"mendelCookie": {"currentDate":20260811,"lti":0,"surveyShown":false,"ts":0},
 			
 
-			"autocompleteToSearchPage": false,"pagesInfo": [{"url":"August-14","title":"On This Day - What Happened on August 14"},{"url":"August-15","title":"On This Day - What Happened on August 15"},{"url":"August-16","title":"On This Day - What Happened on August 16"},{"url":"August-17","title":"On This Day - What Happened on August 17"},{"url":"August-18","title":"On This Day - What Happened on August 18"},{"url":"August-19","title":"On This Day - What Happened on August 19"},{"url":"August-20","title":"On This Day - What Happened on August 20"},{"url":"August-21","title":"On This Day - What Happened on August 21"},{"url":"August-22","title":"On This Day - What Happened on August 22"},{"url":"August-23","title":"On This Day - What Happened on August 23"}]
+			"autocompleteToSearchPage": false,"pagesInfo": [{"url":"August-11","title":"On This Day - What Happened on August 11"},{"url":"August-12","title":"On This Day - What Happened on August 12"},{"url":"August-13","title":"On This Day - What Happened on August 13"},{"url":"August-14","title":"On This Day - What Happened on August 14"},{"url":"August-15","title":"On This Day - What Happened on August 15"},{"url":"August-16","title":"On This Day - What Happened on August 16"},{"url":"August-17","title":"On This Day - What Happened on August 17"},{"url":"August-18","title":"On This Day - What Happened on August 18"},{"url":"August-19","title":"On This Day - What Happened on August 19"},{"url":"August-20","title":"On This Day - What Happened on August 20"}]
 		},
-        "GA": {"adLeg":"D","leg":"B","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false,"isAiQuestionStandalonePage":false}
+        "GA": {"adLeg":"D","leg":"D","userType":"ANONYMOUS","pageType":"TodayInHistory","gisted":false,"hasAiTopQuestions":false,"hasAskButton":false,"hasIndexSummary":false,"hasNews":false,"hasSimplifyButton":false,"isAiQuestionStandalonePage":false}
     };
 
 	</script>
@@ -324,7 +324,7 @@
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:site" content="@britannica" />
-<meta name="twitter:image" content="https://cdn.britannica.com/15/20215-050-9F587C1E/Cologne-Cathedral-rail-pedestrian-bridge-Hohenzollern-Germany.jpg" />
+<meta name="twitter:image" content="https://cdn.britannica.com/24/38524-050-C90B3D2A/Jackson-Pollock-painting-studio-Long-Island-New-1950.jpg" />
 <meta name="twitter:description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
 
 <meta property="og:type"  content="WEBSITE"/>
@@ -332,14 +332,14 @@
 <meta property="og:description" content="On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences."/>
 <meta property="og:site_name" content="Encyclopedia Britannica" />
 <meta property="og:url" content="https://www.britannica.com/on-this-day"/>
-<meta property="og:image" content="https://cdn.britannica.com/15/20215-050-9F587C1E/Cologne-Cathedral-rail-pedestrian-bridge-Hohenzollern-Germany.jpg" />
+<meta property="og:image" content="https://cdn.britannica.com/24/38524-050-C90B3D2A/Jackson-Pollock-painting-studio-Long-Island-New-1950.jpg" />
 
 <script type="text/javascript" data-type="init opengraph">
 Mendel.openGraph = {
     "type": "WEBSITE",
     "title": "On This Day - What Happened Today In History",
     "description": "On This Day In History: anniversaries, birthdays, major events, and time capsules. This day's facts in the arts, politics, and sciences.",
-    "imageUrl": "https://cdn.britannica.com/15/20215-050-9F587C1E/Cologne-Cathedral-rail-pedestrian-bridge-Hohenzollern-Germany.jpg",
+    "imageUrl": "https://cdn.britannica.com/24/38524-050-C90B3D2A/Jackson-Pollock-painting-studio-Long-Island-New-1950.jpg",
     "pageUrl": "https://www.britannica.com/on-this-day"
 }
 </script>
@@ -354,11 +354,11 @@ Mendel.openGraph = {
 
     
 
-    <link href="https://cdn.britannica.com/mendel-resources/3-195/dist/_tailwind.css?v=3.195.4" rel="stylesheet" />
-    <link href="https://cdn.britannica.com/mendel-resources/3-195/dist/vendor-bundle.css?v=3.195.4" rel="stylesheet" />
-    <link href="https://cdn.britannica.com/mendel-resources/3-195/dist/mendel-css.css?v=3.195.4" rel="stylesheet" />
+    <link href="https://cdn.britannica.com/mendel-resources/3-194/dist/_tailwind.css?v=3.194.9" rel="stylesheet" />
+    <link href="https://cdn.britannica.com/mendel-resources/3-194/dist/vendor-bundle.css?v=3.194.9" rel="stylesheet" />
+    <link href="https://cdn.britannica.com/mendel-resources/3-194/dist/mendel-css.css?v=3.194.9" rel="stylesheet" />
     
-    <link href="https://cdn.britannica.com/mendel-resources/3-195/dist/today-in-history-page.css?v=3.195.4" rel="stylesheet" />
+    <link href="https://cdn.britannica.com/mendel-resources/3-194/dist/today-in-history-page.css?v=3.194.9" rel="stylesheet" />
 
     <script type="text/javascript">
         if ((!window.name || (window.name.indexOf('_vis_editor') === -1)) && self !== top) { top.location = self.location; }
@@ -416,7 +416,7 @@ Mendel.openGraph = {
 
 </head>
 
-<body data-leg="B" class="today-in-history user-ANONYMOUS  user-ads   md-desktop    leg-b ">
+<body data-leg="D" class="today-in-history user-ANONYMOUS  user-ads   md-desktop    leg-d ">
 
 
 
@@ -907,8 +907,8 @@ Ask the Chatbot</a>
 
 <script   class="otd-json-info" type="application/json">
 {
-        "calendarInfo": {"day":14,"month":8,"monthName":"August","nbDays":31,"nextMonth":9,"nextMonthName":"September","previousMonth":7,"previousMonthName":"July"},
-        "url": "/on-this-day/August/14",
+        "calendarInfo": {"day":11,"month":8,"monthName":"August","nbDays":31,"nextMonth":9,"nextMonthName":"September","previousMonth":7,"previousMonthName":"July"},
+        "url": "/on-this-day/August/11",
 	    "title": "On This Day - What Happened Today In History"
     }
 </script>
@@ -1007,10 +1007,10 @@ Ask the Chatbot</a>
 		
 		
 
-<img class="tw:pb-2 tw:max-md:pb-4" src="https://cdn.britannica.com/mendel-resources/3-195/images/shared/tih-logo.png?v=3.195.4" alt="Today In History Logo" width="397px" height="52px"/>    
+<img class="tw:pb-2 tw:max-md:pb-4" src="https://cdn.britannica.com/mendel-resources/3-194/images/shared/tih-logo.png?v=3.194.9" alt="Today In History Logo" width="397px" height="52px"/>    
           <div class="d-flex align-items-center tw:gap-2 tw:max-md:mb-0 tw:mb-3">
-            <img src="https://cdn.britannica.com/mendel-resources/3-195/images/shared/tih-star.svg?v=3.195.4" alt="Today In History Star" width="24" height="24"/>
-            <span class="font-oswald tw:text-[var(--tan-date-text-tih)] tw:text-lg text-uppercase cursor-pointer tih-transparent" data-popover=".md-history-calendar-popover">August&nbsp;14</span>
+            <img src="https://cdn.britannica.com/mendel-resources/3-194/images/shared/tih-star.svg?v=3.194.9" alt="Today In History Star" width="24" height="24"/>
+            <span class="font-oswald tw:text-[var(--tan-date-text-tih)] tw:text-lg text-uppercase cursor-pointer tih-transparent" data-popover=".md-history-calendar-popover">August&nbsp;11</span>
         </div>
         </div>
 
@@ -1137,10 +1137,10 @@ Ask the Chatbot</a>
         <div class="tw:flex tw:flex-row tw:max-md:flex-col-reverse tw:gap-10 tw:max-md:gap-9 tw:max-md:gap-6 tw:my-14 tw:max-md:my-11">
   <div class="tw:basis-1/2 tw:flex tw:flex-col tw:max-md:basis-full">
     <div class="font-lora tw:text-3xl tw:mb-6 tw:max-md:mb-2 tw:font-[28px] tw:leading-[35px]">
-      1945: The end of the war in the Pacific</div>
+      1934: America’s escape-proof prison opens</div>
     <div class="font-newsreader tw:text-lg tw:mb-8 tw:max-md:mb-4 tw:leading-[29px]">
-      On this day in 1945, U.S. Pres. <a href="https://www.britannica.com/biography/Harry-S-Truman" class="md-crosslink " data-show-preview="true">Harry S. Truman</a> announced that Japan had surrendered. The following day a radio address by Emperor <a href="https://www.britannica.com/biography/Hirohito" class="md-crosslink " data-show-preview="true">Hirohito</a> was broadcast throughout the country—though he declared the “acceptance” of the <a href="https://www.britannica.com/topic/Allied-powers-World-War-II" class="md-crosslink " data-show-preview="true">Allies</a>’ terms and never used the word “surrender.” This came days after <a href="https://www.britannica.com/event/atomic-bombings-of-Hiroshima-and-Nagasaki" class="md-crosslink " data-show-preview="true">atomic bombs</a> had been dropped on <a href="https://www.britannica.com/place/Hiroshima-Japan" class="md-crosslink " data-show-preview="true">Hiroshima</a> (August 6) and <a href="https://www.britannica.com/place/Nagasaki-Japan" class="md-crosslink " data-show-preview="true">Nagasaki</a> (August 9). The official surrender ceremony was held on September 2, thereby ending the largest—and bloodiest war—in history.</div>
-    <a href="/today-in-history/August-14-1945-WWII-End-of-the-War-in-the-Pacific" class="tw:rounded-full tw:max-md:mb-6! tw:max-md:w-full tw:w-fit tw:py-2 tw:px-4 font-oswald tw:text-base tw:bg-[var(--tan-lighter-tih)] tw:border-[1px] tw:border-[var(--tan-dark-tih)] tw:no-underline! tw:text-[var(--black-tih)]! tw:text-center">
+      On this day in 1934,&nbsp;<a href="https://www.britannica.com/topic/Alcatraz" class="md-crosslink " data-show-preview="true">Alcatraz</a>&nbsp;welcomed its first civilian prisoners, a group of 14 from the federal penitentiary on McNeil Island,&nbsp;Washington. The move was part of the government’s efforts to combat the upswing in crime that had come with&nbsp;<a href="https://www.britannica.com/event/Prohibition-United-States-history-1920-1933" class="md-crosslink " data-show-preview="true">Prohibition</a>, and Alcatraz was well fortified. A who’s-who of America’s criminals would soon reside there, including&nbsp;<a href="https://www.britannica.com/biography/Al-Capone" class="md-crosslink " data-show-preview="true">Al Capone</a>&nbsp;and&nbsp;<a href="https://www.britannica.com/biography/Machine-Gun-Kelly-American-criminal" class="md-crosslink " data-show-preview="true">Machine Gun Kelly</a>.&nbsp;Until its closure in 1963, there were <a href="https://www.britannica.com/topic/Did-Anyone-Escape-from-Alcatraz" class="md-crosslink " data-show-preview="true">no known successful escapes</a>.</div>
+    <a href="/today-in-history/August-11-1934-Alcatraz-Prison-Opens" class="tw:rounded-full tw:max-md:mb-6! tw:max-md:w-full tw:w-fit tw:py-2 tw:px-4 font-oswald tw:text-base tw:bg-[var(--tan-lighter-tih)] tw:border-[1px] tw:border-[var(--tan-dark-tih)] tw:no-underline! tw:text-[var(--black-tih)]! tw:text-center">
       READ&nbsp;MORE
     </a>
   </div>
@@ -1184,10 +1184,10 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/79/290479-050-5BE96259/today-in-history-Japan-uncondonitionally-surrenders.jpg?w=530&h=300&c=crop" alt="August 14, 1945: The very busy weeks after the bombing of Hiroshima" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/76/290476-050-E0352933/today-in-history-First-prisoners-arrive-at-Alcatraz.jpg?w=530&h=300&c=crop" alt="August 11, 1934: Send over the “most desperate or irredeemable” prisoners" class="tw:object-cover tw:w-full tw:h-full"   />
     
 <div class="tw:text-xs tw:italic tw:mt-2 tw:text-black/40 font-newsreader">
-      Encyclopædia Britannica, Inc.; Photo Illustration Encyclopædia Britannica, Inc.</div>
+      © Bettmann/Getty Images; Photo Illustration Encyclopædia Britannica, Inc.</div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:gap-9 tw:max-md:gap-2 tw:max-md:flex-col">
             <div class="tw:basis-1/3 tw:pb-4 tw:flex tw:flex-col tw:max-md:basis-full">
@@ -1235,15 +1235,15 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/15/20215-050-9F587C1E/Cologne-Cathedral-rail-pedestrian-bridge-Hohenzollern-Germany.jpg?w=356&h=200&c=crop" alt="Cologne Cathedral illuminated at night with the Hohenzollern Bridge spanning the Rhine River in Cologne, Germany, city lights reflecting on the water." class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/24/38524-050-C90B3D2A/Jackson-Pollock-painting-studio-Long-Island-New-1950.jpg?w=356&h=200&c=crop" alt="Jackson Pollock" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:mb-3 tw:mt-2 tw:text-black/40 font-newsreader">
-        © RudyBalasko—iStock/Getty Images</div>
+        © Hans Namuth</div>
 
-    <div class="tw:text-2xl! tw:mb-2 tw:text-[var(--black-tih)] font-lora"><a href="https://www.britannica.com/topic/Cologne-Cathedral" class="md-crosslink " data-show-preview="true">Cologne Cathedral completed</a></div>
+    <div class="tw:text-2xl! tw:mb-2 tw:text-[var(--black-tih)] font-lora"><a href="https://www.britannica.com/biography/Jackson-Pollock" class="md-crosslink " data-show-preview="true">Jackson Pollock killed in automobile accident</a></div>
     <div class="tw:text-base/6! font-newsreader tw:[&_blockquote]:hidden tw:[&_p.topic-paragraph]:text-base! tw:[&_p.topic-paragraph]:leading-6!">
-    Originally started in 1248, construction of the <a href="https://www.britannica.com/topic/Cologne-Cathedral" class="md-crosslink " data-show-preview="true">cathedral</a> (Kölner Dom) in <a href="https://www.britannica.com/place/Cologne-Germany" class="md-crosslink " data-show-preview="true">Cologne</a>, Germany—the largest <a href="https://www.britannica.com/art/Gothic-architecture" class="md-crosslink " data-show-preview="true">Gothic</a> church in northern Europe and the city’s major landmark—was finally completed on this day in 1880. <em>[<a href="https://www.britannica.com/quiz/iconic-monuments-quiz" class="md-crosslink " data-show-preview="true">Test your knowledge of iconic monuments</a>.]</em></div>
+    American painter <a href="https://www.britannica.com/biography/Jackson-Pollock" class="md-crosslink " data-show-preview="true">Jackson Pollock</a>, a leading exponent of <a href="https://www.britannica.com/art/Abstract-Expressionism" class="md-crosslink " data-show-preview="true">Abstract Expressionism</a> who received great fame and serious recognition for his radical poured, or “drip,” technique, died this day in 1956 in an automobile accident. <em>[<a href="https://www.britannica.com/quiz/which-artist-part-two-quiz" class="md-crosslink " data-show-preview="true">Take our quiz about famous artists</a>.]</em></div>
 </div></div>
             <div class="tw:basis-2/3 tw:flex tw:flex-col tw:pb-4 tw:max-md:basis-full">
                 <div class="tw:flex tw:flex-row tw:justify-between tw:mb-4 tw:border-b-[1px] tw:border-[var(--gray-300-tih)] tw:pb-4">
@@ -1263,7 +1263,7 @@ Ask the Chatbot</a>
                         </div>
                         <div class="day-in-history-card tw:flex tw:flex-col tw:flex-1"> 
     <div class="tw:w-89 tw:h-50 tw:max-md:w-full tw:flex tw:flex-col tw:items-center tw:justify-center">
-        <a href="/biography/Halle-Berry" class="tw:w-full tw:h-full">
+        <a href="/biography/Pervez-Musharraf" class="tw:w-full tw:h-full">
                     
 
 
@@ -1303,16 +1303,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/94/149194-050-BBAD5680/Halle-Berry-2010.jpg?w=356&h=200&c=crop" alt="Halle Berry poses in a red gown at the 13th Annual Costume Designers Guild Awards, standing in front of a green backdrop with event and sponsor logos." class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/85/144185-050-E8B5F56B/Pervez-Musharraf-2006.jpg?w=356&h=200&c=crop" alt="President Pervez Musharraf of Pakistan speaking at a press conference, wearing glasses, a dark suit, white shirt, and patterned tie, with a blue United Nations backdrop." class="tw:object-cover tw:w-full tw:h-full"   />
     
 </a>
             </div>
     <div class="tw:text-xs tw:italic tw:mb-3 tw:mt-2 tw:text-black/40 font-newsreader">
-        © Helga Esteb/Shutterstock.com</div>
+        © Stocklight/Shutterstock.com</div>
 
-    <div class="tw:text-2xl! tw:mb-2 tw:text-[var(--black-tih)] font-lora">Halle Berry</div>
+    <div class="tw:text-2xl! tw:mb-2 tw:text-[var(--black-tih)] font-lora">Pervez Musharraf</div>
     <div class="tw:text-base/6! font-newsreader tw:[&_blockquote]:hidden tw:[&_p.topic-paragraph]:text-base! tw:[&_p.topic-paragraph]:leading-6!">
-       <p class="topic-paragraph">Born this day in 1966, <a href="https://www.britannica.com/biography/Halle-Berry" class="md-crosslink " data-show-preview="true">Halle Berry</a> in 2002 became the first African American to win the <a href="https://www.britannica.com/art/Academy-Award" class="md-crosslink " data-show-preview="true">Academy Award</a> for best actress, earning the honour for her nuanced portrayal of Leticia Musgrove in Monster’s Ball (2001).</p> </div>
+       <p class="topic-paragraph">Born this day in 1943, General <a href="https://www.britannica.com/biography/Pervez-Musharraf" class="md-crosslink " data-show-preview="true">Pervez Musharraf</a> assumed power in <a href="https://www.britannica.com/place/Pakistan" class="md-crosslink " data-show-preview="true">Pakistan</a> following a 1999 coup, formed a military government, and, during his presidency (2001–08), struggled to deal with Islamist extremism within the country.</p> </div>
 </div></div>
                     <div class="tw:flex tw:flex-col tw:flex-1">
                         <div class="tw:flex tw:min-md:hidden tw:flex-row tw:justify-between tw:mb-4 tw:border-b-[1px] tw:border-[var(--gray-300-tih)] tw:pb-4">
@@ -1321,27 +1321,27 @@ Ask the Chatbot</a>
                         <div class="tw:w-full tw:flex tw:flex-col tw:items-center tw:bg-[var(--tan-light-tih)] tw:border-[var(--tan-default-tih)] tw:border-[1px] tw:py-8 tw:px-6">
                             <div class="tw:grid tw:grid-cols-2 tw:gap-4 tw:max-md:gap-2">
                                 <div class="tw:flex tw:flex-col tw:items-center tw:mb-2">
-                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1940</div>
-                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/money/Arthur-Laffer">Arthur Laffer</a>
-                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">American economist</div>
+                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1957</div>
+                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/David-Henry-Hwang">David Henry Hwang</a>
+                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">American playwright</div>
                                     </div>
                                 <div class="tw:flex tw:flex-col tw:items-center tw:mb-2">
-                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1910</div>
-                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Pierre-Schaeffer">Pierre Schaeffer</a>
-                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">French composer</div>
+                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1949</div>
+                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Ian-Charleson">Ian Charleson</a>
+                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">Scottish actor</div>
                                     </div>
                                 <div class="tw:flex tw:flex-col tw:items-center tw:mb-2">
-                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1742</div>
-                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Pius-VII">Pius VII</a>
-                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">pope</div>
+                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1865</div>
+                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Gifford-Pinchot">Gifford Pinchot</a>
+                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">American conservationist</div>
                                     </div>
                                 <div class="tw:flex tw:flex-col tw:items-center tw:mb-2">
-                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1688</div>
-                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Frederick-William-I">Frederick William I</a>
-                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">king of Prussia</div>
+                                        <div class="tw:mb-2 tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm">1833</div>
+                                        <a class="font-lora tw:text-base tw:text-[var(--black-tih)]! tw:border-b-[2px]! tw:mb-2 tw:border-[var(--orange-tih)]! tw:no-underline! tw:text-center" href="https://www.britannica.com/biography/Robert-G-Ingersoll">Robert G. Ingersoll</a>
+                                        <div class="tw:font-sm font-lora tw:text-[var(--gray-600-tih)] tw:text-center">American politician</div>
                                     </div>
                                 </div>
-                            <a href="/more-on-this-day/August-14" class="tw:rounded-full tw:mt-6 tw:py-3 tw:px-15 font-oswald tw:text-base tw:bg-[var(--tan-lighter-tih)] tw:border-[1px] tw:border-[var(--tan-dark-tih)] tw:no-underline! tw:text-[var(--black-tih)]!">MORE&nbsp;BIRTHDAYS</a>
+                            <a href="/more-on-this-day/August-11" class="tw:rounded-full tw:mt-6 tw:py-3 tw:px-15 font-oswald tw:text-base tw:bg-[var(--tan-lighter-tih)] tw:border-[1px] tw:border-[var(--tan-dark-tih)] tw:no-underline! tw:text-[var(--black-tih)]!">MORE&nbsp;BIRTHDAYS</a>
                         </div>
                     </div>
                 </div>
@@ -1352,7 +1352,7 @@ Ask the Chatbot</a>
             <div class="py-30">
                 <div class="grid">
                     <div class="tw:flex tw:flex-col col-100 col-sm">
-                        <h2 class="tw:uppercase font-oswald font-2xl tw:text-[var(--black-tih)] tw:pb-4 tw:border-b-[1px] tw:border-[var(--gray-300-tih)]">More on August&nbsp;14</h2>
+                        <h2 class="tw:uppercase font-oswald font-2xl tw:text-[var(--black-tih)] tw:pb-4 tw:border-b-[1px] tw:border-[var(--gray-300-tih)]">More on August&nbsp;11</h2>
                         <div class="tw:w-full tw:gap-8 tw:flex tw:flex-col">
                             <div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1396,16 +1396,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/88/193188-050-B804341E/Usain-Bolt-Jamaica-2016-Olympics-gold-2016.jpg?w=260&h=196&c=crop" alt="Usain Bolt  in yellow, crosses the finish line ahead of Justin Gatlin in blue, winning the men's 100-meter final at the 2016 Rio Olympics." class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/45/157045-050-4E29E6FE/Robin-Williams-2011.jpg?w=260&h=196&c=crop" alt="Robin Williams smiling in a dark shirt and jacket, standing in front of a blue background with colorful shapes, 2011." class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        © Fabrice Coffrini—AFP/Getty Images</div>
+        © Joe Seer/Shutterstock.com</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">2016</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">2014</div>
       <div class="tw:text-base/6 font-newsreader">
-      Jamaican sprinter <a href="https://www.britannica.com/biography/Usain-Bolt" class="md-crosslink " data-show-preview="true">Usain Bolt</a> won the 100-metres at the <a href="https://www.britannica.com/event/Rio-de-Janeiro-2016-Olympic-Games" class="md-crosslink " data-show-preview="true">Rio de Janeiro Games</a>, becoming the first person to win the event in three consecutive Olympics; he later claimed an unprecedented third straight gold medal in the 200-metres. <em>[<a href="https://www.britannica.com/quiz/everything-track-and-field-quiz" class="md-crosslink " data-show-preview="true">Take our track and field quiz</a>.]</em></div>
+      American comedian and actor <a href="https://www.britannica.com/biography/Robin-Williams" class="md-crosslink " data-show-preview="true">Robin Williams</a>, who was known for his manic stand-up routines and his diverse film performances, died by suicide. <em>[<a href="https://www.britannica.com/quiz/a-list-of-actors-fact-or-fiction" class="md-crosslink " data-show-preview="true">Sort fact from fiction in our quiz about A-list actors</a>.]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1449,64 +1449,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/41/227541-050-188B8C7A/Polish-American-author-translator-critic-and-diplomat-Czeslaw-Milosz-circa-1980.jpg?w=260&h=196&c=crop" alt="Nobel laureate Czesław Miłosz, c. 1980" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/18/125718-050-0214A613/Wrigley-Field-addition-Chicago-field-Jumbotron.jpg?w=260&h=196&c=crop" alt="View of Wrigley Field baseball stadium in Chicago during a game, with players on the field, fans in the stands, and city buildings in the background." class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        Bernard Gotfryd Photograph Collection, Library of Congress, Washington, D.C. (reproduction no. LC-DIG-gtfy-02725)</div>
-  </div>
-  <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">2004</div>
-      <div class="tw:text-base/6 font-newsreader">
-      Polish-born poet, essayist, and critic <a href="https://www.britannica.com/biography/Czeslaw-Milosz" class="md-crosslink " data-show-preview="true">Czesław Miłosz</a>—who was considered one of the major poets of the 20th century and won the 1980 <a href="https://www.britannica.com/topic/Nobel-Prize" class="md-crosslink " data-show-preview="true">Nobel Prize</a> for Literature—died at age 93. <em>[<a href="https://www.britannica.com/quiz/the-abcs-of-poetry-fact-or-fiction" class="md-crosslink " data-show-preview="true">Sort fact from fiction in our poetry quiz</a>.]</em></div>
-  </div>
-</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
-  <div class="tw:flex tw:flex-col tw:gap-2">
-  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-	<img   src="https://cdn.britannica.com/mendel-resources/3-195/images/shared/thistle-blue-half.svg?v=3.195.4" loading="lazy" alt="default image" />
-</div>
-    <div class="tw:text-xs tw:italic tw:text-black/40">
-        Image: Encyclopædia Britannica, Inc.</div>
+        © Mike Liu/Shutterstock.com</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
     <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1994</div>
       <div class="tw:text-base/6 font-newsreader">
-      Venezuelan militant <a href="https://www.britannica.com/biography/Carlos-the-Jackal" class="md-crosslink " data-show-preview="true">Carlos the Jackal</a>, who orchestrated some of the highest-profile <a href="https://www.britannica.com/topic/terrorism" class="md-crosslink " data-show-preview="true">terrorist</a> attacks of the 1970s and ’80s, was captured by French agents in Sudan; he was later sentenced to life in prison for his crimes. <em>[<a href="https://www.britannica.com/quiz/criminality-and-famous-outlaws" class="md-crosslink " data-show-preview="true">Take our criminality and famous outlaws quiz</a>.]</em></div>
+      The Major League <a href="https://www.britannica.com/sports/baseball" class="md-crosslink " data-show-preview="true">Baseball</a> Players Association began a labor <a href="https://www.britannica.com/topic/strike-industrial-relations" class="md-crosslink " data-show-preview="true">strike</a> following the games of August 11, and the dispute eventually led to the cancellation of the remainder of the season, including the <a href="https://www.britannica.com/sports/World-Series" class="md-crosslink " data-show-preview="true">World Series</a>. <em>[<a href="https://www.britannica.com/quiz/baseball" class="md-crosslink " data-show-preview="true">Test your knowledge of baseball</a>.]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1550,16 +1502,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/27/189527-050-5BAD12C2/Magic-Johnson.jpg?w=260&h=196&c=crop" alt="Magic Johnson in a yellow Los Angeles Lakers uniform dribbles a basketball up the court during a game." class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/80/196780-050-ECB01B9D/Carl-Lewis-Olympic-Games-Barcelona-1992.jpg?w=260&h=196&c=crop" alt="Carl Lewis" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        © Jerry Coli/Dreamstime.com</div>
+        Eric Risberg—AP/REX/Shutterstock.com</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1959</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1984</div>
       <div class="tw:text-base/6 font-newsreader">
-      American <a href="https://www.britannica.com/sports/basketball" class="md-crosslink " data-show-preview="true">basketball</a> player <a href="https://www.britannica.com/biography/Magic-Johnson" class="md-crosslink " data-show-preview="true">Magic Johnson</a>, who led the <a href="https://www.britannica.com/topic/National-Basketball-Association" class="md-crosslink " data-show-preview="true">National Basketball Association</a> (NBA) <a href="https://www.britannica.com/topic/Los-Angeles-Lakers" class="md-crosslink " data-show-preview="true">Los Angeles Lakers</a> to five championships, was born in Lansing, Michigan. <em>[<a href="https://www.britannica.com/quiz/basketball-player-nicknames" class="md-crosslink " data-show-preview="true">Test your knowledge of basketball player nicknames</a>.]</em></div>
+      At the <a href="https://www.britannica.com/event/Los-Angeles-1984-Olympic-Games" class="md-crosslink " data-show-preview="true">Olympic Games in Los Angeles</a>, <a href="https://www.britannica.com/biography/Carl-Lewis" class="md-crosslink " data-show-preview="true">Carl Lewis</a> became the third track-and-field athlete to win four gold medals in one Olympics, joining fellow Americans <a href="https://www.britannica.com/biography/Alvin-Kraenzlein" class="md-crosslink " data-show-preview="true">Alvin Kraenzlein</a> (1900) and <a href="https://www.britannica.com/biography/Jesse-Owens" class="md-crosslink " data-show-preview="true">Jesse Owens</a> (1936). <em>[<a href="https://www.britannica.com/quiz/everything-track-and-field-quiz" class="md-crosslink " data-show-preview="true">Take our quiz about track and field</a>.]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1603,16 +1555,175 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/46/3346-050-DE92F66A/flag-symbolism-Pakistan-design-Islamic.jpg?w=260&h=196&c=crop" alt="Pakistan" class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/20/218320-050-B18879F5/American-disc-jockey-DJ-Kook-Herc-Clive-Campbell-2018.jpg?w=260&h=196&c=crop" alt="DJ Kool Herc, wearing a red crocheted cap, large sunglasses, and a gray and pink patterned shirt with a star necklace, smiles in front of a window with buildings outside." class="tw:object-cover tw:w-full tw:h-full"   />
+    
+</div>
+    <div class="tw:text-xs tw:italic tw:text-black/40">
+        Noam Galai/Getty Images</div>
+  </div>
+  <div class="tw:flex tw:flex-col tw:gap-2">
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1973</div>
+      <div class="tw:text-base/6 font-newsreader">
+      At a back-to-school party in the Bronx, New York, <a href="https://www.britannica.com/question/Who-are-the-founders-of-hip-hop" class="md-crosslink " data-show-preview="true">DJ Kool Herc</a> (Clive Campbell) introduced the technique of playing the same album on two turntables and extending the drum section (which became known as the breakbeat); the night is widely recognized as the birth of <a href="https://www.britannica.com/art/hip-hop" class="md-crosslink " data-show-preview="true">hip-hop</a>. <em>[<a href="https://www.britannica.com/quiz/hip-hop-quiz" class="md-crosslink " data-show-preview="true">How much do you know about hip-hop?</a>]</em></div>
+  </div>
+</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
+  <div class="tw:flex tw:flex-col tw:gap-2">
+  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/88/184788-050-F56B764E/confrontations-Police-men-Watts-district-police-residents-March-1966.jpg?w=260&h=196&c=crop" alt="At night in Los Angeles, police officers in helmets and leather jackets search several young Black men who are lined up against storefronts with their hands on the wall." class="tw:object-cover tw:w-full tw:h-full"   />
+    
+</div>
+    <div class="tw:text-xs tw:italic tw:text-black/40">
+        © Bettmann/Getty Images</div>
+  </div>
+  <div class="tw:flex tw:flex-col tw:gap-2">
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1965</div>
+      <div class="tw:text-base/6 font-newsreader">
+      <a href="https://www.britannica.com/event/Watts-Riots-of-1965" class="md-crosslink " data-show-preview="true">Race riots</a> erupted in the <a href="https://www.britannica.com/place/Watts" class="md-crosslink " data-show-preview="true">Watts</a> district of <a href="https://www.britannica.com/place/Los-Angeles-California" class="md-crosslink " data-show-preview="true">Los Angeles</a>, resulting in the deaths of 34 people. <em>[<a href="https://www.britannica.com/list/theres-a-riot-goin-on-riots-in-us-history-part-two" class="md-crosslink " data-show-preview="true">Read more about this and other significant riots in U.S. history</a>.]</em></div>
+  </div>
+</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
+  <div class="tw:flex tw:flex-col tw:gap-2">
+  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/00/178200-050-B6618CCE/Ringo-Starr-publicity-George-Harrison-John-Lennon.jpg?w=260&h=196&c=crop" alt="Publicity still from A Hard Day's Night showing the Beatles-Ringo Starr, George Harrison, John Lennon, and Paul McCartney-standing in suits beside a train." class="tw:object-cover tw:w-full tw:h-full"   />
+    
+</div>
+    <div class="tw:text-xs tw:italic tw:text-black/40">
+        Proscenium Films</div>
+  </div>
+  <div class="tw:flex tw:flex-col tw:gap-2">
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1964</div>
+      <div class="tw:text-base/6 font-newsreader">
+      <a href="https://www.britannica.com/topic/the-Beatles" class="md-crosslink " data-show-preview="true">The Beatles</a>’ first feature film, <a href="https://www.britannica.com/topic/A-Hard-Days-Night" class="md-crosslink " data-show-preview="true">A Hard Day’s Night</a>, had its U.S. premiere in New York City; released during the height of Beatlemania, it is now widely considered a classic.<em>[<a href="https://www.britannica.com/quiz/beatlemania-fact-or-fiction" class="md-crosslink " data-show-preview="true">Sort fact from fiction in our Beatlemania quiz</a>.]</em></div>
+  </div>
+</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
+  <div class="tw:flex tw:flex-col tw:gap-2">
+  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/96/133096-050-34226B5F/Hedy-Lamarr.jpg?w=260&h=196&c=crop" alt="Black and white portrait of actress Hedy Lamarr with wavy dark hair, looking slightly upward, wearing a patterned sleeveless top." class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
         Encyclopædia Britannica, Inc.</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1947</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1942</div>
       <div class="tw:text-base/6 font-newsreader">
-      <a href="https://www.britannica.com/place/Pakistan" class="md-crosslink " data-show-preview="true">Pakistan</a> became a sovereign state, bringing an end to <a href="https://www.britannica.com/place/United-Kingdom" class="md-crosslink " data-show-preview="true">British</a> rule there.</div>
+      American actress <a href="https://www.britannica.com/biography/Hedy-Lamarr" class="md-crosslink " data-show-preview="true">Hedy Lamarr</a> and composer <a href="https://www.britannica.com/biography/George-Antheil" class="md-crosslink " data-show-preview="true">George Antheil</a> received a patent for an electronic device that minimized the jamming of radio signals; it later became a component of satellite and cellular phone technology. <em>[<a href="https://www.britannica.com/list/7-celebrities-you-didnt-know-were-inventors" class="md-crosslink " data-show-preview="true">Read our list of seven celebrity inventors, including Hedy Lamarr</a>.]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1656,175 +1767,16 @@ Ask the Chatbot</a>
     
     
     
-        <img loading="lazy" src="https://cdn.britannica.com/07/3807-050-3604D9CC/Prime-Minister-WL-Canadian-Franklin-D-Roosevelt-1943.jpg?w=260&h=196&c=crop" alt="Franklin D. Roosevelt sits between Canadian Prime Minister W.L. Mackenzie King and British Prime Minister Winston Churchill, with military officials standing behind them at the 1943 Quebec Allied conference." class="tw:object-cover tw:w-full tw:h-full"   />
+        <img loading="lazy" src="https://cdn.britannica.com/82/22082-004-2FEA5A42/Babe-Ruth.jpg?w=260&h=196&c=crop" alt="Babe Ruth" class="tw:object-cover tw:w-full tw:h-full"   />
     
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
-        Encyclopædia Britannica, Inc.</div>
+        UPI/Bettmann Archive</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1941</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1929</div>
       <div class="tw:text-base/6 font-newsreader">
-      British Prime Minister <a href="https://www.britannica.com/biography/Winston-Churchill" class="md-crosslink " data-show-preview="true">Winston Churchill</a> and U.S. President <a href="https://www.britannica.com/biography/Franklin-D-Roosevelt" class="md-crosslink " data-show-preview="true">Franklin D. Roosevelt</a> issued the <a href="https://www.britannica.com/event/Atlantic-Charter" class="md-crosslink " data-show-preview="true">Atlantic Charter</a>, a joint declaration that stated, among other points, that they desired no territorial changes without the free assent of the peoples concerned. <em>[<a href="https://www.britannica.com/quiz/famous-documents" class="md-crosslink " data-show-preview="true">Take our quiz about famous documents</a>.]</em></div>
-  </div>
-</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
-  <div class="tw:flex tw:flex-col tw:gap-2">
-  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-        <img loading="lazy" src="https://cdn.britannica.com/31/119431-050-1CDED0EB/Franklin-D-Roosevelt-Social-Security-Act-Aug-14-1935.jpg?w=260&h=196&c=crop" alt="Franklin Delano Roosevelt seated at a desk signing the Social Security bill, surrounded by a group of men and one woman watching." class="tw:object-cover tw:w-full tw:h-full"   />
-    
-</div>
-    <div class="tw:text-xs tw:italic tw:text-black/40">
-        Encyclopædia Britannica, Inc.</div>
-  </div>
-  <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1935</div>
-      <div class="tw:text-base/6 font-newsreader">
-      U.S. Pres. <a href="https://www.britannica.com/biography/Franklin-D-Roosevelt" class="md-crosslink " data-show-preview="true">Franklin D. Roosevelt</a> signed the <a href="https://www.britannica.com/topic/Social-Security-Act-United-States-1935" class="md-crosslink " data-show-preview="true">Social Security Act</a>, establishing a permanent national old-age pension system through employer and employee contributions. <em>[<a href="https://www.britannica.com/quiz/all-american-history-quiz" class="md-crosslink " data-show-preview="true">How much do you know about U.S. history?</a>]</em></div>
-  </div>
-</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
-  <div class="tw:flex tw:flex-col tw:gap-2">
-  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-        <img loading="lazy" src="https://cdn.britannica.com/90/7490-050-5D33348F/Flag-China.jpg?w=260&h=196&c=crop" alt="China" class="tw:object-cover tw:w-full tw:h-full"   />
-    
-</div>
-    <div class="tw:text-xs tw:italic tw:text-black/40">
-        Encyclopædia Britannica, Inc.</div>
-  </div>
-  <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1917</div>
-      <div class="tw:text-base/6 font-newsreader">
-      <a href="https://www.britannica.com/place/China" class="md-crosslink " data-show-preview="true">China</a> declared war on <a href="https://www.britannica.com/place/Germany" class="md-crosslink " data-show-preview="true">Germany</a> and <a href="https://www.britannica.com/place/Austria-Hungary" class="md-crosslink " data-show-preview="true">Austria-Hungary</a> during <a href="https://www.britannica.com/event/World-War-I" class="md-crosslink " data-show-preview="true">World War I</a>. <em>[<a href="https://www.britannica.com/quiz/world-war-i-fact-or-fiction" class="md-crosslink " data-show-preview="true">Sort fact from fiction in our quiz about World War I</a>.]</em></div>
-  </div>
-</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
-  <div class="tw:flex tw:flex-col tw:gap-2">
-  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-        <img loading="lazy" src="https://cdn.britannica.com/85/131385-050-66843A8E/Christians-China-Boxer-Rebellion.jpg?w=260&h=196&c=crop" alt="Boxer Rebellion" class="tw:object-cover tw:w-full tw:h-full"   />
-    
-</div>
-    <div class="tw:text-xs tw:italic tw:text-black/40">
-        © Photos.com/Jupiterimages</div>
-  </div>
-  <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1900</div>
-      <div class="tw:text-base/6 font-newsreader">
-      An international force seized <a href="https://www.britannica.com/place/Beijing" class="md-crosslink " data-show-preview="true">Beijing</a> to crush the <a href="https://www.britannica.com/event/Boxer-Rebellion" class="md-crosslink " data-show-preview="true">Boxer Rebellion</a>. <em>[<a href="https://www.britannica.com/quiz/exploring-china-fact-or-fiction" class="md-crosslink " data-show-preview="true">Sort fact from fiction in our quiz about China</a>.]</em></div>
+      In a game against the <a href="https://www.britannica.com/topic/Cleveland-Guardians" class="md-crosslink " data-show-preview="true">Cleveland Indians</a>, <a href="https://www.britannica.com/biography/Babe-Ruth" class="md-crosslink " data-show-preview="true">Babe Ruth</a> of the <a href="https://www.britannica.com/topic/New-York-Yankees" class="md-crosslink " data-show-preview="true">New York Yankees</a> hit his 500th career home run, becoming the first baseball player to reach that milestone. <em>[<a href="https://www.britannica.com/list/10-greatest-baseball-players-of-all-time" class="md-crosslink " data-show-preview="true">See where Babe Ruth ranks on our list of the 10 greatest baseball players of all time</a>.]</em></div>
   </div>
 </div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
   <div class="tw:flex tw:flex-col tw:gap-2">
@@ -1864,15 +1816,121 @@ Ask the Chatbot</a>
 
 
 	
-	<img   src="https://cdn.britannica.com/mendel-resources/3-195/images/shared/thistle-blue-half.svg?v=3.195.4" loading="lazy" alt="default image" />
+	<img   src="https://cdn.britannica.com/mendel-resources/3-194/images/shared/thistle-blue-half.svg?v=3.194.9" loading="lazy" alt="default image" />
 </div>
     <div class="tw:text-xs tw:italic tw:text-black/40">
         Image: Encyclopædia Britannica, Inc.</div>
   </div>
   <div class="tw:flex tw:flex-col tw:gap-2">
-    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1457</div>
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1924</div>
       <div class="tw:text-base/6 font-newsreader">
-      The first book printed in Europe with a <a href="https://www.britannica.com/art/colophon-visual-arts" class="md-crosslink " data-show-preview="true">colophon</a> bearing the name of the printer was completed in <a href="https://www.britannica.com/place/Mainz" class="md-crosslink " data-show-preview="true">Mainz</a>, Germany. <em>[<a href="https://www.britannica.com/quiz/european-history" class="md-crosslink " data-show-preview="true">Test your knowledge of European history</a>.]</em></div>
+      The first newsreel of U.S. presidential candidates, which included footage of <a href="https://www.britannica.com/biography/Calvin-Coolidge" class="md-crosslink " data-show-preview="true">Calvin Coolidge</a>, <a href="https://www.britannica.com/biography/John-W-Davis" class="md-crosslink " data-show-preview="true">John W. Davis</a>, and <a href="https://www.britannica.com/biography/Robert-M-La-Follette" class="md-crosslink " data-show-preview="true">Robert La Follette</a>, was filmed. <em>[<a href="https://www.britannica.com/quiz/us-presidential-elections" class="md-crosslink " data-show-preview="true">Test your knowledge of U.S. presidential elections</a>.]</em></div>
+  </div>
+</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
+  <div class="tw:flex tw:flex-col tw:gap-2">
+  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/18/1118-050-2D7BDDCF/Alex-Haley-1974.jpg?w=260&h=196&c=crop" alt="Alex Haley" class="tw:object-cover tw:w-full tw:h-full"   />
+    
+</div>
+    <div class="tw:text-xs tw:italic tw:text-black/40">
+        AP Images</div>
+  </div>
+  <div class="tw:flex tw:flex-col tw:gap-2">
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1921</div>
+      <div class="tw:text-base/6 font-newsreader">
+      <a href="https://www.britannica.com/biography/Alex-Haley" class="md-crosslink " data-show-preview="true">Alex Haley</a>, an African American writer best known for <a href="https://www.britannica.com/topic/The-Autobiography-of-Malcolm-X" class="md-crosslink " data-show-preview="true">The Autobiography of Malcolm X</a> (1965) and <a href="https://www.britannica.com/topic/Roots-by-Haley" class="md-crosslink " data-show-preview="true">Roots: The Saga of an American Family</a> (1976), was born in Ithaca, New York. <em>[<a href="https://www.britannica.com/quiz/famous-authors" class="md-crosslink " data-show-preview="true">Take our quiz about famous authors</a>.]</em></div>
+  </div>
+</div><div class="tw:flex tw:flex-row tw:max-md:flex-col tw:gap-4">
+  <div class="tw:flex tw:flex-col tw:gap-2">
+  <div class="tw:w-65 tw:max-md:w-full tw:h-49 tw:flex tw:flex-col tw:items-center tw:justify-center tw:object-cover">
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        <img loading="lazy" src="https://cdn.britannica.com/97/897-050-0BFECDA5/Flag-Germany.jpg?w=260&h=196&c=crop" alt="Germany" class="tw:object-cover tw:w-full tw:h-full"   />
+    
+</div>
+    <div class="tw:text-xs tw:italic tw:text-black/40">
+        Encyclopædia Britannica, Inc.</div>
+  </div>
+  <div class="tw:flex tw:flex-col tw:gap-2">
+    <div class="tw:text-[var(--tan-darker-tih)] font-oswald tw:text-sm tw:mt-2">1919</div>
+      <div class="tw:text-base/6 font-newsreader">
+      The <a href="https://www.britannica.com/place/Germany/Germany-from-1918-to-1945#ref58200" class="md-crosslink " data-show-preview="true">Weimar constitution</a> was formally declared, establishing <a href="https://www.britannica.com/place/Germany" class="md-crosslink " data-show-preview="true">Germany</a> as a republic. <em>[<a href="https://www.britannica.com/quiz/how-much-do-you-know-about-german-history" class="md-crosslink " data-show-preview="true">How much do you know about German history?</a>]</em></div>
   </div>
 </div></div>
                     </div>
@@ -2008,7 +2066,7 @@ Ask the Chatbot</a>
 
 
 
-<script src="https://cdn.britannica.com/mendel-resources/3-195/js/libs/jquery-3.5.0.min.js?v=3.195.4"></script>
+<script src="https://cdn.britannica.com/mendel-resources/3-194/js/libs/jquery-3.5.0.min.js?v=3.194.9"></script>
 
 
 
@@ -2022,7 +2080,7 @@ Ask the Chatbot</a>
                 $.ajax({
                   dataType: 'script',
                   cache: true,
-                  url: 'https://cdn.britannica.com/mendel-resources/3-195/dist/today-in-history-page.js?v=3.195.4'
+                  url: 'https://cdn.britannica.com/mendel-resources/3-194/dist/today-in-history-page.js?v=3.194.9'
                 });
               })();
             </script>
@@ -2030,6 +2088,8 @@ Ask the Chatbot</a>
 
 
 
+
+    <script src="https://cdn.britannica.com/mendel-resources/3-194/js/ccpa.js?v=3.194.9" defer="defer"></script>
 
 
 
