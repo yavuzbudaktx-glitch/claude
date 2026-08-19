@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-08-18T20:00:04.227Z
+# generated: 2026-08-19T05:56:47.173Z
 # url:       https://www.britannica.com/on-this-day
 # fetcher:   Wayback Machine
 # kind:      html
