@@ -1,17 +1,17 @@
 {
   "date": "2026-08-20",
-  "generatedAt": "2026-08-20T08:31:21.208Z",
+  "generatedAt": "2026-08-20T12:03:21.225Z",
   "art": {
-    "id": 829408,
-    "title": "Fragrant Garden under a Hazy Moon",
-    "artist": "Nakabayashi Chikutō",
-    "date": "1843",
-    "medium": "Hanging scroll; ink and color on silk",
+    "id": 829385,
+    "title": "Birds and Flowers",
+    "artist": "Kano Motonobu",
+    "date": "mid-16th century",
+    "medium": "Set of three hanging scrolls; ink and color on paper",
     "origin": "Japan",
-    "description": "About the artist — Nakabayashi Chikutō, originally Nariaki (Japanese:中林 竹洞; was a Japanese painter in the nanga style. His other art names include Chūtan, Taigen’an and Tōzan Inshi.",
-    "alt": "Fragrant Garden under a Hazy Moon",
-    "imageUrl": "https://images.metmuseum.org/CRDImages/as/original/DP-20038-002.jpg",
-    "pageUrl": "https://www.metmuseum.org/art/collection/search/829408",
+    "description": "Kanō Motonobu  was a Japanese painter and calligrapher. He was a member of the Kanō school of painting. Through his political connections, patronage, organization, and influence he was able to make the Kanō school into what it is today. The system was responsible for the training of a great majority of painters throughout the Edo period (1603–1868). After his death, he was referred to as Kohōgen (古法眼).",
+    "alt": "Birds and Flowers",
+    "imageUrl": "https://images.metmuseum.org/CRDImages/as/original/DP-20035-001_crd.jpg",
+    "pageUrl": "https://www.metmuseum.org/art/collection/search/829385",
     "source": "The Met",
     "highlight": false
   },
@@ -30,7 +30,7 @@
   "wiki": {
     "title": "Pat O'Keeffe",
     "description": "British professional boxer (1883–1960)",
-    "extract": "Pat O'Keeffe was a British professional boxer who twice held the British middleweight title. His professional career spanned sixteen years, from 1902 to 1918, and took him to the United States and Australia between 1907 and 1910. In 1914, he challenged Georges Carpentier in a contest billed as the European heavyweight championship and was knocked out in two rounds.",
+    "extract": "Pat O'Keeffe was a British professional boxer who twice held the British middleweight title. His professional career spanned sixteen years, from 1902 to 1918, and took him to the United States and Australia between 1907 and 1910. In 1914 he challenged Georges Carpentier in a contest billed as the European heavyweight championship and was knocked out in two rounds.",
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Pat_O%27Keefe_%28boxeur%29_-_btv1b6904887s.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
     "pageUrl": "https://en.wikipedia.org/wiki/Pat_O'Keeffe",
     "source": "Wikipedia · Today's Featured Article"
