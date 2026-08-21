@@ -1,0 +1,58 @@
+# docsync configuration -- copy to "docsync.conf" next to this file and edit.
+#   cp docsync.conf.example docsync.conf
+#
+# This file is sourced by docsync.sh (bash) and parsed by docsync.ps1 (PowerShell),
+# so keep it to simple KEY=VALUE lines with no spaces around the "=".
+# Values may be quoted. "~" is expanded to your home directory.
+
+# ---------------------------------------------------------------------------
+# The two folders to keep in sync. LOCAL_DIR is where you actually work;
+# HUB_DIR is the OneDrive folder that carries changes to the other machine.
+# They must not overlap (one cannot be inside the other).
+# ---------------------------------------------------------------------------
+
+# --- macOS example ---
+LOCAL_DIR=~/Documents
+HUB_DIR=~/OneDrive/Documents
+
+# --- Windows example (use forward slashes or double backslashes) ---
+# LOCAL_DIR=C:/Users/YOU/Documents
+# HUB_DIR=C:/Users/YOU/OneDrive/Documents
+
+# ---------------------------------------------------------------------------
+# Safety
+# ---------------------------------------------------------------------------
+
+# Abort the run if more than this PERCENT of files on either side look deleted.
+# Note: for bisync this is a percentage (0-100), not a file count. This is the
+# guard against OneDrive un-mounting or dehydrating the hub folder and the sync
+# reading that as "the user deleted everything". Raise it only if you routinely
+# delete large batches of documents between runs.
+MAX_DELETE_PERCENT=25
+
+# Deleted and overwritten files are moved here instead of being destroyed,
+# into a dated subfolder. Must live OUTSIDE both LOCAL_DIR and HUB_DIR.
+TRASH_DIR=~/.docsync/trash
+
+# Dated trash folders older than this are removed.
+TRASH_KEEP_DAYS=30
+
+# ---------------------------------------------------------------------------
+# Housekeeping
+# ---------------------------------------------------------------------------
+
+# Where bisync keeps its record of the last synced state. Deleting this forces
+# the next run to rebuild a baseline (a --resync, which never deletes anything).
+STATE_DIR=~/.docsync/state
+
+LOG_DIR=~/.docsync/logs
+LOG_KEEP_DAYS=14
+
+# Timestamps closer together than this count as identical. Keep this tiny.
+# Raising it (say to 1s) makes docsync tolerant of small timestamp differences,
+# but it will then MISS an edit that happens to leave the file the same size and
+# lands within that window of the previous run -- a silently missed change.
+MODIFY_WINDOW=1ns
+
+# Path to the rclone binary. Leave as "rclone" to use whatever is on PATH.
+RCLONE_BIN=rclone

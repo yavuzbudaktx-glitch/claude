@@ -17,3 +17,7 @@ public/sw.js.map
 public/workbox-*.js.map
 public/worker-*.js.map
 public/fallback-*.js
+
+# docsync (tools/docsync) -- per-machine config, logs and state
+tools/docsync/docsync.conf
+tools/docsync/logs/
