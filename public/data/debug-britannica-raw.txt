@@ -1,5 +1,5 @@
 # Britannica scrape debug dump
-# generated: 2026-08-22T09:58:44.577Z
+# generated: 2026-08-22T11:33:47.003Z
 # url:       https://www.britannica.com/on-this-day/august-22
 # fetcher:   Wayback Machine
 # kind:      html
