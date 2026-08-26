@@ -227,14 +227,24 @@ export async function fetchTeamFixturesFromBrowser(
   if (typeof window === "undefined") return null;
 
   const all: Array<{ f: LiteFixture; done: boolean; t: number }> = [];
+  // Ask for the season explicitly as well as bare. ESPN's idea of the "current"
+  // season lags the calendar — in August it can still be answering with last
+  // season, which is all played matches and therefore no next fixture at all.
+  // A European season starting in year Y is labelled Y, so around the turnover
+  // we want both this year and last.
+  const year = new Date().getUTCFullYear();
+  const seasons = ["", `?season=${year}`, `?season=${year - 1}`];
   const results = await Promise.all(
-    leagues.map((lg) =>
-      getJson<{ events?: EspnSchedEvent[] }>(
-        `${ESPN}/site/v2/sports/soccer/${lg}/teams/${espnTeamId}/schedule`,
-      ).then((j) => ({ lg, j })),
+    leagues.flatMap((lg) =>
+      seasons.map((q) =>
+        getJson<{ events?: EspnSchedEvent[] }>(
+          `${ESPN}/site/v2/sports/soccer/${lg}/teams/${espnTeamId}/schedule${q}`,
+        ).then((j) => ({ lg, j })),
+      ),
     ),
   );
 
+  const seenEvents = new Set<string>();
   for (const { lg, j } of results) {
     for (const e of j?.events ?? []) {
       const comp = e.competitions?.[0];
@@ -245,6 +255,10 @@ export async function fetchTeamFixturesFromBrowser(
       const hName = home?.team?.displayName ?? home?.team?.name ?? "";
       const aName = away?.team?.displayName ?? away?.team?.name ?? "";
       if (!hName || !aName) continue;
+      // The same fixture comes back from every season query it belongs to.
+      const key = `${e.date}|${hName}|${aName}`;
+      if (seenEvents.has(key)) continue;
+      seenEvents.add(key);
       all.push({
         f: {
           date: e.date,
@@ -283,11 +297,12 @@ export async function fetchTeamFixturesFromBrowser(
 // returned "Norwich City vs West Bromwich Albion". Resolving the id by name
 // instead means it can never silently point at the wrong team again.
 const SDB = "https://www.thesportsdb.com/api/v1/json/3";
-let sdbIdCache: Record<string, string | null> = {};
+interface SdbTeamRef { team: string | null; league: string | null }
+let sdbIdCache: Record<string, SdbTeamRef> = {};
 
-export async function resolveSportsDbTeamId(teamName: string): Promise<string | null> {
+export async function resolveSportsDbTeam(teamName: string): Promise<SdbTeamRef> {
   if (teamName in sdbIdCache) return sdbIdCache[teamName];
-  const j = await getJson<{ teams?: Array<{ idTeam?: string; strTeam?: string; strLeague?: string }> }>(
+  const j = await getJson<{ teams?: Array<{ idTeam?: string; idLeague?: string; strTeam?: string; strLeague?: string }> }>(
     `${SDB}/searchteams.php?t=${encodeURIComponent(teamName)}`,
   );
   const teams = j?.teams ?? [];
@@ -296,14 +311,38 @@ export async function resolveSportsDbTeamId(teamName: string): Promise<string | 
   const pick =
     teams.find((t) => /super lig|süper lig/i.test(t.strLeague ?? "")) ??
     teams[0];
-  const id = pick?.idTeam ?? null;
-  sdbIdCache = { ...sdbIdCache, [teamName]: id };
-  return id;
+  // The league id comes along for free here, which is what lets us ask for the
+  // whole season's schedule below without hardcoding a competition id.
+  const ref: SdbTeamRef = { team: pick?.idTeam ?? null, league: pick?.idLeague ?? null };
+  sdbIdCache = { ...sdbIdCache, [teamName]: ref };
+  return ref;
+}
+
+export async function resolveSportsDbTeamId(teamName: string): Promise<string | null> {
+  return (await resolveSportsDbTeam(teamName)).team;
+}
+
+/** Loose club-name comparison — "Beşiktaş" vs "Besiktas JK" and the like. */
+function sameLooseTeam(a: string, b: string): boolean {
+  const norm = (s: string) =>
+    s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
+      .replace(/[^a-z0-9]+/g, " ").trim();
+  const x = norm(a);
+  const y = norm(b);
+  if (!x || !y) return false;
+  return x === y || x.includes(y) || y.includes(x);
+}
+
+/** "2026-2027" for a European season that has already kicked off in August. */
+function seasonLabel(d = new Date()): string {
+  const y = d.getUTCFullYear();
+  // Seasons roll over mid-year; from July onward we're in the Y/Y+1 season.
+  return d.getUTCMonth() >= 6 ? `${y}-${y + 1}` : `${y - 1}-${y}`;
 }
 
 /** Last + next fixture from TheSportsDB, by NAME. Covers friendlies and cups. */
 export async function fetchSportsDbFixtures(teamName: string): Promise<{ last: LiteFixture | null; next: LiteFixture | null } | null> {
-  const id = await resolveSportsDbTeamId(teamName);
+  const { team: id, league: leagueId } = await resolveSportsDbTeam(teamName);
   if (!id) return null;
 
   interface SdbEvent {
@@ -340,15 +379,31 @@ export async function fetchSportsDbFixtures(teamName: string): Promise<{ last: L
     };
   };
 
-  const [lastJ, nextJ] = await Promise.all([
+  const [lastJ, nextJ, seasonJ] = await Promise.all([
     getJson<{ results?: SdbEvent[] }>(`${SDB}/eventslast.php?id=${id}`),
     getJson<{ events?: SdbEvent[] }>(`${SDB}/eventsnext.php?id=${id}`),
+    // eventsnext is the endpoint most likely to come back empty on the free
+    // key, and it's the one that feeds "Next match" — so also pull the whole
+    // league season and filter it to this team. A season schedule is a plain
+    // list of fixtures, so it answers both halves.
+    leagueId
+      ? getJson<{ events?: SdbEvent[] }>(`${SDB}/eventsseason.php?id=${leagueId}&s=${seasonLabel()}`)
+      : Promise.resolve(null),
   ]);
+
+  const involves = (f: LiteFixture) => sameLooseTeam(f.home, teamName) || sameLooseTeam(f.away, teamName);
+  const fromSeason = (seasonJ?.events ?? [])
+    .map(toFixture)
+    .filter((f): f is LiteFixture => !!f && involves(f));
+
   // eventslast/eventsnext return up to five fixtures in no guaranteed order,
   // so sort rather than trusting index 0: newest for "last", soonest for "next".
-  const lastList = (lastJ?.results ?? []).map(toFixture).filter((f): f is LiteFixture => !!f)
+  const now = Date.now();
+  const lastList = [...(lastJ?.results ?? []).map(toFixture).filter((f): f is LiteFixture => !!f), ...fromSeason]
+    .filter((f) => Date.parse(f.date) <= now || f.isFinished)
     .sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
-  const nextList = (nextJ?.events ?? []).map(toFixture).filter((f): f is LiteFixture => !!f)
+  const nextList = [...(nextJ?.events ?? []).map(toFixture).filter((f): f is LiteFixture => !!f), ...fromSeason]
+    .filter((f) => Date.parse(f.date) > now && !f.isFinished)
     .sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
   const last = lastList[0] ?? null;
   const next = nextList[0] ?? null;

@@ -96,34 +96,45 @@ const fetcher = async (url: string): Promise<Resp> => {
   // left "Last match" permanently empty.
   const wantFixtures = !server?.last || !server?.next;
 
-  const [table, espnFixtures] = await Promise.all([
+  // Ask BOTH fixture sources at once rather than treating TheSportsDB as a
+  // last resort. ESPN's team schedule regularly has the played matches but no
+  // upcoming one, and the old "only try SportsDB if ESPN gave nothing at all"
+  // rule meant that case left Next match permanently blank.
+  const [table, espnFixtures, sdbFixtures] = await Promise.all([
     wantTable ? fetchSuperLigStandingsFromBrowser() : Promise.resolve(null),
     wantFixtures ? fetchTeamFixturesFromBrowser(teamId) : Promise.resolve(null),
+    wantFixtures ? fetchSportsDbFixtures(teamName) : Promise.resolve(null),
   ]);
-
-  // ESPN's per-league schedule is empty in the off-season, so fall through to
-  // TheSportsDB — resolved BY NAME, because the hardcoded id in the route
-  // pointed at an English club and was returning its fixtures instead.
-  let fixtures = espnFixtures;
-  if (wantFixtures && !fixtures?.last && !fixtures?.next) {
-    fixtures = await fetchSportsDbFixtures(teamName);
-  }
 
   const standings = (table && table.length > serverRows)
     ? (table as unknown as Standing[])
     : (server?.standings ?? []);
 
+  // Merge every source per half: the most recent past match wins "last", the
+  // soonest future one wins "next". A source that only knows about one of them
+  // still contributes it.
+  const now = Date.now();
+  const candidates = [
+    server?.last, server?.next,
+    liteToMatch(espnFixtures?.last), liteToMatch(espnFixtures?.next),
+    liteToMatch(sdbFixtures?.last), liteToMatch(sdbFixtures?.next),
+  ].filter((m): m is Match => !!m && !!m.date && Number.isFinite(Date.parse(m.date)));
+
+  const past = candidates.filter((m) => Date.parse(m.date) <= now || m.isFinished);
+  const future = candidates.filter((m) => !(Date.parse(m.date) <= now || m.isFinished));
+  past.sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
+  future.sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
+
   return {
     source: [
       server?.source,
       table && table.length > serverRows ? "table:espn-browser" : null,
-      fixtures ? "fixtures:browser" : null,
+      espnFixtures?.last || espnFixtures?.next ? "fixtures:espn-browser" : null,
+      sdbFixtures?.last || sdbFixtures?.next ? "fixtures:sportsdb" : null,
     ].filter(Boolean).join("+") || "none",
     standings,
-    // Prefer whichever half actually carries a result. The route's own answer
-    // wins when it has one; the browser fills the gaps.
-    last: server?.last ?? liteToMatch(fixtures?.last),
-    next: server?.next ?? liteToMatch(fixtures?.next),
+    last: past[0] ?? null,
+    next: future[0] ?? null,
   };
 };
 
