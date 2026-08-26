@@ -9,8 +9,12 @@
 // Nights are explicitly out — including the ones that carry a number, like
 // "UFC on ESPN 62", which a naive "has UFC and a digit" test happily accepts.
 
-/** Developmental shows. Never a headline card, regardless of anything else. */
-const FEEDER = /dana white|contender series|road to ufc|ultimate fighter|\btuf\b/i;
+/** Never wanted, regardless of anything else — the developmental shows, plus
+ *  Noche UFC, which is a headline card but not one worth surfacing here. Noche
+ *  is listed as an exclusion rather than just left off the allowlist below,
+ *  because ESPN sometimes files it under a numbered-looking name that the
+ *  general rule would otherwise let through. */
+const FEEDER = /dana white|contender series|road to ufc|ultimate fighter|\btuf\b|\bnoche\b/i;
 
 /** Fight Nights, under every banner ESPN files them as. */
 const FIGHT_NIGHT = /fight night|ufc on\s+(?:espn|abc|fox|fx|fuel|versus|sport)/i;
@@ -19,7 +23,7 @@ const FIGHT_NIGHT = /fight night|ufc on\s+(?:espn|abc|fox|fx|fuel|versus|sport)/
 const NUMBERED = /^\s*ufc\b[^:]*?\b\d{1,4}\b/i;
 
 /** Named specials that carry no number but are unmistakably headline cards. */
-const SPECIAL = /white house|noche ufc/i;
+const SPECIAL = /white house/i;
 
 /**
  * True when the event is one worth putting on the dashboard. Pass every name
