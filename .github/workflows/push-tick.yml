@@ -1,0 +1,46 @@
+name: Notification tick
+
+# Wakes the app every 10 minutes to ask what notifications are due. Web Push has
+# no scheduled delivery — a notification is sent the moment you call the push
+# service — so something has to do the asking.
+#
+# GitHub's scheduler is best-effort: it will drift, occasionally fire twice, and
+# sometimes skip a slot. That's fine here. The endpoint sends only what's
+# genuinely due, and every send is recorded in `push_log` with a unique
+# constraint, so an extra tick is a no-op and a missed one is picked up by the
+# next (the endpoint accepts a moment up to 20 minutes late).
+#
+# This costs nothing: the repo is public, so Actions minutes are unmetered.
+#
+# Optional hardening: set PUSH_TICK_SECRET in Vercel AND as a repo secret, and
+# the endpoint will start requiring it.
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+# A backed-up queue should be dropped, not replayed — a late prayer reminder is
+# worse than none.
+concurrency:
+  group: push-tick
+  cancel-in-progress: true
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ask the app what's due
+        env:
+          APP_URL: ${{ vars.APP_URL || 'https://restarea.vercel.app' }}
+          TOKEN: ${{ secrets.PUSH_TICK_SECRET }}
+        run: |
+          url="${APP_URL%/}/api/push/tick"
+          if [[ -n "$TOKEN" ]]; then url="${url}?token=${TOKEN}"; fi
+          # Never fail the job on a transient blip — a red run here would just
+          # start the failure mail all over again. The response is logged so a
+          # real problem is still visible in the run output.
+          code=$(curl -sS -m 25 -o /tmp/tick.json -w '%{http_code}' "$url" || echo "000")
+          echo "HTTP $code"
+          cat /tmp/tick.json 2>/dev/null || true
+          echo

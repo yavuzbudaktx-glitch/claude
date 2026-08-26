@@ -57,8 +57,30 @@ export async function fetchGoogleRefresh(env: DigestEnv): Promise<string | null>
   return rows[0]?.google_refresh_token ?? null;
 }
 
+// The column is `due_date` and the status enum is not_started/planning/
+// in_progress/on_hold/complete. This used to ask for a column called `due`,
+// which PostgREST rejects outright — so the request 400'd, supaGet swallowed it,
+// and the task section of every digest has been silently empty. Ask for the real
+// columns and map them onto the shape the callers already expect.
+interface TaskRow {
+  id: string; title: string; status: string | null; quadrant: Task["quadrant"];
+  completed: boolean | null; due_date: string | null; created_at: string;
+}
 export async function fetchTasks(env: DigestEnv): Promise<Task[]> {
-  return supaGet<Task>(env, "tasks", `select=id,title,status,quadrant,completed,due,created_at&user_id=eq.${env.userId}`);
+  const rows = await supaGet<TaskRow>(
+    env, "tasks", `select=id,title,status,quadrant,completed,due_date,created_at&user_id=eq.${env.userId}`,
+  );
+  return rows.map((r) => ({
+    id: r.id,
+    title: r.title,
+    status: r.status === "complete" ? "done"
+      : r.status === "in_progress" || r.status === "planning" ? "doing"
+        : "todo",
+    quadrant: r.quadrant,
+    completed: r.completed ? r.created_at : null,
+    due: r.due_date,
+    created_at: r.created_at,
+  }));
 }
 
 export async function fetchWeightEntries(env: DigestEnv): Promise<Array<{ date: string; weight: number }>> {

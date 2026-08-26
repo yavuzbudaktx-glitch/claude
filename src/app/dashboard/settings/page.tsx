@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { DashboardSettings } from "@/components/DashboardSettings";
+import { NotificationSettings } from "@/components/NotificationSettings";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,7 @@ export default async function DashboardSettingsPage() {
         <h1 className="font-display text-lg text-ink">Settings</h1>
       </div>
       <DashboardSettings />
+      <NotificationSettings />
     </main>
   );
 }
