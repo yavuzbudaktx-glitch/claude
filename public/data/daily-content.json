@@ -1,30 +1,30 @@
 {
-  "date": "2026-09-08",
-  "generatedAt": "2026-09-08T15:26:57.615Z",
+  "date": "2026-09-09",
+  "generatedAt": "2026-09-09T11:20:08.010Z",
   "art": {
-    "id": 437567,
-    "title": "Calendar of Saints and Festivals",
-    "artist": "Russian Painter",
-    "date": "",
-    "medium": "Tempera on wood, gold ground",
+    "id": 436638,
+    "title": "Jacob Willemsz van Veen (1456–1535), the Artist's Father",
+    "artist": "Maarten van Heemskerck",
+    "date": "1532",
+    "medium": "Oil on wood",
     "origin": "",
-    "description": "Calendar of Saints and Festivals, by Russian Painter. Tempera on wood, gold ground.",
-    "alt": "Calendar of Saints and Festivals",
-    "imageUrl": "https://images.metmuseum.org/CRDImages/ep/original/EP484.jpg",
-    "pageUrl": "https://www.metmuseum.org/art/collection/search/437567",
+    "description": "About the artist — Maarten van Heemskerck, also known as Marten Jacobsz Heemskerk van Veen, was a Dutch portrait and religious painter, who spent most of his career in Haarlem. He was a pupil of Jan van Scorel, and adopted his teacher's Italian-influenced style. He spent the years 1532–1536 in Italy. He produced many designs for engravers, and is especially known for his depictions of the Wonders of the World.",
+    "alt": "Jacob Willemsz van Veen (1456–1535), the Artist's Father",
+    "imageUrl": "https://images.metmuseum.org/CRDImages/ep/original/DP-38857-001.jpg",
+    "pageUrl": "https://www.metmuseum.org/art/collection/search/436638",
     "source": "The Met",
     "highlight": false
   },
   "bird": {
-    "name": "Blue-headed quail-dove",
+    "name": "Mexican cacique",
     "scientific": "",
-    "blurb": "The blue-headed quail dove, or blue-headed partridge-dove, is a species of bird in the pigeon and dove family Columbidae that is endemic to the island of Cuba. It is monotypic within the subfamily Starnoenadinae and genus Starnoenas.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Blue-headed_quail_dove_%28Starnoenas_cyanocephala%29.JPG/3840px-Blue-headed_quail_dove_%28Starnoenas_cyanocephala%29.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "blurb": "The Mexican cacique or yellow-winged cacique is a species of bird in the family Icteridae, the oropendolas, New World orioles, and New World blackbirds. It is found in El Salvador,Guatemala and Mexico.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Yellow-winged_Cacique.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Blue-headed_quail-dove",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Blue-headed%20quail-dove%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Mexican_cacique",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Mexican%20cacique%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
@@ -35,12 +35,6 @@
     "pageUrl": "https://en.wikipedia.org/wiki/Elizabeth_II",
     "source": "Wikipedia · On this day"
   },
-  "nasa": {
-    "title": "Hubble: Decagon Around Saturn's South Pole",
-    "explanation": "Why are Saturn’s poles geometric? Saturn ’s North Pole has been known to be surrounded by a hexagonal (6 sides) cloud since discovery in 1987 in data taken by NASA’s Voyager spacecrafts , which quickly flew past the ringed world in the early 1980s. Now, recent observations of Saturn by the Hubble Space Telescope reveal a slightly different geometric cloud pattern around the South Pole: a decagon (10 sides ). The geometric boundaries are possibly caused by waves when the fast-moving gas away from the poles interacts with slower-moving gas closer to the poles. In the featured image composite by the Hubble taken last year, the South Pole of Saturn is marked by an X and surrounded by bands of circulating clouds. The decagon appears most prominent in the dark inner regions. The northern hexagon has proven stable for over 40 years, while the stability of the southern decagon will surely remain a topic of research .",
-    "url": "https://apod.nasa.gov/apod/image/2609/SaturnDecagon_Hubble_960.jpg",
-    "hdurl": "https://apod.nasa.gov/apod/image/2609/SaturnDecagon_Hubble_960.jpg",
-    "media_type": "image"
-  },
+  "nasa": null,
   "reddit": null
 }
