@@ -1,40 +1,33 @@
 {
-  "date": "2026-09-09",
-  "generatedAt": "2026-09-09T15:25:42.221Z",
-  "art": {
-    "id": 436638,
-    "title": "Jacob Willemsz van Veen (1456–1535), the Artist's Father",
-    "artist": "Maarten van Heemskerck",
-    "date": "1532",
-    "medium": "Oil on wood",
-    "origin": "",
-    "description": "About the artist — Maarten van Heemskerck, also known as Marten Jacobsz Heemskerk van Veen, was a Dutch portrait and religious painter, who spent most of his career in Haarlem. He was a pupil of Jan van Scorel, and adopted his teacher's Italian-influenced style. He spent the years 1532–1536 in Italy. He produced many designs for engravers, and is especially known for his depictions of the Wonders of the World.",
-    "alt": "Jacob Willemsz van Veen (1456–1535), the Artist's Father",
-    "imageUrl": "https://images.metmuseum.org/CRDImages/ep/original/DP-38857-001.jpg",
-    "pageUrl": "https://www.metmuseum.org/art/collection/search/436638",
-    "source": "The Met",
-    "highlight": false
-  },
+  "date": "2026-09-10",
+  "generatedAt": "2026-09-10T11:16:11.638Z",
+  "art": null,
   "bird": {
-    "name": "Mexican cacique",
+    "name": "Little green woodpecker",
     "scientific": "",
-    "blurb": "The Mexican cacique or yellow-winged cacique is a species of bird in the family Icteridae, the oropendolas, New World orioles, and New World blackbirds. It is found in El Salvador,Guatemala and Mexico.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Yellow-winged_Cacique.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The little green woodpecker, or green-backed woodpecker is a species of bird in the family Picidae. It is widely distributed in tropical Africa, living in forest edges, clearings, and forest-shrub mosaics. The International Union for Conservation of Nature (IUCN) has assessed it as a least-concern species.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/3/38/Green-backed_Woodpecker_-_Malawi_S4E3705.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Mexican_cacique",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Mexican%20cacique%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Little_green_woodpecker",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Little%20green%20woodpecker%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Elizabeth II",
-    "description": "Queen of the United Kingdom from 1952 to 2022",
-    "extract": "Elizabeth II was Queen of the United Kingdom and other Commonwealth realms from 6 February 1952 until her death in 2022. She was queen regnant of 32 sovereign states during her lifetime and was the monarch of 15 realms at her death. Her reign of 70 years and 214 days is the longest of any British monarch, the second-longest of any sovereign state, and the longest of any queen regnant in history.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/11/Queen_Elizabeth_II_official_portrait_for_1959_tour_%28retouched%29_%28cropped%29_%283-to-4_aspect_ratio%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "pageUrl": "https://en.wikipedia.org/wiki/Elizabeth_II",
-    "source": "Wikipedia · On this day"
+    "title": "Yugoslav torpedo boat T6",
+    "description": "Royal Yugoslav Navy sea-going torpedo boat",
+    "extract": "T6 was a sea-going torpedo boat that was operated by the Royal Yugoslav Navy between 1921 and 1941. Originally 93 F, a 250t-class torpedo boat of the Austro-Hungarian Navy built in 1915–1916, she was armed with two Škoda 66 mm (2.6 in) guns and four 450 mm (17.7 in) torpedo tubes and could carry 10–12 naval mines. She saw active service during World War I, performing convoy, escort, patrol and minesweeping tasks, as well as anti-submarine operations. In 1917 the suffixes of all Austro-Hungarian torpedo boats were removed, and thereafter she was referred to as 93.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Yugoslav_torpedo_boat_T3.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Yugoslav_torpedo_boat_T6",
+    "source": "Wikipedia · Today's Featured Article"
   },
-  "nasa": null,
+  "nasa": {
+    "title": "LDN 1295: The Giraffe Nebula",
+    "explanation": "What does this image look like to you? Many see a giraffe facing right, with neck stretched high and long legs mid-stride (but some may see a squirrel instead). The featured image shows LDN 1295 , also called the Giraffe Nebula, in the constellation of the mythical queen of Aethiopia ( Cassiopeia ). It is an object in the Lynds Catalogue of Dark Nebulas , compiled in 1962 by American astronomer Beverly Lynds , a pioneer for women in astronomy and astrophysics. Dark nebulas are interstellar clouds of dust and gas that block the visible light of the stars behind them . These nebulas are often faint and challenging targets for astrophotographers. Why do we see animal shapes and faces in nebulas, clouds, and pretty much everywhere ? It is due to pareidolia , our tendency to look for familiar patterns . Pareidolia may provide animals with an evolutionary advantage , for example in identifying (and avoiding) predators.",
+    "url": "https://apod.nasa.gov/apod/image/2609/LDN1295_giraffe_1024.jpg",
+    "hdurl": "https://apod.nasa.gov/apod/image/2609/LDN1295_giraffe.jpg",
+    "media_type": "image"
+  },
   "reddit": null
 }
