@@ -1,6 +1,6 @@
 {
   "date": "2026-09-23",
-  "generatedAt": "2026-09-23T13:09:17.837Z",
+  "generatedAt": "2026-09-23T15:41:48.560Z",
   "art": {
     "id": 436445,
     "title": "The Translation of the Holy House of Loreto",
@@ -15,22 +15,11 @@
     "source": "The Met",
     "highlight": false
   },
-  "bird": {
-    "name": "Whiskered tern",
-    "scientific": "",
-    "blurb": "The whiskered tern is a tern in the family Laridae. The genus name is from Ancient Greek khelidonios, \"swallow-like\", from khelidon, \"swallow\". The specific hybridus is Latin for hybrid; Peter Simon Pallas thought it might be a hybrid of white-winged black tern and common tern, writing \"Sterna fissipes [Chlidonias leucopterus] et Hirundine [Sterna hirundo] natam\".",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/17/Whiskered_tern_%28Chlidonias_hybrida_delalandii%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "audioUrl": "",
-    "recordist": "",
-    "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Whiskered_tern",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Whiskered%20tern%20audio",
-    "source": "Wikipedia · Wikimedia Commons"
-  },
+  "bird": null,
   "wiki": {
     "title": "Mary Mallon",
     "description": "Irish-American cook and typhoid fever carrier (1869–1938)",
-    "extract": "Mary Mallon, commonly known as Typhoid Mary, was an Irish-born cook who lived in the United States from a young age and is believed to have infected up to fifty-seven people with the bacteria that cause typhoid fever. The infections caused three confirmed deaths. She was the first person in the U.S. to be identified as an asymptomatic carrier of Salmonella typhi bacteria.",
+    "extract": "Mary Mallon, commonly known as Typhoid Mary, was an Irish-born cook who lived in the United States from a young age and is believed to have infected up to fifty-seven people with the bacteria that causes typhoid fever. The infections caused three confirmed deaths. She was the first person in the U.S. to be identified as an asymptomatic carrier of Salmonella typhi bacteria.",
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9f/Mary_Mallon%2C_aka_Typhoid_Mary.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
     "pageUrl": "https://en.wikipedia.org/wiki/Mary_Mallon",
     "source": "Wikipedia · Today's Featured Article"
