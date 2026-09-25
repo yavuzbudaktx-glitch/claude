@@ -1,6 +1,6 @@
 {
   "date": "2026-09-25",
-  "generatedAt": "2026-09-25T11:48:12.583Z",
+  "generatedAt": "2026-09-25T13:08:49.293Z",
   "art": {
     "id": 15057,
     "title": "Portrait of a Lady",
@@ -8,7 +8,7 @@
     "date": "ca. 1790",
     "medium": "Watercolor on ivory",
     "origin": "French",
-    "description": "Portrait of a Lady on Fire is a 2019 French historical romantic drama film written and directed by Céline Sciamma, starring Noémie Merlant and Adèle Haenel. Set in France in the late 18th century, the film tells the story of a brief affair between two young women: an aristocrat and a painter commissioned to paint her portrait. It was Haenel's final film role before retiring from the film industry in 2023.",
+    "description": "The Portrait of a Lady is a novel by Henry James, first published as a serial in The Atlantic Monthly and Macmillan's Magazine in 1880–81 and then as a book in 1881. It is one of James's most popular novels and is regarded by critics as one of his finest.",
     "alt": "Portrait of a Lady",
     "imageUrl": "https://images.metmuseum.org/CRDImages/ad/original/APS6896.jpg",
     "pageUrl": "https://www.metmuseum.org/art/collection/search/15057",
@@ -28,12 +28,12 @@
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Ram Rath Yatra",
-    "description": "1990 political–religious rally in India",
-    "extract": "The Ram Rath Yatra was a political and religious rally that lasted from September to October 1990. It was organised by the Bharatiya Janata Party (BJP) and its Hindu nationalist affiliates, and led by the then-president of the BJP, L. K. Advani. The purpose of the yatra was to support the agitation, led by the Vishva Hindu Parishad (VHP) and its affiliates in the Sangh Parivar, to erect a temple to the Hindu deity Rama on the site of the Babri Masjid.",
-    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d0/Advani_Yatra_1990.svg/960px-Advani_Yatra_1990.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-    "pageUrl": "https://en.wikipedia.org/wiki/Ram_Rath_Yatra",
-    "source": "Wikipedia · On this day"
+    "title": "2024 East–West Line disruption",
+    "description": "Transit disruption in Singapore",
+    "extract": "On 25 September 2024, train services on the East–West Line (EWL) of the Singapore Mass Rapid Transit (MRT) system were disrupted when an axle box on a Kawasaki C151 train dislodged, derailing the train and damaging the track and equipment between Clementi and Dover stations. This resulted in the suspension of regular services between Boon Lay and Queenstown stations, affecting more than 2 million commuters.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/58/SMRT_C151_set_065-066_outside_Ulu_Pandan_Depot_%28Cars_2065_derailed%29_Pt_2.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/2024_East%E2%80%93West_Line_disruption",
+    "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
     "title": "Globular Cluster Omega Centauri",
