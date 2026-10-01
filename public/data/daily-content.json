@@ -1,20 +1,7 @@
 {
   "date": "2026-10-01",
-  "generatedAt": "2026-10-01T13:08:21.318Z",
-  "art": {
-    "id": 461529,
-    "title": "View of Naples from San Martino",
-    "artist": "Italian",
-    "date": "1810–40",
-    "medium": "Gouache",
-    "origin": "",
-    "description": "About the artist — Italians are an ethnic group and nation native to the Italian geographical region. Italians share a common culture, history, ancestry and language. Their ancestors, differing regionally, include the various Italic peoples, notably among them the ancient Romans, who helped create and evolve the Italian identity. The Latin equivalent of the term Italian had been in use for natives of the geographical region since antiquity. Ethnic Italians can be distinguished from Italian nationals, who are citizens of Italy regardless of ancestry or nation of residence.",
-    "alt": "View of Naples from San Martino",
-    "imageUrl": "https://images.metmuseum.org/CRDImages/rl/original/DP-19531-066.jpg",
-    "pageUrl": "https://www.metmuseum.org/art/collection/search/461529",
-    "source": "The Met",
-    "highlight": false
-  },
+  "generatedAt": "2026-10-01T15:00:54.704Z",
+  "art": null,
   "bird": {
     "name": "Red-rumped bush tyrant",
     "scientific": "",
