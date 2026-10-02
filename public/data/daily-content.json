@@ -1,25 +1,25 @@
 {
-  "date": "2026-10-01",
-  "generatedAt": "2026-10-01T17:38:03.205Z",
+  "date": "2026-10-02",
+  "generatedAt": "2026-10-02T12:30:52.574Z",
   "art": null,
   "bird": {
-    "name": "Red-rumped bush tyrant",
+    "name": "Bank cormorant",
     "scientific": "",
-    "blurb": "The red-rumped bush tyrant is a species of bird in the family Tyrannidae, the tyrant flycatchers. It is found in Bolivia, Colombia, Ecuador, and Peru.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f7/Red-rumped-Bush-tyrant.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The bank cormorant, also known as Wahlberg's cormorant, is a medium-sized cormorant that is endemic to Namibia and the western seaboard of South Africa, living in and around coastal waters; it is rarely recorded more than 15 km offshore.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/6/68/Phalacrocoraxneglectus.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Red-rumped_bush_tyrant",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Red-rumped%20bush%20tyrant%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Bank_cormorant",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Bank%20cormorant%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Independence Day (Nigeria)",
-    "description": "National holiday in Nigeria",
-    "extract": "Independence Day is an annual public holiday in Nigeria observed on 1 October to commemorate the country's independence from the United Kingdom in 1960. It is celebrated nationwide with official ceremonies, military parades, cultural displays, and other public events. The holiday commemorates the formal transfer of sovereignty that took place in Lagos at midnight on 1 October 1960, when the Union Jack was lowered and replaced with Nigeria's green–white–green flag. Princess Alexandra of Kent, representing Elizabeth II, presented the constitutional instruments of independence, and the new federal government formally assumed authority. Preparations for the inaugural festivities included cultural events, receptions, and the commissioning of new infrastructure.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/7/79/Flag_of_Nigeria.svg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Independence_Day_(Nigeria)",
+    "title": "Kaiser-class battleship",
+    "description": "German Imperial Navy battleship class",
+    "extract": "The Kaiser class were five dreadnought battleships that were built for the German Kaiserliche Marine in the 1910s: Kaiser, Friedrich der Grosse, Kaiserin, Prinzregent Luitpold, and König Albert. They entered service shortly before World War I, and saw significant combat during the conflict. The Kaiser-class ships introduced several technological improvements to German battleship design, including steam turbines for propulsion and a more efficient superfiring arrangement for some of their main battery guns. They were also faster and more heavily armored than their predecessors of the Nassau and Helgoland classes. Carrying a primary armament of ten 30.5 cm (12 in) guns, they were less heavily armed than their British counterparts.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Bundesarchiv_DVM_10_Bild-23-61-83%2C_Linienschiff_%22SMS_Kaiser%22.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Kaiser-class_battleship",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
