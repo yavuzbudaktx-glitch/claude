@@ -1,25 +1,25 @@
 {
-  "date": "2026-10-02",
-  "generatedAt": "2026-10-02T16:57:47.076Z",
+  "date": "2026-10-03",
+  "generatedAt": "2026-10-03T11:40:38.255Z",
   "art": null,
   "bird": {
-    "name": "Bank cormorant",
+    "name": "Rufous-headed chachalaca",
     "scientific": "",
-    "blurb": "The bank cormorant, also known as Wahlberg's cormorant, is a medium-sized cormorant that is endemic to Namibia and the western seaboard of South Africa, living in and around coastal waters; it is rarely recorded more than 15 km offshore.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/6/68/Phalacrocoraxneglectus.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The rufous-headed chachalaca is a species of bird in the family Cracidae, the chachalacas, guans, and curassows. It is found in Colombia, Ecuador, and Peru.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/3/30/Rufous-headed_Chachalaca.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Bank_cormorant",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Bank%20cormorant%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Rufous-headed_chachalaca",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Rufous-headed%20chachalaca%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Kaiser-class battleship",
-    "description": "German Imperial Navy battleship class",
-    "extract": "The Kaiser class were five dreadnought battleships that were built for the German Kaiserliche Marine in the 1910s: Kaiser, Friedrich der Grosse, Kaiserin, Prinzregent Luitpold, and König Albert. They entered service shortly before World War I, and saw significant combat during the conflict. The Kaiser-class ships introduced several technological improvements to German battleship design, including steam turbines for propulsion and a more efficient superfiring arrangement for some of their main battery guns. They were also faster and more heavily armored than their predecessors of the Nassau and Helgoland classes. Carrying a primary armament of ten 30.5 cm (12 in) guns, they were less heavily armed than their British counterparts.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Bundesarchiv_DVM_10_Bild-23-61-83%2C_Linienschiff_%22SMS_Kaiser%22.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Kaiser-class_battleship",
+    "title": "Blindfold Me",
+    "description": "2006 single by Kelis featuring Nas",
+    "extract": "\"Blindfold Me\" is a hip hop song by American singer Kelis from her fourth studio album, Kelis Was Here (2006). It was written and produced by Sean Garrett and Polow da Don. A remix, featuring American rapper Nas, was released as the album's second single in the United States on October 3, 2006. Although the Neptunes were long-time collaborators of Kelis, Kelis Was Here was her first album without their involvement as she opted for a more diverse team of record producers, which included Garrett and Polow da Don.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/f/f1/Kelis_Blindfold_Me.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Blindfold_Me",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
