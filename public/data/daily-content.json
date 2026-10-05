@@ -1,25 +1,25 @@
 {
-  "date": "2026-10-04",
-  "generatedAt": "2026-10-04T16:04:36.445Z",
+  "date": "2026-10-05",
+  "generatedAt": "2026-10-05T14:27:53.960Z",
   "art": null,
   "bird": {
-    "name": "Black-breasted boatbill",
+    "name": "Scarlet-tufted sunbird",
     "scientific": "",
-    "blurb": "The black-breasted boatbill is a species of bird in the family Machaerirhynchidae.\nIt is found in New Guinea.\nIts natural habitat is subtropical or tropical moist montane forests. It is most commonly seen alone, but sometimes in pairs or mixed-species flocks. It is non-migratory.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/52/MachaerirhynchusNigripectusSmit.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The scarlet-tufted sunbird is a species of bird in the Nectarinia of the family Nectariniidae.\nIt is found in Democratic Republic of the Congo, Kenya, Malawi, Rwanda, Tanzania, Uganda, and Zambia. It is also known as the red-tufted sunbird and the scarlet-tufted malachite sunbird.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/af/NectariniaJohnstoniKeulemans.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Black-breasted_boatbill",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Black-breasted%20boatbill%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Scarlet-tufted_sunbird",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Scarlet-tufted%20sunbird%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Pennsylvania State Capitol",
-    "description": "Capitol building of the U.S. state of Pennsylvania",
-    "extract": "The Pennsylvania State Capitol is the seat of government for the U.S. state of Pennsylvania located in downtown Harrisburg. The building was designed by architect Joseph Miller Huston in 1902 and completed in 1906 in a Beaux-Arts style with decorative Renaissance themes throughout. The capitol houses the legislative chambers for the Pennsylvania General Assembly, made up of the House of Representatives and the Senate, and the Harrisburg chambers for the Supreme and Superior Courts of Pennsylvania, as well as the offices of the Governor and the Lieutenant Governor. It is also the main building of the Pennsylvania State Capitol Complex.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/43/Flying_the_Pride_Flag_over_the_Capitol_%2850035197647%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Pennsylvania_State_Capitol",
+    "title": "White-headed fruit dove",
+    "description": "Species of bird endemic to Solomon Islands",
+    "extract": "The white-headed fruit dove is a species of bird in the pigeon family, Columbidae. It was described by the English ornithologist John Gould in 1856, and the specific name eugeniae honours the French empress Eugénie de Montijo. Adults of the species have white heads, a purplish-red breast patch, a grey shoulder patch, olive-green upperparts, greenish underparts with a blue tinge, and a yellowish vent. Juveniles have green heads with the white restricted to the forehead and upper throat, a much smaller grey shoulder patch, and the red breast patch restricted to the centre of the breast.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8e/PtilopusEugeniaeKeulemans_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/White-headed_fruit_dove",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
