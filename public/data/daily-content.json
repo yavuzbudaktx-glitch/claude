@@ -1,25 +1,25 @@
 {
-  "date": "2026-10-06",
-  "generatedAt": "2026-10-06T17:31:49.527Z",
+  "date": "2026-10-07",
+  "generatedAt": "2026-10-07T13:19:22.370Z",
   "art": null,
   "bird": {
-    "name": "Hazel-fronted pygmy tyrant",
+    "name": "Sombre hummingbird",
     "scientific": "",
-    "blurb": "The hazel-fronted pygmy tyrant is a species of bird in the family Tyrannidae, the tyrant flycatchers. It is found in Bolivia and Peru.",
-    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c6/Pseudotriccus_simplex_map.svg/500px-Pseudotriccus_simplex_map.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "blurb": "The sombre hummingbird is a species of hummingbird in the \"emeralds\", tribe Trochilini of subfamily Trochilinae. It is endemic to Brazil.",
+    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/Sombre_Hummingbird%2C_Serra_dos_Tucanos%2C_Brazil_%2814358956323%29.jpg/3840px-Sombre_Hummingbird%2C_Serra_dos_Tucanos%2C_Brazil_%2814358956323%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Hazel-fronted_pygmy_tyrant",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Hazel-fronted%20pygmy%20tyrant%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Sombre_hummingbird",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Sombre%20hummingbird%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "History of cricket to 1725",
-    "description": "Origin and development of cricket (to 1725)",
-    "extract": "The earliest definite reference to the sport of cricket is dated 17 January 1597, equating to 27 January 1598 in modern New Style dates. It is a deposition in the records of a legal case at Guildford, Surrey, regarding usage of a parcel of land. John Derrick, a coroner, testified that he had played cricket on the land when he was a boy in about 1550. Derrick's testimony is confirmation that the sport was being played by the middle of the 16th century, but its true origin is unknown. All that is known with a fair degree of certainty is that its beginning was earlier than 1550, probably somewhere in south-east England within the counties of Kent, Sussex, and Surrey. There have been suggestions that it can be traced to Flemish immigrants then resident in the area. The origin of the word cricket could derive from the Flemish word krick(-e), meaning a stick.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Charles_Lennox%2C_2nd_Duke_of_Richmond%2C_by_circle_of_Jean_Marc_Nattier.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/History_of_cricket_to_1725",
+    "title": "Mario Party: Star Rush",
+    "description": "2016 video game",
+    "extract": "Mario Party: Star Rush is a 2016 party video game developed by NDcube and published by Nintendo for the Nintendo 3DS. It is the fourth handheld game in the Mario Party series, as well as the second installment in the series to be released for the 3DS. The game was released in Europe, Australia, and Japan in October 2016 and in North America in November 2016.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/4/44/Mario_Party_Star_Rush_generic_boxart.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Mario_Party%3A_Star_Rush",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
