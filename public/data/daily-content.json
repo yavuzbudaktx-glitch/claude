@@ -1,17 +1,17 @@
 {
   "date": "2026-10-07",
-  "generatedAt": "2026-10-07T14:59:21.927Z",
+  "generatedAt": "2026-10-07T18:07:33.509Z",
   "art": null,
   "bird": {
-    "name": "Sombre hummingbird",
+    "name": "Solomons rufous fantail",
     "scientific": "",
-    "blurb": "The sombre hummingbird is a species of hummingbird in the \"emeralds\", tribe Trochilini of subfamily Trochilinae. It is endemic to Brazil.",
-    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/Sombre_Hummingbird%2C_Serra_dos_Tucanos%2C_Brazil_%2814358956323%29.jpg/3840px-Sombre_Hummingbird%2C_Serra_dos_Tucanos%2C_Brazil_%2814358956323%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "blurb": "The Solomons rufous fantail is a species of bird in the family Rhipiduridae that is endemic to the Solomon Islands. It was formerly considered to be a subspecies of the Australian rufous fantail.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Rhipidura_rufofronta_ssp._russata.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Sombre_hummingbird",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Sombre%20hummingbird%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Solomons_rufous_fantail",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Solomons%20rufous%20fantail%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
