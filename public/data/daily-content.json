@@ -1,25 +1,25 @@
 {
-  "date": "2026-10-07",
-  "generatedAt": "2026-10-07T18:07:33.509Z",
+  "date": "2026-10-08",
+  "generatedAt": "2026-10-08T13:26:30.340Z",
   "art": null,
   "bird": {
-    "name": "Solomons rufous fantail",
+    "name": "Kagu",
     "scientific": "",
-    "blurb": "The Solomons rufous fantail is a species of bird in the family Rhipiduridae that is endemic to the Solomon Islands. It was formerly considered to be a subspecies of the Australian rufous fantail.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Rhipidura_rufofronta_ssp._russata.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The kagu or cagou is a crested, long-legged, and bluish-grey bird endemic to the dense mountain forests of New Caledonia. It is the only surviving member of the genus Rhynochetos and family Rhynochetidae, although a second species has been described from the fossil record.",
+    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/68/Kagu_0A2A2595.jpg/3840px-Kagu_0A2A2595.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Solomons_rufous_fantail",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Solomons%20rufous%20fantail%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Kagu",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Kagu%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Mario Party: Star Rush",
-    "description": "2016 video game",
-    "extract": "Mario Party: Star Rush is a 2016 party video game developed by NDcube and published by Nintendo for the Nintendo 3DS. It is the fourth handheld game in the Mario Party series, as well as the second installment in the series to be released for the 3DS. The game was released in Europe, Australia, and Japan in October 2016 and in North America in November 2016.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/4/44/Mario_Party_Star_Rush_generic_boxart.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Mario_Party%3A_Star_Rush",
+    "title": "2006 UAW-Ford 500",
+    "description": "Stock car race",
+    "extract": "The 2006 UAW-Ford 500 was a stock car race that took place on October 8, 2006. The 38th annual running of the event, it was held at Talladega Superspeedway in Talladega, Alabama, United States, before 160,000 spectators. The 188-lap race was the 30th in the 2006 NASCAR Nextel Cup Series and the fourth in the ten-race, season-ending Chase for the Nextel Cup. Brian Vickers of Hendrick Motorsports won the race, his first career Cup series victory; Kasey Kahne finished second, and Kurt Busch came in third.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/e/e7/2006_UAW-Ford_500_program_cover.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/2006_UAW-Ford_500",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
