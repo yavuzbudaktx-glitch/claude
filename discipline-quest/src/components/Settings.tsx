@@ -14,25 +14,32 @@ export default function Settings() {
   const [name, setName] = useState("");
   const [msg, setMsg] = useState("");
   const [confirmReset, setConfirmReset] = useState(false);
+  const [showBackup, setShowBackup] = useState(false);
+  const [paste, setPaste] = useState("");
   const file = useRef<HTMLInputElement>(null);
 
-  const exportData = () => {
-    const blob = new Blob([JSON.stringify(game, null, 2)], { type: "application/json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `discipline-quest-${dateKey(getNow())}.json`;
-    a.click();
-    URL.revokeObjectURL(a.href);
+  const backupText = JSON.stringify(game);
+
+  // Copy instead of download: downloads are blocked when the app runs inside claude.ai.
+  const copyBackup = async () => {
+    setShowBackup(true);
+    try {
+      await navigator.clipboard.writeText(backupText);
+      setMsg(`Backup copied (${dateKey(getNow())}). Paste it into Notes to keep it safe.`);
+    } catch {
+      setMsg("Couldn't copy automatically. Select the text below and copy it.");
+    }
   };
 
-  const importData = async (f: File) => {
+  const restore = (text: string) => {
     try {
-      const data = JSON.parse(await f.text());
-      if (!isGameState(data)) throw new Error("bad file");
+      const data = JSON.parse(text);
+      if (!isGameState(data)) throw new Error("bad backup");
       replace(data);
+      setPaste("");
       setMsg("Backup restored.");
     } catch {
-      setMsg("That file isn't a Discipline Quest backup.");
+      setMsg("That isn't a Discipline Quest backup. Paste the full text you copied.");
     }
   };
 
@@ -104,16 +111,35 @@ export default function Settings() {
       <section className="panel">
         <div className="panel-head">Backup</div>
         <div className="space-y-2 p-3">
-          <p className="text-base">Your data lives only on this device. Export a backup now and then.</p>
+          <p className="text-base">Your progress lives only on this device. Copy a backup now and then and keep it in Notes.</p>
           <div className="grid grid-cols-2 gap-2">
-            <button className="btn btn-blue py-2" onClick={exportData}>
-              Export
+            <button className="btn btn-blue py-2" onClick={copyBackup}>
+              Copy backup
             </button>
             <button className="btn py-2" onClick={() => file.current?.click()}>
-              Import
+              Restore from file
             </button>
           </div>
-          <input ref={file} type="file" accept="application/json" className="hidden" onChange={(e) => e.target.files?.[0] && importData(e.target.files[0])} />
+          {showBackup && (
+            <textarea
+              id="backup-out"
+              readOnly
+              className="input h-24 w-full font-mono text-xs"
+              value={backupText}
+              onFocus={(e) => e.currentTarget.select()}
+            />
+          )}
+          <textarea
+            id="backup-in"
+            className="input h-20 w-full font-mono text-xs"
+            placeholder="To restore, paste a backup here"
+            value={paste}
+            onChange={(e) => setPaste(e.target.value)}
+          />
+          <button className="btn w-full" disabled={!paste.trim()} onClick={() => restore(paste)}>
+            Restore pasted backup
+          </button>
+          <input ref={file} type="file" accept="application/json,.json,.txt" className="hidden" onChange={async (e) => e.target.files?.[0] && restore(await e.target.files[0].text())} />
           {msg && <p className="text-base">{msg}</p>}
           <button className="btn btn-red w-full" onClick={() => setConfirmReset(true)}>
             Reset everything

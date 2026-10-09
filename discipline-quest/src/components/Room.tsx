@@ -172,7 +172,7 @@ export default function Room() {
         a.mirror = false;
         a.poseUntil = t + 3500;
         const [sx, sy] = tileScreen(a.fx, a.fy, true);
-        setBubble({ text: a.pending.say, x: sx / ROOM_W, y: (sy - 52) / ROOM_H, id: t });
+        setBubble({ text: a.pending.say, x: Math.min(0.75, Math.max(0.25, sx / ROOM_W)), y: (sy - 52) / ROOM_H, id: t });
         a.pending = null;
       } else if (t > a.poseUntil) {
         a.pose = gloomy ? "sad" : "idle";
