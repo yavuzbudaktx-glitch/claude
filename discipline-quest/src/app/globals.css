@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #161a2e;
+  --panel: #f2efe6;
+  --ink: #1b1b1b;
+  --head: #2f6fb0;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+body {
+  font-family: "VT323", monospace;
+  font-size: 20px;
+  line-height: 1.15;
+  -webkit-tap-highlight-color: transparent;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 6px 6px;
+}
+
+@layer components {
+  .panel {
+    @apply rounded-md border-2 border-black bg-[var(--panel)] shadow-[0_3px_0_#000];
+  }
+  .panel-head {
+    @apply flex items-center justify-between rounded-t-[4px] border-b-2 border-black bg-[var(--head)] px-3 py-1.5 font-pixel text-[10px] uppercase tracking-wide text-white;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-1 rounded-[4px] border-2 border-black bg-[#e6e2d6] px-3 py-1 text-lg leading-none shadow-[inset_0_-3px_0_rgba(0,0,0,0.18)] active:translate-y-px active:shadow-none disabled:cursor-not-allowed disabled:opacity-45;
+  }
+  .btn-green {
+    @apply bg-[#4caf50] text-white;
+  }
+  .btn-red {
+    @apply bg-[#d64541] text-white;
+  }
+  .btn-blue {
+    @apply bg-[#3d86c6] text-white;
+  }
+  .btn-gold {
+    @apply bg-[#f1c40f];
+  }
+  .chip {
+    @apply rounded-[3px] border-2 border-black px-1.5 text-base leading-tight;
+  }
+  .bubble {
+    @apply max-w-[60%] whitespace-nowrap rounded-[6px] border-2 border-black bg-white px-2 py-0.5 text-lg leading-tight shadow-[0_2px_0_#000];
+  }
+  .bubble::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -8px;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-right: 2px solid black;
+    border-bottom: 2px solid black;
+    transform: translateX(-50%) rotate(45deg);
+  }
+  .input {
+    @apply rounded-[4px] border-2 border-black bg-white px-2 py-1 text-lg outline-none focus:border-[var(--head)];
+  }
+}
