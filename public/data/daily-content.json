@@ -1,25 +1,25 @@
 {
-  "date": "2026-10-08",
-  "generatedAt": "2026-10-08T18:09:11.491Z",
+  "date": "2026-10-09",
+  "generatedAt": "2026-10-09T13:10:30.789Z",
   "art": null,
   "bird": {
-    "name": "Kagu",
+    "name": "Streak-headed antbird",
     "scientific": "",
-    "blurb": "The kagu or cagou is a crested, long-legged, and bluish-grey bird endemic to the dense mountain forests of New Caledonia. It is the only surviving member of the genus Rhynochetos and family Rhynochetidae, although a second species has been described from the fossil record.",
-    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/68/Kagu_0A2A2595.jpg/3840px-Kagu_0A2A2595.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "blurb": "The streak-headed antbird is a species of bird in subfamily Thamnophilinae of family Thamnophilidae, the \"typical antbirds\". It is found in Bolivia, Colombia, Ecuador, and Peru.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Drymophila_striaticeps_%28Streak-headed_Antbird%29_-_male_%287062565647%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Kagu",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Kagu%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Streak-headed_antbird",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Streak-headed%20antbird%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "2006 UAW-Ford 500",
-    "description": "Stock car race",
-    "extract": "The 2006 UAW-Ford 500 was a stock car race that took place on October 8, 2006. The 38th annual running of the event, it was held at Talladega Superspeedway in Talladega, Alabama, United States, before 160,000 spectators. The 188-lap race was the 30th in the 2006 NASCAR Nextel Cup Series and the fourth in the ten-race, season-ending Chase for the Nextel Cup. Brian Vickers of Hendrick Motorsports won the race, his first career Cup series victory; Kasey Kahne finished second, and Kurt Busch came in third.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/e/e7/2006_UAW-Ford_500_program_cover.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/2006_UAW-Ford_500",
+    "title": "The Man with the Golden Gun (novel)",
+    "description": "1965 novel by Ian Fleming",
+    "extract": "The Man with the Golden Gun is the twelfth and final novel in Ian Fleming's James Bond series and the thirteenth Bond book overall. It was first published by Jonathan Cape in the United Kingdom on 1 April 1965, eight months after the author's death, and was a best-seller. The novel was not as detailed or polished as the others in the series, leading to poor but polite reviews.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/7/79/The_Man_with_the_Golden_Gun%2C_wraparound_cover.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/The_Man_with_the_Golden_Gun_(novel)",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
