@@ -1,26 +1,26 @@
 {
-  "date": "2026-10-09",
-  "generatedAt": "2026-10-09T17:43:43.371Z",
+  "date": "2026-10-10",
+  "generatedAt": "2026-10-10T12:28:02.182Z",
   "art": null,
   "bird": {
-    "name": "Streak-headed antbird",
+    "name": "Slaty-backed nightingale-thrush",
     "scientific": "",
-    "blurb": "The streak-headed antbird is a species of bird in subfamily Thamnophilinae of family Thamnophilidae, the \"typical antbirds\". It is found in Bolivia, Colombia, Ecuador, and Peru.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Drymophila_striaticeps_%28Streak-headed_Antbird%29_-_male_%287062565647%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The slaty-backed nightingale-thrush is a species of bird in the family Turdidae, the thrushes and allies. It is found in Bolivia, Colombia, Costa Rica, Ecuador, Panama, Peru, and Venezuela.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Catharus_fuscater_Santa_Elena_1.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Streak-headed_antbird",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Streak-headed%20antbird%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Slaty-backed_nightingale-thrush",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Slaty-backed%20nightingale-thrush%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "The Man with the Golden Gun (novel)",
-    "description": "1965 novel by Ian Fleming",
-    "extract": "The Man with the Golden Gun is the twelfth and final novel in Ian Fleming's James Bond series and the thirteenth Bond book overall. It was first published by Jonathan Cape in the United Kingdom on 1 April 1965, eight months after the author's death, and was a best-seller. The novel was not as detailed or polished as the others in the series, leading to poor but polite reviews.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/7/79/The_Man_with_the_Golden_Gun%2C_wraparound_cover.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/The_Man_with_the_Golden_Gun_(novel)",
-    "source": "Wikipedia · Today's Featured Article"
+    "title": "Murder of Huang Na",
+    "description": "2004 child rape and murder in Singapore",
+    "extract": "Huang Na was an eight-year-old Chinese national residing in Pasir Panjang, Singapore, who disappeared on 10 October 2004. Her mother, the police and the community conducted a three-week-long nationwide search for her. After her body was found, thousands of Singaporeans attended her wake and funeral, giving bai jin (白金) and gifts. In a high-profile 14-day trial, Took Leng How, a Malaysian vegetable packer at the estate's wholesale centre, was found guilty of murdering her. He was hanged on 3 November 2006 after an appeal and a request for presidential clemency failed.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/7/74/HuangNa.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageUrl": "https://en.wikipedia.org/wiki/Murder_of_Huang_Na",
+    "source": "Wikipedia · On this day"
   },
   "nasa": {
     "title": "APOD",
