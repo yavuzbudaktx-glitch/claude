@@ -1,25 +1,25 @@
 {
-  "date": "2026-10-10",
-  "generatedAt": "2026-10-10T16:30:20.937Z",
+  "date": "2026-10-11",
+  "generatedAt": "2026-10-11T12:44:02.307Z",
   "art": null,
   "bird": {
-    "name": "Slaty-backed nightingale-thrush",
+    "name": "Jackal buzzard",
     "scientific": "",
-    "blurb": "The slaty-backed nightingale-thrush is a species of bird in the family Turdidae, the thrushes and allies. It is found in Bolivia, Colombia, Costa Rica, Ecuador, Panama, Peru, and Venezuela.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Catharus_fuscater_Santa_Elena_1.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The jackal buzzard is a fairly large African bird of prey. The taxonomy of this species has caused some confusion in the past and it almost certainly belongs in a species complex with other African Buteo species. Some taxonomists have considered this species, the Archer's buzzard, and the augur buzzard to be the same superspecies. Many taxonomists consider them all to be distinct, having different calls, different home ranges and variations in plumage. The species is resident and non-migratory throughout its range.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/2/26/Buteo_rufofuscus_-Itala_Game_Reserve%2C_KwaZulu-Natal%2C_South_Africa_-flying-6.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Slaty-backed_nightingale-thrush",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Slaty-backed%20nightingale-thrush%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Jackal_buzzard",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Jackal%20buzzard%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Murder of Huang Na",
-    "description": "2004 child rape and murder in Singapore",
-    "extract": "Huang Na was an eight-year-old Chinese national residing in Pasir Panjang, Singapore, who disappeared on 10 October 2004. Her mother, the police and the community conducted a three-week-long nationwide search for her. After her body was found, thousands of Singaporeans attended her wake and funeral, giving bai jin (白金) and gifts. In a high-profile 14-day trial, Took Leng How, a Malaysian vegetable packer at the estate's wholesale centre, was found guilty of murdering her. He was hanged on 3 November 2006 after an appeal and a request for presidential clemency failed.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/7/74/HuangNa.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "pageUrl": "https://en.wikipedia.org/wiki/Murder_of_Huang_Na",
+    "title": "Myyrmanni bombing",
+    "description": "2002 bombing in Myyrmäki, Finland",
+    "extract": "The Myyrmanni bombing took place on October 11, 2002, in Myyrmäki, Vantaa, Finland, in Greater Helsinki, at the Myyrmanni shopping mall. A bomb hidden in a backpack exploded in the center of the mall, killing seven people including the bomber. The blast left a 10-cm deep crater in the floor and blew out the glass dome of the mall. The dead included two teenagers and a seven-year-old. 159 people were injured, including 10 children. 66 victims required hospitalization while the remainder were treated and released at the scene. The bombing took place during the pre-weekend shopping surge late on a Friday afternoon, with 1,000–2,000 people in the shopping center, including many children who had come to see a clown performance.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/2/27/Myyrmannin_r%C3%A4j%C3%A4hdys.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageUrl": "https://en.wikipedia.org/wiki/Myyrmanni_bombing",
     "source": "Wikipedia · On this day"
   },
   "nasa": {
