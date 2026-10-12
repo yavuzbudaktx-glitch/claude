@@ -1,6 +1,6 @@
 {
   "date": "2026-10-12",
-  "generatedAt": "2026-10-12T17:13:50.906Z",
+  "generatedAt": "2026-10-12T20:34:13.293Z",
   "art": null,
   "bird": {
     "name": "Black-backed tanager",
@@ -17,7 +17,7 @@
   "wiki": {
     "title": "Poecilia vandepolli",
     "description": "Species of livebearer fish",
-    "extract": "Poecilia vandepolli, or Van de Poll's molly, is a poeciliid fish native to the Caribbean islands of Aruba, Bonaire, and Curaçao. It is one of the most common fish in its range, inhabiting fresh, brackish, salt, and hypersaline waters such as streams, ponds, bays, salt pans, and lagoons. For much of the twentieth century, it was regarded as a subspecies or synonym of P. sphenops, but morphological and genetic studies have confirmed its status as a distinct species. The molly is highly variable in size and color, with males ranging from 2.6 to 5.3 cm and females from 3.2 to 9.6 cm, and coloration varying from grayish-brown to yellow or orange in any given population. Marine fish are generally larger, stronger, and more colorful than freshwater specimens. Males' ability to develop an intense orange coloration may make the species attractive to aquarists.",
+    "extract": "Poecilia vandepolli, or Van de Poll's molly, is a poeciliid fish native to the Caribbean islands of Aruba, Bonaire, and Curaçao. It is one of the most common fish in its range, inhabiting fresh, brackish, salt, and hypersaline waters such as streams, ponds, bays, salt pans, and lagoons. For much of the twentieth century, it was regarded as a subspecies or synonym of P. sphenops, but morphological and genetic studies have confirmed its status as a distinct species. This molly is highly variable in size and color, with males ranging from 2.6 to 5.3 cm and females from 3.2 to 9.6 cm, and coloration varying from grayish-brown to yellow or orange in any given population. Marine fish are generally larger, stronger, and more colorful than freshwater specimens. Males' ability to develop an intense orange coloration may make the species attractive to aquarists.",
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/7/76/Poecilia_vandepolli_male_lagoon_no_blotch.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
     "pageUrl": "https://en.wikipedia.org/wiki/Poecilia_vandepolli",
     "source": "Wikipedia · Today's Featured Article"
