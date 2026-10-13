@@ -1,25 +1,25 @@
 {
-  "date": "2026-10-12",
-  "generatedAt": "2026-10-12T20:34:13.293Z",
+  "date": "2026-10-13",
+  "generatedAt": "2026-10-13T14:12:14.293Z",
   "art": null,
   "bird": {
-    "name": "Black-backed tanager",
+    "name": "Lesson's motmot",
     "scientific": "",
-    "blurb": "The black-backed tanager is a bird species in the Thraupidae family. It is endemic to the forests and shrubs of south-eastern Brazil. When first described, it was mistakenly believed that it originates from Peru, leading to the misleading scientific name peruviana. It is closely related to the chestnut-backed tanager, and the two have sometimes been considered conspecific.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/51/Tangara_peruviana_-_Black-backed_Tanager_%28male%29%3B_Ilha_do_Mel%2C_Paran%C3%A1%2C_Brazil.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "Lesson's motmot or the blue-diademed motmot, is a colorful bird found in forests and woodlands of southern Mexico to western Panama. This species and the blue-capped motmot, whooping motmot, Trinidad motmot, Amazonian motmot, and Andean motmot were all considered conspecific.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Lesson%27s_motmot_%28Momotus_lessonii_lessonii%29_2.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Black-backed_tanager",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Black-backed%20tanager%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Lesson's_motmot",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Lesson's%20motmot%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Poecilia vandepolli",
-    "description": "Species of livebearer fish",
-    "extract": "Poecilia vandepolli, or Van de Poll's molly, is a poeciliid fish native to the Caribbean islands of Aruba, Bonaire, and Curaçao. It is one of the most common fish in its range, inhabiting fresh, brackish, salt, and hypersaline waters such as streams, ponds, bays, salt pans, and lagoons. For much of the twentieth century, it was regarded as a subspecies or synonym of P. sphenops, but morphological and genetic studies have confirmed its status as a distinct species. This molly is highly variable in size and color, with males ranging from 2.6 to 5.3 cm and females from 3.2 to 9.6 cm, and coloration varying from grayish-brown to yellow or orange in any given population. Marine fish are generally larger, stronger, and more colorful than freshwater specimens. Males' ability to develop an intense orange coloration may make the species attractive to aquarists.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/7/76/Poecilia_vandepolli_male_lagoon_no_blotch.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Poecilia_vandepolli",
+    "title": "Beauty Revealed",
+    "description": "1828 painting by Sarah Goodridge",
+    "extract": "Beauty Revealed is an 1828 self-portrait by the American artist Sarah Goodridge. Depicting only the artist's bared breasts surrounded by white cloth, the 2.6-by-3.1-inch painting, originally backed with paper, is now in a modern frame. Goodridge, aged forty when she completed the watercolor portrait miniature on a piece of ivory, presented the breasts as youthful and individualized. She employed a frontal view that showed only the area from the collarbone to just underneath the breasts, thereby anonymizing the portrait.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Sarah_Goodridge_Beauty_Revealed_The_Metropolitan_Museum_of_Art.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Beauty_Revealed",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
