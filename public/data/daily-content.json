@@ -1,25 +1,25 @@
 {
-  "date": "2026-10-13",
-  "generatedAt": "2026-10-13T18:37:55.516Z",
+  "date": "2026-10-14",
+  "generatedAt": "2026-10-14T11:48:35.588Z",
   "art": null,
   "bird": {
-    "name": "Lesson's motmot",
+    "name": "Black-tailed antbird",
     "scientific": "",
-    "blurb": "Lesson's motmot or the blue-diademed motmot, is a colorful bird found in forests and woodlands of southern Mexico to western Panama. This species and the blue-capped motmot, whooping motmot, Trinidad motmot, Amazonian motmot, and Andean motmot were all considered conspecific.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Lesson%27s_motmot_%28Momotus_lessonii_lessonii%29_2.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The black-tailed antbird is a Near Threatened species of bird in subfamily Thamnophilinae of family Thamnophilidae, the \"typical antbirds\". It is found in Brazil, Colombia, and Peru.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Myrmoborus_melanurus_-_Black_tailed_antbird_%28male%29%3B_Iquitos%2C_Peru.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Lesson's_motmot",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Lesson's%20motmot%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Black-tailed_antbird",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Black-tailed%20antbird%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Beauty Revealed",
-    "description": "1828 painting by Sarah Goodridge",
-    "extract": "Beauty Revealed is an 1828 self-portrait by the American artist Sarah Goodridge. Depicting only the artist's bared breasts surrounded by white cloth, the 2.6-by-3.1-inch painting, originally backed with paper, is now in a modern frame. Goodridge, aged forty when she completed the watercolor portrait miniature on a piece of ivory, presented the breasts as youthful and individualized. She employed a frontal view that showed only the area from the collarbone to just underneath the breasts, thereby anonymizing the portrait.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Sarah_Goodridge_Beauty_Revealed_The_Metropolitan_Museum_of_Art.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Beauty_Revealed",
+    "title": "RAAF area commands",
+    "description": "Royal Australian Air Force command system",
+    "extract": "Area commands were the major operational and administrative formations of the Royal Australian Air Force (RAAF) between 1940 and 1954. Established in response to the outbreak of World War II, they underpinned the Air Force's geographically based command-and-control system for the duration of the conflict and into the early years of the Cold War, until being superseded by a functional control system made up of Home, Training, and Maintenance Commands.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b5/RAAFAreaCommands1944.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/RAAF_area_commands",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
