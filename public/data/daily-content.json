@@ -1,15 +1,26 @@
 {
-  "date": "2026-10-15",
-  "generatedAt": "2026-10-15T15:54:08.905Z",
+  "date": "2026-10-16",
+  "generatedAt": "2026-10-16T11:18:51.102Z",
   "art": null,
-  "bird": null,
+  "bird": {
+    "name": "Broad-billed parrot",
+    "scientific": "",
+    "blurb": "The broad-billed parrot or raven parrot is a large extinct parrot in the family Psittaculidae. It was endemic to the Mascarene island of Mauritius. The species was first referred to as the \"Indian raven\" in Dutch ships' journals from 1598 onwards. Only a few brief contemporary descriptions and three depictions are known. It was first scientifically described from a subfossil mandible in 1866, but this was not linked to the old accounts until the rediscovery of a detailed 1601 sketch that matched both the subfossils and the accounts. It is unclear what other species it was most closely related to, but it has been classified as a member of the tribe Psittaculini, along with other Mascarene parrots. It had similarities with the Rodrigues parrot, and may have been closely related.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8f/Gelderland1601-1603_Lophopsittacus_mauritianus.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "audioUrl": "",
+    "recordist": "",
+    "place": "",
+    "pageUrl": "https://en.wikipedia.org/wiki/Broad-billed_parrot",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Broad-billed%20parrot%20audio",
+    "source": "Wikipedia · Wikimedia Commons"
+  },
   "wiki": {
-    "title": "Kidnapping of Jayme Closs",
-    "description": "2018 double homicide and child abduction in Barron, Wisconsin",
-    "extract": "On October 15, 2018, 21-year-old Jake Thomas Patterson abducted 13-year-old Jayme Lynn Closs after fatally shooting her parents, James and Denise Closs, at their home just outside of Barron, Wisconsin, at 12:53 a.m. Patterson took Closs to a house 70 miles (110 km) away in rural Gordon, Wisconsin, and held her in captivity for 88 days until she escaped on January 10, 2019, seeking help from neighbors.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/84/Closs_Home_Barron_Wisconsin.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "pageUrl": "https://en.wikipedia.org/wiki/Kidnapping_of_Jayme_Closs",
-    "source": "Wikipedia · On this day"
+    "title": "The Hunger (collection)",
+    "description": "1996 fashion collection by Alexander McQueen",
+    "extract": "The Hunger is the seventh collection by British designer Alexander McQueen, released for the Spring/Summer 1996 season of his eponymous fashion house. The collection was primarily inspired by The Hunger, a 1983 erotic horror film about vampires. McQueen had limited financial backing, so the collection was created on a minimal budget. Typically for McQueen in the early stages of his career, the collection centred around sharply tailored garments and emphasised female sexuality. It was his first collection to include menswear.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/5/53/The_worm_corset.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/The_Hunger_(collection)",
+    "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
     "title": "APOD",
