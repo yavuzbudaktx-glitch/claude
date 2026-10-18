@@ -1,25 +1,25 @@
 {
-  "date": "2026-10-17",
-  "generatedAt": "2026-10-17T14:31:26.338Z",
+  "date": "2026-10-18",
+  "generatedAt": "2026-10-18T10:59:02.078Z",
   "art": null,
   "bird": {
-    "name": "Spot-winged monarch",
+    "name": "Carmiol's tanager",
     "scientific": "",
-    "blurb": "The spot-winged monarch, or spot-wing monarch flycatcher, is a species of bird in the family Monarchidae. It is found in New Guinea. Its natural habitat is subtropical or tropical moist lowland forests.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/7/75/Symposiachrus_guttula_-_Jean-Paul_Boerekamps_-_338538128.jpeg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "Carmiol's tanager is a species of bird in the cardinal family Cardinalidae that is found in Central America from Nicaragua southwards to northwest Colombia. Its natural habitats are subtropical or tropical moist lowland forests and heavily degraded former forest. It was formerly considered as conspecific with the yellow-lored tanager.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Chlorothraupis_carmioli_-Costa_Rica-8.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Spot-winged_monarch",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Spot-winged%20monarch%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Carmiol's_tanager",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Carmiol's%20tanager%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "French battleship Brennus",
-    "description": "Pre-dreadnought battleship built for the French Navy",
-    "extract": "Brennus was the first pre-dreadnought battleship built for the Marine Nationale. Completed in 1896, she was the sole member of her class, with a main battery of heavy guns mounted on the centerline and the first use of Belleville boilers. She formed the basis for several subsequent designs, beginning with Charles Martel. As completed in 1893, the ship was very top-heavy and had to be rebuilt over the next three years before she was ready to enter service.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/9/96/French_battleship_Brennus_NH_64443.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/French_battleship_Brennus",
+    "title": "The Demi-Virgin",
+    "description": "1921 stage play by Avery Hopwood",
+    "extract": "The Demi-Virgin is a three-act play written by Avery Hopwood. Producer Albert H. Woods staged it on Broadway, where it was a hit during the 1921–22 season. The play is a bedroom farce about former couple Gloria Graham and Wally Deane, both movie actors, whose brief marriage causes the press to speculate about whether Gloria is still a virgin. She attempts to seduce Wally when they are forced to reunite for a movie, but after playing along he surprises her by revealing that their divorce is not valid.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9d/The_Demi-Virgin_program_inside.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/The_Demi-Virgin",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
