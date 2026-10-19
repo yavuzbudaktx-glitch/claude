@@ -1,26 +1,26 @@
 {
-  "date": "2026-10-18",
-  "generatedAt": "2026-10-18T14:55:49.622Z",
+  "date": "2026-10-19",
+  "generatedAt": "2026-10-19T13:02:05.907Z",
   "art": null,
   "bird": {
-    "name": "Carmiol's tanager",
+    "name": "Swamp flycatcher",
     "scientific": "",
-    "blurb": "Carmiol's tanager is a species of bird in the cardinal family Cardinalidae that is found in Central America from Nicaragua southwards to northwest Colombia. Its natural habitats are subtropical or tropical moist lowland forests and heavily degraded former forest. It was formerly considered as conspecific with the yellow-lored tanager.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Chlorothraupis_carmioli_-Costa_Rica-8.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The swamp flycatcher or swamp alseonax is a species of bird in the family Muscicapidae.\nIts range stretches east across the Sudan (region) and south towards Zambia.\nIts natural habitats are subtropical or tropical moist shrubland and swamps.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Papamoscas_palustre_%28Muscicapa_aquatica%29%2C_parque_nacional_de_la_Selva_Impenetrable_de_Bwindi%2C_Uganda%2C_2024-02-02%2C_DD_95.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Carmiol's_tanager",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Carmiol's%20tanager%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Swamp_flycatcher",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Swamp%20flycatcher%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "The Demi-Virgin",
-    "description": "1921 stage play by Avery Hopwood",
-    "extract": "The Demi-Virgin is a three-act play written by Avery Hopwood. Producer Albert H. Woods staged it on Broadway, where it was a hit during the 1921–22 season. The play is a bedroom farce about former couple Gloria Graham and Wally Deane, both movie actors, whose brief marriage causes the press to speculate about whether Gloria is still a virgin. She attempts to seduce Wally when they are forced to reunite for a movie, but after playing along he surprises her by revealing that their divorce is not valid.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9d/The_Demi-Virgin_program_inside.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/The_Demi-Virgin",
-    "source": "Wikipedia · Today's Featured Article"
+    "title": "1I/ʻOumuamua",
+    "description": "Interstellar object that passed near Earth in 2017",
+    "extract": "1I/ʻOumuamua is the first confirmed interstellar object detected passing through the Solar System. Formally designated 1I/2017 U1, it was discovered by Canadian physicist Robert Weryk using the Pan-STARRS telescope at Haleakalā Observatory, Hawaii, on 19 October 2017, approximately 40 days after it passed its closest point to the Sun on 9 September. When it was first observed, it was about 33 million km from Earth and already heading away from the Sun.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c2/A2017U1_5gsmoothWHT_enhanced.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageUrl": "https://en.wikipedia.org/wiki/1I%2F%CA%BBOumuamua",
+    "source": "Wikipedia · On this day"
   },
   "nasa": {
     "title": "APOD",
