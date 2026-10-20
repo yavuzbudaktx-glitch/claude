@@ -1,26 +1,26 @@
 {
-  "date": "2026-10-19",
-  "generatedAt": "2026-10-19T17:49:42.128Z",
+  "date": "2026-10-20",
+  "generatedAt": "2026-10-20T11:32:05.201Z",
   "art": null,
   "bird": {
-    "name": "Swamp flycatcher",
+    "name": "Southern white-faced owl",
     "scientific": "",
-    "blurb": "The swamp flycatcher or swamp alseonax is a species of bird in the family Muscicapidae.\nIts range stretches east across the Sudan (region) and south towards Zambia.\nIts natural habitats are subtropical or tropical moist shrubland and swamps.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Papamoscas_palustre_%28Muscicapa_aquatica%29%2C_parque_nacional_de_la_Selva_Impenetrable_de_Bwindi%2C_Uganda%2C_2024-02-02%2C_DD_95.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The Southern white-faced owl is a fairly small owl in the family Strigidae. It is native to the southern half of Africa. It was formerly regarded as a subspecies of the northern white-faced owl but the two are now commonly treated as separate species.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/b/bd/Southern_white_faced_scops_owl.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Swamp_flycatcher",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Swamp%20flycatcher%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Southern_white-faced_owl",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Southern%20white-faced%20owl%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "1I/ʻOumuamua",
-    "description": "Interstellar object that passed near Earth in 2017",
-    "extract": "1I/ʻOumuamua is the first confirmed interstellar object detected passing through the Solar System. Formally designated 1I/2017 U1, it was discovered by Canadian physicist Robert Weryk using the Pan-STARRS telescope at Haleakalā Observatory, Hawaii, on 19 October 2017, approximately 40 days after it passed its closest point to the Sun on 9 September. When it was first observed, it was about 33 million km from Earth and already heading away from the Sun.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c2/A2017U1_5gsmoothWHT_enhanced.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "pageUrl": "https://en.wikipedia.org/wiki/1I%2F%CA%BBOumuamua",
-    "source": "Wikipedia · On this day"
+    "title": "London Monster",
+    "description": "Eighteenth-century criminal",
+    "extract": "The London Monster was the name given to an attacker of women in London between 1788 and 1790. Renwick Williams, a Welsh maker of artificial flowers, was arrested for the attacks in June 1790, given two trials and sent to Newgate Prison for six years. The Monster's modus operandi was to verbally abuse women with lewd and suggestive comments and then attack them with a knife, cutting the clothing and slicing into buttocks, thighs or chest. Other forms of attack included having knives attached to his knees, possibly attached as a claw-like device to his hands or having a sharp implement hidden in a nosegay—a small flower bouquet. Over fifty women reported attacks, sometimes several on the same day, including up to six reported attacks in one night. Such was the number of attacks, variety of methods and discrepancies in the descriptions of the attackers, that historians are unsure if the Monster was one man or several.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/b/bd/The_monster_cutting_a_lady.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/London_Monster",
+    "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
     "title": "APOD",
