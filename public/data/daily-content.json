@@ -1,26 +1,26 @@
 {
-  "date": "2026-10-20",
-  "generatedAt": "2026-10-20T15:56:32.374Z",
+  "date": "2026-10-21",
+  "generatedAt": "2026-10-21T11:47:14.663Z",
   "art": null,
   "bird": {
-    "name": "Southern white-faced owl",
+    "name": "Bush blackcap",
     "scientific": "",
-    "blurb": "The Southern white-faced owl is a fairly small owl in the family Strigidae. It is native to the southern half of Africa. It was formerly regarded as a subspecies of the northern white-faced owl but the two are now commonly treated as separate species.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/b/bd/Southern_white_faced_scops_owl.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The bush blackcap is a species of bird in the family Sylviidae. It is endemic to South Africa and Eswatini. Its natural habitats are subtropical or tropical moist montane forests and subtropical or tropical high-altitude shrubland. It is threatened by habitat loss.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Bush_Blackcap_2016_12_30_15_33_23_2771_crop.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Southern_white-faced_owl",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Southern%20white-faced%20owl%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Bush_blackcap",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Bush%20blackcap%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "London Monster",
-    "description": "Eighteenth-century criminal",
-    "extract": "The name London Monster was used to describe an attacker of women in London between 1788 and 1790. Renwick Williams, a Welsh maker of artificial flowers, was arrested for the attacks in June 1790, given two trials and sent to Newgate Prison for six years. The Monster's modus operandi was to verbally abuse women with lewd and suggestive comments and then attack them with a knife, cutting the clothing and slicing into buttocks, thighs or chest. Other forms of attack included having knives attached to his knees, possibly attached as a claw-like device to his hands or having a sharp implement hidden in a nosegay—a small flower bouquet. Over fifty women reported attacks, sometimes several on the same day, including up to six reported attacks in one night. Such was the number of attacks, variety of methods and discrepancies in the descriptions of the attackers, that historians are unsure if the Monster was one man or several.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/b/bd/The_monster_cutting_a_lady.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/London_Monster",
-    "source": "Wikipedia · Today's Featured Article"
+    "title": "Agreed Framework",
+    "description": "1994 nuclear agreement between the United States and North Korea",
+    "extract": "The Agreed Framework between the United States of America and the Democratic People's Republic of Korea (Korean: 북미제네바기본합의서) was signed on 21 October 1994, between North Korea (DPRK) and the United States. The objective of the agreement was the freezing and replacement of North Korea's indigenous nuclear power plant program with more nuclear proliferation resistant light water reactor power plants, and the step-by-step normalization of relations between the U.S. and the DPRK. Implementation of the agreement was troubled from the start, but its key elements were being implemented until it effectively broke down in 2003.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Agreed_frame_work_1994_cover_page_1.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageUrl": "https://en.wikipedia.org/wiki/Agreed_Framework",
+    "source": "Wikipedia · On this day"
   },
   "nasa": {
     "title": "APOD",
