@@ -1,25 +1,25 @@
 {
-  "date": "2026-10-23",
-  "generatedAt": "2026-10-23T16:02:11.203Z",
+  "date": "2026-10-24",
+  "generatedAt": "2026-10-24T10:55:51.892Z",
   "art": null,
   "bird": {
-    "name": "Madagascar forest rail",
+    "name": "Topknot pigeon",
     "scientific": "",
-    "blurb": "The Madagascar forest rail, also known as the Madagascar wood rail or the kioloides rail, is a species of bird in the family Sarothruridae. It is endemic to forests, often in wet areas, in northern and eastern Madagascar. The secretive and shy personality of this reddish brown bird has contributed to a lack of study on this species; a reason why it is not that well known. Their smaller size and coloration make them great foragers on the forest floor. As of recent despite habitat loss the endangerment level of the Madagascar forest rail is 'of least concern.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/0/08/Madagascar_Forest_Rail_iNaturalist.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "audioUrl": "",
+    "blurb": "The topknot pigeon is a pigeon native to eastern Australia.",
+    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/Topknot_Pigeon_0A2A6700.jpg/3840px-Topknot_Pigeon_0A2A6700.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "audioUrl": "/api/bird-audio?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2F1%2F10%2FTopknot_Pigeon_rushck.ogv%3Futm_source%3Den.wikipedia.org%26utm_campaign%3Dimageinfo%26utm_content%3Doriginal",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Madagascar_forest_rail",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Madagascar%20forest%20rail%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Topknot_pigeon",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Topknot%20pigeon%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Thuggee",
-    "description": "Indian gangs of robbers and murderers",
-    "extract": "Thuggee was a phenomenon of highway robbery in the Indian subcontinent that saw gangs of Thugs murder and rob travellers, often by strangling. During the British colonial era, thuggee was represented and popularised as a secret pan-Indian fraternity of ritual stranglers with ancient origins, motivated by fanaticism and bloodlust. This portrayal has come under intense scholarly criticism beginning in the 1950s, with historical reinterpretations generally contesting the significance of religion to thuggee and viewing the Thugs as more or less ordinary criminals, or thuggee as a type of banditry. There is a general consensus among contemporary historians against the colonial-era representation.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Thugs_About_To_Strangle_Traveller.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Thuggee",
+    "title": "Battle of Schliengen",
+    "description": "1796 War of the First Coalition battle",
+    "extract": "The Battle of Schliengen took place on 24 October 1796 between the French Army of the Rhine and Moselle and the Austrian army near the village of Schliengen during the War of the First Coalition. The French army was under the command of Jean-Victor Moreau and the Austrian army was under the command of Archduke Charles of Austria. The village lies in the present-day Kreis Lörrach close to the border of present-day Baden-Württemberg (Germany), the Haut-Rhin (France), and the Canton of Basel-Stadt (Switzerland). During the French Revolutionary Wars, Schliengen was a strategically important location for the armies of both Republican France and Habsburg Austria. Control of the area gave either combatant access to southwestern German states and important Rhine crossings.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1d/BW41_Schliengen.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Battle_of_Schliengen",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
