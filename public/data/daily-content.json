@@ -1,25 +1,25 @@
 {
-  "date": "2026-10-24",
-  "generatedAt": "2026-10-24T14:54:11.564Z",
+  "date": "2026-10-25",
+  "generatedAt": "2026-10-25T11:21:08.740Z",
   "art": null,
   "bird": {
-    "name": "Topknot pigeon",
+    "name": "Modest tiger parrot",
     "scientific": "",
-    "blurb": "The topknot pigeon is a pigeon native to eastern Australia.",
-    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/Topknot_Pigeon_0A2A6700.jpg/3840px-Topknot_Pigeon_0A2A6700.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-    "audioUrl": "/api/bird-audio?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2F1%2F10%2FTopknot_Pigeon_rushck.ogv%3Futm_source%3Den.wikipedia.org%26utm_campaign%3Dimageinfo%26utm_content%3Doriginal",
+    "blurb": "The modest tiger parrot is a species of parrot in the family Psittaculidae. It is found in the Arfak Mountains and New Guinea Highlands. Its natural habitat is subtropical or tropical moist montane forests.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Psittacella_modesta_-_Jay_Pruett_-_336058401.jpeg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Topknot_pigeon",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Topknot%20pigeon%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Modest_tiger_parrot",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Modest%20tiger%20parrot%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Battle of Schliengen",
-    "description": "1796 War of the First Coalition battle",
-    "extract": "The Battle of Schliengen took place on 24 October 1796 between the French Army of the Rhine and Moselle and the Austrian army near the village of Schliengen during the War of the First Coalition. The French army was under the command of Jean-Victor Moreau and the Austrian army was under the command of Archduke Charles of Austria. The village lies in the present-day Kreis Lörrach in Baden-Württemberg, Germany, close to the borders with Haut-Rhin (France), and the Canton of Basel-Stadt (Switzerland). During the French Revolutionary Wars, Schliengen was a strategically important location for the armies of both Republican France and Habsburg Austria. Control of the area gave either combatant access to southwestern German states and important Rhine crossings.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1d/BW41_Schliengen.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Battle_of_Schliengen",
+    "title": "The Kinks",
+    "description": "English rock band (1962–1997)",
+    "extract": "The Kinks were an English rock band formed in London in 1962. The band's classic line-up comprised brothers Ray Davies and Dave Davies, Pete Quaife (bass), and Mick Avory. Emerging during the height of British rhythm and blues and Merseybeat, their breakthrough third single, the Ray Davies-penned \"You Really Got Me\" (1964), became an international hit, topping the charts in the United Kingdom and reaching the Top 10 in the United States. Other early hits included \"All Day and All of the Night\" (1964), \"Tired of Waiting for You\", \"Set Me Free\", \"See My Friends\", and \"Till the End of the Day\". They were part of the British Invasion of America until several problems during their 1965 American tour led to them being banned from touring there for several years.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/88/Helmfrid-sofa4_Touched.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/The_Kinks",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
