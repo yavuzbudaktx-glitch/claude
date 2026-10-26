@@ -1,5 +1,6 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
+import { cloudStatus, onCloudStatus } from "@/lib/cloudSave";
 import { addCustomHabit, archiveCustomHabit, isGameState, updateSettings } from "@/engine/engine";
 import { dateKey } from "@/engine/dates";
 import { getNow } from "@/lib/clock";
@@ -57,6 +58,7 @@ export default function Settings() {
 
   return (
     <div className="space-y-3">
+      <SaveStatus />
       <section className="panel">
         <div className="panel-head">Custom habits</div>
         <div className="space-y-2 p-3">
@@ -150,7 +152,7 @@ export default function Settings() {
       <section className="panel">
         <div className="panel-head">Backup</div>
         <div className="space-y-2 p-3">
-          <p className="text-base">Your progress lives only on this device. Copy a backup now and then and keep it in Notes.</p>
+          <p className="text-base">An extra copy never hurts: copy a backup now and then and keep it in Notes.</p>
           <div className="grid grid-cols-2 gap-2">
             <button className="btn btn-blue py-2" onClick={copyBackup}>
               Copy backup
@@ -205,6 +207,17 @@ export default function Settings() {
           </div>
         </Dialog>
       )}
+    </div>
+  );
+}
+
+function SaveStatus() {
+  const c = useSyncExternalStore(onCloudStatus, cloudStatus, cloudStatus);
+  const when = c.savedAt ? new Date(c.savedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : null;
+  return (
+    <div className={`chip block ${c.mode === "cloud" && !c.error ? "bg-[#d9f0d9]" : "bg-[#ffe680]"}`}>
+      {c.mode === "cloud" ? `Saved to your Claude account ✓${when ? ` (last saved ${when})` : ""}` : "Saving only on this device. Copy a backup now and then."}
+      {c.error && <div>{c.error}</div>}
     </div>
   );
 }

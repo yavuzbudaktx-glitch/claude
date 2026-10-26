@@ -1,9 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { CATALOG } from "@/engine/catalog";
 import { useGame } from "@/store/useGame";
 import { useReminders } from "@/lib/reminders";
 import { isClockShifted, getNow } from "@/lib/clock";
+import { cloudStatus, loadCloud, onCloudStatus, saveGame } from "@/lib/cloudSave";
 import Badges from "./Badges";
 import Catalog, { isNew } from "./Catalog";
 import Celebrate from "./Celebrate";
@@ -36,6 +37,24 @@ export default function App() {
   const toggleLights = useGame((s) => s.toggleLights);
   useReminders();
 
+  const cloud = useSyncExternalStore(onCloudStatus, cloudStatus, cloudStatus);
+  useEffect(() => {
+    // Start from the cloud save if there is one, then save every change from here on.
+    let unsub = () => {};
+    let alive = true;
+    loadCloud().then((g) => {
+      if (!alive) return;
+      if (g) useGame.getState().replace(g);
+      useGame.getState().tick();
+      if (!g) saveGame(useGame.getState().game);
+      unsub = useGame.subscribe((s, prev) => s.game !== prev.game && saveGame(s.game));
+    });
+    return () => {
+      alive = false;
+      unsub();
+    };
+  }, []);
+
   useEffect(() => {
     tick();
     const id = setInterval(tick, 30_000);
@@ -48,6 +67,9 @@ export default function App() {
   }, [tick]);
 
   const freshCount = CATALOG.filter((c) => isNew(game, c)).length;
+
+  if (cloud.mode === "loading")
+    return <div className="p-8 text-center font-pixel text-xs text-white">Loading your save…</div>;
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-[720px] flex-col gap-3 px-4 pb-28 pt-[max(12px,env(safe-area-inset-top))]">
