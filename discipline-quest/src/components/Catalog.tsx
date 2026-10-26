@@ -41,7 +41,7 @@ export function previewFor(item: CatalogItem, locked = false) {
 }
 
 export function isNew(s: GameState, item: CatalogItem) {
-  return !s.seen.includes(item.id) && levelFor(s.xp).level >= item.level && !owns(s, item.id);
+  return item.category !== "rare" && !s.seen.includes(item.id) && levelFor(s.xp).level >= item.level && !owns(s, item.id);
 }
 
 const REASON: Record<Exclude<BuyResult, "ok" | "owned" | "not-for-sale">, (i: CatalogItem) => string> = {

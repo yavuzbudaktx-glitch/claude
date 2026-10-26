@@ -170,7 +170,7 @@ export interface Body {
 }
 
 export interface GameState {
-  version: 5;
+  version: 6;
   startDate: string;
   /** Last calendar date whose misses/rewards have been applied. */
   lastSettled: string | null;
@@ -198,4 +198,18 @@ export interface GameState {
   gloomy: boolean;
   settings: Settings;
   log: GameEvent[];
+  /** This month's challenge, once you've picked one. */
+  challenge: ActiveChallenge | null;
+  /** Past months: which challenge, and whether you won it. */
+  challengeHistory: { month: string; id: string; won: boolean }[];
+}
+
+export interface ActiveChallenge {
+  /** "2026-11" */
+  month: string;
+  id: string;
+  startedOn: string;
+  /** Days you ticked (self-reported challenges). */
+  ticks: string[];
+  won?: boolean;
 }

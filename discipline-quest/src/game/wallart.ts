@@ -354,6 +354,32 @@ export function drawWallItem(iso: Iso, id: string, at: At, wall: "L" | "R", u0: 
       break;
     }
 
+    // ---- monthly prizes ----
+    case "rare-jun": {
+      // champion belt: black leather strap, big gold centre plate, side plates
+      Q(u, 44, u + 24, 49, "#1d1d1f", "#000000");
+      for (const a of [3, 18]) {
+        Q(u + a, 43.5, u + a + 3.5, 49.5, "#c9a227", "#7a5f12");
+        PX(u + a + 1.2, 46, "#7a1f2b");
+      }
+      CIRC(u + 12, 46.5, 6, "#c9a227", "#7a5f12", 8);
+      CIRC(u + 12, 46.5, 4.4, "#ffe48a", undefined, 8);
+      CIRC(u + 12, 46.5, 2.4, "#c0392b", undefined, 8);
+      PX(u + 11.5, 47.5, "#ffffff");
+      break;
+    }
+    case "rare-jul":
+      // a glowing crescent and star on a dark panel
+      Q(u, 39, u + 18, 57, "#16141a", "#0a090c");
+      for (let a = 0.6; a < 5.6; a += 0.08) {
+        const x = u + 7 + Math.cos(a + Math.PI / 2) * 6, z = 48 + Math.sin(a + Math.PI / 2) * 6;
+        iso.blob(at(x, z), 1.2, 1.2, g("#ffd23f40"));
+      }
+      for (let a = 0.6; a < 5.6; a += 0.05) PX(u + 7 + Math.cos(a + Math.PI / 2) * 6, 48 + Math.sin(a + Math.PI / 2) * 6, "#fff3b0");
+      for (let a = 1.1; a < 5.1; a += 0.05) PX(u + 9 + Math.cos(a + Math.PI / 2) * 4.8, 48.5 + Math.sin(a + Math.PI / 2) * 4.8, "#fff3b0");
+      for (const [du, dz] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) PX(u + 15 + du, 50 + dz, "#fff3b0");
+      break;
+
     // ---- gym ----
     case "p-lightweight":
       Q(u, 30, u + 26, 58, "#ffd23f", "#8a6a00");

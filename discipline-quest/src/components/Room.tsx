@@ -452,6 +452,14 @@ const QUIPS: Record<string, string> = {
   tasbih: "SubhanAllah ×33.",
   platetree: "Plates, sorted by colour. Very pro.",
   rehal: "Quran time.",
+  "rare-feb": "Galata. Home sweet home.",
+  "rare-mar": "SubhanAllah ×99.",
+  "rare-apr": "One day, insha'Allah.",
+  "rare-may": "Earned, not bought.",
+  "rare-sep": "Mini me, mini car.",
+  "rare-oct": "Çay time.",
+  "rare-nov": "Time well spent.",
+  "rare-dec": "The world, in glass.",
   fan: "Spinning. Like my thoughts at 2am.",
   cactus: "Don't hug it.",
   bonsai: "Snip snip.",
@@ -1053,15 +1061,6 @@ export default function Room({
       }
       ctx.clearRect(0, 0, spec.W, spec.H);
       ctx.drawImage(bg, 0, 0);
-      // soft contact shadows under furniture standing on the floor
-      ctx.fillStyle = "rgba(20,14,30,0.16)";
-      for (const pc of L.layout.pieces) {
-        if (pc.flat || pc.lift || (L.ghost && pc.place.itemId === L.ghost.itemId)) continue;
-        const [cx, cy] = tileScreen(spec, pc.place.tx + pc.w / 2, pc.place.ty + pc.d / 2);
-        ctx.beginPath();
-        ctx.ellipse(cx, cy + 1.5 * S, (pc.w + pc.d) * 6.6 * S, (pc.w + pc.d) * 3.3 * S, 0, 0, Math.PI * 2);
-        ctx.fill();
-      }
 
       const view: AvatarView = {
         fx: a.fx,
@@ -1801,6 +1800,7 @@ const GLOWS: Record<string, [number, number, number, string]> = {
   vending: [8, 8, 30, "rgba(255,120,120,A)"],
   console: [8, 8, 20, "rgba(120,190,255,A)"],
   hottub: [16, 16, 30, "rgba(95,211,232,A)"],
+  "rare-jan": [8, 8, 30, "rgba(255,190,90,A)"],
 };
 
 const NOTE = ["..##", "..#.", "..#.", "###.", "##.."];

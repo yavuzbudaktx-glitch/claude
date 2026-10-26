@@ -14,6 +14,7 @@ export const RULES = {
   bed: { coins: 15, xp: 15, missCoins: 15, opensHour: 21 },
   jumuah: { coins: 20, xp: 20 },
   ramadan: { fastCoins: 20, fastXp: 25, taraweehCoins: 15, taraweehXp: 15 },
+  challenge: { coins: 300, xp: 300 },
   wakeEarliestHour: 4,
   /** After this hour a missed wake-up can't be checked in any more (it's settled at midnight). */
   wakeLatestHour: 12,

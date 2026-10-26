@@ -2,6 +2,11 @@
 import { BADGES, type BadgeFamily } from "@/engine/badges";
 import { renderBadge } from "@/game/sprites/badges";
 import { useGame } from "@/store/useGame";
+import { ITEMS, RARE_BY_MONTH } from "@/engine/catalog";
+import { monthOf } from "@/engine/challenges";
+import { dateKey } from "@/engine/dates";
+import { getNow } from "@/lib/clock";
+import { previewFor } from "./Catalog";
 import PixelIcon from "./PixelIcon";
 import RasterCanvas from "./RasterCanvas";
 
@@ -13,7 +18,65 @@ const FAMILIES: { id: BadgeFamily; label: string }[] = [
   { id: "general", label: "General" },
 ];
 
+/** A year of monthly prizes: won ones shine, missed ones are greyed out, future ones are a mystery. */
+function TrophyWall() {
+  const game = useGame((s) => s.game);
+  const now = getNow();
+  const year = now.getFullYear();
+  const thisMonth = monthOf(dateKey(now));
+  const wins = game.challengeHistory.filter((h) => h.won).length + (game.challenge?.won ? 1 : 0);
+  return (
+    <section className="panel">
+      <div className="panel-head">
+        <span className="flex items-center gap-1.5">
+          <PixelIcon name="star" size={12} color="#fff" /> Trophy wall {year}
+        </span>
+        <span className="normal-case">{wins} won</span>
+      </div>
+      <div className="grid grid-cols-4 gap-2 p-3 sm:grid-cols-6">
+        {Array.from({ length: 12 }, (_, k) => {
+          const month = `${year}-${String(k + 1).padStart(2, "0")}`;
+          const item = ITEMS[RARE_BY_MONTH[k + 1]];
+          const past = game.challengeHistory.find((h) => h.month === month);
+          const live = game.challenge?.month === month ? game.challenge : null;
+          const won = !!past?.won || !!live?.won;
+          // a month only counts as missed if you had a challenge running in it
+          const state = won ? "won" : month < thisMonth ? (past ? "missed" : "none") : month === thisMonth ? "now" : "later";
+          const label = new Date(year, k, 1).toLocaleString("en", { month: "short" });
+          return (
+            <div
+              key={month}
+              className={`flex flex-col items-center rounded-xl border-2 border-[var(--line)] p-1.5 text-center ${state === "won" ? "shine bg-[linear-gradient(135deg,#fff7d6,#f6e3a1)]" : state === "now" ? "bg-white" : "bg-[var(--panel-2)]"}`}
+            >
+              <div className="flex h-11 w-full items-center justify-center">
+                {state === "later" || state === "none" ? (
+                  <span className="font-pixel text-[14px] text-[var(--muted)]">{state === "none" ? "–" : "?"}</span>
+                ) : (
+                  <RasterCanvas make={() => previewFor(item, !won)} deps={[item.id, won]} className="max-h-full max-w-full" style={{ width: 44, height: 44 }} />
+                )}
+              </div>
+              <div className="font-pixel text-[7px]">{label.toUpperCase()}</div>
+              <div className={`text-[11px] font-bold leading-tight ${won ? "text-[var(--good)]" : "text-[var(--muted)]"}`}>
+                {state === "won" ? item.name : state === "missed" ? "Missed" : state === "now" ? (live ? "In progress" : "Pick one") : state === "none" ? "—" : "Locked"}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 export default function Badges() {
+  return (
+    <div className="space-y-3">
+      <TrophyWall />
+      <BadgeList />
+    </div>
+  );
+}
+
+function BadgeList() {
   const game = useGame((s) => s.game);
   const earned = BADGES.filter((b) => game.badges[b.id]).length;
   return (

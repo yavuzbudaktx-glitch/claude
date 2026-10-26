@@ -108,7 +108,7 @@ export const useGame = create<Store>()(
     }),
     {
       name: "discipline-quest",
-      version: 5,
+      version: 6,
       storage: createJSONStorage(() => localStorage),
       partialize: (s) => ({ game: s.game }),
       migrate: (persisted) => {
@@ -119,7 +119,7 @@ export const useGame = create<Store>()(
         const p = persisted as { game?: GameState } | undefined;
         if (!p?.game) return current;
         // Saves written by v1 code without the persist version bump still need upgrading.
-        return { ...current, game: (p.game as { version: number }).version === 5 ? p.game : migrate(p.game, getNow()) };
+        return { ...current, game: (p.game as { version: number }).version === 6 ? p.game : migrate(p.game, getNow()) };
       },
     },
   ),

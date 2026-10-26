@@ -1,4 +1,4 @@
-import { Raster, gridRaster, paintGrid, rgba, scale2x } from "../raster";
+import { Raster, gridRaster, paintGrid, scale2x } from "../raster";
 
 export type Facing = "front" | "back";
 export type Pose =
@@ -88,22 +88,22 @@ const HAIR_TOP = [
   "KHHHHHHHHHHHHHHHHK",
 ];
 
-/** Front head with the face left blank: the 2× face is painted on after upscaling. */
+/** Front head with the face left blank: the 2× face is painted on after upscaling. Flat skin, a hint of ear, a soft jaw line. */
 function headBlank(): string[] {
   return [
     ...HAIR_TOP,
     "KdHHHHHHHSSSSSHHHK",
     "KdHHHHSSSSSSSSSSHK",
     "KHHHHSSSSSSSSSSSSK",
-    "KHHHsSSSSSSSSSSSSK",
-    "KHsrsSSSSSSSSSSSSK",
-    "KHsrsSSSSSSSSsSSSK",
-    ".KHssSSSSSSSSSSSSK",
-    ".KHsSSSSSSSSSSSSSK",
-    "..KTsSSSSSSSSSSSK.",
-    "..KTTsSSSSSSSSTTK.",
-    "...KTTTSSSSSTTTK..",
-    "....KKTTTTTTTKK...",
+    "KHHHSSSSSSSSSSSSSK",
+    "KHsSSSSSSSSSSSSSSK",
+    "KHSSSSSSSSSSSSSSSK",
+    ".KHSSSSSSSSSSSSSSK",
+    ".KHSSSSSSSSSSSSSsK",
+    "..KsSSSSSSSSSSSsK.",
+    "..KsSSSSSSSSSSSsK.",
+    "...KsSSSSSSSSSsK..",
+    "....KKssSSSssKK...",
     "......KKKKKKK.....",
   ];
 }
@@ -465,60 +465,42 @@ function renderAvatar1x(facing: Facing, pose: Pose, outfit: OutfitId, body: Body
   return { base: r, props, headDy, mood, front };
 }
 
-// ---------- the 2× face ----------
+// ---------- the 2× face: classic Habbo, clean ----------
 
 type Grid = string[];
+/** [left eye, right eye] for each mood. Dot eyes with a white glint. */
 const EYES: Record<Mood, [Grid, Grid]> = {
-  neutral: [[".LLLL.", "LWeEWL", ".WEEW.", "..ss.."], ["LLLL.", "WeEWL", "WEEW.", ".ss.."]],
-  happy: [["......", ".LLLL.", "L....L", "......"], [".....", ".LLL.", "L...L", "....."]],
-  sad: [["......", "LLLLLL", ".WEEW.", "..ss.."], [".....", "LLLLL", "WEEW.", ".ss.."]],
-  closed: [["......", "......", "LLLLLL", ".ssss."], [".....", ".....", "LLLLL", "ssss."]],
+  neutral: [["WE", "EE", "EE"], ["WE", "EE", "EE"]],
+  happy: [[".EE.", "E..E"], [".EE.", "E..E"]],
+  sad: [["WE", "EE", "EE"], ["WE", "EE", "EE"]],
+  closed: [["....", "EEEE"], ["....", "EEEE"]],
 };
+const EYE_X: Record<Mood, [number, number]> = { neutral: [15, 26], sad: [15, 26], happy: [14, 25], closed: [14, 25] };
 const BROWS: Record<Mood, [Grid, Grid]> = {
-  neutral: [["..BBBBBB", "BBBBBB.."], ["BBBBBB", "..BBBB"]],
-  happy: [[".BBBBBB.", "BB....BB"], [".BBBB.", "BB..BB"]],
-  sad: [["......BB", "BBBBBB.."], ["BB....", "..BBBB"]],
-  closed: [["..BBBBBB", "BBBBBB.."], ["BBBBBB", "..BBBB"]],
+  neutral: [["BBBB"], ["BBBB"]],
+  happy: [["BBBB", "...."], ["BBBB", "...."]],
+  sad: [["..BB", "BB.."], ["BB..", "..BB"]],
+  closed: [["BBBB"], ["BBBB"]],
 };
 const MOUTH: Record<Mood, Grid> = {
-  neutral: [".MMMMMM.", "..mmmm.."],
-  happy: ["MMMMMMMM", "MWWWWWWM", ".MXXXXM.", "..MMMM.."],
-  sad: ["..MMMM..", ".M....M."],
-  closed: [".MMMMMM.", "..mmmm.."],
+  neutral: ["M....M", ".MMMM."],
+  happy: ["MMMMMM", "MWWWWM", ".MMMM."],
+  sad: [".MMMM.", "M....M"],
+  closed: ["M....M", ".MMMM."],
 };
-const NOSE: Grid = ["...s", "...s", "..ss", "..sr", ".rnr"];
+const FACE_P: Record<string, string> = { ...BODY, E: "#2a1a10", M: "#9a5040" };
 
-const same = (r: Raster, x: number, y: number, hex: string) => {
-  if (x < 0 || y < 0 || x >= r.w || y >= r.h) return false;
-  const [cr, cg, cb] = rgba(hex);
-  const i = (y * r.w + x) * 4;
-  return r.data[i] === cr && r.data[i + 1] === cg && r.data[i + 2] === cb && r.data[i + 3] === 255;
-};
-
-/** Paint eyes, brows, nose, mouth, stubble and skin highlights onto a 2× head whose top-left is (hx, hy). */
+/** Paint brows, eyes, nose and mouth onto a 2× head whose top-left is (hx, hy). */
 function paintFace(r: Raster, hx: number, hy: number, mood: Mood) {
-  const P = BODY;
-  // stubble texture: only on skin, along the jaw and upper lip
-  for (let y = 29; y < 41; y++)
-    for (let x = 6; x < 34; x++) {
-      const X = hx + x, Y = hy + y;
-      if (!(same(r, X, Y, P.S) || same(r, X, Y, P.s))) continue;
-      // a beard shadow: the jaw and upper lip take a slightly darker, cooler skin tone with a faint grain
-      const lip = y >= 30 && y <= 31 && x >= 18 && x <= 27;
-      const jaw = y >= 34 || (x < 12 && y >= 30) || lip;
-      if (!jaw) continue;
-      const h = (Math.imul(x + 31, 73856093) ^ Math.imul(y + 17, 19349663)) >>> 0;
-      r.set(X, Y, h % 100 < 14 ? "#cfa784" : same(r, X, Y, P.s) ? "#d2a986" : "#e0bb98");
-    }
-  // light on the forehead and the cheek nearest the light
-  for (const [x, y] of [[22, 16], [23, 16], [24, 16], [25, 16], [23, 17], [24, 17], [27, 27], [28, 27], [28, 26]]) if (same(r, hx + x, hy + y, P.S)) r.set(hx + x, hy + y, P.G);
-  paintGrid(r, BROWS[mood][0], P, hx + 13, hy + 19);
-  paintGrid(r, BROWS[mood][1], P, hx + 25, hy + 19);
-  paintGrid(r, EYES[mood][0], P, hx + 13, hy + 22);
-  paintGrid(r, EYES[mood][1], P, hx + 25, hy + 22);
-  paintGrid(r, NOSE, P, hx + 21, hy + 25);
-  paintGrid(r, MOUTH[mood], P, hx + 18, hy + 32);
-  if (mood === "sad") r.set(hx + 15, hy + 27, P.t);
+  const [lx, rx] = EYE_X[mood];
+  const by = mood === "happy" ? 18 : 19;
+  paintGrid(r, BROWS[mood][0], FACE_P, hx + 14, hy + by);
+  paintGrid(r, BROWS[mood][1], FACE_P, hx + 25, hy + by);
+  paintGrid(r, EYES[mood][0], FACE_P, hx + lx, hy + 22);
+  paintGrid(r, EYES[mood][1], FACE_P, hx + rx, hy + 22);
+  paintGrid(r, ["s.", "ss"], FACE_P, hx + 21, hy + 26);
+  paintGrid(r, MOUTH[mood], FACE_P, hx + 18, hy + 30);
+  if (mood === "sad") r.set(hx + 16, hy + 26, FACE_P.t);
 }
 
 /** Render one avatar frame at 2× (60×96). Mirroring for other directions happens at draw time. */

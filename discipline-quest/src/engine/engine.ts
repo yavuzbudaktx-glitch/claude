@@ -6,6 +6,7 @@ import {
   EQUIP_SLOT,
   GYM_TIERS,
   ITEMS,
+  RARE_BY_MONTH,
   REMOVED_REFUNDS,
   STARTERS,
   TIER_ORDER,
@@ -16,6 +17,7 @@ import { addDays, dateKey, daysBetween, minutesOfDay, parseHM, parseKey } from "
 import { PREFERRED, autoPlace, checkPlace, roomN, settle, spaceOf } from "./placement";
 import { autoWall, checkWall } from "./wall";
 import { QUEST_BY_ID, questsFor } from "./quests";
+import { CHALLENGE_BY_ID, monthOf, offersFor, progressOf, targetFor } from "./challenges";
 import { RULES, levelFor } from "./rules";
 import {
   PRAYERS,
@@ -63,7 +65,7 @@ function freshSince(today: string) {
 export function createInitialState(now: Date): GameState {
   const today = dateKey(now);
   const s: GameState = {
-    version: 5,
+    version: 6,
     startDate: today,
     lastSettled: addDays(today, -1),
     days: { [today]: emptyDay(today) },
@@ -86,6 +88,8 @@ export function createInitialState(now: Date): GameState {
     gloomy: false,
     settings: { wakeTarget: "08:30", wakeGraceMin: 15, bedtime: "23:30", quranGoal: 2, ramadan: false, lights: true, notifications: false, sound: false },
     log: [{ at: now.getTime(), text: "Your room is ready. Stay disciplined.", kind: "info" }],
+    challenge: null,
+    challengeHistory: [],
   };
   s.days[today].quests = questsFor(today, s).map((q) => q.id);
   return s;
@@ -377,8 +381,59 @@ export function ensureToday(state: GameState, now: Date): GameState {
   if (pending.length) s.lastSettled = pending[pending.length - 1];
   if (!s.days[today]) s.days[today] = emptyDay(today);
   if (!s.days[today].quests) s.days[today].quests = questsFor(today, s).map((q) => q.id);
+  rollChallenge(s, today);
+  checkChallenge(s, now);
   awardBadges(s, now);
   return s;
+}
+
+// ---------- monthly challenge ----------
+
+/** A new month files last month's challenge away (won or not; missing one costs nothing). */
+function rollChallenge(s: GameState, today: string) {
+  s.challengeHistory ??= [];
+  if (s.challenge && s.challenge.month < monthOf(today)) {
+    s.challengeHistory.push({ month: s.challenge.month, id: s.challenge.id, won: !!s.challenge.won });
+    s.challenge = null;
+  }
+}
+
+/** Pay out the moment the target is reached: coins, XP and the month's rare item. */
+function checkChallenge(s: GameState, now: Date) {
+  const c = s.challenge;
+  const def = c && CHALLENGE_BY_ID[c.id];
+  if (!c || !def || c.won) return;
+  if (progressOf(s, def, c.month, c.startedOn, c.ticks, dateKey(now)) < targetFor(def, c.month, c.startedOn)) return;
+  c.won = true;
+  earn(s, now, RULES.challenge.coins, RULES.challenge.xp, `Monthly challenge won: ${def.name}`, "good");
+  const prize = RARE_BY_MONTH[Number(c.month.slice(5, 7))];
+  if (prize) grant(s, now, prize, true);
+}
+
+export function challengeOffers(s: GameState, now: Date) {
+  const last = s.challengeHistory?.[s.challengeHistory.length - 1]?.id;
+  return offersFor(monthOf(dateKey(now)), last);
+}
+
+export function pickChallenge(state: GameState, now: Date, id: string): GameState {
+  const month = monthOf(dateKey(now));
+  if (state.challenge?.month === month || !challengeOffers(state, now).some((c) => c.id === id)) return state;
+  return withToday(state, now, (s) => {
+    s.challenge = { month, id, startedOn: dateKey(now), ticks: [] };
+    s.log.unshift({ at: now.getTime(), text: `Took on this month's challenge: ${CHALLENGE_BY_ID[id].name}`, kind: "info" });
+  });
+}
+
+/** Mark (or unmark) today for a self-reported challenge. A won challenge stays won. */
+export function tickChallenge(state: GameState, now: Date, done: boolean): GameState {
+  const c = state.challenge;
+  if (!c || CHALLENGE_BY_ID[c.id]?.kind !== "tick" || c.month !== monthOf(dateKey(now))) return state;
+  const today = dateKey(now);
+  if (c.ticks.includes(today) === done) return state;
+  return withToday(state, now, (s) => {
+    const t = s.challenge!.ticks;
+    s.challenge!.ticks = done ? [...t, today] : t.filter((d) => d !== today);
+  });
 }
 
 function withToday(state: GameState, now: Date, fn: (s: GameState, day: DayLog) => void): GameState {
@@ -386,6 +441,7 @@ function withToday(state: GameState, now: Date, fn: (s: GameState, day: DayLog) 
   const today = dateKey(now);
   fn(s, s.days[today]);
   syncQuests(s, today, now);
+  checkChallenge(s, now);
   bumpBest(s);
   awardBadges(s, now);
   return s;
@@ -753,7 +809,7 @@ export function liveStreaks(s: GameState, now: Date) {
 
 export function isGameState(v: unknown): boolean {
   const o = v as { version?: number; coins?: unknown; days?: unknown; inventory?: unknown };
-  return !!o && [1, 2, 3, 4, 5].includes(o.version ?? 0) && typeof o.coins === "number" && typeof o.days === "object" && Array.isArray(o.inventory);
+  return !!o && [1, 2, 3, 4, 5, 6].includes(o.version ?? 0) && typeof o.coins === "number" && typeof o.days === "object" && Array.isArray(o.inventory);
 }
 
 /** Bring any saved state (v1, v2 or v3) up to the current shape without losing progress. */
@@ -853,6 +909,11 @@ export function migrate(raw: any, now: Date): GameState {
     s.equipped = { ...s.equipped, gym: "" };
     s.version = 5;
     if ((s.stats?.gymWeeksDone ?? 0) > 0) unlockGym(s as GameState, now);
+  }
+  if (s.version === 5) {
+    s.challenge = null;
+    s.challengeHistory = [];
+    s.version = 6;
   }
   // Fill anything a later field might be missing.
   s.equipped = { ...DEFAULT_EQUIPPED, ...s.equipped };

@@ -1,8 +1,12 @@
 "use client";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { CAR_UNLOCKS, ITEMS } from "@/engine/catalog";
+import { CAR_UNLOCKS, ITEMS, RARE_BY_MONTH } from "@/engine/catalog";
+import { CHALLENGE_BY_ID, challengeDays, monthOf, progressOf, targetFor } from "@/engine/challenges";
 import {
   BODY_NAMES,
+  challengeOffers,
+  pickChallenge,
+  tickChallenge,
   BODY_THRESHOLDS,
   activeCustom,
   bedCheckIn,
@@ -37,6 +41,7 @@ import Dialog from "./Dialog";
 import PixelIcon, { type IconName } from "./PixelIcon";
 import RasterCanvas from "./RasterCanvas";
 import UrgeModal from "./UrgeModal";
+import { previewFor } from "./Catalog";
 import { renderAvatar, type BodyStage, type OutfitId } from "@/game/sprites/avatar";
 
 export function Card({ title, icon, right, children }: { title: string; icon?: IconName; right?: ReactNode; children: ReactNode }) {
@@ -506,11 +511,95 @@ export function cardOrder(hour: number): CardId[] {
   return ["bed", "prayers", "diet", "quran", "purity", "habits", "gym", "wake"];
 }
 
+/** This month's challenge: pick one of three, then watch it fill (or tick it daily). Failing costs nothing. */
+export function ChallengeCard() {
+  const { game, act, now } = useToday();
+  const today = dateKey(now);
+  const month = monthOf(today);
+  const c = game.challenge?.month === month ? game.challenge : null;
+  const prize = ITEMS[RARE_BY_MONTH[now.getMonth() + 1]];
+  const monthName = now.toLocaleString("en", { month: "long" });
+  const prizeArt = prize && (
+    <div className="flex items-center gap-2.5 rounded-xl border-2 border-[var(--line)] bg-[linear-gradient(135deg,#fff7d6,#f6e3a1)] p-2">
+      <div className="shine grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-white/70">
+        <RasterCanvas make={() => previewFor(prize)} deps={[prize.id]} className="max-h-full max-w-full" style={{ width: 44, height: 44 }} />
+      </div>
+      <div className="min-w-0 text-[13px] leading-snug">
+        <div className="font-pixel text-[8px] text-[#8a6a00]">{monthName.toUpperCase()} PRIZE</div>
+        <b>{prize.name}</b> + {RULES.challenge.coins} coins. Only this month.
+      </div>
+    </div>
+  );
+  if (!c) {
+    const offers = challengeOffers(game, now);
+    return (
+      <Card title={`${monthName} challenge`} icon="star">
+        <p className="text-[14px]">Pick one for the rest of the month. No penalty if you miss it.</p>
+        {prizeArt}
+        <div className="space-y-2">
+          {offers.map((o) => (
+            <div key={o.id} className="flex items-center gap-2 rounded-xl border-2 border-[var(--line)] bg-white p-2.5">
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <b className="text-[15px]">{o.name}</b>
+                  <span className={`chip text-[11px] ${o.kind === "auto" ? "bg-[#e3f1ff]" : "bg-[#efe6ff]"}`}>{o.kind === "auto" ? "tracked for you" : "tick it daily"}</span>
+                </div>
+                <div className="text-[13px] text-[var(--muted)]">
+                  {o.desc} Target: {targetFor(o, month, today)} {o.unit}.
+                </div>
+              </div>
+              <button className="btn btn-gold shrink-0" onClick={() => act((s, n) => pickChallenge(s, n, o.id), { kind: "habit", say: `Challenge accepted: ${o.name}!` })}>
+                Take it
+              </button>
+            </div>
+          ))}
+        </div>
+      </Card>
+    );
+  }
+  const def = CHALLENGE_BY_ID[c.id];
+  const target = targetFor(def, c.month, c.startedOn);
+  const prog = Math.min(target, progressOf(game, def, c.month, c.startedOn, c.ticks, today));
+  const left = challengeDays(c.month, today).length - 1;
+  const ticked = c.ticks.includes(today);
+  return (
+    <Card title={`${monthName} challenge`} icon="star" right={<span className="normal-case">{c.won ? "WON" : `${left}d left`}</span>}>
+      <div className="flex items-baseline justify-between gap-2">
+        <b className="text-[16px]">{def.name}</b>
+        <span className="font-pixel text-[10px] tabular-nums">
+          {prog}/{target}
+        </span>
+      </div>
+      <p className="text-[13px] text-[var(--muted)]">{def.desc}</p>
+      <div className="bar">
+        <div
+          className={`h-full rounded-full transition-[width] duration-700 ${c.won ? "bg-[linear-gradient(180deg,#ffe48a,#e8b931)]" : "bg-[linear-gradient(180deg,#5cc263,#3f9e45)]"}`}
+          style={{ width: `${(prog / target) * 100}%` }}
+        />
+      </div>
+      {c.won ? (
+        <p className="text-[14px] font-extrabold text-[var(--good)]">Won! The {prize?.name.toLowerCase()} is in your room. Next challenge on the 1st.</p>
+      ) : def.kind === "tick" ? (
+        <button
+          className={`btn w-full py-2 ${ticked ? "btn-green" : "btn-gold"}`}
+          onClick={() => act((s, n) => tickChallenge(s, n, !ticked), ticked ? undefined : { kind: "habit", say: `${def.name} ✓` })}
+        >
+          {ticked ? "Done today ✓" : `Did it today`}
+        </button>
+      ) : (
+        <p className="text-[13px] text-[var(--muted)]">Tracked automatically from your check-ins.</p>
+      )}
+      {!c.won && prizeArt}
+    </Card>
+  );
+}
+
 export default function Today() {
   const now = useNow();
   return (
     <div className="space-y-3">
       <TodaySummary />
+      <ChallengeCard />
       <RamadanCard />
       {cardOrder(now.getHours()).map((id) => {
         const C = CARDS[id];

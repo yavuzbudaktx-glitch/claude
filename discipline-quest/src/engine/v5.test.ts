@@ -104,7 +104,7 @@ describe("v4 → v5 migration", () => {
     (s as { version: number }).version = 4;
     s.coins = 0;
     const m = migrate(s, at("12:00"));
-    expect(m.version).toBe(5);
+    expect(m.version).toBe(6);
     expect(m.coins).toBe(410 + 50);
     expect(m.inventory.map((i) => i.itemId)).toEqual(["punchbag"]);
     expect(m.placements.some((p) => p.itemId === "punchbag" || p.itemId === "lantern")).toBe(false);

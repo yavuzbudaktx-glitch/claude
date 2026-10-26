@@ -16,6 +16,7 @@ export type Category =
   | "pet"
   | "gym"
   | "gymroom"
+  | "rare"
   | "car";
 
 /** Categories where you own several but equip exactly one. */
@@ -66,6 +67,8 @@ export interface CatalogItem {
   /** Small things can stand on top of furniture with a surface (height of its top in world units). */
   surface?: number;
   small?: boolean;
+  /** Monthly challenge prize: 1 = January … 12 = December. */
+  rareMonth?: number;
 }
 
 /** Everything bought got cheaper when the catalog tripled, so ~everything still unlocks in about 4 months. */
@@ -196,6 +199,20 @@ export const CATALOG: CatalogItem[] = [
   I("p-nopain", "\"Stay Hard\" Neon", "gym", 450, 11, "Red neon for the last rep.", W(28, { space: "gym", gymVisits: 25 })),
   I("gymmirror", "Mirror Wall", "gym", 600, 10, "Check form. Mostly check the pump.", W(48, { space: "gym", gymVisits: 25 })),
 
+  // Monthly challenge prizes: one per calendar month, never for sale
+  I("rare-jan", "Ottoman Lamp", "rare", null, 1, "January prize. Pierced brass, warm glow.", S(1, 1, { small: true, rareMonth: 1 })),
+  I("rare-feb", "Galata Tower Model", "rare", null, 1, "February prize. Istanbul on your shelf.", S(1, 1, { small: true, rareMonth: 2 })),
+  I("rare-mar", "Gold Tasbih", "rare", null, 1, "March prize. 99 golden beads.", S(1, 1, { small: true, rareMonth: 3 })),
+  I("rare-apr", "Kaaba Model", "rare", null, 1, "April prize. Black and gold, on a marble base.", S(1, 1, { small: true, rareMonth: 4 })),
+  I("rare-may", "Golden Dumbbell", "rare", null, 1, "May prize. A trophy you can't lift. Shiny though.", S(1, 1, { small: true, rareMonth: 5 })),
+  I("rare-jun", "Champion Belt", "rare", null, 1, "June prize. Undisputed.", W(24, { rareMonth: 6 })),
+  I("rare-jul", "Crescent Neon", "rare", null, 1, "July prize. A glowing hilal and star.", W(18, { rareMonth: 7 })),
+  I("rare-aug", "Golden Rug", "rare", null, 1, "August prize. Gold and ivory, very sultan.", S(2, 2, { flat: true, rareMonth: 8 })),
+  I("rare-sep", "Ioniq 5 Model", "rare", null, 1, "September prize. A tiny white Ioniq for the desk.", S(1, 1, { small: true, rareMonth: 9 })),
+  I("rare-oct", "Turkish Tea Set", "rare", null, 1, "October prize. Tulip glasses on a silver tray.", S(1, 1, { small: true, rareMonth: 10 })),
+  I("rare-nov", "Hourglass", "rare", null, 1, "November prize. Time well spent.", S(1, 1, { small: true, rareMonth: 11 })),
+  I("rare-dec", "Crystal Globe", "rare", null, 1, "December prize. A glass world that catches the light.", S(1, 1, { small: true, rareMonth: 12 })),
+
   // Wallpapers
   I("wp-sky", "Sky Blue Walls", "wallpaper", null, 1, "The original.", { starter: true }),
   I("wp-sand", "Desert Sand", "wallpaper", 80, 2, "Warm and calm."),
@@ -270,6 +287,8 @@ export const CAR_UNLOCKS: { id: ItemId; cleanDays: number }[] = [
 ];
 
 export const CAR_ORDER: ItemId[] = ["car-mini", "car-q50", "car-ioniq5"];
+
+export const RARE_BY_MONTH: Record<number, ItemId> = Object.fromEntries(CATALOG.filter((c) => c.rareMonth).map((c) => [c.rareMonth, c.id]));
 
 /** Items that no longer exist, with the coins refunded if you owned them. */
 export const REMOVED_REFUNDS: Record<string, number> = {

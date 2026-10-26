@@ -4,6 +4,7 @@ import { Iso, S, TILE, makeSprite, type P3, type Sprite } from "./iso";
 import { GYM } from "./pieces/gym";
 import { HOME } from "./pieces/home";
 import { LIVING } from "./pieces/living";
+import { RARE } from "./pieces/rare";
 import type { Draw } from "./pieces/util";
 import { Raster, shade } from "./raster";
 import { drawWallItem } from "./wallart";
@@ -55,7 +56,7 @@ export const MESS: { id: string; tx: number; ty: number }[] = [
   { id: "can", tx: 4, ty: 5 },
 ];
 
-const DRAW: Record<string, Draw> = { ...HOME, ...LIVING, ...GYM };
+const DRAW: Record<string, Draw> = { ...HOME, ...LIVING, ...GYM, ...RARE };
 
 /** Piece keys may carry a variant: "prayerrug:rug-red", "kitchen:wall-open". */
 export function buildPiece(key: string): Sprite {
@@ -218,12 +219,6 @@ export function buildBackground({ spec, wallpaper, floor, hour, wallItems, curta
 
   iso.box(0, 0, -6, L, L, 6, fl.slab, { top: fl.slab, outline: shade(fl.slab, -0.5) });
   iso.paint((x, y) => [x, y, 0], L, L, fl.at);
-  // soft shading where the floor meets the walls
-  for (let d = 0; d < 6; d += 0.5 / S) {
-    const a = Math.round(40 * (1 - d / 6)).toString(16).padStart(2, "0");
-    iso.line([d, d, 0], [d, L, 0], `#000000${a}`);
-    iso.line([d, d, 0], [L, d, 0], `#000000${a}`);
-  }
 
   const sky = skyColor(hour);
   const wallAt = (wall: "L" | "R") => (u: number, z: number): P3 => (wall === "L" ? [0, u, z] : [u, 0, z]);

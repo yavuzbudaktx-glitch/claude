@@ -17,6 +17,7 @@ export interface BadgeDef {
 }
 
 const lvl = (s: GameState) => levelFor(s.xp).level;
+const wins = (s: GameState) => (s.challengeHistory ?? []).filter((h) => h.won).length + (s.challenge?.won ? 1 : 0);
 const owned = (s: GameState) => s.inventory.length;
 const has = (s: GameState, id: string) => (s.inventory.some((i) => i.itemId === id) ? 1 : 0);
 const B = (
@@ -71,6 +72,10 @@ export const BADGES: BadgeDef[] = [
   B("perfect-7", "Perfect Week", "general", "star", "7 perfect days in a row.", 300, 300, (s) => [s.best.perfect, 7]),
   B("quests-10", "Quest Taker", "general", "scroll", "Finish 10 daily quests.", 50, 50, (s) => [s.stats.quests, 10]),
   B("quests-100", "Quest Master", "general", "scroll", "Finish 100 daily quests.", 300, 250, (s) => [s.stats.quests, 100]),
+  B("challenge-1", "Challenger", "general", "crown", "Win a monthly challenge.", 100, 100, (s) => [wins(s), 1]),
+  B("challenge-3", "Hat Trick", "general", "crown", "Win 3 monthly challenges.", 250, 200, (s) => [wins(s), 3]),
+  B("challenge-6", "Half a Year", "general", "crown", "Win 6 monthly challenges.", 500, 400, (s) => [wins(s), 6]),
+  B("challenge-12", "Twelve for Twelve", "general", "crown", "Win 12 monthly challenges: every rare prize.", 1200, 1000, (s) => [wins(s), 12]),
   B("level-5", "Level 5", "general", "star", "Reach level 5.", 50, 0, (s) => [lvl(s), 5]),
   B("level-10", "Level 10", "general", "crown", "Reach level 10.", 150, 0, (s) => [lvl(s), 10]),
   B("level-20", "Level 20", "general", "crown", "Reach level 20.", 400, 0, (s) => [lvl(s), 20]),
