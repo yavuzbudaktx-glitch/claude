@@ -13,7 +13,8 @@ import PixelIcon, { type IconName } from "./PixelIcon";
 import Room, { type RoomTap } from "./Room";
 import Settings from "./Settings";
 import Stats from "./Stats";
-import Today, { DietCard, PrayersCard, WakeCard } from "./Today";
+import Garage from "./Garage";
+import Today, { BedtimeCard, DietCard, PrayersCard, WakeCard } from "./Today";
 import Wardrobe from "./Wardrobe";
 
 const TABS: { id: string; label: string; icon: IconName }[] = [
@@ -29,6 +30,8 @@ export default function App() {
   const game = useGame((s) => s.game);
   const [tab, setTab] = useState("today");
   const [sheet, setSheet] = useState<RoomTap | "settings" | null>(null);
+  const [scene, setScene] = useState<"room" | "garage">("room");
+  const [decorating, setDecorating] = useState(false);
   useReminders();
 
   useEffect(() => {
@@ -49,8 +52,27 @@ export default function App() {
       {isClockShifted() && <div className="chip self-start bg-[#ffe680]">Test clock: {getNow().toLocaleString()}</div>}
       <Hud onSettings={() => setSheet("settings")} />
       <div className="panel overflow-hidden">
+        <div className="flex items-center gap-1.5 border-b-2 border-black bg-[var(--chrome)] p-1.5">
+          {(["room", "garage"] as const).map((k) => (
+            <button
+              key={k}
+              className={`tab ${scene === k ? "bg-[var(--head)] text-white" : "bg-[#e6e2d6]"}`}
+              onClick={() => {
+                setScene(k);
+                setDecorating(false);
+              }}
+            >
+              {k === "room" ? "Room" : "Garage"}
+            </button>
+          ))}
+          {scene === "room" && (
+            <button className={`tab ml-auto flex items-center gap-1 ${decorating ? "bg-[var(--gold)]" : "bg-[#e6e2d6]"}`} onClick={() => setDecorating((d) => !d)}>
+              <PixelIcon name="home" size={12} /> {decorating ? "Decorating" : "Decorate"}
+            </button>
+          )}
+        </div>
         <div className="bg-[radial-gradient(ellipse_at_center,#2c3560,#1a1f3b)]">
-          <Room onTap={setSheet} />
+          {scene === "room" ? <Room onTap={setSheet} decorating={decorating} onDoneDecorating={() => setDecorating(false)} /> : <Garage />}
         </div>
       </div>
       {tab === "today" && <Today />}
@@ -67,6 +89,11 @@ export default function App() {
       {sheet === "wake" && (
         <Dialog title="Bed" onClose={() => setSheet(null)}>
           <WakeCard />
+        </Dialog>
+      )}
+      {sheet === "bed" && (
+        <Dialog title="Bedtime" onClose={() => setSheet(null)}>
+          <BedtimeCard />
         </Dialog>
       )}
       {sheet === "diet" && (

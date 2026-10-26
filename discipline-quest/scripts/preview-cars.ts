@@ -1,0 +1,12 @@
+import { writeFileSync, mkdirSync } from "node:fs";
+import { Raster } from "../src/game/raster";
+import { carSprite } from "../src/game/sprites/cars";
+import { toPNG } from "./png";
+mkdirSync(".preview", { recursive: true });
+const ids = ["car-mini", "car-q50", "car-ioniq5"];
+const sprites = ids.map(carSprite);
+const w = Math.max(...sprites.map((s) => s.r.w)) + 8;
+const h = Math.max(...sprites.map((s) => s.r.h)) + 8;
+const sheet = new Raster(w * 3, h);
+sprites.forEach((s, k) => sheet.blit(s.r, k * w + 4, 4));
+writeFileSync(".preview/cars3.png", toPNG(sheet, 5, [205, 212, 222]));

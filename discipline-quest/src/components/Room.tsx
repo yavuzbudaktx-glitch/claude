@@ -1,15 +1,20 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ITEMS } from "@/engine/catalog";
-import { dateKey, minutesOfDay, parseHM } from "@/engine/dates";
+import { bedWindow, canStore, isAsleep, wakeWindow } from "@/engine/engine";
+import { blockedSet, checkPlace, footprint, visiblePlacements, type PlaceCheck } from "@/engine/placement";
+import type { PlacedItem } from "@/engine/types";
 import { lockedCopy, type Sprite } from "@/game/iso";
 import type { Raster } from "@/game/raster";
-import { SPOTS, blockedTiles, buildBackground, buildPiece, findPath, screenToTile, tileScreen } from "@/game/furniture";
-import { roomLayout, sceneDrawables, type AvatarView, type CatView, type Drawable } from "@/game/scene";
-import { renderAvatar, renderSleepingHead, type Facing, type OutfitId, type Pose } from "@/game/sprites/avatar";
+import { buildBackground, buildPiece, findPath, screenToTile, tileScreen } from "@/game/furniture";
+import { pieceDepth, pieceKey, roomLayout, sceneDrawables, type AvatarView, type CatView, type Drawable, type PlacedPiece } from "@/game/scene";
+import { renderAvatar, renderSleepingHead, type BodyStage, type Facing, type OutfitId, type Pose } from "@/game/sprites/avatar";
 import { renderCat } from "@/game/sprites/cat";
 import { getNow } from "@/lib/clock";
+import { SFX } from "@/lib/sound";
 import { useGame, type RoomActionKind } from "@/store/useGame";
+import PixelIcon from "./PixelIcon";
+import RasterCanvas from "./RasterCanvas";
 
 type Tile = { tx: number; ty: number };
 
@@ -29,38 +34,49 @@ interface Cached {
 }
 const cache = (s: Sprite): Cached => ({ c: toCanvas(s.r), r: s.r, ax: s.ax, ay: s.ay });
 
-const ACTION_SPOT: Record<RoomActionKind, Tile> = {
-  pray: SPOTS.pray, wake: SPOTS.wake, late: SPOTS.wake, diet: SPOTS.diet, cheat: SPOTS.diet,
-  urge: SPOTS.center, habit: SPOTS.center, buy: SPOTS.center, equip: SPOTS.center, relapse: SPOTS.sad,
-};
+/** What the avatar does when you tap a piece. */
+interface Use {
+  /** Stand on the piece itself (sofa, treadmill, chair) instead of next to it. */
+  onTop?: boolean;
+  /** Draw the avatar behind the piece (sitting in a sofa/chair) or on top (treadmill). */
+  depthBias?: number;
+  lift?: number;
+  poses: Pose[];
+  frameMs: number;
+  durationMs: number;
+  /** "item" = turn toward the piece, "away" = face the way the seat faces, "front" = face you. */
+  face: "item" | "away" | "front";
+  say?: string;
+  effect?: string;
+}
 
-/** What the avatar does on arrival. Prayer plays a short takbir → qiyam → sitting sequence. */
-const ACTION_POSES: Record<RoomActionKind, Pose[]> = {
-  pray: ["takbir", "pray", "kneel"], wake: ["celebrate"], late: ["sad"], diet: ["celebrate"], cheat: ["sad"],
-  urge: ["celebrate"], habit: ["celebrate"], buy: ["celebrate"], equip: ["celebrate"], relapse: ["sad"],
+const USES: Record<string, Use> = {
+  treadmill: { onTop: true, depthBias: 0.2, lift: 4, poses: ["run1", "run2"], frameMs: 130, durationMs: 7000, face: "away", say: "Cardio!", effect: "belt" },
+  sofa: { onTop: true, depthBias: -0.1, poses: ["sit"], frameMs: 1000, durationMs: 6000, face: "away", say: "Taking five." },
+  chair: { onTop: true, depthBias: -0.1, poses: ["sit"], frameMs: 1000, durationMs: 5000, face: "away" },
+  desk: { poses: ["game"], frameMs: 1000, durationMs: 7000, face: "item", say: "One game. Then back to work.", effect: "pc" },
+  arcade: { poses: ["idle", "blink"], frameMs: 400, durationMs: 7000, face: "item", say: "High score!", effect: "arcade" },
+  clarinet: { poses: ["clarinet"], frameMs: 1000, durationMs: 7000, face: "front", say: "♪ ♫ ♪", effect: "notes" },
+  recordplayer: { poses: ["celebrate", "idle"], frameMs: 450, durationMs: 9000, face: "front", say: "Good song.", effect: "vinyl" },
+  coffee: { poses: ["drink"], frameMs: 1000, durationMs: 4000, face: "front", say: "Fresh coffee.", effect: "steam" },
+  gymbench: { poses: ["curl1", "curl2"], frameMs: 500, durationMs: 7000, face: "front", say: "Light weight!", effect: "" },
+  aquarium: { poses: ["idle"], frameMs: 1000, durationMs: 3500, face: "item", say: "Feeding the fish.", effect: "feed" },
+  bookshelf: { poses: ["read"], frameMs: 1000, durationMs: 7000, face: "front", say: "One more chapter.", effect: "" },
+  tv: { poses: ["sit"], frameMs: 1000, durationMs: 8000, face: "away", say: "Earned screen time.", effect: "tv" },
 };
 
 const QUIPS: Record<string, string> = {
-  arcade: "Streak first. Games later.",
-  tv: "Earned screen time only.",
-  bookshelf: "One more chapter.",
-  dumbbells: "Light weight!",
-  treadmill: "Cardio after Fajr.",
-  piano: "♪ ♫",
-  aquarium: "The fish never skip a day.",
-  ioniq5: "Fully charged.",
-  sofa: "Rest, then back to it.",
-  desk: "Build, don't scroll.",
-  chair: "Posture check.",
-  lamp: "Lights.",
   plant: "Watered.",
   monstera: "It grows like my streak.",
-  coffee: "Fuel for 08:30.",
   lantern: "Ramadan vibes.",
-  mabkhara: "Smells like Jumu'ah.",
-  tasbihshelf: "SubhanAllah ×33",
-  beanbag: "Comfy.",
   trophycase: "Earned, not bought. Well, bought too.",
+  rehal: "Bismillah.",
+};
+
+const ACTION_POSES: Record<RoomActionKind, Pose[]> = {
+  pray: ["takbir", "pray", "kneel"], wake: ["celebrate"], late: ["sad"], diet: ["celebrate"], cheat: ["sad"],
+  urge: ["celebrate"], habit: ["celebrate"], buy: ["celebrate"], equip: ["celebrate"], relapse: ["sad"],
+  gym: ["curl1", "curl2", "curl1", "curl2"], quran: ["read"], bed: ["blink"],
 };
 
 const SPEED = 2.6;
@@ -72,65 +88,124 @@ interface Actor {
   facing: Facing;
   mirror: boolean;
   pose: Pose;
-  queue: Pose[];
-  poseUntil: number;
-  pending: { poses: Pose[]; say: string } | null;
+  /** Poses to cycle through while busy. */
+  cycle: Pose[];
+  frameMs: number;
+  busyUntil: number;
+  /** After arriving: start this activity. */
+  pending: { use: Use; pieceId?: string; sitOn?: PlacedItem; faceTo?: Tile } | null;
+  depth?: number;
+  lift?: number;
   nextWander: number;
   nextBlink: number;
 }
 
-interface CatActor {
-  fx: number;
-  fy: number;
-  mirror: boolean;
-  moving: boolean;
-}
+export type RoomTap = "pray" | "wake" | "diet" | "bed";
 
-export type RoomTap = "pray" | "wake" | "diet";
-
-export default function Room({ onTap }: { onTap?: (t: RoomTap) => void }) {
+export default function Room({ onTap, decorating, onDoneDecorating }: { onTap?: (t: RoomTap) => void; decorating: boolean; onDoneDecorating: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const game = useGame((s) => s.game);
   const lastAction = useGame((s) => s.lastAction);
+  const place = useGame((s) => s.place);
+  const store = useGame((s) => s.store);
   const [bubble, setBubble] = useState<{ text: string; x: number; y: number; id: number } | null>(null);
   const [pops, setPops] = useState<{ id: number; text: string; good: boolean; x: number; y: number }[]>([]);
+  const [ghost, setGhost] = useState<PlacedItem | null>(null);
 
   const layout = useMemo(() => roomLayout(game), [game]);
-  const blocked = useMemo(() => blockedTiles(layout.pieces.map((p) => p.place)), [layout]);
-  const now = getNow();
-  const today = game.days[dateKey(now)];
-  const deadline = parseHM(game.settings.wakeTarget) + game.settings.wakeGraceMin;
-  const asleep = !!today && today.wake === "pending" && minutesOfDay(now) < deadline;
+  const blocked = useMemo(() => blockedSet(visiblePlacements(game)), [game]);
+  const asleep = isAsleep(game, getNow());
   const hasCat = game.inventory.some((i) => i.itemId === "cat" && i.lockDaysLeft === 0);
+  const ghostCheck: PlaceCheck | null = ghost ? checkPlace(game, ghost) : null;
 
-  const live = useRef({ layout, blocked, asleep, outfit: game.equipped.outfit as OutfitId, hasCat, gloomy: game.gloomy });
-  live.current = { layout, blocked, asleep, outfit: game.equipped.outfit as OutfitId, hasCat, gloomy: game.gloomy };
+  const live = useRef({ layout, blocked, asleep, outfit: game.equipped.outfit as OutfitId, body: game.body.stage as BodyStage, hasCat, gloomy: game.gloomy, decorating, ghost, ghostOk: ghostCheck === "ok", rug: game.equipped.rug });
+  live.current = { layout, blocked, asleep, outfit: game.equipped.outfit as OutfitId, body: game.body.stage as BodyStage, hasCat, gloomy: game.gloomy, decorating, ghost, ghostOk: ghostCheck === "ok", rug: game.equipped.rug };
 
-  const actor = useRef<Actor>({
-    fx: SPOTS.center.tx, fy: SPOTS.center.ty, path: [], facing: "front", mirror: false, pose: "idle",
-    queue: [], poseUntil: 0, pending: null, nextWander: 0, nextBlink: 0,
-  });
-  const cat = useRef<CatActor>({ fx: 3, fy: 4, mirror: false, moving: false });
+  const actor = useRef<Actor>({ fx: 4, fy: 3, path: [], facing: "front", mirror: false, pose: "idle", cycle: [], frameMs: 1000, busyUntil: 0, pending: null, nextWander: 0, nextBlink: 0 });
+  const cat = useRef({ fx: 3, fy: 4, mirror: false, moving: false });
+  const effects = useRef<{ effect: string; pieceId?: string; until: number }>({ effect: "", until: 0 });
+  const kitchenOpenUntil = useRef(0);
+  const lampOn = useRef(true);
   const drawn = useRef<Drawable[]>([]);
   const piecesRef = useRef(new Map<string, Cached>());
 
   const avatarScreen = () => {
     const a = actor.current;
-    const [sx, sy] = tileScreen(live.current.layout.spec, a.fx, a.fy, true);
-    return { x: sx / live.current.layout.spec.W, y: (sy - 50) / live.current.layout.spec.H };
+    const { spec } = live.current.layout;
+    const [sx, sy] = tileScreen(spec, a.fx, a.fy, true);
+    return { x: sx / spec.W, y: (sy - 50 - (a.lift ?? 0)) / spec.H };
   };
 
-  // Walk to the right spot for each habit action, then pose and talk.
-  useEffect(() => {
-    if (!lastAction) return;
+  const placed = (id: string) => live.current.layout.pieces.find((p) => p.place.itemId === id);
+
+  /** Path to a free tile next to a piece (closest to the viewer). */
+  const besideTile = (p: PlacedPiece): Tile | null => {
+    const { n } = live.current.layout.spec;
+    const cands: Tile[] = [];
+    for (let x = p.place.tx - 1; x <= p.place.tx + p.w; x++)
+      for (let y = p.place.ty - 1; y <= p.place.ty + p.d; y++) {
+        const inside = x >= p.place.tx && x < p.place.tx + p.w && y >= p.place.ty && y < p.place.ty + p.d;
+        if (inside || x < 0 || y < 0 || x >= n || y >= n || live.current.blocked.has(`${x},${y}`)) continue;
+        cands.push({ tx: x, ty: y });
+      }
+    const a = actor.current;
+    return cands.sort((u, v) => Math.hypot(u.tx - a.fx, u.ty - a.fy) - Math.hypot(v.tx - a.fx, v.ty - a.fy))[0] ?? null;
+  };
+
+  const goTo = (target: Tile | null, pending: Actor["pending"]) => {
     const a = actor.current;
     const from = { tx: Math.round(a.fx), ty: Math.round(a.fy) };
     a.fx = from.tx;
     a.fy = from.ty;
-    a.path = findPath(live.current.layout.spec.n, from, ACTION_SPOT[lastAction.kind], live.current.blocked);
-    a.pending = { poses: ACTION_POSES[lastAction.kind], say: lastAction.say };
-    a.poseUntil = 0;
-    a.queue = [];
+    a.depth = undefined;
+    a.lift = undefined;
+    a.busyUntil = 0;
+    a.cycle = [];
+    a.path = target && (target.tx !== from.tx || target.ty !== from.ty) ? findPath(live.current.layout.spec.n, from, target, live.current.blocked) : [];
+    a.pending = pending;
+  };
+
+  /** Run a piece's activity: walk over, then animate. */
+  const usePiece = (id: string) => {
+    const use = USES[id];
+    const p = placed(id);
+    if (!use || !p) return;
+    if (id === "bookshelf" || id === "tv") {
+      // grab a book / turn on the TV, then sit on the sofa if there is one
+      const sofa = placed("sofa");
+      if (sofa) {
+        effects.current = { effect: use.effect ?? "", pieceId: id, until: performance.now() + use.durationMs + 6000 };
+        const seat: Use = { ...USES.sofa, poses: id === "bookshelf" ? ["read"] : ["sit"], say: use.say, durationMs: use.durationMs };
+        goTo(besideTile(sofa), { use: seat, pieceId: "sofa", sitOn: sofa.place });
+        return;
+      }
+    }
+    if (id === "desk") {
+      const chair = placed("chair");
+      if (chair) {
+        effects.current = { effect: "pc", pieceId: "desk", until: performance.now() + use.durationMs + 6000 };
+        goTo(besideTile(chair), { use: { ...USES.chair, say: use.say, durationMs: use.durationMs }, pieceId: "chair", sitOn: chair.place, faceTo: { tx: p.place.tx, ty: p.place.ty } });
+        return;
+      }
+    }
+    goTo(besideTile(p), { use, pieceId: id, sitOn: use.onTop ? p.place : undefined, faceTo: { tx: p.place.tx + (p.w - 1) / 2, ty: p.place.ty + (p.d - 1) / 2 } });
+  };
+
+  // Habit actions: walk to the right piece, then pose and talk.
+  useEffect(() => {
+    if (!lastAction) return;
+    const target =
+      lastAction.kind === "pray" ? placed("prayerrug") :
+      lastAction.kind === "wake" || lastAction.kind === "late" || lastAction.kind === "bed" ? placed("bed") :
+      lastAction.kind === "diet" || lastAction.kind === "cheat" ? placed("kitchen") :
+      lastAction.kind === "quran" ? placed("rehal") ?? placed("prayerrug") :
+      lastAction.kind === "gym" ? placed("gymbench") : undefined;
+    if (lastAction.kind === "diet" || lastAction.kind === "cheat") kitchenOpenUntil.current = performance.now() + 4500;
+    const use: Use = { poses: ACTION_POSES[lastAction.kind], frameMs: 1100, durationMs: 3600, face: "front", say: lastAction.say };
+    if (target?.place.itemId === "prayerrug") {
+      goTo({ tx: target.place.tx, ty: target.place.ty }, { use });
+    } else goTo(target ? besideTile(target) : { tx: Math.round(actor.current.fx), ty: Math.round(actor.current.fy) }, { use });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastAction]);
 
   // Floating +coins / -coins over the avatar.
@@ -143,7 +218,12 @@ export default function Room({ onTap }: { onTap?: (t: RoomTap) => void }) {
     const id = Date.now() + Math.random();
     setPops((p) => [...p.slice(-4), { id, text: `${delta > 0 ? "+" : ""}${delta}`, good: delta > 0, x, y }]);
     setTimeout(() => setPops((p) => p.filter((q) => q.id !== id)), 1400);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game.coins]);
+
+  useEffect(() => {
+    if (!decorating) setGhost(null);
+  }, [decorating]);
 
   useEffect(() => {
     const canvas = canvasRef.current!;
@@ -162,10 +242,10 @@ export default function Room({ onTap }: { onTap?: (t: RoomTap) => void }) {
       return p;
     };
     const frames = new Map<string, HTMLCanvasElement>();
-    const frame = (outfit: OutfitId, f: Facing, p: Pose) => {
-      const k = `${outfit}:${f}:${p}`;
+    const frame = (outfit: OutfitId, body: BodyStage, f: Facing, p: Pose) => {
+      const k = `${outfit}:${body}:${f}:${p}`;
       let c = frames.get(k);
-      if (!c) frames.set(k, (c = toCanvas(renderAvatar(f, p, outfit))));
+      if (!c) frames.set(k, (c = toCanvas(renderAvatar(f, p, outfit, body))));
       return c;
     };
     const heads = new Map<string, HTMLCanvasElement>();
@@ -180,6 +260,17 @@ export default function Room({ onTap }: { onTap?: (t: RoomTap) => void }) {
       const n = live.current.layout.spec.n;
       for (let x = 0; x < n; x++) for (let y = 0; y < n; y++) if (!live.current.blocked.has(`${x},${y}`)) out.push({ tx: x, ty: y });
       return out;
+    };
+
+    const faceToward = (a: Actor, to: Tile) => {
+      const dx = to.tx - a.fx, dy = to.ty - a.fy;
+      if (Math.abs(dx) >= Math.abs(dy)) {
+        a.facing = dx >= 0 ? "front" : "back";
+        a.mirror = dx < 0;
+      } else {
+        a.facing = dy > 0 ? "front" : "back";
+        a.mirror = dy > 0;
+      }
     };
 
     const step = (t: number) => {
@@ -197,22 +288,19 @@ export default function Room({ onTap }: { onTap?: (t: RoomTap) => void }) {
       ctx.imageSmoothingEnabled = false;
 
       // ----- avatar -----
-      if (L.asleep && !a.pending) {
+      const bed = L.layout.pieces.find((p) => p.place.itemId === "bed");
+      const sleeping = L.asleep && !a.pending && !a.path.length && a.busyUntil < t;
+      if (L.decorating) {
         a.path = [];
-        a.fx = SPOTS.wake.tx;
-        a.fy = SPOTS.wake.ty;
+      } else if (sleeping) {
+        a.path = [];
+        a.cycle = [];
       } else if (a.path.length) {
         const next = a.path[0];
         const dx = next.tx - a.fx, dy = next.ty - a.fy;
         const dist = Math.hypot(dx, dy);
         const stepLen = SPEED * dt;
-        if (Math.abs(dx) > Math.abs(dy)) {
-          a.facing = dx > 0 ? "front" : "back";
-          a.mirror = dx < 0;
-        } else if (dy !== 0) {
-          a.facing = dy > 0 ? "front" : "back";
-          a.mirror = dy > 0;
-        }
+        faceToward(a, next);
         if (dist <= stepLen) {
           a.fx = next.tx;
           a.fy = next.ty;
@@ -224,22 +312,56 @@ export default function Room({ onTap }: { onTap?: (t: RoomTap) => void }) {
         walkClock += dt;
         a.pose = Math.floor(walkClock / 0.16) % 2 ? "walk1" : "walk2";
       } else if (a.pending) {
-        a.queue = [...a.pending.poses];
-        a.pose = a.queue.shift()!;
-        a.facing = "front";
-        a.mirror = false;
-        a.poseUntil = t + (a.queue.length ? 1100 : 3200);
-        const { x, y } = avatarScreen();
-        setBubble({ text: a.pending.say, x, y, id: t });
-        a.pending = null;
-      } else if (a.poseUntil && t > a.poseUntil && a.queue.length) {
-        a.pose = a.queue.shift()!;
-        a.poseUntil = t + (a.queue.length ? 1100 : 2600);
-      } else if (t > a.poseUntil) {
-        if (a.poseUntil) {
-          a.poseUntil = 0;
+        const { use, sitOn, faceTo } = a.pending;
+        if (sitOn) {
+          const fp = footprint(sitOn.itemId, sitOn.rot);
+          // sit on the middle of the piece; seats face away from their backrest (-X, or -Y when rotated)
+          a.fx = sitOn.tx + (fp.w - 1) / 2;
+          a.fy = sitOn.ty + (fp.d - 1) / 2;
+          const p = L.layout.pieces.find((q) => q.place.itemId === sitOn.itemId);
+          a.depth = p ? pieceDepth(p) + (use.depthBias ?? 0) : undefined;
+          a.lift = use.lift;
+          // sofas face -X when unrotated; chairs and treadmills face -Y
+          a.facing = "back";
+          a.mirror = (sitOn.itemId === "sofa") !== (sitOn.rot === 1);
+        } else if (use.face === "item" && faceTo) faceToward(a, faceTo);
+        else {
           a.facing = "front";
           a.mirror = false;
+        }
+        a.cycle = use.poses;
+        a.frameMs = use.frameMs;
+        a.pose = use.poses[0];
+        a.busyUntil = t + use.durationMs;
+        if (use.effect) effects.current = { effect: use.effect, pieceId: a.pending.pieceId, until: Math.max(effects.current.until, t + use.durationMs) };
+        if (use.say) {
+          const { x, y } = avatarScreen();
+          setBubble({ text: use.say, x, y, id: t });
+        }
+        a.pending = null;
+      } else if (a.busyUntil > t) {
+        a.pose = a.cycle[Math.floor(t / a.frameMs) % a.cycle.length] ?? "idle";
+        // facing "front" poses like clarinet/pray only exist from the front
+        if (["pray", "takbir", "kneel", "clarinet", "read", "drink", "curl1", "curl2", "celebrate", "sad"].includes(a.pose) && !a.depth) {
+          a.facing = "front";
+          a.mirror = false;
+        }
+      } else {
+        if (a.busyUntil) {
+          // stand up off seats / treadmill onto the nearest free tile
+          if (a.depth !== undefined || a.lift) {
+            const free = freeTiles().sort((u, v) => Math.hypot(u.tx - a.fx, u.ty - a.fy) - Math.hypot(v.tx - a.fx, v.ty - a.fy))[0];
+            if (free) {
+              a.fx = free.tx;
+              a.fy = free.ty;
+            }
+          }
+          a.busyUntil = 0;
+          a.depth = undefined;
+          a.lift = undefined;
+          a.facing = "front";
+          a.mirror = false;
+          a.nextWander = t + 4000;
         }
         a.pose = L.gloomy ? "sad" : t > a.nextBlink && t < a.nextBlink + 140 ? "blink" : "idle";
         if (t > a.nextBlink + 140) a.nextBlink = t + 2500 + Math.random() * 3000;
@@ -254,8 +376,8 @@ export default function Room({ onTap }: { onTap?: (t: RoomTap) => void }) {
       // ----- cat follows a step behind -----
       const c = cat.current;
       let catView: CatView | undefined;
-      if (L.hasCat) {
-        const tx = a.fx - 0.9, ty = a.fy + 0.4;
+      if (L.hasCat && !L.decorating) {
+        const tx = (sleeping && bed ? bed.place.tx + bed.w : a.fx) - 0.9, ty = (sleeping && bed ? bed.place.ty : a.fy) + 0.4;
         const dx = tx - c.fx, dy = ty - c.fy;
         const dist = Math.hypot(dx, dy);
         c.moving = dist > 0.6;
@@ -271,7 +393,7 @@ export default function Room({ onTap }: { onTap?: (t: RoomTap) => void }) {
       // ----- draw -----
       const now = getNow();
       const hour = now.getHours();
-      const key = `${spec.tier}|${L.layout.wallItems.map((w) => w.id + w.locked).join()}|${hour}|${bgSig(L.layout)}`;
+      const key = `${spec.tier}|${L.layout.wallItems.map((w) => w.id + w.locked).join()}|${hour}|${L.layout.wallpaper}|${L.layout.floor}`;
       if (key !== bgKey || !bg) {
         bg = toCanvas(buildBackground({ spec, wallpaper: L.layout.wallpaper, floor: L.layout.floor, hour, wallItems: L.layout.wallItems }));
         bgKey = key;
@@ -279,25 +401,37 @@ export default function Room({ onTap }: { onTap?: (t: RoomTap) => void }) {
       ctx.clearRect(0, 0, spec.W, spec.H);
       ctx.drawImage(bg, 0, 0);
 
-      const view: AvatarView = { fx: a.fx, fy: a.fy, facing: a.facing, pose: a.pose, mirror: a.mirror, outfit: L.outfit, asleep: L.asleep && !a.pending && !a.path.length };
-      const list = sceneDrawables(L.layout, view, catView);
+      const view: AvatarView = {
+        fx: a.fx, fy: a.fy, facing: a.facing, pose: a.pose, mirror: a.mirror, outfit: L.outfit, body: L.body,
+        asleep: sleeping || L.decorating, depth: a.depth, lift: a.lift,
+      };
+      const ghost = L.ghost;
+      const layoutForDraw = ghost
+        ? { ...L.layout, pieces: L.layout.pieces.filter((p) => p.place.itemId !== ghost.itemId) }
+        : L.layout;
+      const list = sceneDrawables(layoutForDraw, view, catView);
       drawn.current = list;
+      const fx = effects.current.until > t ? effects.current : null;
       for (const d of list) {
         if (d.kind === "piece") {
-          const p = piece(d.piece.key, d.piece.locked);
-          const x = Math.round(d.x - p.ax), y = Math.round(d.y - p.ay);
-          ctx.drawImage(p.c, x, y);
-          animate(ctx, d.piece.key.split(":")[0], Math.round(d.x), Math.round(d.y), t, d.piece.locked);
-          if (d.piece.key === "bed" && view.asleep) {
+          const id = d.piece.place.itemId;
+          let k = d.piece.key;
+          if (id === "kitchen" && kitchenOpenUntil.current > t) k += "-open";
+          const p = piece(k, d.piece.locked);
+          drawPiece(ctx, p, d.x, d.y, d.piece.place.rot === 1);
+          if (!d.piece.locked) animate(ctx, id, d.x, d.y, d.piece.place.rot === 1, t, fx?.pieceId === id ? fx.effect : "", lampOn.current);
+          if (id === "bed" && view.asleep && !L.decorating) {
             let h = heads.get(L.outfit);
             if (!h) heads.set(L.outfit, (h = toCanvas(renderSleepingHead(L.outfit))));
-            ctx.drawImage(h, 0, 0, 18, 16, Math.round(d.x - 15), Math.round(d.y - 12), 18, 16);
+            const rot = d.piece.place.rot === 1;
+            const [hx, hy] = local(d.x, d.y, rot)(10, 16, 13);
+            ctx.drawImage(h, 0, 0, 18, 16, Math.round(hx - 9), Math.round(hy - 10), 18, 16);
             ctx.fillStyle = "#ffffff";
             ctx.font = "8px monospace";
             const zz = Math.floor(t / 500) % 3;
-            ctx.fillText("z".repeat(zz + 1), Math.round(d.x + 3), Math.round(d.y - 18 - zz * 2));
+            ctx.fillText("z".repeat(zz + 1), Math.round(hx + 8), Math.round(hy - 12 - zz * 2));
           }
-          if (d.piece.locked) drawLock(ctx, Math.round(d.x), y - 4);
+          if (d.piece.locked) drawLock(ctx, Math.round(d.x), Math.round(d.y - p.ay) - 4);
         } else if (d.kind === "shadow") {
           ctx.fillStyle = "rgba(0,0,0,0.22)";
           const x = Math.round(d.x), y = Math.round(d.y);
@@ -307,8 +441,48 @@ export default function Room({ onTap }: { onTap?: (t: RoomTap) => void }) {
           const img = catFrames[d.view.pose];
           drawMirrored(ctx, img, Math.round(d.x - img.width / 2), Math.round(d.y - img.height + 2), d.view.mirror);
         } else {
-          const img = frame(d.view.outfit, d.view.facing, d.view.pose);
+          const img = frame(d.view.outfit, d.view.body, d.view.facing, d.view.pose);
           drawMirrored(ctx, img, Math.round(d.x), Math.round(d.y), d.view.mirror);
+        }
+      }
+
+      // ----- decorate: the piece being moved, with its footprint in green/red -----
+      if (L.decorating && ghost) {
+        const fp = footprint(ghost.itemId, ghost.rot);
+        ctx.fillStyle = L.ghostOk ? "rgba(76,175,80,0.45)" : "rgba(214,69,65,0.5)";
+        for (let x = ghost.tx; x < ghost.tx + fp.w; x++)
+          for (let y = ghost.ty; y < ghost.ty + fp.d; y++) {
+            const [sx, sy] = tileScreen(spec, x, y);
+            ctx.beginPath();
+            ctx.moveTo(sx, sy);
+            ctx.lineTo(sx + 16, sy + 8);
+            ctx.lineTo(sx, sy + 16);
+            ctx.lineTo(sx - 16, sy + 8);
+            ctx.closePath();
+            ctx.fill();
+          }
+        const [gx, gy] = tileScreen(spec, ghost.tx, ghost.ty);
+        const s = { itemId: ghost.itemId, tx: ghost.tx, ty: ghost.ty, rot: ghost.rot } as PlacedItem;
+        ctx.globalAlpha = 0.8;
+        drawPiece(ctx, piece(pieceKey(useGame.getState().game, s), false), gx, gy, ghost.rot === 1);
+        ctx.globalAlpha = 1;
+      } else if (L.decorating) {
+        ctx.strokeStyle = "rgba(255,255,255,0.12)";
+        for (let x = 0; x <= spec.n; x++) {
+          const [ax, ay] = tileScreen(spec, x, 0);
+          const [bx, by] = tileScreen(spec, x, spec.n);
+          ctx.beginPath();
+          ctx.moveTo(ax, ay);
+          ctx.lineTo(bx, by);
+          ctx.stroke();
+        }
+        for (let y = 0; y <= spec.n; y++) {
+          const [ax, ay] = tileScreen(spec, 0, y);
+          const [bx, by] = tileScreen(spec, spec.n, y);
+          ctx.beginPath();
+          ctx.moveTo(ax, ay);
+          ctx.lineTo(bx, by);
+          ctx.stroke();
         }
       }
 
@@ -322,11 +496,13 @@ export default function Room({ onTap }: { onTap?: (t: RoomTap) => void }) {
         ctx.globalCompositeOperation = "lighter";
         for (const d of list) {
           if (d.kind !== "piece" || d.piece.locked) continue;
-          const glow = GLOWS[d.piece.key.split(":")[0]];
-          if (!glow) continue;
+          const id = d.piece.place.itemId;
+          const glow = GLOWS[id];
+          if (!glow || (id === "lamp" && !lampOn.current)) continue;
+          if (id === "tv" && fx?.effect !== "tv") continue;
           const [gx, gy, rad, color] = glow;
-          const flicker = d.piece.key === "lantern" ? 0.85 + Math.sin(t / 90) * 0.15 : 1;
-          const cx = d.x + gx, cy = d.y + gy;
+          const flicker = id === "lantern" ? 0.85 + Math.sin(t / 90) * 0.15 : 1;
+          const [cx, cy] = local(d.x, d.y, d.piece.place.rot === 1)(gx, gy, 0);
           const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
           g.addColorStop(0, color.replace("A", String(0.5 * flicker)));
           g.addColorStop(1, color.replace("A", "0"));
@@ -347,84 +523,192 @@ export default function Room({ onTap }: { onTap?: (t: RoomTap) => void }) {
     return () => clearTimeout(id);
   }, [bubble]);
 
-  const onPointer = (e: React.PointerEvent<HTMLCanvasElement>) => {
+  const toCanvasXY = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current!;
     const rect = canvas.getBoundingClientRect();
-    const sx = ((e.clientX - rect.left) / rect.width) * canvas.width;
-    const sy = ((e.clientY - rect.top) / rect.height) * canvas.height;
-    const hit = hitTest(drawn.current, piecesRef.current, sx, sy);
-    const a = actor.current;
+    return [((e.clientX - rect.left) / rect.width) * canvas.width, ((e.clientY - rect.top) / rect.height) * canvas.height];
+  };
+
+  const onPointer = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const [sx, sy] = toCanvasXY(e);
     const L = live.current;
+    const hit = hitTest(drawn.current, piecesRef.current, sx, sy);
+
+    if (L.decorating) {
+      if (ghost) {
+        const t = screenToTile(L.layout.spec, sx, sy);
+        setGhost({ ...ghost, tx: t.tx, ty: t.ty });
+      } else if (hit) {
+        const p = L.layout.pieces.find((q) => q.place.itemId === hit.split(":")[0]);
+        if (p && ITEMS[p.place.itemId]?.size) setGhost({ ...p.place });
+      }
+      return;
+    }
+
+    const now = getNow();
     if (hit) {
       const id = hit.split(":")[0];
-      if (id === "rug" || id === "rehal") return onTap?.("pray");
-      if (id === "bed") return onTap?.("wake");
-      if (id === "fridge" || id === "counter" || id === "coffee") return onTap?.("diet");
+      if (id === "prayerrug" || id === "rehal") return onTap?.("pray");
+      if (id === "bed") {
+        const s = useGame.getState().game;
+        if (isAsleep(s, now) && wakeWindow(s, now) !== "too-early") return onTap?.("wake");
+        if (bedWindow(s, now) !== "too-early") return onTap?.("bed");
+        return onTap?.("wake");
+      }
+      if (id === "kitchen") {
+        kitchenOpenUntil.current = performance.now() + 4500;
+        return onTap?.("diet");
+      }
       if (L.asleep) return onTap?.("wake");
-      const quip = QUIPS[id];
-      if (quip) {
-        const item = ITEMS[id];
-        const piece = L.layout.pieces.find((p) => p.key.split(":")[0] === id);
-        const target = piece ? nearestFree(piece.place, L.blocked, L.layout.spec.n) : null;
-        if (target) a.path = findPath(L.layout.spec.n, { tx: Math.round(a.fx), ty: Math.round(a.fy) }, target, L.blocked);
-        a.pending = { poses: ["idle"], say: piece?.locked ? `${item?.name ?? id} is locked. Stay clean.` : quip };
+      const p = placed(id);
+      if (p?.locked) {
+        goTo(besideTile(p), { use: { poses: ["sad"], frameMs: 1000, durationMs: 2500, face: "front", say: `${ITEMS[id]?.name ?? id} is locked. Stay clean.` } });
         return;
       }
+      if (id === "lamp") {
+        lampOn.current = !lampOn.current;
+        if (useGame.getState().game.settings.sound) SFX.tap();
+        return;
+      }
+      if (USES[id]) {
+        if (useGame.getState().game.settings.sound) (id === "clarinet" || id === "recordplayer" ? SFX.melody : SFX.tap)();
+        return usePiece(id);
+      }
+      if (QUIPS[id] && p) return goTo(besideTile(p), { use: { poses: ["idle"], frameMs: 1000, durationMs: 2500, face: "item", say: QUIPS[id] }, faceTo: { tx: p.place.tx, ty: p.place.ty } });
     }
     if (L.asleep) return onTap?.("wake");
     const t = screenToTile(L.layout.spec, sx, sy);
     if (t.tx < 0 || t.ty < 0 || t.tx >= L.layout.spec.n || t.ty >= L.layout.spec.n || L.blocked.has(`${t.tx},${t.ty}`)) return;
-    a.path = findPath(L.layout.spec.n, { tx: Math.round(a.fx), ty: Math.round(a.fy) }, t, L.blocked);
-    a.poseUntil = 0;
-    a.queue = [];
-    a.nextWander = performance.now() + 8000;
+    goTo(t, null);
+    actor.current.nextWander = performance.now() + 8000;
   };
 
+  const s = game;
+  const placeable = s.inventory.map((i) => i.itemId).filter((id) => ITEMS[id]?.size).concat(["bed", "kitchen", "prayerrug"]);
+  const placedIds = new Set(s.placements.map((p) => p.itemId));
+  const ghostReason: Record<PlaceCheck, string> = { ok: "Fits here", outside: "Outside the room", overlap: "Something's already there", "blocks-path": "That would block the way" };
+
   return (
-    <div className="relative w-full select-none" style={{ aspectRatio: `${layout.spec.W} / ${layout.spec.H}` }}>
-      <canvas
-        ref={canvasRef}
-        width={layout.spec.W}
-        height={layout.spec.H}
-        className="h-full w-full cursor-pointer touch-manipulation"
-        style={{ imageRendering: "pixelated" }}
-        aria-label="Your room. Tap the rug to pray, the bed to wake up, the kitchen for meals."
-        onPointerDown={onPointer}
-      />
-      {bubble && (
-        <div
-          key={bubble.id}
-          className="bubble pointer-events-none absolute -translate-x-1/2 -translate-y-full"
-          style={{ left: `${Math.min(75, Math.max(25, bubble.x * 100))}%`, top: `${Math.max(12, bubble.y * 100)}%` }}
-        >
-          {bubble.text}
-        </div>
-      )}
-      {pops.map((p) => (
-        <div
-          key={p.id}
-          className={`coin-pop pointer-events-none absolute -translate-x-1/2 font-pixel text-[11px] ${p.good ? "text-[#ffe14d]" : "text-[#ff6b6b]"}`}
-          style={{ left: `${p.x * 100 + 6}%`, top: `${p.y * 100}%` }}
-        >
-          {p.text}
-        </div>
-      ))}
-      {asleep && (
-        <div className="pointer-events-none absolute right-2 top-2 whitespace-nowrap rounded-sm border-2 border-black bg-[#232a46]/90 px-2 py-0.5 text-base text-white">
-          Zzz… tap the bed when you&apos;re up
-        </div>
-      )}
-      {game.gloomy && (
-        <div className="absolute left-2 top-2 rounded-sm border-2 border-black bg-[#3b1d4a] px-2 py-0.5 text-base text-[#f3c1ff]">
-          Room is gloomy. One clean day restores it.
+    <div>
+      <div className="relative w-full select-none" style={{ aspectRatio: `${layout.spec.W} / ${layout.spec.H}` }}>
+        <canvas
+          ref={canvasRef}
+          width={layout.spec.W}
+          height={layout.spec.H}
+          className="h-full w-full cursor-pointer touch-manipulation"
+          style={{ imageRendering: "pixelated" }}
+          aria-label="Your room. Tap the rug to pray, the bed to sleep or wake up, the kitchen for meals, and other items to use them."
+          onPointerDown={onPointer}
+        />
+        {bubble && !decorating && (
+          <div
+            key={bubble.id}
+            className="bubble pointer-events-none absolute -translate-x-1/2 -translate-y-full"
+            style={{ left: `${Math.min(75, Math.max(25, bubble.x * 100))}%`, top: `${Math.max(12, bubble.y * 100)}%` }}
+          >
+            {bubble.text}
+          </div>
+        )}
+        {pops.map((p) => (
+          <div
+            key={p.id}
+            className={`coin-pop pointer-events-none absolute -translate-x-1/2 font-pixel text-[11px] ${p.good ? "text-[#ffe14d]" : "text-[#ff6b6b]"}`}
+            style={{ left: `${p.x * 100 + 6}%`, top: `${p.y * 100}%` }}
+          >
+            {p.text}
+          </div>
+        ))}
+        {asleep && !decorating && (
+          <div className="pointer-events-none absolute right-2 top-2 whitespace-nowrap rounded-sm border-2 border-black bg-[#232a46]/90 px-2 py-0.5 text-base text-white">
+            Zzz… tap the bed when you&apos;re up
+          </div>
+        )}
+        {game.gloomy && !decorating && (
+          <div className="absolute left-2 top-2 rounded-sm border-2 border-black bg-[#3b1d4a] px-2 py-0.5 text-base text-[#f3c1ff]">
+            Room is gloomy. One clean day restores it.
+          </div>
+        )}
+        {decorating && (
+          <div className="pointer-events-none absolute left-2 top-2 rounded-sm border-2 border-black bg-[#232a46]/90 px-2 py-0.5 text-base text-white">
+            {ghost ? `Tap a tile to move the ${ITEMS[ghost.itemId]?.name ?? ghost.itemId}` : "Tap an item to move it"}
+          </div>
+        )}
+      </div>
+
+      {decorating && (
+        <div className="space-y-2 border-t-2 border-black bg-[var(--panel)] p-2">
+          {ghost ? (
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className={`chip ${ghostCheck === "ok" ? "bg-[#d9f0d9]" : "bg-[#f9d6d5]"}`}>{ghostReason[ghostCheck ?? "outside"]}</span>
+              <button className="btn" onClick={() => setGhost({ ...ghost, rot: ghost.rot ? 0 : 1 })}>
+                Rotate
+              </button>
+              <button
+                className="btn btn-green"
+                disabled={ghostCheck !== "ok"}
+                onClick={() => {
+                  place(ghost);
+                  setGhost(null);
+                }}
+              >
+                Place
+              </button>
+              {canStore(ghost.itemId) && placedIds.has(ghost.itemId) && (
+                <button
+                  className="btn"
+                  onClick={() => {
+                    store(ghost.itemId);
+                    setGhost(null);
+                  }}
+                >
+                  Store
+                </button>
+              )}
+              <button className="btn" onClick={() => setGhost(null)}>
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-base text-[var(--muted)]">Pick something below or tap it in the room.</span>
+              <button className="btn btn-blue" onClick={onDoneDecorating}>
+                Done
+              </button>
+            </div>
+          )}
+          <div className="flex gap-1.5 overflow-x-auto pb-1">
+            {placeable.map((id) => {
+              const isPlaced = placedIds.has(id);
+              return (
+                <button
+                  key={id}
+                  className={`flex w-[72px] shrink-0 flex-col items-center rounded-[4px] border-2 border-black p-1 ${ghost?.itemId === id ? "bg-[#e3f1ff]" : "bg-white"}`}
+                  onClick={() => {
+                    const cur = s.placements.find((p) => p.itemId === id);
+                    const n = layout.spec.n;
+                    setGhost(cur ?? { itemId: id, tx: Math.floor(n / 2), ty: Math.floor(n / 2), rot: 0 });
+                  }}
+                >
+                  <RasterCanvas make={() => buildPiece(id === "prayerrug" ? `prayerrug:${s.equipped.rug}` : id === "kitchen" ? "kitchen:wall" : id).r} deps={[id]} style={{ width: 48, height: 40 }} />
+                  <span className="w-full truncate text-center text-sm leading-tight">{ITEMS[id]?.name ?? id}</span>
+                  <span className={`text-xs leading-tight ${isPlaced ? "text-[var(--good)]" : "text-[var(--head-2)]"}`}>{isPlaced ? "placed" : "in storage"}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-function bgSig(l: ReturnType<typeof roomLayout>) {
-  return `${l.wallpaper}|${l.floor}`;
+function drawPiece(ctx: CanvasRenderingContext2D, p: Cached, x: number, y: number, mirror: boolean) {
+  if (!mirror) return ctx.drawImage(p.c, Math.round(x - p.ax), Math.round(y - p.ay));
+  ctx.save();
+  ctx.translate(Math.round(x + p.ax + 1), Math.round(y - p.ay));
+  ctx.scale(-1, 1);
+  ctx.drawImage(p.c, 0, 0);
+  ctx.restore();
 }
 
 function drawMirrored(ctx: CanvasRenderingContext2D, img: HTMLCanvasElement, x: number, y: number, mirror: boolean) {
@@ -436,45 +720,105 @@ function drawMirrored(ctx: CanvasRenderingContext2D, img: HTMLCanvasElement, x: 
   ctx.restore();
 }
 
-/** Light sources at night: offset from the piece's back corner, radius, rgba color with an A placeholder. */
+/** Project a piece-local point (X, Y, Z) to the screen, honouring rotation (mirroring swaps X and Y). */
+function local(x: number, y: number, rot: boolean) {
+  return (X: number, Y: number, Z: number): [number, number] => {
+    const [a, b] = rot ? [Y, X] : [X, Y];
+    return [x + a - b, y + (a + b) / 2 - Z];
+  };
+}
+
+/** Light sources at night: piece-local offset (X, Y), radius, rgba color with an A placeholder. */
 const GLOWS: Record<string, [number, number, number, string]> = {
-  lamp: [0, -28, 46, "rgba(255,214,120,A)"],
-  lantern: [0, -6, 30, "rgba(255,190,80,A)"],
-  tv: [10, -8, 26, "rgba(120,190,255,A)"],
-  desk: [6, -16, 30, "rgba(90,160,255,A)"],
-  aquarium: [0, -12, 24, "rgba(110,220,255,A)"],
-  arcade: [10, -20, 26, "rgba(200,90,255,A)"],
-  ioniq5: [31, 22, 22, "rgba(220,240,255,A)"],
-  trophycase: [0, -22, 22, "rgba(255,230,150,A)"],
+  lamp: [8, 8, 46, "rgba(255,214,120,A)"],
+  lantern: [8, 8, 30, "rgba(255,190,80,A)"],
+  tv: [8, 16, 34, "rgba(120,190,255,A)"],
+  desk: [16, 8, 30, "rgba(90,160,255,A)"],
+  aquarium: [8, 8, 24, "rgba(110,220,255,A)"],
+  arcade: [12, 8, 28, "rgba(200,90,255,A)"],
+  trophycase: [8, 8, 22, "rgba(255,230,150,A)"],
+  recordplayer: [8, 8, 18, "rgba(255,120,120,A)"],
 };
 
-/** Small per-frame animations drawn over a piece. */
-function animate(ctx: CanvasRenderingContext2D, id: string, x: number, y: number, t: number, locked: boolean) {
-  if (locked) return;
-  const P = (X: number, Y: number, Z: number) => [x + X - Y, y + (X + Y) / 2 - Z] as const;
-  if (id === "aquarium") {
-    const fish: [number, string, number][] = [[0, "#ff8c1a", 20], [1.7, "#ffd23f", 17], [3.1, "#ff5e5e", 23]];
-    for (const [phase, col, z] of fish) {
-      const k = (Math.sin(t / 900 + phase) + 1) / 2;
-      const [fx, fy] = P(3 + k * 10, 15, z);
-      ctx.fillStyle = col;
-      ctx.fillRect(Math.round(fx), Math.round(fy), 3, 2);
+const NOTE = ["..##", "..#.", "..#.", "###.", "##.."];
+
+/** Small per-frame animations drawn over a piece. `effect` is the active use, if any. */
+function animate(ctx: CanvasRenderingContext2D, id: string, x: number, y: number, rot: boolean, t: number, effect: string, lampOn: boolean) {
+  const P = local(x, y, rot);
+  const px = (X: number, Y: number, Z: number, c: string, w = 1, h = 1) => {
+    const [sx, sy] = P(X, Y, Z);
+    ctx.fillStyle = c;
+    ctx.fillRect(Math.round(sx), Math.round(sy), w, h);
+  };
+  const note = (X: number, Y: number, Z: number, phase: number, color: string) => {
+    const k = (t / 1600 + phase) % 1;
+    const [sx, sy] = P(X, Y, Z + k * 18);
+    ctx.globalAlpha = 1 - k;
+    ctx.fillStyle = color;
+    NOTE.forEach((row, ry) => [...row].forEach((ch, rx) => ch === "#" && ctx.fillRect(Math.round(sx + rx + Math.sin(k * 6 + phase) * 2), Math.round(sy + ry), 1, 1)));
+    ctx.globalAlpha = 1;
+  };
+  switch (id) {
+    case "aquarium": {
+      const fish: [number, string, number][] = [[0, "#ff8c1a", 20], [1.7, "#ffd23f", 17], [3.1, "#ff5e5e", 23]];
+      for (const [phase, col, z] of fish) px(3 + ((Math.sin(t / 900 + phase) + 1) / 2) * 10, 15, z, col, 3, 2);
+      if (effect === "feed") for (let k = 0; k < 4; k++) px(4 + k * 2, 6 + k, 26 - ((t / 60 + k * 5) % 12), "#c8a26a");
+      break;
     }
-  } else if (id === "tv" && Math.floor(t / 400) % 3 === 0) {
-    const [sx, sy] = P(12, 6, 18);
-    ctx.fillStyle = "rgba(255,255,255,0.35)";
-    ctx.fillRect(Math.round(sx) - 3, Math.round(sy), 4, 2);
-  } else if (id === "mabkhara") {
-    for (let k = 0; k < 3; k++) {
-      const ph = ((t / 1400 + k / 3) % 1);
-      const [sx, sy] = P(8, 8, 10 + ph * 16);
-      ctx.fillStyle = `rgba(230,230,240,${0.6 * (1 - ph)})`;
-      ctx.fillRect(Math.round(sx + Math.sin(ph * 6 + k) * 2), Math.round(sy), 1, 1);
-    }
-  } else if (id === "desk" && Math.floor(t / 250) % 2) {
-    const [sx, sy] = P(12, 5, 24);
-    ctx.fillStyle = "#bfe0ff";
-    ctx.fillRect(Math.round(sx), Math.round(sy), 3, 1);
+    case "tv":
+      if (effect === "tv") {
+        const cols = ["#3a8ee6", "#e74c3c", "#2ecc71", "#f1c40f", "#9b59b6"];
+        for (let k = 0; k < 6; k++) {
+          const c = cols[(Math.floor(t / 300) + k) % cols.length];
+          const [ax, ay] = P(7.6, 2 + k * 5, 29);
+          const [bx, by] = P(7.6, 2 + k * 5 + 5, 12);
+          ctx.fillStyle = c;
+          ctx.globalAlpha = 0.85;
+          ctx.fillRect(Math.round(Math.min(ax, bx)), Math.round(ay), Math.max(1, Math.round(Math.abs(bx - ax))), Math.round(by - ay));
+          ctx.globalAlpha = 1;
+        }
+      }
+      break;
+    case "desk":
+      if (effect === "pc") {
+        for (let k = 0; k < 5; k++) px(10 + k * 2.5, 5, 20 + ((t / 90 + k * 3) % 6), k % 2 ? "#ff3df2" : "#4dff88", 2, 1);
+      } else if (Math.floor(t / 250) % 2) px(12, 5, 24, "#bfe0ff", 3, 1);
+      px(30, 6, 21, ["#ff3df2", "#3dfff2", "#f1c40f"][Math.floor(t / 400) % 3]);
+      break;
+    case "arcade":
+      px(9.7, 6 + (Math.floor(t / (effect ? 120 : 400)) % 5), 30, "#4dff88", 2, 1);
+      px(9.7, 9 - (Math.floor(t / (effect ? 150 : 500)) % 4), 32, "#ff4d6d", 1, 1);
+      if (effect) px(9.7, 8, 34, Math.floor(t / 200) % 2 ? "#ffffff" : "#f1c40f", 2, 1);
+      break;
+    case "recordplayer":
+      if (effect === "vinyl") {
+        const a = t / 140;
+        px(7.5 + Math.cos(a) * 3, 8 + Math.sin(a) * 3, 15.2, "#9a9aa0");
+        note(4, 6, 18, 0, "#ff4fc3");
+        note(10, 9, 18, 0.5, "#4de0ff");
+      }
+      break;
+    case "clarinet":
+      if (effect === "notes") {
+        note(2, 12, 30, 0, "#ffd23f");
+        note(-4, 14, 30, 0.35, "#ffffff");
+        note(4, 16, 30, 0.7, "#4de0ff");
+      }
+      break;
+    case "treadmill":
+      if (effect === "belt") for (let k = 0; k < 6; k++) px(4, 5 + ((k * 4 + t / 40) % 24), 4.1, "#55555a", 8, 1);
+      break;
+    case "coffee":
+      if (effect === "steam") for (let k = 0; k < 3; k++) {
+        const ph = (t / 900 + k / 3) % 1;
+        ctx.globalAlpha = 0.7 * (1 - ph);
+        px(12.5, 9.5, 17 + ph * 12, "#ffffff");
+        ctx.globalAlpha = 1;
+      }
+      break;
+    case "lamp":
+      if (!lampOn) px(5, 5, 32, "rgba(0,0,0,0.25)", 10, 6);
+      break;
   }
 }
 
@@ -483,21 +827,16 @@ function hitTest(list: Drawable[], pieces: Map<string, Cached>, sx: number, sy: 
   for (let i = list.length - 1; i >= 0; i--) {
     const d = list[i];
     if (d.kind !== "piece") continue;
-    const p = pieces.get(`${d.piece.key}|${d.piece.locked}`);
+    const p = pieces.get(`${d.piece.key}|${d.piece.locked}`) ?? pieces.get(`${d.piece.key}-open|${d.piece.locked}`);
     if (!p) continue;
-    const px = Math.floor(sx - Math.round(d.x - p.ax)), py = Math.floor(sy - Math.round(d.y - p.ay));
+    const mirror = d.piece.place.rot === 1;
+    let px = Math.floor(sx - Math.round(d.x - p.ax));
+    if (mirror) px = Math.floor(Math.round(d.x + p.ax) - sx);
+    const py = Math.floor(sy - Math.round(d.y - p.ay));
     if (px < 0 || py < 0 || px >= p.r.w || py >= p.r.h) continue;
     if (p.r.data[(py * p.r.w + px) * 4 + 3] > 0) return d.piece.key;
   }
   return null;
-}
-
-function nearestFree(place: { tx: number; ty: number; w: number; d: number }, blocked: Set<string>, n: number): Tile | null {
-  const cands: Tile[] = [];
-  for (let x = place.tx - 1; x <= place.tx + place.w; x++)
-    for (let y = place.ty - 1; y <= place.ty + place.d; y++)
-      if (x >= 0 && y >= 0 && x < n && y < n && !blocked.has(`${x},${y}`)) cands.push({ tx: x, ty: y });
-  return cands.sort((a, b) => b.tx + b.ty - (a.tx + a.ty))[0] ?? null;
 }
 
 function drawLock(ctx: CanvasRenderingContext2D, x: number, y: number) {
@@ -511,4 +850,3 @@ function drawLock(ctx: CanvasRenderingContext2D, x: number, y: number) {
   ctx.fillStyle = "#111";
   ctx.fillRect(x, y + 2, 1, 2);
 }
-

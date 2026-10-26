@@ -1,7 +1,7 @@
 "use client";
 import { CATALOG } from "@/engine/catalog";
 import { buyItem, canBuy, isLocked, owns } from "@/engine/engine";
-import { renderAvatar, type OutfitId } from "@/game/sprites/avatar";
+import { renderAvatar, type BodyStage, type OutfitId } from "@/game/sprites/avatar";
 import { useGame } from "@/store/useGame";
 import PixelIcon from "./PixelIcon";
 import RasterCanvas from "./RasterCanvas";
@@ -28,7 +28,7 @@ export default function Wardrobe() {
           return (
             <article key={o.id} className={`flex flex-col items-center rounded-[4px] border-2 border-black p-2 text-center ${on ? "bg-[#e3f1ff]" : "bg-white"}`}>
               <div className={`flex h-28 w-full items-end justify-center rounded-[3px] bg-[linear-gradient(#cfe0f2,#a9c6dc)] ${have && !locked ? "" : "opacity-50 grayscale"}`}>
-                <RasterCanvas make={() => renderAvatar("front", on ? "celebrate" : "idle", o.id as OutfitId)} deps={[o.id, on]} style={{ height: "96px" }} />
+                <RasterCanvas make={() => renderAvatar("front", on ? "celebrate" : "idle", o.id as OutfitId, game.body.stage as BodyStage)} deps={[o.id, on, game.body.stage]} style={{ height: "96px" }} />
               </div>
               <h3 className="mt-1 font-pixel text-[8px] leading-tight">{o.name}</h3>
               <p className="mb-1.5 text-base leading-tight text-[var(--muted)]">{o.blurb}</p>

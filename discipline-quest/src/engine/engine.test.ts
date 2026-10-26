@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buyItem,
   canBuy,
-  createInitialState,
+  createInitialState as baseInitial,
   dietCheckIn,
   ensureToday,
   liveStreaks,
@@ -23,6 +23,13 @@ const base = (s: GameState) =>
   s.coins - s.log.filter((e) => /^(Badge earned|Quest done|Quest undone|Reached level)/.test(e.text)).reduce((n, e) => n + (e.coins ?? 0), 0);
 
 const at = (d: string, hm = "12:00") => new Date(`${d}T${hm}:00`);
+
+/** These tests cover the original trackers, so the newer ones (gym, Quran, bedtime) never charge here. */
+function createInitialState(now: Date): GameState {
+  const s = baseInitial(now);
+  s.since = { gym: "9999-12-31", quran: "9999-12-31", bed: "9999-12-31" };
+  return s;
+}
 
 function perfectDay(s: GameState, d: string): GameState {
   for (const p of PRAYERS) s = setPrayer(s, at(d, "12:00"), p, true);
@@ -130,22 +137,23 @@ describe("shop and unlocks", () => {
     let s = createInitialState(at("2026-01-01"));
     s = wakeCheckIn(s, at("2026-01-01", "10:00"));
     expect(canBuy(s, "plant")).toBe("debt");
-    expect(canBuy(s, "ioniq5")).toBe("not-for-sale");
+    expect(canBuy(s, "car-ioniq5")).toBe("not-for-sale");
   });
 
-  it("unlocks the Ioniq 5 after 30 clean days", () => {
+  it("unlocks the Q50 after 30 clean days, not yet the Ioniq 5", () => {
     let s = createInitialState(at("2026-01-01"));
     for (let d = 1; d <= 30; d++) {
       const key = `2026-01-${String(d).padStart(2, "0")}`;
       s = perfectDay(s, key);
       if (d === 14) {
         s = ensureToday(s, at("2026-01-15"));
-        expect(s.inventory.some((i) => i.itemId === "ioniq5")).toBe(false);
+        expect(s.inventory.some((i) => i.itemId === "car-q50")).toBe(false);
       }
     }
     s = ensureToday(s, at("2026-01-31"));
-    expect(s.inventory.some((i) => i.itemId === "ioniq5")).toBe(true);
-    expect(s.inbox.some((e) => e.kind === "unlock" && e.id === "ioniq5")).toBe(true);
+    expect(s.inventory.some((i) => i.itemId === "car-q50")).toBe(true);
+    expect(s.inventory.some((i) => i.itemId === "car-ioniq5")).toBe(false);
+    expect(s.inbox.some((e) => e.kind === "unlock" && e.id === "car-q50")).toBe(true);
     expect(s.badges["prayers-30"]).toBeTruthy();
     expect(s.badges["perfect-7"]).toBeTruthy();
     expect(s.streaks.wake).toBe(30);

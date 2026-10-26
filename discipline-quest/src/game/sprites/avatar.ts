@@ -1,14 +1,18 @@
 import { Raster, gridRaster, paintGrid } from "../raster";
 
 export type Facing = "front" | "back";
-export type Pose = "idle" | "walk1" | "walk2" | "pray" | "takbir" | "kneel" | "sit" | "celebrate" | "sad" | "blink";
+export type Pose =
+  | "idle" | "walk1" | "walk2" | "pray" | "takbir" | "kneel" | "sit" | "celebrate" | "sad" | "blink"
+  | "run1" | "run2" | "read" | "game" | "clarinet" | "drink" | "curl1" | "curl2";
+/** 0 = starting out … 4 = built. Comes from gym weeks. */
+export type BodyStage = 0 | 1 | 2 | 3 | 4;
 export type Mood = "neutral" | "happy" | "sad" | "closed";
 export type OutfitId = "fit-coat" | "fit-hoodie" | "fit-gym" | "fit-thobe" | "fit-leather" | "fit-suit";
 
-export const AVATAR_W = 26;
+export const AVATAR_W = 30;
 export const AVATAR_H = 48;
 /** Pixel in the sprite that sits on the floor point. */
-export const AVATAR_FOOT = { x: 13, y: 46 };
+export const AVATAR_FOOT = { x: 15, y: 46 };
 
 /** Face and hair colors, picked from your photo. */
 const BODY: Record<string, string> = {
@@ -306,19 +310,47 @@ function palette(fit: OutfitStyle): Record<string, string> {
   return { ...BODY, ...fit.colors, W: BODY.W, S: BODY.S, s: BODY.s };
 }
 
+/** Extra pixels per side for the chest/shoulders and the waist at each body stage (V-taper later). */
+const CHEST_PAD = [0, 1, 1, 2, 3];
+const WAIST_PAD = [0, 0, 1, 1, 1];
+
+/** Widen a grid row by repeating the pixel next to each outline. */
+function widen(row: string, pad: number): string {
+  if (!pad || row.length < 4) return row;
+  return row[0] + row[1].repeat(pad) + row.slice(1, -1) + row[row.length - 2].repeat(pad) + row[row.length - 1];
+}
+
+/** Thicker arms/legs: repeat the first inner column. */
+const thicken = (grid: string[], on: boolean) => (on ? grid.map((row) => row[0] + row[1] + row.slice(1)) : grid);
+
+const PROPS: Record<string, string> = { b: "#a8322d", u: "#fbf6ee", g: "#1b1b1e", m: "#c9ccd2", n: "#6b4a33" };
+const BOOK = [".KKKKKKKK.", "KbuuuKuubK", "KbuuuKuubK", ".KKKKKKKK."];
+const PAD = [".KKKKKK.", "KggmmggK", ".KKKKKK."];
+const CUP = ["KKK", "KuK", "KuK", "KKK"];
+const DUMBBELL = ["KK.KK", "KgKgK", "KK.KK"];
+
 /** Render one avatar frame (26×48). Mirroring for other directions happens at draw time. */
-export function renderAvatar(facing: Facing, pose: Pose, outfit: OutfitId = "fit-coat"): Raster {
+export function renderAvatar(facing: Facing, pose: Pose, outfit: OutfitId = "fit-coat", body: BodyStage = 0): Raster {
   const fit = OUTFITS[outfit] ?? OUTFITS["fit-coat"];
-  const P = palette(fit);
+  const P = { ...palette(fit), ...PROPS };
   const g = (grid: string[]) => gridRaster(grid, P);
   const r = new Raster(AVATAR_W, AVATAR_H);
-  const step = pose === "walk1" ? 1 : pose === "walk2" ? -1 : 0;
-  const low = pose === "kneel" ? 11 : pose === "sit" ? 8 : 0;
+  r.tx = 2;
+  const run = pose === "run1" || pose === "run2";
+  const step = pose === "walk1" ? 1 : pose === "walk2" ? -1 : pose === "run1" ? 2 : pose === "run2" ? -2 : 0;
+  const seated = pose === "sit" || pose === "read" || pose === "game";
+  const low = pose === "kneel" ? 11 : seated ? 8 : 0;
   const headDy = (pose === "pray" || pose === "sad" ? 1 : 0) + low;
   const mood: Mood =
-    pose === "celebrate" ? "happy" : pose === "sad" ? "sad" : pose === "blink" || pose === "kneel" ? "closed" : "neutral";
+    pose === "celebrate" ? "happy" : pose === "sad" ? "sad" : pose === "blink" || pose === "kneel" || pose === "clarinet" ? "closed" : "neutral";
   const arms = ARMS[fit.arm];
   const front = facing === "front";
+  const cp = CHEST_PAD[body] ?? 0;
+  const wp = WAIST_PAD[body] ?? 0;
+  const bigArms = body >= 2;
+  const bigLegs = body >= 3;
+  const leftArmX = 3 - cp - (bigArms ? 1 : 0);
+  const rightArmX = 19 + cp;
 
   // Legs
   if (low) {
@@ -326,36 +358,70 @@ export function renderAvatar(facing: Facing, pose: Pose, outfit: OutfitId = "fit
   } else if (fit.legs === "robe") {
     r.blit(g(ROBE), 7, 33);
   } else {
-    r.blit(g(LEGS[fit.legs]), 7, 33 + step);
-    r.blit(g(LEGS[fit.legs]), 13, 33 - step);
+    const leg = thicken(LEGS[fit.legs], bigLegs);
+    r.blit(g(leg), bigLegs ? 6 : 7, 33 + step);
+    r.blit(g(leg), 13, 33 - step);
   }
 
   // Arms, behind the torso edges
   const ay = 19 + low;
+  const A = (grid: string[]) => g(thicken(grid, bigArms));
   if (pose === "celebrate") {
-    r.blit(g(arms.up), 2, 6);
-    r.blit(g(arms.up), 20, 6);
-  } else if ((pose === "pray" || pose === "kneel") && front) {
-    r.blit(g(arms.bent), 3, ay);
-    r.blit(g(arms.bent), 19, ay);
-  } else if (pose === "takbir" && front) {
-    r.blit(g(arms.bent), 3, ay);
-    r.blit(g(arms.bent), 19, ay);
+    r.blit(A(arms.up), leftArmX - 1, 6);
+    r.blit(A(arms.up), rightArmX + 1, 6);
+  } else if (pose === "curl2") {
+    r.blit(A(arms.bent), leftArmX, ay);
+    r.blit(A(arms.bent), rightArmX, ay);
+  } else if (front && (pose === "pray" || pose === "kneel" || pose === "takbir" || pose === "read" || pose === "game" || pose === "clarinet")) {
+    r.blit(A(arms.bent), leftArmX, ay);
+    r.blit(A(arms.bent), rightArmX, ay);
+  } else if (pose === "drink") {
+    r.blit(A(arms.down), leftArmX, ay);
+    r.blit(A(arms.bent), rightArmX, ay - 2);
+  } else if (run) {
+    r.blit(A(arms.bent), leftArmX, ay - step / 2);
+    r.blit(A(arms.bent), rightArmX, ay + step / 2);
   } else {
-    r.blit(g(arms.down), 3, ay - step);
-    r.blit(g(arms.down), 19, ay + step);
+    r.blit(A(arms.down), leftArmX, ay - step);
+    r.blit(A(arms.down), rightArmX, ay + step);
   }
 
-  paintGrid(r, TORSO[fit.torso][front ? "front" : "back"], P, 6, 18 + low);
+  // Torso, widened for the body stage
+  const torso = TORSO[fit.torso][front ? "front" : "back"];
+  torso.forEach((row, y) => {
+    const pad = y === 0 ? 0 : y <= 9 ? cp : wp;
+    paintGrid(r, [widen(row, pad)], P, 6 - pad, 18 + low + y);
+  });
+  if (outfit === "fit-gym" && front && body >= 2) {
+    // chest line and a hint of abs on the tee
+    r.line(9 - cp + 1, 25 + low, 16 + cp, 25 + low, "#2a2a30");
+    if (body >= 4) for (const y of [28, 30]) r.line(11, y + low, 14, y + low, "#2a2a30");
+  }
   if ((pose === "pray" || pose === "kneel") && front) paintGrid(r, CHEST_HANDS, P, 9, 25 + low);
+  if (pose === "read" && front) paintGrid(r, BOOK, P, 8, 24 + low);
+  if (pose === "game" && front) paintGrid(r, PAD, P, 9, 26 + low);
+  if (pose === "curl1" || pose === "curl2") {
+    const hy = pose === "curl2" ? ay + 6 : ay + 13;
+    paintGrid(r, DUMBBELL, P, leftArmX - 1, hy);
+    paintGrid(r, DUMBBELL, P, rightArmX, hy);
+  }
 
   const head = front ? headFront(mood) : HEAD_BACK;
   paintGrid(r, fit.kufi ? head.map((row, i) => (i < 2 ? "" : row)) : head, P, 4, headDy);
   if (fit.kufi) paintGrid(r, KUFI, KUFI_COLORS, 4, headDy + 2);
   if (pose === "takbir" && front) {
-    paintGrid(r, EAR_HAND, P, 2, 11 + headDy);
-    paintGrid(r, EAR_HAND, P, 20, 11 + headDy);
+    paintGrid(r, EAR_HAND, P, 2 - cp, 11 + headDy);
+    paintGrid(r, EAR_HAND, P, 20 + cp, 11 + headDy);
   }
+  if (pose === "clarinet" && front) {
+    // clarinet from the mouth down to the waist, hands on it
+    r.rect(13, 16 + headDy, 2, 14, "#121214");
+    for (const y of [20, 23, 26]) r.set(14, y + headDy, "#d8dde2");
+    r.rect(12, 30 + headDy, 4, 2, "#121214");
+    paintGrid(r, ["KSSK", "KSsK"], P, 12, 21 + headDy);
+    paintGrid(r, ["KSSK", "KSsK"], P, 12, 25 + headDy);
+  }
+  if (pose === "drink") paintGrid(r, CUP, P, 17 + cp, 15 + headDy);
   return r;
 }
 
@@ -367,5 +433,5 @@ export function renderSleepingHead(outfit: OutfitId = "fit-coat"): Raster {
   return r;
 }
 
-export const ALL_POSES: Pose[] = ["idle", "walk1", "walk2", "pray", "takbir", "kneel", "sit", "celebrate", "sad", "blink"];
+export const ALL_POSES: Pose[] = ["idle", "walk1", "walk2", "pray", "takbir", "kneel", "sit", "celebrate", "sad", "blink", "run1", "run2", "read", "game", "clarinet", "drink", "curl1", "curl2"];
 export const ALL_OUTFITS = Object.keys(OUTFITS) as OutfitId[];

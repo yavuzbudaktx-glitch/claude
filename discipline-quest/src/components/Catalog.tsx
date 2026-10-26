@@ -1,13 +1,13 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { CATALOG, CATEGORY_LABELS, EQUIP_SLOT, ITEMS, type CatalogItem, type Category } from "@/engine/catalog";
-import { buyItem, canBuy, isLocked, liveStreaks, owns, type BuyResult } from "@/engine/engine";
-import { RULES, levelFor } from "@/engine/rules";
+import { CATALOG, EQUIP_SLOT, ITEMS, type CatalogItem, type Category } from "@/engine/catalog";
+import { buyItem, canBuy, isLocked, owns, type BuyResult } from "@/engine/engine";
+import { levelFor } from "@/engine/rules";
 import type { GameState } from "@/engine/types";
 import { WALL_ITEMS, buildPiece, stylePreview, wallItemPreview } from "@/game/furniture";
 import { lockedCopy } from "@/game/iso";
 import { renderCat } from "@/game/sprites/cat";
-import { useNow } from "@/lib/useNow";
+import { carSprite } from "@/game/sprites/cars";
 import { useGame } from "@/store/useGame";
 import PixelIcon from "./PixelIcon";
 import RasterCanvas from "./RasterCanvas";
@@ -19,7 +19,6 @@ const TABS: { label: string; cats: Category[] }[] = [
   { label: "Walls & floors", cats: ["wallpaper", "floor"] },
   { label: "Rugs", cats: ["rug"] },
   { label: "Rooms", cats: ["room"] },
-  { label: "Garage", cats: ["milestone", "paint"] },
   { label: "Pets", cats: ["pet"] },
 ];
 
@@ -29,9 +28,9 @@ export function previewFor(item: CatalogItem, locked = false) {
     case "wallpaper": return lock(stylePreview({ wallpaper: item.id })).r;
     case "floor": return lock(stylePreview({ floor: item.id })).r;
     case "room": return lock(stylePreview({ size: item.id === "room-penthouse" ? 56 : item.id === "room-apartment" ? 46 : 36 })).r;
-    case "rug": return lock(buildPiece(`rug:${item.id}`)).r;
-    case "paint": return lock(buildPiece(`ioniq5:${item.id}`)).r;
-    case "milestone": return lock(buildPiece("ioniq5:paint-white")).r;
+    case "rug": return lock(buildPiece(`prayerrug:${item.id}`)).r;
+    case "car": return lock(carSprite(item.id)).r;
+    case "fixture": return buildPiece(item.id === "prayerrug" ? "prayerrug:rug-green" : item.id === "kitchen" ? "kitchen:wall" : item.id).r;
     case "pet": return renderCat("sit");
     default: return lock(WALL_ITEMS.includes(item.id) ? wallItemPreview(item.id) : buildPiece(item.id)).r;
   }
@@ -44,7 +43,6 @@ export function isNew(s: GameState, item: CatalogItem) {
 const REASON: Record<Exclude<BuyResult, "ok" | "owned" | "not-for-sale">, (i: CatalogItem) => string> = {
   level: (i) => `Level ${i.level}`,
   tier: (i) => `Needs ${ITEMS[`room-${i.tier}`]?.name ?? i.tier}`,
-  needs: (i) => `Needs ${ITEMS[i.requires!]?.name}`,
   debt: () => "In debt",
   poor: (i) => `${i.price} coins`,
 };
@@ -56,8 +54,6 @@ export default function Catalog() {
   const markSeen = useGame((s) => s.markSeen);
   const [tab, setTab] = useState(0);
   const items = useMemo(() => CATALOG.filter((c) => TABS[tab].cats.includes(c.category)), [tab]);
-  const now = useNow();
-  const streaks = liveStreaks(game, now);
 
   // Clear NEW tags for what you've looked at, when you leave the tab.
   useEffect(() => {
@@ -66,8 +62,6 @@ export default function Catalog() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items]);
 
-  const milestoneText = (id: string) =>
-    id === "ioniq5" ? `${Math.min(streaks.clean, RULES.carCleanDays)}/${RULES.carCleanDays} clean days` : id === "paint-gold" ? `${Math.min(streaks.clean, RULES.goldPaintCleanDays)}/${RULES.goldPaintCleanDays} clean days` : "";
 
   return (
     <section className="panel">
@@ -121,7 +115,7 @@ export default function Catalog() {
                     </span>
                   )
                 ) : item.price === null ? (
-                  <span className="chip w-full justify-center bg-[#efe6ff] text-sm">{milestoneText(item.id) || "Milestone"}</span>
+                  <span className="chip w-full justify-center bg-[#efe6ff] text-sm">Not for sale</span>
                 ) : (
                   <button
                     className="btn btn-gold w-full"

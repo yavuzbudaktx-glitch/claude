@@ -86,7 +86,7 @@ export default function Settings() {
       </section>
 
       <section className="panel">
-        <div className="panel-head">Wake-up, reminders & sound</div>
+        <div className="panel-head">Schedule, reminders & sound</div>
         <div className="space-y-2 p-3">
           <label className="flex items-center justify-between gap-2">
             <span>Wake target</span>
@@ -101,6 +101,31 @@ export default function Settings() {
             <span>Grace minutes</span>
             <span className="text-lg">{game.settings.wakeGraceMin}</span>
           </label>
+          <label className="flex items-center justify-between gap-2">
+            <span>Bedtime</span>
+            <input
+              id="bedtime"
+              type="time"
+              className="input"
+              value={game.settings.bedtime}
+              onChange={(e) => e.target.value && act((s) => updateSettings(s, { bedtime: e.target.value }))}
+            />
+          </label>
+          <div className="flex items-center justify-between gap-2">
+            <span>Quran pages a day</span>
+            <span className="flex items-center gap-1.5">
+              <button className="btn h-9 w-9 px-0" disabled={game.settings.quranGoal <= 1} onClick={() => act((s) => updateSettings(s, { quranGoal: s.settings.quranGoal - 1 }))} aria-label="Fewer pages">
+                −
+              </button>
+              <span className="w-6 text-center text-xl tabular-nums">{game.settings.quranGoal}</span>
+              <button className="btn h-9 w-9 px-0" disabled={game.settings.quranGoal >= 20} onClick={() => act((s) => updateSettings(s, { quranGoal: s.settings.quranGoal + 1 }))} aria-label="More pages">
+                +
+              </button>
+            </span>
+          </div>
+          <button className={`btn w-full py-2 ${game.settings.ramadan ? "btn-green" : ""}`} onClick={() => act((s) => updateSettings(s, { ramadan: !s.settings.ramadan }))}>
+            <PixelIcon name="moon" size={14} /> Ramadan mode: {game.settings.ramadan ? "on" : "off"}
+          </button>
           <div className="grid grid-cols-2 gap-2">
             <button className={`btn py-2 ${game.settings.notifications ? "btn-green" : ""}`} onClick={toggleNotifications}>
               Reminders: {game.settings.notifications ? "on" : "off"}

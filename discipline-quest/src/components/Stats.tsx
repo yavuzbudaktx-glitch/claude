@@ -4,6 +4,7 @@ import { addDays, dateKey } from "@/engine/dates";
 import { PRAYERS, type DayLog } from "@/engine/types";
 import { useNow } from "@/lib/useNow";
 import { useGame } from "@/store/useGame";
+import { plan, dayLabel } from "@/engine/planner";
 
 /** 0..4 score: prayers all done, woke on time, diet kept, clean. */
 function score(d: DayLog) {
@@ -30,6 +31,10 @@ export default function Stats() {
 
   const rows: [string, number, number][] = [
     ["Perfect days", game.streaks.perfect, game.best.perfect],
+    ["Gym weeks (4×)", game.streaks.gymWeeks, game.best.gymWeeks],
+    ["Quran goal", game.streaks.quran, game.best.quran],
+    ["Bedtime", game.streaks.bed, game.best.bed],
+    ["Jumu'ah (Fridays)", game.streaks.jumuah, game.best.jumuah],
     ["Prayers (all 5)", live.prayers, game.best.prayers],
     ["Wake on time", live.wake, game.best.wake],
     ["Porn-free", live.clean, game.best.clean],
@@ -37,8 +42,33 @@ export default function Stats() {
     ...game.customHabits.filter((h) => !h.archived).map((h): [string, number, number] => [h.name, game.streaks.custom[h.id] ?? 0, game.best.custom[h.id] ?? 0]),
   ];
 
+  const p = plan(game, now);
+
   return (
     <div className="space-y-3">
+      <section className="panel">
+        <div className="panel-head">Unlock planner</div>
+        <div className="space-y-2 p-3">
+          <div className="flex items-end gap-3">
+            <div className="font-pixel text-3xl leading-none tabular-nums">{p.daysAll}</div>
+            <div className="pb-0.5 text-lg leading-tight">days until everything is unlocked{p.daysAll > 0 ? ` (around ${dayLabel(now, p.daysAll)})` : ""}</div>
+          </div>
+          <p className="text-base text-[var(--muted)]">
+            {p.estimated ? "Estimated for a strong pace" : "Based on your last 14 days"}: about {p.coinRate} coins and {p.xpRate} XP a day, with no relapses.
+            {" "}{p.remainingCost.toLocaleString()} coins of items left to buy.
+          </p>
+          {p.next.length > 0 && (
+            <ul className="space-y-0.5">
+              {p.next.map((n) => (
+                <li key={n.id} className="flex justify-between gap-2 border-b border-black/10 text-lg">
+                  <span className="min-w-0 truncate">{n.name}</span>
+                  <span className="shrink-0 tabular-nums text-[var(--head-2)]">{n.days <= 0 ? "now" : `in ${n.days} day${n.days === 1 ? "" : "s"}`}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
       <section className="panel">
         <div className="panel-head">This week</div>
         <div className="grid grid-cols-3 gap-2 p-3 text-center">
@@ -117,6 +147,10 @@ export default function Stats() {
             ["On-time mornings", game.stats.wakeOnTime],
             ["Diet days", game.stats.dietDays],
             ["Quests done", game.stats.quests],
+            ["Gym visits", game.stats.gym],
+            ["Quran pages", game.stats.quranPages],
+            ["Khatms", game.stats.khatms],
+            ["Jumu'ah", game.stats.jumuah],
             ["Perfect days", game.stats.perfectDays],
           ] as [string, number][]).map(([k, v]) => (
             <div key={k} className="flex justify-between border-b border-black/10">

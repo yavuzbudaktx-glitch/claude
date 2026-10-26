@@ -29,6 +29,13 @@ export interface DayLog {
   quests?: string[];
   /** Quest ids already paid out for this day. */
   questsDone?: string[];
+  gym?: boolean;
+  quranPages?: number;
+  /** Going-to-bed check-in for the night that starts on this date. */
+  bed?: "pending" | "ok" | "late";
+  bedAt?: number;
+  fasted?: boolean;
+  taraweeh?: boolean;
 }
 
 export interface CustomHabit {
@@ -49,6 +56,14 @@ export interface OwnedItem {
   lockDaysLeft: number;
 }
 
+/** Where a piece of furniture sits. rot 1 = mirrored (footprint w/d swapped). */
+export interface PlacedItem {
+  itemId: ItemId;
+  tx: number;
+  ty: number;
+  rot: 0 | 1;
+}
+
 export interface Streaks {
   prayers: number;
   wake: number;
@@ -56,6 +71,12 @@ export interface Streaks {
   diet: number;
   /** Days where everything was done. */
   perfect: number;
+  /** Weeks in a row with 4+ gym visits. */
+  gymWeeks: number;
+  quran: number;
+  bed: number;
+  /** Fridays in a row with Jumu'ah. */
+  jumuah: number;
   custom: Record<string, number>;
 }
 
@@ -71,6 +92,16 @@ export interface LifetimeStats {
   perfectDays: number;
   quests: number;
   bought: number;
+  /** Coins spent in the catalog (for earning-rate math). */
+  spent: number;
+  gym: number;
+  gymWeeksDone: number;
+  quranPages: number;
+  khatms: number;
+  bedOnTime: number;
+  jumuah: number;
+  fasts: number;
+  taraweeh: number;
 }
 
 export interface GameEvent {
@@ -84,12 +115,18 @@ export interface GameEvent {
 export type InboxEntry =
   | { kind: "badge"; id: string; at: number }
   | { kind: "level"; level: number; at: number }
-  | { kind: "unlock"; id: ItemId; at: number };
+  | { kind: "unlock"; id: ItemId; at: number }
+  | { kind: "body"; stage: number; up: boolean; at: number }
+  | { kind: "khatm"; count: number; at: number };
 
 export interface Settings {
   /** "HH:MM" */
   wakeTarget: string;
   wakeGraceMin: number;
+  /** "HH:MM", latest on-time bedtime. */
+  bedtime: string;
+  quranGoal: number;
+  ramadan: boolean;
   notifications: boolean;
   sound: boolean;
 }
@@ -101,11 +138,19 @@ export interface Equipped {
   floor: ItemId;
   rug: ItemId;
   room: ItemId;
-  paint: ItemId;
+  car: ItemId;
+}
+
+export interface Body {
+  /** 0..4 */
+  stage: number;
+  /** Progress toward stages; drops back when two weeks in a row are missed. */
+  points: number;
+  missedInRow: number;
 }
 
 export interface GameState {
-  version: 2;
+  version: 3;
   startDate: string;
   /** Last calendar date whose misses/rewards have been applied. */
   lastSettled: string | null;
@@ -117,11 +162,17 @@ export interface GameState {
   stats: LifetimeStats;
   customHabits: CustomHabit[];
   inventory: OwnedItem[];
+  placements: PlacedItem[];
   equipped: Equipped;
+  body: Body;
+  /** First dates that new trackers can charge for (so starting mid-week or mid-day is fair). */
+  since: { gym: string; quran: string; bed: string };
   badges: Record<string, number>;
   inbox: InboxEntry[];
   /** Catalog ids the player has already seen (for "NEW" tags). */
   seen: ItemId[];
+  /** End-of-day totals for the earning-rate planner: earned = coins + spent. */
+  history: Record<string, { earned: number; xp: number }>;
   /** Room goes dark and messy after a relapse or a day with zero prayers. */
   gloomy: boolean;
   settings: Settings;

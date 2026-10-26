@@ -1,12 +1,12 @@
 "use client";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { createInitialState, dismissInbox, ensureToday, equip, markSeen, migrate } from "@/engine/engine";
-import type { GameState, ItemId } from "@/engine/types";
+import { createInitialState, dismissInbox, ensureToday, equip, markSeen, migrate, placeItem, storeItem } from "@/engine/engine";
+import type { GameState, ItemId, PlacedItem } from "@/engine/types";
 import { getNow } from "@/lib/clock";
 import { SFX } from "@/lib/sound";
 
-export type RoomActionKind = "pray" | "wake" | "diet" | "cheat" | "urge" | "relapse" | "buy" | "habit" | "late" | "equip";
+export type RoomActionKind = "pray" | "wake" | "diet" | "cheat" | "urge" | "relapse" | "buy" | "habit" | "late" | "equip" | "gym" | "quran" | "bed";
 
 export interface RoomAction {
   kind: RoomActionKind;
@@ -25,9 +25,11 @@ interface Store {
   equip: (id: ItemId, say?: string) => void;
   markSeen: (ids: ItemId[]) => void;
   dismiss: () => void;
+  place: (p: PlacedItem) => void;
+  store: (id: ItemId) => void;
 }
 
-const GOOD: RoomActionKind[] = ["pray", "wake", "diet", "urge", "buy", "habit", "equip"];
+const GOOD: RoomActionKind[] = ["pray", "wake", "diet", "urge", "buy", "habit", "equip", "gym", "quran", "bed"];
 
 export const useGame = create<Store>()(
   persist(
@@ -69,10 +71,19 @@ export const useGame = create<Store>()(
       dismiss() {
         set({ game: dismissInbox(get().game) });
       },
+      place(p) {
+        const next = placeItem(get().game, p);
+        if (next === get().game) return;
+        if (next.settings.sound) SFX.tap();
+        set({ game: next });
+      },
+      store(id) {
+        set({ game: storeItem(get().game, id) });
+      },
     }),
     {
       name: "discipline-quest",
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => localStorage),
       partialize: (s) => ({ game: s.game }),
       migrate: (persisted) => {
@@ -83,7 +94,7 @@ export const useGame = create<Store>()(
         const p = persisted as { game?: GameState } | undefined;
         if (!p?.game) return current;
         // Saves written by v1 code without the persist version bump still need upgrading.
-        return { ...current, game: p.game.version === 2 ? p.game : migrate(p.game, getNow()) };
+        return { ...current, game: (p.game as { version: number }).version === 3 ? p.game : migrate(p.game, getNow()) };
       },
     },
   ),

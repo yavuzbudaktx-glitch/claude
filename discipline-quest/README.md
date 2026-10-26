@@ -14,9 +14,14 @@ A Habbo-style pixel room that reflects how disciplined you are. Your avatar walk
 | Diet | Log meals as on-plan or cheat. Evening check-in (opens 18:00) gives +15. A cheat meal or no check-in costs 20. |
 | Custom habits | Add your own daily habits in Settings. +5 when done, −5 when missed. |
 
+| Gym | One tap per visit. 4 visits a week (Mon–Sun) or lose 30 coins. Full weeks grow your body through 5 stages; two missed weeks in a row drop a stage. |
+| Quran | Log pages with +/−. Daily goal (default 2) or −10. A khatm bar counts to 604 pages. |
+| Bedtime | Check in between 21:00 and 23:30. Late or missed costs 15. The avatar goes to sleep. |
+| Jumu'ah / Ramadan | Friday Dhuhr becomes Jumu'ah with a bonus. Ramadan mode adds fasting and taraweeh check-ins. |
+
 - Days you don't open the app still count as full misses.
 - Coins can go negative. While in debt the catalog is closed.
-- **Hyundai Ioniq 5** (Atlas White) unlocks at 30 clean days, Gravity Gold paint at 90.
+- **Cars** (parked in the garage outside): 2016 Mini Cooper from day one, 2016 Infiniti Q50 at 30 clean days, 2027 Hyundai Ioniq 5 at 90 clean days.
 
 ## Progression
 
@@ -25,6 +30,9 @@ A Habbo-style pixel room that reflects how disciplined you are. Your avatar walk
 - **Wardrobe**: six outfits (coat, hoodie, gym, thobe + kufi, leather jacket, navy suit).
 - **Badges**: 29 badges for prayer, purity, mornings, diet and general milestones. Each pays coins and XP.
 - **Daily quests**: three bonus quests a day, the same all day. Undoing the work takes the reward back.
+- **Decorate**: move, rotate or store any furniture, including the bed, kitchen and rug. Placement can't block the way.
+- **Use things**: tap the treadmill, bookshelf (read on the sofa), clarinet, PC, arcade, record player, TV, coffee, weight bench or aquarium and the avatar uses it.
+- **Planner**: Stats shows how many days until everything is unlocked (about 100 at a strong pace).
 - **Room life**: tap the rug, bed or kitchen to log things. The avatar prays (takbir, qiyam, sitting), sleeps until you check in, and the room gets darker at night with lamps and screens glowing.
 
 ## Tech

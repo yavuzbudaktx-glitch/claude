@@ -19,12 +19,14 @@ export function shade(hex: string, f: number): string {
 
 export class Raster {
   readonly data: Uint8ClampedArray;
+  /** Horizontal offset applied to every draw call (lets a sprite grow without moving its art). */
+  tx = 0;
   constructor(readonly w: number, readonly h: number) {
     this.data = new Uint8ClampedArray(w * h * 4);
   }
 
   set(x: number, y: number, color: string) {
-    x = Math.floor(x);
+    x = Math.floor(x + this.tx);
     y = Math.floor(y);
     if (x < 0 || y < 0 || x >= this.w || y >= this.h) return;
     const [r, g, b, a] = rgba(color);
@@ -46,7 +48,7 @@ export class Raster {
       for (let x = 0; x < src.w; x++) {
         const i = (y * src.w + (mirror ? src.w - 1 - x : x)) * 4;
         if (src.data[i + 3] === 0) continue;
-        const tx = dx + x, ty = dy + y;
+        const tx = dx + x + this.tx, ty = dy + y;
         if (tx < 0 || ty < 0 || tx >= this.w || ty >= this.h) continue;
         const j = (ty * this.w + tx) * 4;
         this.data.set(src.data.subarray(i, i + 4), j);

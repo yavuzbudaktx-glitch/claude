@@ -4,6 +4,8 @@ import { BADGE_BY_ID } from "@/engine/badges";
 import { ITEMS } from "@/engine/catalog";
 import { titleFor } from "@/engine/rules";
 import { renderBadge } from "@/game/sprites/badges";
+import { renderAvatar, type BodyStage, type OutfitId } from "@/game/sprites/avatar";
+import { BODY_NAMES } from "@/engine/engine";
 import { useGame } from "@/store/useGame";
 import { previewFor } from "./Catalog";
 import RasterCanvas from "./RasterCanvas";
@@ -13,6 +15,7 @@ const COLORS = ["#f1c40f", "#ff4fc3", "#4caf50", "#3d86c6", "#ffffff", "#e67e22"
 /** Shows one queued celebration at a time: badge earned, level up, or an unlock. */
 export default function Celebrate() {
   const entry = useGame((s) => s.game.inbox[0]);
+  const outfit = useGame((s) => s.game.equipped.outfit) as OutfitId;
   const dismiss = useGame((s) => s.dismiss);
   const confetti = useMemo(
     () => Array.from({ length: 28 }, (_, k) => ({ left: (k * 37) % 100, delay: (k % 7) * 0.08, color: COLORS[k % COLORS.length] })),
@@ -40,6 +43,16 @@ export default function Celebrate() {
     title = `Level ${entry.level}`;
     body = `You're now "${titleFor(entry.level)}". New items may be open in the catalog.`;
     art = <div className="font-pixel text-5xl text-[var(--head)]">{entry.level}</div>;
+  } else if (entry.kind === "body") {
+    title = entry.up ? "Body upgrade" : "Body slipped";
+    body = entry.up
+      ? `Gym consistency is showing: you're now "${BODY_NAMES[entry.stage]}". Keep going 4× a week.`
+      : `Two missed gym weeks. Back to "${BODY_NAMES[entry.stage]}". Four visits this week gets you moving again.`;
+    art = <RasterCanvas make={() => renderAvatar("front", entry.up ? "celebrate" : "sad", outfit, entry.stage as BodyStage)} deps={[entry.stage, entry.up, outfit]} style={{ width: 60, height: 96 }} />;
+  } else if (entry.kind === "khatm") {
+    title = "Khatm al-Quran";
+    body = `You finished the whole Quran${entry.count > 1 ? ` for the ${entry.count}th time` : ""}. MashaAllah.`;
+    art = <div className="text-5xl" lang="ar" dir="rtl">ختم</div>;
   } else {
     const item = ITEMS[entry.id];
     if (!item) return null;

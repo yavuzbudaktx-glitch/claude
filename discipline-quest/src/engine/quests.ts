@@ -24,6 +24,11 @@ export const QUESTS: QuestDef[] = [
   { id: "breakfast", text: "Log an on-plan meal before noon", coins: 15, xp: 15, done: (d) => d.diet !== "cheat" && d.meals.some((m) => m.onPlan && hourOf(m.at) < 12) },
   { id: "diet-checkin", text: "Do the evening diet check-in", coins: 15, xp: 15, done: (d) => d.diet === "on" },
   { id: "urge", text: "Beat an urge with the urge timer", coins: 20, xp: 20, done: (d) => d.urgesResisted > 0 && d.relapses === 0 },
+  { id: "gym", text: "Go to the gym today", coins: 20, xp: 20, done: (d) => !!d.gym },
+  { id: "quran-goal", text: "Read your daily Quran pages", coins: 15, xp: 15, done: (d, s) => (d.quranPages ?? 0) >= s.settings.quranGoal },
+  { id: "quran-5", text: "Read 5 pages of Quran", coins: 25, xp: 25, done: (d) => (d.quranPages ?? 0) >= 5 },
+  { id: "bed", text: "Check in for bed on time tonight", coins: 20, xp: 20, done: (d) => d.bed === "ok" },
+  { id: "fast", text: "Fast today", coins: 20, xp: 20, done: (d) => !!d.fasted, when: (s) => s.settings.ramadan },
   {
     id: "habits",
     text: "Finish all your own habits",

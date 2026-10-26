@@ -107,3 +107,54 @@ export function lockedCopy(s: Sprite): Sprite {
   }
   return { ...s, r };
 }
+
+/**
+ * Extrude a side profile (points in X/Z, any winding) across Y from y0 to y1.
+ * Draws the faces that point up or toward +X, then the near (+Y) side on top.
+ * Great for car bodies: the silhouette comes from the profile.
+ */
+export function prism(
+  iso: Iso,
+  profile: [number, number][],
+  y0: number,
+  y1: number,
+  color: string,
+  o: { side?: string; top?: string; front?: string; slope?: string; outline?: string; noSide?: boolean } = {},
+) {
+  let pts = profile;
+  const area = pts.reduce((a, [x, z], i) => {
+    const [x2, z2] = pts[(i + 1) % pts.length];
+    return a + (x * z2 - x2 * z);
+  }, 0);
+  if (area < 0) pts = [...pts].reverse();
+  const top = o.top ?? shade(color, 0.16);
+  const front = o.front ?? shade(color, -0.22);
+  const outline = o.outline ?? shade(color, -0.6);
+  const faces: { q: P3[]; mx: number; c: string }[] = [];
+  for (let i = 0; i < pts.length; i++) {
+    const [x1, z1] = pts[i];
+    const [x2, z2] = pts[(i + 1) % pts.length];
+    const nx = z2 - z1, nz = -(x2 - x1);
+    if (nz <= 0 && nx <= 0) continue;
+    const len = Math.hypot(nx, nz) || 1;
+    const up = Math.max(0, nz / len);
+    const c = up > 0.85 ? top : up > 0.35 ? (o.slope ?? shade(color, 0.05)) : front;
+    faces.push({ q: [[x1, y0, z1], [x2, y0, z2], [x2, y1, z2], [x1, y1, z1]], mx: (x1 + x2) / 2, c });
+  }
+  faces.sort((a, b) => a.mx - b.mx);
+  for (const f of faces) iso.quad(f.q, f.c);
+  if (!o.noSide) iso.quad(pts.map(([x, z]) => [x, y1, z] as P3), o.side ?? color);
+  // silhouette-ish outline: near side edges plus the far top edges
+  for (const f of faces) iso.line(f.q[0], f.q[1], outline);
+  if (!o.noSide)
+    for (let i = 0; i < pts.length; i++) {
+      const a = pts[i], b = pts[(i + 1) % pts.length];
+      iso.line([a[0], y1, a[1]], [b[0], y1, b[1]], outline);
+    }
+}
+
+/** Octagon "circle" on a vertical plane (u along the plane, z up). */
+export function octagonOn(plane: (u: number, z: number) => P3, cu: number, cz: number, r: number): P3[] {
+  const k = r * 0.41;
+  return ([[k, r], [r, k], [r, -k], [k, -r], [-k, -r], [-r, -k], [-r, k], [-k, r]] as const).map(([du, dz]) => plane(cu + du, cz + dz));
+}

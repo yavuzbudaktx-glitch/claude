@@ -1,31 +1,64 @@
 import { BADGES } from "./badges";
-import { CATALOG, DEFAULT_EQUIPPED, EQUIP_SLOT, ITEMS, STARTERS, TIER_ORDER, tierOf } from "./catalog";
-import { addDays, dateKey, daysBetween, minutesOfDay, parseHM } from "./dates";
+import {
+  CAR_UNLOCKS,
+  CATALOG,
+  DEFAULT_EQUIPPED,
+  EQUIP_SLOT,
+  ITEMS,
+  REMOVED_REFUNDS,
+  STARTERS,
+  TIER_ORDER,
+  tierOf,
+} from "./catalog";
+import { addDays, dateKey, daysBetween, minutesOfDay, parseHM, parseKey } from "./dates";
+import { PREFERRED, autoPlace, checkPlace } from "./placement";
 import { QUEST_BY_ID, questsFor } from "./quests";
 import { RULES, levelFor } from "./rules";
 import {
   PRAYERS,
   PRAYER_LABELS,
+  type Body,
   type CustomHabit,
   type DayLog,
   type GameEvent,
   type GameState,
   type ItemId,
   type LifetimeStats,
+  type PlacedItem,
   type PrayerName,
   type Streaks,
 } from "./types";
 
-const emptyStreaks = (): Streaks => ({ prayers: 0, wake: 0, clean: 0, diet: 0, perfect: 0, custom: {} });
+const emptyStreaks = (): Streaks => ({ prayers: 0, wake: 0, clean: 0, diet: 0, perfect: 0, gymWeeks: 0, quran: 0, bed: 0, jumuah: 0, custom: {} });
 const emptyStats = (): LifetimeStats => ({
-  prayers: 0, fajr: 0, fullPrayerDays: 0, cleanDays: 0, urges: 0, wakeOnTime: 0,
-  dietDays: 0, mealsOnPlan: 0, perfectDays: 0, quests: 0, bought: 0,
+  prayers: 0, fajr: 0, fullPrayerDays: 0, cleanDays: 0, urges: 0, wakeOnTime: 0, dietDays: 0, mealsOnPlan: 0,
+  perfectDays: 0, quests: 0, bought: 0, spent: 0, gym: 0, gymWeeksDone: 0, quranPages: 0, khatms: 0,
+  bedOnTime: 0, jumuah: 0, fasts: 0, taraweeh: 0,
 });
+const emptyBody = (): Body => ({ stage: 0, points: 0, missedInRow: 0 });
+
+export const BODY_THRESHOLDS = [0, 2, 5, 9, 14];
+export const BODY_NAMES = ["Starting out", "Getting there", "Fit", "Athletic", "Built"];
+
+/** Monday of the week containing this date. */
+export function mondayOf(date: string): string {
+  const d = parseKey(date);
+  return addDays(date, -((d.getDay() + 6) % 7));
+}
+export const isFriday = (date: string) => parseKey(date).getDay() === 5;
+export const isSunday = (date: string) => parseKey(date).getDay() === 0;
+
+const defaultPlacements = (): PlacedItem[] =>
+  (["bed", "kitchen", "prayerrug"] as const).map((id) => ({ itemId: id, tx: PREFERRED[id][0], ty: PREFERRED[id][1], rot: 0 as const }));
+
+function freshSince(today: string) {
+  return { gym: addDays(mondayOf(today), 7), quran: addDays(today, 1), bed: addDays(today, 1) };
+}
 
 export function createInitialState(now: Date): GameState {
   const today = dateKey(now);
   const s: GameState = {
-    version: 2,
+    version: 3,
     startDate: today,
     lastSettled: addDays(today, -1),
     days: { [today]: emptyDay(today) },
@@ -36,12 +69,16 @@ export function createInitialState(now: Date): GameState {
     stats: emptyStats(),
     customHabits: [],
     inventory: [],
+    placements: defaultPlacements(),
     equipped: { ...DEFAULT_EQUIPPED },
+    body: emptyBody(),
+    since: freshSince(today),
     badges: {},
     inbox: [],
     seen: CATALOG.filter((c) => c.level <= 1).map((c) => c.id),
+    history: {},
     gloomy: false,
-    settings: { wakeTarget: "08:30", wakeGraceMin: 15, notifications: false, sound: false },
+    settings: { wakeTarget: "08:30", wakeGraceMin: 15, bedtime: "23:30", quranGoal: 2, ramadan: false, notifications: false, sound: false },
     log: [{ at: now.getTime(), text: "Your room is ready. Stay disciplined.", kind: "info" }],
   };
   s.days[today].quests = questsFor(today, s).map((q) => q.id);
@@ -78,13 +115,10 @@ function earn(s: GameState, now: Date, coins: number, xp: number, text: string, 
 }
 
 function bumpBest(s: GameState) {
-  const b = s.best;
-  b.prayers = Math.max(b.prayers, s.streaks.prayers);
-  b.wake = Math.max(b.wake, s.streaks.wake);
-  b.clean = Math.max(b.clean, s.streaks.clean);
-  b.diet = Math.max(b.diet, s.streaks.diet);
-  b.perfect = Math.max(b.perfect, s.streaks.perfect);
-  for (const [id, v] of Object.entries(s.streaks.custom)) b.custom[id] = Math.max(b.custom[id] ?? 0, v);
+  const b = s.best as unknown as Record<string, number>;
+  const c = s.streaks as unknown as Record<string, number>;
+  for (const k of ["prayers", "wake", "clean", "diet", "perfect", "gymWeeks", "quran", "bed", "jumuah"]) b[k] = Math.max(b[k] ?? 0, c[k] ?? 0);
+  for (const [id, v] of Object.entries(s.streaks.custom)) s.best.custom[id] = Math.max(s.best.custom[id] ?? 0, v);
 }
 
 export function activeCustom(s: GameState, date: string): CustomHabit[] {
@@ -107,6 +141,8 @@ export function usable(s: GameState, id: ItemId): boolean {
 function grant(s: GameState, now: Date, id: ItemId, celebrate: boolean) {
   if (s.inventory.some((i) => i.itemId === id)) return;
   s.inventory.push({ uid: `${id}-${now.getTime()}`, itemId: id, acquiredAt: now.getTime(), lockDaysLeft: 0 });
+  const spot = autoPlace(s, id);
+  if (spot) s.placements.push(spot);
   if (celebrate) s.inbox.push({ kind: "unlock", id, at: now.getTime() });
 }
 
@@ -149,14 +185,58 @@ function syncQuests(s: GameState, date: string, now: Date) {
   }
 }
 
+const quranCounts = (s: GameState, date: string) => date >= s.since.quran;
+
 function isPerfect(s: GameState, day: DayLog) {
   return (
     PRAYERS.every((p) => day.prayers[p]) &&
     day.wake === "ok" &&
     day.diet === "on" &&
     day.relapses === 0 &&
+    (!quranCounts(s, day.date) || (day.quranPages ?? 0) >= s.settings.quranGoal) &&
     activeCustom(s, day.date).every((h) => day.custom[h.id])
   );
+}
+
+export function gymCountInWeek(s: GameState, monday: string): number {
+  let n = 0;
+  for (let i = 0; i < 7; i++) if (s.days[addDays(monday, i)]?.gym) n++;
+  return n;
+}
+
+export function stageFor(points: number): number {
+  let st = 0;
+  BODY_THRESHOLDS.forEach((t, i) => points >= t && (st = i));
+  return st;
+}
+
+/** Sunday night: did you make 4 gym visits this week? */
+function settleGymWeek(s: GameState, monday: string, now: Date) {
+  const count = gymCountInWeek(s, monday);
+  const b = s.body;
+  if (count >= RULES.gym.perWeek) {
+    s.streaks.gymWeeks++;
+    s.stats.gymWeeksDone++;
+    b.missedInRow = 0;
+    b.points++;
+    earn(s, now, RULES.gym.weekCoins, RULES.gym.weekXp, `Gym week done: ${count} visits`, "good");
+    const st = stageFor(b.points);
+    if (st > b.stage) {
+      b.stage = st;
+      s.inbox.push({ kind: "body", stage: st, up: true, at: now.getTime() });
+    }
+  } else if (monday >= s.since.gym) {
+    s.streaks.gymWeeks = 0;
+    b.missedInRow++;
+    earn(s, now, -RULES.gym.missWeekCoins, 0, `Gym week missed: ${count}/${RULES.gym.perWeek}`, "bad");
+    if (b.missedInRow >= 2 && b.stage > 0) {
+      b.stage--;
+      b.points = BODY_THRESHOLDS[b.stage];
+      b.missedInRow = 0;
+      s.inbox.push({ kind: "body", stage: b.stage, up: false, at: now.getTime() });
+      s.log.unshift({ at: now.getTime(), text: "Two missed gym weeks: your body slipped back a stage", kind: "bad" });
+    }
+  }
 }
 
 /** Apply end-of-day misses and streaks for one finished day. */
@@ -170,7 +250,13 @@ function settleDay(s: GameState, date: string, now: Date) {
   } else {
     s.streaks.prayers = 0;
     earn(s, now, -missed.length * RULES.prayer.missCoins, 0,
-      `${date}: missed ${missed.map((p) => PRAYER_LABELS[p]).join(", ")}`, "bad");
+      `${date}: missed ${missed.map((p) => (p === "dhuhr" && isFriday(date) ? "Jumu'ah" : PRAYER_LABELS[p])).join(", ")}`, "bad");
+  }
+  if (isFriday(date)) {
+    if (day.prayers.dhuhr) {
+      s.streaks.jumuah++;
+      s.stats.jumuah++;
+    } else s.streaks.jumuah = 0;
   }
 
   if (day.wake === "ok") s.streaks.wake++;
@@ -185,6 +271,25 @@ function settleDay(s: GameState, date: string, now: Date) {
   } else if (day.diet === "pending") {
     s.streaks.diet = 0;
     earn(s, now, -RULES.diet.missCoins, 0, `${date}: no diet check-in`, "bad");
+  }
+
+  if (quranCounts(s, date)) {
+    if ((day.quranPages ?? 0) >= s.settings.quranGoal) s.streaks.quran++;
+    else {
+      s.streaks.quran = 0;
+      earn(s, now, -RULES.quran.missCoins, 0, `${date}: Quran goal missed`, "bad");
+    }
+  }
+
+  // Bedtime is a night thing, so yesterday's bed check-in is settled today.
+  const prev = addDays(date, -1);
+  if (prev >= s.since.bed && s.days[prev]) {
+    const b = s.days[prev].bed ?? "pending";
+    if (b === "ok") s.streaks.bed++;
+    else {
+      s.streaks.bed = 0;
+      if (b === "pending") earn(s, now, -RULES.bed.missCoins, 0, `${prev}: no bedtime check-in`, "bad");
+    }
   }
 
   if (day.relapses > 0) s.streaks.clean = 0;
@@ -209,17 +314,21 @@ function settleDay(s: GameState, date: string, now: Date) {
     earn(s, now, RULES.perfectDay.coins, RULES.perfectDay.xp, `${date}: perfect day!`, "good");
   } else s.streaks.perfect = 0;
 
+  if (isSunday(date)) settleGymWeek(s, mondayOf(date), now);
+
   s.gloomy = day.relapses > 0 || missed.length === PRAYERS.length;
 
-  if (s.streaks.clean >= RULES.carCleanDays && !owns(s, "ioniq5")) {
-    grant(s, now, "ioniq5", true);
-    earn(s, now, 0, 100, `Unlocked the Ioniq 5: ${RULES.carCleanDays} clean days!`, "good");
-  }
-  if (s.streaks.clean >= RULES.goldPaintCleanDays && !owns(s, "paint-gold")) {
-    grant(s, now, "paint-gold", true);
-    earn(s, now, 0, 150, `Unlocked Gravity Gold paint: ${RULES.goldPaintCleanDays} clean days!`, "good");
+  for (const u of CAR_UNLOCKS) {
+    if (s.streaks.clean >= u.cleanDays && !owns(s, u.id)) {
+      grant(s, now, u.id, true);
+      earn(s, now, 0, 100, `Unlocked the ${ITEMS[u.id].name}: ${u.cleanDays} clean days!`, "good");
+    }
   }
   bumpBest(s);
+
+  s.history[date] = { earned: s.coins + s.stats.spent, xp: s.xp };
+  const keys = Object.keys(s.history).sort();
+  for (const k of keys.slice(0, Math.max(0, keys.length - 120))) delete s.history[k];
 }
 
 /**
@@ -257,10 +366,12 @@ export function setPrayer(state: GameState, now: Date, p: PrayerName, done: bool
     day.prayers[p] = done;
     const isAll = PRAYERS.every((x) => day.prayers[x]);
     const sign = done ? 1 : -1;
+    const jumuah = p === "dhuhr" && isFriday(day.date);
+    const label = jumuah ? "Jumu'ah" : PRAYER_LABELS[p];
     s.stats.prayers += sign;
     if (p === "fajr") s.stats.fajr += sign;
-    earn(s, now, sign * RULES.prayer.coins, sign * RULES.prayer.xp,
-      done ? `Prayed ${PRAYER_LABELS[p]}` : `Unmarked ${PRAYER_LABELS[p]}`, done ? "good" : "info");
+    earn(s, now, sign * RULES.prayer.coins, sign * RULES.prayer.xp, done ? `Prayed ${label}` : `Unmarked ${label}`, done ? "good" : "info");
+    if (jumuah) earn(s, now, sign * RULES.jumuah.coins, sign * RULES.jumuah.xp, done ? "Jumu'ah bonus" : "Jumu'ah bonus taken back", done ? "good" : "info");
     if (isAll && !wasAll) earn(s, now, RULES.allPrayersBonus.coins, RULES.allPrayersBonus.xp, "All 5 prayers today!", "good");
     if (wasAll && !isAll) earn(s, now, -RULES.allPrayersBonus.coins, -RULES.allPrayersBonus.xp, "Lost all-prayers bonus", "info");
   });
@@ -292,6 +403,59 @@ export function wakeCheckIn(state: GameState, now: Date): GameState {
   });
 }
 
+// ---------- bedtime ----------
+
+/** The night a bedtime check-in belongs to: before 04:00 counts as the previous evening. */
+export function bedKey(now: Date): string {
+  return dateKey(new Date(now.getTime() - RULES.wakeEarliestHour * 3600_000));
+}
+
+/** Minutes since noon-ish, so 00:30 sorts after 23:30. */
+const nightMinutes = (m: number) => (m < 12 * 60 ? m + 24 * 60 : m);
+
+export type BedWindow = "too-early" | "on-time" | "late";
+
+export function bedWindow(state: GameState, now: Date): BedWindow {
+  const m = nightMinutes(minutesOfDay(now));
+  if (m < RULES.bed.opensHour * 60) return "too-early";
+  return m <= nightMinutes(parseHM(state.settings.bedtime)) ? "on-time" : "late";
+}
+
+export function bedCheckIn(state: GameState, now: Date): GameState {
+  const win = bedWindow(state, now);
+  if (win === "too-early") return state;
+  return withToday(state, now, (s) => {
+    const k = bedKey(now);
+    const day = s.days[k] ?? (s.days[k] = emptyDay(k));
+    if (day.bed && day.bed !== "pending") return;
+    day.bedAt = now.getTime();
+    if (win === "on-time") {
+      day.bed = "ok";
+      s.stats.bedOnTime++;
+      earn(s, now, RULES.bed.coins, RULES.bed.xp, "In bed on time", "good");
+    } else {
+      day.bed = "late";
+      s.streaks.bed = 0;
+      earn(s, now, -RULES.bed.missCoins, 0, "Late to bed", "bad");
+    }
+  });
+}
+
+/** Asleep in bed: from a bed check-in until the next wake-up, or before the morning wake-up check-in. */
+export function isAsleep(s: GameState, now: Date): boolean {
+  const today = dateKey(now);
+  const night = s.days[bedKey(now)];
+  if (night?.bedAt && night.bed && night.bed !== "pending") {
+    if (bedKey(now) === today) return true;
+    if ((s.days[today]?.wake ?? "pending") === "pending") return true;
+  }
+  const day = s.days[today];
+  const deadline = parseHM(s.settings.wakeTarget) + s.settings.wakeGraceMin;
+  return !!day && day.wake === "pending" && minutesOfDay(now) < deadline;
+}
+
+// ---------- diet ----------
+
 export function dietCheckInOpen(now: Date): boolean {
   return now.getHours() >= RULES.diet.checkInFromHour;
 }
@@ -320,6 +484,8 @@ export function logMeal(state: GameState, now: Date, note: string, onPlan: boole
   });
 }
 
+// ---------- purity ----------
+
 export function resistUrge(state: GameState, now: Date): GameState {
   return withToday(state, now, (s, day) => {
     day.urgesResisted++;
@@ -344,6 +510,59 @@ export function relapse(state: GameState, now: Date): GameState {
     }
   });
 }
+
+// ---------- gym, Quran, Ramadan ----------
+
+export function setGym(state: GameState, now: Date, done: boolean): GameState {
+  return withToday(state, now, (s, day) => {
+    if (!!day.gym === done) return;
+    day.gym = done;
+    const sign = done ? 1 : -1;
+    s.stats.gym += sign;
+    earn(s, now, sign * RULES.gym.coins, sign * RULES.gym.xp, done ? "Went to the gym" : "Gym check-in removed", done ? "good" : "info");
+  });
+}
+
+export function setQuranPages(state: GameState, now: Date, pages: number): GameState {
+  return withToday(state, now, (s, day) => {
+    const before = day.quranPages ?? 0;
+    const after = Math.max(0, Math.min(604, Math.round(pages)));
+    if (after === before) return;
+    day.quranPages = after;
+    s.stats.quranPages += after - before;
+    const goal = s.settings.quranGoal;
+    if (before < goal && after >= goal) earn(s, now, RULES.quran.coins, RULES.quran.xp, `Read ${after} pages of Quran`, "good");
+    if (before >= goal && after < goal) earn(s, now, -RULES.quran.coins, -RULES.quran.xp, "Quran goal undone", "info");
+    const khatms = Math.floor(s.stats.quranPages / 604);
+    if (khatms > s.stats.khatms) {
+      s.stats.khatms = khatms;
+      s.inbox.push({ kind: "khatm", count: khatms, at: now.getTime() });
+      earn(s, now, RULES.quran.khatmCoins, RULES.quran.khatmXp, `Khatm #${khatms}! You finished the Quran`, "good");
+    }
+  });
+}
+
+export function setFast(state: GameState, now: Date, done: boolean): GameState {
+  return withToday(state, now, (s, day) => {
+    if (!!day.fasted === done) return;
+    day.fasted = done;
+    const sign = done ? 1 : -1;
+    s.stats.fasts += sign;
+    earn(s, now, sign * RULES.ramadan.fastCoins, sign * RULES.ramadan.fastXp, done ? "Fasted today" : "Fast unmarked", done ? "good" : "info");
+  });
+}
+
+export function setTaraweeh(state: GameState, now: Date, done: boolean): GameState {
+  return withToday(state, now, (s, day) => {
+    if (!!day.taraweeh === done) return;
+    day.taraweeh = done;
+    const sign = done ? 1 : -1;
+    s.stats.taraweeh += sign;
+    earn(s, now, sign * RULES.ramadan.taraweehCoins, sign * RULES.ramadan.taraweehXp, done ? "Prayed taraweeh" : "Taraweeh unmarked", done ? "good" : "info");
+  });
+}
+
+// ---------- custom habits ----------
 
 export function setCustom(state: GameState, now: Date, id: string, done: boolean): GameState {
   return withToday(state, now, (s, day) => {
@@ -376,13 +595,12 @@ export function currentTierIndex(s: GameState): number {
   return TIER_ORDER.indexOf(tierOf(s.equipped.room));
 }
 
-export type BuyResult = "ok" | "debt" | "poor" | "owned" | "not-for-sale" | "level" | "tier" | "needs";
+export type BuyResult = "ok" | "debt" | "poor" | "owned" | "not-for-sale" | "level" | "tier";
 
 export function canBuy(state: GameState, id: ItemId): BuyResult {
   const item = ITEMS[id];
   if (!item || item.price === null) return "not-for-sale";
   if (owns(state, id)) return "owned";
-  if (item.requires && !owns(state, item.requires)) return "needs";
   if (levelFor(state.xp).level < item.level) return "level";
   if (item.tier && currentTierIndex(state) < TIER_ORDER.indexOf(item.tier)) return "tier";
   if (state.coins < 0) return "debt";
@@ -394,11 +612,12 @@ export function buyItem(state: GameState, now: Date, id: ItemId): GameState {
   if (canBuy(state, id) !== "ok") return state;
   return withToday(state, now, (s) => {
     const item = ITEMS[id];
-    grant(s, now, id, false);
-    s.stats.bought++;
-    earn(s, now, -(item.price ?? 0), 0, `Bought ${item.name}`, "info");
     const slot = EQUIP_SLOT[item.category];
     if (slot) s.equipped[slot] = id;
+    grant(s, now, id, false);
+    s.stats.bought++;
+    s.stats.spent += item.price ?? 0;
+    earn(s, now, -(item.price ?? 0), 0, `Bought ${item.name}`, "info");
   });
 }
 
@@ -407,6 +626,21 @@ export function equip(state: GameState, id: ItemId): GameState {
   const slot = item && EQUIP_SLOT[item.category];
   if (!slot || !usable(state, id) || state.equipped[slot] === id) return state;
   return { ...state, equipped: { ...state.equipped, [slot]: id } };
+}
+
+// ---------- decorating ----------
+
+export function placeItem(state: GameState, p: PlacedItem): GameState {
+  if (!owns(state, p.itemId) || checkPlace(state, p) !== "ok") return state;
+  return { ...state, placements: [...state.placements.filter((q) => q.itemId !== p.itemId), p] };
+}
+
+const FIXTURES = ["bed", "kitchen", "prayerrug"];
+export const canStore = (id: ItemId) => !FIXTURES.includes(id);
+
+export function storeItem(state: GameState, itemId: ItemId): GameState {
+  if (!canStore(itemId)) return state;
+  return { ...state, placements: state.placements.filter((q) => q.itemId !== itemId) };
 }
 
 export function markSeen(state: GameState, ids: ItemId[]): GameState {
@@ -430,6 +664,8 @@ export function liveStreaks(s: GameState, now: Date) {
     wake: s.streaks.wake + (day.wake === "ok" ? 1 : 0),
     diet: s.streaks.diet + (day.diet === "on" ? 1 : 0),
     clean: s.streaks.clean,
+    quran: s.streaks.quran + ((day.quranPages ?? 0) >= s.settings.quranGoal ? 1 : 0),
+    bed: s.streaks.bed + (s.days[bedKey(now)]?.bed === "ok" ? 1 : 0),
   };
 }
 
@@ -437,13 +673,14 @@ export function liveStreaks(s: GameState, now: Date) {
 
 export function isGameState(v: unknown): boolean {
   const o = v as { version?: number; coins?: unknown; days?: unknown; inventory?: unknown };
-  return !!o && (o.version === 1 || o.version === 2) && typeof o.coins === "number" && typeof o.days === "object" && Array.isArray(o.inventory);
+  return !!o && [1, 2, 3].includes(o.version ?? 0) && typeof o.coins === "number" && typeof o.days === "object" && Array.isArray(o.inventory);
 }
 
-/** Bring any saved state (v1 or v2) up to the current shape without losing progress. */
+/** Bring any saved state (v1, v2 or v3) up to the current shape without losing progress. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function migrate(raw: any, now: Date): GameState {
   const s = clone(raw);
+  const today = dateKey(now);
   if (s.version === 1) {
     const days = Object.values(s.days as Record<string, DayLog>);
     const settled = days.filter((d) => !s.lastSettled || d.date <= s.lastSettled);
@@ -458,29 +695,58 @@ export function migrate(raw: any, now: Date): GameState {
       dietDays: settled.filter((d) => d.diet === "on").length,
       mealsOnPlan: days.reduce((n, d) => n + d.meals.filter((m) => m.onPlan).length, 0),
     };
-    s.streaks.perfect = 0;
-    s.best.perfect = 0;
-    const hadPony = s.inventory.some((i: { itemId: string }) => i.itemId === "pony");
-    s.inventory = s.inventory
-      .filter((i: { itemId: string }) => i.itemId !== "pony")
-      .map((i: { itemId: string }) => (i.itemId === "car" ? { ...i, itemId: "ioniq5" } : i));
-    s.stats.bought = s.inventory.filter((i: { itemId: string }) => ITEMS[i.itemId]?.price).length;
-    if (hadPony) {
-      s.coins += RULES.ponyRefund;
-      s.log.unshift({ at: now.getTime(), text: `The pony moved out. +${RULES.ponyRefund} coins refund`, coins: RULES.ponyRefund, kind: "info" });
-    }
-    s.equipped = { ...DEFAULT_EQUIPPED };
+    s.inventory = s.inventory.map((i: { itemId: string }) => (i.itemId === "car" ? { ...i, itemId: "ioniq5" } : i));
     s.badges = {};
     s.inbox = [];
-    s.seen = CATALOG.filter((c) => c.level <= 1).map((c) => c.id);
-    s.settings = { ...s.settings, sound: false };
+    s.seen = [];
     s.version = 2;
   }
-  // Fill anything a future field might be missing.
+  if (s.version === 2) {
+    let refund = 0;
+    const kept: { itemId: string }[] = [];
+    for (const i of s.inventory as { itemId: string }[]) {
+      if (i.itemId in REMOVED_REFUNDS) refund += REMOVED_REFUNDS[i.itemId];
+      else if (i.itemId === "paint-gold") continue;
+      else if (i.itemId === "piano") kept.push({ ...i, itemId: "clarinet" });
+      else if (i.itemId === "ioniq5") kept.push({ ...i, itemId: "car-ioniq5" });
+      else kept.push(i);
+    }
+    s.inventory = kept;
+    if (refund) {
+      s.coins += refund;
+      s.log.unshift({ at: now.getTime(), text: `Retired items refunded: +${refund} coins`, coins: refund, kind: "info" });
+    }
+    const hadIoniq = kept.some((i) => i.itemId === "car-ioniq5");
+    const eq = { ...DEFAULT_EQUIPPED, ...s.equipped };
+    delete (eq as Record<string, unknown>).paint;
+    eq.car = hadIoniq ? "car-ioniq5" : "car-mini";
+    s.equipped = eq;
+    s.streaks = { ...emptyStreaks(), ...s.streaks };
+    s.best = { ...emptyStreaks(), ...s.best };
+    s.stats = { ...emptyStats(), ...s.stats, spent: kept.reduce((n, i) => n + (ITEMS[i.itemId]?.price ?? 0), 0) };
+    s.body = emptyBody();
+    s.since = freshSince(today);
+    s.history = {};
+    s.settings = { bedtime: "23:30", quranGoal: 2, ramadan: false, sound: false, ...s.settings };
+    s.placements = defaultPlacements();
+    s.version = 3;
+    for (const i of kept) {
+      const spot = autoPlace(s as GameState, i.itemId);
+      if (spot) s.placements.push(spot);
+    }
+  }
+  // Fill anything a later field might be missing.
   s.equipped = { ...DEFAULT_EQUIPPED, ...s.equipped };
   s.badges ??= {};
   s.inbox ??= [];
   s.seen ??= [];
+  s.history ??= {};
+  s.placements ??= defaultPlacements();
+  s.body ??= emptyBody();
+  s.since ??= freshSince(today);
   s.stats = { ...emptyStats(), ...s.stats };
+  s.streaks = { ...emptyStreaks(), ...s.streaks };
+  s.best = { ...emptyStreaks(), ...s.best };
+  s.settings = { wakeTarget: "08:30", wakeGraceMin: 15, bedtime: "23:30", quranGoal: 2, ramadan: false, notifications: false, sound: false, ...s.settings };
   return ensureToday(s as GameState, now);
 }

@@ -1,5 +1,5 @@
 import type { RoomTier } from "@/engine/catalog";
-import { Iso, TILE, makeSprite, type P3, type Sprite } from "./iso";
+import { Iso, TILE, makeSprite, prism, type P3, type Sprite } from "./iso";
 import { Raster, shade } from "./raster";
 
 // ---------- room geometry ----------
@@ -36,69 +36,11 @@ export function screenToTile(spec: RoomSpec, sx: number, sy: number): { tx: numb
 
 // ---------- layout ----------
 
-export interface Placement {
-  id: string;
-  tx: number;
-  ty: number;
-  w: number;
-  d: number;
-  /** Flat things (rugs, mess) always draw under people. */
-  flat?: boolean;
-}
-
-const P = (id: string, tx: number, ty: number, w = 1, d = 1, flat = false): Placement => ({ id, tx, ty, w, d, flat });
-
-export const FIXED: Placement[] = [P("bed", 0, 5, 3, 2), P("fridge", 2, 0), P("counter", 3, 0, 2, 1)];
-
-export const RUG_SLOT = P("rug", 5, 3, 1, 2, true);
-
-/** Floor items by catalog id. Car moves with the room size. */
-export function itemSlot(id: string, tier: RoomTier): Placement | null {
-  switch (id) {
-    case "plant": return P(id, 0, 0);
-    case "bookshelf": return P(id, 1, 0);
-    case "coffee": return P(id, 5, 0);
-    case "tasbihshelf": return P(id, 6, 0);
-    case "lamp": return P(id, 7, 0);
-    case "dumbbells": return P(id, 7, 1);
-    case "monstera": return P(id, 7, 2);
-    case "aquarium": return P(id, 7, 3);
-    case "tv": return P(id, 0, 2);
-    case "sofa": return P(id, 2, 2, 1, 2);
-    case "rehal": return P(id, 5, 2);
-    case "lantern": return P(id, 6, 2);
-    case "mabkhara": return P(id, 4, 3);
-    case "arcade": return P(id, 0, 4);
-    case "beanbag": return P(id, 6, 5);
-    case "desk": return P(id, 8, 0, 2, 1);
-    case "chair": return P(id, 9, 1);
-    case "treadmill": return P(id, 0, 8, 1, 2);
-    case "piano": return P(id, 8, 5, 2, 1);
-    case "trophycase": return P(id, 0, 10);
-    case "ioniq5":
-      return tier === "penthouse" ? P(id, 7, 9, 3, 2) : tier === "apartment" ? P(id, 5, 7, 3, 2) : P(id, 4, 6, 3, 2);
-    default: return null;
-  }
-}
-
-export const MESS: Placement[] = [P("pizza", 3, 4, 1, 1, true), P("clothes", 1, 3, 1, 1, true), P("can", 4, 5, 1, 1, true)];
-
-/** Where the avatar stands for each kind of action. */
-export const SPOTS = {
-  wake: { tx: 3, ty: 5 },
-  pray: { tx: 5, ty: 3 },
-  diet: { tx: 3, ty: 1 },
-  center: { tx: 4, ty: 4 },
-  sad: { tx: 3, ty: 3 },
-} as const;
-
-// ---------- palettes ----------
-
-export const PAINTS: Record<string, string> = {
-  "paint-white": "#eceef0",
-  "paint-teal": "#2d5f5e",
-  "paint-gold": "#b5a47c",
-};
+export const MESS: { id: string; tx: number; ty: number }[] = [
+  { id: "pizza", tx: 3, ty: 4 },
+  { id: "clothes", tx: 1, ty: 3 },
+  { id: "can", tx: 4, ty: 5 },
+];
 
 const RUGS: Record<string, { border: string; field: string; accent: string; mihrab: string }> = {
   "rug-green": { border: "#c9a227", field: "#1f6b45", accent: "#9c2f2f", mihrab: "#2f8a5c" },
@@ -107,8 +49,6 @@ const RUGS: Record<string, { border: string; field: string; accent: string; mihr
   "rug-gold": { border: "#7a1f2b", field: "#c99a2e", accent: "#5b2a86", mihrab: "#e8c25a" },
 };
 
-// ---------- pieces ----------
-
 const WOOD = "#8a5a33";
 
 function octagon(cx: number, cz: number, r: number, plane: (u: number, z: number) => P3): P3[] {
@@ -116,54 +56,83 @@ function octagon(cx: number, cz: number, r: number, plane: (u: number, z: number
   return ([[k, r], [r, k], [r, -k], [k, -r], [-k, -r], [-r, -k], [-r, k], [-k, r]] as const).map(([du, dz]) => plane(cx + du, cz + dz));
 }
 
-function drawIoniq(i: Iso, paint: string) {
-  const clad = "#26272b";
-  const glassSide = "#25313e";
-  const glassFront = "#46627a";
-  const roof = "#121820";
-  const wheelBack = (x: number) => i.box(x, 5, 0, 9, 3, 9, "#18181a");
-  wheelBack(8);
-  wheelBack(34);
-  // lower cladding and the flat-sided body
-  i.box(1, 6, 2, 46, 20, 4, clad);
-  i.box(1, 6, 6, 46, 20, 7, paint);
-  // short clamshell hood, slightly raised
-  i.box(31, 6, 13, 16, 20, 1, paint);
-  // rear hatch shoulder
-  i.box(1, 7, 13, 5, 18, 2, paint);
-  // greenhouse: side glass, raked windshield, black panoramic roof
-  i.quad([[5, 24, 13], [31, 24, 13], [25, 24, 19], [7, 24, 19]], glassSide, roof);
-  i.quad([[25, 8, 19], [31, 7, 13], [31, 25, 13], [25, 24, 19]], glassFront, roof);
-  i.quad([[7, 8, 19], [25, 8, 19], [25, 24, 19], [7, 24, 19]], roof, "#0b0f14");
-  i.line([7, 24, 19], [25, 24, 19], shade(paint, 0.2));
-  i.line([17, 24, 13], [17, 24, 19], roof);
-  // signature diagonal door crease
-  i.line([36, 26, 7], [14, 26, 11], shade(paint, -0.2));
-  // flush handles, mirror
-  i.line([20, 26, 11], [23, 26, 11], shade(paint, -0.45));
-  i.line([30, 26, 11], [33, 26, 11], shade(paint, -0.45));
-  i.box(29, 26, 12, 3, 2, 2, "#1d1d1d");
-  // rear pixel taillight wrapping the corner
-  i.quad([[1, 26, 10], [4, 26, 10], [4, 26, 12], [1, 26, 12]], "#d4202c");
-  // front: black band with parametric pixel lights
-  i.quad([[47, 7, 9], [47, 25, 9], [47, 25, 12], [47, 7, 12]], "#1b1c1f");
-  for (const y0 of [8, 20])
-    for (let y = y0; y < y0 + 4; y += 2)
-      for (let z = 9.5; z < 12; z += 2) {
-        const [sx, sy] = i.proj([47, y, z]);
-        i.r.set(sx, sy, "#eaf6ff");
-      }
-  i.quad([[47, 7, 2], [47, 25, 2], [47, 25, 5], [47, 7, 5]], clad);
-  // near-side wheels with arches and aero rims
-  for (const cx of [12.5, 38]) {
-    const plane = (u: number, z: number): P3 => [u, 26.5, z];
-    i.quad(octagon(cx, 5, 5.8, plane), clad);
-    i.quad(octagon(cx, 4.6, 4.6, plane), "#141416");
-    i.quad(octagon(cx, 4.6, 3.1, plane), "#a3a9b0");
-    i.quad(octagon(cx, 4.6, 1.6, plane), "#5d6268");
-    const [hx, hy] = i.proj(plane(cx, 4.6));
-    i.r.set(hx, hy, "#d9dde1");
+function px(i: Iso, p: P3, c: string) {
+  const [x, y] = i.proj(p);
+  i.r.set(x, y, c);
+}
+
+/** Kitchen set: French-door fridge, base cabinets with sink, stove. Variants: "wall" adds upper cabinets, "open" opens the fridge. */
+function drawKitchen(i: Iso, variant = "") {
+  const wall = variant.includes("wall");
+  const open = variant.includes("open");
+  const steel = "#d9dee3";
+  // upper cabinets and hood (only against a wall)
+  if (wall) {
+    i.box(16, 0, 34, 32, 7, 13, "#f4f1ea");
+    for (const x of [24, 32, 40]) i.line([x, 7, 35], [x, 7, 46], "#c9c3b5");
+    i.box(34, 0, 27, 12, 8, 4, "#9aa0a6");
   }
+  // fridge first (it's furthest back): stainless, French doors, two handles, freezer drawer
+  i.box(1, 1, 0, 14, 14, 40, steel, { left: "#e3e7eb", right: "#b9bfc5" });
+  i.line([1, 15, 13], [15, 15, 13], "#8d949b");
+  i.line([4, 15, 11], [12, 15, 11], "#6f767d");
+  i.line([7, 15, 22], [7, 15, 33], "#5d646b");
+  if (!open) {
+    i.line([8, 15, 13], [8, 15, 40], "#8d949b");
+    i.line([9, 15, 22], [9, 15, 33], "#5d646b");
+  } else {
+    // right door open: lit shelves with food inside
+    i.quad([[8, 15, 13.5], [15, 15, 13.5], [15, 15, 39.5], [8, 15, 39.5]], "#f6fbff", "#8d949b");
+    for (const z of [20, 27, 34]) i.line([8, 15, z], [15, 15, z], "#c9d6e2");
+    i.box(9, 13, 14, 2, 2, 4, "#e74c3c", { noOutline: true });
+    i.box(12, 13, 21, 2, 2, 3, "#f1c40f", { noOutline: true });
+    i.box(9.5, 13, 28, 3, 2, 3, "#27ae60", { noOutline: true });
+    i.box(12, 13, 35, 2, 2, 4, "#ffffff", { noOutline: true });
+  }
+  // base cabinets, dark stone top, sink
+  i.box(15, 1, 0, 18, 14, 14, "#f4f1ea", { top: "#3a3a3f" });
+  i.line([24, 15, 1], [24, 15, 12], "#c9c3b5");
+  for (const x of [20, 28]) i.line([x, 15, 8], [x, 15, 10], "#7d7468");
+  i.quad([[18, 4, 14.05], [28, 4, 14.05], [28, 11, 14.05], [18, 11, 14.05]], "#aab3bb", "#6f7881");
+  i.box(22, 2, 14, 2, 2, 5, "#b8bec5");
+  i.box(22, 2, 18, 2, 4, 1, "#b8bec5", { noOutline: true });
+  // stove with glass top, four burners, oven window
+  i.box(33, 1, 0, 15, 14, 14, "#2b2b2e", { top: "#1a1a1d" });
+  for (const [x, y] of [[37, 4.5], [44, 4.5], [37, 10.5], [44, 10.5]])
+    i.quad(octagon(x, y, 2.2, (u, v) => [u, v, 14.05]), "#26262a", "#5a5a60");
+  i.quad([[35, 15, 3], [46, 15, 3], [46, 15, 10], [35, 15, 10]], "#121214", "#55555a");
+  i.line([36, 15, 11.5], [45, 15, 11.5], "#b8bec5");
+  // the open fridge door swings out toward you, in front of everything
+  if (open) {
+    i.quad([[15, 15, 13.5], [15, 26, 13.5], [15, 26, 39.5], [15, 15, 39.5]], "#cfd5db", "#8d949b");
+    i.line([15, 24, 22], [15, 24, 33], "#5d646b");
+  }
+}
+
+/** Arcade cabinet from a real side profile: marquee, slanted screen, control deck, kick plate. Front faces +X. */
+function drawArcade(i: Iso) {
+  const body = "#3b1f66";
+  prism(i, [[1, 0], [1, 46], [14, 46], [14, 38], [10, 36], [9, 25], [15, 22], [15, 19], [12, 18], [12, 0]], 2, 14, body, {
+    side: "#4b2a80", top: "#2a1650", front: "#2a1650", slope: "#22123f", outline: "#140a26",
+  });
+  const s = (x: number, z: number): P3 => [x, 14, z];
+  // side art stripes
+  i.quad([s(2, 4), s(11, 4), s(11, 8), s(2, 8)], "#ff4fc3");
+  i.quad([s(2, 9), s(11, 9), s(11, 11), s(2, 11)], "#4de0ff");
+  // lit marquee
+  i.quad([[14, 2, 38.5], [14, 14, 38.5], [14, 14, 45.5], [14, 2, 45.5]], "#ffd23f", "#8a6a00");
+  for (let y = 4; y < 13; y += 2) px(i, [14, y, 42], "#c0392b");
+  // screen in its bezel, on the slanted face
+  i.quad([[10, 3.5, 35.5], [10, 12.5, 35.5], [9.2, 12.5, 26], [9.2, 3.5, 26]], "#0b0d1a", "#000000");
+  i.quad([[9.9, 4.5, 34], [9.9, 11.5, 34], [9.3, 11.5, 27.5], [9.3, 4.5, 27.5]], "#1c2a6b");
+  // control deck: joystick + buttons
+  i.box(11, 4, 22.3, 1, 1, 3, "#111111", { noOutline: true });
+  px(i, [11.5, 4.5, 26], "#e74c3c");
+  px(i, [12.5, 4.5, 26], "#e74c3c");
+  for (const [x, y, c] of [[12, 8, "#f1c40f"], [13.5, 8, "#2ecc71"], [12, 10.5, "#3498db"], [13.5, 10.5, "#e74c3c"]] as const) px(i, [x, y, 22.5], c);
+  // coin door
+  i.quad([[12, 6, 6], [12, 10, 6], [12, 10, 12], [12, 6, 12]], "#1b0f33", "#c9a227");
+  px(i, [12, 8, 10], "#ff4040");
 }
 
 const DRAW: Record<string, (i: Iso, variant?: string) => void> = {
@@ -175,20 +144,8 @@ const DRAW: Record<string, (i: Iso, variant?: string) => void> = {
     i.box(18, 0, 7, 30, 32, 6, "#3d6fb6");
     i.box(18, 0, 13, 4, 32, 0.01, "#f2efe6", { noOutline: true });
   },
-  fridge(i) {
-    i.box(1, 1, 0, 14, 14, 38, "#e9edf0");
-    i.line([15, 1, 26], [15, 15, 26], "#9aa3ab");
-    i.line([15, 4, 28], [15, 4, 34], "#6b747c");
-    i.line([15, 4, 15], [15, 4, 22], "#6b747c");
-  },
-  counter(i) {
-    i.box(0, 1, 0, 32, 14, 15, "#9a6a3e", { top: "#e6dccb" });
-    i.box(7, 4, 15, 9, 7, 1, "#ffffff");
-    i.box(9, 5, 16, 4, 4, 2, "#5cb85c");
-    i.box(21, 6, 15, 3, 3, 3, "#d23a2c");
-    i.box(26, 4, 15, 2, 2, 6, "#bfe3f2");
-  },
-  rug(i, variant = "rug-green") {
+  kitchen: drawKitchen,
+  prayerrug(i, variant = "rug-green") {
     const c = RUGS[variant] ?? RUGS["rug-green"];
     i.box(1, 1, 0, 14, 30, 0, c.border, { top: c.border });
     i.box(3, 3, 0, 10, 26, 0, c.field, { top: c.field, noOutline: true });
@@ -221,8 +178,7 @@ const DRAW: Record<string, (i: Iso, variant?: string) => void> = {
     i.box(3, 4, 14, 8, 7, 10, "#2b2b2e");
     i.box(4, 9, 15, 5, 3, 3, "#111111");
     i.box(11, 8, 14, 3, 3, 3, "#ffffff");
-    const [sx, sy] = i.proj([11, 6, 21]);
-    i.r.set(sx, sy, "#ff4040");
+    px(i, [11, 6, 21], "#ff4040");
   },
   bookshelf(i) {
     i.box(1, 0, 0, 14, 12, 44, "#7a4b2a");
@@ -232,36 +188,33 @@ const DRAW: Record<string, (i: Iso, variant?: string) => void> = {
       for (let b = 0; b < 5; b++) i.box(2 + b * 2.6, 9, z, 2, 3, 8 + ((b + row) % 3), cols[(b + row) % cols.length]);
     });
   },
+  /** Low walnut console with a thin 65" panel, screen facing +X. */
   tv(i) {
-    i.box(1, 2, 0, 10, 12, 10, "#5a3a22");
-    i.box(1, 1, 10, 11, 14, 12, "#3a3a3a");
-    i.quad([[12, 3, 12], [12, 13, 12], [12, 13, 20], [12, 3, 20]], "#6fb7e6");
-    i.quad([[12, 4, 17], [12, 7, 17], [12, 7, 19], [12, 4, 19]], "#bfe6ff");
-    i.line([6, 8, 22], [3, 3, 30], "#222222");
-    i.line([6, 8, 22], [9, 12, 30], "#222222");
-  },
-  beanbag(i) {
-    i.box(2, 2, 0, 12, 12, 5, "#e67e22");
-    i.box(3, 3, 5, 10, 10, 3, "#e67e22");
-    i.box(4, 4, 8, 6, 8, 3, "#f0904a");
-  },
-  dumbbells(i) {
-    i.box(2, 2, 0, 2, 2, 10, "#2b2b2e");
-    i.box(12, 2, 0, 2, 2, 10, "#2b2b2e");
-    i.box(2, 10, 0, 2, 2, 10, "#2b2b2e");
-    i.box(12, 10, 0, 2, 2, 10, "#2b2b2e");
-    i.box(1, 1, 10, 14, 13, 2, "#3a3a3e");
-    for (let k = 0; k < 3; k++) {
-      i.box(3 + k * 4, 3, 12, 3, 3, 3, k === 2 ? "#c0392b" : "#555559");
-      i.box(3 + k * 4, 9, 12, 3, 3, 3, k === 2 ? "#c0392b" : "#555559");
-      i.box(4 + k * 4, 6, 13, 1, 3, 1, "#9a9aa0");
-    }
+    i.box(1, 1, 0, 13, 30, 8, "#3b2a20", { top: "#4a3528" });
+    i.line([14, 11, 1], [14, 11, 7], "#22170f");
+    i.line([14, 21, 1], [14, 21, 7], "#22170f");
+    i.box(5, 13, 8, 3, 6, 2, "#1d1d20");
+    i.box(5, 0, 10, 2.5, 32, 21, "#141416", { top: "#1d1d20" });
+    i.quad([[7.5, 1, 11], [7.5, 31, 11], [7.5, 31, 30], [7.5, 1, 30]], "#0c1018", "#000000");
+    i.line([7.5, 6, 29], [7.5, 18, 13], "#1c2433");
+    i.line([7.5, 9, 29], [7.5, 21, 13], "#161d29");
+    px(i, [8, 28, 11.5], "#ff3b3b");
   },
   sofa(i) {
     i.box(0, 0, 0, 14, 32, 8, "#c0392b");
     i.box(0, 0, 8, 10, 3, 6, "#c0392b");
     i.box(0, 29, 8, 10, 3, 6, "#c0392b");
     i.box(10, 0, 8, 4, 32, 11, "#a93226");
+  },
+  recordplayer(i) {
+    i.box(1, 2, 0, 14, 12, 13, "#8a5a33", { top: "#7a4b2a" });
+    const spines = ["#e74c3c", "#2c3e50", "#f1c40f", "#8e44ad", "#16a085", "#ecf0f1"];
+    spines.forEach((c, k) => i.box(2.5 + k * 2, 13, 1, 1.6, 1, 10, c, { noOutline: true }));
+    i.box(2, 3, 13, 12, 10, 2, "#2b2b2e", { top: "#3a3a3f" });
+    i.quad(octagon(7.5, 8, 4.2, (u, v) => [u, v, 15.05]), "#111113", "#000000");
+    i.quad(octagon(7.5, 8, 1.3, (u, v) => [u, v, 15.1]), "#d64541");
+    i.line([12.5, 4.5, 15.2], [10, 9, 15.2], "#c9ccd2");
+    i.box(12, 4, 15, 1.5, 1.5, 1, "#c9ccd2", { noOutline: true });
   },
   aquarium(i) {
     i.box(1, 1, 0, 14, 14, 12, "#4a3a2a");
@@ -270,16 +223,24 @@ const DRAW: Record<string, (i: Iso, variant?: string) => void> = {
     i.box(4, 9, 14, 1, 1, 6, "#2f8a3e", { noOutline: true });
     i.box(10, 13, 14, 1, 1, 8, "#2f8a3e", { noOutline: true });
   },
-  arcade(i) {
-    i.box(1, 1, 0, 14, 14, 40, "#5b2a86");
-    i.quad([[15, 3, 22], [15, 13, 22], [15, 13, 34], [15, 3, 34]], "#1c1c3a");
-    i.quad([[15, 5, 26], [15, 8, 26], [15, 8, 29], [15, 5, 29]], "#4dff88");
-    i.quad([[15, 9, 30], [15, 11, 30], [15, 11, 32], [15, 9, 32]], "#ff4d6d");
-    i.box(1, 1, 40, 14, 14, 4, "#f1c40f");
-    i.box(13, 3, 17, 4, 10, 2, "#2b2b2b");
+  /** Your clarinet on its stand, with a music stand. */
+  clarinet(i) {
+    i.box(5, 6, 0, 5, 5, 1, "#2b2b2e");
+    i.line([5, 6, 1], [7.5, 8.5, 6], "#55555a");
+    i.line([10, 6, 1], [7.5, 8.5, 6], "#55555a");
+    i.line([7.5, 11, 1], [7.5, 8.5, 6], "#55555a");
+    i.box(6.5, 7.5, 1, 2.2, 2.2, 3, "#121214");
+    i.box(7, 8, 4, 1.3, 1.3, 20, "#121214", { top: "#2a2a2e" });
+    for (const z of [8, 11, 14, 17, 20]) px(i, [8.3, 9.3, z], "#d8dde2");
+    i.box(7.1, 8.1, 24, 1.1, 1.1, 2, "#c9ccd2", { noOutline: true });
+    // music stand with a sheet
+    i.line([12, 3, 0], [12, 3, 18], "#3a3a3e");
+    i.quad([[10.5, 1, 17], [13.5, 1, 22], [13.5, 7, 22], [10.5, 7, 17]], "#f7f4ea", "#7d7468");
+    for (let k = 0; k < 3; k++) i.line([11 + k, 2, 18 + k * 1.5], [11 + k, 6, 18 + k * 1.5], "#55555a");
   },
+  arcade: drawArcade,
   desk(i) {
-    for (const [x, y] of [[1, 2], [28, 2], [1, 12], [28, 12]]) i.box(x, y, 0, 2, 2, 12, "#9a9aa0");
+    for (const [x, y] of [[1, 2], [28, 2], [1, 12], [28, 12]]) i.box(x, y, 0, 2, 2, 12, "#9aa0a6");
     i.box(0, 1, 12, 31, 14, 2, "#e8e4da");
     i.box(10, 3, 14, 12, 2, 1, "#1d1d21");
     i.box(15, 3, 15, 2, 2, 3, "#1d1d21");
@@ -288,9 +249,8 @@ const DRAW: Record<string, (i: Iso, variant?: string) => void> = {
     i.box(10, 9, 14, 11, 3, 1, "#2b2b2e");
     i.box(23, 9, 14, 3, 3, 1, "#2b2b2e");
     i.box(26, 2, 14, 4, 9, 12, "#222226");
-    const [sx, sy] = i.proj([30, 6, 22]);
-    i.r.set(sx, sy, "#ff3df2");
-    i.r.set(sx, sy + 2, "#3dfff2");
+    px(i, [30, 6, 22], "#ff3df2");
+    px(i, [30, 6, 20], "#3dfff2");
   },
   chair(i) {
     i.box(6, 6, 0, 4, 4, 1, "#1d1d1d");
@@ -301,6 +261,20 @@ const DRAW: Record<string, (i: Iso, variant?: string) => void> = {
     i.box(1, 3, 10, 2, 8, 4, "#1d1d1d");
     i.box(13, 3, 10, 2, 8, 4, "#1d1d1d");
   },
+  /** Flat bench with a rack and a loaded barbell. Long side along Y. */
+  gymbench(i) {
+    for (const [x, y] of [[5, 10], [10, 10], [5, 26], [10, 26]]) i.box(x, y, 0, 1.5, 1.5, 6, "#3a3a3e");
+    i.box(4, 9, 6, 8, 20, 3, "#1d1d1f", { top: "#2b2b2f" });
+    i.box(2, 3, 0, 2, 2, 22, "#55555a");
+    i.box(12, 3, 0, 2, 2, 22, "#55555a");
+    i.line([-3, 4, 21], [19, 4, 21], "#c9ccd2");
+    for (const x of [0, 16]) {
+      const plane = (u: number, z: number): P3 => [x, u, z];
+      i.quad(octagon(4, 21, 4.6, plane), "#1d1d1f", "#000000");
+      i.quad(octagon(4, 21, 3, plane), "#c0392b");
+      px(i, [x, 4, 21], "#c9ccd2");
+    }
+  },
   treadmill(i) {
     i.box(1, 3, 0, 14, 28, 4, "#2b2b2e", { top: "#3a3a3f" });
     i.box(3, 5, 4, 10, 24, 0.01, "#1a1a1d", { noOutline: true });
@@ -309,17 +283,6 @@ const DRAW: Record<string, (i: Iso, variant?: string) => void> = {
     i.box(1, 1, 22, 14, 4, 5, "#2b2b2e");
     const [sx, sy] = i.proj([8, 5, 25]);
     i.r.rect(sx - 1, sy, 3, 1, "#4dff88");
-  },
-  piano(i) {
-    i.box(0, 1, 0, 30, 9, 28, "#151517", { top: "#26262a" });
-    i.box(1, 10, 12, 28, 5, 2, "#f4f4f4", { outline: "#555555" });
-    for (let x = 3; x < 29; x += 2.5) {
-      if (Math.round(x * 2) % 5 === 1) continue;
-      i.box(x, 10, 14, 1, 3, 0.8, "#111111", { noOutline: true });
-    }
-    i.box(1, 10, 0, 2, 4, 12, "#151517");
-    i.box(27, 10, 0, 2, 4, 12, "#151517");
-    i.box(10, 8, 20, 9, 2, 6, "#f2ecd9");
   },
   trophycase(i) {
     i.box(1, 1, 0, 14, 12, 4, "#4a2f1c");
@@ -345,21 +308,6 @@ const DRAW: Record<string, (i: Iso, variant?: string) => void> = {
     i.box(6, 6, 12, 4, 4, 3, "#b8860b");
     i.box(7.5, 7.5, 15, 1, 1, 3, "#b8860b", { noOutline: true });
   },
-  mabkhara(i) {
-    i.box(5, 5, 0, 6, 6, 2, "#8a6508");
-    i.box(6, 6, 2, 4, 4, 5, "#d4af37");
-    i.box(5, 5, 7, 6, 6, 2, "#b8860b");
-  },
-  tasbihshelf(i) {
-    i.box(1, 2, 0, 14, 11, 10, "#7a4b2a");
-    for (let k = 0; k < 9; k++) {
-      const a = (k / 9) * Math.PI * 2;
-      const [sx, sy] = i.proj([7 + Math.cos(a) * 3.5, 7 + Math.sin(a) * 3.5, 10]);
-      i.r.set(sx, sy, "#2f8a5c");
-    }
-    i.box(11, 4, 10, 2, 2, 5, "#a0522d");
-    i.box(11.5, 4.5, 15, 1, 1, 2, "#d4af37", { noOutline: true });
-  },
   pizza(i) {
     i.box(2, 3, 0, 12, 12, 2, "#c8a26a");
     i.quad([[4, 5, 2], [9, 5, 2], [9, 10, 2], [4, 10, 2]], "#e0b34a");
@@ -372,12 +320,9 @@ const DRAW: Record<string, (i: Iso, variant?: string) => void> = {
   can(i) {
     i.box(5, 6, 0, 6, 3, 3, "#c0392b");
   },
-  ioniq5(i, variant = "paint-white") {
-    drawIoniq(i, PAINTS[variant] ?? PAINTS["paint-white"]);
-  },
 };
 
-/** Piece ids may carry a variant: "rug:rug-red", "ioniq5:paint-teal". */
+/** Piece keys may carry a variant: "prayerrug:rug-red", "kitchen:wall-open". */
 export function buildPiece(key: string): Sprite {
   const [id, variant] = key.split(":");
   const draw = DRAW[id];
@@ -645,16 +590,6 @@ function neonText(iso: Iso, at: (u: number, z: number) => P3, u0: number, zTop: 
 }
 
 // ---------- walking ----------
-
-/** Tiles the avatar can't walk through. */
-export function blockedTiles(placements: Placement[]): Set<string> {
-  const set = new Set<string>();
-  for (const p of placements) {
-    if (p.flat) continue;
-    for (let x = p.tx; x < p.tx + p.w; x++) for (let y = p.ty; y < p.ty + p.d; y++) set.add(`${x},${y}`);
-  }
-  return set;
-}
 
 /** BFS path over the floor, 4-connected. Returns tiles after the start. */
 export function findPath(n: number, from: { tx: number; ty: number }, to: { tx: number; ty: number }, blocked: Set<string>) {
