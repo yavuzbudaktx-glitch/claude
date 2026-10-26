@@ -29,13 +29,31 @@ function useCountUp(target: number) {
   return shown;
 }
 
+/** A few coins fly into the counter whenever you earn some. */
+function useCoinBurst(coins: number, target: React.RefObject<HTMLElement>) {
+  const prev = useRef(coins);
+  const [burst, setBurst] = useState<{ id: number; n: number } | null>(null);
+  useEffect(() => {
+    const gained = coins - prev.current;
+    prev.current = coins;
+    if (gained <= 0 || !target.current) return;
+    setBurst({ id: Date.now(), n: Math.min(8, 3 + Math.floor(gained / 10)) });
+    const id = setTimeout(() => setBurst(null), 900);
+    return () => clearTimeout(id);
+  }, [coins, target]);
+  return burst;
+}
+
 export default function Hud({ onSettings }: { onSettings: () => void }) {
   const { coins, xp } = useGame((s) => s.game);
   const lv = levelFor(xp);
   const shown = useCountUp(coins);
+  const coinRef = useRef<HTMLDivElement>(null);
+  const burst = useCoinBurst(coins, coinRef);
+  const box = coinRef.current?.getBoundingClientRect();
   return (
-    <header className="panel flex items-center gap-3 p-2">
-      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-[4px] border-2 border-black bg-[linear-gradient(#5b8fd0,#2f6fb0)]">
+    <header className="panel flex items-center gap-3 p-2.5">
+      <div className="h-[60px] w-[60px] shrink-0 overflow-hidden rounded-xl border-2 border-[var(--line)] bg-[radial-gradient(circle_at_50%_35%,#6ea4e0,#2f6fb0_70%)] shadow-[inset_0_-6px_12px_rgba(0,0,0,0.25)]">
         <RasterCanvas make={renderPortrait} deps={[]} className="h-full w-full" label="Your avatar" />
       </div>
       <div className="min-w-0 flex-1">
@@ -43,22 +61,49 @@ export default function Hud({ onSettings }: { onSettings: () => void }) {
           LV {lv.level} <span className="text-[var(--head)]">{titleFor(lv.level).toUpperCase()}</span>
         </div>
         <div className="bar mt-1.5">
-          <div className="h-full bg-[linear-gradient(#b06ad8,#8e44ad)] transition-[width] duration-500" style={{ width: `${(lv.into / lv.need) * 100}%` }} />
+          <div
+            className="h-full rounded-full bg-[linear-gradient(180deg,#c487e6,#8e44ad)] shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] transition-[width] duration-700 ease-out"
+            style={{ width: `${(lv.into / lv.need) * 100}%` }}
+          />
         </div>
-        <div className="mt-0.5 whitespace-nowrap text-sm tabular-nums leading-none text-[var(--muted)]">
+        <div className="mt-1 whitespace-nowrap text-[12px] font-bold tabular-nums leading-none text-[var(--muted)]">
           {lv.into}/{lv.need} XP
         </div>
       </div>
       <div
-        className={`chip shrink-0 py-0.5 text-xl tabular-nums ${coins < 0 ? "bg-[#d64541] text-white" : "bg-[var(--gold)]"}`}
+        ref={coinRef}
+        key={burst?.id}
+        className={`chip shrink-0 py-1 font-pixel text-[11px] tabular-nums ${burst ? "coin-bump" : ""} ${coins < 0 ? "bg-[#d64541] text-white" : "bg-[linear-gradient(180deg,#ffd85c,#efb92a)]"}`}
         title={coins < 0 ? "In debt: the catalog is closed" : "Coins"}
       >
         <PixelIcon name="coin" size={14} color={coins < 0 ? "#fff" : "#7a5a00"} />
         {shown}
       </div>
-      <button className="btn h-10 w-10 shrink-0 px-0" onClick={onSettings} aria-label="Settings">
+      <button className="icon-btn h-10 w-10 shrink-0 bg-[#ece7da]" onClick={onSettings} aria-label="Settings">
         <PixelIcon name="gear" size={18} />
       </button>
+      {burst &&
+        box &&
+        Array.from({ length: burst.n }, (_, k) => {
+          const a = (k / burst.n) * Math.PI * 2;
+          return (
+            <span
+              key={`${burst.id}-${k}`}
+              className="coin-fly"
+              style={
+                {
+                  left: box.left + 8,
+                  top: box.top + 4,
+                  animationDelay: `${k * 45}ms`,
+                  "--fx": `${Math.cos(a) * 60 - 30}px`,
+                  "--fy": `${Math.sin(a) * 40 + 90}px`,
+                } as React.CSSProperties
+              }
+            >
+              <PixelIcon name="coin" size={14} color="#f6c744" />
+            </span>
+          );
+        })}
     </header>
   );
 }

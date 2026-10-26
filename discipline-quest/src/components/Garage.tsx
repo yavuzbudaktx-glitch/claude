@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { CAR_ORDER, CAR_UNLOCKS, ITEMS } from "@/engine/catalog";
 import { owns } from "@/engine/engine";
 import type { Raster } from "@/game/raster";
+import { S } from "@/game/iso";
 import { GARAGE, buildGarage, carAt, emptyBays, garagePoints, isNight, parkedCars } from "@/game/garage";
 import { AVATAR_FOOT, renderAvatar, type BodyStage, type OutfitId } from "@/game/sprites/avatar";
 import { getNow } from "@/lib/clock";
@@ -60,7 +61,9 @@ export default function Garage() {
       ctx.drawImage(bg, 0, 0);
       const pts = garagePoints();
       ctx.fillStyle = "rgba(0,0,0,0.22)";
-      ctx.fillRect(Math.round(pts.avatar[0]) - 7, Math.round(pts.avatar[1]) - 1, 14, 3);
+      ctx.beginPath();
+      ctx.ellipse(pts.avatar[0], pts.avatar[1], 8 * S, 3 * S, 0, 0, Math.PI * 2);
+      ctx.fill();
       ctx.drawImage(avatar, Math.round(pts.avatar[0] - AVATAR_FOOT.x), Math.round(pts.avatar[1] - AVATAR_FOOT.y));
       const night = isNight(hour);
       if (night) {
@@ -75,7 +78,8 @@ export default function Garage() {
         if (on || night) for (const h of c.headlights) glows.push([h, on ? 30 : 14, "rgba(230,245,255,A)"]);
       }
       ctx.globalCompositeOperation = "lighter";
-      for (const [[x, y], rad, col] of glows) {
+      for (const [[x, y], rad0, col] of glows) {
+        const rad = rad0 * S;
         const g = ctx.createRadialGradient(x, y, 0, x, y, rad);
         g.addColorStop(0, col.replace("A", "0.55"));
         g.addColorStop(1, col.replace("A", "0"));
@@ -125,7 +129,7 @@ export default function Garage() {
           return (
             <div
               key={b.id}
-              className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-[3px] border-2 border-dashed border-white/70 bg-black/40 px-1.5 text-sm leading-tight text-white"
+              className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border-2 border-dashed border-white/60 bg-black/45 px-2 text-[10.5px] font-bold leading-tight text-white"
               style={{ left: `${(b.at[0] / GARAGE.W) * 100}%`, top: `${(b.at[1] / GARAGE.H) * 100}%` }}
             >
               {ITEMS[b.id].name.replace(/^\d+ /, "")} · {Math.min(game.streaks.clean, unlock?.cleanDays ?? 0)}/{unlock?.cleanDays} clean
@@ -138,7 +142,7 @@ export default function Garage() {
           </div>
         )}
       </div>
-      <div className="flex flex-wrap gap-1.5 border-t-2 border-black bg-[var(--panel)] p-2 text-base">
+      <div className="flex flex-wrap gap-1.5 border-t-2 border-black bg-[var(--panel)] p-2 text-[14px]">
         {CAR_ORDER.map((id) => {
           const have = owned.includes(id);
           const unlock = CAR_UNLOCKS.find((u) => u.id === id);

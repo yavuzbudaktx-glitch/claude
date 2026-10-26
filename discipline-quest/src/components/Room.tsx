@@ -6,13 +6,16 @@ import {
   blockedSet,
   checkPlace,
   footprint,
+  roomN,
+  spaceOf,
+  surfaceUnder,
   visiblePlacements,
   type PlaceCheck,
 } from "@/engine/placement";
 import { checkWall, wallWidth, type WallCheck } from "@/engine/wall";
 import { ITEMS as CAT_ITEMS, isWallItem } from "@/engine/catalog";
-import type { PlacedItem, WallPlaced } from "@/engine/types";
-import { lockedCopy, type Sprite } from "@/game/iso";
+import type { PlacedItem, Space, WallPlaced } from "@/engine/types";
+import { S, lockedCopy, type Sprite } from "@/game/iso";
 import type { Raster } from "@/game/raster";
 import {
   buildBackground,
@@ -208,15 +211,6 @@ const USES: Record<string, Use> = {
     face: "away",
     say: "Comfy.",
   },
-  massage: {
-    onTop: true,
-    depthBias: -0.1,
-    poses: ["sit", "blink"],
-    frameMs: 600,
-    durationMs: 6000,
-    face: "away",
-    say: "Ahhhh. Leg day recovery.",
-  },
   majlis: {
     onTop: true,
     depthBias: -0.1,
@@ -227,20 +221,102 @@ const USES: Record<string, Use> = {
     say: "Çay anyone?",
   },
   punchbag: {
-    poses: ["celebrate", "idle"],
+    poses: ["punch1", "punch2"],
     frameMs: 220,
     durationMs: 5000,
-    face: "item",
+    face: "front",
     say: "Take that, urge.",
     effect: "sway",
   },
-  pullup: {
-    poses: ["celebrate", "idle"],
-    frameMs: 600,
+  squatrack: {
+    poses: ["squat1", "squat2"],
+    frameMs: 700,
+    durationMs: 7000,
+    face: "front",
+    say: "Bismillah. Depth is not optional.",
+  },
+  powerrack: {
+    poses: ["squat1", "squat2"],
+    frameMs: 650,
+    durationMs: 7000,
+    face: "front",
+    say: "New PR loading…",
+  },
+  dumbbellrack: {
+    poses: ["curl1", "curl2"],
+    frameMs: 500,
     durationMs: 6000,
     face: "front",
-    say: "One more rep.",
-    effect: "",
+    say: "Light weight, baby!",
+  },
+  kettlebells: {
+    poses: ["curl1", "squat2", "curl2", "squat1"],
+    frameMs: 500,
+    durationMs: 5000,
+    face: "front",
+    say: "Swing it.",
+  },
+  battleropes: {
+    poses: ["punch1", "punch2"],
+    frameMs: 160,
+    durationMs: 5000,
+    face: "front",
+    say: "Thirty seconds of regret.",
+    effect: "ropes",
+  },
+  rower: {
+    onTop: true,
+    depthBias: 0.2,
+    poses: ["row1", "row2"],
+    frameMs: 450,
+    durationMs: 7000,
+    face: "away",
+    say: "Row, row, row.",
+  },
+  legpress: {
+    onTop: true,
+    depthBias: 0.2,
+    poses: ["row2", "row1"],
+    frameMs: 700,
+    durationMs: 6000,
+    face: "away",
+    say: "Never skip leg day.",
+  },
+  cable: {
+    poses: ["row1", "row2"],
+    frameMs: 600,
+    durationMs: 6000,
+    face: "item",
+    say: "Squeeze the back.",
+  },
+  speaker: {
+    poses: ["celebrate", "idle"],
+    frameMs: 400,
+    durationMs: 7000,
+    face: "front",
+    say: "Hype playlist on.",
+    effect: "notes",
+  },
+  watercooler: {
+    poses: ["drink"],
+    frameMs: 1000,
+    durationMs: 3500,
+    face: "front",
+    say: "Hydrate or diedrate.",
+  },
+  chalkbowl: {
+    poses: ["celebrate"],
+    frameMs: 1000,
+    durationMs: 3000,
+    face: "item",
+    say: "Chalk up. Serious now.",
+  },
+  foamroller: {
+    poses: ["kneel"],
+    frameMs: 1000,
+    durationMs: 4500,
+    face: "front",
+    say: "Ow. Ow. Good ow.",
   },
   yogamat: {
     onTop: true,
@@ -371,9 +447,10 @@ const USES: Record<string, Use> = {
 
 const QUIPS: Record<string, string> = {
   plant: "Watered.",
+  snakeplant: "Unkillable. Respect.",
   monstera: "It grows like my streak.",
-  lantern: "Ramadan vibes.",
-  trophycase: "Earned, not bought. Well, bought too.",
+  tasbih: "SubhanAllah ×33.",
+  platetree: "Plates, sorted by colour. Very pro.",
   rehal: "Quran time.",
   fan: "Spinning. Like my thoughts at 2am.",
   cactus: "Don't hug it.",
@@ -381,7 +458,6 @@ const QUIPS: Record<string, string> = {
   olivetree: "No olives yet.",
   sideboard: "Fancy.",
   wardrobe: "Too many hoodies.",
-  fountain: "Very villa.",
   kilim: "Nice rug.",
   persian: "Bigger rug.",
 };
@@ -435,11 +511,13 @@ export default function Room({
   decorating,
   onDoneDecorating,
   zoom = false,
+  space = "home",
 }: {
   onTap?: (t: RoomTap) => void;
   decorating: boolean;
   onDoneDecorating: () => void;
   zoom?: boolean;
+  space?: Space;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const game = useGame((s) => s.game);
@@ -460,12 +538,13 @@ export default function Room({
   const placeWallAct = useGame((s) => s.placeWall);
   const storeWallAct = useGame((s) => s.storeWall);
 
-  const layout = useMemo(() => roomLayout(game), [game]);
-  const blocked = useMemo(() => blockedSet(visiblePlacements(game)), [game]);
-  const asleep = isAsleep(game, getNow());
-  const hasCat = game.inventory.some(
-    (i) => i.itemId === "cat" && i.lockDaysLeft === 0,
-  );
+  const moveToSpaceAct = useGame((s) => s.moveToSpace);
+  const layout = useMemo(() => roomLayout(game, space), [game, space]);
+  const blocked = useMemo(() => blockedSet(visiblePlacements(game, space)), [game, space]);
+  const asleep = space === "home" && isAsleep(game, getNow());
+  const hasCat =
+    space === "home" &&
+    game.inventory.some((i) => i.itemId === "cat" && i.lockDaysLeft === 0);
   const ghostCheck: PlaceCheck | null = ghost ? checkPlace(game, ghost) : null;
   const wallCheck: WallCheck | null = wallGhost
     ? checkWall(game, wallGhost)
@@ -481,7 +560,7 @@ export default function Room({
     outfit: game.equipped.outfit as OutfitId,
     body: game.body.stage as BodyStage,
     hasCat,
-    gloomy: game.gloomy,
+    gloomy: layout.gloomy,
     decorating,
     ghost,
     ghostOk: ghostCheck === "ok",
@@ -498,7 +577,7 @@ export default function Room({
     outfit: game.equipped.outfit as OutfitId,
     body: game.body.stage as BodyStage,
     hasCat,
-    gloomy: game.gloomy,
+    gloomy: layout.gloomy,
     decorating,
     ghost,
     ghostOk: ghostCheck === "ok",
@@ -539,7 +618,7 @@ export default function Room({
     const a = actor.current;
     const { spec } = live.current.layout;
     const [sx, sy] = tileScreen(spec, a.fx, a.fy, true);
-    return { x: sx / spec.W, y: (sy - 50 - (a.lift ?? 0)) / spec.H };
+    return { x: sx / spec.W, y: (sy - (50 + (a.lift ?? 0)) * S) / spec.H };
   };
 
   const placed = (id: string) =>
@@ -671,7 +750,7 @@ export default function Room({
             : lastAction.kind === "quran"
               ? (placed("rehal") ?? placed("prayerrug"))
               : lastAction.kind === "gym"
-                ? placed("gymbench")
+                ? (placed("squatrack") ?? placed("powerrack") ?? placed("gymbench"))
                 : undefined;
     if (lastAction.kind === "diet" || lastAction.kind === "cheat")
       kitchenOpenUntil.current = performance.now() + 4500;
@@ -947,7 +1026,7 @@ export default function Room({
       const now = getNow();
       const hour = now.getHours();
       const wg = L.wallGhost;
-      const key = `${spec.tier}|${L.layout.wallItems.map((w) => w.id + w.locked).join()}|${L.wallSig}|${wg ? `${wg.itemId}${wg.wall}${wg.u}` : ""}|${hour}|${L.layout.wallpaper}|${L.layout.floor}|${L.layout.curtains}|${L.layout.ledStrip}`;
+      const key = `${spec.key}|${L.layout.wallItems.map((w) => w.id + w.locked).join()}|${L.wallSig}|${wg ? `${wg.itemId}${wg.wall}${wg.u}` : ""}|${hour}|${L.layout.wallpaper}|${L.layout.floor}|${L.layout.curtains}|${L.layout.ledStrip}`;
       if (key !== bgKey || !bg) {
         const wallItems = L.layout.wallItems.filter(
           (w) => !wg || w.id !== wg.itemId,
@@ -974,6 +1053,15 @@ export default function Room({
       }
       ctx.clearRect(0, 0, spec.W, spec.H);
       ctx.drawImage(bg, 0, 0);
+      // soft contact shadows under furniture standing on the floor
+      ctx.fillStyle = "rgba(20,14,30,0.16)";
+      for (const pc of L.layout.pieces) {
+        if (pc.flat || pc.lift || (L.ghost && pc.place.itemId === L.ghost.itemId)) continue;
+        const [cx, cy] = tileScreen(spec, pc.place.tx + pc.w / 2, pc.place.ty + pc.d / 2);
+        ctx.beginPath();
+        ctx.ellipse(cx, cy + 1.5 * S, (pc.w + pc.d) * 6.6 * S, (pc.w + pc.d) * 3.3 * S, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       const view: AvatarView = {
         fx: a.fx,
@@ -1033,30 +1121,29 @@ export default function Room({
               h,
               0,
               0,
-              18,
-              16,
-              Math.round(hx - 9),
-              Math.round(hy - 10),
-              18,
-              16,
+              h.width,
+              32,
+              Math.round(hx - 9 * S),
+              Math.round(hy - 10 * S),
+              h.width,
+              32,
             );
             ctx.fillStyle = "#ffffff";
-            ctx.font = "8px monospace";
+            ctx.font = `${8 * S}px monospace`;
             const zz = Math.floor(t / 500) % 3;
             ctx.fillText(
               "z".repeat(zz + 1),
-              Math.round(hx + 8),
-              Math.round(hy - 12 - zz * 2),
+              Math.round(hx + 8 * S),
+              Math.round(hy - (12 + zz * 2) * S),
             );
           }
           if (d.piece.locked)
-            drawLock(ctx, Math.round(d.x), Math.round(d.y - p.ay) - 4);
+            drawLock(ctx, Math.round(d.x), Math.round(d.y - p.ay) - 4 * S);
         } else if (d.kind === "shadow") {
-          ctx.fillStyle = "rgba(0,0,0,0.22)";
-          const x = Math.round(d.x),
-            y = Math.round(d.y);
-          ctx.fillRect(x - 7, y - 1, 14, 3);
-          ctx.fillRect(x - 5, y - 2, 10, 5);
+          ctx.fillStyle = "rgba(0,0,0,0.2)";
+          ctx.beginPath();
+          ctx.ellipse(Math.round(d.x), Math.round(d.y), 8 * S, 3 * S, 0, 0, Math.PI * 2);
+          ctx.fill();
         } else if (d.kind === "cat") {
           const img = catFrames[d.view.pose];
           drawMirrored(
@@ -1094,19 +1181,28 @@ export default function Room({
             const [sx, sy] = tileScreen(spec, x, y);
             ctx.beginPath();
             ctx.moveTo(sx, sy);
-            ctx.lineTo(sx + 16, sy + 8);
-            ctx.lineTo(sx, sy + 16);
-            ctx.lineTo(sx - 16, sy + 8);
+            ctx.lineTo(sx + 16 * S, sy + 8 * S);
+            ctx.lineTo(sx, sy + 16 * S);
+            ctx.lineTo(sx - 16 * S, sy + 8 * S);
             ctx.closePath();
             ctx.fill();
           }
-        const [gx, gy] = tileScreen(spec, ghost.tx, ghost.ty);
+        const [gx, gy0] = tileScreen(spec, ghost.tx, ghost.ty);
         const s = {
           itemId: ghost.itemId,
           tx: ghost.tx,
           ty: ghost.ty,
           rot: ghost.rot,
         } as PlacedItem;
+        // a small thing hovering over a surface shows up on top of it
+        const st = useGame.getState().game;
+        const base = surfaceUnder(
+          visiblePlacements(st, L.layout.space).filter(
+            (p) => p.itemId !== ghost.itemId && p.on !== ghost.itemId,
+          ),
+          ghost,
+        );
+        const gy = gy0 - (base ? (ITEMS[base.itemId]?.surface ?? 0) * S : 0);
         ctx.globalAlpha = 0.8;
         drawPiece(
           ctx,
@@ -1159,8 +1255,9 @@ export default function Room({
           if (!glow || (id === "lamp" && !lampOn.current)) continue;
           if (id === "tv" && fx?.effect !== "tv") continue;
           if (id === "console" && fx?.pieceId !== "console") continue;
-          const [gx, gy, rad, color] = glow;
-          const flicker = id === "lantern" ? 0.85 + Math.sin(t / 90) * 0.15 : 1;
+          const [gx, gy, rad0, color] = glow;
+          const rad = rad0 * S;
+          const flicker = id === "fireplace" ? 0.85 + Math.sin(t / 90) * 0.15 : 1;
           const [cx, cy] = local(d.x, d.y, d.piece.place.rot === 1)(gx, gy, 0);
           const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
           g.addColorStop(0, color.replace("A", String(0.5 * flicker)));
@@ -1170,13 +1267,13 @@ export default function Room({
         }
         if (L.layout.ledStrip) {
           ctx.strokeStyle = `rgba(200,107,255,${0.35 + Math.sin(t / 700) * 0.1})`;
-          ctx.lineWidth = 3;
-          const top = spec.wallH - 3;
+          ctx.lineWidth = 3 * S;
+          const top = (spec.wallH - 3) * S;
           const [ax, ay] = [spec.origin.x, spec.origin.y - top];
           ctx.beginPath();
-          ctx.moveTo(ax - spec.n * 16, ay + spec.n * 8);
+          ctx.moveTo(ax - spec.n * 16 * S, ay + spec.n * 8 * S);
           ctx.lineTo(ax, ay);
-          ctx.lineTo(ax + spec.n * 16, ay + spec.n * 8);
+          ctx.lineTo(ax + spec.n * 16 * S, ay + spec.n * 8 * S);
           ctx.stroke();
           ctx.lineWidth = 1;
         }
@@ -1187,10 +1284,10 @@ export default function Room({
         const w = wallWidth(wg.itemId);
         const P = (u: number, z: number) =>
           wg.wall === "R"
-            ? [spec.origin.x + u, spec.origin.y + u / 2 - z]
-            : [spec.origin.x - u, spec.origin.y + u / 2 - z];
+            ? [spec.origin.x + u * S, spec.origin.y + (u / 2 - z) * S]
+            : [spec.origin.x - u * S, spec.origin.y + (u / 2 - z) * S];
         ctx.strokeStyle = L.wallOk ? "#4caf50" : "#d64541";
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2 * S;
         ctx.beginPath();
         const pts = [
           P(wg.u, 22),
@@ -1316,14 +1413,26 @@ export default function Room({
   };
 
   const s = game;
+  const tag = space === "home" ? {} : { space };
+  /** Can this item live in this room? Gym gear only in the gym; fitness gear anywhere; the rest at home. */
+  const fits = (id: string) => {
+    const it = ITEMS[id];
+    if (it?.space) return it.space === space;
+    return space === "home" || it?.category === "fitness" || !!it?.wallWidth;
+  };
   const placeable = s.inventory
     .map((i) => i.itemId)
-    .filter((id) => ITEMS[id]?.size)
-    .concat(["bed", "kitchen", "prayerrug"]);
+    .filter((id) => ITEMS[id]?.size && fits(id))
+    .concat(space === "home" ? ["bed", "kitchen", "prayerrug"] : []);
   const wallOwned = s.inventory
     .map((i) => i.itemId)
-    .filter((id) => isWallItem(id));
-  const hungIds = new Set(s.wallPlacements.map((w) => w.itemId));
+    .filter((id) => isWallItem(id) && fits(id));
+  const hungIds = new Set(
+    s.wallPlacements.filter((w) => spaceOf(w) === space).map((w) => w.itemId),
+  );
+  const otherSpace: Space = space === "home" ? "gym" : "home";
+  const canSend = (id: string) =>
+    ITEMS[id]?.category === "fitness" && roomN(s, otherSpace) > 0;
   const wallReason: Record<WallCheck, string> = {
     ok: "Fits here",
     outside: "Off the wall",
@@ -1332,7 +1441,20 @@ export default function Room({
   const nudge = (du: number) =>
     wallGhost &&
     setWallGhost({ ...wallGhost, u: Math.max(0, wallGhost.u + du) });
-  const placedIds = new Set(s.placements.map((p) => p.itemId));
+  const placedHere = (id: string) =>
+    s.placements.some((p) => p.itemId === id && spaceOf(p) === space);
+  const placedIds = new Set(
+    s.placements.filter((p) => spaceOf(p) === space).map((p) => p.itemId),
+  );
+  const ghostBase =
+    ghost && ghostCheck === "ok"
+      ? surfaceUnder(
+          visiblePlacements(s, space).filter(
+            (p) => p.itemId !== ghost.itemId && p.on !== ghost.itemId,
+          ),
+          ghost,
+        )
+      : null;
   const ghostReason: Record<PlaceCheck, string> = {
     ok: "Fits here",
     outside: "Outside the room",
@@ -1366,7 +1488,11 @@ export default function Room({
               height={layout.spec.H}
               className="h-full w-full cursor-pointer touch-manipulation"
               style={{ imageRendering: "pixelated" }}
-              aria-label="Your room. Tap the rug to pray, the bed to sleep or wake up, the kitchen for meals, and other items to use them."
+              aria-label={
+                space === "gym"
+                  ? "Your gym. Tap the equipment to train."
+                  : "Your room. Tap the rug to pray, the bed to sleep or wake up, the kitchen for meals, and other items to use them."
+              }
               onPointerDown={onPointer}
             />
             {bubble && !decorating && (
@@ -1393,17 +1519,17 @@ export default function Room({
           </div>
         </div>
         {asleep && !decorating && (
-          <div className="pointer-events-none absolute right-2 top-2 whitespace-nowrap rounded-sm border-2 border-black bg-[#232a46]/90 px-2 py-0.5 text-base text-white">
+          <div className="pointer-events-none absolute right-2 top-2 whitespace-nowrap rounded-full border-2 border-black bg-[#232a46]/90 px-2.5 py-0.5 text-[12px] font-bold text-white">
             Zzz… tap the bed when you&apos;re up
           </div>
         )}
-        {game.gloomy && !decorating && (
-          <div className="absolute left-2 top-2 rounded-sm border-2 border-black bg-[#3b1d4a] px-2 py-0.5 text-base text-[#f3c1ff]">
+        {layout.gloomy && !decorating && (
+          <div className="absolute left-2 top-2 rounded-full border-2 border-black bg-[#3b1d4a]/90 px-2.5 py-0.5 text-[12px] font-bold text-[#f3c1ff]">
             Room is gloomy. One clean day restores it.
           </div>
         )}
         {decorating && (
-          <div className="pointer-events-none absolute left-2 top-2 rounded-sm border-2 border-black bg-[#232a46]/90 px-2 py-0.5 text-base text-white">
+          <div className="pointer-events-none absolute left-2 top-2 rounded-full border-2 border-black bg-[#232a46]/90 px-2.5 py-0.5 text-[12px] font-bold text-white">
             {wallGhost
               ? `Slide the ${ITEMS[wallGhost.itemId]?.name ?? wallGhost.itemId} with ◀ ▶`
               : ghost
@@ -1477,7 +1603,9 @@ export default function Room({
               <span
                 className={`chip ${ghostCheck === "ok" ? "bg-[#d9f0d9]" : "bg-[#f9d6d5]"}`}
               >
-                {ghostReason[ghostCheck ?? "outside"]}
+                {ghostBase
+                  ? `On the ${(ITEMS[ghostBase.itemId]?.name ?? ghostBase.itemId).toLowerCase()} ✓`
+                  : ghostReason[ghostCheck ?? "outside"]}
               </span>
               <button
                 className="btn"
@@ -1495,6 +1623,17 @@ export default function Room({
               >
                 Place
               </button>
+              {canSend(ghost.itemId) && (
+                <button
+                  className="btn"
+                  onClick={() => {
+                    moveToSpaceAct(ghost.itemId, otherSpace);
+                    setGhost(null);
+                  }}
+                >
+                  Send to {otherSpace === "gym" ? "gym" : "home"}
+                </button>
+              )}
               {canStore(ghost.itemId) && placedIds.has(ghost.itemId) && (
                 <button
                   className="btn"
@@ -1512,7 +1651,7 @@ export default function Room({
             </div>
           ) : (
             <div className="flex items-center justify-between gap-2">
-              <span className="text-base text-[var(--muted)]">
+              <span className="text-[14px] text-[var(--muted)]">
                 Pick something below or tap it in the room.
               </span>
               <button className="btn btn-blue" onClick={onDoneDecorating}>
@@ -1522,14 +1661,17 @@ export default function Room({
           )}
           <div className="flex gap-1.5 overflow-x-auto pb-1">
             {placeable.map((id) => {
-              const isPlaced = placedIds.has(id);
+              const isPlaced = placedHere(id);
+              const elsewhere = !isPlaced && s.placements.some((p) => p.itemId === id);
               return (
                 <button
                   key={id}
                   className={`flex w-[72px] shrink-0 flex-col items-center rounded-[4px] border-2 border-black p-1 ${ghost?.itemId === id ? "bg-[#e3f1ff]" : "bg-white"}`}
                   onClick={() => {
                     setWallGhost(null);
-                    const cur = s.placements.find((p) => p.itemId === id);
+                    const cur = s.placements.find(
+                      (p) => p.itemId === id && spaceOf(p) === space,
+                    );
                     const n = layout.spec.n;
                     setGhost(
                       cur ?? {
@@ -1537,6 +1679,7 @@ export default function Room({
                         tx: Math.floor(n / 2),
                         ty: Math.floor(n / 2),
                         rot: 0,
+                        ...tag,
                       },
                     );
                   }}
@@ -1554,26 +1697,34 @@ export default function Room({
                     deps={[id]}
                     style={{ width: 48, height: 40 }}
                   />
-                  <span className="w-full truncate text-center text-sm leading-tight">
+                  <span className="w-full truncate text-center text-[12.5px] leading-tight">
                     {ITEMS[id]?.name ?? id}
                   </span>
                   <span
-                    className={`text-xs leading-tight ${isPlaced ? "text-[var(--good)]" : "text-[var(--head-2)]"}`}
+                    className={`text-[11px] leading-tight ${isPlaced ? "text-[var(--good)]" : "text-[var(--head-2)]"}`}
                   >
-                    {isPlaced ? "placed" : "in storage"}
+                    {isPlaced
+                      ? "placed"
+                      : elsewhere
+                        ? space === "gym"
+                          ? "at home"
+                          : "in the gym"
+                        : "in storage"}
                   </span>
                 </button>
               );
             })}
             {wallOwned.map((id) => {
-              const hung = s.wallPlacements.find((w) => w.itemId === id);
+              const hung = s.wallPlacements.find(
+                (w) => w.itemId === id && spaceOf(w) === space,
+              );
               return (
                 <button
                   key={id}
                   className={`flex w-[72px] shrink-0 flex-col items-center rounded-[4px] border-2 border-black p-1 ${wallGhost?.itemId === id ? "bg-[#e3f1ff]" : "bg-[#f3efe4]"}`}
                   onClick={() => {
                     setGhost(null);
-                    setWallGhost(hung ?? { itemId: id, wall: "R", u: 8 });
+                    setWallGhost(hung ?? { itemId: id, wall: "R", u: 8, ...tag });
                   }}
                 >
                   <RasterCanvas
@@ -1581,11 +1732,11 @@ export default function Room({
                     deps={[id]}
                     style={{ width: 48, height: 40 }}
                   />
-                  <span className="w-full truncate text-center text-sm leading-tight">
+                  <span className="w-full truncate text-center text-[12.5px] leading-tight">
                     {CAT_ITEMS[id]?.name ?? id}
                   </span>
                   <span
-                    className={`text-xs leading-tight ${hung ? "text-[var(--good)]" : "text-[var(--head-2)]"}`}
+                    className={`text-[11px] leading-tight ${hung ? "text-[var(--good)]" : "text-[var(--head-2)]"}`}
                   >
                     {hung ? "on wall" : "in storage"}
                   </span>
@@ -1634,19 +1785,17 @@ function drawMirrored(
 function local(x: number, y: number, rot: boolean) {
   return (X: number, Y: number, Z: number): [number, number] => {
     const [a, b] = rot ? [Y, X] : [X, Y];
-    return [x + a - b, y + (a + b) / 2 - Z];
+    return [x + (a - b) * S, y + ((a + b) / 2 - Z) * S];
   };
 }
 
 /** Light sources at night: piece-local offset (X, Y), radius, rgba color with an A placeholder. */
 const GLOWS: Record<string, [number, number, number, string]> = {
   lamp: [8, 8, 46, "rgba(255,214,120,A)"],
-  lantern: [8, 8, 30, "rgba(255,190,80,A)"],
   tv: [8, 16, 34, "rgba(120,190,255,A)"],
   desk: [16, 8, 30, "rgba(90,160,255,A)"],
   aquarium: [8, 8, 24, "rgba(110,220,255,A)"],
   arcade: [12, 8, 28, "rgba(200,90,255,A)"],
-  trophycase: [8, 8, 22, "rgba(255,230,150,A)"],
   recordplayer: [8, 8, 18, "rgba(255,120,120,A)"],
   fireplace: [16, 10, 46, "rgba(255,150,60,A)"],
   vending: [8, 8, 30, "rgba(255,120,120,A)"],
@@ -1675,7 +1824,7 @@ function animate(
   const px = (X: number, Y: number, Z: number, c: string, w = 1, h = 1) => {
     const [sx, sy] = P(X, Y, Z);
     ctx.fillStyle = c;
-    ctx.fillRect(Math.round(sx), Math.round(sy), w, h);
+    ctx.fillRect(Math.round(sx), Math.round(sy), w * S, h * S);
   };
   const note = (
     X: number,
@@ -1693,10 +1842,10 @@ function animate(
         (ch, rx) =>
           ch === "#" &&
           ctx.fillRect(
-            Math.round(sx + rx + Math.sin(k * 6 + phase) * 2),
-            Math.round(sy + ry),
-            1,
-            1,
+            Math.round(sx + (rx + Math.sin(k * 6 + phase) * 2) * S),
+            Math.round(sy + ry * S),
+            S,
+            S,
           ),
       ),
     );
@@ -1804,10 +1953,10 @@ function animate(
         const r = (dx: number, dy: number, w: number, h: number, c: string) => {
           ctx.fillStyle = c;
           ctx.fillRect(
-            Math.round(bx + dx * k),
-            Math.round(by + dy * k),
-            w * k,
-            h * k,
+            Math.round(bx + dx * k * S),
+            Math.round(by + dy * k * S),
+            w * k * S,
+            h * k * S,
           );
         };
         r(0, 0, 4, 3, "#6fd14a");
@@ -1826,10 +1975,10 @@ function animate(
         const wy = 8 + (cy + Math.sin(a) * R - 8) * s;
         const z = 24 + s * 30 + Math.sin(k * Math.PI * 6) * 4;
         const [fx, fy] = rot ? P(wy, wx, z) : P(wx, wy, z);
-        bird(fx - 4 * s, fy, Math.floor(t / 90) % 2 === 0, s > 0.4 ? 2 : 1);
+        bird(fx - 4 * s * S, fy, Math.floor(t / 90) % 2 === 0, s > 0.4 ? 2 : 1);
       } else {
         const [bx, by] = P(8, 8, 24 + (Math.floor(t / 700) % 4 === 0 ? 1 : 0));
-        bird(bx - 2, by, false);
+        bird(bx - 2 * S, by, false);
       }
       break;
     }
@@ -1845,7 +1994,7 @@ function animate(
           7 + Math.sin(ang) * 2.6,
         );
         ctx.fillStyle = "#b9770e";
-        ctx.fillRect(Math.round(sx), Math.round(sy), 1, 1);
+        ctx.fillRect(Math.round(sx), Math.round(sy), S, S);
       }
       px(
         9.5,
@@ -1883,7 +2032,7 @@ function animate(
           27 + Math.sin(ang) * 4.5,
         );
         ctx.fillStyle = "#9fb3c2";
-        ctx.fillRect(Math.round(sx), Math.round(sy), 2, 2);
+        ctx.fillRect(Math.round(sx), Math.round(sy), 2 * S, 2 * S);
       }
       break;
     }
@@ -1919,7 +2068,7 @@ function animate(
             8 + Math.sin(ang) * 3.5,
           );
           ctx.fillStyle = "#55555a";
-          ctx.fillRect(Math.round(sx), Math.round(sy), 1, 1);
+          ctx.fillRect(Math.round(sx), Math.round(sy), S, S);
         }
       break;
     case "vending":
@@ -1936,16 +2085,19 @@ function animate(
         );
       }
       break;
-    case "fountain":
-      for (let k = 0; k < 4; k++) {
-        const ph = (t / 600 + k / 4) % 1;
-        px(
-          16 + Math.cos(k * 1.6) * ph * 6,
-          16 + Math.sin(k * 1.6) * ph * 6,
-          25 - ph * 14,
-          "#bfe8f7",
-        );
-      }
+    case "speaker":
+      if (effect === "notes") {
+        note(12, 4, 26, 0, "#ff4fc3");
+        note(12, 10, 26, 0.5, "#4de0ff");
+      } else if (Math.floor(t / 600) % 2) px(12, 10.5, 22.5, "#4dff88");
+      break;
+    case "battleropes":
+      if (effect === "ropes")
+        for (const off of [-2.2, 2.2])
+          for (let y = 6; y < 28; y += 2) {
+            const wave = Math.sin(y * 0.5 - t / 70) * 2.2;
+            px(8 + off, y, 1 + Math.max(0, wave), "#e0c891");
+          }
       break;
     case "lamp":
       if (!lampOn) px(5, 5, 32, "rgba(0,0,0,0.25)", 10, 6);
@@ -1963,7 +2115,7 @@ function hitTest(
 ): string | null {
   const exact = hitAt(list, pieces, sx, sy);
   if (exact) return exact;
-  for (const r of [2, 4])
+  for (const r of [2 * S, 4 * S])
     for (const [dx, dy] of [
       [0, -r],
       [0, r],
@@ -2004,6 +2156,10 @@ function hitAt(
 }
 
 function drawLock(ctx: CanvasRenderingContext2D, x: number, y: number) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(S, S);
+  ctx.translate(-x, -y);
   ctx.fillStyle = "#111";
   ctx.fillRect(x - 3, y - 5, 7, 2);
   ctx.fillRect(x - 3, y - 5, 2, 5);
@@ -2013,6 +2169,7 @@ function drawLock(ctx: CanvasRenderingContext2D, x: number, y: number) {
   ctx.fillRect(x - 3, y, 7, 6);
   ctx.fillStyle = "#111";
   ctx.fillRect(x, y + 2, 1, 2);
+  ctx.restore();
 }
 
 /** Which wall decoration (if any) is under a canvas point. */
@@ -2025,9 +2182,9 @@ function wallHit(
   for (const w of layout.wallItems) {
     const width = wallWidth(w.id);
     for (let u = w.u; u <= w.u + width; u += 1) {
-      const x = w.wall === "R" ? spec.origin.x + u : spec.origin.x - u;
-      const yMid = spec.origin.y + u / 2;
-      if (Math.abs(sx - x) <= 1.5 && sy >= yMid - 64 && sy <= yMid - 24)
+      const x = w.wall === "R" ? spec.origin.x + u * S : spec.origin.x - u * S;
+      const yMid = spec.origin.y + (u / 2) * S;
+      if (Math.abs(sx - x) <= 1.5 * S && sy >= yMid - 66 * S && sy <= yMid - 6 * S)
         return w;
     }
   }

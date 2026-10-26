@@ -1,8 +1,8 @@
 "use client";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { createInitialState, dismissInbox, ensureToday, equip, markSeen, migrate, placeItem, placeWall, storeItem, storeWall, updateSettings } from "@/engine/engine";
-import type { GameState, ItemId, PlacedItem, WallPlaced } from "@/engine/types";
+import { createInitialState, dismissInbox, ensureToday, equip, markSeen, migrate, moveToSpace, placeItem, placeWall, storeItem, storeWall, updateSettings } from "@/engine/engine";
+import type { GameState, ItemId, PlacedItem, Space, WallPlaced } from "@/engine/types";
 import { getNow } from "@/lib/clock";
 import { SFX } from "@/lib/sound";
 
@@ -29,6 +29,7 @@ interface Store {
   store: (id: ItemId) => void;
   placeWall: (w: WallPlaced) => void;
   storeWall: (id: ItemId) => void;
+  moveToSpace: (id: ItemId, space: Space) => void;
   toggleLights: () => void;
 }
 
@@ -45,7 +46,10 @@ export const useGame = create<Store>()(
         const next = fn(before, now);
         if (next === before) return;
         if (next.settings.sound && action) {
-          if (next.inbox.length > before.inbox.length) SFX.badge();
+          const fresh = next.inbox.slice(before.inbox.length);
+          if (fresh.some((e) => e.kind === "level")) SFX.levelUp();
+          else if (fresh.length) SFX.badge();
+          else if (action.kind === "pray") SFX.prayer();
           else if (GOOD.includes(action.kind)) SFX.good();
           else SFX.bad();
         }
@@ -92,6 +96,10 @@ export const useGame = create<Store>()(
       storeWall(id) {
         set({ game: storeWall(get().game, id) });
       },
+      moveToSpace(id, space) {
+        const next = moveToSpace(get().game, id, space);
+        if (next !== get().game) set({ game: next });
+      },
       toggleLights() {
         const g = get().game;
         if (g.settings.sound) SFX.tap();
@@ -100,7 +108,7 @@ export const useGame = create<Store>()(
     }),
     {
       name: "discipline-quest",
-      version: 4,
+      version: 5,
       storage: createJSONStorage(() => localStorage),
       partialize: (s) => ({ game: s.game }),
       migrate: (persisted) => {
@@ -111,7 +119,7 @@ export const useGame = create<Store>()(
         const p = persisted as { game?: GameState } | undefined;
         if (!p?.game) return current;
         // Saves written by v1 code without the persist version bump still need upgrading.
-        return { ...current, game: (p.game as { version: number }).version === 4 ? p.game : migrate(p.game, getNow()) };
+        return { ...current, game: (p.game as { version: number }).version === 5 ? p.game : migrate(p.game, getNow()) };
       },
     },
   ),

@@ -4,14 +4,16 @@ import {
   CATALOG,
   DEFAULT_EQUIPPED,
   EQUIP_SLOT,
+  GYM_TIERS,
   ITEMS,
   REMOVED_REFUNDS,
   STARTERS,
   TIER_ORDER,
   tierOf,
+  type GymTier,
 } from "./catalog";
 import { addDays, dateKey, daysBetween, minutesOfDay, parseHM, parseKey } from "./dates";
-import { PREFERRED, autoPlace, checkPlace } from "./placement";
+import { PREFERRED, autoPlace, checkPlace, roomN, settle, spaceOf } from "./placement";
 import { autoWall, checkWall } from "./wall";
 import { QUEST_BY_ID, questsFor } from "./quests";
 import { RULES, levelFor } from "./rules";
@@ -26,6 +28,7 @@ import {
   type ItemId,
   type LifetimeStats,
   type PlacedItem,
+  type Space,
   type WallPlaced,
   type PrayerName,
   type Streaks,
@@ -60,7 +63,7 @@ function freshSince(today: string) {
 export function createInitialState(now: Date): GameState {
   const today = dateKey(now);
   const s: GameState = {
-    version: 4,
+    version: 5,
     startDate: today,
     lastSettled: addDays(today, -1),
     days: { [today]: emptyDay(today) },
@@ -215,6 +218,31 @@ export function stageFor(points: number): number {
   return st;
 }
 
+/** The first full gym week opens the gym room. */
+function unlockGym(s: GameState, now: Date) {
+  if (owns(s, "gym-garage")) return;
+  s.equipped.gym = "gym-garage";
+  grant(s, now, "gym-garage", true);
+  // Fitness gear you already own moves over if it fits.
+  for (const p of [...s.placements]) {
+    if (ITEMS[p.itemId]?.category !== "fitness") continue;
+    s.placements = s.placements.filter((q) => q.itemId !== p.itemId);
+    const spot = autoPlace(s, p.itemId, "gym");
+    s.placements.push(spot ?? p);
+  }
+  for (const i of s.inventory) {
+    if (ITEMS[i.itemId]?.space !== "gym") continue;
+    if (!s.placements.some((p) => p.itemId === i.itemId)) {
+      const spot = autoPlace(s, i.itemId);
+      if (spot) s.placements.push(spot);
+    }
+    if (!s.wallPlacements.some((w) => w.itemId === i.itemId)) {
+      const hang = autoWall(s, i.itemId);
+      if (hang) s.wallPlacements.push(hang);
+    }
+  }
+}
+
 /** Sunday night: did you make 4 gym visits this week? */
 function settleGymWeek(s: GameState, monday: string, now: Date) {
   const count = gymCountInWeek(s, monday);
@@ -225,6 +253,7 @@ function settleGymWeek(s: GameState, monday: string, now: Date) {
     b.missedInRow = 0;
     b.points++;
     earn(s, now, RULES.gym.weekCoins, RULES.gym.weekXp, `Gym week done: ${count} visits`, "good");
+    unlockGym(s, now);
     const st = stageFor(b.points);
     if (st > b.stage) {
       b.stage = st;
@@ -603,7 +632,9 @@ export function currentTierIndex(s: GameState): number {
   return TIER_ORDER.indexOf(tierOf(s.equipped.room));
 }
 
-export type BuyResult = "ok" | "debt" | "poor" | "owned" | "not-for-sale" | "level" | "tier";
+export type BuyResult = "ok" | "debt" | "poor" | "owned" | "not-for-sale" | "level" | "tier" | "gym-visits" | "no-gym" | "gym-tier";
+
+const gymIndex = (s: GameState) => GYM_TIERS.indexOf(s.equipped.gym as GymTier);
 
 export function canBuy(state: GameState, id: ItemId): BuyResult {
   const item = ITEMS[id];
@@ -611,6 +642,13 @@ export function canBuy(state: GameState, id: ItemId): BuyResult {
   if (owns(state, id)) return "owned";
   if (levelFor(state.xp).level < item.level) return "level";
   if (item.tier && currentTierIndex(state) < TIER_ORDER.indexOf(item.tier)) return "tier";
+  if (item.category === "gymroom") {
+    if (gymIndex(state) < 0) return "no-gym";
+    if (GYM_TIERS.indexOf(id as GymTier) > gymIndex(state) + 1) return "gym-tier";
+  }
+  if (item.space === "gym" && gymIndex(state) < 0) return "no-gym";
+  if (item.gymTier && gymIndex(state) < GYM_TIERS.indexOf(item.gymTier)) return "gym-tier";
+  if (item.gymVisits && state.stats.gym < item.gymVisits) return "gym-visits";
   if (state.coins < 0) return "debt";
   if (state.coins < item.price) return "poor";
   return "ok";
@@ -640,7 +678,32 @@ export function equip(state: GameState, id: ItemId): GameState {
 
 export function placeItem(state: GameState, p: PlacedItem): GameState {
   if (!owns(state, p.itemId) || checkPlace(state, p) !== "ok") return state;
-  return { ...state, placements: [...state.placements.filter((q) => q.itemId !== p.itemId), p] };
+  const it = ITEMS[p.itemId];
+  if (it?.space && it.space !== spaceOf(p)) return state;
+  const placed = settle(state, p);
+  const prev = state.placements.find((q) => q.itemId === p.itemId);
+  // Things standing on a moved piece move with it (or go to storage if it changed room or turned).
+  const riders = state.placements.filter((q) => q.on === p.itemId);
+  const moved = riders.flatMap((q) => {
+    if (!prev || spaceOf(prev) !== spaceOf(p) || prev.rot !== p.rot) return [];
+    return [{ ...q, tx: q.tx + p.tx - prev.tx, ty: q.ty + p.ty - prev.ty }];
+  });
+  return {
+    ...state,
+    placements: [...state.placements.filter((q) => q.itemId !== p.itemId && q.on !== p.itemId), placed, ...moved],
+  };
+}
+
+/** Send something to the other room (it lands in the first free spot, or storage). */
+export function moveToSpace(state: GameState, itemId: ItemId, space: Space): GameState {
+  if (!owns(state, itemId) || !roomN(state, space)) return state;
+  const it = ITEMS[itemId];
+  if (it?.space && it.space !== space) return state;
+  const s = clone(state);
+  s.placements = s.placements.filter((q) => q.itemId !== itemId && q.on !== itemId);
+  const spot = autoPlace(s, itemId, space);
+  if (spot) s.placements.push(spot);
+  return s;
 }
 
 const FIXTURES = ["bed", "kitchen", "prayerrug"];
@@ -648,7 +711,7 @@ export const canStore = (id: ItemId) => !FIXTURES.includes(id);
 
 export function storeItem(state: GameState, itemId: ItemId): GameState {
   if (!canStore(itemId)) return state;
-  return { ...state, placements: state.placements.filter((q) => q.itemId !== itemId) };
+  return { ...state, placements: state.placements.filter((q) => q.itemId !== itemId && q.on !== itemId) };
 }
 
 export function placeWall(state: GameState, w: WallPlaced): GameState {
@@ -690,7 +753,7 @@ export function liveStreaks(s: GameState, now: Date) {
 
 export function isGameState(v: unknown): boolean {
   const o = v as { version?: number; coins?: unknown; days?: unknown; inventory?: unknown };
-  return !!o && [1, 2, 3, 4].includes(o.version ?? 0) && typeof o.coins === "number" && typeof o.days === "object" && Array.isArray(o.inventory);
+  return !!o && [1, 2, 3, 4, 5].includes(o.version ?? 0) && typeof o.coins === "number" && typeof o.days === "object" && Array.isArray(o.inventory);
 }
 
 /** Bring any saved state (v1, v2 or v3) up to the current shape without losing progress. */
@@ -772,6 +835,24 @@ export function migrate(raw: any, now: Date): GameState {
       const hang = autoWall(s as GameState, i.itemId);
       if (hang) s.wallPlacements.push(hang);
     }
+  }
+  if (s.version === 4) {
+    let refund = 0;
+    s.inventory = (s.inventory as { itemId: string }[]).filter((i) => {
+      if (!(i.itemId in REMOVED_REFUNDS)) return true;
+      refund += REMOVED_REFUNDS[i.itemId];
+      return false;
+    });
+    s.placements = (s.placements as PlacedItem[]).filter((p) => !(p.itemId in REMOVED_REFUNDS));
+    if (refund) {
+      s.coins += refund;
+      s.log.unshift({ at: now.getTime(), text: `Retired items refunded: +${refund} coins`, coins: refund, kind: "info" });
+    }
+    // The punching bag lives in the gym now; it waits in storage until the gym opens.
+    s.placements = (s.placements as PlacedItem[]).filter((p) => p.itemId !== "punchbag");
+    s.equipped = { ...s.equipped, gym: "" };
+    s.version = 5;
+    if ((s.stats?.gymWeeksDone ?? 0) > 0) unlockGym(s as GameState, now);
   }
   // Fill anything a later field might be missing.
   s.equipped = { ...DEFAULT_EQUIPPED, ...s.equipped };

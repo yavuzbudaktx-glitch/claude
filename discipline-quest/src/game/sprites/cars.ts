@@ -20,8 +20,7 @@ function farWheel(i: Iso, y: number, cx: number, r: number) {
 }
 
 function dot(i: Iso, p: P3, c: string) {
-  const [x, y] = i.proj(p);
-  i.r.set(x, y, c);
+  i.dot(p, c);
 }
 
 // ---------- 2027 Hyundai Ioniq 5, all Atlas White ----------

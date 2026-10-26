@@ -1,4 +1,4 @@
-import { gridRaster } from "../raster";
+import { gridRaster, scale2x } from "../raster";
 
 const C = { K: "#2a1a10", O: "#e08a3c", o: "#c06a24", W: "#f6efe4", E: "#2f6b2f", P: "#f2a0a0" };
 
@@ -41,4 +41,4 @@ const WALK_B = [
   "...KK..KK.KK.",
 ];
 
-export const renderCat = (pose: "sit" | "walk1" | "walk2") => gridRaster(pose === "sit" ? SIT : pose === "walk1" ? WALK_A : WALK_B, C);
+export const renderCat = (pose: "sit" | "walk1" | "walk2") => scale2x(gridRaster(pose === "sit" ? SIT : pose === "walk1" ? WALK_A : WALK_B, C));

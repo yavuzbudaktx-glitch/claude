@@ -58,7 +58,7 @@ async function main() {
 <meta name="theme-color" content="#161a2e">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Press+Start+2P&display=swap">
 <style>:root{color-scheme:dark}${css}</style>
 <div id="root"><div style="padding:32px;text-align:center;color:#fff;font-family:monospace">Loading room…</div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/${REACT}/umd/react.production.min.js"></script>

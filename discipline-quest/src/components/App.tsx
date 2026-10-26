@@ -2,6 +2,8 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { CATALOG } from "@/engine/catalog";
 import { useGame } from "@/store/useGame";
+import { gymCountInWeek, mondayOf } from "@/engine/engine";
+import { dateKey } from "@/engine/dates";
 import { useReminders } from "@/lib/reminders";
 import { isClockShifted, getNow } from "@/lib/clock";
 import { cloudStatus, loadCloud, onCloudStatus, saveGame } from "@/lib/cloudSave";
@@ -31,7 +33,7 @@ export default function App() {
   const game = useGame((s) => s.game);
   const [tab, setTab] = useState("today");
   const [sheet, setSheet] = useState<RoomTap | "settings" | null>(null);
-  const [scene, setScene] = useState<"room" | "garage">("room");
+  const [scene, setScene] = useState<"room" | "gym" | "garage">("room");
   const [decorating, setDecorating] = useState(false);
   const [zoom, setZoom] = useState(false);
   const toggleLights = useGame((s) => s.toggleLights);
@@ -69,10 +71,10 @@ export default function App() {
   const freshCount = CATALOG.filter((c) => isNew(game, c)).length;
 
   if (cloud.mode === "loading")
-    return <div className="p-8 text-center font-pixel text-xs text-white">Loading your save…</div>;
+    return <div className="p-8 text-center font-pixel text-[11px] text-white">Loading your save…</div>;
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-[720px] flex-col gap-3 px-4 pb-28 pt-[max(12px,env(safe-area-inset-top))]">
+    <main className="mx-auto flex min-h-dvh max-w-[720px] flex-col gap-3 px-4 pb-32 pt-[max(12px,env(safe-area-inset-top))]">
       {isClockShifted() && (
         <div className="chip self-start bg-[#ffe680]">
           Test clock: {getNow().toLocaleString()}
@@ -81,60 +83,71 @@ export default function App() {
       <Hud onSettings={() => setSheet("settings")} />
       <div className="panel overflow-hidden">
         <div className="flex items-center gap-1.5 border-b-2 border-black bg-[var(--chrome)] p-1.5">
-          {(["room", "garage"] as const).map((k) => (
-            <button
-              key={k}
-              className={`tab ${scene === k ? "bg-[var(--head)] text-white" : "bg-[#e6e2d6]"}`}
-              onClick={() => {
-                setScene(k);
-                setDecorating(false);
-              }}
-            >
-              {k === "room" ? "Room" : "Garage"}
-            </button>
-          ))}
-          {scene === "room" && (
-            <>
+          <div className="seg flex" role="tablist" aria-label="Where to look">
+            {(["room", "gym", "garage"] as const).map((k) => {
+              const locked = k === "gym" && !game.equipped.gym;
+              return (
+                <button
+                  key={k}
+                  role="tab"
+                  aria-selected={scene === k}
+                  className={`seg-btn flex items-center gap-1 ${scene === k ? "seg-on" : ""}`}
+                  onClick={() => {
+                    setScene(k);
+                    setDecorating(false);
+                  }}
+                >
+                  {locked && <PixelIcon name="lock" size={10} />}
+                  {k === "room" ? "Room" : k === "gym" ? "Gym" : "Garage"}
+                </button>
+              );
+            })}
+          </div>
+          {scene !== "garage" && !(scene === "gym" && !game.equipped.gym) && (
+            <div className="ml-auto flex items-center gap-1">
+              {scene === "room" && (
+                <button
+                  className={`icon-btn ${game.settings.lights ? "bg-[#ffe680]" : "bg-[#3a3f5c] text-white"}`}
+                  onClick={toggleLights}
+                  aria-pressed={game.settings.lights}
+                  aria-label={game.settings.lights ? "Turn lights off" : "Turn lights on"}
+                >
+                  <PixelIcon name={game.settings.lights ? "sun" : "moon"} size={13} />
+                </button>
+              )}
               <button
-                className={`tab ml-auto flex items-center gap-1 ${game.settings.lights ? "bg-[#ffe680]" : "bg-[#3a3f5c] text-white"}`}
-                onClick={toggleLights}
-                aria-pressed={game.settings.lights}
-                aria-label={
-                  game.settings.lights ? "Turn lights off" : "Turn lights on"
-                }
-              >
-                <PixelIcon
-                  name={game.settings.lights ? "sun" : "moon"}
-                  size={12}
-                />
-              </button>
-              <button
-                className={`tab ${zoom ? "bg-[var(--head)] text-white" : "bg-[#e6e2d6]"}`}
+                className={`icon-btn ${zoom ? "bg-[var(--head)] text-white" : "bg-[#e6e2d6]"}`}
                 onClick={() => setZoom((z) => !z)}
                 aria-pressed={zoom}
+                aria-label={zoom ? "Fit the room" : "Zoom in"}
               >
-                {zoom ? "Fit" : "Zoom"}
+                <PixelIcon name="zoom" size={13} />
               </button>
               <button
-                className={`tab flex items-center gap-1 ${decorating ? "bg-[var(--gold)]" : "bg-[#e6e2d6]"}`}
+                className={`icon-btn ${decorating ? "bg-[var(--gold)]" : "bg-[#e6e2d6]"}`}
                 onClick={() => setDecorating((d) => !d)}
+                aria-pressed={decorating}
+                aria-label={decorating ? "Done decorating" : "Decorate"}
               >
-                <PixelIcon name="home" size={12} />{" "}
-                {decorating ? "Done" : "Decorate"}
+                <PixelIcon name="brush" size={13} />
               </button>
-            </>
+            </div>
           )}
         </div>
         <div className="bg-[radial-gradient(ellipse_at_center,#2c3560,#1a1f3b)]">
-          {scene === "room" ? (
+          {scene === "garage" ? (
+            <Garage />
+          ) : scene === "gym" && !game.equipped.gym ? (
+            <GymLocked />
+          ) : (
             <Room
+              key={scene}
+              space={scene === "gym" ? "gym" : "home"}
               onTap={setSheet}
               decorating={decorating}
               onDoneDecorating={() => setDecorating(false)}
               zoom={zoom}
             />
-          ) : (
-            <Garage />
           )}
         </div>
       </div>
@@ -168,7 +181,7 @@ export default function App() {
         <div className="fixed inset-0 z-40 overflow-y-auto bg-[var(--bg)] px-4 pb-10 pt-[max(12px,env(safe-area-inset-top))]">
           <div className="mx-auto max-w-[720px] space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="font-pixel text-xs text-white">SETTINGS</h2>
+              <h2 className="font-pixel text-[11px] text-white">SETTINGS</h2>
               <button
                 className="btn h-10 w-10 px-0"
                 onClick={() => setSheet(null)}
@@ -183,11 +196,8 @@ export default function App() {
       )}
       <Celebrate />
 
-      <nav
-        className="fixed inset-x-0 bottom-0 z-30 border-t-2 border-black bg-[var(--chrome)] pb-[env(safe-area-inset-bottom,0px)]"
-        aria-label="Sections"
-      >
-        <div className="mx-auto grid max-w-[720px] grid-cols-5">
+      <nav className="fixed inset-x-0 bottom-0 z-30 px-3 pb-[max(10px,env(safe-area-inset-bottom,0px))]" aria-label="Sections">
+        <div className="dock">
           {TABS.map((t) => {
             const on = tab === t.id;
             return (
@@ -198,16 +208,12 @@ export default function App() {
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
                 aria-current={on ? "page" : undefined}
-                className={`relative flex flex-col items-center gap-1 py-2.5 font-pixel text-[8px] uppercase ${on ? "bg-[var(--head)] text-white" : "text-[var(--chrome-ink)]"}`}
+                className={`dock-btn ${on ? "dock-on text-white" : "text-[var(--chrome-ink)]"}`}
               >
-                <PixelIcon
-                  name={t.icon}
-                  size={18}
-                  color={on ? "#fff" : "#a9b6dc"}
-                />
+                <PixelIcon name={t.icon} size={18} color={on ? "#fff" : "#a9b6dc"} />
                 {t.label}
                 {t.id === "catalog" && freshCount > 0 && (
-                  <span className="absolute right-[18%] top-1.5 min-w-[16px] rounded-full border border-black bg-[#ff4fc3] px-1 text-[8px] leading-[14px] text-white">
+                  <span className="absolute right-[14%] top-1 min-w-[16px] rounded-full border border-black bg-[#ff4fc3] px-1 font-sans text-[10px] font-extrabold leading-[14px] text-white">
                     {freshCount}
                   </span>
                 )}
@@ -217,5 +223,29 @@ export default function App() {
         </div>
       </nav>
     </main>
+  );
+}
+
+/** Before the first full gym week: what the gym room is and how close you are. */
+function GymLocked() {
+  const game = useGame((s) => s.game);
+  const today = dateKey(getNow());
+  const n = gymCountInWeek(game, mondayOf(today));
+  return (
+    <div className="flex flex-col items-center gap-3 px-6 py-10 text-center text-white">
+      <div className="grid h-14 w-14 place-items-center rounded-2xl bg-white/10">
+        <PixelIcon name="dumbbell" size={28} color="#ffd23f" />
+      </div>
+      <h2 className="font-pixel text-[11px] leading-relaxed">Your gym room is waiting</h2>
+      <p className="max-w-xs text-[14px] text-white/80">
+        Finish one full gym week (4 visits, Monday to Sunday) and a garage gym opens up. Then earn racks, ropes and posters with coins and gym visits.
+      </p>
+      <div className="flex gap-1.5" aria-label={`${n} of 4 visits this week`}>
+        {[0, 1, 2, 3].map((k) => (
+          <span key={k} className={`h-3 w-8 rounded-full ${k < n ? "bg-[#ffd23f]" : "bg-white/15"}`} />
+        ))}
+      </div>
+      <p className="font-pixel text-[9px] text-white/70">{Math.min(n, 4)}/4 this week</p>
+    </div>
   );
 }

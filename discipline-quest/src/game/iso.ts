@@ -1,16 +1,73 @@
 import { Raster, shade } from "./raster";
 
-/** World units per tile edge. A tile projects to a 32×16 diamond. */
+/** World units per tile edge. A tile projects to a 32×16 diamond (times the render scale). */
 export const TILE = 16;
+
+/** Render scale: every world unit becomes S screen pixels, so art is drawn at twice the detail with 1-pixel outlines. */
+export const S = 2;
 
 export type P3 = [number, number, number];
 
 /** A raster plus an isometric projection origin (where world 0,0,0 lands). */
 export class Iso {
-  constructor(public r: Raster, public ox: number, public oy: number) {}
+  constructor(public r: Raster, public ox: number, public oy: number, public s = S) {}
 
   proj([x, y, z]: P3): [number, number] {
-    return [this.ox + x - y, this.oy + (x + y) / 2 - z];
+    return [this.ox + (x - y) * this.s, this.oy + ((x + y) / 2 - z) * this.s];
+  }
+
+  /** One "world pixel": an s×s block at a 3D point (stars, LEDs, buttons). */
+  dot(p: P3, color: string, w = 1, h = 1) {
+    const [x, y] = this.proj(p);
+    this.r.rect(Math.floor(x), Math.floor(y), w * this.s, h * this.s, color);
+  }
+
+  /** A screen-space ellipse centred on a 3D point; radii in world units. Good for leaves, balls, bowls. */
+  blob(p: P3, rx: number, ry: number, color: string) {
+    const [x, y] = this.proj(p);
+    this.r.ellipse(x, y, rx * this.s, ry * this.s, color);
+  }
+
+  /** A flat circle lying on the floor plane (or any horizontal plane at height z). */
+  disc(cx: number, cy: number, z: number, r: number, fill: string, outline?: string, n = 20) {
+    this.quad(ring(n).map(([c, s2]) => [cx + c * r, cy + s2 * r, z] as P3), fill, outline);
+  }
+
+  /** A circle standing on a vertical plane. */
+  circle(plane: (u: number, z: number) => P3, cu: number, cz: number, r: number, fill: string, outline?: string, n = 20) {
+    this.quad(ring(n).map(([c, s2]) => plane(cu + c * r, cz + s2 * r)), fill, outline);
+  }
+
+  /** Upright cylinder (pots, posts, bins): side band shaded light→dark, then the top. */
+  cylinder(cx: number, cy: number, z: number, r: number, h: number, color: string, top?: string, outline?: string) {
+    const n = 24;
+    const pts = ring(n);
+    for (let k = 0; k < n; k++) {
+      const [c1, s1] = pts[k], [c2, s2] = pts[(k + 1) % n];
+      // only the half facing the viewer (+X/+Y)
+      if (c1 + s1 + c2 + s2 < -0.2) continue;
+      const lit = (s1 + s2) / 2 - (c1 + c2) / 2; // +Y side is lit, +X side darker
+      this.quad(
+        [[cx + c1 * r, cy + s1 * r, z], [cx + c2 * r, cy + s2 * r, z], [cx + c2 * r, cy + s2 * r, z + h], [cx + c1 * r, cy + s1 * r, z + h]],
+        shade(color, lit * 0.12 - 0.08),
+      );
+    }
+    this.disc(cx, cy, z + h, r, top ?? shade(color, 0.15), outline ?? shade(color, -0.55), n);
+    if (outline !== "") {
+      const e = outline ?? shade(color, -0.55);
+      this.line([cx + r * 0.707, cy - r * 0.707, z], [cx + r * 0.707, cy - r * 0.707, z + h], e);
+      this.line([cx - r * 0.707, cy + r * 0.707, z], [cx - r * 0.707, cy + r * 0.707, z + h], e);
+    }
+  }
+
+  /** Fill a plane pixel-by-pixel from a pattern (walls, floors). `at` maps (a, b) on the plane to a 3D point. */
+  paint(at: (a: number, b: number) => P3, A: number, B: number, pat: (a: number, b: number) => string, a0 = 0, b0 = 0) {
+    const step = 0.5 / this.s;
+    for (let a = a0; a < A; a += step)
+      for (let b = b0; b < B; b += step) {
+        const [sx, sy] = this.proj(at(a, b));
+        this.r.set(sx, sy, pat(a, b));
+      }
   }
 
   quad(pts: P3[], fill: string, outline?: string) {
@@ -56,6 +113,13 @@ export class Iso {
   }
 }
 
+const rings = new Map<number, [number, number][]>();
+function ring(n: number): [number, number][] {
+  let r = rings.get(n);
+  if (!r) rings.set(n, (r = Array.from({ length: n }, (_, k) => [Math.cos((k / n) * Math.PI * 2), Math.sin((k / n) * Math.PI * 2)] as [number, number])));
+  return r;
+}
+
 export interface BoxOpts {
   top?: string;
   left?: string;
@@ -72,8 +136,9 @@ export interface Sprite {
   ay: number;
 }
 
-/** Render with a generous canvas, then crop to content. */
-export function makeSprite(draw: (iso: Iso) => void, size = 200, ax = 100, ay = 130): Sprite {
+/** Render with a generous canvas (sizes in unscaled pixels), then crop to content. */
+export function makeSprite(draw: (iso: Iso) => void, size0 = 200, ax0 = 100, ay0 = 130): Sprite {
+  const size = size0 * S, ax = ax0 * S, ay = ay0 * S;
   const r = new Raster(size, size);
   draw(new Iso(r, ax, ay));
   let x0 = size, y0 = size, x1 = -1, y1 = -1;

@@ -60,7 +60,7 @@ function v2Save() {
 describe("migration", () => {
   it("v1 → v3 keeps progress, renames the car, refunds the pony", () => {
     const s = migrate(V1_SAVE, at("2026-10-11", "10:00"));
-    expect(s.version).toBe(4);
+    expect(s.version).toBe(5);
     expect(s.streaks.clean).toBe(1);
     expect(s.inventory.map((i) => i.itemId).sort()).toEqual(["car-ioniq5", "plant"]);
     expect(s.equipped.car).toBe("car-ioniq5");
@@ -294,7 +294,7 @@ describe("v4: wall decor, lights, retired trophy case", () => {
     v3.placements = [...(v3.placements as unknown[]), { itemId: "trophycase", tx: 0, ty: 0, rot: 0 }, { itemId: "sofa", tx: 2, ty: 2, rot: 0 }];
     v3.coins = 10;
     const s = migrate(v3, at("2026-10-20", "15:00"));
-    expect(s.version).toBe(4);
+    expect(s.version).toBe(5);
     expect(s.coins).toBeGreaterThanOrEqual(1210);
     expect(s.inventory.some((i) => i.itemId === "trophycase")).toBe(false);
     expect(s.placements.some((p) => p.itemId === "trophycase")).toBe(false);

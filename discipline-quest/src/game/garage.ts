@@ -1,11 +1,11 @@
 import { CAR_ORDER } from "@/engine/catalog";
-import { Iso, type P3 } from "./iso";
+import { Iso, S, type P3 } from "./iso";
 import { Raster } from "./raster";
 import { carSprite } from "./sprites/cars";
 
 /** Outside the building: three garage doors, a driveway with a bay per car, curb, street, lamp post and a tree. */
 const X1 = 210, Y1 = 124;
-export const GARAGE = { W: 348, H: 296, ox: 132, oy: 120 };
+export const GARAGE = { W: 348 * S, H: 296 * S, ox: 132 * S, oy: 120 * S };
 
 /** Each car has its own bay, in the order you owned them. Cars are mirrored so they face the street (+Y). */
 const BAY_X: Record<string, number> = { "car-mini": 20, "car-q50": 84, "car-ioniq5": 148 };
@@ -21,7 +21,7 @@ function skyColors(hour: number): [string, string] {
 
 export const isNight = (hour: number) => hour >= 20 || hour < 6;
 
-const P = (x: number, y: number, z: number) => [GARAGE.ox + x - y, GARAGE.oy + (x + y) / 2 - z] as const;
+const P = (x: number, y: number, z: number) => [GARAGE.ox + (x - y) * S, GARAGE.oy + ((x + y) / 2 - z) * S] as const;
 
 export interface ParkedCar {
   id: string;
@@ -68,13 +68,13 @@ export function buildGarage(hour: number, cars: ParkedCar[]): Raster {
   };
   for (let y = 0; y < H; y++) r.rect(0, y, W, 1, mix(sky1, sky2, y / H));
   const night = isNight(hour);
-  if (night) for (let k = 0; k < 50; k++) r.set((k * 97) % W, (k * 53) % 80, k % 3 ? "#ffffff" : "#c9d6ff");
+  if (night) for (let k = 0; k < 50; k++) r.rect((k * 97 * S) % W, ((k * 53) % 80) * S, S, S, k % 3 ? "#ffffff" : "#c9d6ff");
   const iso = new Iso(r, ox, oy);
 
   // ground: driveway with bay lines, curb, road
   iso.box(0, 0, -5, X1, Y1, 5, "#7b7f86", { top: "#b9bcc1" });
-  for (let x = 0; x < X1; x += 0.5)
-    for (let y = 0; y < Y1; y += 0.5) {
+  for (let x = 0; x < X1; x += 0.5 / S)
+    for (let y = 0; y < Y1; y += 0.5 / S) {
       let c: string;
       if (y < 80) {
         const bayLine = [12, 76, 140, 204].some((bx) => Math.abs(x - bx) < 0.6) && y > 6 && y < 76;
@@ -89,8 +89,8 @@ export function buildGarage(hour: number, cars: ParkedCar[]): Raster {
   // building facade with three garage doors
   const F = (u: number, z: number): P3 => [u, 0, z];
   iso.box(-6, -6, 0, X1 + 6, 6, 100, "#d8cbb3", { left: "#d8cbb3", top: "#eee5d3", outline: "#6d6150" });
-  for (let z = 0; z < 100; z += 0.5)
-    for (let u = 0; u < X1; u += 0.5)
+  for (let z = 0; z < 100; z += 0.5 / S)
+    for (let u = 0; u < X1; u += 0.5 / S)
       if (Math.floor(z) % 8 === 0 && z % 1 < 0.5) {
         const [sx, sy] = iso.proj(F(u, z));
         r.set(sx, sy, "#cbbda3");

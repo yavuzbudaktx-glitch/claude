@@ -24,9 +24,9 @@ export default function UrgeModal({ onResist, onClose }: { onResist: () => void;
       <p className="text-center text-3xl" dir="rtl" lang="ar">
         أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ
       </p>
-      <p className="text-center text-base italic">I seek refuge in Allah from Shaytan, the accursed.</p>
+      <p className="text-center text-[14px] italic">I seek refuge in Allah from Shaytan, the accursed.</p>
       <p>The urge peaks and fades in minutes. Ride it out. Pick one:</p>
-      <ul className="grid grid-cols-2 gap-1.5 text-base">
+      <ul className="grid grid-cols-2 gap-1.5 text-[14px]">
         {MOVES.map((m) => (
           <li key={m} className="chip bg-white">
             {m}

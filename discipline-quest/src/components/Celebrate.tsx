@@ -70,7 +70,7 @@ export default function Celebrate() {
         <div className="panel-head justify-center">{title}</div>
         <div className="flex flex-col items-center gap-3 p-4">
           {art}
-          <p className="text-lg leading-tight">{body}</p>
+          <p className="text-[15px] leading-tight">{body}</p>
           <button className="btn btn-green w-full py-2" onClick={dismiss} autoFocus>
             {entry.kind === "khatm" || (entry.kind === "badge" && ["prayer", "quran", "purity"].includes(BADGE_BY_ID[entry.id]?.family ?? "")) ? "Alhamdulillah" : "Nice!"}
           </button>

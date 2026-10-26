@@ -40,15 +40,15 @@ export default function Badges() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-baseline justify-between gap-2">
                         <span className="font-pixel text-[8px]">{b.name}</span>
-                        <span className="shrink-0 text-sm text-[var(--muted)]">+{b.coins}</span>
+                        <span className="shrink-0 text-[12.5px] text-[var(--muted)]">+{b.coins}</span>
                       </div>
-                      <div className="text-base leading-tight">{b.desc}</div>
+                      <div className="text-[14px] leading-tight">{b.desc}</div>
                       {!got && (
                         <div className="mt-1 flex items-center gap-2">
                           <div className="bar h-2.5 flex-1">
                             <div className="h-full bg-[var(--head)]" style={{ width: `${Math.min(100, (cur / target) * 100)}%` }} />
                           </div>
-                          <span className="text-sm tabular-nums">
+                          <span className="text-[12.5px] tabular-nums">
                             {Math.min(cur, target)}/{target}
                           </span>
                         </div>

@@ -1,18 +1,22 @@
-import { Raster, gridRaster, paintGrid } from "../raster";
+import { Raster, gridRaster, paintGrid, rgba, scale2x } from "../raster";
 
 export type Facing = "front" | "back";
 export type Pose =
   | "idle" | "walk1" | "walk2" | "pray" | "takbir" | "kneel" | "sit" | "celebrate" | "sad" | "blink"
-  | "run1" | "run2" | "read" | "game" | "clarinet" | "drink" | "curl1" | "curl2";
+  | "run1" | "run2" | "read" | "game" | "clarinet" | "drink" | "curl1" | "curl2"
+  | "squat1" | "squat2" | "punch1" | "punch2" | "row1" | "row2";
 /** 0 = starting out … 4 = built. Comes from gym weeks. */
 export type BodyStage = 0 | 1 | 2 | 3 | 4;
 export type Mood = "neutral" | "happy" | "sad" | "closed";
 export type OutfitId = "fit-coat" | "fit-hoodie" | "fit-gym" | "fit-thobe" | "fit-leather" | "fit-suit";
 
-export const AVATAR_W = 30;
-export const AVATAR_H = 48;
+/** The avatar is designed on a 30×48 grid and rendered at 2× (Scale2x plus a hand-drawn 2× face). */
+const W1 = 30;
+const H1 = 48;
+export const AVATAR_W = W1 * 2;
+export const AVATAR_H = H1 * 2;
 /** Pixel in the sprite that sits on the floor point. */
-export const AVATAR_FOOT = { x: 15, y: 46 };
+export const AVATAR_FOOT = { x: 30, y: 92 };
 
 /** Face and hair colors, picked from your photo. */
 const BODY: Record<string, string> = {
@@ -30,6 +34,11 @@ const BODY: Record<string, string> = {
   m: "#c9826f", // lower lip
   T: "#d9b192", // stubble
   t: "#7fb6e6", // tear
+  L: "#2a1810", // lash line
+  e: "#9a6a44", // iris highlight
+  n: "#a06a50", // nostril
+  G: "#f8dcc0", // skin highlight
+  X: "#5a3426", // mouth inside
 };
 
 interface OutfitStyle {
@@ -44,7 +53,7 @@ interface OutfitStyle {
 export const OUTFITS: Record<OutfitId, OutfitStyle> = {
   "fit-coat": {
     torso: "open", arm: "long", legs: "pants",
-    colors: { C: "#4b4b51", c: "#36363b", x: "#67676e", N: "#17171b", Z: "#c9ccd2", P: "#2c2c33", p: "#1e1e24", O: "#111114", o: "#3a3a42" },
+    colors: { C: "#4b4b51", c: "#36363b", x: "#525258", N: "#17171b", Z: "#c9ccd2", P: "#2c2c33", p: "#1e1e24", O: "#111114", o: "#3a3a42" },
   },
   "fit-hoodie": {
     torso: "closed", arm: "long", legs: "pants",
@@ -60,11 +69,11 @@ export const OUTFITS: Record<OutfitId, OutfitStyle> = {
   },
   "fit-leather": {
     torso: "open", arm: "long", legs: "pants",
-    colors: { C: "#26221f", c: "#171412", x: "#3a3430", N: "#f4f4f4", Z: "#f4f4f4", P: "#2d3a52", p: "#202a3c", O: "#3b2416", o: "#24160d" },
+    colors: { C: "#26221f", c: "#171412", x: "#2e2926", N: "#f4f4f4", Z: "#f4f4f4", P: "#2d3a52", p: "#202a3c", O: "#3b2416", o: "#24160d" },
   },
   "fit-suit": {
     torso: "suit", arm: "long", legs: "pants",
-    colors: { C: "#26324f", c: "#1b2439", x: "#3b4a70", N: "#f7f7f7", Z: "#7a1f2b", P: "#26324f", p: "#1b2439", O: "#0e0e10", o: "#2c2c30" },
+    colors: { C: "#26324f", c: "#1b2439", x: "#2c3a5c", N: "#f7f7f7", Z: "#7a1f2b", P: "#26324f", p: "#1b2439", O: "#0e0e10", o: "#2c2c30" },
   },
 };
 
@@ -79,27 +88,20 @@ const HAIR_TOP = [
   "KHHHHHHHHHHHHHHHHK",
 ];
 
-function headFront(mood: Mood): string[] {
-  const brows = mood === "sad" ? "KHHHHSSSBBBSSBBSSK" : "KHHHHSSBBBBSSBBBSK";
-  const lids = mood === "closed" ? "KHHHsSSSSSSSSSSSSK" : "KHHHsSSKKKSSSKKSSK";
-  const eyes = mood === "closed" ? "KHsrsSSKKKSSSKKSSK" : mood === "happy" ? "KHsrsSSKEESSSKESSK" : "KHsrsSSWEESSSWESSK";
-  const cheek = mood === "sad" ? "KHsrsSSSSSSSSsStSK" : "KHsrsSSSSSSSSsSSSK";
-  const mouth =
-    mood === "happy" ? "..KTsSSSSKWWWKSSK." : mood === "sad" ? "..KTsSSSSSSMMSSSK." : "..KTsSSSSSMMMSSSK.";
-  const lip =
-    mood === "happy" ? "..KTTsSSSSKKKSTTK." : mood === "sad" ? "..KTTsSSSSMSSMTTK." : "..KTTsSSSSSmSSTTK.";
+/** Front head with the face left blank: the 2× face is painted on after upscaling. */
+function headBlank(): string[] {
   return [
     ...HAIR_TOP,
     "KdHHHHHHHSSSSSHHHK",
     "KdHHHHSSSSSSSSSSHK",
-    brows,
-    lids,
-    eyes,
-    cheek,
-    ".KHssSSSSSSSSrSSSK",
+    "KHHHHSSSSSSSSSSSSK",
+    "KHHHsSSSSSSSSSSSSK",
+    "KHsrsSSSSSSSSSSSSK",
+    "KHsrsSSSSSSSSsSSSK",
+    ".KHssSSSSSSSSSSSSK",
     ".KHsSSSSSSSSSSSSSK",
-    mouth,
-    lip,
+    "..KTsSSSSSSSSSSSK.",
+    "..KTTsSSSSSSSSTTK.",
     "...KTTTSSSSSTTTK..",
     "....KKTTTTTTTKK...",
     "......KKKKKKK.....",
@@ -329,17 +331,30 @@ const PAD = [".KKKKKK.", "KggmmggK", ".KKKKKK."];
 const CUP = ["KKK", "KuK", "KuK", "KKK"];
 const DUMBBELL = ["KK.KK", "KgKgK", "KK.KK"];
 
-/** Render one avatar frame (26×48). Mirroring for other directions happens at draw time. */
-export function renderAvatar(facing: Facing, pose: Pose, outfit: OutfitId = "fit-coat", body: BodyStage = 0): Raster {
+interface Frame1x {
+  base: Raster;
+  /** Hands and props in front of the face (takbir, clarinet, cup): drawn after the 2× face. */
+  props: Raster;
+  headDy: number;
+  mood: Mood;
+  front: boolean;
+}
+
+const GLOVE = [".KKK.", "KbbbK", "KbbbK", ".KKK."];
+
+/** One avatar frame on the 30×48 design grid. */
+function renderAvatar1x(facing: Facing, pose: Pose, outfit: OutfitId, body: BodyStage): Frame1x {
   const fit = OUTFITS[outfit] ?? OUTFITS["fit-coat"];
   const P = { ...palette(fit), ...PROPS };
   const g = (grid: string[]) => gridRaster(grid, P);
-  const r = new Raster(AVATAR_W, AVATAR_H);
+  const r = new Raster(W1, H1);
   r.tx = 2;
+  const props = new Raster(W1, H1);
+  props.tx = 2;
   const run = pose === "run1" || pose === "run2";
   const step = pose === "walk1" ? 1 : pose === "walk2" ? -1 : pose === "run1" ? 2 : pose === "run2" ? -2 : 0;
-  const seated = pose === "sit" || pose === "read" || pose === "game";
-  const low = pose === "kneel" ? 11 : seated ? 8 : 0;
+  const seated = pose === "sit" || pose === "read" || pose === "game" || pose === "row1" || pose === "row2";
+  const low = pose === "kneel" ? 11 : seated ? 8 : pose === "squat2" ? 6 : 0;
   const headDy = (pose === "pray" || pose === "sad" ? 1 : 0) + low;
   const mood: Mood =
     pose === "celebrate" ? "happy" : pose === "sad" ? "sad" : pose === "blink" || pose === "kneel" || pose === "clarinet" ? "closed" : "neutral";
@@ -366,10 +381,21 @@ export function renderAvatar(facing: Facing, pose: Pose, outfit: OutfitId = "fit
   // Arms, behind the torso edges
   const ay = 19 + low;
   const A = (grid: string[]) => g(thicken(grid, bigArms));
+  const squat = pose === "squat1" || pose === "squat2";
   if (pose === "celebrate") {
     r.blit(A(arms.up), leftArmX - 1, 6);
     r.blit(A(arms.up), rightArmX + 1, 6);
-  } else if (pose === "curl2") {
+  } else if (squat) {
+    r.blit(A(arms.bent), leftArmX - 1, ay - 3);
+    r.blit(A(arms.bent), rightArmX + 1, ay - 3);
+  } else if (pose === "punch1" || pose === "punch2") {
+    const left = pose === "punch1";
+    r.blit(A(left ? arms.bent : arms.down), leftArmX, left ? ay - 3 : ay);
+    r.blit(A(left ? arms.down : arms.bent), rightArmX, left ? ay : ay - 3);
+  } else if (pose === "row1") {
+    r.blit(A(arms.down), leftArmX, ay);
+    r.blit(A(arms.down), rightArmX, ay);
+  } else if (pose === "curl2" || pose === "row2") {
     r.blit(A(arms.bent), leftArmX, ay);
     r.blit(A(arms.bent), rightArmX, ay);
   } else if (front && (pose === "pray" || pose === "kneel" || pose === "takbir" || pose === "read" || pose === "game" || pose === "clarinet")) {
@@ -393,7 +419,6 @@ export function renderAvatar(facing: Facing, pose: Pose, outfit: OutfitId = "fit
     paintGrid(r, [widen(row, pad)], P, 6 - pad, 18 + low + y);
   });
   if (outfit === "fit-gym" && front && body >= 2) {
-    // chest line and a hint of abs on the tee
     r.line(9 - cp + 1, 25 + low, 16 + cp, 25 + low, "#2a2a30");
     if (body >= 4) for (const y of [28, 30]) r.line(11, y + low, 14, y + low, "#2a2a30");
   }
@@ -405,33 +430,115 @@ export function renderAvatar(facing: Facing, pose: Pose, outfit: OutfitId = "fit
     paintGrid(r, DUMBBELL, P, leftArmX - 1, hy);
     paintGrid(r, DUMBBELL, P, rightArmX, hy);
   }
+  if (pose === "row1" || pose === "row2") {
+    const hy = pose === "row2" ? ay + 6 : ay + 13;
+    r.rect(leftArmX + 1, hy + 1, rightArmX - leftArmX + 2, 1, "#1d1d20");
+  }
 
-  const head = front ? headFront(mood) : HEAD_BACK;
+  const head = front ? headBlank() : HEAD_BACK;
   paintGrid(r, fit.kufi ? head.map((row, i) => (i < 2 ? "" : row)) : head, P, 4, headDy);
   if (fit.kufi) paintGrid(r, KUFI, KUFI_COLORS, 4, headDy + 2);
+  if (squat) {
+    // barbell across the shoulders, plates out wide
+    const by = 17 + low;
+    props.rect(-2, by, W1, 1, "#c9ccd2");
+    props.rect(-2, by - 3, 2, 7, "#1d1d20");
+    props.rect(W1 - 4, by - 3, 2, 7, "#1d1d20");
+  }
+  if (pose === "punch1" || pose === "punch2") {
+    const left = pose === "punch1";
+    paintGrid(props, GLOVE, P, left ? leftArmX - 1 : rightArmX - 1, ay + 5);
+    paintGrid(props, GLOVE, P, left ? rightArmX - 1 : leftArmX - 1, ay + 12);
+  }
   if (pose === "takbir" && front) {
-    paintGrid(r, EAR_HAND, P, 2 - cp, 11 + headDy);
-    paintGrid(r, EAR_HAND, P, 20 + cp, 11 + headDy);
+    paintGrid(props, EAR_HAND, P, 2 - cp, 11 + headDy);
+    paintGrid(props, EAR_HAND, P, 20 + cp, 11 + headDy);
   }
   if (pose === "clarinet" && front) {
-    // clarinet from the mouth down to the waist, hands on it
-    r.rect(13, 16 + headDy, 2, 14, "#121214");
-    for (const y of [20, 23, 26]) r.set(14, y + headDy, "#d8dde2");
-    r.rect(12, 30 + headDy, 4, 2, "#121214");
-    paintGrid(r, ["KSSK", "KSsK"], P, 12, 21 + headDy);
-    paintGrid(r, ["KSSK", "KSsK"], P, 12, 25 + headDy);
+    props.rect(13, 16 + headDy, 2, 14, "#121214");
+    for (const y of [20, 23, 26]) props.set(14, y + headDy, "#d8dde2");
+    props.rect(12, 30 + headDy, 4, 2, "#121214");
+    paintGrid(props, ["KSSK", "KSsK"], P, 12, 21 + headDy);
+    paintGrid(props, ["KSSK", "KSsK"], P, 12, 25 + headDy);
   }
-  if (pose === "drink") paintGrid(r, CUP, P, 17 + cp, 15 + headDy);
+  if (pose === "drink") paintGrid(props, CUP, P, 17 + cp, 15 + headDy);
+  return { base: r, props, headDy, mood, front };
+}
+
+// ---------- the 2× face ----------
+
+type Grid = string[];
+const EYES: Record<Mood, [Grid, Grid]> = {
+  neutral: [[".LLLL.", "LWeEWL", ".WEEW.", "..ss.."], ["LLLL.", "WeEWL", "WEEW.", ".ss.."]],
+  happy: [["......", ".LLLL.", "L....L", "......"], [".....", ".LLL.", "L...L", "....."]],
+  sad: [["......", "LLLLLL", ".WEEW.", "..ss.."], [".....", "LLLLL", "WEEW.", ".ss.."]],
+  closed: [["......", "......", "LLLLLL", ".ssss."], [".....", ".....", "LLLLL", "ssss."]],
+};
+const BROWS: Record<Mood, [Grid, Grid]> = {
+  neutral: [["..BBBBBB", "BBBBBB.."], ["BBBBBB", "..BBBB"]],
+  happy: [[".BBBBBB.", "BB....BB"], [".BBBB.", "BB..BB"]],
+  sad: [["......BB", "BBBBBB.."], ["BB....", "..BBBB"]],
+  closed: [["..BBBBBB", "BBBBBB.."], ["BBBBBB", "..BBBB"]],
+};
+const MOUTH: Record<Mood, Grid> = {
+  neutral: [".MMMMMM.", "..mmmm.."],
+  happy: ["MMMMMMMM", "MWWWWWWM", ".MXXXXM.", "..MMMM.."],
+  sad: ["..MMMM..", ".M....M."],
+  closed: [".MMMMMM.", "..mmmm.."],
+};
+const NOSE: Grid = ["...s", "...s", "..ss", "..sr", ".rnr"];
+
+const same = (r: Raster, x: number, y: number, hex: string) => {
+  if (x < 0 || y < 0 || x >= r.w || y >= r.h) return false;
+  const [cr, cg, cb] = rgba(hex);
+  const i = (y * r.w + x) * 4;
+  return r.data[i] === cr && r.data[i + 1] === cg && r.data[i + 2] === cb && r.data[i + 3] === 255;
+};
+
+/** Paint eyes, brows, nose, mouth, stubble and skin highlights onto a 2× head whose top-left is (hx, hy). */
+function paintFace(r: Raster, hx: number, hy: number, mood: Mood) {
+  const P = BODY;
+  // stubble texture: only on skin, along the jaw and upper lip
+  for (let y = 29; y < 41; y++)
+    for (let x = 6; x < 34; x++) {
+      const X = hx + x, Y = hy + y;
+      if (!(same(r, X, Y, P.S) || same(r, X, Y, P.s))) continue;
+      // a beard shadow: the jaw and upper lip take a slightly darker, cooler skin tone with a faint grain
+      const lip = y >= 30 && y <= 31 && x >= 18 && x <= 27;
+      const jaw = y >= 34 || (x < 12 && y >= 30) || lip;
+      if (!jaw) continue;
+      const h = (Math.imul(x + 31, 73856093) ^ Math.imul(y + 17, 19349663)) >>> 0;
+      r.set(X, Y, h % 100 < 14 ? "#cfa784" : same(r, X, Y, P.s) ? "#d2a986" : "#e0bb98");
+    }
+  // light on the forehead and the cheek nearest the light
+  for (const [x, y] of [[22, 16], [23, 16], [24, 16], [25, 16], [23, 17], [24, 17], [27, 27], [28, 27], [28, 26]]) if (same(r, hx + x, hy + y, P.S)) r.set(hx + x, hy + y, P.G);
+  paintGrid(r, BROWS[mood][0], P, hx + 13, hy + 19);
+  paintGrid(r, BROWS[mood][1], P, hx + 25, hy + 19);
+  paintGrid(r, EYES[mood][0], P, hx + 13, hy + 22);
+  paintGrid(r, EYES[mood][1], P, hx + 25, hy + 22);
+  paintGrid(r, NOSE, P, hx + 21, hy + 25);
+  paintGrid(r, MOUTH[mood], P, hx + 18, hy + 32);
+  if (mood === "sad") r.set(hx + 15, hy + 27, P.t);
+}
+
+/** Render one avatar frame at 2× (60×96). Mirroring for other directions happens at draw time. */
+export function renderAvatar(facing: Facing, pose: Pose, outfit: OutfitId = "fit-coat", body: BodyStage = 0): Raster {
+  const f = renderAvatar1x(facing, pose, outfit, body);
+  const r = scale2x(f.base);
+  if (f.front) paintFace(r, (4 + f.base.tx) * 2, f.headDy * 2, f.mood);
+  r.blit(scale2x(f.props), 0, 0);
   return r;
 }
 
-/** Just the head, eyes closed, for sleeping in bed. */
+/** Just the head, eyes closed, for sleeping in bed (36×42). */
 export function renderSleepingHead(outfit: OutfitId = "fit-coat"): Raster {
   const fit = OUTFITS[outfit] ?? OUTFITS["fit-coat"];
-  const r = new Raster(18, 21);
-  paintGrid(r, headFront("closed"), palette(fit));
+  const h = new Raster(18, 21);
+  paintGrid(h, headBlank(), palette(fit));
+  const r = scale2x(h);
+  paintFace(r, 0, 0, "closed");
   return r;
 }
 
-export const ALL_POSES: Pose[] = ["idle", "walk1", "walk2", "pray", "takbir", "kneel", "sit", "celebrate", "sad", "blink", "run1", "run2", "read", "game", "clarinet", "drink", "curl1", "curl2"];
+export const ALL_POSES: Pose[] = ["idle", "walk1", "walk2", "pray", "takbir", "kneel", "sit", "celebrate", "sad", "blink", "run1", "run2", "read", "game", "clarinet", "drink", "curl1", "curl2", "squat1", "squat2", "punch1", "punch2", "row1", "row2"];
 export const ALL_OUTFITS = Object.keys(OUTFITS) as OutfitId[];

@@ -3,11 +3,11 @@ import type { ReactNode } from "react";
 
 export default function Dialog({ title, children, onClose }: { title: string; children: ReactNode; onClose: () => void }) {
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
-      <div className="panel w-full max-w-sm" onClick={(e) => e.stopPropagation()} role="dialog" aria-label={title}>
+    <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/60 p-3 backdrop-blur-[2px] sm:items-center" onClick={onClose}>
+      <div className="panel sheet-in w-full max-w-sm" onClick={(e) => e.stopPropagation()} role="dialog" aria-label={title}>
         <div className="panel-head">
           <span>{title}</span>
-          <button onClick={onClose} className="text-base leading-none" aria-label="Close">
+          <button onClick={onClose} className="text-[14px] leading-none" aria-label="Close">
             ✕
           </button>
         </div>

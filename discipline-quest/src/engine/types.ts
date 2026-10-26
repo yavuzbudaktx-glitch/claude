@@ -56,11 +56,16 @@ export interface OwnedItem {
   lockDaysLeft: number;
 }
 
+/** Which room something is in: your home or the gym room. */
+export type Space = "home" | "gym";
+
 /** Where a wall decoration hangs: which wall (L = left, R = right) and how far along it (world units). */
 export interface WallPlaced {
   itemId: ItemId;
   wall: "L" | "R";
   u: number;
+  /** Absent = home. */
+  space?: Space;
 }
 
 /** Where a piece of furniture sits. rot 1 = mirrored (footprint w/d swapped). */
@@ -69,6 +74,10 @@ export interface PlacedItem {
   tx: number;
   ty: number;
   rot: 0 | 1;
+  /** Absent = home. */
+  space?: Space;
+  /** Small things standing on top of a surface (a console on the desk). */
+  on?: ItemId;
 }
 
 export interface Streaks {
@@ -148,6 +157,8 @@ export interface Equipped {
   rug: ItemId;
   room: ItemId;
   car: ItemId;
+  /** Gym room tier, "" until the first full gym week. */
+  gym: ItemId;
 }
 
 export interface Body {
@@ -159,7 +170,7 @@ export interface Body {
 }
 
 export interface GameState {
-  version: 4;
+  version: 5;
   startDate: string;
   /** Last calendar date whose misses/rewards have been applied. */
   lastSettled: string | null;

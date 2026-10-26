@@ -51,16 +51,16 @@ export default function Stats() {
         <div className="space-y-2 p-3">
           <div className="flex items-end gap-3">
             <div className="font-pixel text-3xl leading-none tabular-nums">{p.daysAll}</div>
-            <div className="pb-0.5 text-lg leading-tight">days until everything is unlocked{p.daysAll > 0 ? ` (around ${dayLabel(now, p.daysAll)})` : ""}</div>
+            <div className="pb-0.5 text-[15px] leading-tight">days until everything is unlocked{p.daysAll > 0 ? ` (around ${dayLabel(now, p.daysAll)})` : ""}</div>
           </div>
-          <p className="text-base text-[var(--muted)]">
+          <p className="text-[14px] text-[var(--muted)]">
             {p.estimated ? "Estimated for a strong pace" : "Based on your last 14 days"}: about {p.coinRate} coins and {p.xpRate} XP a day, with no relapses.
             {" "}{p.remainingCost.toLocaleString()} coins of items left to buy.
           </p>
           {p.next.length > 0 && (
             <ul className="space-y-0.5">
               {p.next.map((n) => (
-                <li key={n.id} className="flex justify-between gap-2 border-b border-black/10 text-lg">
+                <li key={n.id} className="flex justify-between gap-2 border-b border-black/10 text-[15px]">
                   <span className="min-w-0 truncate">{n.name}</span>
                   <span className="shrink-0 tabular-nums text-[var(--head-2)]">{n.days <= 0 ? "now" : `in ${n.days} day${n.days === 1 ? "" : "s"}`}</span>
                 </li>
@@ -73,27 +73,27 @@ export default function Stats() {
         <div className="panel-head">This week</div>
         <div className="grid grid-cols-3 gap-2 p-3 text-center">
           <div>
-            <div className="font-pixel text-xl tabular-nums">{thisWeek}</div>
-            <div className="text-base text-[var(--muted)]">points / 28</div>
+            <div className="font-pixel text-[17px] tabular-nums">{thisWeek}</div>
+            <div className="text-[14px] text-[var(--muted)]">points / 28</div>
           </div>
           <div>
-            <div className="font-pixel text-xl tabular-nums">{lastWeek}</div>
-            <div className="text-base text-[var(--muted)]">last week</div>
+            <div className="font-pixel text-[17px] tabular-nums">{lastWeek}</div>
+            <div className="text-[14px] text-[var(--muted)]">last week</div>
           </div>
           <div>
-            <div className={`font-pixel text-xl tabular-nums ${thisWeek >= lastWeek ? "text-[var(--good)]" : "text-[var(--bad)]"}`}>
+            <div className={`font-pixel text-[17px] tabular-nums ${thisWeek >= lastWeek ? "text-[var(--good)]" : "text-[var(--bad)]"}`}>
               {thisWeek >= lastWeek ? "+" : ""}
               {thisWeek - lastWeek}
             </div>
-            <div className="text-base text-[var(--muted)]">change</div>
+            <div className="text-[14px] text-[var(--muted)]">change</div>
           </div>
         </div>
       </section>
       <section className="panel">
         <div className="panel-head">Streaks</div>
-        <table className="w-full text-lg">
+        <table className="w-full text-[15px]">
           <thead>
-            <tr className="text-left text-base opacity-70">
+            <tr className="text-left text-[14px] opacity-70">
               <th className="px-3 py-1 font-normal">Habit</th>
               <th className="px-3 py-1 text-right font-normal">Now</th>
               <th className="px-3 py-1 text-right font-normal">Best</th>
@@ -124,7 +124,7 @@ export default function Stats() {
                 <div
                   key={k}
                   title={before ? k : `${k}: ${s}/4`}
-                  className={`flex aspect-square items-center justify-center rounded-[3px] border-2 text-base ${isToday ? "border-[var(--head)]" : "border-black"}`}
+                  className={`flex aspect-square items-center justify-center rounded-[3px] border-2 text-[14px] ${isToday ? "border-[var(--head)]" : "border-black"}`}
                   style={{ background: before ? "#e6e2d6" : isToday ? "#fff" : SCORE_COLORS[s] }}
                 >
                   {Number(k.slice(8))}
@@ -132,13 +132,13 @@ export default function Stats() {
               );
             })}
           </div>
-          <p className="mt-2 text-base opacity-75">Each day scores 0–4: all prayers, on-time wake-up, diet kept, porn-free.</p>
+          <p className="mt-2 text-[14px] opacity-75">Each day scores 0–4: all prayers, on-time wake-up, diet kept, porn-free.</p>
         </div>
       </section>
 
       <section className="panel">
         <div className="panel-head">Lifetime</div>
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-0.5 px-3 py-2 text-lg">
+        <dl className="grid grid-cols-2 gap-x-4 gap-y-0.5 px-3 py-2 text-[15px]">
           {([
             ["Prayers", game.stats.prayers],
             ["Fajr", game.stats.fajr],
@@ -163,7 +163,7 @@ export default function Stats() {
 
       <section className="panel">
         <div className="panel-head">Log</div>
-        <ul className="max-h-72 overflow-y-auto px-3 py-2 text-base">
+        <ul className="max-h-72 overflow-y-auto px-3 py-2 text-[14px]">
           {game.log.slice(0, 60).map((e, i) => (
             <li key={i} className="flex justify-between gap-2 border-b border-black/10 py-0.5">
               <span className={e.kind === "bad" ? "text-[#b0302c]" : e.kind === "good" ? "text-[#1e7d32]" : ""}>{e.text}</span>

@@ -84,6 +84,15 @@ export class Raster {
     }
   }
 
+  /** Filled ellipse in screen space. */
+  ellipse(cx: number, cy: number, rx: number, ry: number, color: string) {
+    for (let y = Math.floor(cy - ry); y <= Math.ceil(cy + ry); y++)
+      for (let x = Math.floor(cx - rx); x <= Math.ceil(cx + rx); x++) {
+        const dx = (x + 0.5 - cx) / rx, dy = (y + 0.5 - cy) / ry;
+        if (dx * dx + dy * dy <= 1) this.set(x, y, color);
+      }
+  }
+
   rect(x: number, y: number, w: number, h: number, color: string) {
     for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) this.set(x + i, y + j, color);
   }
@@ -115,4 +124,30 @@ export function gridRaster(grid: string[], palette: Record<string, string>): Ras
   const r = new Raster(Math.max(...grid.map((g) => g.length)), grid.length);
   paintGrid(r, grid, palette);
   return r;
+}
+
+/**
+ * Scale2x (EPX): doubles a sprite and rounds off its diagonals, so pixel art stays crisp
+ * but outlines get smooth instead of blocky.
+ */
+export function scale2x(src: Raster): Raster {
+  const { w, h } = src;
+  const out = new Raster(w * 2, h * 2);
+  const d = new Uint32Array(src.data.buffer, src.data.byteOffset, w * h);
+  const o = new Uint32Array(out.data.buffer, out.data.byteOffset, w * h * 4);
+  const at = (x: number, y: number) => (x < 0 || y < 0 || x >= w || y >= h ? 0 : d[y * w + x]);
+  for (let y = 0; y < h; y++)
+    for (let x = 0; x < w; x++) {
+      const P = d[y * w + x], A = at(x, y - 1), B = at(x + 1, y), C = at(x - 1, y), D = at(x, y + 1);
+      const e0 = C === A && C !== D && A !== B ? A : P;
+      const e1 = A === B && A !== C && B !== D ? B : P;
+      const e2 = D === C && D !== B && C !== A ? C : P;
+      const e3 = B === D && B !== A && D !== C ? D : P;
+      const i = y * 2 * w * 2 + x * 2;
+      o[i] = e0;
+      o[i + 1] = e1;
+      o[i + w * 2] = e2;
+      o[i + w * 2 + 1] = e3;
+    }
+  return out;
 }

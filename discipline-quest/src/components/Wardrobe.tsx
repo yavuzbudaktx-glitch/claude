@@ -31,7 +31,7 @@ export default function Wardrobe() {
                 <RasterCanvas make={() => renderAvatar("front", on ? "celebrate" : "idle", o.id as OutfitId, game.body.stage as BodyStage)} deps={[o.id, on, game.body.stage]} style={{ height: "96px" }} />
               </div>
               <h3 className="mt-1 font-pixel text-[8px] leading-tight">{o.name}</h3>
-              <p className="mb-1.5 text-base leading-tight text-[var(--muted)]">{o.blurb}</p>
+              <p className="mb-1.5 text-[14px] leading-tight text-[var(--muted)]">{o.blurb}</p>
               <div className="mt-auto w-full">
                 {have ? (
                   <button className={`btn w-full ${on ? "btn-blue" : ""}`} disabled={on || locked} onClick={() => equip(o.id, "Fresh fit.")}>

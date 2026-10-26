@@ -1,6 +1,6 @@
 # Discipline Quest
 
-A Habbo-style pixel room that reflects how disciplined you are. Your avatar walks to the prayer rug, the bed, or the kitchen counter when you check things off. Stay consistent and the room fills with furniture, pets and your real cars. Slip and it goes dark and messy.
+A Habbo-style pixel room, drawn at 2× detail, that reflects how disciplined you are. Your avatar walks to the prayer rug, the bed, or the kitchen counter when you check things off. Stay consistent and the room fills with furniture, pets and your real cars. Slip and it goes dark and messy.
 
 <img src="docs/screenshot.png" width="320" alt="Room screenshot" />
 
@@ -15,7 +15,7 @@ A Habbo-style pixel room that reflects how disciplined you are. Your avatar walk
 | Custom habits | Add your own daily habits in Settings. +5 when done, −5 when missed. |
 | Gym | One tap per visit. 4 visits a week (Mon–Sun) or lose 30 coins. Full weeks grow your body through 5 stages; two missed weeks in a row drop a stage. |
 | Quran | Log pages with +/−. +15 for hitting the daily goal (default 2). Missing it only resets the streak, no coins lost. A khatm bar counts to 604 pages. |
-| Bedtime | Check in between 21:00 and 23:30. Late or missed costs 15. The lights go off and the avatar lies down in bed. |
+| Bedtime | Check in between 21:00 and 23:30 (closed 04:00–21:00). Late or missed costs 15. The lights go off and the avatar lies down in bed. |
 | Jumu'ah / Ramadan | Friday Dhuhr becomes Jumu'ah with a bonus. Ramadan mode adds fasting and taraweeh check-ins. |
 
 - Days you don't open the app still count as full misses.
@@ -24,12 +24,14 @@ A Habbo-style pixel room that reflects how disciplined you are. Your avatar walk
 
 ## Progression
 
+- **Gym room**: opens after your first full 4-visit gym week. Garage gym → Home gym → Pro gym. Racks, dumbbells, ropes, rower, leg press, cable machine and posters cost coins *and* lifetime gym visits.
+
 - **Catalog**: about 100 items across furniture, fitness, plants, pets (cat, budgie, hamster, turtle, snake), wall decor, rugs, a faith corner, wallpapers and floors. Many are gated by level or room size.
 - **Rooms**: Studio (8×8) → Apartment (10×10) → Penthouse (12×12, skyline) → Loft (14×14) → Villa (16×16, balcony door). Big pieces like the pool table or hot tub need a bigger room. **Zoom** shows big rooms at 2×.
 - **Wardrobe**: six outfits (coat, hoodie, gym, thobe + kufi, leather jacket, navy suit).
 - **Badges**: about 55 badges for prayer, purity, mornings, diet and general milestones. Each pays coins and XP.
 - **Daily quests**: three bonus quests a day, the same all day. Undoing the work takes the reward back.
-- **Decorate**: move, rotate or store any furniture, including the bed, kitchen and rug. Placement can't block the way. Wall decor slides along either wall and can't cover windows or other frames.
+- **Decorate**: move, rotate or store any furniture, including the bed, kitchen and rug. Placement can't block the way. Rugs go under furniture, and small things (console, plants, cages, record player) can stand on desks, sideboards, dressers and tables. Wall decor slides along either wall and can't cover windows or other frames.
 - **Use things**: tap the treadmill, bookshelf (read on the sofa), clarinet, PC, arcade, record player, TV, coffee, weight bench aquarium, punching bag, bike, pool table and more, and the avatar uses it. Tap the budgie cage and it flies a lap around the room.
 - **Planner**: Stats shows how many days until everything is unlocked (about 125 at a strong pace).
 - **Room life**: tap the rug, bed or kitchen to log things. The avatar prays (takbir, qiyam, sitting), sleeps until you check in, and the room gets darker at night with lamps and screens glowing. The light switch on the room bar turns the room lights on or off.

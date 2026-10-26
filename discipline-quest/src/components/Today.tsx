@@ -1,5 +1,5 @@
 "use client";
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CAR_UNLOCKS, ITEMS } from "@/engine/catalog";
 import {
   BODY_NAMES,
@@ -69,6 +69,22 @@ function useToday() {
   return { game, act, now, day, streaks: liveStreaks(game, now) };
 }
 
+/** Confetti the moment everything for today is done (once per page visit). */
+function usePerfectParty(perfect: boolean) {
+  const [party, setParty] = useState(0);
+  const was = useRef(perfect);
+  useEffect(() => {
+    if (perfect && !was.current) {
+      setParty(Date.now());
+      const id = setTimeout(() => setParty(0), 2400);
+      was.current = perfect;
+      return () => clearTimeout(id);
+    }
+    was.current = perfect;
+  }, [perfect]);
+  return party;
+}
+
 export function TodaySummary() {
   const { game, day } = useToday();
   const habits = activeCustom(game, day.date);
@@ -82,8 +98,17 @@ export function TodaySummary() {
   const done = items.filter(Boolean).length;
   const quests = day.quests ?? [];
   const qDone = day.questsDone ?? [];
+  const party = usePerfectParty(done === items.length && day.relapses === 0);
   return (
-    <section className="panel overflow-hidden">
+    <section className="panel relative overflow-hidden">
+      {party > 0 &&
+        Array.from({ length: 26 }, (_, k) => (
+          <span
+            key={`${party}-${k}`}
+            className="confetti pointer-events-none"
+            style={{ left: `${(k * 37) % 100}%`, top: 0, background: ["#f6c744", "#ff4fc3", "#4caf50", "#3d86c6", "#ffffff"][k % 5], animationDelay: `${(k % 7) * 0.07}s` }}
+          />
+        ))}
       <div className="flex items-center gap-3 px-3 pt-2">
         <div className="font-pixel text-[11px]">TODAY</div>
         <div className="flex flex-1 gap-[3px]">
@@ -95,7 +120,7 @@ export function TodaySummary() {
           {done}/{items.length}
         </div>
       </div>
-      <div className="px-3 pb-2 pt-1 text-base text-[var(--muted)]">
+      <div className="px-3 pb-2 pt-1 text-[14px] text-[var(--muted)]">
         {day.relapses > 0 ? "Relapsed today. Back to it tomorrow." : done === items.length ? "Everything done. A perfect day if you stay clean." : "Tap the rug, the bed or the kitchen in your room, or use the cards below."}
       </div>
       {quests.length > 0 && (
@@ -109,14 +134,14 @@ export function TodaySummary() {
               if (!q) return null;
               const ok = qDone.includes(id);
               return (
-                <li key={id} className={`flex items-center justify-between gap-2 text-lg ${ok ? "text-[var(--good)]" : ""}`}>
+                <li key={id} className={`flex items-center justify-between gap-2 text-[15px] ${ok ? "text-[var(--good)]" : ""}`}>
                   <span className="flex min-w-0 items-center gap-1.5">
                     <span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-[2px] border-2 border-black ${ok ? "bg-[#4caf50]" : "bg-white"}`}>
                       {ok && <PixelIcon name="check" size={10} color="#fff" />}
                     </span>
                     <span className={ok ? "line-through decoration-2" : ""}>{q.text}</span>
                   </span>
-                  <span className="chip shrink-0 bg-[var(--gold)] text-sm">+{q.coins}</span>
+                  <span className="chip shrink-0 bg-[var(--gold)] text-[12.5px]">+{q.coins}</span>
                 </li>
               );
             })}
@@ -143,7 +168,7 @@ export function WakeCard() {
             Check in by <b>{deadline}</b>. Miss it and lose {RULES.wake.missCoins} coins and the streak.
           </p>
           <button
-            className={`btn w-full py-2 text-xl ${win === "late" ? "btn-red" : "btn-green"}`}
+            className={`btn w-full py-2 text-[17px] ${win === "late" ? "btn-red" : "btn-green"}`}
             disabled={win === "too-early"}
             onClick={() =>
               act((s, n) => wakeCheckIn(s, n), win === "late" ? { kind: "late", say: "Overslept... tomorrow." } : { kind: "wake", say: "Alhamdulillah, good morning!" })
@@ -178,12 +203,12 @@ export function PrayersCard() {
               act((s, n) => setPrayer(s, n, p, !day.prayers[p]), day.prayers[p] ? undefined : { kind: "pray", say: prayed === 4 ? "Alhamdulillah, all five!" : p === "dhuhr" && friday ? "Jumu'ah Mubarak!" : `Alhamdulillah, ${label(p)} ✓` })
             }
           >
-            <span className={`text-lg ${p === "dhuhr" && friday ? "text-[15px]" : ""}`}>{label(p)}</span>
-            {day.prayers[p] ? <PixelIcon name="check" size={12} color="#fff" /> : <span className="h-3 text-base leading-3">·</span>}
+            <span className={`text-[15px] ${p === "dhuhr" && friday ? "text-[15px]" : ""}`}>{label(p)}</span>
+            {day.prayers[p] ? <PixelIcon name="check" size={12} color="#fff" /> : <span className="h-3 text-[14px] leading-3">·</span>}
           </button>
         ))}
       </div>
-      <p className="text-base text-[var(--muted)]">
+      <p className="text-[14px] text-[var(--muted)]">
         {friday ? `It's Friday: Jumu'ah pays +${RULES.jumuah.coins} extra. ` : ""}Each unchecked prayer at midnight costs {RULES.prayer.missCoins}. All five earns a bonus.
       </p>
     </Card>
@@ -200,15 +225,15 @@ export function PurityCard() {
     <Card title="Quit porn" icon="shield" right={<span className="normal-case">best {game.best.clean}</span>}>
       <div className="flex items-end gap-3">
         <div className="font-pixel text-4xl leading-none tabular-nums">{streaks.clean}</div>
-        <div className="pb-0.5 text-base">
+        <div className="pb-0.5 text-[14px]">
           days clean · {nextCar ? `${toCar} more for the ${ITEMS[nextCar.id].name.replace(/^\d+ /, "")}` : "all cars unlocked"}
         </div>
       </div>
       <div className="bar">
         <div className="h-full bg-[linear-gradient(#5b8fe0,#3d6fd1)]" style={{ width: `${nextCar ? Math.min(100, (streaks.clean / nextCar.cleanDays) * 100) : 100}%` }} />
       </div>
-      {day.urgesResisted > 0 && <p className="text-base">Urges beaten today: {day.urgesResisted}</p>}
-      {day.relapses > 0 && <p className="text-base text-[var(--bad)]">Relapsed today. Tomorrow is day 1. Go again.</p>}
+      {day.urgesResisted > 0 && <p className="text-[14px]">Urges beaten today: {day.urgesResisted}</p>}
+      {day.relapses > 0 && <p className="text-[14px] text-[var(--bad)]">Relapsed today. Tomorrow is day 1. Go again.</p>}
       <div className="grid grid-cols-2 gap-2">
         <button className="btn btn-blue py-2" onClick={() => setUrge(true)}>
           I feel an urge
@@ -229,13 +254,13 @@ export function PurityCard() {
       {confirm && (
         <Dialog title="Log relapse" onClose={() => setConfirm(false)}>
           <p>Strict mode. This will:</p>
-          <ul className="list-disc pl-5 text-base">
+          <ul className="list-disc pl-5 text-[14px]">
             <li>Reset your clean streak to 0</li>
             <li>Cost {RULES.relapse.coins} coins (you can go into debt)</li>
             <li>Lock your newest item for {RULES.relapse.lockDays} clean days</li>
             <li>Make your room gloomy until a clean day</li>
           </ul>
-          <p className="text-base">Being honest here is the discipline. It can&apos;t be undone.</p>
+          <p className="text-[14px]">Being honest here is the discipline. It can&apos;t be undone.</p>
           <div className="grid grid-cols-2 gap-2">
             <button className="btn" onClick={() => setConfirm(false)}>
               Cancel
@@ -275,7 +300,7 @@ export function DietCard() {
         </button>
       </form>
       {day.meals.length > 0 && (
-        <ul className="space-y-0.5 text-base">
+        <ul className="space-y-0.5 text-[14px]">
           {day.meals.map((m) => (
             <li key={m.at} className="flex justify-between gap-2">
               <span className="min-w-0 truncate">
@@ -342,13 +367,13 @@ export function GymCard() {
               const date = addDays(monday, k);
               const went = !!game.days[date]?.gym;
               return (
-                <div key={k} className={`flex h-7 flex-1 items-center justify-center rounded-[3px] border-2 border-black text-sm ${went ? "bg-[#e0662c] text-white" : date === day.date ? "bg-white" : "bg-[var(--panel-2)]"}`}>
+                <div key={k} className={`flex h-7 flex-1 items-center justify-center rounded-[3px] border-2 border-black text-[12.5px] ${went ? "bg-[#e0662c] text-white" : date === day.date ? "bg-white" : "bg-[var(--panel-2)]"}`}>
                   {d}
                 </div>
               );
             })}
           </div>
-          <div className="text-base leading-tight">
+          <div className="text-[14px] leading-tight">
             Body: <b>{BODY_NAMES[stage]}</b>
             {next !== undefined ? ` · ${next - game.body.points} more full week${next - game.body.points === 1 ? "" : "s"} to level up` : " · max"}
           </div>
@@ -360,7 +385,7 @@ export function GymCard() {
       >
         {day.gym ? "Went to the gym today ✓" : "I went to the gym today"}
       </button>
-      <p className="text-base text-[var(--muted)]">
+      <p className="text-[14px] text-[var(--muted)]">
         4 visits by Sunday or lose {RULES.gym.missWeekCoins} coins. Two missed weeks in a row and your body slips back a stage.
       </p>
     </Card>
@@ -381,13 +406,13 @@ export function QuranCard() {
         </button>
         <div className="flex-1 text-center">
           <div className="font-pixel text-2xl tabular-nums">{pages}</div>
-          <div className="text-base text-[var(--muted)]">pages today</div>
+          <div className="text-[14px] text-[var(--muted)]">pages today</div>
         </div>
         <button className="btn btn-green h-11 w-11 px-0 text-2xl" onClick={() => set(pages + 1)} aria-label="One page more">
           +
         </button>
       </div>
-      <div className="flex items-center gap-2 text-base">
+      <div className="flex items-center gap-2 text-[14px]">
         <span className="shrink-0">Khatm</span>
         <div className="bar flex-1">
           <div className="h-full bg-[linear-gradient(#2f9a72,#1f7a5c)]" style={{ width: `${(total / 604) * 100}%` }} />
@@ -403,6 +428,16 @@ export function BedtimeCard() {
   const night = game.days[bedKey(now)];
   const win = bedWindow(game, now);
   const done = night?.bed && night.bed !== "pending";
+  if (!done && win === "too-early")
+    return (
+      <section className="panel flex items-center gap-2.5 px-3.5 py-2.5 text-[15px] text-[var(--muted)]">
+        <PixelIcon name="moon" size={14} color="var(--head)" />
+        <span className="flex-1">
+          Bedtime check-in opens at <b className="text-[var(--ink)]">{RULES.bed.opensHour}:00</b> (in bed by {game.settings.bedtime})
+        </span>
+        <Streak n={game.streaks.bed} />
+      </section>
+    );
   return (
     <Card title={`Bedtime · ${game.settings.bedtime}`} icon="moon" right={<Streak n={game.streaks.bed + (night?.bed === "ok" ? 1 : 0)} />}>
       {done ? (
@@ -446,24 +481,41 @@ export function RamadanCard() {
           {day.taraweeh ? "Taraweeh ✓" : "Taraweeh"}
         </button>
       </div>
-      <p className="text-base text-[var(--muted)]">No penalties here: missed fasts for travel or illness are allowed.</p>
+      <p className="text-[14px] text-[var(--muted)]">No penalties here: missed fasts for travel or illness are allowed.</p>
     </Card>
   );
 }
 
+const CARDS = {
+  wake: WakeCard,
+  prayers: PrayersCard,
+  purity: PurityCard,
+  gym: GymCard,
+  quran: QuranCard,
+  diet: DietCard,
+  bed: BedtimeCard,
+  habits: HabitsCard,
+};
+type CardId = keyof typeof CARDS;
+
+/** What matters most right now goes first: mornings start with waking up, evenings with dinner, nights with bed. */
+export function cardOrder(hour: number): CardId[] {
+  if (hour >= 4 && hour < 12) return ["wake", "prayers", "purity", "gym", "quran", "diet", "habits", "bed"];
+  if (hour >= 12 && hour < 18) return ["prayers", "gym", "quran", "purity", "diet", "habits", "wake", "bed"];
+  if (hour >= 18 && hour < 21) return ["diet", "prayers", "quran", "gym", "purity", "habits", "bed", "wake"];
+  return ["bed", "prayers", "diet", "quran", "purity", "habits", "gym", "wake"];
+}
+
 export default function Today() {
+  const now = useNow();
   return (
     <div className="space-y-3">
       <TodaySummary />
       <RamadanCard />
-      <WakeCard />
-      <PrayersCard />
-      <PurityCard />
-      <GymCard />
-      <QuranCard />
-      <DietCard />
-      <BedtimeCard />
-      <HabitsCard />
+      {cardOrder(now.getHours()).map((id) => {
+        const C = CARDS[id];
+        return <C key={id} />;
+      })}
     </div>
   );
 }

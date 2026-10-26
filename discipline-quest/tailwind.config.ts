@@ -6,7 +6,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         pixel: ['"Press Start 2P"', "monospace"],
-        body: ['"VT323"', "monospace"],
+        body: ['"Nunito"', "system-ui", "sans-serif"],
       },
     },
   },

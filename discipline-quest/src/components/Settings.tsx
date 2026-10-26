@@ -75,7 +75,7 @@ export default function Settings() {
               Add
             </button>
           </form>
-          <p className="text-base opacity-75">Daily. Each miss at midnight costs 5 coins, starting tomorrow.</p>
+          <p className="text-[14px] opacity-75">Daily. Each miss at midnight costs 5 coins, starting tomorrow.</p>
           {habits.map((h) => (
             <div key={h.id} className="flex items-center justify-between border-t border-black/15 pt-1.5">
               <span>{h.name}</span>
@@ -101,7 +101,7 @@ export default function Settings() {
           </label>
           <label className="flex items-center justify-between gap-2">
             <span>Grace minutes</span>
-            <span className="text-lg">{game.settings.wakeGraceMin}</span>
+            <span className="text-[15px]">{game.settings.wakeGraceMin}</span>
           </label>
           <label className="flex items-center justify-between gap-2">
             <span>Bedtime</span>
@@ -119,7 +119,7 @@ export default function Settings() {
               <button className="btn h-9 w-9 px-0" disabled={game.settings.quranGoal <= 1} onClick={() => act((s) => updateSettings(s, { quranGoal: s.settings.quranGoal - 1 }))} aria-label="Fewer pages">
                 −
               </button>
-              <span className="w-6 text-center text-xl tabular-nums">{game.settings.quranGoal}</span>
+              <span className="w-6 text-center text-[17px] tabular-nums">{game.settings.quranGoal}</span>
               <button className="btn h-9 w-9 px-0" disabled={game.settings.quranGoal >= 20} onClick={() => act((s) => updateSettings(s, { quranGoal: s.settings.quranGoal + 1 }))} aria-label="More pages">
                 +
               </button>
@@ -143,7 +143,7 @@ export default function Settings() {
               <PixelIcon name="sound" size={14} /> Sound: {game.settings.sound ? "on" : "off"}
             </button>
           </div>
-          <p className="text-base opacity-75">
+          <p className="text-[14px] opacity-75">
             Wake-up and 21:00 diet reminders fire while the app is open or recently backgrounded. Install it to your home screen for the best results.
           </p>
         </div>
@@ -152,7 +152,7 @@ export default function Settings() {
       <section className="panel">
         <div className="panel-head">Backup</div>
         <div className="space-y-2 p-3">
-          <p className="text-base">An extra copy never hurts: copy a backup now and then and keep it in Notes.</p>
+          <p className="text-[14px]">An extra copy never hurts: copy a backup now and then and keep it in Notes.</p>
           <div className="grid grid-cols-2 gap-2">
             <button className="btn btn-blue py-2" onClick={copyBackup}>
               Copy backup
@@ -165,14 +165,14 @@ export default function Settings() {
             <textarea
               id="backup-out"
               readOnly
-              className="input h-24 w-full font-mono text-xs"
+              className="input h-24 w-full font-mono text-[11px]"
               value={backupText}
               onFocus={(e) => e.currentTarget.select()}
             />
           )}
           <textarea
             id="backup-in"
-            className="input h-20 w-full font-mono text-xs"
+            className="input h-20 w-full font-mono text-[11px]"
             placeholder="To restore, paste a backup here"
             value={paste}
             onChange={(e) => setPaste(e.target.value)}
@@ -181,7 +181,7 @@ export default function Settings() {
             Restore pasted backup
           </button>
           <input ref={file} type="file" accept="application/json,.json,.txt" className="hidden" onChange={async (e) => e.target.files?.[0] && restore(await e.target.files[0].text())} />
-          {msg && <p className="text-base">{msg}</p>}
+          {msg && <p className="text-[14px]">{msg}</p>}
           <button className="btn btn-red w-full" onClick={() => setConfirmReset(true)}>
             Reset everything
           </button>

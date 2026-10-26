@@ -14,7 +14,7 @@ import RasterCanvas from "./RasterCanvas";
 
 const TABS: { label: string; cats: Category[] }[] = [
   { label: "Furniture", cats: ["furniture"] },
-  { label: "Fitness", cats: ["fitness"] },
+  { label: "Gym", cats: ["gymroom", "gym", "fitness"] },
   { label: "Plants", cats: ["plants"] },
   { label: "Pets", cats: ["pet"] },
   { label: "Wall decor", cats: ["wall"] },
@@ -26,7 +26,9 @@ const TABS: { label: string; cats: Category[] }[] = [
 
 export function previewFor(item: CatalogItem, locked = false) {
   const lock = (s: ReturnType<typeof buildPiece>) => (locked ? lockedCopy(s) : s);
+  if (item.wallWidth) return lock(wallItemPreview(item.id)).r;
   switch (item.category) {
+    case "gymroom": return lock(stylePreview({ gym: item.id, size: { "gym-garage": 30, "gym-home": 38, "gym-pro": 46 }[item.id] ?? 36 })).r;
     case "wallpaper": return lock(stylePreview({ wallpaper: item.id })).r;
     case "floor": return lock(stylePreview({ floor: item.id })).r;
     case "room": return lock(stylePreview({ size: { "room-studio": 30, "room-apartment": 38, "room-penthouse": 46, "room-loft": 54, "room-villa": 62 }[item.id] ?? 36 })).r;
@@ -34,7 +36,6 @@ export function previewFor(item: CatalogItem, locked = false) {
     case "car": return lock(carSprite(item.id)).r;
     case "fixture": return buildPiece(item.id === "prayerrug" ? "prayerrug:rug-green" : item.id === "kitchen" ? "kitchen:wall" : item.id).r;
     case "pet": return item.id === "cat" ? renderCat("sit") : lock(buildPiece(item.id)).r;
-    case "wall": return lock(wallItemPreview(item.id)).r;
     default: return lock(buildPiece(item.id)).r;
   }
 }
@@ -48,7 +49,13 @@ const REASON: Record<Exclude<BuyResult, "ok" | "owned" | "not-for-sale">, (i: Ca
   tier: (i) => `Needs ${ITEMS[`room-${i.tier}`]?.name ?? i.tier}`,
   debt: () => "In debt",
   poor: (i) => `${i.price} coins`,
+  "gym-visits": (i) => `${i.gymVisits} gym visits`,
+  "no-gym": () => "Needs the gym",
+  "gym-tier": (i) => `Needs ${ITEMS[i.gymTier ?? ""]?.name ?? ITEMS[CATALOG_PREV[i.id] ?? ""]?.name ?? "a bigger gym"}`,
 };
+
+/** For gym room tiers: the one before it. */
+const CATALOG_PREV: Record<string, string> = { "gym-home": "gym-garage", "gym-pro": "gym-home" };
 
 export default function Catalog() {
   const game = useGame((s) => s.game);
@@ -85,7 +92,7 @@ export default function Catalog() {
           );
         })}
       </div>
-      {game.coins < 0 && <p className="border-b-2 border-black bg-[#f9d6d5] px-3 py-2 text-base">You are {Math.abs(game.coins)} coins in debt. Buying reopens at 0.</p>}
+      {game.coins < 0 && <p className="border-b-2 border-black bg-[#f9d6d5] px-3 py-2 text-[14px]">You are {Math.abs(game.coins)} coins in debt. Buying reopens at 0.</p>}
       <div className="grid grid-cols-2 gap-2 p-3 sm:grid-cols-3">
         {items.map((item) => {
           const have = owns(game, item.id);
@@ -101,7 +108,7 @@ export default function Catalog() {
                 <RasterCanvas make={() => previewFor(item, locked || gated)} deps={[item.id, locked, gated]} className="max-h-full max-w-full" style={{ width: "100%", height: "100%" }} />
               </div>
               <h3 className="font-pixel text-[8px] leading-tight">{item.name}</h3>
-              <p className="mb-1.5 mt-0.5 text-base leading-tight text-[var(--muted)]">{item.blurb}</p>
+              <p className="mb-1.5 mt-0.5 text-[14px] leading-tight text-[var(--muted)]">{item.blurb}</p>
               <div className="mt-auto w-full">
                 {have ? (
                   locked ? (
@@ -118,7 +125,7 @@ export default function Catalog() {
                     </span>
                   )
                 ) : item.price === null ? (
-                  <span className="chip w-full justify-center bg-[#efe6ff] text-sm">Not for sale</span>
+                  <span className="chip w-full justify-center bg-[#efe6ff] text-[12.5px]">Not for sale</span>
                 ) : (
                   <button
                     className="btn btn-gold w-full"
