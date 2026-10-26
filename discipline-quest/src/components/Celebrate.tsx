@@ -72,7 +72,7 @@ export default function Celebrate() {
           {art}
           <p className="text-lg leading-tight">{body}</p>
           <button className="btn btn-green w-full py-2" onClick={dismiss} autoFocus>
-            {entry.kind === "khatm" ? "Alhamdulillah" : "Nice!"}
+            {entry.kind === "khatm" || (entry.kind === "badge" && ["prayer", "quran", "purity"].includes(BADGE_BY_ID[entry.id]?.family ?? "")) ? "Alhamdulillah" : "Nice!"}
           </button>
         </div>
       </div>

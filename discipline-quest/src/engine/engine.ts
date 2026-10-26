@@ -380,17 +380,19 @@ export function setPrayer(state: GameState, now: Date, p: PrayerName, done: bool
   });
 }
 
-export type WakeWindow = "too-early" | "on-time" | "late";
+export type WakeWindow = "too-early" | "on-time" | "late" | "missed";
 
 export function wakeWindow(state: GameState, now: Date): WakeWindow {
   const m = minutesOfDay(now);
   if (m < RULES.wakeEarliestHour * 60) return "too-early";
-  return m <= parseHM(state.settings.wakeTarget) + state.settings.wakeGraceMin ? "on-time" : "late";
+  if (m <= parseHM(state.settings.wakeTarget) + state.settings.wakeGraceMin) return "on-time";
+  // A late check-in still counts as waking up until noon; after that the morning is gone.
+  return m < RULES.wakeLatestHour * 60 ? "late" : "missed";
 }
 
 export function wakeCheckIn(state: GameState, now: Date): GameState {
   const win = wakeWindow(state, now);
-  if (win === "too-early") return state;
+  if (win === "too-early" || win === "missed") return state;
   return withToday(state, now, (s, day) => {
     if (day.wake !== "pending") return;
     day.wokeAt = now.getTime();
@@ -420,9 +422,10 @@ const nightMinutes = (m: number) => (m < 12 * 60 ? m + 24 * 60 : m);
 export type BedWindow = "too-early" | "on-time" | "late";
 
 export function bedWindow(state: GameState, now: Date): BedWindow {
-  const m = nightMinutes(minutesOfDay(now));
-  if (m < RULES.bed.opensHour * 60) return "too-early";
-  return m <= nightMinutes(parseHM(state.settings.bedtime)) ? "on-time" : "late";
+  const raw = minutesOfDay(now);
+  // Closed from the earliest wake-up (04:00) until the bed window opens (21:00).
+  if (raw >= RULES.wakeEarliestHour * 60 && raw < RULES.bed.opensHour * 60) return "too-early";
+  return nightMinutes(raw) <= nightMinutes(parseHM(state.settings.bedtime)) ? "on-time" : "late";
 }
 
 export function bedCheckIn(state: GameState, now: Date): GameState {
@@ -452,7 +455,7 @@ export function isAsleep(s: GameState, now: Date): boolean {
   const night = s.days[bedKey(now)];
   if (night?.bedAt && night.bed && night.bed !== "pending") {
     if (bedKey(now) === today) return true;
-    if ((s.days[today]?.wake ?? "pending") === "pending") return true;
+    if ((s.days[today]?.wake ?? "pending") === "pending" && minutesOfDay(now) < RULES.wakeLatestHour * 60) return true;
   }
   const day = s.days[today];
   const deadline = parseHM(s.settings.wakeTarget) + s.settings.wakeGraceMin;

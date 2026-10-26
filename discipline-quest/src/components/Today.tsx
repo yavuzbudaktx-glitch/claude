@@ -133,7 +133,11 @@ export function WakeCard() {
   const deadline = formatHM(parseHM(game.settings.wakeTarget) + game.settings.wakeGraceMin);
   return (
     <Card title={`Wake up · ${game.settings.wakeTarget}`} icon="sun" right={<Streak n={streaks.wake} />}>
-      {day.wake === "pending" ? (
+      {day.wake === "pending" && win === "missed" ? (
+        <p className="text-[var(--bad)]">
+          Missed this morning. It costs {RULES.wake.missCoins} at midnight. Tomorrow: check in by <b>{deadline}</b>.
+        </p>
+      ) : day.wake === "pending" ? (
         <>
           <p>
             Check in by <b>{deadline}</b>. Miss it and lose {RULES.wake.missCoins} coins and the streak.
@@ -142,7 +146,7 @@ export function WakeCard() {
             className={`btn w-full py-2 text-xl ${win === "late" ? "btn-red" : "btn-green"}`}
             disabled={win === "too-early"}
             onClick={() =>
-              act((s, n) => wakeCheckIn(s, n), win === "late" ? { kind: "late", say: "Overslept... tomorrow." } : { kind: "wake", say: "Good morning!" })
+              act((s, n) => wakeCheckIn(s, n), win === "late" ? { kind: "late", say: "Overslept... tomorrow." } : { kind: "wake", say: "Alhamdulillah, good morning!" })
             }
           >
             {win === "too-early" ? `Opens at 0${RULES.wakeEarliestHour}:00` : win === "late" ? `I'm up (late, -${RULES.wake.missCoins})` : "I'm up!"}
@@ -171,7 +175,7 @@ export function PrayersCard() {
             className={`btn flex-col px-0 py-2 ${day.prayers[p] ? "btn-green" : ""}`}
             aria-pressed={day.prayers[p]}
             onClick={() =>
-              act((s, n) => setPrayer(s, n, p, !day.prayers[p]), day.prayers[p] ? undefined : { kind: "pray", say: prayed === 4 ? "All 5 today!" : `${label(p)} ✓` })
+              act((s, n) => setPrayer(s, n, p, !day.prayers[p]), day.prayers[p] ? undefined : { kind: "pray", say: prayed === 4 ? "Alhamdulillah, all five!" : p === "dhuhr" && friday ? "Jumu'ah Mubarak!" : `Alhamdulillah, ${label(p)} ✓` })
             }
           >
             <span className={`text-lg ${p === "dhuhr" && friday ? "text-[15px]" : ""}`}>{label(p)}</span>
@@ -217,7 +221,7 @@ export function PurityCard() {
         <UrgeModal
           onClose={() => setUrge(false)}
           onResist={() => {
-            act((s, n) => resistUrge(s, n), { kind: "urge", say: "Stayed strong!" });
+            act((s, n) => resistUrge(s, n), { kind: "urge", say: "Stayed strong. Alhamdulillah." });
             setUrge(false);
           }}
         />
@@ -239,7 +243,7 @@ export function PurityCard() {
             <button
               className="btn btn-red"
               onClick={() => {
-                act((s, n) => relapse(s, n), { kind: "relapse", say: "Back to day one." });
+                act((s, n) => relapse(s, n), { kind: "relapse", say: "Astaghfirullah. Back to day one." });
                 setConfirm(false);
               }}
             >
@@ -256,7 +260,7 @@ export function DietCard() {
   const { act, now, day, streaks } = useToday();
   const [meal, setMeal] = useState("");
   const log = (onPlan: boolean) => {
-    act((s, n) => logMeal(s, n, meal, onPlan), onPlan ? { kind: "diet", say: "On plan!" } : { kind: "cheat", say: "Cheat meal..." });
+    act((s, n) => logMeal(s, n, meal, onPlan), onPlan ? { kind: "diet", say: "Bismillah. On plan!" } : { kind: "cheat", say: "Cheat meal..." });
     setMeal("");
   };
   return (
@@ -368,7 +372,7 @@ export function QuranCard() {
   const pages = day.quranPages ?? 0;
   const goal = game.settings.quranGoal;
   const total = game.stats.quranPages % 604;
-  const set = (n: number) => act((s, now) => setQuranPages(s, now, n), n > pages && n >= goal && pages < goal ? { kind: "quran", say: "Pages done." } : undefined);
+  const set = (n: number) => act((s, now) => setQuranPages(s, now, n), n > pages && n >= goal && pages < goal ? { kind: "quran", say: "SubhanAllah. Pages done." } : undefined);
   return (
     <Card title={`Quran · ${pages}/${goal} pages`} icon="scroll" right={<Streak n={streaks.quran} />}>
       <div className="flex items-center gap-2">
@@ -413,7 +417,7 @@ export function BedtimeCard() {
           <button
             className={`btn w-full py-2 ${win === "late" ? "btn-red" : "btn-blue"}`}
             disabled={win === "too-early"}
-            onClick={() => act((s, n) => bedCheckIn(s, n), win === "late" ? { kind: "late", say: "Late night..." } : { kind: "bed", say: "Lights out. Good night." })}
+            onClick={() => act((s, n) => bedCheckIn(s, n), win === "late" ? { kind: "late", say: "Late night..." } : { kind: "bed", say: "Bismillah. Lights out, good night." })}
           >
             {win === "too-early" ? `Opens at ${RULES.bed.opensHour}:00` : win === "late" ? `Going to bed (late, -${RULES.bed.missCoins})` : "Going to bed"}
           </button>
@@ -431,13 +435,13 @@ export function RamadanCard() {
       <div className="grid grid-cols-2 gap-2">
         <button
           className={`btn py-2 ${day.fasted ? "btn-green" : ""}`}
-          onClick={() => act((s, n) => setFast(s, n, !day.fasted), day.fasted ? undefined : { kind: "pray", say: "Fasting today." })}
+          onClick={() => act((s, n) => setFast(s, n, !day.fasted), day.fasted ? undefined : { kind: "pray", say: "Bismillah, fasting today." })}
         >
           {day.fasted ? "Fasting ✓" : "I'm fasting"}
         </button>
         <button
           className={`btn py-2 ${day.taraweeh ? "btn-green" : ""}`}
-          onClick={() => act((s, n) => setTaraweeh(s, n, !day.taraweeh), day.taraweeh ? undefined : { kind: "pray", say: "Taraweeh ✓" })}
+          onClick={() => act((s, n) => setTaraweeh(s, n, !day.taraweeh), day.taraweeh ? undefined : { kind: "pray", say: "Alhamdulillah, Taraweeh ✓" })}
         >
           {day.taraweeh ? "Taraweeh ✓" : "Taraweeh"}
         </button>
