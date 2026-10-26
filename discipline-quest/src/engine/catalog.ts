@@ -3,7 +3,10 @@ import type { Equipped, ItemId } from "./types";
 export type Category =
   | "fixture"
   | "furniture"
+  | "fitness"
   | "faith"
+  | "plants"
+  | "floorrug"
   | "wall"
   | "wallpaper"
   | "floor"
@@ -23,8 +26,9 @@ export const EQUIP_SLOT: Partial<Record<Category, keyof Equipped>> = {
   car: "car",
 };
 
-export type RoomTier = "studio" | "apartment" | "penthouse";
-export const TIER_ORDER: RoomTier[] = ["studio", "apartment", "penthouse"];
+export type RoomTier = "studio" | "apartment" | "penthouse" | "loft" | "villa";
+export const TIER_ORDER: RoomTier[] = ["studio", "apartment", "penthouse", "loft", "villa"];
+export const ROOM_SIZE: Record<RoomTier, number> = { studio: 8, apartment: 10, penthouse: 12, loft: 14, villa: 16 };
 
 export interface CatalogItem {
   id: ItemId;
@@ -42,14 +46,21 @@ export interface CatalogItem {
   size?: [number, number];
   /** Flat on the floor: people can stand on it. */
   flat?: boolean;
+  /** Wall decor: width along the wall in world units (a tile is 16). */
+  wallWidth?: number;
 }
 
-const I = (
-  id: string, name: string, category: Category, price: number | null, level: number, blurb: string,
-  extra: Partial<CatalogItem> = {},
-): CatalogItem => ({ id, name, category, price, level, blurb, ...extra });
+/** Everything bought got cheaper when the catalog tripled, so ~everything still unlocks in about 4 months. */
+const PRICE_SCALE = 0.45;
+const price = (p: number) => Math.max(20, Math.round((p * PRICE_SCALE) / 10) * 10);
 
-const S = (w: number, d: number): Partial<CatalogItem> => ({ size: [w, d] });
+const I = (
+  id: string, name: string, category: Category, cost: number | null, level: number, blurb: string,
+  extra: Partial<CatalogItem> = {},
+): CatalogItem => ({ id, name, category, price: cost === null ? null : price(cost), level, blurb, ...extra });
+
+const S = (w: number, d: number, extra: Partial<CatalogItem> = {}): Partial<CatalogItem> => ({ size: [w, d], ...extra });
+const W = (width: number, extra: Partial<CatalogItem> = {}): Partial<CatalogItem> => ({ wallWidth: width, ...extra });
 
 export const CATALOG: CatalogItem[] = [
   // Fixtures you start with (movable, not sold)
@@ -57,34 +68,89 @@ export const CATALOG: CatalogItem[] = [
   I("kitchen", "Kitchen", "fixture", null, 1, "Fridge, sink and stove.", { starter: true, size: [3, 1] }),
   I("prayerrug", "Prayer Rug", "fixture", null, 1, "Your spot for salah.", { starter: true, size: [1, 2], flat: true }),
 
-  // Furniture
-  I("plant", "Potted Plant", "furniture", 40, 1, "Something alive in here.", S(1, 1)),
-  I("lamp", "Floor Lamp", "furniture", 60, 1, "Warm light for late Isha. Tap to switch.", S(1, 1)),
+  // Living
+  I("lamp", "Floor Lamp", "furniture", 60, 1, "Warm light. Tap to switch.", S(1, 1)),
+  I("fan", "Standing Fan", "furniture", 80, 2, "Spins. That's it. That's the fan.", S(1, 1)),
   I("coffee", "Coffee Station", "furniture", 90, 2, "Fuel for the 08:30 alarm.", S(1, 1)),
+  I("coffeetable", "Coffee Table", "furniture", 140, 3, "Somewhere to put the remote.", S(1, 1)),
   I("bookshelf", "Bookshelf", "furniture", 150, 3, "Grab a book and read on the sofa.", S(1, 1)),
-  I("monstera", "Big Monstera", "furniture", 120, 3, "Grows like your streak.", S(1, 1)),
+  I("globe", "Globe", "furniture", 120, 4, "Spin it, pick a country, never go.", S(1, 1)),
+  I("armchair", "Leather Armchair", "furniture", 220, 4, "Cognac leather. Smells expensive.", S(1, 1)),
   I("sofa", "Sofa", "furniture", 250, 4, "Sit, read, watch.", S(1, 2)),
   I("recordplayer", "Record Player", "furniture", 200, 4, "Vinyl and two speakers.", S(1, 1)),
   I("tv", "Smart TV", "furniture", 300, 5, "Thin 65-inch on a low console.", S(1, 2)),
+  I("wardrobe", "Wardrobe", "furniture", 320, 5, "Where the hoodies live.", S(2, 1)),
   I("aquarium", "Aquarium", "furniture", 350, 6, "Calm fish, calm mind.", S(1, 1)),
+  I("sideboard", "Sideboard", "furniture", 260, 6, "Walnut, with a vase on top.", S(2, 1)),
+  I("majlis", "Majlis Cushions", "furniture", 300, 6, "Floor seating for when the cousins come.", S(2, 1)),
+  I("dresser", "Dresser + Mirror", "furniture", 280, 7, "Check the hair before Jumu'ah.", S(2, 1)),
+  I("console", "Game Console", "furniture", 350, 7, "Put it by the TV. One match. Okay two.", S(1, 1)),
   I("clarinet", "Clarinet Stand", "furniture", 300, 7, "Your clarinet. Tap to play.", S(1, 1)),
+  I("dining", "Dining Table", "furniture", 450, 8, "Table for four.", S(2, 2, { tier: "apartment" })),
   I("arcade", "Arcade Cabinet", "furniture", 600, 9, "High score: your streak.", S(1, 1)),
-  I("desk", "Desk + Gaming PC", "furniture", 500, 9, "RGB included.", { size: [2, 1], tier: "apartment" }),
-  I("chair", "Gaming Chair", "furniture", 250, 10, "Put it at the desk.", { size: [1, 1], tier: "apartment" }),
-  I("gymbench", "Weight Bench", "furniture", 450, 11, "Barbell and plates.", { size: [1, 2], tier: "apartment" }),
-  I("treadmill", "Treadmill", "furniture", 700, 12, "Cardio while the city sleeps.", { size: [1, 2], tier: "apartment" }),
-  I("trophycase", "Trophy Case", "furniture", 1200, 18, "For a man with this many badges.", { size: [1, 1], tier: "penthouse" }),
+  I("desk", "Desk + Gaming PC", "furniture", 500, 9, "RGB included.", S(2, 1, { tier: "apartment" })),
+  I("chair", "Leather Desk Chair", "furniture", 250, 10, "Beige leather, tufted, very CEO.", S(1, 1, { tier: "apartment" })),
+  I("island", "Kitchen Island", "furniture", 500, 10, "Marble top, two bar stools.", S(2, 1, { tier: "apartment" })),
+  I("telescope", "Telescope", "furniture", 380, 10, "Tap to look at the moon.", S(1, 1)),
+  I("fireplace", "Electric Fireplace", "furniture", 600, 11, "Fake fire, real cozy.", S(2, 1)),
+  I("vending", "Vending Machine", "furniture", 800, 13, "Tap for a drink. Free, because it's yours.", S(1, 1)),
+  I("massage", "Massage Chair", "furniture", 900, 16, "For the legs after leg day.", S(1, 1)),
+  I("pingpong", "Ping-Pong Table", "furniture", 900, 15, "Needs a big room.", S(3, 2, { tier: "loft" })),
+  I("pooltable", "Pool Table", "furniture", 1400, 17, "Tap to break.", S(3, 2, { tier: "loft" })),
+  I("fountain", "Indoor Fountain", "furniture", 1600, 20, "Villa things.", S(2, 2, { tier: "villa" })),
+  I("hottub", "Hot Tub", "furniture", 2200, 21, "Earned it.", S(2, 2, { tier: "villa" })),
+
+  // Fitness
+  I("yogamat", "Yoga Mat", "fitness", 90, 3, "Tap to stretch.", S(1, 2, { flat: true })),
+  I("punchbag", "Punching Bag", "fitness", 400, 8, "Tap to punch out the urge.", S(1, 1)),
+  I("pullup", "Pull-up Bar", "fitness", 300, 9, "Tap for pull-ups.", S(1, 1)),
+  I("gymbench", "Weight Bench", "fitness", 450, 11, "Barbell and plates.", S(1, 2, { tier: "apartment" })),
+  I("bike", "Road Bike Trainer", "fitness", 650, 12, "Tap to ride nowhere, fast.", S(2, 1)),
+  I("treadmill", "Treadmill", "fitness", 700, 12, "Cardio while the city sleeps.", S(1, 2, { tier: "apartment" })),
+
+  // Plants
+  I("cactus", "Cactus", "plants", 50, 2, "Hard to kill. Like your streak.", S(1, 1)),
+  I("plant", "Potted Plant", "plants", 40, 1, "Something alive in here.", S(1, 1)),
+  I("bonsai", "Bonsai", "plants", 100, 3, "Patience, in a pot.", S(1, 1)),
+  I("monstera", "Big Monstera", "plants", 120, 3, "Grows like your streak.", S(1, 1)),
+  I("olivetree", "Olive Tree", "plants", 260, 9, "Mediterranean energy.", S(1, 1)),
 
   // Faith corner
   I("rehal", "Quran Stand", "faith", 60, 1, "A rehal with a mushaf.", S(1, 1)),
   I("lantern", "Ramadan Lantern", "faith", 120, 2, "A fanous that glows at night.", S(1, 1)),
 
+  // Floor rugs (not for prayer)
+  I("kilim", "Kilim Rug", "floorrug", 250, 5, "Anatolian pattern.", S(2, 2, { flat: true })),
+  I("persian", "Persian Rug", "floorrug", 400, 8, "Big, red, classic.", S(3, 2, { flat: true })),
+
+  // Pets
+  I("cat", "Cat", "pet", 500, 7, "Follows you around. Judges your screen time."),
+  I("budgie", "Budgie (Muhabbet Kuşu)", "pet", 250, 4, "Tap the cage and it flies around.", S(1, 1)),
+  I("hamster", "Hamster Cage", "pet", 200, 5, "Tap to make him run.", S(1, 1)),
+  I("turtle", "Turtle Tank", "pet", 450, 9, "Slow and steady. Like a good streak.", S(2, 1)),
+  I("snake", "Snake Terrarium", "pet", 600, 11, "Corn snake. Harmless. Mostly.", S(2, 1)),
+
   // Wall decor
-  I("clock", "Wall Clock", "wall", 50, 1, "Time is the one thing you can't buy back."),
-  I("calligraphy", "Bismillah Frame", "wall", 150, 3, "Start everything with it."),
-  I("madinah", "Masjid an-Nabawi Poster", "wall", 180, 5, "The green dome."),
-  I("shelf", "Trophy Shelf", "wall", 300, 8, "Little trophies for big streaks."),
-  I("neon", "Neon Sign", "wall", 500, 12, "DISCIPLINE, in pink neon.", { tier: "apartment" }),
+  I("clock", "Wall Clock", "wall", 50, 1, "Time is the one thing you can't buy back.", W(14)),
+  I("nozero", "\"No Zero Days\" Poster", "wall", 80, 2, "Do one thing. Every day.", W(18)),
+  I("nazar", "Nazar Boncuğu", "wall", 60, 2, "Keeps the evil eye off the streak.", W(12)),
+  I("calligraphy", "Bismillah Frame", "wall", 150, 3, "Start everything with it.", W(28)),
+  I("corkboard", "Corkboard", "wall", 120, 3, "Notes, plans, a receipt you'll never need.", W(24)),
+  I("mirror", "Wall Mirror", "wall", 150, 4, "Looking good. Gym's working.", W(14)),
+  I("dartboard", "Dartboard", "wall", 140, 4, "Triple twenty, eventually.", W(14)),
+  I("madinah", "Masjid an-Nabawi Poster", "wall", 180, 5, "The green dome.", W(22)),
+  I("istanbul", "Istanbul Skyline Print", "wall", 200, 5, "Galata at sunset.", W(30)),
+  I("bluemosque", "Blue Mosque Print", "wall", 200, 6, "Six minarets.", W(24)),
+  I("plantshelf", "Wall Plant Shelf", "wall", 180, 6, "Hanging pothos.", W(24)),
+  I("worldmap", "World Map", "wall", 250, 7, "Pins for where you'll drive the Ioniq.", W(36)),
+  I("shelf", "Trophy Shelf", "wall", 300, 8, "Little trophies for big streaks.", W(14)),
+  I("guitar", "Wall Guitar", "wall", 220, 8, "Decorative. For now.", W(12)),
+  I("ioniqposter", "Ioniq 5 Poster", "wall", 150, 9, "Manifesting.", W(26)),
+  I("vinylwall", "Vinyl Record Wall", "wall", 300, 10, "Six records, zero dust.", W(30)),
+  I("neon", "Neon Sign", "wall", 500, 12, "DISCIPLINE, in pink neon.", W(26, { tier: "apartment" })),
+  I("walltv", "Wall TV", "wall", 600, 13, "Floating 75-inch.", W(40, { tier: "apartment" })),
+  I("curtains", "Curtains", "wall", 160, 4, "On every window. Automatic."),
+  I("ledstrip", "LED Strip", "wall", 350, 10, "Purple glow along the ceiling at night. Automatic."),
 
   // Wallpapers
   I("wp-sky", "Sky Blue Walls", "wallpaper", null, 1, "The original.", { starter: true }),
@@ -119,10 +185,9 @@ export const CATALOG: CatalogItem[] = [
   // Room tiers
   I("room-studio", "Studio", "room", null, 1, "8×8. Where it starts.", { starter: true }),
   I("room-apartment", "Apartment", "room", 1200, 8, "10×10 with a second window."),
-  I("room-penthouse", "Penthouse", "room", 3000, 14, "12×12 with a city skyline."),
-
-  // Pet
-  I("cat", "Cat", "pet", 500, 7, "Follows you around. Judges your screen time."),
+  I("room-penthouse", "Penthouse", "room", 3000, 13, "12×12 with a city skyline."),
+  I("room-loft", "Loft", "room", 5000, 17, "14×14, high ceilings, huge windows."),
+  I("room-villa", "Villa", "room", 8000, 22, "16×16 with a balcony door."),
 
   // Cars (your real ones, in order)
   I("car-mini", "2016 Mini Cooper", "car", null, 1, "Your first car. Cream with black bonnet stripes.", { starter: true }),
@@ -136,6 +201,8 @@ export const STARTERS: ItemId[] = CATALOG.filter((c) => c.starter).map((c) => c.
 
 /** Things that go on the floor and can be moved in decorate mode. */
 export const isPlaceable = (id: ItemId) => !!ITEMS[id]?.size;
+/** Wall decor you can slide along the walls (curtains and the LED strip place themselves). */
+export const isWallItem = (id: ItemId) => !!ITEMS[id]?.wallWidth;
 
 export const DEFAULT_EQUIPPED: Equipped = {
   outfit: "fit-coat",
@@ -147,10 +214,9 @@ export const DEFAULT_EQUIPPED: Equipped = {
 };
 
 export function tierOf(roomId: ItemId): RoomTier {
-  return (roomId.replace("room-", "") as RoomTier) ?? "studio";
+  const t = roomId.replace("room-", "") as RoomTier;
+  return TIER_ORDER.includes(t) ? t : "studio";
 }
-
-export const ROOM_SIZE: Record<RoomTier, number> = { studio: 8, apartment: 10, penthouse: 12 };
 
 /** Cars unlock by clean days, in the order you owned them. */
 export const CAR_UNLOCKS: { id: ItemId; cleanDays: number }[] = [
@@ -158,7 +224,9 @@ export const CAR_UNLOCKS: { id: ItemId; cleanDays: number }[] = [
   { id: "car-ioniq5", cleanDays: 90 },
 ];
 
-/** v2 items that no longer exist, with the coins refunded if you owned them. */
+export const CAR_ORDER: ItemId[] = ["car-mini", "car-q50", "car-ioniq5"];
+
+/** Items that no longer exist, with the coins refunded if you owned them. */
 export const REMOVED_REFUNDS: Record<string, number> = {
   beanbag: 70,
   mabkhara: 80,
@@ -166,4 +234,5 @@ export const REMOVED_REFUNDS: Record<string, number> = {
   dumbbells: 140,
   "paint-teal": 500,
   pony: 150,
+  trophycase: 1200,
 };

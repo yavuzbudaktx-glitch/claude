@@ -17,6 +17,8 @@ import {
   wakeCheckIn,
 } from "./engine";
 import { checkPlace, footprint } from "./placement";
+import { autoWall, checkWall } from "./wall";
+import { placeWall, storeWall } from "./engine";
 import { plan } from "./planner";
 import { QUEST_BY_ID, questsFor } from "./quests";
 import { PRAYERS, type GameState } from "./types";
@@ -58,7 +60,7 @@ function v2Save() {
 describe("migration", () => {
   it("v1 → v3 keeps progress, renames the car, refunds the pony", () => {
     const s = migrate(V1_SAVE, at("2026-10-11", "10:00"));
-    expect(s.version).toBe(3);
+    expect(s.version).toBe(4);
     expect(s.streaks.clean).toBe(1);
     expect(s.inventory.map((i) => i.itemId).sort()).toEqual(["car-ioniq5", "plant"]);
     expect(s.equipped.car).toBe("car-ioniq5");
@@ -149,7 +151,7 @@ describe("gym", () => {
 });
 
 describe("Quran, bedtime, Jumu'ah", () => {
-  it("rewards hitting the page goal, reverses it, and charges a miss", () => {
+  it("rewards hitting the page goal, reverses it, and does not charge a miss", () => {
     let s = ensureToday(createInitialState(at("2026-10-20")), at("2026-10-21"));
     const c0 = s.coins;
     s = setQuranPages(s, at("2026-10-21"), 3);
@@ -157,9 +159,13 @@ describe("Quran, bedtime, Jumu'ah", () => {
     expect(c1).toBeGreaterThan(c0);
     s = setQuranPages(s, at("2026-10-21"), 1);
     expect(s.days["2026-10-21"].quranPages).toBe(1);
+    const before = s.coins;
     s = ensureToday(s, at("2026-10-22"));
     expect(s.streaks.quran).toBe(0);
-    expect(s.log.some((e) => e.text.includes("Quran goal missed"))).toBe(true);
+    // missing the Quran goal never costs coins
+    expect(s.log.some((e) => /Quran goal missed/.test(e.text))).toBe(false);
+    expect(s.coins).toBeGreaterThanOrEqual(before - 200);
+    void before;
   });
 
   it("celebrates a khatm at 604 pages", () => {
@@ -219,7 +225,7 @@ describe("catalog and cars", () => {
     expect(canBuy(s, "desk")).toBe("tier");
     s = buyItem(s, at("2026-10-11"), "room-apartment");
     expect(canBuy(s, "desk")).toBe("ok");
-    expect(canBuy(s, "trophycase")).toBe("tier");
+    expect(canBuy(s, "pingpong")).toBe("tier");
   });
 
   it("starts with the Mini and lets you park only cars you own", () => {
@@ -243,12 +249,56 @@ describe("planner", () => {
     const s = createInitialState(at("2026-10-11"));
     const p = plan(s, at("2026-10-11"));
     expect(p.estimated).toBe(true);
-    expect(p.daysAll).toBeGreaterThanOrEqual(90);
-    expect(p.daysAll).toBeLessThan(140);
+    expect(p.daysAll).toBeGreaterThanOrEqual(100);
+    expect(p.daysAll).toBeLessThan(160);
     expect(p.next).toHaveLength(3);
     const h: GameState = { ...s, history: { "2026-10-01": { earned: 0, xp: 0 }, "2026-10-05": { earned: 800, xp: 1000 }, "2026-10-10": { earned: 2000, xp: 2500 } } };
     const p2 = plan(h, at("2026-10-11"));
     expect(p2.estimated).toBe(false);
     expect(p2.coinRate).toBe(Math.round(2000 / 2));
+  });
+});
+
+describe("v4: wall decor, lights, retired trophy case", () => {
+  it("hangs new wall items in free spots and rejects windows, the Kaaba frame and overlaps", () => {
+    let s: GameState = { ...createInitialState(at("2026-10-20")), coins: 9000, xp: 100_000 };
+    s = buyItem(s, at("2026-10-20"), "clock");
+    expect(s.wallPlacements.find((w) => w.itemId === "clock")).toMatchObject({ wall: "R", u: 40 });
+    expect(checkWall(s, { itemId: "worldmap", wall: "R", u: 80 })).toBe("overlap"); // studio window 70..110
+    expect(checkWall(s, { itemId: "nazar", wall: "L", u: 50 })).toBe("overlap"); // Kaaba frame
+    expect(checkWall(s, { itemId: "nazar", wall: "R", u: 44 })).toBe("overlap"); // the clock
+    expect(checkWall(s, { itemId: "nazar", wall: "R", u: 120 })).toBe("outside");
+    s = buyItem(s, at("2026-10-20"), "nazar");
+    const spot = s.wallPlacements.find((w) => w.itemId === "nazar")!;
+    expect(checkWall(s, spot)).toBe("ok");
+    s = placeWall(s, { itemId: "nazar", wall: "L", u: 12 });
+    expect(s.wallPlacements.find((w) => w.itemId === "nazar")).toMatchObject({ wall: "L", u: 12 });
+    s = storeWall(s, "nazar");
+    expect(s.wallPlacements.some((w) => w.itemId === "nazar")).toBe(false);
+    expect(autoWall(s, "nazar")).not.toBeNull();
+  });
+
+  it("bedtime turns the lights off and waking up turns them on", () => {
+    let s = createInitialState(at("2026-10-20"));
+    s = bedCheckIn(s, at("2026-10-20", "22:30"));
+    expect(s.settings.lights).toBe(false);
+    s = wakeCheckIn(s, at("2026-10-21", "08:10"));
+    expect(s.settings.lights).toBe(true);
+  });
+
+  it("v3 → v4 refunds the trophy case and hangs owned wall decor", () => {
+    const v3 = createInitialState(at("2026-10-20")) as unknown as Record<string, unknown>;
+    v3.version = 3;
+    delete v3.wallPlacements;
+    v3.inventory = ["trophycase", "clock", "calligraphy", "sofa"].map((id, k) => ({ uid: id, itemId: id, acquiredAt: k, lockDaysLeft: 0 }));
+    v3.placements = [...(v3.placements as unknown[]), { itemId: "trophycase", tx: 0, ty: 0, rot: 0 }, { itemId: "sofa", tx: 2, ty: 2, rot: 0 }];
+    v3.coins = 10;
+    const s = migrate(v3, at("2026-10-20", "15:00"));
+    expect(s.version).toBe(4);
+    expect(s.coins).toBeGreaterThanOrEqual(1210);
+    expect(s.inventory.some((i) => i.itemId === "trophycase")).toBe(false);
+    expect(s.placements.some((p) => p.itemId === "trophycase")).toBe(false);
+    expect(s.wallPlacements.map((w) => w.itemId).sort()).toEqual(["calligraphy", "clock"]);
+    expect(s.settings.lights).toBe(true);
   });
 });

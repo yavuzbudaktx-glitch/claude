@@ -51,7 +51,7 @@ export default function Celebrate() {
     art = <RasterCanvas make={() => renderAvatar("front", entry.up ? "celebrate" : "sad", outfit, entry.stage as BodyStage)} deps={[entry.stage, entry.up, outfit]} style={{ width: 60, height: 96 }} />;
   } else if (entry.kind === "khatm") {
     title = "Khatm al-Quran";
-    body = `You finished the whole Quran${entry.count > 1 ? ` for the ${entry.count}th time` : ""}. MashaAllah.`;
+    body = `You finished the whole Quran${entry.count > 1 ? ` for the ${entry.count}th time` : ""}.`;
     art = <div className="text-5xl" lang="ar" dir="rtl">ختم</div>;
   } else {
     const item = ITEMS[entry.id];
@@ -72,7 +72,7 @@ export default function Celebrate() {
           {art}
           <p className="text-lg leading-tight">{body}</p>
           <button className="btn btn-green w-full py-2" onClick={dismiss} autoFocus>
-            Alhamdulillah
+            {entry.kind === "khatm" ? "Alhamdulillah" : "Nice!"}
           </button>
         </div>
       </div>

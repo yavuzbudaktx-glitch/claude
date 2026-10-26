@@ -12,6 +12,7 @@ import {
 } from "./catalog";
 import { addDays, dateKey, daysBetween, minutesOfDay, parseHM, parseKey } from "./dates";
 import { PREFERRED, autoPlace, checkPlace } from "./placement";
+import { autoWall, checkWall } from "./wall";
 import { QUEST_BY_ID, questsFor } from "./quests";
 import { RULES, levelFor } from "./rules";
 import {
@@ -25,6 +26,7 @@ import {
   type ItemId,
   type LifetimeStats,
   type PlacedItem,
+  type WallPlaced,
   type PrayerName,
   type Streaks,
 } from "./types";
@@ -58,7 +60,7 @@ function freshSince(today: string) {
 export function createInitialState(now: Date): GameState {
   const today = dateKey(now);
   const s: GameState = {
-    version: 3,
+    version: 4,
     startDate: today,
     lastSettled: addDays(today, -1),
     days: { [today]: emptyDay(today) },
@@ -70,6 +72,7 @@ export function createInitialState(now: Date): GameState {
     customHabits: [],
     inventory: [],
     placements: defaultPlacements(),
+    wallPlacements: [],
     equipped: { ...DEFAULT_EQUIPPED },
     body: emptyBody(),
     since: freshSince(today),
@@ -78,7 +81,7 @@ export function createInitialState(now: Date): GameState {
     seen: CATALOG.filter((c) => c.level <= 1).map((c) => c.id),
     history: {},
     gloomy: false,
-    settings: { wakeTarget: "08:30", wakeGraceMin: 15, bedtime: "23:30", quranGoal: 2, ramadan: false, notifications: false, sound: false },
+    settings: { wakeTarget: "08:30", wakeGraceMin: 15, bedtime: "23:30", quranGoal: 2, ramadan: false, lights: true, notifications: false, sound: false },
     log: [{ at: now.getTime(), text: "Your room is ready. Stay disciplined.", kind: "info" }],
   };
   s.days[today].quests = questsFor(today, s).map((q) => q.id);
@@ -143,6 +146,8 @@ function grant(s: GameState, now: Date, id: ItemId, celebrate: boolean) {
   s.inventory.push({ uid: `${id}-${now.getTime()}`, itemId: id, acquiredAt: now.getTime(), lockDaysLeft: 0 });
   const spot = autoPlace(s, id);
   if (spot) s.placements.push(spot);
+  const hang = autoWall(s, id);
+  if (hang) s.wallPlacements.push(hang);
   if (celebrate) s.inbox.push({ kind: "unlock", id, at: now.getTime() });
 }
 
@@ -273,12 +278,10 @@ function settleDay(s: GameState, date: string, now: Date) {
     earn(s, now, -RULES.diet.missCoins, 0, `${date}: no diet check-in`, "bad");
   }
 
+  // Quran is never charged: missing the goal only resets the streak.
   if (quranCounts(s, date)) {
     if ((day.quranPages ?? 0) >= s.settings.quranGoal) s.streaks.quran++;
-    else {
-      s.streaks.quran = 0;
-      earn(s, now, -RULES.quran.missCoins, 0, `${date}: Quran goal missed`, "bad");
-    }
+    else s.streaks.quran = 0;
   }
 
   // Bedtime is a night thing, so yesterday's bed check-in is settled today.
@@ -391,6 +394,7 @@ export function wakeCheckIn(state: GameState, now: Date): GameState {
   return withToday(state, now, (s, day) => {
     if (day.wake !== "pending") return;
     day.wokeAt = now.getTime();
+    s.settings.lights = true;
     if (win === "on-time") {
       day.wake = "ok";
       s.stats.wakeOnTime++;
@@ -429,6 +433,7 @@ export function bedCheckIn(state: GameState, now: Date): GameState {
     const day = s.days[k] ?? (s.days[k] = emptyDay(k));
     if (day.bed && day.bed !== "pending") return;
     day.bedAt = now.getTime();
+    s.settings.lights = false;
     if (win === "on-time") {
       day.bed = "ok";
       s.stats.bedOnTime++;
@@ -643,6 +648,15 @@ export function storeItem(state: GameState, itemId: ItemId): GameState {
   return { ...state, placements: state.placements.filter((q) => q.itemId !== itemId) };
 }
 
+export function placeWall(state: GameState, w: WallPlaced): GameState {
+  if (!owns(state, w.itemId) || checkWall(state, w) !== "ok") return state;
+  return { ...state, wallPlacements: [...state.wallPlacements.filter((q) => q.itemId !== w.itemId), w] };
+}
+
+export function storeWall(state: GameState, itemId: ItemId): GameState {
+  return { ...state, wallPlacements: state.wallPlacements.filter((q) => q.itemId !== itemId) };
+}
+
 export function markSeen(state: GameState, ids: ItemId[]): GameState {
   const fresh = ids.filter((id) => !state.seen.includes(id));
   return fresh.length ? { ...state, seen: [...state.seen, ...fresh] } : state;
@@ -673,7 +687,7 @@ export function liveStreaks(s: GameState, now: Date) {
 
 export function isGameState(v: unknown): boolean {
   const o = v as { version?: number; coins?: unknown; days?: unknown; inventory?: unknown };
-  return !!o && [1, 2, 3].includes(o.version ?? 0) && typeof o.coins === "number" && typeof o.days === "object" && Array.isArray(o.inventory);
+  return !!o && [1, 2, 3, 4].includes(o.version ?? 0) && typeof o.coins === "number" && typeof o.days === "object" && Array.isArray(o.inventory);
 }
 
 /** Bring any saved state (v1, v2 or v3) up to the current shape without losing progress. */
@@ -729,10 +743,31 @@ export function migrate(raw: any, now: Date): GameState {
     s.history = {};
     s.settings = { bedtime: "23:30", quranGoal: 2, ramadan: false, sound: false, ...s.settings };
     s.placements = defaultPlacements();
+    s.wallPlacements = [];
     s.version = 3;
     for (const i of kept) {
       const spot = autoPlace(s as GameState, i.itemId);
       if (spot) s.placements.push(spot);
+    }
+  }
+  if (s.version === 3) {
+    let refund = 0;
+    s.inventory = (s.inventory as { itemId: string }[]).filter((i) => {
+      if (!(i.itemId in REMOVED_REFUNDS)) return true;
+      refund += REMOVED_REFUNDS[i.itemId];
+      return false;
+    });
+    s.placements = (s.placements as PlacedItem[]).filter((p) => !(p.itemId in REMOVED_REFUNDS));
+    if (refund) {
+      s.coins += refund;
+      s.log.unshift({ at: now.getTime(), text: `Retired items refunded: +${refund} coins`, coins: refund, kind: "info" });
+    }
+    s.settings = { ...s.settings, lights: true };
+    s.wallPlacements = [];
+    s.version = 4;
+    for (const i of s.inventory as { itemId: string }[]) {
+      const hang = autoWall(s as GameState, i.itemId);
+      if (hang) s.wallPlacements.push(hang);
     }
   }
   // Fill anything a later field might be missing.
@@ -742,11 +777,12 @@ export function migrate(raw: any, now: Date): GameState {
   s.seen ??= [];
   s.history ??= {};
   s.placements ??= defaultPlacements();
+  s.wallPlacements ??= [];
   s.body ??= emptyBody();
   s.since ??= freshSince(today);
   s.stats = { ...emptyStats(), ...s.stats };
   s.streaks = { ...emptyStreaks(), ...s.streaks };
   s.best = { ...emptyStreaks(), ...s.best };
-  s.settings = { wakeTarget: "08:30", wakeGraceMin: 15, bedtime: "23:30", quranGoal: 2, ramadan: false, notifications: false, sound: false, ...s.settings };
+  s.settings = { wakeTarget: "08:30", wakeGraceMin: 15, bedtime: "23:30", quranGoal: 2, ramadan: false, lights: true, notifications: false, sound: false, ...s.settings };
   return ensureToday(s as GameState, now);
 }

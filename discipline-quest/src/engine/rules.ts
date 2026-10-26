@@ -10,7 +10,7 @@ export const RULES = {
   relapse: { coins: 100, lockDays: 7 },
   custom: { coins: 5, xp: 5, missCoins: 5 },
   gym: { coins: 15, xp: 20, perWeek: 4, weekCoins: 40, weekXp: 60, missWeekCoins: 30 },
-  quran: { coins: 15, xp: 20, missCoins: 10, khatmCoins: 300, khatmXp: 300 },
+  quran: { coins: 15, xp: 20, khatmCoins: 300, khatmXp: 300 },
   bed: { coins: 15, xp: 15, missCoins: 15, opensHour: 21 },
   jumuah: { coins: 20, xp: 20 },
   ramadan: { fastCoins: 20, fastXp: 25, taraweehCoins: 15, taraweehXp: 15 },

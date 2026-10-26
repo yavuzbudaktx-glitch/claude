@@ -1,8 +1,8 @@
 "use client";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { createInitialState, dismissInbox, ensureToday, equip, markSeen, migrate, placeItem, storeItem } from "@/engine/engine";
-import type { GameState, ItemId, PlacedItem } from "@/engine/types";
+import { createInitialState, dismissInbox, ensureToday, equip, markSeen, migrate, placeItem, placeWall, storeItem, storeWall, updateSettings } from "@/engine/engine";
+import type { GameState, ItemId, PlacedItem, WallPlaced } from "@/engine/types";
 import { getNow } from "@/lib/clock";
 import { SFX } from "@/lib/sound";
 
@@ -27,6 +27,9 @@ interface Store {
   dismiss: () => void;
   place: (p: PlacedItem) => void;
   store: (id: ItemId) => void;
+  placeWall: (w: WallPlaced) => void;
+  storeWall: (id: ItemId) => void;
+  toggleLights: () => void;
 }
 
 const GOOD: RoomActionKind[] = ["pray", "wake", "diet", "urge", "buy", "habit", "equip", "gym", "quran", "bed"];
@@ -80,10 +83,24 @@ export const useGame = create<Store>()(
       store(id) {
         set({ game: storeItem(get().game, id) });
       },
+      placeWall(w) {
+        const next = placeWall(get().game, w);
+        if (next === get().game) return;
+        if (next.settings.sound) SFX.tap();
+        set({ game: next });
+      },
+      storeWall(id) {
+        set({ game: storeWall(get().game, id) });
+      },
+      toggleLights() {
+        const g = get().game;
+        if (g.settings.sound) SFX.tap();
+        set({ game: updateSettings(g, { lights: !g.settings.lights }) });
+      },
     }),
     {
       name: "discipline-quest",
-      version: 3,
+      version: 4,
       storage: createJSONStorage(() => localStorage),
       partialize: (s) => ({ game: s.game }),
       migrate: (persisted) => {
@@ -94,7 +111,7 @@ export const useGame = create<Store>()(
         const p = persisted as { game?: GameState } | undefined;
         if (!p?.game) return current;
         // Saves written by v1 code without the persist version bump still need upgrading.
-        return { ...current, game: (p.game as { version: number }).version === 3 ? p.game : migrate(p.game, getNow()) };
+        return { ...current, game: (p.game as { version: number }).version === 4 ? p.game : migrate(p.game, getNow()) };
       },
     },
   ),

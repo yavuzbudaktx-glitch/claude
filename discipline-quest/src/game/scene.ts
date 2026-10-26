@@ -3,7 +3,8 @@ import { isLocked, owns } from "@/engine/engine";
 import { footprint, visiblePlacements } from "@/engine/placement";
 import type { GameState, PlacedItem } from "@/engine/types";
 import { AVATAR_FOOT, type BodyStage, type Facing, type OutfitId, type Pose } from "./sprites/avatar";
-import { MESS, WALL_ITEMS, roomSpec, tileScreen, type RoomSpec } from "./furniture";
+import { MESS, roomSpec, tileScreen, type RoomSpec } from "./furniture";
+import { visibleWall } from "@/engine/wall";
 
 export interface AvatarView {
   fx: number;
@@ -41,7 +42,9 @@ export interface PlacedPiece {
 export interface RoomLayout {
   spec: RoomSpec;
   pieces: PlacedPiece[];
-  wallItems: { id: string; locked: boolean }[];
+  wallItems: { id: string; wall: "L" | "R"; u: number; locked: boolean }[];
+  curtains: boolean;
+  ledStrip: boolean;
   wallpaper: string;
   floor: string;
   gloomy: boolean;
@@ -66,8 +69,11 @@ export function roomLayout(s: GameState): RoomLayout {
     for (const m of MESS)
       if (m.tx < ROOM_SIZE[spec.tier] && m.ty < ROOM_SIZE[spec.tier])
         pieces.push({ place: { itemId: m.id, tx: m.tx, ty: m.ty, rot: 0 }, w: 1, d: 1, key: m.id, locked: false, flat: true });
-  const wallItems = WALL_ITEMS.filter((id) => owns(s, id)).map((id) => ({ id, locked: isLocked(s, id) }));
-  return { spec, pieces, wallItems, wallpaper: s.equipped.wallpaper, floor: s.equipped.floor, gloomy: s.gloomy };
+  const wallItems = visibleWall(s)
+    .filter((w) => owns(s, w.itemId))
+    .map((w) => ({ id: w.itemId, wall: w.wall, u: w.u, locked: isLocked(s, w.itemId) }));
+  const on = (id: string) => owns(s, id) && !isLocked(s, id);
+  return { spec, pieces, wallItems, curtains: on("curtains"), ledStrip: on("ledstrip"), wallpaper: s.equipped.wallpaper, floor: s.equipped.floor, gloomy: s.gloomy };
 }
 
 export type Drawable =

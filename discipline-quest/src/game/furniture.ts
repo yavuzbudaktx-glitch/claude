@@ -1,4 +1,5 @@
-import type { RoomTier } from "@/engine/catalog";
+import { ROOM_SIZE, type RoomTier } from "@/engine/catalog";
+import { reservedOnWalls } from "@/engine/wall";
 import { Iso, TILE, makeSprite, prism, type P3, type Sprite } from "./iso";
 import { Raster, shade } from "./raster";
 
@@ -14,8 +15,8 @@ export interface RoomSpec {
 }
 
 export function roomSpec(tier: RoomTier): RoomSpec {
-  const n = tier === "penthouse" ? 12 : tier === "apartment" ? 10 : 8;
-  const wallH = tier === "penthouse" ? 88 : 72;
+  const n = ROOM_SIZE[tier];
+  const wallH = tier === "studio" || tier === "apartment" ? 72 : tier === "penthouse" ? 88 : 96;
   const W = n * 32 + 28;
   const top = wallH + 12;
   return { tier, n, wallH, W, H: top + n * 16 + 12, origin: { x: W / 2, y: top } };
@@ -66,12 +67,6 @@ function drawKitchen(i: Iso, variant = "") {
   const wall = variant.includes("wall");
   const open = variant.includes("open");
   const steel = "#d9dee3";
-  // upper cabinets and hood (only against a wall)
-  if (wall) {
-    i.box(16, 0, 34, 32, 7, 13, "#f4f1ea");
-    for (const x of [24, 32, 40]) i.line([x, 7, 35], [x, 7, 46], "#c9c3b5");
-    i.box(34, 0, 27, 12, 8, 4, "#9aa0a6");
-  }
   // fridge first (it's furthest back): stainless, French doors, two handles, freezer drawer
   i.box(1, 1, 0, 14, 14, 40, steel, { left: "#e3e7eb", right: "#b9bfc5" });
   i.line([1, 15, 13], [15, 15, 13], "#8d949b");
@@ -88,6 +83,12 @@ function drawKitchen(i: Iso, variant = "") {
     i.box(12, 13, 21, 2, 2, 3, "#f1c40f", { noOutline: true });
     i.box(9.5, 13, 28, 3, 2, 3, "#27ae60", { noOutline: true });
     i.box(12, 13, 35, 2, 2, 4, "#ffffff", { noOutline: true });
+  }
+  // upper cabinets and hood (only against a wall), starting where the fridge ends
+  if (wall) {
+    i.box(16, 0, 34, 32, 7, 13, "#f4f1ea");
+    for (const x of [24, 32, 40]) i.line([x, 7, 35], [x, 7, 46], "#c9c3b5");
+    i.box(34, 0, 27, 12, 8, 4, "#9aa0a6");
   }
   // base cabinets, dark stone top, sink
   i.box(15, 1, 0, 18, 14, 14, "#f4f1ea", { top: "#3a3a3f" });
@@ -252,28 +253,40 @@ const DRAW: Record<string, (i: Iso, variant?: string) => void> = {
     px(i, [30, 6, 22], "#ff3df2");
     px(i, [30, 6, 20], "#3dfff2");
   },
+  /** Beige leather desk chair: tufted back, wooden arms, chrome base. Faces -Y (the desk). */
   chair(i) {
-    i.box(6, 6, 0, 4, 4, 1, "#1d1d1d");
-    i.box(7, 7, 1, 2, 2, 6, "#3a3a3a");
-    i.box(2, 2, 7, 12, 11, 3, "#c0392b");
-    i.box(2, 12, 10, 12, 3, 18, "#c0392b");
-    i.box(6, 12, 12, 4, 3, 14, "#1d1d1d", { noOutline: true });
-    i.box(1, 3, 10, 2, 8, 4, "#1d1d1d");
-    i.box(13, 3, 10, 2, 8, 4, "#1d1d1d");
+    const leather = "#d9c19a";
+    for (const [x, y] of [[4, 8], [12, 8], [8, 3], [8, 13]]) i.box(x - 1, y - 1, 0, 2, 2, 1, "#c9ccd2", { noOutline: true });
+    i.box(7, 7, 0, 2, 2, 7, "#c9ccd2");
+    i.box(2, 2, 7, 12, 11, 4, leather, { top: "#e8d5b2" });
+    i.box(2, 12, 9, 12, 3, 18, leather, { top: "#e8d5b2" });
+    for (const [x, z] of [[5, 15], [9, 15], [5, 21], [9, 21], [7, 18], [11, 18]]) {
+      const [sx, sy] = i.proj([x, 15, z]);
+      i.r.set(sx, sy, "#a88b5e");
+    }
+    i.box(1, 3, 11, 2, 9, 2, "#7a4b2a");
+    i.box(13, 3, 11, 2, 9, 2, "#7a4b2a");
+    i.box(1.5, 10, 7, 1, 1, 4, "#7a4b2a", { noOutline: true });
+    i.box(13.5, 10, 7, 1, 1, 4, "#7a4b2a", { noOutline: true });
   },
   /** Flat bench with a rack and a loaded barbell. Long side along Y. */
+  /** Rack at the back, bench clearly in front of it: no overlap. Long side along Y. */
   gymbench(i) {
-    for (const [x, y] of [[5, 10], [10, 10], [5, 26], [10, 26]]) i.box(x, y, 0, 1.5, 1.5, 6, "#3a3a3e");
-    i.box(4, 9, 6, 8, 20, 3, "#1d1d1f", { top: "#2b2b2f" });
-    i.box(2, 3, 0, 2, 2, 22, "#55555a");
-    i.box(12, 3, 0, 2, 2, 22, "#55555a");
-    i.line([-3, 4, 21], [19, 4, 21], "#c9ccd2");
-    for (const x of [0, 16]) {
-      const plane = (u: number, z: number): P3 => [x, u, z];
-      i.quad(octagon(4, 21, 4.6, plane), "#1d1d1f", "#000000");
-      i.quad(octagon(4, 21, 3, plane), "#c0392b");
-      px(i, [x, 4, 21], "#c9ccd2");
+    // rack: two posts on feet, barbell resting on the hooks, plates on the bar ends
+    for (const x of [1, 13]) {
+      i.box(x - 1, 0, 0, 4, 5, 1.5, "#3a3a3e");
+      i.box(x, 1.5, 1.5, 2, 2, 22, "#55555a");
     }
+    i.line([-4, 2.5, 22], [20, 2.5, 22], "#c9ccd2");
+    for (const x of [-2.5, 18.5]) {
+      const plane = (u: number, z: number): P3 => [x, u, z];
+      i.quad(octagon(2.5, 22, 4.4, plane), "#1d1d1f", "#000000");
+      i.quad(octagon(2.5, 22, 2.8, plane), "#c0392b");
+      px(i, [x, 2.5, 22], "#c9ccd2");
+    }
+    // bench pad starts well in front of the rack
+    for (const [x, y] of [[5, 13], [10, 13], [5, 28], [10, 28]]) i.box(x, y, 0, 1.5, 1.5, 6.5, "#3a3a3e");
+    i.box(4, 12, 6.5, 8, 19, 3, "#1d1d1f", { top: "#2b2b2f" });
   },
   treadmill(i) {
     i.box(1, 3, 0, 14, 28, 4, "#2b2b2e", { top: "#3a3a3f" });
@@ -283,15 +296,6 @@ const DRAW: Record<string, (i: Iso, variant?: string) => void> = {
     i.box(1, 1, 22, 14, 4, 5, "#2b2b2e");
     const [sx, sy] = i.proj([8, 5, 25]);
     i.r.rect(sx - 1, sy, 3, 1, "#4dff88");
-  },
-  trophycase(i) {
-    i.box(1, 1, 0, 14, 12, 4, "#4a2f1c");
-    for (const z of [4, 18, 32]) {
-      i.box(2, 2, z, 12, 10, 1, "#4a2f1c", { noOutline: true });
-      i.box(4, 5, z + 1, 3, 3, 6, "#e0b33a");
-      i.box(9, 6, z + 1, 2, 2, 9, "#c9ccd2");
-    }
-    i.box(1, 1, 4, 14, 12, 42, "#bfe3f240", { top: "#d8f0fa60", left: "#bfe3f230", right: "#9fc9da40", outline: "#4a2f1c" });
   },
   rehal(i) {
     i.box(4, 5, 0, 8, 6, 3, "#7a4b2a");
@@ -307,6 +311,243 @@ const DRAW: Record<string, (i: Iso, variant?: string) => void> = {
     i.line([8, 11, 2], [8, 11, 12], "#8a6508");
     i.box(6, 6, 12, 4, 4, 3, "#b8860b");
     i.box(7.5, 7.5, 15, 1, 1, 3, "#b8860b", { noOutline: true });
+  },
+  fan(i) {
+    i.box(5, 5, 0, 6, 6, 1.5, "#2b2b2e");
+    i.box(7, 7, 1.5, 2, 2, 22, "#c9ccd2");
+    i.box(5, 6, 22, 6, 4, 5, "#2b2b2e");
+    const plane = (u: number, z: number): P3 => [11, u, z];
+    i.quad(octagon(8, 27, 6.5, plane), "#e8eef2", "#7d8a94");
+    i.quad(octagon(8, 27, 1.5, plane), "#2b2b2e");
+  },
+  coffeetable(i) {
+    for (const [x, y] of [[2, 2], [12, 2], [2, 12], [12, 12]]) i.box(x, y, 0, 2, 2, 6, "#5a3a22");
+    i.box(1, 1, 6, 14, 14, 2, "#7a4b2a", { top: "#8a5a33" });
+    i.box(4, 5, 8, 6, 4, 1, "#2e86c1");
+    i.box(10, 9, 8, 2, 2, 3, "#ffffff");
+  },
+  globe(i) {
+    i.box(6, 6, 0, 4, 4, 2, "#7a4b2a");
+    i.box(7.5, 7.5, 2, 1, 1, 8, "#c9a227", { noOutline: true });
+    const plane = (u: number, z: number): P3 => [8, u, z];
+    i.quad(octagon(8, 15, 5, plane), "#3d8bd6", "#1d4a7a");
+    i.quad([plane(6, 13), plane(9, 12), plane(10, 15), plane(7, 17)], "#5cb85c");
+    i.quad([plane(10, 16), plane(12, 17), plane(11, 19), plane(9.5, 18)], "#5cb85c");
+  },
+  armchair(i) {
+    const c = "#8a4b2a";
+    i.box(2, 2, 0, 12, 12, 7, c, { top: "#a35f38" });
+    i.box(11, 2, 7, 3, 12, 11, c, { top: "#a35f38" });
+    i.box(2, 1, 7, 9, 3, 5, c);
+    i.box(2, 12, 7, 9, 3, 5, c);
+  },
+  wardrobe(i) {
+    i.box(1, 1, 0, 30, 13, 42, "#e8e2d4", { top: "#f2ede1" });
+    i.line([16, 14, 1], [16, 14, 41], "#b9b09c");
+    i.line([14, 14, 18], [14, 14, 26], "#8a7f68");
+    i.line([18, 14, 18], [18, 14, 26], "#8a7f68");
+  },
+  sideboard(i) {
+    i.box(1, 2, 0, 30, 11, 14, "#6b4426", { top: "#7a4b2a" });
+    for (const x of [8, 16, 24]) i.line([x, 13, 1], [x, 13, 13], "#4a2f1c");
+    i.box(5, 5, 14, 4, 4, 9, "#3d6fb6");
+    i.box(20, 5, 14, 6, 4, 3, "#e8e2d4");
+  },
+  majlis(i) {
+    i.box(0, 1, 0, 32, 14, 4, "#7a1f2b", { top: "#9e2a39" });
+    i.box(0, 1, 4, 32, 4, 9, "#7a1f2b", { top: "#9e2a39" });
+    for (let x = 2; x < 30; x += 7) i.box(x, 5, 4, 5, 5, 3, "#c9a227", { top: "#e2c04a" });
+  },
+  dresser(i) {
+    i.box(1, 2, 0, 30, 11, 16, "#e8e2d4");
+    for (const z of [5, 10]) i.line([1, 13, z], [31, 13, z], "#b9b09c");
+    i.box(8, 2, 16, 16, 2, 18, "#c9a227");
+    i.quad([[9.5, 4, 17.5], [22.5, 4, 17.5], [22.5, 4, 32.5], [9.5, 4, 32.5]], "#cfe6f2");
+  },
+  console(i) {
+    i.box(4, 5, 0, 8, 6, 2, "#1a1a1d");
+    i.box(5, 4, 2, 5, 8, 12, "#f4f4f4", { top: "#ffffff" });
+    i.line([10, 6, 4], [10, 6, 12], "#3a8ee6");
+    i.box(10, 10, 0, 4, 3, 1, "#2b2b2e");
+  },
+  dining(i) {
+    for (const [x, y] of [[4, 4], [26, 4], [4, 26], [26, 26]]) i.box(x, y, 0, 2, 2, 12, "#5a3a22");
+    i.box(2, 2, 12, 28, 28, 2, "#8a5a33", { top: "#9a6a3e" });
+    i.box(12, 12, 14, 8, 8, 1, "#ffffff");
+    for (const [x, y] of [[-3, 10], [31, 10], [12, -3], [12, 31]]) {
+      i.box(x, y, 0, 6, 6, 7, "#d9c19a");
+    }
+  },
+  island(i) {
+    i.box(1, 3, 0, 30, 10, 15, "#2b3a4a", { top: "#efefea" });
+    i.line([1, 13, 15], [31, 13, 15], "#b9b9b4");
+    for (const x of [6, 22]) {
+      i.box(x + 1, 15, 0, 1, 1, 9, "#c9ccd2", { noOutline: true });
+      i.box(x - 1, 13, 9, 5, 5, 2, "#d9c19a");
+    }
+  },
+  telescope(i) {
+    i.line([4, 4, 0], [8, 8, 10], "#3a3a3e");
+    i.line([12, 4, 0], [8, 8, 10], "#3a3a3e");
+    i.line([8, 13, 0], [8, 8, 10], "#3a3a3e");
+    i.box(7, 7, 10, 2, 2, 2, "#2b2b2e");
+    i.box(3, 6, 12, 12, 3, 3, "#f4f4f4", { top: "#ffffff" });
+    i.box(14, 5.5, 11.5, 2, 4, 4, "#2b2b2e");
+  },
+  fireplace(i) {
+    i.box(0, 1, 0, 32, 10, 22, "#e8e2d4", { top: "#f2ede1" });
+    i.quad([[4, 11, 3], [28, 11, 3], [28, 11, 16], [4, 11, 16]], "#1a1a1d", "#55555a");
+    i.box(-1, 0, 22, 34, 12, 2, "#5a3a22");
+  },
+  vending(i) {
+    i.box(1, 1, 0, 14, 14, 44, "#c0392b", { top: "#d64541" });
+    i.quad([[2, 15, 14], [11, 15, 14], [11, 15, 40], [2, 15, 40]], "#bfe3f2", "#7aa7bd");
+    for (let z = 18; z < 40; z += 6) for (let x = 3; x < 11; x += 3) i.box(x, 12, z, 2, 2, 3, ["#f1c40f", "#3498db", "#2ecc71", "#e67e22"][(x + z) % 4], { noOutline: true });
+    i.quad([[12, 15, 24], [14.5, 15, 24], [14.5, 15, 36], [12, 15, 36]], "#2b2b2e");
+    i.quad([[2, 15, 4], [11, 15, 4], [11, 15, 9], [2, 15, 9]], "#1a1a1d");
+  },
+  massage(i) {
+    i.box(2, 2, 0, 12, 12, 8, "#2b2b2e");
+    i.box(2, 2, 8, 12, 12, 4, "#3a3a3e", { top: "#4a4a50" });
+    i.box(11, 2, 12, 4, 12, 18, "#3a3a3e");
+    i.box(1, 1, 8, 3, 14, 8, "#2b2b2e");
+    i.box(4, 3, 0, 4, 10, 4, "#2b2b2e");
+  },
+  pingpong(i) {
+    for (const [x, y] of [[4, 4], [42, 4], [4, 26], [42, 26]]) i.box(x, y, 0, 2, 2, 12, "#2b2b2e");
+    i.box(2, 2, 12, 44, 28, 1.5, "#1f6b45", { top: "#2a8a5a" });
+    i.line([2, 16, 13.6], [46, 16, 13.6], "#ffffff");
+    i.box(23.5, 1, 13.5, 1, 30, 4, "#e8e8e8", { top: "#ffffff", outline: "#9a9a9a" });
+    i.line([2, 2, 13.6], [46, 2, 13.6], "#ffffff");
+  },
+  pooltable(i) {
+    for (const [x, y] of [[3, 3], [43, 3], [3, 27], [43, 27]]) i.box(x, y, 0, 3, 3, 12, "#3b2416");
+    i.box(1, 1, 12, 46, 30, 3, "#5a3420", { top: "#5a3420" });
+    i.quad([[4, 4, 15.05], [44, 4, 15.05], [44, 28, 15.05], [4, 28, 15.05]], "#1e7a46");
+    for (const [x, y] of [[4, 4], [24, 4], [44, 4], [4, 28], [24, 28], [44, 28]]) i.quad(octagon(x, y, 1.4, (u, v) => [u, v, 15.1]), "#111111");
+    for (const [x, y, c] of [[30, 14, "#f1c40f"], [32, 16, "#c0392b"], [32, 12, "#2e86c1"], [34, 14, "#111111"], [14, 16, "#ffffff"]] as [number, number, string][])
+      i.quad(octagon(x, y, 0.9, (u, v) => [u, v, 15.2]), c);
+    i.line([8, 22, 16], [28, 6, 18], "#c8a26a");
+  },
+  fountain(i) {
+    i.box(1, 1, 0, 30, 30, 6, "#d9d4c4", { top: "#e6e1d2" });
+    i.quad([[4, 4, 6.05], [28, 4, 6.05], [28, 28, 6.05], [4, 28, 6.05]], "#5bb8e0");
+    i.box(13, 13, 6, 6, 6, 10, "#d9d4c4");
+    i.box(10, 10, 16, 12, 12, 3, "#d9d4c4");
+    i.box(14.5, 14.5, 19, 3, 3, 6, "#d9d4c4");
+  },
+  hottub(i) {
+    i.box(1, 1, 0, 30, 30, 10, "#6b4426", { top: "#7a4b2a" });
+    i.quad([[4, 4, 10.05], [28, 4, 10.05], [28, 28, 10.05], [4, 28, 10.05]], "#5fd3e8");
+    for (const [x, y] of [[8, 9], [20, 14], [12, 22], [24, 24]]) i.quad(octagon(x, y, 1, (u, v) => [u, v, 10.1]), "#bff2fb");
+  },
+  yogamat(i) {
+    i.box(3, 2, 0, 10, 28, 0.6, "#7e57c2", { top: "#9575cd" });
+    i.box(3, 28, 0, 10, 3, 2, "#5e35b1");
+  },
+  punchbag(i) {
+    i.box(6, 6, 0, 4, 4, 1, "#2b2b2e");
+    i.line([8, 8, 44], [8, 8, 34], "#55555a");
+    i.box(4, 4, 8, 8, 8, 26, "#b0302c", { top: "#c94540" });
+    i.box(4, 4, 30, 8, 8, 2, "#1d1d1f", { noOutline: true });
+    i.box(4, 4, 12, 8, 8, 2, "#1d1d1f", { noOutline: true });
+    i.box(0, 0, 44, 16, 3, 2, "#2b2b2e");
+  },
+  pullup(i) {
+    for (const x of [1, 13]) {
+      i.box(x - 1, 2, 0, 4, 12, 1.5, "#2b2b2e");
+      i.box(x, 7, 1.5, 2, 2, 46, "#3a3a3e");
+    }
+    i.line([1, 8, 47], [15, 8, 47], "#c9ccd2");
+    i.box(5, 7, 46, 6, 2, 2, "#2b2b2e", { noOutline: true });
+  },
+  bike(i) {
+    i.box(4, 5, 0, 24, 6, 2, "#2b2b2e");
+    const plane = (u: number, z: number): P3 => [u, 9, z];
+    for (const cx of [7, 25]) {
+      i.quad(octagon(cx, 8, 6, plane), "#1d1d1f");
+      i.quad(octagon(cx, 8, 4.6, plane), "#cfd5db");
+      i.quad(octagon(cx, 8, 1, plane), "#2b2b2e");
+    }
+    i.line(plane(7, 8), plane(15, 9), "#e74c3c");
+    i.line(plane(15, 9), plane(25, 8), "#e74c3c");
+    i.line(plane(15, 9), plane(13, 18), "#e74c3c");
+    i.line(plane(13, 18), plane(23, 18), "#e74c3c");
+    i.line(plane(23, 18), plane(25, 8), "#e74c3c");
+    i.line(plane(13, 18), plane(12, 21), "#2b2b2e");
+    i.line(plane(10, 21), plane(14, 21), "#2b2b2e");
+    i.line(plane(23, 18), plane(24, 22), "#2b2b2e");
+    i.line(plane(22, 22), plane(26, 22), "#2b2b2e");
+  },
+  cactus(i) {
+    i.box(5, 5, 0, 6, 6, 6, "#c0623a");
+    i.box(6.5, 6.5, 6, 3, 3, 14, "#3c8d4a", { top: "#4fa95e" });
+    i.box(4, 7, 11, 2.5, 2, 5, "#3c8d4a");
+    i.box(9.5, 7, 13, 2.5, 2, 5, "#3c8d4a");
+  },
+  bonsai(i) {
+    i.box(3, 4, 0, 10, 8, 4, "#2f5d8a");
+    i.line([7, 8, 4], [9, 8, 10], "#5a3a22");
+    i.line([9, 8, 10], [6, 8, 13], "#5a3a22");
+    i.box(2, 5, 12, 7, 6, 3, "#3f8f45", { top: "#57ad5c" });
+    i.box(8, 4, 9, 6, 6, 3, "#3f8f45", { top: "#57ad5c" });
+  },
+  olivetree(i) {
+    i.box(3, 3, 0, 10, 10, 9, "#d9cfba");
+    i.box(7, 7, 9, 2, 2, 18, "#6b5a45");
+    for (const [x, y, z, s2] of [[2, 3, 24, 10], [5, 6, 30, 8], [4, 2, 34, 6], [8, 7, 26, 7]]) i.box(x, y, z, s2, s2, 5, "#7c9a5a", { top: "#93b26e" });
+  },
+  kilim(i) {
+    i.box(1, 1, 0, 30, 30, 0, "#a33b2a", { top: "#a33b2a" });
+    for (let k = 0; k < 4; k++) i.quad([[4 + k * 6, 6, 0], [7 + k * 6, 3, 0], [10 + k * 6, 6, 0], [7 + k * 6, 9, 0]], "#f2d24b");
+    i.box(4, 12, 0, 24, 8, 0, "#1d3557", { top: "#1d3557", noOutline: true });
+    for (let k = 0; k < 4; k++) i.quad([[4 + k * 6, 25, 0], [7 + k * 6, 22, 0], [10 + k * 6, 25, 0], [7 + k * 6, 28, 0]], "#f2d24b");
+  },
+  persian(i) {
+    i.box(1, 1, 0, 46, 30, 0, "#7a1f2b", { top: "#7a1f2b" });
+    i.box(4, 4, 0, 40, 24, 0, "#9e2a39", { top: "#9e2a39", noOutline: true });
+    i.quad([[24, 8, 0], [34, 16, 0], [24, 24, 0], [14, 16, 0]], "#1d3557");
+    i.quad([[24, 11, 0], [30, 16, 0], [24, 21, 0], [18, 16, 0]], "#e2c28a");
+    for (const [x, y] of [[8, 8], [40, 8], [8, 24], [40, 24]]) i.quad([[x, y - 2, 0], [x + 2, y, 0], [x, y + 2, 0], [x - 2, y, 0]], "#e2c28a");
+  },
+  /** Budgie cage on a stand. The bird itself is drawn by the room so it can fly. */
+  budgie(i) {
+    i.box(6, 6, 0, 4, 4, 1, "#2b2b2e");
+    i.box(7.5, 7.5, 1, 1, 1, 16, "#c9a227", { noOutline: true });
+    i.box(3, 3, 17, 10, 10, 1, "#c9a227");
+    for (let k = 0; k <= 4; k++) {
+      i.line([3 + k * 2.5, 13, 18], [3 + k * 2.5, 13, 32], "#c9a227");
+      i.line([13, 3 + k * 2.5, 18], [13, 3 + k * 2.5, 32], "#c9a227");
+    }
+    i.quad([[3, 13, 32], [8, 13, 36], [13, 13, 32]], "#e0c04a", "#a07e1a");
+    i.line([3, 13, 32], [8, 8, 36], "#c9a227");
+    i.line([13, 3, 32], [8, 8, 36], "#c9a227");
+    i.line([3, 13, 25], [13, 13, 25], "#a07e1a");
+  },
+  hamster(i) {
+    i.box(1, 3, 0, 14, 10, 2, "#2e86c1");
+    i.box(1, 3, 2, 14, 10, 9, "#d6f0ff20", { top: "#e8f7ff30", left: "#d6f0ff30", right: "#b9dcf030", outline: "#2e86c1" });
+    i.box(2, 4, 2, 12, 8, 1, "#e8d9a8", { noOutline: true });
+    const plane = (u: number, z: number): P3 => [u, 9, z];
+    i.quad(octagon(10, 7, 3.6, plane), "#f39c12", "#b9770e");
+    i.quad(octagon(10, 7, 2.4, plane), "#f7c46c");
+  },
+  turtle(i) {
+    i.box(1, 2, 0, 30, 12, 8, "#4a3a2a");
+    i.box(1, 2, 8, 30, 12, 12, "#7fd0ee40", { top: "#a8e2f560", left: "#7fd0ee50", right: "#5fb8d850", outline: "#2b6f8a" });
+    i.box(2, 3, 8, 28, 10, 5, "#3f9bc9", { noOutline: true });
+    i.box(20, 3, 8, 9, 9, 7, "#9a8a70", { noOutline: true });
+    i.box(3, 4, 8, 3, 2, 8, "#2f8a3e", { noOutline: true });
+  },
+  /** Corn snake terrarium with a heat lamp. The snake slithers (drawn by the room). */
+  snake(i) {
+    i.box(1, 2, 0, 30, 12, 6, "#2b2b2e");
+    i.box(1, 2, 6, 30, 12, 14, "#cfe8f240", { top: "#e8f7ff40", left: "#cfe8f250", right: "#b9dcf050", outline: "#2b2b2e" });
+    i.box(2, 3, 6, 28, 10, 2, "#d8b56a", { noOutline: true });
+    i.line([5, 10, 8], [16, 6, 14], "#6b4426");
+    i.box(22, 4, 8, 6, 5, 3, "#8a7f68", { noOutline: true });
+    i.box(4, 5, 20, 6, 6, 3, "#2b2b2e");
+    i.box(5.5, 6.5, 19, 3, 3, 1, "#ff9a3c", { noOutline: true });
   },
   pizza(i) {
     i.box(2, 3, 0, 12, 12, 2, "#c8a26a");
@@ -412,7 +653,9 @@ export interface BackgroundInput {
   wallpaper: string;
   floor: string;
   hour: number;
-  wallItems: { id: string; locked: boolean }[];
+  wallItems: { id: string; wall: "L" | "R"; u: number; locked: boolean }[];
+  curtains?: boolean;
+  ledStrip?: boolean;
 }
 
 function skyColor(hour: number) {
@@ -420,7 +663,7 @@ function skyColor(hour: number) {
 }
 
 /** Walls, floor, windows (sky follows the clock), the Kaaba picture and wall decor. */
-export function buildBackground({ spec, wallpaper, floor, hour, wallItems }: BackgroundInput): Raster {
+export function buildBackground({ spec, wallpaper, floor, hour, wallItems, curtains, ledStrip }: BackgroundInput): Raster {
   const r = new Raster(spec.W, spec.H);
   const iso = new Iso(r, spec.origin.x, spec.origin.y);
   const L = spec.n * TILE;
@@ -428,7 +671,6 @@ export function buildBackground({ spec, wallpaper, floor, hour, wallItems }: Bac
   const wp = WALLPAPERS[wallpaper] ?? WALLPAPERS["wp-sky"];
   const fl = FLOORS[floor] ?? FLOORS["fl-tile"];
 
-  // wall slabs (gives the caps and outlines), then paint the faces with the pattern
   iso.box(-4, 0, 0, 4, L, H, wp.base, { top: "#e8eef3", outline: "#4f5f6d" });
   iso.box(-4, -4, 0, L + 4, 4, H, wp.base, { top: "#e8eef3", outline: "#4f5f6d" });
   paintPlane(r, iso, (u, z) => [0, u, z], L, H, wp.left);
@@ -445,17 +687,37 @@ export function buildBackground({ spec, wallpaper, floor, hour, wallItems }: Bac
     }
 
   const sky = skyColor(hour);
-  if (spec.tier === "penthouse") drawSkyline(iso, sky, 56, 136, 14, 78);
-  else drawWindow(iso, sky, (u, z) => [u, 0, z], 70, 110, 28, 62);
-  if (spec.tier !== "studio") drawWindow(iso, sky, (u, z) => [0, u, z], 124, 152, 28, 60);
+  const wallAt = (wall: "L" | "R") => (u: number, z: number): P3 => (wall === "L" ? [0, u, z] : [u, 0, z]);
+  for (const w of reservedOnWalls(spec.tier)) {
+    const at = wallAt(w.wall);
+    if (w.kind === "kaaba") {
+      iso.quad([at(40, 32), at(66, 32), at(66, 58), at(40, 58)], "#c9a227", "#7a5f12");
+      iso.quad([at(42, 34), at(64, 34), at(64, 56), at(42, 56)], "#2b3a55");
+      iso.quad([at(46, 36), at(60, 36), at(60, 48), at(46, 48)], "#111111");
+      iso.quad([at(46, 45), at(60, 45), at(60, 46), at(46, 46)], "#d4af37");
+    } else if (w.kind === "door") {
+      iso.quad([at(w.u0, 0), at(w.u1, 0), at(w.u1, 70), at(w.u0, 70)], "#f5f5f5", "#7d8a94");
+      iso.quad([at(w.u0 + 2, 1), at(w.u1 - 2, 1), at(w.u1 - 2, 68), at(w.u0 + 2, 68)], sky);
+      iso.line(at((w.u0 + w.u1) / 2, 1), at((w.u0 + w.u1) / 2, 68), "#f5f5f5");
+      iso.quad([at(w.u0 + 2, 1), at(w.u1 - 2, 1), at(w.u1 - 2, 12), at(w.u0 + 2, 12)], "#6f7a84");
+    } else if (w.u1 - w.u0 > 60) drawSkyline(iso, sky, at, w.u0, w.u1, 14, Math.min(H - 8, 82));
+    else drawWindow(iso, sky, at, w.u0, w.u1, 28, 62);
+    if (curtains && w.kind !== "kaaba") {
+      const top = w.kind === "door" ? 72 : w.u1 - w.u0 > 60 ? Math.min(H - 6, 84) : 64;
+      const bottom = w.kind === "door" ? 0 : w.u1 - w.u0 > 60 ? 10 : 24;
+      iso.quad([at(w.u0 - 4, bottom), at(w.u0 + 4, bottom), at(w.u0 + 4, top), at(w.u0 - 4, top)], "#b23a48", "#6e1f2a");
+      iso.quad([at(w.u1 - 4, bottom), at(w.u1 + 4, bottom), at(w.u1 + 4, top), at(w.u1 - 4, top)], "#b23a48", "#6e1f2a");
+      for (const u of [w.u0 - 2, w.u0 + 1, w.u1 - 1, w.u1 + 2]) iso.line(at(u, bottom + 1), at(u, top - 1), "#8e2b38");
+      iso.line(at(w.u0 - 6, top + 1), at(w.u1 + 6, top + 1), "#3a3a3e");
+    }
+  }
+  if (ledStrip)
+    for (const wall of ["L", "R"] as const) {
+      const at = wallAt(wall);
+      iso.line(at(2, H - 3), at(L - 2, H - 3), "#c86bff");
+    }
 
-  // framed Kaaba picture on the left wall
-  iso.quad([[0, 40, 32], [0, 66, 32], [0, 66, 58], [0, 40, 58]], "#c9a227", "#7a5f12");
-  iso.quad([[0, 42, 34], [0, 64, 34], [0, 64, 56], [0, 42, 56]], "#2b3a55");
-  iso.quad([[0, 46, 36], [0, 60, 36], [0, 60, 48], [0, 46, 48]], "#111111");
-  iso.quad([[0, 46, 45], [0, 60, 45], [0, 60, 46], [0, 46, 46]], "#d4af37");
-
-  for (const w of wallItems) drawWallItem(iso, w.id, spec, w.locked);
+  for (const w of wallItems) drawWallItem(iso, w.id, wallAt(w.wall), w.wall, w.u, w.locked);
   return r;
 }
 
@@ -483,8 +745,7 @@ function drawWindow(iso: Iso, sky: string, at: (u: number, z: number) => P3, u0:
 }
 
 /** Floor-to-ceiling glass with a city skyline. */
-function drawSkyline(iso: Iso, sky: string, u0: number, u1: number, z0: number, z1: number) {
-  const at = (u: number, z: number): P3 => [u, 0, z];
+function drawSkyline(iso: Iso, sky: string, at: (u: number, z: number) => P3, u0: number, u1: number, z0: number, z1: number) {
   const night = sky === "#1d2550";
   iso.quad([at(u0, z0), at(u1, z0), at(u1, z1), at(u0, z1)], "#2b2f36");
   iso.quad([at(u0 + 2, z0 + 2), at(u1 - 2, z0 + 2), at(u1 - 2, z1 - 2), at(u0 + 2, z1 - 2)], sky);
@@ -492,74 +753,192 @@ function drawSkyline(iso: Iso, sky: string, u0: number, u1: number, z0: number, 
   let k = 0;
   while (u < u1 - 2) {
     const w = 6 + Math.floor(hash2(k, 7) * 8);
-    const h = 12 + Math.floor(hash2(k, 3) * 34);
+    const h = 12 + Math.floor(hash2(k, 3) * Math.min(40, z1 - z0 - 18));
     const u2 = Math.min(u1 - 2, u + w);
     const body = night ? (k % 2 ? "#1a1f33" : "#232a44") : k % 2 ? "#7d8ba3" : "#93a2ba";
     iso.quad([at(u, z0 + 2), at(u2, z0 + 2), at(u2, z0 + 2 + h), at(u, z0 + 2 + h)], body);
     for (let wu = u + 1.5; wu < u2 - 1; wu += 2.5)
-      for (let wz = z0 + 5; wz < z0 + h; wz += 3) {
+      for (let wz = z0 + 5; wz < z0 + h; wz += 3)
         if (hash2(wu * 3, wz * 5) < (night ? 0.45 : 0.25)) {
           const [px, py] = iso.proj(at(wu, wz));
           iso.r.set(px, py, night ? "#ffd86b" : "#c9d6e8");
         }
-      }
     u = u2 + 1;
     k++;
   }
-  for (const m of [u0 + (u1 - u0) / 3, u0 + (2 * (u1 - u0)) / 3]) iso.line(at(m, z0), at(m, z1), "#2b2f36");
+  const panes = Math.max(2, Math.round((u1 - u0) / 40));
+  for (let p = 1; p < panes; p++) {
+    const m = u0 + ((u1 - u0) * p) / panes;
+    iso.line(at(m, z0), at(m, z1), "#2b2f36");
+  }
 }
 
-/** Wall decor positions depend on the room size (bigger rooms have longer walls). */
-function drawWallItem(iso: Iso, id: string, spec: RoomSpec, locked: boolean) {
-  const R = (u: number, z: number): P3 => [u, 0, z];
-  const Lw = (u: number, z: number): P3 => [0, u, z];
+/** Every wall decoration, drawn from its left edge `u0` on whichever wall it hangs. */
+function drawWallItem(iso: Iso, id: string, at: (u: number, z: number) => P3, wall: "L" | "R", u0: number, locked: boolean) {
   const g = (c: string) => (locked ? greyOf(c) : c);
-  const pent = spec.tier === "penthouse";
+  const Q = (a: number, z0: number, b: number, z1: number, fill: string, edge?: string) =>
+    iso.quad([at(a, z0), at(b, z0), at(b, z1), at(a, z1)], g(fill), edge ? g(edge) : undefined);
+  const LN = (a: number, z0: number, b: number, z1: number, c: string) => iso.line(at(a, z0), at(b, z1), g(c));
+  const PXL = (u: number, z: number, c: string) => {
+    const [x, y] = iso.proj(at(u, z));
+    iso.r.set(x, y, g(c));
+  };
+  const OCT = (cu: number, cz: number, rr: number, c: string, edge?: string) => iso.quad(octagon(cu, cz, rr, at), g(c), edge ? g(edge) : undefined);
+  /** A box sticking out of the wall: along the wall `w`, out of the wall `d`, height `h`. */
+  const BX = (u: number, z: number, w: number, d: number, h: number, c: string) =>
+    wall === "R" ? iso.box(u, 0, z, w, d, h, g(c)) : iso.box(0, u, z, d, w, h, g(c));
+  const u = u0;
   switch (id) {
-    case "clock": {
-      const cu = pent ? 42 : 46;
-      iso.quad(octagon(cu, 56, 6.5, R), g("#f5f5f5"), g("#333333"));
-      iso.line(R(cu, 56), R(cu, 60), g("#222222"));
-      iso.line(R(cu, 56), R(cu + 3, 56), g("#c0392b"));
+    case "clock":
+      OCT(u + 7, 56, 6.5, "#f5f5f5", "#333333");
+      LN(u + 7, 56, u + 7, 60, "#222222");
+      LN(u + 7, 56, u + 10, 56, "#c0392b");
+      break;
+    case "nozero":
+      Q(u, 34, u + 18, 58, "#16161a", "#000000");
+      neonText(iso, at, u + 2, 55, "NO", g("#ffffff"));
+      neonText(iso, at, u + 2, 48, "ZERO", g("#ffd23f"));
+      neonText(iso, at, u + 2, 41, "DAYS", g("#ffffff"));
+      break;
+    case "nazar":
+      LN(u + 6, 62, u + 6, 54, "#7a5f12");
+      for (const zz of [60, 58]) PXL(u + 6, zz, "#2e86de");
+      OCT(u + 6, 47, 5.6, "#1f4fbf", "#0f2a66");
+      OCT(u + 6, 47, 4, "#ffffff");
+      OCT(u + 6, 47, 2.6, "#7fc8ff");
+      OCT(u + 6, 47, 1.2, "#111111");
+      break;
+    case "calligraphy":
+      Q(u, 34, u + 28, 54, "#c9a227", "#7a5f12");
+      Q(u + 2, 36, u + 26, 52, "#123d2b");
+      LN(u + 4, 42, u + 23, 42, "#e8c25a");
+      LN(u + 6, 42, u + 6, 48, "#e8c25a");
+      LN(u + 11, 42, u + 11, 46, "#e8c25a");
+      LN(u + 15, 42, u + 15, 49, "#e8c25a");
+      LN(u + 19, 42, u + 21, 47, "#e8c25a");
+      LN(u + 8, 39, u + 17, 39, "#e8c25a");
+      break;
+    case "corkboard":
+      Q(u, 34, u + 24, 54, "#7a4b2a", "#4a2f1c");
+      Q(u + 1.5, 35.5, u + 22.5, 52.5, "#c49a6c");
+      for (const [a, z, c] of [[3, 44, "#ffe066"], [11, 46, "#9be7ff"], [16, 38, "#ffadad"], [5, 37, "#caffbf"]] as [number, number, string][]) {
+        Q(u + a, z, u + a + 5, z + 5, c);
+        PXL(u + a + 2.5, z + 4.5, "#d63031");
+      }
+      break;
+    case "mirror":
+      Q(u, 24, u + 14, 62, "#c9a227", "#7a5f12");
+      Q(u + 1.5, 25.5, u + 12.5, 60.5, "#cfe6f2");
+      LN(u + 3, 40, u + 8, 55, "#ffffff");
+      LN(u + 5, 34, u + 10, 50, "#e8f5fb");
+      break;
+    case "dartboard":
+      OCT(u + 7, 48, 6.6, "#1a1a1a");
+      OCT(u + 7, 48, 5.4, "#f1e6c8");
+      OCT(u + 7, 48, 3.6, "#2e8b57");
+      OCT(u + 7, 48, 2.2, "#f1e6c8");
+      OCT(u + 7, 48, 0.9, "#d63031");
+      LN(u + 9, 50, u + 12, 53, "#f39c12");
+      break;
+    case "madinah":
+      Q(u, 30, u + 22, 58, "#f5f5f5", "#555555");
+      Q(u + 2, 32, u + 20, 56, "#9fd0ef");
+      Q(u + 2, 32, u + 20, 40, "#e9dfc9");
+      iso.quad(octagon(u + 11, 44, 4.5, at).slice(0, 5).concat([at(u + 6.5, 40), at(u + 15.5, 40)]), g("#2e9e57"));
+      Q(u + 16, 40, u + 18, 54, "#e9dfc9");
+      LN(u + 11, 48, u + 11, 51, "#d4af37");
+      break;
+    case "istanbul": {
+      Q(u, 32, u + 30, 56, "#3a2a20", "#1d140f");
+      Q(u + 1.5, 46, u + 28.5, 54.5, "#f6b26b");
+      Q(u + 1.5, 39, u + 28.5, 46, "#e07a5f");
+      Q(u + 1.5, 33.5, u + 28.5, 39, "#3d5a80");
+      const dark = "#2a1f2d";
+      Q(u + 3, 39, u + 13, 42, dark);
+      OCT(u + 8, 42, 3, dark);
+      LN(u + 4, 39, u + 4, 47, dark);
+      LN(u + 12, 39, u + 12, 47, dark);
+      Q(u + 19, 39, u + 22, 49, dark);
+      Q(u + 18.5, 49, u + 22.5, 51, dark);
+      PXL(u + 20.5, 52, dark);
+      LN(u + 24, 39, u + 28, 39, dark);
       break;
     }
-    case "shelf": {
-      const u = pent ? 140 : 114;
-      iso.box(u, 0, 44, 14, 5, 2, g("#7a4b2a"));
-      iso.box(u + 2, 1, 46, 3, 3, 5, g("#e0b33a"));
-      iso.box(u + 7, 1, 46, 2, 2, 7, g("#c9ccd2"));
-      iso.box(u + 10, 1, 46, 3, 3, 4, g("#cd7f32"));
+    case "bluemosque":
+      Q(u, 32, u + 24, 56, "#f5f5f5", "#555555");
+      Q(u + 1.5, 33.5, u + 22.5, 54.5, "#b9dcf2");
+      Q(u + 4, 33.5, u + 20, 40, "#7f93b5");
+      OCT(u + 12, 41, 4.2, "#7f93b5");
+      for (const m of [3, 6, 18, 21]) LN(u + m, 33.5, u + m, 50, "#6a7ea0");
+      PXL(u + 12, 46, "#d4af37");
       break;
-    }
-    case "neon": {
-      if (spec.tier === "studio") break;
-      const u0 = pent ? 160 : 132;
-      iso.quad([R(u0, 38), R(u0 + 26, 38), R(u0 + 26, 56), R(u0, 56)], g("#1b1b24"), g("#0d0d12"));
-      neonText(iso, R, u0 + 3, 53, "DISCI", g("#ff4fc3"));
-      neonText(iso, R, u0 + 3, 46, "PLINE", g("#ff4fc3"));
+    case "plantshelf":
+      BX(u, 40, 24, 5, 2, "#7a4b2a");
+      for (const [a, c] of [[2, "#c0623a"], [10, "#e8e2d4"], [18, "#c0623a"]] as [number, string][]) {
+        BX(u + a, 42, 4, 4, 4, c);
+        for (let k = 0; k < 6; k++) PXL(u + a + 1 + (k % 3), 41 - k * 1.6, k % 2 ? "#3aa34b" : "#2f8a3e");
+      }
       break;
-    }
-    case "madinah": {
-      iso.quad([Lw(10, 30), Lw(32, 30), Lw(32, 58), Lw(10, 58)], g("#f5f5f5"), g("#555555"));
-      iso.quad([Lw(12, 32), Lw(30, 32), Lw(30, 56), Lw(12, 56)], g("#9fd0ef"));
-      iso.quad([Lw(12, 32), Lw(30, 32), Lw(30, 40), Lw(12, 40)], g("#e9dfc9"));
-      iso.quad(octagon(21, 44, 4.5, Lw).slice(0, 5).concat([Lw(16.5, 40), Lw(25.5, 40)]), g("#2e9e57"));
-      iso.quad([Lw(26, 40), Lw(28, 40), Lw(28, 54), Lw(26, 54)], g("#e9dfc9"));
-      iso.line(Lw(21, 48), Lw(21, 51), g("#d4af37"));
+    case "worldmap":
+      Q(u, 34, u + 36, 56, "#2b2b2e", "#111111");
+      Q(u + 1.5, 35.5, u + 34.5, 54.5, "#4a90c2");
+      for (const [a, z0, b, z1] of [[4, 44, 11, 52], [8, 37, 12, 44], [15, 45, 21, 52], [16, 38, 21, 45], [22, 42, 31, 52], [27, 37, 31, 41]])
+        Q(u + a, z0, u + b, z1, "#6fbf73");
+      PXL(u + 18, 49, "#e74c3c");
       break;
-    }
-    case "calligraphy": {
-      iso.quad([Lw(82, 34), Lw(110, 34), Lw(110, 54), Lw(82, 54)], g("#c9a227"), g("#7a5f12"));
-      iso.quad([Lw(84, 36), Lw(108, 36), Lw(108, 52), Lw(84, 52)], g("#123d2b"));
-      const stroke = g("#e8c25a");
-      iso.line(Lw(86, 42), Lw(105, 42), stroke);
-      iso.line(Lw(88, 42), Lw(88, 48), stroke);
-      iso.line(Lw(93, 42), Lw(93, 46), stroke);
-      iso.line(Lw(97, 42), Lw(97, 49), stroke);
-      iso.line(Lw(101, 42), Lw(103, 47), stroke);
-      iso.line(Lw(90, 39), Lw(99, 39), stroke);
+    case "shelf":
+      BX(u, 44, 14, 5, 2, "#7a4b2a");
+      BX(u + 2, 46, 3, 3, 5, "#e0b33a");
+      BX(u + 7, 46, 2, 2, 7, "#c9ccd2");
+      BX(u + 10, 46, 3, 3, 4, "#cd7f32");
       break;
-    }
+    case "guitar":
+      LN(u + 6, 44, u + 6, 64, "#3a2a20");
+      Q(u + 5, 62, u + 7, 66, "#2b2b2e");
+      OCT(u + 6, 36, 5, "#c27c3a", "#5a3415");
+      OCT(u + 6, 43, 3.6, "#c27c3a", "#5a3415");
+      OCT(u + 6, 39, 1.4, "#1d140f");
+      LN(u + 6, 32, u + 6, 46, "#e8e2d4");
+      break;
+    case "ioniqposter":
+      Q(u, 32, u + 26, 56, "#101418", "#000000");
+      Q(u + 4, 40, u + 22, 44, "#f2f4f6");
+      Q(u + 7, 44, u + 19, 48, "#f2f4f6");
+      Q(u + 8, 44.5, u + 18, 47.5, "#2a3846");
+      OCT(u + 8, 40, 1.6, "#1a1a1a");
+      OCT(u + 18, 40, 1.6, "#1a1a1a");
+      for (let a = 5; a < 21; a += 2) PXL(u + a, 50.5, "#7fd3ff");
+      neonText(iso, at, u + 5, 37, "EV", g("#7fd3ff"));
+      break;
+    case "vinylwall":
+      for (let k = 0; k < 6; k++) {
+        const cu = u + 5 + (k % 3) * 10, cz = 54 - Math.floor(k / 3) * 11;
+        OCT(cu, cz, 4.4, "#141414", "#000000");
+        OCT(cu, cz, 1.6, ["#e74c3c", "#f1c40f", "#3498db", "#2ecc71", "#ff4fc3", "#ecf0f1"][k]);
+      }
+      break;
+    case "neon":
+      Q(u, 38, u + 26, 56, "#1b1b24", "#0d0d12");
+      neonText(iso, at, u + 3, 53, "DISCI", g("#ff4fc3"));
+      neonText(iso, at, u + 3, 46, "PLINE", g("#ff4fc3"));
+      break;
+    case "curtains":
+      Q(u, 24, u + 8, 64, "#b23a48", "#6e1f2a");
+      Q(u + 22, 24, u + 30, 64, "#b23a48", "#6e1f2a");
+      Q(u + 8, 30, u + 22, 60, "#9fd0ef", "#7d8a94");
+      LN(u - 2, 65, u + 32, 65, "#3a3a3e");
+      break;
+    case "ledstrip":
+      LN(u, 60, u + 40, 60, "#c86bff");
+      LN(u, 59, u + 40, 59, "#e3b3ff");
+      break;
+    case "walltv":
+      Q(u, 28, u + 40, 54, "#111114", "#000000");
+      Q(u + 1.5, 29.5, u + 38.5, 52.5, "#0c1018");
+      LN(u + 6, 52, u + 18, 31, "#1c2433");
+      LN(u + 10, 52, u + 22, 31, "#161d29");
+      PXL(u + 37, 29.5, "#ff3b3b");
+      break;
   }
 }
 
@@ -572,7 +951,9 @@ function greyOf(c: string) {
 const FONT: Record<string, string[]> = {
   D: ["110", "101", "101", "101", "110"], I: ["111", "010", "010", "010", "111"], S: ["011", "100", "010", "001", "110"],
   C: ["011", "100", "100", "100", "011"], P: ["110", "101", "110", "100", "100"], L: ["100", "100", "100", "100", "111"],
-  N: ["101", "111", "111", "101", "101"], E: ["111", "100", "110", "100", "111"],
+  N: ["101", "111", "111", "101", "101"], E: ["111", "100", "110", "100", "111"], O: ["010", "101", "101", "101", "010"],
+  Z: ["111", "001", "010", "100", "111"], R: ["110", "101", "110", "101", "101"], A: ["010", "101", "111", "101", "101"],
+  Y: ["101", "101", "010", "010", "010"], V: ["101", "101", "101", "101", "010"],
 };
 
 function neonText(iso: Iso, at: (u: number, z: number) => P3, u0: number, zTop: number, text: string, color: string) {
@@ -617,11 +998,9 @@ export function findPath(n: number, from: { tx: number; ty: number }, to: { tx: 
   return path;
 }
 
-export const WALL_ITEMS = ["clock", "shelf", "neon", "madinah", "calligraphy"];
-
 /** Catalog thumbnail for a wall item, cropped to the item itself. */
 export function wallItemPreview(id: string): Sprite {
-  return makeSprite((iso) => drawWallItem(iso, id, roomSpec("apartment"), false), 420, 210, 230);
+  return makeSprite((iso) => drawWallItem(iso, id, (u, z) => [u, 0, z], "R", 4, false), 160, 60, 120);
 }
 
 /** A tiny room corner showing a wallpaper, floor or room size. */

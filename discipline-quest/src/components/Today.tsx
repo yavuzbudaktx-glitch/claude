@@ -96,7 +96,7 @@ export function TodaySummary() {
         </div>
       </div>
       <div className="px-3 pb-2 pt-1 text-base text-[var(--muted)]">
-        {day.relapses > 0 ? "Relapsed today. Tawbah, then back to it tomorrow." : done === items.length ? "Everything done. A perfect day if you stay clean." : "Tap the rug, the bed or the kitchen in your room, or use the cards below."}
+        {day.relapses > 0 ? "Relapsed today. Back to it tomorrow." : done === items.length ? "Everything done. A perfect day if you stay clean." : "Tap the rug, the bed or the kitchen in your room, or use the cards below."}
       </div>
       {quests.length > 0 && (
         <div className="border-t-2 border-black bg-[var(--panel-2)] px-3 py-2">
@@ -142,7 +142,7 @@ export function WakeCard() {
             className={`btn w-full py-2 text-xl ${win === "late" ? "btn-red" : "btn-green"}`}
             disabled={win === "too-early"}
             onClick={() =>
-              act((s, n) => wakeCheckIn(s, n), win === "late" ? { kind: "late", say: "Overslept... tomorrow." } : { kind: "wake", say: "Good morning! Bismillah." })
+              act((s, n) => wakeCheckIn(s, n), win === "late" ? { kind: "late", say: "Overslept... tomorrow." } : { kind: "wake", say: "Good morning!" })
             }
           >
             {win === "too-early" ? `Opens at 0${RULES.wakeEarliestHour}:00` : win === "late" ? `I'm up (late, -${RULES.wake.missCoins})` : "I'm up!"}
@@ -171,7 +171,7 @@ export function PrayersCard() {
             className={`btn flex-col px-0 py-2 ${day.prayers[p] ? "btn-green" : ""}`}
             aria-pressed={day.prayers[p]}
             onClick={() =>
-              act((s, n) => setPrayer(s, n, p, !day.prayers[p]), day.prayers[p] ? undefined : { kind: "pray", say: prayed === 4 ? "All 5! Alhamdulillah" : `${label(p)}. Alhamdulillah` })
+              act((s, n) => setPrayer(s, n, p, !day.prayers[p]), day.prayers[p] ? undefined : { kind: "pray", say: prayed === 4 ? "All 5 today!" : `${label(p)} ✓` })
             }
           >
             <span className={`text-lg ${p === "dhuhr" && friday ? "text-[15px]" : ""}`}>{label(p)}</span>
@@ -204,7 +204,7 @@ export function PurityCard() {
         <div className="h-full bg-[linear-gradient(#5b8fe0,#3d6fd1)]" style={{ width: `${nextCar ? Math.min(100, (streaks.clean / nextCar.cleanDays) * 100) : 100}%` }} />
       </div>
       {day.urgesResisted > 0 && <p className="text-base">Urges beaten today: {day.urgesResisted}</p>}
-      {day.relapses > 0 && <p className="text-base text-[var(--bad)]">Relapsed today. Tomorrow is day 1. Make tawbah and go again.</p>}
+      {day.relapses > 0 && <p className="text-base text-[var(--bad)]">Relapsed today. Tomorrow is day 1. Go again.</p>}
       <div className="grid grid-cols-2 gap-2">
         <button className="btn btn-blue py-2" onClick={() => setUrge(true)}>
           I feel an urge
@@ -239,7 +239,7 @@ export function PurityCard() {
             <button
               className="btn btn-red"
               onClick={() => {
-                act((s, n) => relapse(s, n), { kind: "relapse", say: "Astaghfirullah. Again." });
+                act((s, n) => relapse(s, n), { kind: "relapse", say: "Back to day one." });
                 setConfirm(false);
               }}
             >
@@ -352,7 +352,7 @@ export function GymCard() {
       </div>
       <button
         className={`btn w-full py-2 ${day.gym ? "btn-green" : ""}`}
-        onClick={() => act((s, n) => setGym(s, n, !day.gym), day.gym ? undefined : { kind: "gym", say: "Gym done. Light weight!" })}
+        onClick={() => act((s, n) => setGym(s, n, !day.gym), day.gym ? undefined : { kind: "gym", say: "Light weight, baby!" })}
       >
         {day.gym ? "Went to the gym today ✓" : "I went to the gym today"}
       </button>
@@ -368,7 +368,7 @@ export function QuranCard() {
   const pages = day.quranPages ?? 0;
   const goal = game.settings.quranGoal;
   const total = game.stats.quranPages % 604;
-  const set = (n: number) => act((s, now) => setQuranPages(s, now, n), n > pages && n >= goal && pages < goal ? { kind: "quran", say: "Alhamdulillah." } : undefined);
+  const set = (n: number) => act((s, now) => setQuranPages(s, now, n), n > pages && n >= goal && pages < goal ? { kind: "quran", say: "Pages done." } : undefined);
   return (
     <Card title={`Quran · ${pages}/${goal} pages`} icon="scroll" right={<Streak n={streaks.quran} />}>
       <div className="flex items-center gap-2">
@@ -413,7 +413,7 @@ export function BedtimeCard() {
           <button
             className={`btn w-full py-2 ${win === "late" ? "btn-red" : "btn-blue"}`}
             disabled={win === "too-early"}
-            onClick={() => act((s, n) => bedCheckIn(s, n), win === "late" ? { kind: "late", say: "Late night..." } : { kind: "bed", say: "Good night. Bismika Allahumma." })}
+            onClick={() => act((s, n) => bedCheckIn(s, n), win === "late" ? { kind: "late", say: "Late night..." } : { kind: "bed", say: "Lights out. Good night." })}
           >
             {win === "too-early" ? `Opens at ${RULES.bed.opensHour}:00` : win === "late" ? `Going to bed (late, -${RULES.bed.missCoins})` : "Going to bed"}
           </button>
@@ -431,13 +431,13 @@ export function RamadanCard() {
       <div className="grid grid-cols-2 gap-2">
         <button
           className={`btn py-2 ${day.fasted ? "btn-green" : ""}`}
-          onClick={() => act((s, n) => setFast(s, n, !day.fasted), day.fasted ? undefined : { kind: "pray", say: "Fasting. Bismillah." })}
+          onClick={() => act((s, n) => setFast(s, n, !day.fasted), day.fasted ? undefined : { kind: "pray", say: "Fasting today." })}
         >
           {day.fasted ? "Fasting ✓" : "I'm fasting"}
         </button>
         <button
           className={`btn py-2 ${day.taraweeh ? "btn-green" : ""}`}
-          onClick={() => act((s, n) => setTaraweeh(s, n, !day.taraweeh), day.taraweeh ? undefined : { kind: "pray", say: "Taraweeh done." })}
+          onClick={() => act((s, n) => setTaraweeh(s, n, !day.taraweeh), day.taraweeh ? undefined : { kind: "pray", say: "Taraweeh ✓" })}
         >
           {day.taraweeh ? "Taraweeh ✓" : "Taraweeh"}
         </button>

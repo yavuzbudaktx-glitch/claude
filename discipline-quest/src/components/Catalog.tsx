@@ -4,7 +4,7 @@ import { CATALOG, EQUIP_SLOT, ITEMS, type CatalogItem, type Category } from "@/e
 import { buyItem, canBuy, isLocked, owns, type BuyResult } from "@/engine/engine";
 import { levelFor } from "@/engine/rules";
 import type { GameState } from "@/engine/types";
-import { WALL_ITEMS, buildPiece, stylePreview, wallItemPreview } from "@/game/furniture";
+import { buildPiece, stylePreview, wallItemPreview } from "@/game/furniture";
 import { lockedCopy } from "@/game/iso";
 import { renderCat } from "@/game/sprites/cat";
 import { carSprite } from "@/game/sprites/cars";
@@ -14,12 +14,14 @@ import RasterCanvas from "./RasterCanvas";
 
 const TABS: { label: string; cats: Category[] }[] = [
   { label: "Furniture", cats: ["furniture"] },
-  { label: "Faith", cats: ["faith"] },
-  { label: "Wall decor", cats: ["wall"] },
-  { label: "Walls & floors", cats: ["wallpaper", "floor"] },
-  { label: "Rugs", cats: ["rug"] },
-  { label: "Rooms", cats: ["room"] },
+  { label: "Fitness", cats: ["fitness"] },
+  { label: "Plants", cats: ["plants"] },
   { label: "Pets", cats: ["pet"] },
+  { label: "Wall decor", cats: ["wall"] },
+  { label: "Rugs", cats: ["floorrug", "rug"] },
+  { label: "Faith", cats: ["faith"] },
+  { label: "Walls & floors", cats: ["wallpaper", "floor"] },
+  { label: "Rooms", cats: ["room"] },
 ];
 
 export function previewFor(item: CatalogItem, locked = false) {
@@ -27,12 +29,13 @@ export function previewFor(item: CatalogItem, locked = false) {
   switch (item.category) {
     case "wallpaper": return lock(stylePreview({ wallpaper: item.id })).r;
     case "floor": return lock(stylePreview({ floor: item.id })).r;
-    case "room": return lock(stylePreview({ size: item.id === "room-penthouse" ? 56 : item.id === "room-apartment" ? 46 : 36 })).r;
+    case "room": return lock(stylePreview({ size: { "room-studio": 30, "room-apartment": 38, "room-penthouse": 46, "room-loft": 54, "room-villa": 62 }[item.id] ?? 36 })).r;
     case "rug": return lock(buildPiece(`prayerrug:${item.id}`)).r;
     case "car": return lock(carSprite(item.id)).r;
     case "fixture": return buildPiece(item.id === "prayerrug" ? "prayerrug:rug-green" : item.id === "kitchen" ? "kitchen:wall" : item.id).r;
-    case "pet": return renderCat("sit");
-    default: return lock(WALL_ITEMS.includes(item.id) ? wallItemPreview(item.id) : buildPiece(item.id)).r;
+    case "pet": return item.id === "cat" ? renderCat("sit") : lock(buildPiece(item.id)).r;
+    case "wall": return lock(wallItemPreview(item.id)).r;
+    default: return lock(buildPiece(item.id)).r;
   }
 }
 

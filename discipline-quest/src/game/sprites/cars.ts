@@ -69,48 +69,63 @@ export function drawIoniq(i: Iso) {
   wheel(i, y1 + 0.5, 54, 5.3, ioniqRim);
 }
 
-// ---------- 2016 Infiniti Q50, Hagane Blue with a black roof ----------
+// ---------- 2016 Infiniti Q50, light Hagane Blue with a black roof ----------
 
 function q50Rim(i: Iso, plane: (u: number, z: number) => P3, cx: number, cz: number, r: number) {
-  i.quad(octagonOn(plane, cx, cz, r), "#30343a");
+  i.quad(octagonOn(plane, cx, cz, r), "#2a2e34");
   for (let k = 0; k < 5; k++) {
     const a = (k / 5) * Math.PI * 2 - Math.PI / 2;
-    i.line(plane(cx, cz), plane(cx + Math.cos(a) * r, cz + Math.sin(a) * r), "#b8bec5");
+    for (const off of [-0.18, 0.18])
+      i.line(plane(cx, cz), plane(cx + Math.cos(a + off) * r, cz + Math.sin(a + off) * r), "#d3d8de");
   }
-  dot(i, plane(cx, cz), "#e5e8eb");
+  i.quad(octagonOn(plane, cx, cz, 1.2), "#9aa1a9");
+  dot(i, plane(cx, cz), "#3b4048");
 }
 
 export function drawQ50(i: Iso) {
-  const blue = "#2c4a7c";
-  const glass = "#1a2230";
-  const y0 = 3, y1 = 28;
-  farWheel(i, y0 + 1, 14, 5);
-  farWheel(i, y0 + 1, 54, 5);
-  // low sedan body: short deck, long hood sweeping down to the nose
-  prism(i, [[0, 4], [0, 12], [2, 14.2], [13, 14.6], [48, 14.6], [62, 12.8], [67, 10.5], [67, 4.5], [64, 2.5], [3, 2.5]], y0, y1, blue, { outline: "#14243f" });
-  // fastback greenhouse with a black roof
-  prism(i, [[11, 14.6], [22, 20.5], [40, 20.8], [50, 14.6]], y0 + 2, y1 - 2, "#141518", { side: glass, front: "#3c5470", slope: "#3c5470", top: "#1b1c20", outline: "#0b0c0f" });
-  const s = near(y1 - 2);
-  i.quad([s(12.5, 14.8), s(21.5, 20), s(25, 20), s(22, 14.8)], "#141518");
-  i.line(s(31, 14.8), s(31, 20.6), "#0b0c0f");
-  // chrome window trim, Infiniti shoulder line, handles, mirror
-  i.line(s(12, 14.8), s(22, 20.3), "#c9ced4");
-  i.line(s(22, 20.3), s(40, 20.6), "#c9ced4");
-  i.line(s(40, 20.6), s(49, 14.8), "#c9ced4");
+  const blue = "#4f86c6";
+  const hi = "#8fb8e6";
+  const roof = "#15161a";
+  const glass = "#1b2433";
+  const y0 = 2.5, y1 = 28.5;
+  farWheel(i, y0 + 1, 15, 5.2);
+  farWheel(i, y0 + 1, 53, 5.2);
+  // low, wide body: short trunk with a lip, long hood that dips to a rounded nose
+  prism(i, [[0, 5], [0.5, 12.4], [2.5, 14.2], [11, 14.6], [46, 14.4], [58, 13.2], [64, 11.6], [67, 10], [67.5, 7], [66, 3.6], [62, 2.6], [4, 2.6]], y0, y1, blue, {
+    outline: "#1e3a5f", top: "#6a9bd4", front: "#3b6aa3",
+  });
+  // fastback greenhouse, black roof
+  prism(i, [[10, 14.6], [23, 20.4], [37, 20.6], [47.5, 14.4]], y0 + 2.2, y1 - 2.2, roof, { side: glass, front: "#4a6a8e", slope: "#4a6a8e", top: "#1e1f24", outline: "#0a0b0d" });
+  const s = near(y1 - 2.2);
+  // Infiniti crescent-cut C-pillar and black B-pillar, chrome window line
+  i.quad([s(11, 14.8), s(19, 19.4), s(20.5, 17.6), s(18.5, 15.6), s(16, 14.8)], roof);
+  i.line(s(30, 14.8), s(30.5, 20.3), "#0a0b0d");
+  i.line(s(15.5, 14.8), s(47, 14.8), "#d6dbe1");
+  i.line(s(23, 20.2), s(37, 20.4), "#d6dbe1");
+  // sculpted shoulder line from headlight to taillight, a lower crease, flush chrome handles, body-colour mirror
   const b = near(y1);
-  i.line(b(6, 11.5), b(58, 11), shade(blue, 0.35));
-  i.line(b(25, 12.5), b(28, 12.5), "#c9ced4");
-  i.line(b(37, 12.5), b(40, 12.5), "#c9ced4");
-  i.box(46, y1, 14, 3, 2.5, 2, blue);
-  i.quad([b(0, 10), b(4, 10), b(3, 12), b(0, 12)], "#b0182a");
-  // front: double-arch grille with chrome, slanted "eye" headlights
-  const f = (u: number, z: number): P3 => [67, u, z];
-  i.quad([f(y0 + 8, 4.5), f(y1 - 8, 4.5), f(y1 - 7, 9.5), f(y0 + 7, 9.5)], "#15171a", "#c9ced4");
-  for (let z = 5.5; z < 9.5; z += 1.5) i.line(f(y0 + 8, z), f(y1 - 8, z), "#3a3e45");
-  i.quad([f(y0 + 1, 9.5), f(y0 + 6, 10), f(y0 + 6, 11), f(y0 + 1, 10.5)], "#e8f2ff", "#9aa6b5");
-  i.quad([f(y1 - 6, 10), f(y1 - 1, 9.5), f(y1 - 1, 10.5), f(y1 - 6, 11)], "#e8f2ff", "#9aa6b5");
-  wheel(i, y1 + 0.5, 14, 5, q50Rim, "#1a2235");
-  wheel(i, y1 + 0.5, 54, 5, q50Rim, "#1a2235");
+  i.line(b(3, 12.2), b(63, 11.2), hi);
+  i.line(b(14, 7.5), b(50, 7), "#3b6aa3");
+  i.line(b(24, 11.6), b(27, 11.6), "#e3e7eb");
+  i.line(b(35, 11.6), b(38, 11.6), "#e3e7eb");
+  i.box(44, y1, 14, 3, 2.4, 2, blue, { outline: "#1e3a5f" });
+  // slim LED taillight wrapping the corner
+  i.quad([b(0.5, 10.8), b(6, 11.2), b(5.5, 12.3), b(0.8, 12.2)], "#c4142a", "#7a0c1a");
+  // front: double-arch wavy grille with chrome surround and mesh, emblem, "human eye" LEDs, lower intake
+  const f = (u: number, z: number): P3 => [67.2, u, z];
+  const mid = (y0 + y1) / 2;
+  const grille: P3[] = [f(y0 + 8, 4.6), f(y1 - 8, 4.6), f(y1 - 6.5, 8.8), f(mid + 3, 9.9), f(mid, 9.2), f(mid - 3, 9.9), f(y0 + 6.5, 8.8)];
+  i.quad(grille, "#121418", "#d6dbe1");
+  for (let z = 5.6; z < 9.2; z += 1.2)
+    for (let u = y0 + 8; u < y1 - 8; u += 1.6) dot(i, f(u + ((z * 10) % 2 ? 0.8 : 0), z), "#5b636d");
+  i.quad(octagonOn(f, mid, 8.6, 0.9), "#e3e7eb");
+  i.quad([f(y0 + 0.8, 9.6), f(y0 + 6, 10.2), f(y0 + 7, 11.4), f(y0 + 1, 11.4)], "#e9f4ff", "#7f8c99");
+  i.quad([f(y1 - 6, 10.2), f(y1 - 0.8, 9.6), f(y1 - 1, 11.4), f(y1 - 7, 11.4)], "#e9f4ff", "#7f8c99");
+  i.line(f(y0 + 1.5, 10.4), f(y0 + 5.5, 10.8), "#ffffff");
+  i.line(f(y1 - 5.5, 10.8), f(y1 - 1.5, 10.4), "#ffffff");
+  i.quad([f(y0 + 3, 2.8), f(y1 - 3, 2.8), f(y1 - 4, 4), f(y0 + 4, 4)], "#1a1c20");
+  wheel(i, y1 + 0.5, 15, 5.2, q50Rim, "#2b3e57");
+  wheel(i, y1 + 0.5, 53, 5.2, q50Rim, "#2b3e57");
 }
 
 // ---------- 2016 Mini Cooper, cream with black bonnet stripes ----------

@@ -2,6 +2,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { CATALOG, DEFAULT_EQUIPPED } from "../src/engine/catalog";
 import { createInitialState } from "../src/engine/engine";
 import { autoPlace } from "../src/engine/placement";
+import { autoWall } from "../src/engine/wall";
 import type { GameState } from "../src/engine/types";
 import { buildBackground, buildPiece, hasPiece } from "../src/game/furniture";
 import { lockedCopy } from "../src/game/iso";
@@ -18,9 +19,11 @@ function richState(room: string, extra: Partial<GameState["equipped"]> = {}, glo
   s.equipped = { ...DEFAULT_EQUIPPED, room, ...extra };
   s.inventory = CATALOG.filter((c) => !c.starter).map((c, k) => ({ uid: c.id, itemId: c.id, acquiredAt: k, lockDaysLeft: 0 }));
   for (const c of CATALOG) {
-    if (!c.size || c.starter) continue;
-    const spot = autoPlace(s, c.id);
+    if (c.starter) continue;
+    const spot = c.size ? autoPlace(s, c.id) : null;
     if (spot) s.placements.push(spot);
+    const hang = autoWall(s, c.id);
+    if (hang) s.wallPlacements.push(hang);
   }
   s.gloomy = gloomy;
   return s;
@@ -29,7 +32,7 @@ function richState(room: string, extra: Partial<GameState["equipped"]> = {}, glo
 function render(s: GameState, hour: number, name: string, body: BodyStage = 0) {
   const layout = roomLayout(s);
   const r = new Raster(layout.spec.W, layout.spec.H);
-  r.blit(buildBackground({ spec: layout.spec, wallpaper: s.equipped.wallpaper, floor: s.equipped.floor, hour, wallItems: layout.wallItems }), 0, 0);
+  r.blit(buildBackground({ spec: layout.spec, wallpaper: s.equipped.wallpaper, floor: s.equipped.floor, hour, wallItems: layout.wallItems, curtains: layout.curtains, ledStrip: layout.ledStrip }), 0, 0);
   const avatar = { fx: 4, fy: 4, facing: "front" as const, pose: "idle" as const, mirror: false, outfit: s.equipped.outfit as OutfitId, body };
   for (const d of sceneDrawables(layout, avatar, { fx: 3, fy: 4, pose: "sit", mirror: false })) {
     if (d.kind === "piece") {
@@ -46,14 +49,14 @@ function render(s: GameState, hour: number, name: string, body: BodyStage = 0) {
   return s;
 }
 
-const studio = render(richState("room-studio"), 12, "room-studio");
-console.log("studio placed:", studio.placements.map((p) => p.itemId).join(","));
+render(richState("room-studio"), 12, "room-studio");
 render(richState("room-apartment", { wallpaper: "wp-brick", floor: "fl-oak", rug: "rug-red", outfit: "fit-hoodie" }), 12, "room-apartment", 2);
-const pent = render(richState("room-penthouse", { wallpaper: "wp-zellige", floor: "fl-marble", rug: "rug-gold", outfit: "fit-gym" }), 12, "room-penthouse", 4);
-console.log("penthouse placed:", pent.placements.length);
+render(richState("room-loft", { wallpaper: "wp-wood", floor: "fl-oak", rug: "rug-blue", outfit: "fit-gym" }), 12, "room-loft", 3);
+const villa = render(richState("room-villa", { wallpaper: "wp-zellige", floor: "fl-marble", rug: "rug-gold", outfit: "fit-thobe" }), 21, "room-villa", 4);
+console.log("villa placed:", villa.placements.length, "wall:", villa.wallPlacements.length);
 
 // piece sheet (incl. variants)
-const keys = ["kitchen:wall", "kitchen:wall-open", "arcade", "tv", "recordplayer", "clarinet", "gymbench", "sofa", "desk", "chair", "treadmill", "bookshelf", "coffee", "aquarium", "lamp", "plant", "monstera", "rehal", "lantern", "trophycase", "prayerrug:rug-blue", "bed"];
+const keys = ["kitchen:wall", "kitchen:wall-open", "arcade", "tv", "recordplayer", "clarinet", "gymbench", "sofa", "desk", "chair", "treadmill", "bookshelf", "coffee", "aquarium", "lamp", "plant", "monstera", "rehal", "lantern", "prayerrug:rug-blue", "bed"];
 const cell = 110;
 const sheet = new Raster(cell * 6, cell * Math.ceil(keys.length / 6));
 keys.forEach((k, i) => {

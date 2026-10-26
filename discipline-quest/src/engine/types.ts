@@ -56,6 +56,13 @@ export interface OwnedItem {
   lockDaysLeft: number;
 }
 
+/** Where a wall decoration hangs: which wall (L = left, R = right) and how far along it (world units). */
+export interface WallPlaced {
+  itemId: ItemId;
+  wall: "L" | "R";
+  u: number;
+}
+
 /** Where a piece of furniture sits. rot 1 = mirrored (footprint w/d swapped). */
 export interface PlacedItem {
   itemId: ItemId;
@@ -127,6 +134,8 @@ export interface Settings {
   bedtime: string;
   quranGoal: number;
   ramadan: boolean;
+  /** Room lights (only matters in the evening). Bedtime turns them off, waking up turns them on. */
+  lights: boolean;
   notifications: boolean;
   sound: boolean;
 }
@@ -150,7 +159,7 @@ export interface Body {
 }
 
 export interface GameState {
-  version: 3;
+  version: 4;
   startDate: string;
   /** Last calendar date whose misses/rewards have been applied. */
   lastSettled: string | null;
@@ -163,6 +172,7 @@ export interface GameState {
   customHabits: CustomHabit[];
   inventory: OwnedItem[];
   placements: PlacedItem[];
+  wallPlacements: WallPlaced[];
   equipped: Equipped;
   body: Body;
   /** First dates that new trackers can charge for (so starting mid-week or mid-day is fair). */

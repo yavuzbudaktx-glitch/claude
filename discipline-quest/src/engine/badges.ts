@@ -76,6 +76,9 @@ export const BADGES: BadgeDef[] = [
   B("level-20", "Level 20", "general", "crown", "Reach level 20.", 400, 0, (s) => [lvl(s), 20]),
   B("collector-5", "Decorator", "general", "bag", "Own 5 items.", 40, 40, (s) => [owned(s), 5]),
   B("collector-20", "Collector", "general", "bag", "Own 20 items.", 200, 150, (s) => [owned(s), 20]),
+  B("pets-3", "Zookeeper", "general", "star", "Own 3 pets.", 150, 120, (s) => [["cat", "budgie", "hamster", "turtle", "snake"].filter((id) => has(s, id)).length, 3]),
+  B("loft", "Moving Up", "general", "crown", "Move into the Loft.", 300, 200, (s) => [has(s, "room-loft"), 1]),
+  B("villa", "Villa Life", "general", "crown", "Move into the Villa.", 600, 400, (s) => [has(s, "room-villa"), 1]),
   B("q50", "Second Car", "general", "car", "Unlock the Q50 (30 clean days).", 100, 100, (s) => [has(s, "car-q50"), 1]),
   B("ioniq", "Electric", "general", "car", "Unlock the Ioniq 5 (90 clean days).", 300, 200, (s) => [has(s, "car-ioniq5"), 1]),
 ];
