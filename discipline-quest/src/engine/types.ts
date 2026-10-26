@@ -25,6 +25,10 @@ export interface DayLog {
   urgesResisted: number;
   relapses: number;
   custom: Record<string, boolean>;
+  /** The day's 3 quest ids, picked when the day starts. */
+  quests?: string[];
+  /** Quest ids already paid out for this day. */
+  questsDone?: string[];
 }
 
 export interface CustomHabit {
@@ -34,16 +38,8 @@ export interface CustomHabit {
   archived?: boolean;
 }
 
-export type ItemId =
-  | "plant"
-  | "lamp"
-  | "bookshelf"
-  | "tv"
-  | "sofa"
-  | "aquarium"
-  | "arcade"
-  | "car"
-  | "pony";
+/** Any catalog id (see catalog.ts). */
+export type ItemId = string;
 
 export interface OwnedItem {
   uid: string;
@@ -58,7 +54,23 @@ export interface Streaks {
   wake: number;
   clean: number;
   diet: number;
+  /** Days where everything was done. */
+  perfect: number;
   custom: Record<string, number>;
+}
+
+export interface LifetimeStats {
+  prayers: number;
+  fajr: number;
+  fullPrayerDays: number;
+  cleanDays: number;
+  urges: number;
+  wakeOnTime: number;
+  dietDays: number;
+  mealsOnPlan: number;
+  perfectDays: number;
+  quests: number;
+  bought: number;
 }
 
 export interface GameEvent {
@@ -68,15 +80,32 @@ export interface GameEvent {
   kind: "good" | "bad" | "info";
 }
 
+/** Things the UI should celebrate once, then dismiss. */
+export type InboxEntry =
+  | { kind: "badge"; id: string; at: number }
+  | { kind: "level"; level: number; at: number }
+  | { kind: "unlock"; id: ItemId; at: number };
+
 export interface Settings {
   /** "HH:MM" */
   wakeTarget: string;
   wakeGraceMin: number;
   notifications: boolean;
+  sound: boolean;
+}
+
+/** One equipped choice per style slot. */
+export interface Equipped {
+  outfit: ItemId;
+  wallpaper: ItemId;
+  floor: ItemId;
+  rug: ItemId;
+  room: ItemId;
+  paint: ItemId;
 }
 
 export interface GameState {
-  version: 1;
+  version: 2;
   startDate: string;
   /** Last calendar date whose misses/rewards have been applied. */
   lastSettled: string | null;
@@ -85,8 +114,14 @@ export interface GameState {
   xp: number;
   streaks: Streaks;
   best: Streaks;
+  stats: LifetimeStats;
   customHabits: CustomHabit[];
   inventory: OwnedItem[];
+  equipped: Equipped;
+  badges: Record<string, number>;
+  inbox: InboxEntry[];
+  /** Catalog ids the player has already seen (for "NEW" tags). */
+  seen: ItemId[];
   /** Room goes dark and messy after a relapse or a day with zero prayers. */
   gloomy: boolean;
   settings: Settings;

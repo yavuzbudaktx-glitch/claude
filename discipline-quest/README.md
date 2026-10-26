@@ -15,8 +15,17 @@ A Habbo-style pixel room that reflects how disciplined you are. Your avatar walk
 | Custom habits | Add your own daily habits in Settings. +5 when done, −5 when missed. |
 
 - Days you don't open the app still count as full misses.
-- Coins can go negative. While in debt the shop is closed.
-- **Pony**: all 5 prayers for 14 days in a row. **Red convertible**: 30 clean days.
+- Coins can go negative. While in debt the catalog is closed.
+- **Hyundai Ioniq 5** (Atlas White) unlocks at 30 clean days, Gravity Gold paint at 90.
+
+## Progression
+
+- **Catalog**: about 50 items across furniture, a faith corner, wall decor, wallpapers, floors, prayer rugs, car paint and a cat. Many are gated by level.
+- **Rooms**: Studio (8×8) → Apartment (10×10, second window) → Penthouse (12×12, city skyline). Some furniture needs a bigger room.
+- **Wardrobe**: six outfits (coat, hoodie, gym, thobe + kufi, leather jacket, navy suit).
+- **Badges**: 29 badges for prayer, purity, mornings, diet and general milestones. Each pays coins and XP.
+- **Daily quests**: three bonus quests a day, the same all day. Undoing the work takes the reward back.
+- **Room life**: tap the rug, bed or kitchen to log things. The avatar prays (takbir, qiyam, sitting), sleeps until you check in, and the room gets darker at night with lamps and screens glowing.
 
 ## Tech
 
@@ -27,7 +36,7 @@ There are no image assets. The avatar, pony, furniture and room are all drawn in
 - `src/game/sprites/avatar.ts` – the avatar, drawn as pixel grids (colors in `palette.ts`)
 - `src/game/iso.ts` – pixel-exact isometric box rasterizer
 - `src/game/furniture.ts` – every piece of furniture, the room and the layout
-- `src/engine/` – pure game rules and tests (`engine.test.ts`)
+- `src/engine/` – pure game rules, catalog, badges, quests and save migration, with tests
 
 ## Run
 
@@ -36,7 +45,8 @@ npm install
 npm run dev               # http://localhost:3000
 npm test                  # engine tests
 npm run build             # production build + service worker
-npm run preview-sprites   # renders sprite sheets to .preview/
+npm run preview-sprites   # renders rooms + catalog to .preview/
+npm run build:single      # one self-contained HTML page in dist/
 npm run icons             # regenerates PWA icons from the avatar
 ```
 

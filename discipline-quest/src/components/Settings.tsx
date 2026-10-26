@@ -4,7 +4,9 @@ import { addCustomHabit, archiveCustomHabit, isGameState, updateSettings } from 
 import { dateKey } from "@/engine/dates";
 import { getNow } from "@/lib/clock";
 import { useGame } from "@/store/useGame";
+import { SFX } from "@/lib/sound";
 import Dialog from "./Dialog";
+import PixelIcon from "./PixelIcon";
 
 export default function Settings() {
   const game = useGame((s) => s.game);
@@ -84,7 +86,7 @@ export default function Settings() {
       </section>
 
       <section className="panel">
-        <div className="panel-head">Wake-up & reminders</div>
+        <div className="panel-head">Wake-up, reminders & sound</div>
         <div className="space-y-2 p-3">
           <label className="flex items-center justify-between gap-2">
             <span>Wake target</span>
@@ -99,9 +101,21 @@ export default function Settings() {
             <span>Grace minutes</span>
             <span className="text-lg">{game.settings.wakeGraceMin}</span>
           </label>
-          <button className={`btn w-full py-2 ${game.settings.notifications ? "btn-green" : ""}`} onClick={toggleNotifications}>
-            Reminders: {game.settings.notifications ? "on" : "off"}
-          </button>
+          <div className="grid grid-cols-2 gap-2">
+            <button className={`btn py-2 ${game.settings.notifications ? "btn-green" : ""}`} onClick={toggleNotifications}>
+              Reminders: {game.settings.notifications ? "on" : "off"}
+            </button>
+            <button
+              className={`btn py-2 ${game.settings.sound ? "btn-green" : ""}`}
+              onClick={() => {
+                const on = !game.settings.sound;
+                act((s) => updateSettings(s, { sound: on }));
+                if (on) SFX.good();
+              }}
+            >
+              <PixelIcon name="sound" size={14} /> Sound: {game.settings.sound ? "on" : "off"}
+            </button>
+          </div>
           <p className="text-base opacity-75">
             Wake-up and 21:00 diet reminders fire while the app is open or recently backgrounded. Install it to your home screen for the best results.
           </p>

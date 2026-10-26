@@ -23,7 +23,13 @@ export default function Stats() {
   const live = liveStreaks(game, now);
   const days = Array.from({ length: 35 }, (_, i) => addDays(today, i - 34));
 
+  const weekScore = (offset: number) =>
+    Array.from({ length: 7 }, (_, i) => addDays(today, -i - offset)).reduce((n, k) => n + (game.days[k] && k >= game.startDate ? score(game.days[k]) : 0), 0);
+  const thisWeek = weekScore(0);
+  const lastWeek = weekScore(7);
+
   const rows: [string, number, number][] = [
+    ["Perfect days", game.streaks.perfect, game.best.perfect],
     ["Prayers (all 5)", live.prayers, game.best.prayers],
     ["Wake on time", live.wake, game.best.wake],
     ["Porn-free", live.clean, game.best.clean],
@@ -33,6 +39,26 @@ export default function Stats() {
 
   return (
     <div className="space-y-3">
+      <section className="panel">
+        <div className="panel-head">This week</div>
+        <div className="grid grid-cols-3 gap-2 p-3 text-center">
+          <div>
+            <div className="font-pixel text-xl tabular-nums">{thisWeek}</div>
+            <div className="text-base text-[var(--muted)]">points / 28</div>
+          </div>
+          <div>
+            <div className="font-pixel text-xl tabular-nums">{lastWeek}</div>
+            <div className="text-base text-[var(--muted)]">last week</div>
+          </div>
+          <div>
+            <div className={`font-pixel text-xl tabular-nums ${thisWeek >= lastWeek ? "text-[var(--good)]" : "text-[var(--bad)]"}`}>
+              {thisWeek >= lastWeek ? "+" : ""}
+              {thisWeek - lastWeek}
+            </div>
+            <div className="text-base text-[var(--muted)]">change</div>
+          </div>
+        </div>
+      </section>
       <section className="panel">
         <div className="panel-head">Streaks</div>
         <table className="w-full text-lg">
@@ -78,6 +104,27 @@ export default function Stats() {
           </div>
           <p className="mt-2 text-base opacity-75">Each day scores 0–4: all prayers, on-time wake-up, diet kept, porn-free.</p>
         </div>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">Lifetime</div>
+        <dl className="grid grid-cols-2 gap-x-4 gap-y-0.5 px-3 py-2 text-lg">
+          {([
+            ["Prayers", game.stats.prayers],
+            ["Fajr", game.stats.fajr],
+            ["Clean days", game.stats.cleanDays],
+            ["Urges beaten", game.stats.urges],
+            ["On-time mornings", game.stats.wakeOnTime],
+            ["Diet days", game.stats.dietDays],
+            ["Quests done", game.stats.quests],
+            ["Perfect days", game.stats.perfectDays],
+          ] as [string, number][]).map(([k, v]) => (
+            <div key={k} className="flex justify-between border-b border-black/10">
+              <dt>{k}</dt>
+              <dd className="tabular-nums">{v}</dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
       <section className="panel">

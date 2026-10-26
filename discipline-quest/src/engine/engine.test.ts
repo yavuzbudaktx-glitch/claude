@@ -18,6 +18,10 @@ import {
 import { RULES, levelFor } from "./rules";
 import { PRAYERS, type GameState } from "./types";
 
+/** Coins excluding badge and quest bonuses, so rule math stays checkable. */
+const base = (s: GameState) =>
+  s.coins - s.log.filter((e) => /^(Badge earned|Quest done|Quest undone|Reached level)/.test(e.text)).reduce((n, e) => n + (e.coins ?? 0), 0);
+
 const at = (d: string, hm = "12:00") => new Date(`${d}T${hm}:00`);
 
 function perfectDay(s: GameState, d: string): GameState {
@@ -31,20 +35,20 @@ describe("prayers", () => {
   it("rewards each prayer plus an all-5 bonus, and reverses on uncheck", () => {
     let s = createInitialState(at("2026-01-01"));
     for (const p of PRAYERS) s = setPrayer(s, at("2026-01-01"), p, true);
-    expect(s.coins).toBe(5 * RULES.prayer.coins + RULES.allPrayersBonus.coins);
+    expect(base(s)).toBe(5 * RULES.prayer.coins + RULES.allPrayersBonus.coins);
     s = setPrayer(s, at("2026-01-01"), "isha", false);
-    expect(s.coins).toBe(4 * RULES.prayer.coins);
+    expect(base(s)).toBe(4 * RULES.prayer.coins);
   });
 
   it("charges each missed prayer at end of day and breaks the streak", () => {
     let s = createInitialState(at("2026-01-01"));
     s = perfectDay(s, "2026-01-01");
     s = setPrayer(s, at("2026-01-02"), "fajr", true);
-    const before = s.coins;
+    const before = base(s);
     s = ensureToday(s, at("2026-01-03"));
     expect(s.streaks.prayers).toBe(0);
     // 4 missed prayers, wake miss, diet miss, +clean day
-    expect(s.coins - before).toBe(-4 * RULES.prayer.missCoins - RULES.wake.missCoins - RULES.diet.missCoins + RULES.cleanDay.coins);
+    expect(base(s) - before).toBe(-4 * RULES.prayer.missCoins - RULES.wake.missCoins - RULES.diet.missCoins + RULES.cleanDay.coins);
   });
 
   it("goes gloomy after a day with zero prayers and recovers after a clean day", () => {
@@ -69,7 +73,7 @@ describe("wake-up", () => {
     let s = createInitialState(at("2026-01-01"));
     s = wakeCheckIn(s, at("2026-01-01", "09:30"));
     s = wakeCheckIn(s, at("2026-01-01", "09:31"));
-    expect(s.coins).toBe(-RULES.wake.missCoins);
+    expect(base(s)).toBe(-RULES.wake.missCoins);
     expect(s.days["2026-01-01"].wake).toBe("late");
   });
 });
@@ -87,16 +91,16 @@ describe("diet", () => {
     let s = createInitialState(at("2026-01-01"));
     s = dietCheckIn(s, at("2026-01-01", "19:00"));
     s = logMeal(s, at("2026-01-01", "22:00"), "pizza", false);
-    expect(s.coins).toBe(-RULES.diet.missCoins);
+    expect(base(s)).toBe(-RULES.diet.missCoins);
     s = logMeal(s, at("2026-01-01", "23:00"), "more pizza", false);
-    expect(s.coins).toBe(-RULES.diet.missCoins);
+    expect(base(s)).toBe(-RULES.diet.missCoins);
   });
 });
 
 describe("porn relapse", () => {
   it("resets clean streak, charges coins, locks newest item until 7 clean days", () => {
     let s = createInitialState(at("2026-01-01"));
-    s = { ...s, coins: 500 };
+    s = { ...s, coins: 500, xp: 10_000 };
     s = buyItem(s, at("2026-01-01"), "plant");
     s = buyItem(s, at("2026-01-01", "13:00"), "lamp");
     s = ensureToday(s, at("2026-01-03"));
@@ -116,7 +120,7 @@ describe("porn relapse", () => {
   it("caps urge rewards per day", () => {
     let s = createInitialState(at("2026-01-01"));
     for (let i = 0; i < 8; i++) s = resistUrge(s, at("2026-01-01"));
-    expect(s.coins).toBe(RULES.urge.maxPerDay * RULES.urge.coins);
+    expect(base(s)).toBe(RULES.urge.maxPerDay * RULES.urge.coins);
     expect(s.days["2026-01-01"].urgesResisted).toBe(8);
   });
 });
@@ -126,22 +130,24 @@ describe("shop and unlocks", () => {
     let s = createInitialState(at("2026-01-01"));
     s = wakeCheckIn(s, at("2026-01-01", "10:00"));
     expect(canBuy(s, "plant")).toBe("debt");
-    expect(canBuy(s, "car")).toBe("not-for-sale");
+    expect(canBuy(s, "ioniq5")).toBe("not-for-sale");
   });
 
-  it("unlocks the pony after 14 perfect prayer days and the car after 30 clean days", () => {
+  it("unlocks the Ioniq 5 after 30 clean days", () => {
     let s = createInitialState(at("2026-01-01"));
     for (let d = 1; d <= 30; d++) {
       const key = `2026-01-${String(d).padStart(2, "0")}`;
       s = perfectDay(s, key);
       if (d === 14) {
         s = ensureToday(s, at("2026-01-15"));
-        expect(s.inventory.some((i) => i.itemId === "pony")).toBe(true);
-        expect(s.inventory.some((i) => i.itemId === "car")).toBe(false);
+        expect(s.inventory.some((i) => i.itemId === "ioniq5")).toBe(false);
       }
     }
     s = ensureToday(s, at("2026-01-31"));
-    expect(s.inventory.some((i) => i.itemId === "car")).toBe(true);
+    expect(s.inventory.some((i) => i.itemId === "ioniq5")).toBe(true);
+    expect(s.inbox.some((e) => e.kind === "unlock" && e.id === "ioniq5")).toBe(true);
+    expect(s.badges["prayers-30"]).toBeTruthy();
+    expect(s.badges["perfect-7"]).toBeTruthy();
     expect(s.streaks.wake).toBe(30);
     expect(liveStreaks(s, at("2026-01-31")).diet).toBe(30);
   });
@@ -150,7 +156,7 @@ describe("shop and unlocks", () => {
     let s = createInitialState(at("2026-01-01"));
     s = ensureToday(s, at("2026-01-04"));
     // 3 days × (5 prayers + wake + diet) misses, but 3 clean days
-    expect(s.coins).toBe(3 * (-5 * RULES.prayer.missCoins - RULES.wake.missCoins - RULES.diet.missCoins + RULES.cleanDay.coins));
+    expect(base(s)).toBe(3 * (-5 * RULES.prayer.missCoins - RULES.wake.missCoins - RULES.diet.missCoins + RULES.cleanDay.coins));
   });
 });
 

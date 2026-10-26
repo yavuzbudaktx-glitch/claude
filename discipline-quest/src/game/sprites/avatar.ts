@@ -1,150 +1,371 @@
 import { Raster, gridRaster, paintGrid } from "../raster";
-import { AVATAR_PALETTE as P } from "./palette";
 
 export type Facing = "front" | "back";
-export type Pose = "idle" | "walk1" | "walk2" | "pray" | "celebrate" | "sad";
-export type Mood = "neutral" | "happy" | "sad";
+export type Pose = "idle" | "walk1" | "walk2" | "pray" | "takbir" | "kneel" | "sit" | "celebrate" | "sad" | "blink";
+export type Mood = "neutral" | "happy" | "sad" | "closed";
+export type OutfitId = "fit-coat" | "fit-hoodie" | "fit-gym" | "fit-thobe" | "fit-leather" | "fit-suit";
 
-export const AVATAR_W = 24;
+export const AVATAR_W = 26;
 export const AVATAR_H = 48;
 /** Pixel in the sprite that sits on the floor point. */
-export const AVATAR_FOOT = { x: 12, y: 45 };
+export const AVATAR_FOOT = { x: 13, y: 46 };
+
+/** Face and hair colors, picked from your photo. */
+const BODY: Record<string, string> = {
+  K: "#25170f", // outline
+  H: "#3a271c", // hair
+  h: "#634634", // hair highlight
+  d: "#24170f", // hair shadow
+  S: "#f0c9a4", // skin
+  s: "#d9a882", // skin shade
+  r: "#bd8a66", // deep shade
+  B: "#2b1b12", // brows
+  W: "#fbf6ee", // eye white
+  E: "#4a2a16", // iris
+  M: "#a8604f", // lips
+  m: "#c9826f", // lower lip
+  T: "#d9b192", // stubble
+  t: "#7fb6e6", // tear
+};
+
+interface OutfitStyle {
+  torso: "open" | "closed" | "suit";
+  arm: "long" | "short";
+  legs: "pants" | "shorts" | "robe";
+  kufi?: boolean;
+  colors: Record<string, string>;
+}
+
+/** C main, c shade, x detail, N inner layer, Z center detail, P/p pants, O/o shoes. */
+export const OUTFITS: Record<OutfitId, OutfitStyle> = {
+  "fit-coat": {
+    torso: "open", arm: "long", legs: "pants",
+    colors: { C: "#4b4b51", c: "#36363b", x: "#67676e", N: "#17171b", Z: "#c9ccd2", P: "#2c2c33", p: "#1e1e24", O: "#111114", o: "#3a3a42" },
+  },
+  "fit-hoodie": {
+    torso: "closed", arm: "long", legs: "pants",
+    colors: { C: "#8d9198", c: "#6f737a", x: "#7c8088", N: "#5c6066", Z: "#f2f2f2", P: "#35507a", p: "#283d5e", O: "#f4f4f4", o: "#c9c9c9" },
+  },
+  "fit-gym": {
+    torso: "closed", arm: "short", legs: "shorts",
+    colors: { C: "#1d1d21", c: "#111114", x: "#1d1d21", N: "#f0c9a4", Z: "#1d1d21", P: "#5b5f66", p: "#474b51", O: "#f4f4f4", o: "#e04848" },
+  },
+  "fit-thobe": {
+    torso: "closed", arm: "long", legs: "robe", kufi: true,
+    colors: { C: "#f6f4ee", c: "#dcd8cd", x: "#f6f4ee", N: "#e8e4d8", Z: "#c9c4b6", P: "#f6f4ee", p: "#dcd8cd", O: "#7a5236", o: "#5b3b25" },
+  },
+  "fit-leather": {
+    torso: "open", arm: "long", legs: "pants",
+    colors: { C: "#26221f", c: "#171412", x: "#3a3430", N: "#f4f4f4", Z: "#f4f4f4", P: "#2d3a52", p: "#202a3c", O: "#3b2416", o: "#24160d" },
+  },
+  "fit-suit": {
+    torso: "suit", arm: "long", legs: "pants",
+    colors: { C: "#26324f", c: "#1b2439", x: "#3b4a70", N: "#f7f7f7", Z: "#7a1f2b", P: "#26324f", p: "#1b2439", O: "#0e0e10", o: "#2c2c30" },
+  },
+};
 
 const HAIR_TOP = [
-  "...KKKKKKKKK....",
-  ".KKhhhhhhHHHKK..",
-  "KHhhhHHHHHhhhHK.",
-  "KHHHHHHHhhHHhHHK",
-  "KHHhhHHHHHHHHhHK",
-  "KHHHHHHHHHHHHHHK",
+  ".....KKKKKKK......",
+  "...KKhhhhhhhKK....",
+  "..KhhhhHHHHhhhK...",
+  ".KHhhHHHHHHHHhhKK.",
+  "KHHHHHHHHHhhhHHHHK",
+  "KHHdHHHHHHHHHhHHHK",
+  "KHdHHHHHHHHHHHHHdK",
+  "KHHHHHHHHHHHHHHHHK",
 ];
 
 function headFront(mood: Mood): string[] {
-  const brows = mood === "sad" ? "KHHHSSSBBSSSSBBK" : "KHHHSSBBBSSSBBSK";
-  const eyes = mood === "sad" ? "KHsssSSEESSSSESK" : "KHsssSSEESSSSESK";
+  const brows = mood === "sad" ? "KHHHHSSSBBBSSBBSSK" : "KHHHHSSBBBBSSBBBSK";
+  const lids = mood === "closed" ? "KHHHsSSSSSSSSSSSSK" : "KHHHsSSKKKSSSKKSSK";
+  const eyes = mood === "closed" ? "KHsrsSSKKKSSSKKSSK" : mood === "happy" ? "KHsrsSSKEESSSKESSK" : "KHsrsSSWEESSSWESSK";
+  const cheek = mood === "sad" ? "KHsrsSSSSSSSSsStSK" : "KHsrsSSSSSSSSsSSSK";
   const mouth =
-    mood === "happy" ? ".KHSSSSSSSMMMMSK" : mood === "sad" ? ".KHSSSSSSSSSMMSK" : ".KHSSSSSSSSMMSSK";
-  const under = mood === "sad" ? "KHsSsSStSSSSsStK" : "KHsSsSSSSSSSsSSK";
+    mood === "happy" ? "..KTsSSSSKWWWKSSK." : mood === "sad" ? "..KTsSSSSSSMMSSSK." : "..KTsSSSSSMMMSSSK.";
+  const lip =
+    mood === "happy" ? "..KTTsSSSSKKKSTTK." : mood === "sad" ? "..KTTsSSSSMSSMTTK." : "..KTTsSSSSSmSSTTK.";
   return [
     ...HAIR_TOP,
-    "KHHHHHHHSSSSSHHK",
-    "KHHHHHSSSSSSSHHK",
+    "KdHHHHHHHSSSSSHHHK",
+    "KdHHHHSSSSSSSSSSHK",
     brows,
-    "KHHsSSSSSSSSSSSK",
+    lids,
     eyes,
-    under,
-    ".KHsSSSSSSSSssSK",
+    cheek,
+    ".KHssSSSSSSSSrSSSK",
+    ".KHsSSSSSSSSSSSSSK",
     mouth,
-    "..KTSSSSSSTTTTK.",
-    "...KTTTTTTTTTK..",
-    "....KKKKKKKKK...",
+    lip,
+    "...KTTTSSSSSTTTK..",
+    "....KKTTTTTTTKK...",
+    "......KKKKKKK.....",
   ];
 }
 
 const HEAD_BACK = [
   ...HAIR_TOP,
-  "KHHHHHHHHHHHHHHK",
-  "KHHHhHHHHHHHHHHK",
-  "KHHHHHHHHHHHHHHK",
-  "KHHHHHHHHHHHsSHK",
-  "KHHHHHHHHhHHsSHK",
-  "KHHHHHHHHHHHHHHK",
-  ".KHHHHHHHHHHHHHK",
-  ".KHHHHHHHHHHHHHK",
-  "..KHHHHHHHHHHHK.",
-  "...KsSSSSSSSsK..",
-  "....KKKKKKKKK...",
+  "KHHHHHHHHHHHHHHHHK",
+  "KHHHhHHHHHHHHHHHHK",
+  "KHHHHHHHHHHHHHHHHK",
+  "KHHHHHHHHHHHHHsSHK",
+  "KHHHHHHHhHHHHHsrHK",
+  "KHHHHHHHHHHHHHHHHK",
+  ".KHHHHHHHHHHHHHHHK",
+  ".KHHHHHHHdHHHHHHHK",
+  "..KdHHHHHHHHHHHdK.",
+  "..KKSSSSSSSSSSSK..",
+  "...KsSSSSSSSSsK...",
+  "....KSSSSSSSSK....",
+  "......KKKKKKK.....",
 ];
 
-const TORSO_FRONT = [
-  "....KNNNNK....",
-  "..KKCNNNNCKK..",
-  ".KCCcNNZNcCCK.",
-  "KCxCcNNZNcCxCK",
-  "KCCCcNNZNcCCCK",
-  "KCCxcNNZNcxCCK",
-  "KCCCcNNZNcCCCK",
-  "KCxCcNNZNcCCxK",
-  "KCCCcNNZNcCCCK",
-  "KCCCcNNZNcCxCK",
-  "KCxCcNNZNcCCCK",
-  "KCCCcNNZNcCCCK",
-  "KCCCcNNZNcxCCK",
-  "KCxCCcNZcCCCCK",
-  "KCCCCcNZcCCxCK",
-  "KcCCCcNNcCCCcK",
-  "KKKKKKKKKKKKKK",
+/** Sits over the hair from row 2; rows 0-1 of hair are hidden when worn. */
+const KUFI = [
+  "...KKKKKKKKKKK....",
+  "..KWWWWWWWWWWWK...",
+  ".KWWWwWWWwWWWWWKK.",
+  "KWWWWWWWWWWWWWWWWK",
+  "KwWwWwWwWwWwWwWwWK",
+  "KKKKKKKKKKKKKKKKKK",
 ];
+const KUFI_COLORS = { K: "#9c968a", W: "#fbfaf6", w: "#d9d4c8" };
 
-const TORSO_BACK = [
-  "....KNNNNK....",
-  "..KKCCCCCCKK..",
-  ".KCCCCCCCCCCK.",
-  "KCxCCCCCCCCxCK",
-  "KCCCCCxCCCCCCK",
-  "KCCxCCCCCCxCCK",
-  "KCCCCCCCCCCCCK",
-  "KCxCCCCCCxCCxK",
-  "KCCCCCCcCCCCCK",
-  "KCCCCCCcCCCxCK",
-  "KCxCCCCcCCCCCK",
-  "KCCCCCCcCCCCCK",
-  "KCCCCCCcCCxCCK",
-  "KCxCCCCcCCCCCK",
-  "KCCCCCCcCCCxCK",
-  "KcCCCCCcCCCCcK",
-  "KKKKKKKKKKKKKK",
-];
+const TORSO: Record<OutfitStyle["torso"], { front: string[]; back: string[] }> = {
+  open: {
+    front: [
+      "....KNNNNK....",
+      "..KKCNNNNCKK..",
+      ".KCCcNNZNcCCK.",
+      "KCxCcNNZNcCxCK",
+      "KCCCcNNZNcCCCK",
+      "KCCxcNNZNcxCCK",
+      "KCCCcNNZNcCCCK",
+      "KCxCcNNZNcCCxK",
+      "KCCCcNNZNcCCCK",
+      "KCCCcNNZNcCxCK",
+      "KCxCcNNZNcCCCK",
+      "KCCCcNNZNcCCCK",
+      "KCCCcNNZNcxCCK",
+      "KCxCCcNZcCCCCK",
+      "KCCCCcNZcCCxCK",
+      "KcCCCcNNcCCCcK",
+      "KKKKKKKKKKKKKK",
+    ],
+    back: [
+      "....KNNNNK....",
+      "..KKCCCCCCKK..",
+      ".KCCCCCCCCCCK.",
+      "KCxCCCCCCCCxCK",
+      "KCCCCCxCCCCCCK",
+      "KCCxCCCCCCxCCK",
+      "KCCCCCCCCCCCCK",
+      "KCxCCCCCCxCCxK",
+      "KCCCCCCcCCCCCK",
+      "KCCCCCCcCCCxCK",
+      "KCxCCCCcCCCCCK",
+      "KCCCCCCcCCCCCK",
+      "KCCCCCCcCCxCCK",
+      "KCxCCCCcCCCCCK",
+      "KCCCCCCcCCCxCK",
+      "KcCCCCCcCCCCcK",
+      "KKKKKKKKKKKKKK",
+    ],
+  },
+  closed: {
+    front: [
+      "...KCCCCCCK...",
+      "..KCcNNNNcCK..",
+      ".KCCCcZNZcCCK.",
+      "KCCCCCZCZCCCCK",
+      "KCCCCCZCZCCCCK",
+      "KCCCCCCCCCCCCK",
+      "KCCCCCCCCCCCcK",
+      "KCCCCCCCCCCCcK",
+      "KCCCCCCCCCCCcK",
+      "KCCcxxxxxxcCcK",
+      "KCCcCCCCCCcCcK",
+      "KCCcCCCCCCcCcK",
+      "KCCcxxxxxxcCcK",
+      "KccCCCCCCCCccK",
+      "KcxxxxxxxxxxcK",
+      "KcxxxxxxxxxxcK",
+      "KKKKKKKKKKKKKK",
+    ],
+    back: [
+      "...KCCCCCCK...",
+      "..KCCCCCCCCK..",
+      ".KCCCcccccCCK.",
+      "KCCCCcccccCCCK",
+      "KCCCCCcccCCCCK",
+      "KCCCCCCCCCCCCK",
+      "KCCCCCCCCCCCcK",
+      "KCCCCCCCCCCCcK",
+      "KCCCCCCCCCCCcK",
+      "KCCCCCCCCCCCcK",
+      "KCCCCCCCCCCCcK",
+      "KCCCCCCCCCCCcK",
+      "KCCCCCCCCCCCcK",
+      "KccCCCCCCCCccK",
+      "KcxxxxxxxxxxcK",
+      "KcxxxxxxxxxxcK",
+      "KKKKKKKKKKKKKK",
+    ],
+  },
+  suit: {
+    front: [
+      "....KNNNNK....",
+      "..KKCNZZNCKK..",
+      ".KCCCNZZNCCCK.",
+      "KCCCcNZZNcCCCK",
+      "KCCCCcZZcCCCCK",
+      "KCCCCCcZcCCCCK",
+      "KCCCCCCcCCCCCK",
+      "KCCCCCCxCCCCCK",
+      "KCCCCCCcCCCCCK",
+      "KCCCCCCxCCCCCK",
+      "KCccCCCcCCCccK",
+      "KCCCCCCcCCCCCK",
+      "KCCCCCcCcCCCCK",
+      "KCCCCcCCCcCCCK",
+      "KCCCCcCCCcCCCK",
+      "KcCCcCCCCCcCcK",
+      "KKKKKKKKKKKKKK",
+    ],
+    back: [
+      "....KNNNNK....",
+      "..KKCCCCCCKK..",
+      ".KCCCCCCCCCCK.",
+      "KCCCCCCCCCCCCK",
+      "KCCCCCCCCCCCCK",
+      "KCCCCCCCCCCCCK",
+      "KCCCCCCcCCCCCK",
+      "KCCCCCCcCCCCCK",
+      "KCCCCCCcCCCCCK",
+      "KCCCCCCcCCCCCK",
+      "KCCCCCCcCCCCCK",
+      "KCCCCCCcCCCCCK",
+      "KCCCCCCcCCCCCK",
+      "KCCCCCcKcCCCCK",
+      "KCCCCCcKcCCCCK",
+      "KcCCCCcKcCCCcK",
+      "KKKKKKKKKKKKKK",
+    ],
+  },
+};
 
-const ARM_DOWN = [
-  ".KK.", "KCCK", "KCxK", "KCCK", "KCCK", "KCCK", "KCxK", "KCCK",
-  "KCCK", "KcCK", "KccK", "KccK", "KSSK", "KSsK", ".KK.",
-];
-
-const ARM_BENT = [".KK.", "KCCK", "KCxK", "KCCK", "KCCK", "KcCK", "KccK", "KccK", ".KK."];
-
-const ARM_UP = [
-  ".KK.", "KSSK", "KsSK", "KccK", "KcCK", "KCCK", "KCxK", "KCCK",
-  "KCCK", "KCCK", "KCxK", "KCCK", "KCCK", "KCCK", ".KK.",
-];
+const ARMS = {
+  long: {
+    down: [".KK.", "KCCK", "KCxK", "KCCK", "KCCK", "KCCK", "KCxK", "KCCK", "KCCK", "KcCK", "KccK", "KccK", "KSSK", "KSsK", ".KK."],
+    bent: [".KK.", "KCCK", "KCxK", "KCCK", "KCCK", "KcCK", "KccK", "KccK", ".KK."],
+    up: [".KK.", "KSSK", "KsSK", "KccK", "KcCK", "KCCK", "KCxK", "KCCK", "KCCK", "KCCK", "KCxK", "KCCK", "KCCK", "KCCK", ".KK."],
+  },
+  short: {
+    down: [".KK.", "KCCK", "KCCK", "KcCK", "KKKK", "KSSK", "KSSK", "KSsK", "KSSK", "KSSK", "KSsK", "KSSK", "KSSK", "KSsK", ".KK."],
+    bent: [".KK.", "KCCK", "KCCK", "KcCK", "KKKK", "KSSK", "KSsK", "KSSK", ".KK."],
+    up: [".KK.", "KSSK", "KsSK", "KSSK", "KSSK", "KSsK", "KSSK", "KSSK", "KSSK", "KSsK", "KKKK", "KcCK", "KCCK", "KCCK", ".KK."],
+  },
+};
 
 const CHEST_HANDS = [".KKKKKK.", "KSSSSSsK", "KsSSSSsK", ".KKKKKK."];
+/** Hands raised to the ears for takbir. */
+const EAR_HAND = [".KK.", "KSSK", "KSsK", "KSSK", ".KK."];
 
-const LEG = [
-  "KPPPPK", "KPPPpK", "KPPPpK", "KPPPpK", "KPPPpK", "KPPPpK", "KPPPpK",
-  "KPPPpK", "KPPPpK", "KPPPpK", "KPPppK", "KOOOOK", "KOoOOK", "KKKKKK",
+const LEGS: Record<OutfitStyle["legs"], string[]> = {
+  pants: ["KPPPPK", "KPPPpK", "KPPPpK", "KPPPpK", "KPPPpK", "KPPPpK", "KPPPpK", "KPPPpK", "KPPPpK", "KPPPpK", "KPPppK", "KOOOOK", "KOoOOK", "KKKKKK"],
+  shorts: ["KPPPPK", "KPPPpK", "KPPPpK", "KPPPpK", "KKKKKK", "KSSSsK", "KSSSsK", "KSSSsK", "KSSSsK", "KSSssK", "KWWWWK", "KOOOOK", "KOoooK", "KKKKKK"],
+  robe: [],
+};
+
+const ROBE = [
+  "KPPPPPpPPPPK", "KPPPPPpPPPPK", "KPPPPPpPPPPK", "KPPPPPpPPPPK", "KPPPPPpPPPPK",
+  "KPPPPPpPPPPK", "KPPPPPpPPPPK", "KPPPPPpPPPPK", "KPPPPPpPPPPK", "KpPPPPpPPPpK",
+  "KpPPPPpPPPpK", "KKKKKKKKKKKK", ".KOOK..KOOK.", ".KKKK..KKKK.",
 ];
 
-const g = (grid: string[]) => gridRaster(grid, P);
+/** Folded legs for kneeling / sitting on the floor. */
+const KNEEL = [
+  "..KKKKKKKKKKKK..",
+  ".KPPPPPPPPPPPPK.",
+  "KPPPPPPPpPPPPPPK",
+  "KPPPPPPPpPPPPPPK",
+  "KpPPPPPPpPPPPPpK",
+  "KOOOKKKKKKKKOOOK",
+  ".KKK........KKK.",
+];
+const KNEEL_ROBE = [
+  "..KKKKKKKKKKKK..",
+  ".KPPPPPPPPPPPPK.",
+  "KPPPPPPPpPPPPPPK",
+  "KPPPPPPPpPPPPPPK",
+  "KpPPPPPPpPPPPPpK",
+  "KpPPPPPPpPPPPPpK",
+  ".KKKKKKKKKKKKKK.",
+];
 
-/** Render one avatar frame (24×48). Mirroring for other directions happens at draw time. */
-export function renderAvatar(facing: Facing, pose: Pose): Raster {
+function palette(fit: OutfitStyle): Record<string, string> {
+  return { ...BODY, ...fit.colors, W: BODY.W, S: BODY.S, s: BODY.s };
+}
+
+/** Render one avatar frame (26×48). Mirroring for other directions happens at draw time. */
+export function renderAvatar(facing: Facing, pose: Pose, outfit: OutfitId = "fit-coat"): Raster {
+  const fit = OUTFITS[outfit] ?? OUTFITS["fit-coat"];
+  const P = palette(fit);
+  const g = (grid: string[]) => gridRaster(grid, P);
   const r = new Raster(AVATAR_W, AVATAR_H);
   const step = pose === "walk1" ? 1 : pose === "walk2" ? -1 : 0;
-  const headDy = pose === "pray" || pose === "sad" ? 1 : 0;
-  const mood: Mood = pose === "celebrate" ? "happy" : pose === "sad" ? "sad" : "neutral";
+  const low = pose === "kneel" ? 11 : pose === "sit" ? 8 : 0;
+  const headDy = (pose === "pray" || pose === "sad" ? 1 : 0) + low;
+  const mood: Mood =
+    pose === "celebrate" ? "happy" : pose === "sad" ? "sad" : pose === "blink" || pose === "kneel" ? "closed" : "neutral";
+  const arms = ARMS[fit.arm];
+  const front = facing === "front";
 
-  // Legs (behind the coat hem)
-  r.blit(g(LEG), 6, 31 + step);
-  r.blit(g(LEG), 12, 31 - step);
-
-  // Arms behind torso edges
-  if (pose === "celebrate") {
-    r.blit(g(ARM_UP), 1, 4);
-    r.blit(g(ARM_UP), 19, 4);
-  } else if (pose === "pray" && facing === "front") {
-    r.blit(g(ARM_BENT), 2, 17);
-    r.blit(g(ARM_BENT), 18, 17);
+  // Legs
+  if (low) {
+    paintGrid(r, fit.legs === "robe" ? KNEEL_ROBE : KNEEL, P, 5, 40);
+  } else if (fit.legs === "robe") {
+    r.blit(g(ROBE), 7, 33);
   } else {
-    r.blit(g(ARM_DOWN), 2, 17 - step);
-    r.blit(g(ARM_DOWN), 18, 17 + step);
+    r.blit(g(LEGS[fit.legs]), 7, 33 + step);
+    r.blit(g(LEGS[fit.legs]), 13, 33 - step);
   }
 
-  paintGrid(r, facing === "front" ? TORSO_FRONT : TORSO_BACK, P, 5, 16);
-  if (pose === "pray" && facing === "front") paintGrid(r, CHEST_HANDS, P, 8, 23);
+  // Arms, behind the torso edges
+  const ay = 19 + low;
+  if (pose === "celebrate") {
+    r.blit(g(arms.up), 2, 6);
+    r.blit(g(arms.up), 20, 6);
+  } else if ((pose === "pray" || pose === "kneel") && front) {
+    r.blit(g(arms.bent), 3, ay);
+    r.blit(g(arms.bent), 19, ay);
+  } else if (pose === "takbir" && front) {
+    r.blit(g(arms.bent), 3, ay);
+    r.blit(g(arms.bent), 19, ay);
+  } else {
+    r.blit(g(arms.down), 3, ay - step);
+    r.blit(g(arms.down), 19, ay + step);
+  }
 
-  paintGrid(r, facing === "front" ? headFront(mood) : HEAD_BACK, P, 4, headDy);
+  paintGrid(r, TORSO[fit.torso][front ? "front" : "back"], P, 6, 18 + low);
+  if ((pose === "pray" || pose === "kneel") && front) paintGrid(r, CHEST_HANDS, P, 9, 25 + low);
+
+  const head = front ? headFront(mood) : HEAD_BACK;
+  paintGrid(r, fit.kufi ? head.map((row, i) => (i < 2 ? "" : row)) : head, P, 4, headDy);
+  if (fit.kufi) paintGrid(r, KUFI, KUFI_COLORS, 4, headDy + 2);
+  if (pose === "takbir" && front) {
+    paintGrid(r, EAR_HAND, P, 2, 11 + headDy);
+    paintGrid(r, EAR_HAND, P, 20, 11 + headDy);
+  }
   return r;
 }
 
-export const ALL_POSES: Pose[] = ["idle", "walk1", "walk2", "pray", "celebrate", "sad"];
+/** Just the head, eyes closed, for sleeping in bed. */
+export function renderSleepingHead(outfit: OutfitId = "fit-coat"): Raster {
+  const fit = OUTFITS[outfit] ?? OUTFITS["fit-coat"];
+  const r = new Raster(18, 21);
+  paintGrid(r, headFront("closed"), palette(fit));
+  return r;
+}
+
+export const ALL_POSES: Pose[] = ["idle", "walk1", "walk2", "pray", "takbir", "kneel", "sit", "celebrate", "sad", "blink"];
+export const ALL_OUTFITS = Object.keys(OUTFITS) as OutfitId[];
