@@ -1,25 +1,25 @@
 {
-  "date": "2026-10-25",
-  "generatedAt": "2026-10-25T15:13:39.330Z",
+  "date": "2026-10-26",
+  "generatedAt": "2026-10-26T12:55:09.077Z",
   "art": null,
   "bird": {
-    "name": "Modest tiger parrot",
+    "name": "Western fire-eye",
     "scientific": "",
-    "blurb": "The modest tiger parrot is a species of parrot in the family Psittaculidae. It is found in the Arfak Mountains and New Guinea Highlands. Its natural habitat is subtropical or tropical moist montane forests.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Psittacella_modesta_-_Jay_Pruett_-_336058401.jpeg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The western fire-eye is an insectivorous bird in subfamily Thamnophilinae of family Thamnophilidae, the \"typical antbirds\". It is found in Bolivia, Brazil, Colombia, Ecuador, Paraguay, and Peru.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Pyriglena_maura_-_Western_Fire-eye_%28male%29%3B_Vila_Bela_da_Sant%C3%ADssima_Trindade%2C_Mato_Grosso%2C_Brazil.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Modest_tiger_parrot",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Modest%20tiger%20parrot%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Western_fire-eye",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Western%20fire-eye%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "The Kinks",
-    "description": "English rock band (1962–1997)",
-    "extract": "The Kinks were an English rock band formed in London in 1962. The band's classic line-up comprised brothers Ray Davies and Dave Davies, Pete Quaife (bass), and Mick Avory. Emerging during the height of British rhythm and blues and Merseybeat, their breakthrough third single, the Ray Davies-penned \"You Really Got Me\" (1964), became an international hit, topping the charts in the United Kingdom and reaching the Top 10 in the United States. Other early hits included \"All Day and All of the Night\" (1964), \"Tired of Waiting for You\", \"Set Me Free\", \"See My Friends\", and \"Till the End of the Day\". They were part of the British Invasion of America until several problems during their 1965 American tour led to them being banned from touring there for several years.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/88/Helmfrid-sofa4_Touched.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/The_Kinks",
+    "title": "Eyebrow Talk",
+    "description": "Chinese magazine (1914–1916)",
+    "extract": "Eyebrow Talk was a Chinese monthly literary magazine published in 18 issues from November 1914 to around April or May 1916. It was among the first literary magazines in China to be marketed towards women and the first to be primarily edited by women. Its founder and editor-in-chief was Gao Jianhua, who worked closely with Xu Xiaotian and a staff of mainly female assistant editors. At least ten different women are confirmed to have written for the magazine, alongside some men who wrote under female pen names. Reaching a claimed circulation of 10,000 by 1915, the magazine was published by the New Learning Society, which mostly published school textbooks.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/14/Meiyu_Issue_One.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Eyebrow_Talk",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
