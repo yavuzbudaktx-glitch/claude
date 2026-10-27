@@ -1,25 +1,25 @@
 {
-  "date": "2026-10-26",
-  "generatedAt": "2026-10-26T17:42:32.219Z",
+  "date": "2026-10-27",
+  "generatedAt": "2026-10-27T12:10:57.519Z",
   "art": null,
   "bird": {
-    "name": "Western fire-eye",
+    "name": "Numfor leaf warbler",
     "scientific": "",
-    "blurb": "The western fire-eye is an insectivorous bird in subfamily Thamnophilinae of family Thamnophilidae, the \"typical antbirds\". It is found in Bolivia, Brazil, Colombia, Ecuador, Paraguay, and Peru.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Pyriglena_maura_-_Western_Fire-eye_%28male%29%3B_Vila_Bela_da_Sant%C3%ADssima_Trindade%2C_Mato_Grosso%2C_Brazil.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The Numfor leaf warbler is a species of Old World warbler in the family Phylloscopidae.\nIt is endemic to Numfor in Indonesia.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/93/Numfor_Leaf_Warbler_Phylloscopus_maforensis_in_Papua%2C_Indonesia.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Western_fire-eye",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Western%20fire-eye%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Numfor_leaf_warbler",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Numfor%20leaf%20warbler%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Eyebrow Talk",
-    "description": "Chinese magazine (1914–1916)",
-    "extract": "Eyebrow Talk was a Chinese monthly literary magazine published in 18 issues from November 1914 to around April or May 1916. It was among the first literary magazines in China to be marketed towards women and the first to be primarily edited by women. Its founder and editor-in-chief was Gao Jianhua, who worked closely with Xu Xiaotian and a staff of mainly female assistant editors. At least ten different women are confirmed to have written for the magazine, alongside some men who wrote under female pen names. Reaching a claimed circulation of 10,000 by 1915, the magazine was published by the New Learning Society, which mostly published school textbooks.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/14/Meiyu_Issue_One.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Eyebrow_Talk",
+    "title": "1986 New York Mets season",
+    "description": "Major League Baseball season",
+    "extract": "The 1986 New York Mets season was the 25th season for the New York Mets as a franchise of Major League Baseball, and their 22nd season playing at Shea Stadium in the Queens borough. The team was managed by Davey Johnson, with their general manager being Frank Cashen. The Mets won the National League East, National League Championship Series (NLCS) and the 1986 World Series, the team's second and most recent World Series championship. At 108 wins and 54 losses, the Mets recorded one of the best regular season records in MLB history.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/44/1986_Mets_in_the_Citi_Field_infield.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/1986_New_York_Mets_season",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
