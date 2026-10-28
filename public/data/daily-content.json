@@ -1,25 +1,25 @@
 {
-  "date": "2026-10-27",
-  "generatedAt": "2026-10-27T17:00:29.212Z",
+  "date": "2026-10-28",
+  "generatedAt": "2026-10-28T12:47:50.361Z",
   "art": null,
   "bird": {
-    "name": "Numfor leaf warbler",
+    "name": "Chinese blackbird",
     "scientific": "",
-    "blurb": "The Numfor leaf warbler is a species of Old World warbler in the family Phylloscopidae.\nIt is endemic to Numfor in Indonesia.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/93/Numfor_Leaf_Warbler_Phylloscopus_maforensis_in_Papua%2C_Indonesia.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The Chinese blackbird is a member of the thrush family Turdidae. It was formerly considered conspecific with the related common blackbird.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/d/da/Turdus_merula_mandarinus_Hong_Kong_6.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Numfor_leaf_warbler",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Numfor%20leaf%20warbler%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Chinese_blackbird",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Chinese%20blackbird%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "1986 New York Mets season",
-    "description": "Major League Baseball season",
-    "extract": "During the 1986 Major League Baseball (MLB) season, the New York Mets won the National League East, the National League Championship Series (NLCS) and the 1986 World Series, the team's second and most recent World Series championship. General manager Frank Cashen and manager Davey Johnson built a powerful team that compiled one of the best regular season records in MLB history.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/44/1986_Mets_in_the_Citi_Field_infield.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/1986_New_York_Mets_season",
+    "title": "Second Battle of Newtonia",
+    "description": "1864 battle of the American Civil War",
+    "extract": "The Second Battle of Newtonia was fought on October 28, 1864, near Newtonia, Missouri, between cavalry commanded by Major General James G. Blunt of the Union Army and Brigadier General Joseph O. Shelby's rear guard of the Confederate Army of Missouri. In September 1864, Confederate Major General Sterling Price had entered the state of Missouri with hopes of creating a popular uprising against Union control of the state. A defeat at the Battle of Pilot Knob in late September and the strength of Union positions at Jefferson City led Price to abandon the main objectives of the campaign; instead he moved his force west towards Kansas City, where it was badly defeated at the Battle of Westport by Major General Samuel R. Curtis on October 23. Following a set of three defeats on October 25, Price's army halted to rest near Newtonia on October 28.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Beanfield_south_of_Newtonia_MO.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Second_Battle_of_Newtonia",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
