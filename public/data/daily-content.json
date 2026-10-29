@@ -1,25 +1,25 @@
 {
-  "date": "2026-10-28",
-  "generatedAt": "2026-10-28T17:27:23.257Z",
+  "date": "2026-10-29",
+  "generatedAt": "2026-10-29T12:57:09.673Z",
   "art": null,
   "bird": {
-    "name": "Chinese blackbird",
+    "name": "Palmchat",
     "scientific": "",
-    "blurb": "The Chinese blackbird is a member of the thrush family Turdidae. It was formerly considered conspecific with the related common blackbird.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/d/da/Turdus_merula_mandarinus_Hong_Kong_6.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The palmchat is a medium-sized passerine bird endemic to the Caribbean island of Hispaniola. It is the only species in the genus Dulus and the family Dulidae, and is related to the waxwing family Bombycillidae and the silky-flycatchers in Ptiliogonatidae. Its name reflects its strong association with palms for feeding, roosting, and nesting.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/ca/Cigua-palmera-ave-nacional-dominicana.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Chinese_blackbird",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Chinese%20blackbird%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Palmchat",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Palmchat%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Second Battle of Newtonia",
-    "description": "1864 battle of the American Civil War",
-    "extract": "The Second Battle of Newtonia was a battle of the American Civil War fought on October 28, 1864, near Newtonia, Missouri, between cavalry commanded by Major General James G. Blunt of the Union Army and Brigadier General Joseph O. Shelby's rear guard of the Confederate Army of Missouri. In September 1864, Confederate Major General Sterling Price had entered the state of Missouri with hopes of sparking a popular uprising against Union control of the state. A defeat at the Battle of Pilot Knob in late September and the strength of Union positions at Jefferson City led Price to abandon the main objectives of the campaign; instead he moved his force west towards Kansas City, where it was badly defeated at the Battle of Westport by Major General Samuel R. Curtis on October 23. Following a set of three defeats on October 25, Price's army halted to rest near Newtonia on October 28.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Beanfield_south_of_Newtonia_MO.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Second_Battle_of_Newtonia",
+    "title": "Chimacum Creek",
+    "description": "Stream in Jefferson County, Washington, U.S.",
+    "extract": "Chimacum Creek is a stream in Jefferson County, Washington, United States. Located on the base of the Quimper Peninsula in the northeast of the larger Olympic Peninsula, the main stem originates from a series of springs and ponds in the forested hills south of Discovery Bay. It flows south from its source before turning east and eventually north, taking in many small tributaries before it enters the broad Chimacum Valley, an agricultural region where the stream has been extensively channelized. After taking in its largest tributary, the East Fork Chimacum, near the community of Chimacum, it enters a tight ravine where it meets the sea in the community of Port Hadlock-Irondale, creating a small estuary and an area of intertidal wetland as it enters Port Townsend Bay.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Chimacum_Valley.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Chimacum_Creek",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
