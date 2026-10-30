@@ -1,17 +1,17 @@
 {
   "date": "2026-10-30",
-  "generatedAt": "2026-10-30T14:43:58.843Z",
+  "generatedAt": "2026-10-30T17:18:04.153Z",
   "art": null,
   "bird": {
-    "name": "Dusky grouse",
+    "name": "Bismarck crow",
     "scientific": "",
-    "blurb": "The dusky grouse is a species of forest-dwelling grouse native to the Rocky Mountains in North America. It is closely related to the sooty grouse, and the two were previously considered a single species, the blue grouse.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Dendragapus_obscurus_USNPS.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The Bismarck crow is a species of crow found in the Bismarck Archipelago. It was considered by many authorities to be a subspecies of the Torresian crow, but is now treated as a distinct species.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/93/Bismarck_Crow_imported_from_iNaturalist_photo_406257676_on_8_August_2024.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Dusky_grouse",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Dusky%20grouse%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Bismarck_crow",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Bismarck%20crow%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
