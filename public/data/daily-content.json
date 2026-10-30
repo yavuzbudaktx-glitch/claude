@@ -1,17 +1,17 @@
 {
   "date": "2026-10-30",
-  "generatedAt": "2026-10-30T12:49:28.684Z",
+  "generatedAt": "2026-10-30T14:43:58.843Z",
   "art": null,
   "bird": {
-    "name": "Grey-chested jungle flycatcher",
+    "name": "Dusky grouse",
     "scientific": "",
-    "blurb": "The grey-chested jungle flycatcher is a species of bird in the Old World flycatcher family Muscicapidae. It is found in Brunei, Indonesia, Malaysia, and Thailand. Its natural habitats are subtropical or tropical moist lowland forests and subtropical or tropical swamps. It is threatened by habitat loss.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Cyornis_umbratilis_-_Ian_Dugdale_-_547323875.jpeg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The dusky grouse is a species of forest-dwelling grouse native to the Rocky Mountains in North America. It is closely related to the sooty grouse, and the two were previously considered a single species, the blue grouse.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Dendragapus_obscurus_USNPS.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Grey-chested_jungle_flycatcher",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Grey-chested%20jungle%20flycatcher%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Dusky_grouse",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Dusky%20grouse%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
