@@ -1,25 +1,25 @@
 {
-  "date": "2026-10-29",
-  "generatedAt": "2026-10-29T17:43:42.953Z",
+  "date": "2026-10-30",
+  "generatedAt": "2026-10-30T12:49:28.684Z",
   "art": null,
   "bird": {
-    "name": "Palmchat",
+    "name": "Grey-chested jungle flycatcher",
     "scientific": "",
-    "blurb": "The palmchat is a medium-sized passerine bird endemic to the Caribbean island of Hispaniola. It is the only species in the genus Dulus and the family Dulidae, and is related to the waxwing family Bombycillidae and the silky-flycatchers in Ptiliogonatidae. Its name reflects its strong association with palms for feeding, roosting, and nesting.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/ca/Cigua-palmera-ave-nacional-dominicana.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The grey-chested jungle flycatcher is a species of bird in the Old World flycatcher family Muscicapidae. It is found in Brunei, Indonesia, Malaysia, and Thailand. Its natural habitats are subtropical or tropical moist lowland forests and subtropical or tropical swamps. It is threatened by habitat loss.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Cyornis_umbratilis_-_Ian_Dugdale_-_547323875.jpeg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Palmchat",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Palmchat%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Grey-chested_jungle_flycatcher",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Grey-chested%20jungle%20flycatcher%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Chimacum Creek",
-    "description": "Stream in Jefferson County, Washington, U.S.",
-    "extract": "Chimacum Creek is a stream in Jefferson County, Washington, United States. Located on the base of the Quimper Peninsula in the northeast of the larger Olympic Peninsula, the main stem originates from a series of springs and ponds in the forested hills south of Discovery Bay. It flows south from its source before turning east and eventually north, taking in many small tributaries before it enters the broad Chimacum Valley, an agricultural region where the stream has been extensively channelized. After taking in its largest tributary, the East Fork Chimacum, near the community of Chimacum, it enters a tight ravine where it meets the sea in the community of Port Hadlock-Irondale, creating a small estuary and an area of intertidal wetland as it enters Port Townsend Bay.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Chimacum_Valley.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Chimacum_Creek",
+    "title": "John Adams",
+    "description": "Founding Father, U.S. president 1797 to 1801",
+    "extract": "John Adams was a Founding Father and the second president of the United States from 1797 to 1801. Before his presidency, he was a leader of the American Revolution that achieved independence from Great Britain. During the latter part of the Revolutionary War and in the early years of the new nation, he served the Continental Congress of the United States as a senior diplomat in Europe. Adams was the first vice president of the United States, serving from 1789 to 1797. He was a dedicated diarist and regularly corresponded with contemporaries, including his wife and advisor Abigail Adams and his friend and rival Thomas Jefferson.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Gilbert_Stuart%2C_John_Adams%2C_c._1800-1815%2C_NGA_42933.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/John_Adams",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
