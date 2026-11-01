@@ -39,7 +39,7 @@ export default function Wardrobe() {
                   </button>
                 ) : (
                   <button className="btn btn-gold w-full" disabled={status !== "ok"} onClick={() => act((s, n) => buyItem(s, n, o.id), { kind: "buy", say: "New fit!" })}>
-                    {status === "level" ? <><PixelIcon name="lock" size={10} /> Lv {o.level}</> : status === "debt" ? "In debt" : <><PixelIcon name="coin" size={10} color="#7a5a00" /> {o.price}</>}
+                    {status === "level" ? <><PixelIcon name="lock" size={10} /> Lv {o.level}</> : <><PixelIcon name="coin" size={10} color="#7a5a00" /> {o.price}</>}
                   </button>
                 )}
               </div>

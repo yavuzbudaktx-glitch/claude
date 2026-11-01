@@ -73,10 +73,10 @@ export default function Hud({ onSettings }: { onSettings: () => void }) {
       <div
         ref={coinRef}
         key={burst?.id}
-        className={`chip shrink-0 py-1 font-pixel text-[11px] tabular-nums ${burst ? "coin-bump" : ""} ${coins < 0 ? "bg-[#d64541] text-white" : "bg-[linear-gradient(180deg,#ffd85c,#efb92a)]"}`}
-        title={coins < 0 ? "In debt: the catalog is closed" : "Coins"}
+        className={`chip shrink-0 py-1 font-pixel text-[11px] tabular-nums ${burst ? "coin-bump" : ""} bg-[linear-gradient(180deg,#ffd85c,#efb92a)]`}
+        title="Coins"
       >
-        <PixelIcon name="coin" size={14} color={coins < 0 ? "#fff" : "#7a5a00"} />
+        <PixelIcon name="coin" size={14} color="#7a5a00" />
         {shown}
       </div>
       <button className="icon-btn h-10 w-10 shrink-0 bg-[#ece7da]" onClick={onSettings} aria-label="Settings">

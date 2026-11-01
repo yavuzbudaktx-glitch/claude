@@ -19,7 +19,7 @@ A Habbo-style pixel room, drawn at 2× detail, that reflects how disciplined you
 | Jumu'ah / Ramadan | Friday Dhuhr becomes Jumu'ah with a bonus. Ramadan mode adds fasting and taraweeh check-ins. |
 
 - Days you don't open the app still count as full misses.
-- Coins can go negative. While in debt the catalog is closed.
+- Coins never go below 0: a penalty only takes what you have (streaks still reset).
 - **Cars** (each gets its own bay in the garage outside, so the collection grows): 2016 Mini Cooper from day one, 2016 Infiniti Q50 in Hagane Blue at 30 clean days, 2027 Hyundai Ioniq 5 at 90 clean days. Tap a car to flash its lights.
 
 ## Progression

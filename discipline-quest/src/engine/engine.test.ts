@@ -77,10 +77,10 @@ describe("wake-up", () => {
   });
 
   it("penalizes a late check-in immediately and only once", () => {
-    let s = createInitialState(at("2026-01-01"));
+    let s = { ...createInitialState(at("2026-01-01")), coins: 1000 };
     s = wakeCheckIn(s, at("2026-01-01", "09:30"));
     s = wakeCheckIn(s, at("2026-01-01", "09:31"));
-    expect(base(s)).toBe(-RULES.wake.missCoins);
+    expect(base(s)).toBe(1000 - RULES.wake.missCoins);
     expect(s.days["2026-01-01"].wake).toBe("late");
   });
 });
@@ -95,12 +95,12 @@ describe("diet", () => {
   });
 
   it("a cheat meal after check-in revokes the reward and charges the miss", () => {
-    let s = createInitialState(at("2026-01-01"));
+    let s = { ...createInitialState(at("2026-01-01")), coins: 1000 };
     s = dietCheckIn(s, at("2026-01-01", "19:00"));
     s = logMeal(s, at("2026-01-01", "22:00"), "pizza", false);
-    expect(base(s)).toBe(-RULES.diet.missCoins);
+    expect(base(s)).toBe(1000 - RULES.diet.missCoins);
     s = logMeal(s, at("2026-01-01", "23:00"), "more pizza", false);
-    expect(base(s)).toBe(-RULES.diet.missCoins);
+    expect(base(s)).toBe(1000 - RULES.diet.missCoins);
   });
 });
 
@@ -133,11 +133,21 @@ describe("porn relapse", () => {
 });
 
 describe("shop and unlocks", () => {
-  it("blocks purchases while in debt", () => {
+  it("never lets coins go below 0, and check/uncheck can't farm coins", () => {
     let s = createInitialState(at("2026-01-01"));
     s = wakeCheckIn(s, at("2026-01-01", "10:00"));
-    expect(canBuy(s, "plant")).toBe("debt");
+    expect(s.coins).toBe(0);
+    expect(canBuy(s, "plant")).toBe("poor");
     expect(canBuy(s, "car-ioniq5")).toBe("not-for-sale");
+    // a reward taken back below 0 is owed, so re-checking doesn't create coins
+    s = { ...s, coins: 2 };
+    const coins = base(s);
+    s = setPrayer(s, at("2026-01-01", "13:00"), "dhuhr", true);
+    s = setPrayer(s, at("2026-01-01", "13:01"), "dhuhr", false);
+    s = setPrayer(s, at("2026-01-01", "13:02"), "dhuhr", true);
+    s = setPrayer(s, at("2026-01-01", "13:03"), "dhuhr", false);
+    expect(s.coins).toBeGreaterThanOrEqual(0);
+    expect(base(s)).toBeLessThanOrEqual(coins);
   });
 
   it("unlocks the Q50 after 30 clean days, not yet the Ioniq 5", () => {
@@ -161,10 +171,10 @@ describe("shop and unlocks", () => {
   });
 
   it("treats days the app wasn't opened as full misses", () => {
-    let s = createInitialState(at("2026-01-01"));
+    let s = { ...createInitialState(at("2026-01-01")), coins: 1000 };
     s = ensureToday(s, at("2026-01-04"));
     // 3 days × (5 prayers + wake + diet) misses, but 3 clean days
-    expect(base(s)).toBe(3 * (-5 * RULES.prayer.missCoins - RULES.wake.missCoins - RULES.diet.missCoins + RULES.cleanDay.coins));
+    expect(base(s)).toBe(1000 + 3 * (-5 * RULES.prayer.missCoins - RULES.wake.missCoins - RULES.diet.missCoins + RULES.cleanDay.coins));
   });
 });
 

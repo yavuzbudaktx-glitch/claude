@@ -85,8 +85,22 @@ describe("v5 → v6 migration", () => {
     delete s.challenge;
     delete s.challengeHistory;
     const m = migrate(s, at("2026-10-26"));
-    expect(m.version).toBe(6);
+    expect(m.version).toBe(7);
     expect(m.challenge).toBeNull();
     expect(m.challengeHistory).toEqual([]);
+  });
+});
+
+describe("v6 → v7: debt wiped", () => {
+  it("resets negative coins to 0 and keeps everything else", () => {
+    const s = createInitialState(at("2026-10-20")) as unknown as Record<string, unknown> & GameState;
+    (s as { version: number }).version = 6;
+    s.coins = -1965;
+    s.xp = 5000;
+    const m = migrate(s, at("2026-10-26"));
+    expect(m.version).toBe(7);
+    expect(m.coins).toBeGreaterThanOrEqual(0);
+    expect(m.xp).toBeGreaterThanOrEqual(5000);
+    expect(m.log.some((e) => e.text.startsWith("Debt wiped"))).toBe(true);
   });
 });

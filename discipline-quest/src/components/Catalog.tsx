@@ -47,7 +47,6 @@ export function isNew(s: GameState, item: CatalogItem) {
 const REASON: Record<Exclude<BuyResult, "ok" | "owned" | "not-for-sale">, (i: CatalogItem) => string> = {
   level: (i) => `Level ${i.level}`,
   tier: (i) => `Needs ${ITEMS[`room-${i.tier}`]?.name ?? i.tier}`,
-  debt: () => "In debt",
   poor: (i) => `${i.price} coins`,
   "gym-visits": (i) => `${i.gymVisits} gym visits`,
   "no-gym": () => "Needs the gym",
@@ -92,7 +91,6 @@ export default function Catalog() {
           );
         })}
       </div>
-      {game.coins < 0 && <p className="border-b-2 border-black bg-[#f9d6d5] px-3 py-2 text-[14px]">You are {Math.abs(game.coins)} coins in debt. Buying reopens at 0.</p>}
       <div className="grid grid-cols-2 gap-2 p-3 sm:grid-cols-3">
         {items.map((item) => {
           const have = owns(game, item.id);
@@ -100,7 +98,7 @@ export default function Catalog() {
           const slot = EQUIP_SLOT[item.category];
           const equipped = slot && game.equipped[slot] === item.id;
           const status = canBuy(game, item.id);
-          const gated = !have && status !== "ok" && status !== "poor" && status !== "debt" && status !== "not-for-sale";
+          const gated = !have && status !== "ok" && status !== "poor" && status !== "not-for-sale";
           return (
             <article key={item.id} className={`relative flex flex-col items-center rounded-[4px] border-2 border-black p-2 text-center ${equipped ? "bg-[#e3f1ff]" : "bg-white"}`}>
               {isNew(game, item) && <span className="new-tag absolute left-1 top-1">NEW</span>}

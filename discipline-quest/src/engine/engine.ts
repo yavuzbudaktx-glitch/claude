@@ -65,8 +65,9 @@ function freshSince(today: string) {
 export function createInitialState(now: Date): GameState {
   const today = dateKey(now);
   const s: GameState = {
-    version: 6,
+    version: 7,
     startDate: today,
+    owed: 0,
     lastSettled: addDays(today, -1),
     days: { [today]: emptyDay(today) },
     coins: 0,
@@ -113,9 +114,20 @@ const clone = <T>(v: T): T => structuredClone(v);
 
 function earn(s: GameState, now: Date, coins: number, xp: number, text: string, kind: GameEvent["kind"]) {
   const before = levelFor(s.xp).level;
-  s.coins += coins;
+  // Coins never go below 0. Penalties only take what you have; a taken-back reward that
+  // doesn't fit is owed and comes out of your next earnings (so check/uncheck can't farm coins).
+  const start = s.coins;
+  if (coins > 0) {
+    const pay = Math.min(s.owed ?? 0, coins);
+    s.owed = (s.owed ?? 0) - pay;
+    s.coins += coins - pay;
+  } else if (coins < 0) {
+    const take = Math.min(Math.max(0, s.coins), -coins);
+    s.coins -= take;
+    if (kind !== "bad") s.owed = (s.owed ?? 0) + (-coins - take);
+  }
   s.xp = Math.max(0, s.xp + xp);
-  s.log.unshift({ at: now.getTime(), text, coins, kind });
+  s.log.unshift({ at: now.getTime(), text, coins: s.coins - start, kind });
   if (s.log.length > RULES.logLimit) s.log.length = RULES.logLimit;
   const after = levelFor(s.xp).level;
   if (after > before) {
@@ -688,7 +700,7 @@ export function currentTierIndex(s: GameState): number {
   return TIER_ORDER.indexOf(tierOf(s.equipped.room));
 }
 
-export type BuyResult = "ok" | "debt" | "poor" | "owned" | "not-for-sale" | "level" | "tier" | "gym-visits" | "no-gym" | "gym-tier";
+export type BuyResult = "ok" | "poor" | "owned" | "not-for-sale" | "level" | "tier" | "gym-visits" | "no-gym" | "gym-tier";
 
 const gymIndex = (s: GameState) => GYM_TIERS.indexOf(s.equipped.gym as GymTier);
 
@@ -705,7 +717,6 @@ export function canBuy(state: GameState, id: ItemId): BuyResult {
   if (item.space === "gym" && gymIndex(state) < 0) return "no-gym";
   if (item.gymTier && gymIndex(state) < GYM_TIERS.indexOf(item.gymTier)) return "gym-tier";
   if (item.gymVisits && state.stats.gym < item.gymVisits) return "gym-visits";
-  if (state.coins < 0) return "debt";
   if (state.coins < item.price) return "poor";
   return "ok";
 }
@@ -809,7 +820,7 @@ export function liveStreaks(s: GameState, now: Date) {
 
 export function isGameState(v: unknown): boolean {
   const o = v as { version?: number; coins?: unknown; days?: unknown; inventory?: unknown };
-  return !!o && [1, 2, 3, 4, 5, 6].includes(o.version ?? 0) && typeof o.coins === "number" && typeof o.days === "object" && Array.isArray(o.inventory);
+  return !!o && [1, 2, 3, 4, 5, 6, 7].includes(o.version ?? 0) && typeof o.coins === "number" && typeof o.days === "object" && Array.isArray(o.inventory);
 }
 
 /** Bring any saved state (v1, v2 or v3) up to the current shape without losing progress. */
@@ -914,6 +925,14 @@ export function migrate(raw: any, now: Date): GameState {
     s.challenge = null;
     s.challengeHistory = [];
     s.version = 6;
+  }
+  if (s.version === 6) {
+    if (s.coins < 0) {
+      s.log.unshift({ at: now.getTime(), text: `Debt wiped (${s.coins}). Fresh start: 0 coins`, coins: -s.coins, kind: "info" });
+      s.coins = 0;
+    }
+    s.owed = 0;
+    s.version = 7;
   }
   // Fill anything a later field might be missing.
   s.equipped = { ...DEFAULT_EQUIPPED, ...s.equipped };

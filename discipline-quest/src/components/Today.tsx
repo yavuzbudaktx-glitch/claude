@@ -261,7 +261,7 @@ export function PurityCard() {
           <p>Strict mode. This will:</p>
           <ul className="list-disc pl-5 text-[14px]">
             <li>Reset your clean streak to 0</li>
-            <li>Cost {RULES.relapse.coins} coins (you can go into debt)</li>
+            <li>Cost up to {RULES.relapse.coins} coins (never below 0)</li>
             <li>Lock your newest item for {RULES.relapse.lockDays} clean days</li>
             <li>Make your room gloomy until a clean day</li>
           </ul>

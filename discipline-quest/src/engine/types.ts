@@ -170,12 +170,15 @@ export interface Body {
 }
 
 export interface GameState {
-  version: 6;
+  version: 7;
   startDate: string;
   /** Last calendar date whose misses/rewards have been applied. */
   lastSettled: string | null;
   days: Record<string, DayLog>;
+  /** Never below 0. */
   coins: number;
+  /** A taken-back reward that didn't fit under 0; paid off from the next earnings. */
+  owed?: number;
   xp: number;
   streaks: Streaks;
   best: Streaks;
