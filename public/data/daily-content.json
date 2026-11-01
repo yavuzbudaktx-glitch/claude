@@ -1,25 +1,25 @@
 {
-  "date": "2026-10-31",
-  "generatedAt": "2026-10-31T16:26:24.300Z",
+  "date": "2026-11-01",
+  "generatedAt": "2026-11-01T13:15:28.455Z",
   "art": null,
   "bird": {
-    "name": "Varzea piculet",
+    "name": "Berylline hummingbird",
     "scientific": "",
-    "blurb": "The varzea piculet is a Near Threatened species of bird in subfamily Picumninae of the woodpecker family Picidae. It is endemic to Brazil's Amazon basin.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/47/Picumnus_varzeae_-_Varzea_Piculet_%28male%29_Itacoatiara%2C_Amazonas%2C_Brazil.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The berylline hummingbird is a species of hummingbird in the \"emeralds\", tribe Trochilini of subfamily Trochilinae. It is found in El Salvador, Guatemala, Honduras, Mexico, and the southern United States.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/91/Berylline_hummingbird_%28Saucerottia_beryllina%29_Finca_El_Pilar_4.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Varzea_piculet",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Varzea%20piculet%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Berylline_hummingbird",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Berylline%20hummingbird%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Zombie Nightmare",
-    "description": "1987 horror film directed by Jack Bravman",
-    "extract": "Zombie Nightmare is a 1987 Canadian zombie film produced and directed by Jack Bravman, written by John Fasano, and starring Adam West, Jon Mikl Thor, Tia Carrere, Frank Dietz, and Linda Singer. The film centres on a baseball player who is killed by a group of teenagers and resurrected as a zombie by a voodoo priestess. The zombie goes on to kill the teenagers, whose deaths are investigated by the police. The film was shot in the suburbs of Montreal. It was originally written to star mostly black actors, but at the request of investors, the characters' names were changed to more typically white names. While Bravman was credited as director, Fasano directed the majority of the film; problems occurred between Fasano and the production crew, who believed him to be the assistant director and ignored his instructions.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/e/e9/Zombie_Nightmare.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Zombie_Nightmare",
+    "title": "Europejara",
+    "description": "Genus of tapejarid pterosaur",
+    "extract": "Europejara is a genus of tapejarid pterosaur, a flying reptile that lived during the Barremian age of the Early Cretaceous epoch in what is now Spain. The only known specimen was found at the Las Hoyas site of Cuenca, a location noted for its exceptional Konservat-Lagerstätte preservation. In 2012, the new genus and species Europejara olcadesorum was named based on it. The generic name refers to Europe, where it was found, and to the related genus Tapejara from what is now Brazil, while the specific name refers to the Olcades, an ancient people that lived in the region. The holotype specimen consists of an incomplete, crushed skull; the bones of the postorbital region are displaced while the mandible is almost complete.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Europejara_holotype_horizontal.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Europejara",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
