@@ -1,17 +1,17 @@
 {
   "date": "2026-11-02",
-  "generatedAt": "2026-11-02T15:39:00.362Z",
+  "generatedAt": "2026-11-02T17:40:48.567Z",
   "art": null,
   "bird": {
-    "name": "Russet-crowned crake",
+    "name": "Flat-billed kingfisher",
     "scientific": "",
-    "blurb": "The russet-crowned crake is a species of bird in subfamily Rallinae of family Rallidae, the rails, gallinules, and coots. It is found in Bolivia, Brazil, Colombia, Ecuador, the Guianas, Paraguay, Peru, and Venezuela.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f0/Anurolimnas_viridis_%28M%C3%BCller%2C_1776%29%2C_Rallidae%2C_Atlantic_forest%2C_northern_littoral_of_Bahia%2C_Brazil_%2814224836829%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The flat-billed kingfisher is a species of bird in the family Alcedinidae, the kingfishers. This kingfisher is endemic to Samoa.",
+    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3e/Flat-billed_kingfisher_%28Todiramphus_recurvirostris%29_Upolu.jpg/3840px-Flat-billed_kingfisher_%28Todiramphus_recurvirostris%29_Upolu.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Russet-crowned_crake",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Russet-crowned%20crake%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Flat-billed_kingfisher",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Flat-billed%20kingfisher%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
