@@ -1,25 +1,25 @@
 {
-  "date": "2026-11-02",
-  "generatedAt": "2026-11-02T21:04:46.382Z",
+  "date": "2026-11-03",
+  "generatedAt": "2026-11-03T14:12:27.339Z",
   "art": null,
   "bird": {
-    "name": "Flat-billed kingfisher",
+    "name": "Water pipit",
     "scientific": "",
-    "blurb": "The flat-billed kingfisher is a species of bird in the family Alcedinidae, the kingfishers. This kingfisher is endemic to Samoa.",
-    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3e/Flat-billed_kingfisher_%28Todiramphus_recurvirostris%29_Upolu.jpg/3840px-Flat-billed_kingfisher_%28Todiramphus_recurvirostris%29_Upolu.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "blurb": "The water pipit is a small passerine bird which breeds in the mountains of Southern Europe and the Palearctic eastwards to China. It is a short-distance migrant; many birds move to lower altitudes or wet open lowlands in winter.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/2/24/Anthus_spinoletta_-_Water_Pipit%2C_Kahramanmara%C5%9F_2016-11-18_01-10.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Flat-billed_kingfisher",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Flat-billed%20kingfisher%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Water_pipit",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Water%20pipit%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Lewis Hamilton",
-    "description": "British racing driver (born 1985)",
-    "extract": "Sir Lewis Carl Davidson Hamilton is a British racing driver who competes in Formula One for Ferrari. Hamilton has won a joint-record seven Formula One World Drivers' Championship titles—tied with Michael Schumacher—and holds the records for most wins (106), pole positions (105), and podium finishes (209), among others.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Prime_Minister_Keir_Starmer_meets_Sir_Lewis_Hamilton_%2854566928382%29_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "pageUrl": "https://en.wikipedia.org/wiki/Lewis_Hamilton",
+    "title": "2002 Marib airstrike",
+    "description": "US drone strike on the leader of al-Qaeda in Yemen",
+    "extract": "On November 3, 2002, a remotely piloted aircraft operated by the Central Intelligence Agency (CIA) launched an airstrike on a vehicle travelling through Marib Governorate, Yemen. The strike killed six militants including its target Abu Ali al-Harithi, the leader of al-Qaeda in Yemen. It was the first drone strike conducted by the United States outside of a conventional battlefield, and the first targeted killing in the war on terror.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4a/MQ-1_Predator.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageUrl": "https://en.wikipedia.org/wiki/2002_Marib_airstrike",
     "source": "Wikipedia · On this day"
   },
   "nasa": {
