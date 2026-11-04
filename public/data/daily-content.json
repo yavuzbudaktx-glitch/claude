@@ -1,26 +1,26 @@
 {
-  "date": "2026-11-03",
-  "generatedAt": "2026-11-03T18:45:33.923Z",
+  "date": "2026-11-04",
+  "generatedAt": "2026-11-04T14:26:17.620Z",
   "art": null,
   "bird": {
-    "name": "Water pipit",
+    "name": "Frances's sparrowhawk",
     "scientific": "",
-    "blurb": "The water pipit is a small passerine bird which breeds in the mountains of Southern Europe and the Palearctic eastwards to China. It is a short-distance migrant; many birds move to lower altitudes or wet open lowlands in winter.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/2/24/Anthus_spinoletta_-_Water_Pipit%2C_Kahramanmara%C5%9F_2016-11-18_01-10.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "Frances's sparrowhawk is a small bird of prey. This species was formerly placed in the genus Accipiter. The nominate subspecies, T. f. francesiae, is endemic to Madagascar, and the other subspecies are found in the Comoro Islands. The Anjouan sparrowhawk, also known as the Anjouan Island sparrowhawk, Ndzuwani goshawk or Joanna Island goshawk, was thought to be extinct until searches in the 1980s and in 2005 confirmed that it is still extant.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/51/Francess_sparrowhawk_cropped.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Water_pipit",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Water%20pipit%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Frances's_sparrowhawk",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Frances's%20sparrowhawk%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "2002 Marib airstrike",
-    "description": "US drone strike on the leader of al-Qaeda in Yemen",
-    "extract": "On November 3, 2002, a remotely piloted aircraft operated by the Central Intelligence Agency (CIA) launched an airstrike on a vehicle travelling through Marib Governorate, Yemen. The strike killed six militants including its target Abu Ali al-Harithi, the leader of al-Qaeda in Yemen. It was the first drone strike conducted by the United States outside of a conventional battlefield, and the first targeted killing in the war on terror.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4a/MQ-1_Predator.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "pageUrl": "https://en.wikipedia.org/wiki/2002_Marib_airstrike",
-    "source": "Wikipedia · On this day"
+    "title": "Eunos MRT station",
+    "description": "Mass Rapid Transit station in Singapore",
+    "extract": "Eunos MRT station is an elevated Mass Rapid Transit (MRT) station on the East–West Line in Geylang, Singapore. Operated by SMRT Trains, the station is connected to the Eunos Bus Interchange. It also provides access to other surrounding landmarks such as the Masjid Darul Aman, Eunos Crescent Market and Food Centre, and Mangala Vihara Buddhist Temple.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0e/EW7_Eunos_MRT_Station_exterior_202412.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Eunos_MRT_station",
+    "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
     "title": "APOD",
