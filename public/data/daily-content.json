@@ -1,25 +1,25 @@
 {
-  "date": "2026-11-04",
-  "generatedAt": "2026-11-04T18:56:49.047Z",
+  "date": "2026-11-05",
+  "generatedAt": "2026-11-05T14:41:50.673Z",
   "art": null,
   "bird": {
-    "name": "Blue waxbill",
+    "name": "Scarlet-rumped trogon",
     "scientific": "",
-    "blurb": "The blue waxbill, also called southern blue waxbill, blue-breasted waxbill, southern cordon-bleu, blue-cheeked cordon-bleu, blue-breasted cordon-bleu and Angola cordon-bleu, is a common species of estrildid finch found in Southern Africa. It is also relatively commonly kept as an aviary bird.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/0/05/Uraeginthus_angolensis_%28portrait%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The scarlet-rumped trogon is a species of bird in the family Trogonidae. It has also been called the red-rumped trogon and Duvaucel's trogon. It is distinguishable from other trogons by its small size and reddish rump. This species is generally solitary except mating and raising young, which is done in pairs. It is found within certain lowland forests of Indonesia, Malaysia, Myanmar, and Thailand. It is currently considered near threatened by Red List Assessments due to habitat loss.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Scarlet-rumped_Trogon_%28Harpactes_duvaucelii%29_-_Flickr_-_Lip_Kee_%282%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Blue_waxbill",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Blue%20waxbill%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Scarlet-rumped_trogon",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Scarlet-rumped%20trogon%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Eunos MRT station",
-    "description": "Mass Rapid Transit station in Singapore",
-    "extract": "Eunos MRT station is an elevated Mass Rapid Transit (MRT) station on the East–West Line in Geylang, Singapore. Operated by SMRT Trains, the station is connected to the Eunos Bus Interchange. It also provides access to other surrounding landmarks such as the Masjid Darul Aman, Eunos Crescent Market and Food Centre, and Mangala Vihara Buddhist Temple.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0e/EW7_Eunos_MRT_Station_exterior_202412.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Eunos_MRT_station",
+    "title": "Nikolai Kulikovsky",
+    "description": "Second husband of Grand Duchess Olga Alexandrovna of Russia",
+    "extract": "Nikolai Alexandrovich Kulikovsky was the second husband of Grand Duchess Olga Alexandrovna of Russia, the sister of Tsar Nicholas II and daughter of Tsar Alexander III. He was born into a military landowning family from the south of the Russian Empire, and followed the family tradition by entering the army. In 1903, he was noticed by Grand Duchess Olga during a military review, and they became close friends. Olga wanted to divorce her first husband, Duke Peter Alexandrovich of Oldenburg, and marry Kulikovsky, but neither her husband nor her brother, the Tsar, would allow it.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Olga_alexandrovna_com_marida.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Nikolai_Kulikovsky",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
