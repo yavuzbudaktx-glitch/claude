@@ -1,25 +1,25 @@
 {
-  "date": "2026-11-05",
-  "generatedAt": "2026-11-05T19:05:58.143Z",
+  "date": "2026-11-06",
+  "generatedAt": "2026-11-06T14:17:34.908Z",
   "art": null,
   "bird": {
-    "name": "Scarlet-rumped trogon",
+    "name": "White-headed pigeon",
     "scientific": "",
-    "blurb": "The scarlet-rumped trogon is a species of bird in the family Trogonidae. It has also been called the red-rumped trogon and Duvaucel's trogon. It is distinguishable from other trogons by its small size and reddish rump. This species is generally solitary except mating and raising young, which is done in pairs. It is found within certain lowland forests of Indonesia, Malaysia, Myanmar, and Thailand. It is currently considered near threatened by Red List Assessments due to habitat loss.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Scarlet-rumped_Trogon_%28Harpactes_duvaucelii%29_-_Flickr_-_Lip_Kee_%282%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The white-headed pigeon is a pigeon native to the east coast of Australia.",
+    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/84/Columba_leucomela_-_Brunkerville.jpg/3840px-Columba_leucomela_-_Brunkerville.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Scarlet-rumped_trogon",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Scarlet-rumped%20trogon%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/White-headed_pigeon",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=White-headed%20pigeon%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Nikolai Kulikovsky",
-    "description": "Second husband of Grand Duchess Olga Alexandrovna of Russia",
-    "extract": "Nikolai Alexandrovich Kulikovsky was the second husband of Grand Duchess Olga Alexandrovna of Russia, the sister of Tsar Nicholas II and daughter of Tsar Alexander III. He was born into a military landowning family from the south of the Russian Empire, and followed the family tradition by entering the army. In 1903, he was noticed by Grand Duchess Olga during a military review, and they became close friends. Olga wanted to divorce her first husband, Duke Peter Alexandrovich of Oldenburg, and marry Kulikovsky, but neither her husband nor her brother, the Tsar, would allow it.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Olga_alexandrovna_com_marida.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Nikolai_Kulikovsky",
+    "title": "Bill Madden (soldier)",
+    "description": "Australian recipient of the George Cross (1924–1951)",
+    "extract": "Horace William Madden was an Australian Army soldier who was posthumously awarded the George Cross, the highest award for extraordinary acts of gallantry away from the field of battle that could be awarded to a member of the Australian armed forces at the time. The citation for his award highlighted his \"undaunted\" resistance and \"outstanding heroism\" while a prisoner of war of the Chinese forces during the Korean War, which was \"an inspiration to all his fellow prisoners\". It was the highest decoration awarded to an Australian during the Korean War.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/c/ce/Bill_Madden_in_1947.jpeg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Bill_Madden_(soldier)",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
