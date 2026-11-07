@@ -1,26 +1,26 @@
 {
-  "date": "2026-11-06",
-  "generatedAt": "2026-11-06T18:20:14.735Z",
+  "date": "2026-11-07",
+  "generatedAt": "2026-11-07T13:01:24.026Z",
   "art": null,
   "bird": {
-    "name": "White-headed pigeon",
+    "name": "Taiwan shortwing",
     "scientific": "",
-    "blurb": "The white-headed pigeon is a pigeon native to the east coast of Australia.",
-    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/84/Columba_leucomela_-_Brunkerville.jpg/3840px-Columba_leucomela_-_Brunkerville.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "blurb": "The Taiwan shortwing is a species of chat. This species is now classified in the family Muscicapidae.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/56/Brachypteryx_goodfellowi-bio6dSvM1mA.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/White-headed_pigeon",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=White-headed%20pigeon%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Taiwan_shortwing",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Taiwan%20shortwing%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Bill Madden (soldier)",
-    "description": "Australian recipient of the George Cross (1924–1951)",
-    "extract": "Horace William Madden was an Australian Army soldier who was posthumously awarded the George Cross, the highest award for extraordinary acts of gallantry away from the field of battle that could be awarded to a member of the Australian armed forces at the time. The citation for his award highlighted his \"undaunted\" resistance and \"outstanding heroism\" while a prisoner of war of the Chinese forces during the Korean War, which was \"an inspiration to all his fellow prisoners\". It was the highest decoration awarded to an Australian during the Korean War.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/c/ce/Bill_Madden_in_1947.jpeg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Bill_Madden_(soldier)",
-    "source": "Wikipedia · Today's Featured Article"
+    "title": "Hillary Clinton",
+    "description": "American politician and diplomat (born 1947)",
+    "extract": "Hillary Diane Rodham Clinton is an American politician, lawyer and diplomat. She was the 67th United States secretary of state in the administration of Barack Obama from 2009 to 2013, a U.S. senator representing New York from 2001 to 2009, and the first lady of the United States from 1993 to 2001 as the wife of Bill Clinton. A member of the Democratic Party, she was the party's nominee in the 2016 presidential election, becoming the first woman to win a presidential nomination by a major U.S. political party. Clinton won the popular vote but lost the election to Republican Party nominee Donald Trump in the United States Electoral College. She is the only first lady of the United States to have run for, or held, elected office.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Former_United_States_Secretary_of_State_Hillary_Rodham_Clinton_at_the_U.S._Department_of_State_on_September_26%2C_2023_in_Washington%2C_D.C._14_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageUrl": "https://en.wikipedia.org/wiki/Hillary_Clinton",
+    "source": "Wikipedia · On this day"
   },
   "nasa": {
     "title": "APOD",
