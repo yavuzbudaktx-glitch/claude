@@ -1,26 +1,26 @@
 {
-  "date": "2026-11-07",
-  "generatedAt": "2026-11-07T17:09:09.312Z",
+  "date": "2026-11-08",
+  "generatedAt": "2026-11-08T13:21:14.255Z",
   "art": null,
   "bird": {
-    "name": "Caribbean elaenia",
+    "name": "Whiskered wren",
     "scientific": "",
-    "blurb": "The Caribbean elaenia is a species of bird in subfamily Elaeniinae of family Tyrannidae, the tyrant flycatchers. It is found in the West Indies, in parts of Central America, and on islands just off the northern South American coast.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/96/Caribbean_Elaenia.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "audioUrl": "",
+    "blurb": "The whiskered wren is a species of bird in the family Troglodytidae. It is found in Colombia, Ecuador, and Venezuela.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Pheugopedius_mystacalis_-_Whiskered_wren%3B_Rubio%2C_T%C3%A1chira%2C_Venezuela.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "audioUrl": "/api/bird-audio?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fa%2Fa7%2FPheugopedius_mystacalis_-_Whiskered_Wren_XC251341.mp3%3Futm_source%3Den.wikipedia.org%26utm_campaign%3Dimageinfo%26utm_content%3Doriginal",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Caribbean_elaenia",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Caribbean%20elaenia%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Whiskered_wren",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Whiskered%20wren%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Hillary Clinton",
-    "description": "American politician and diplomat (born 1947)",
-    "extract": "Hillary Diane Rodham Clinton is an American politician, lawyer and diplomat. She was the 67th United States secretary of state in the administration of Barack Obama from 2009 to 2013, a U.S. senator representing New York from 2001 to 2009, and the first lady of the United States from 1993 to 2001 as the wife of Bill Clinton. A member of the Democratic Party, she was the party's nominee in the 2016 presidential election, becoming the first woman to win a presidential nomination by a major U.S. political party. Clinton won the popular vote but lost the election to Republican Party nominee Donald Trump in the United States Electoral College. She is the only first lady of the United States to have run for, or held, elected office.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Former_United_States_Secretary_of_State_Hillary_Rodham_Clinton_at_the_U.S._Department_of_State_on_September_26%2C_2023_in_Washington%2C_D.C._14_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "pageUrl": "https://en.wikipedia.org/wiki/Hillary_Clinton",
-    "source": "Wikipedia · On this day"
+    "title": "Formula, Vol. 1",
+    "description": "2011 studio album by Romeo Santos",
+    "extract": "Fórmula, Vol. 1 is the debut studio album by American singer Romeo Santos, released on November 8, 2011, by Sony Music Latin. It is Santos's first album as a solo artist following the break-up of American bachata group Aventura, of which he was the lead singer. The record contains fifteen tracks, most of which were composed by Santos and co-produced with Ivan Chevere. The album experiments with the sound of bachata and other genres including R&B and flamenco. It features several Anglophone and Hispanophone guest artists including Usher, Tomatito, Mario Domm, and Lil Wayne. Recording for the album took place in 2011 at The Castle, Fight Klub, and EMG Studios in New York City. A deluxe edition of the album containing five extra tracks was released exclusively in Walmart retail stores in the United States.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/6/68/Romeosantosforumalvol1.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Formula%2C_Vol._1",
+    "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
     "title": "APOD",
