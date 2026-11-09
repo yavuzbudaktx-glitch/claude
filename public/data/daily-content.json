@@ -1,25 +1,25 @@
 {
-  "date": "2026-11-08",
-  "generatedAt": "2026-11-08T17:22:50.726Z",
+  "date": "2026-11-09",
+  "generatedAt": "2026-11-09T16:04:56.442Z",
   "art": null,
   "bird": {
-    "name": "Whiskered wren",
+    "name": "Tuamotu reed warbler",
     "scientific": "",
-    "blurb": "The whiskered wren is a species of bird in the family Troglodytidae. It is found in Colombia, Ecuador, and Venezuela.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Pheugopedius_mystacalis_-_Whiskered_wren%3B_Rubio%2C_T%C3%A1chira%2C_Venezuela.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "audioUrl": "/api/bird-audio?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fa%2Fa7%2FPheugopedius_mystacalis_-_Whiskered_Wren_XC251341.mp3%3Futm_source%3Den.wikipedia.org%26utm_campaign%3Dimageinfo%26utm_content%3Doriginal",
+    "blurb": "The Tuamotu reed warbler is a species of Old World warbler in the family Acrocephalidae.\nIt is found only in French Polynesia.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/3/35/Acrocephalus_atyphus_457387853.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Whiskered_wren",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Whiskered%20wren%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Tuamotu_reed_warbler",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Tuamotu%20reed%20warbler%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Formula, Vol. 1",
-    "description": "2011 studio album by Romeo Santos",
-    "extract": "Fórmula, Vol. 1 is the debut studio album by American singer Romeo Santos, released on November 8, 2011, by Sony Music Latin. It is Santos's first album as a solo artist following the break-up of American bachata group Aventura, of which he was the lead singer. The record contains fifteen tracks, most of which were composed by Santos and co-produced with Ivan Chevere. The album experiments with the sound of bachata and other genres including R&B and flamenco. It features several Anglophone and Hispanophone guest artists including Usher, Tomatito, Mario Domm, and Lil Wayne. Recording for the album took place in 2011 at The Castle, Fight Klub, and EMG Studios in New York City. A deluxe edition of the album containing five extra tracks was released exclusively in Walmart retail stores in the United States.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/6/68/Romeosantosforumalvol1.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Formula%2C_Vol._1",
+    "title": "SoHo Weekly News",
+    "description": "New York City alternative newspaper (1973–1982)",
+    "extract": "The SoHo Weekly News (SWN) was a weekly alternative newspaper founded by American music publicist Michael Goldstein and published in New York City from 1973 to 1982. Goldstein positioned the paper as a competitor to The Village Voice, an established alternative newspaper, but it struggled financially. SWN was acquired by Associated Newspaper Group in 1979 and ceased publication three years later after the company was unable to make it profitable.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/6/60/Soho_News%2C_Vol._8_No._6%2C_November_1980.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/SoHo_Weekly_News",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
