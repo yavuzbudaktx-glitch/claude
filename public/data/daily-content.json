@@ -1,25 +1,25 @@
 {
-  "date": "2026-11-09",
-  "generatedAt": "2026-11-09T21:44:15.066Z",
+  "date": "2026-11-10",
+  "generatedAt": "2026-11-10T14:55:57.147Z",
   "art": null,
   "bird": {
-    "name": "Tuamotu reed warbler",
+    "name": "Snowy plover",
     "scientific": "",
-    "blurb": "The Tuamotu reed warbler is a species of Old World warbler in the family Acrocephalidae.\nIt is found only in French Polynesia.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/3/35/Acrocephalus_atyphus_457387853.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The snowy plover is a small shorebird found in the Americas. It is a member of the bird family Charadriidae, which includes the plovers, dotterels, and lapwings. The snowy plover was originally described by John Cassin in 1858, but was classified as a subspecies of the Kentish plover in 1922. Since 2011, the snowy plover has been recognized as a distinct species based on genetic and anatomical differences from the Kentish plover. Two or three subspecies are recognized, distributed along the Pacific coast of North America, Ecuador, Peru, and Chile, in several inland areas of the US and Mexico, along the Gulf Coast, and on Caribbean islands. The coastal populations consist of both residential and migratory birds, whereas the inland populations are mostly migratory. It is one of the best studied endemic shorebirds of the Americas, and one of the rarest.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Snowy_Plover_Morro_Strand.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Tuamotu_reed_warbler",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Tuamotu%20reed%20warbler%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Snowy_plover",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Snowy%20plover%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "SoHo Weekly News",
-    "description": "New York City alternative newspaper (1973–1982)",
-    "extract": "The SoHo Weekly News (SWN) was a weekly alternative newspaper founded by American music publicist Michael Goldstein and published in New York City from 1973 to 1982. Goldstein positioned the paper as a competitor to The Village Voice, an established alternative newspaper, but it struggled financially. SWN was acquired by Associated Newspaper Group in 1979 and ceased publication three years later after the company was unable to make it profitable.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/6/60/Soho_News%2C_Vol._8_No._6%2C_November_1980.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/SoHo_Weekly_News",
+    "title": "Regulus (Turner)",
+    "description": "1828 painting by J. M. W. Turner",
+    "extract": "Regulus is an oil painting by the English artist J. M. W. Turner, currently housed in Tate Britain, London. It was initially painted in 1828 and overpainted twice, first between 1829 and 1837, and again in 1837. The painting is based on a legend about the Roman consul and general Marcus Atilius Regulus, in which he was captured by Carthaginian forces and executed after refusing a prisoner exchange. Many accounts add that he was tortured by being forced to stare at the sun, blinding him. The painting depicts a harbour in either Rome or Carthage, with ships and buildings surrounding the ocean. It is dominated by the large white sun in the centre.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Regulus_Turner_1828.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Regulus_(Turner)",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
