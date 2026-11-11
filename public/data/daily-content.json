@@ -1,25 +1,25 @@
 {
-  "date": "2026-11-10",
-  "generatedAt": "2026-11-10T18:58:25.380Z",
+  "date": "2026-11-11",
+  "generatedAt": "2026-11-11T14:10:34.620Z",
   "art": null,
   "bird": {
-    "name": "Snowy plover",
+    "name": "Bronze-tailed plumeleteer",
     "scientific": "",
-    "blurb": "The snowy plover is a small shorebird found in the Americas. It is a member of the bird family Charadriidae, which includes the plovers, dotterels, and lapwings. The snowy plover was originally described by John Cassin in 1858, but was classified as a subspecies of the Kentish plover in 1922. Since 2011, the snowy plover has been recognized as a distinct species based on genetic and anatomical differences from the Kentish plover. Two or three subspecies are recognized, distributed along the Pacific coast of North America, Ecuador, Peru, and Chile, in several inland areas of the US and Mexico, along the Gulf Coast, and on Caribbean islands. The coastal populations consist of both residential and migratory birds, whereas the inland populations are mostly migratory. It is one of the best studied endemic shorebirds of the Americas, and one of the rarest.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Snowy_Plover_Morro_Strand.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The bronze-tailed plumeleteer is a species of hummingbird in the \"emeralds\", tribe Trochilini of subfamily Trochilinae. It is found in Colombia, Costa Rica, Ecuador, Nicaragua, and Panama.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/d/db/Bronze-tailed_Plumeleteer_%28Chalybura_urochrysia%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Snowy_plover",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Snowy%20plover%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Bronze-tailed_plumeleteer",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Bronze-tailed%20plumeleteer%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Regulus (Turner)",
-    "description": "1828 painting by J. M. W. Turner",
-    "extract": "Regulus is an oil painting by the English artist J. M. W. Turner, currently housed in Tate Britain, London. It was initially painted in 1828 and overpainted twice, first between 1829 and 1837, and again in 1837. The painting is based on a legend about the Roman consul and general Marcus Atilius Regulus, in which he was captured by Carthaginian forces and executed after refusing a prisoner exchange. Many accounts add that he was tortured by being forced to stare at the sun, blinding him. The painting depicts a harbour in either Rome or Carthage, with ships and buildings surrounding the ocean. It is dominated by the large white sun in the centre.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Regulus_Turner_1828.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Regulus_(Turner)",
+    "title": "U.S. Route 101",
+    "description": "U.S. Numbered Highway on the West Coast",
+    "extract": "U.S. Route 101, or U.S. Highway 101 (US 101), is a major north–south highway that traverses the states of California, Oregon, and Washington on the West Coast of the United States. It is part of the United States Numbered Highway System and runs for over 1,500 miles (2,400 km) along the Pacific Ocean. The highway is also known by various names, including El Camino Real in parts of California, the Oregon Coast Highway, and the Olympic Highway in Washington. Despite its three-digit number, normally used for spur routes, US 101 is classified as a primary route with 10 as its \"first digit\".",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/7/79/US_101.svg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/U.S._Route_101",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
