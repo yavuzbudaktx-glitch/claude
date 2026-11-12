@@ -1,25 +1,25 @@
 {
-  "date": "2026-11-11",
-  "generatedAt": "2026-11-11T19:01:17.952Z",
+  "date": "2026-11-12",
+  "generatedAt": "2026-11-12T15:12:30.653Z",
   "art": null,
   "bird": {
-    "name": "Bronze-tailed plumeleteer",
+    "name": "Black-throated antshrike",
     "scientific": "",
-    "blurb": "The bronze-tailed plumeleteer is a species of hummingbird in the \"emeralds\", tribe Trochilini of subfamily Trochilinae. It is found in Colombia, Costa Rica, Ecuador, Nicaragua, and Panama.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/d/db/Bronze-tailed_Plumeleteer_%28Chalybura_urochrysia%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The black-throated antshrike is a species of bird in subfamily Thamnophilinae of family Thamnophilidae, the \"typical antbirds\". It is native to the Guiana Shield.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Frederickena_viridis_-_Black-throated_Antshrike_%28male%29%3B_Ramal_do_Pau_Rosa%2C_Manaus%2C_Amazonas%2C_Brazil.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Bronze-tailed_plumeleteer",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Bronze-tailed%20plumeleteer%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Black-throated_antshrike",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Black-throated%20antshrike%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "U.S. Route 101",
-    "description": "U.S. Numbered Highway on the West Coast",
-    "extract": "U.S. Route 101, or U.S. Highway 101 (US 101), is a major north–south highway that traverses the states of California, Oregon, and Washington on the West Coast of the United States. It is part of the United States Numbered Highway System and runs for over 1,500 miles (2,400 km) along the Pacific Ocean. The highway is also known by various names, including El Camino Real in parts of California, the Oregon Coast Highway, and the Olympic Highway in Washington. Despite its three-digit number, normally used for spur routes, US 101 is classified as a primary route with 10 as its \"first digit\".",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/7/79/US_101.svg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/U.S._Route_101",
+    "title": "Royal Gloucestershire Hussars",
+    "description": "Unit of the British Army",
+    "extract": "The Royal Gloucestershire Hussars was a volunteer yeomanry regiment which, in the 20th century, became part of the British Army Reserve. It traced its origins to the First or Cheltenham Troop of Gloucestershire Gentleman and Yeomanry raised in 1795, although a break in the lineage means that its formation is dated to the Marshfield and Dodington Troop raised in 1830. Six further troops – officered by nobility and gentry, and recruited largely from among landholders and tenant farmers – were subsequently raised in Gloucestershire, and in 1834 they came together to form the Gloucestershire Yeomanry Cavalry. In 1847, the regiment adopted a hussar uniform and the name Royal Gloucestershire Hussars. Originally intended to counter insurrection and a French invasion that never materialised, the yeomanry's first deployments were ceremonial and as mounted police during times of civil unrest. Three Gloucestershire troops were deployed to Bristol on two separate occasions in the 1830s in support of the civil authorities.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/49/Rgh-badge.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Royal_Gloucestershire_Hussars",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
