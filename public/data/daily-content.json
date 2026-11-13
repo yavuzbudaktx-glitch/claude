@@ -1,26 +1,26 @@
 {
-  "date": "2026-11-12",
-  "generatedAt": "2026-11-12T19:15:20.148Z",
+  "date": "2026-11-13",
+  "generatedAt": "2026-11-13T14:37:50.301Z",
   "art": null,
   "bird": {
-    "name": "Black-throated antshrike",
+    "name": "Black-bellied malkoha",
     "scientific": "",
-    "blurb": "The black-throated antshrike is a species of bird in subfamily Thamnophilinae of family Thamnophilidae, the \"typical antbirds\". It is native to the Guiana Shield.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Frederickena_viridis_-_Black-throated_Antshrike_%28male%29%3B_Ramal_do_Pau_Rosa%2C_Manaus%2C_Amazonas%2C_Brazil.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The black-bellied malkoha is a species of malkoha in the family Cuculidae. It is found in Brunei, Indonesia, Malaysia, Myanmar, Singapore, and Thailand. Its natural habitats are subtropical or tropical moist lowland forests, including mango trees, and subtropical or tropical mangrove forests. It is threatened by habitat loss.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/42/Black-bellied_malkoha_%28Phaenicophaeus_diardi%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Black-throated_antshrike",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Black-throated%20antshrike%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Black-bellied_malkoha",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Black-bellied%20malkoha%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Royal Gloucestershire Hussars",
-    "description": "Unit of the British Army",
-    "extract": "The Royal Gloucestershire Hussars was a volunteer yeomanry regiment which, in the 20th century, became part of the British Army Reserve. It traced its origins to the First or Cheltenham Troop of Gloucestershire Gentleman and Yeomanry raised in 1795, although a break in the lineage means that its formation is dated to the Marshfield and Dodington Troop raised in 1830. Six further troops – officered by nobility and gentry, and recruited largely from among landholders and tenant farmers – were subsequently raised in Gloucestershire, and in 1834 they came together to form the Gloucestershire Yeomanry Cavalry. In 1847, the regiment adopted a hussar uniform and the name Royal Gloucestershire Hussars. Originally intended to counter insurrection and a French invasion that never materialised, the yeomanry's first deployments were ceremonial and as mounted police during times of civil unrest. Three Gloucestershire troops were deployed to Bristol on two separate occasions in the 1830s in support of the civil authorities.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/49/Rgh-badge.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Royal_Gloucestershire_Hussars",
-    "source": "Wikipedia · Today's Featured Article"
+    "title": "November 2015 Paris attacks",
+    "description": "2015 Islamist terror attacks in France",
+    "extract": "A series of coordinated Islamic terrorist attacks took place on Friday, 13 November 2015 in Paris, France, and the city's northern suburb, Saint-Denis. Beginning at 21:16, three suicide bombers struck outside the Stade de France in Saint-Denis, during an international football match, after failing to gain entry to the stadium. Another group of attackers then fired on crowded cafés and restaurants in Paris with one of them also detonating an explosive, killing himself in the process. A third group carried out another mass shooting and took hostages at an Eagles of Death Metal concert attended by 1,500 people in the Bataclan theatre, leading to a stand-off with police. The attackers were either shot or detonated suicide vests when police raided the theatre.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a2/13_November_2015_Paris_attacks_-_montage.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "pageUrl": "https://en.wikipedia.org/wiki/November_2015_Paris_attacks",
+    "source": "Wikipedia · On this day"
   },
   "nasa": {
     "title": "APOD",
