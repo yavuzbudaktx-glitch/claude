@@ -1,26 +1,26 @@
 {
-  "date": "2026-11-13",
-  "generatedAt": "2026-11-13T18:49:45.501Z",
+  "date": "2026-11-14",
+  "generatedAt": "2026-11-14T13:32:33.021Z",
   "art": null,
   "bird": {
-    "name": "Black-bellied malkoha",
+    "name": "Lesser bird-of-paradise",
     "scientific": "",
-    "blurb": "The black-bellied malkoha is a species of malkoha in the family Cuculidae. It is found in Brunei, Indonesia, Malaysia, Myanmar, Singapore, and Thailand. Its natural habitats are subtropical or tropical moist lowland forests, including mango trees, and subtropical or tropical mangrove forests. It is threatened by habitat loss.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/42/Black-bellied_malkoha_%28Phaenicophaeus_diardi%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The lesser bird-of-paradise is a bird-of-paradise in the genus Paradisaea.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/6/64/Cendrawasih.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Black-bellied_malkoha",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Black-bellied%20malkoha%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Lesser_bird-of-paradise",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Lesser%20bird-of-paradise%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "November 2015 Paris attacks",
-    "description": "2015 Islamist terror attacks in France",
-    "extract": "A series of coordinated Islamic terrorist attacks took place on Friday, 13 November 2015 in Paris, France, and the city's northern suburb, Saint-Denis. Beginning at 21:16, three suicide bombers struck outside the Stade de France in Saint-Denis, during an international football match, after failing to gain entry to the stadium. Another group of attackers then fired on crowded cafés and restaurants in Paris with one of them also detonating an explosive, killing himself in the process. A third group carried out another mass shooting and took hostages at an Eagles of Death Metal concert attended by 1,500 people in the Bataclan theatre, leading to a stand-off with police. The attackers were either shot or detonated suicide vests when police raided the theatre.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a2/13_November_2015_Paris_attacks_-_montage.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "pageUrl": "https://en.wikipedia.org/wiki/November_2015_Paris_attacks",
-    "source": "Wikipedia · On this day"
+    "title": "Aucanquilcha",
+    "description": "Stratovolcano in Antofagasta Region, Chile",
+    "extract": "Aucanquilcha is a large compound volcano in the Antofagasta Region of northern Chile, within the Central Volcanic Zone of the Andes. The volcano has the form of a ridge reaching an altitude of 6176 m above sea level, and formed between 1.04 and 0.23 million years ago; there is ongoing fumarolic activity. The volcano is part of a larger cluster of volcanoes sometimes known as the \"Aucanquilcha cluster\" or \"Aucanquilcha complex\". This cluster includes lava domes and lava flows that have formed in several stages over 11 million years of activity with varying magma output. During the ice ages, Aucanquilcha was covered in an ice cap that left moraines and cirques.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/85/Volc%C3%A1n_Aucanquilcha%2C_Chile%2C_2016-02-10%2C_DD_11.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Aucanquilcha",
+    "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
     "title": "APOD",
