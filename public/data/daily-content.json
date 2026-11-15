@@ -1,25 +1,25 @@
 {
-  "date": "2026-11-14",
-  "generatedAt": "2026-11-14T17:26:48.419Z",
+  "date": "2026-11-15",
+  "generatedAt": "2026-11-15T14:00:21.968Z",
   "art": null,
   "bird": {
-    "name": "Lesser bird-of-paradise",
+    "name": "Indian roller",
     "scientific": "",
-    "blurb": "The lesser bird-of-paradise is a bird-of-paradise in the genus Paradisaea.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/6/64/Cendrawasih.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The Indian roller is a bird of the family Coraciidae. It is 30–34 cm (12–13 in) long with a wingspan of 65–74 cm (26–29 in) and weighs 166–176 g (5.9–6.2 oz). The face and throat are pinkish, the head and back are brown, with blue on the rump and contrasting light and dark blue on the wings and tail. The bright blue markings on the wing are prominent in flight. The sexes are similar in appearance. Two subspecies are recognised.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/0/06/Indian_roller_-_Timbi_Lake%2C_Vadodara_2023-12-03.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Lesser_bird-of-paradise",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Lesser%20bird-of-paradise%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Indian_roller",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Indian%20roller%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Aucanquilcha",
-    "description": "Stratovolcano in Antofagasta Region, Chile",
-    "extract": "Aucanquilcha is a large compound volcano in the Antofagasta Region of northern Chile, within the Central Volcanic Zone of the Andes. The volcano has the form of a ridge reaching an altitude of 6,176 metres (20,262 ft) above sea level, formed between 1.04 and 0.23 million years ago; there is ongoing fumarolic activity. The volcano is part of a larger cluster of volcanoes sometimes known as the \"Aucanquilcha cluster\" or \"Aucanquilcha complex\". This cluster includes lava domes and lava flows that have formed in several stages over 11 million years of activity with varying magma output. During the ice ages, Aucanquilcha was covered in an ice cap that left moraines and cirques.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/85/Volc%C3%A1n_Aucanquilcha%2C_Chile%2C_2016-02-10%2C_DD_11.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Aucanquilcha",
+    "title": "Can't Let Go (Mariah Carey song)",
+    "description": "1991 single by Mariah Carey",
+    "extract": "\"Can't Let Go\" is a song recorded by American singer-songwriter Mariah Carey for her second studio album, Emotions (1991). Columbia Records released it as the album's second single in November 1991. Featuring synthesizers and drum programming, \"Can't Let Go\" is a breakup song in the form of an R&B and pop slow jam. The lyrics, written by Carey, are about post-breakup sadness. She composed the music and produced the song with Walter Afanasieff, who had previously worked on her 1990 single \"Love Takes Time\". Carey's vocal range spans more than three octaves; her delivery is predominately breathy and in a low register, with whistle notes in the song's introduction and ending.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/d/d2/Can%27t_Let_Go_by_Mariah_Carey_US_cassette_single.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Can't_Let_Go_(Mariah_Carey_song)",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
