@@ -1,25 +1,25 @@
 {
-  "date": "2026-11-15",
-  "generatedAt": "2026-11-15T18:06:54.063Z",
+  "date": "2026-11-16",
+  "generatedAt": "2026-11-16T15:41:55.079Z",
   "art": null,
   "bird": {
-    "name": "Indian roller",
+    "name": "Speckle-breasted wren",
     "scientific": "",
-    "blurb": "The Indian roller is a bird of the family Coraciidae. It is 30–34 cm (12–13 in) long with a wingspan of 65–74 cm (26–29 in) and weighs 166–176 g (5.9–6.2 oz). The face and throat are pinkish, the head and back are brown, with blue on the rump and contrasting light and dark blue on the wings and tail. The bright blue markings on the wing are prominent in flight. The sexes are similar in appearance. Two subspecies are recognised.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/0/06/Indian_roller_-_Timbi_Lake%2C_Vadodara_2023-12-03.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "audioUrl": "",
+    "blurb": "The speckle-breasted wren is a species of bird in the family Troglodytidae. It is found in Colombia, Ecuador, and Peru.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/2/23/Pheugopedius_sclateri_12870149.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "audioUrl": "/api/bird-audio?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fa%2Fae%2FPheugopedius_sclateri_-_Speckle-breasted_Wren_XC242957.mp3%3Futm_source%3Den.wikipedia.org%26utm_campaign%3Dimageinfo%26utm_content%3Doriginal",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Indian_roller",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Indian%20roller%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Speckle-breasted_wren",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Speckle-breasted%20wren%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Can't Let Go (Mariah Carey song)",
-    "description": "1991 single by Mariah Carey",
-    "extract": "\"Can't Let Go\" is a song recorded by American singer-songwriter Mariah Carey for her second studio album, Emotions (1991). Columbia Records released it as the album's second single in November 1991. Featuring synthesizers and drum programming, \"Can't Let Go\" is a breakup song in the form of an R&B and pop slow jam. The lyrics, written by Carey, are about post-breakup sadness. She composed the music and produced the song with Walter Afanasieff, who had previously worked on her 1990 single \"Love Takes Time\". Carey's vocal range spans more than three octaves; her delivery is predominately breathy and in a low register, with whistle notes in the song's introduction and ending.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/d/d2/Can%27t_Let_Go_by_Mariah_Carey_US_cassette_single.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Can't_Let_Go_(Mariah_Carey_song)",
+    "title": "Mark Satin",
+    "description": "American political theorist, writer, and newsletter publisher (born 1946)",
+    "extract": "Mark Ivor Satin is an American political theorist, writer, and newsletter publisher. He contributed to the development and dissemination of three political perspectives – neopacifism in the 1960s, New Age politics in the 1970s and 1980s, and radical centrism from the 1990s into the 2020s. Satin's work is sometimes seen as building toward a new political ideology, and then it is often labeled \"transformational\", \"post-liberal\", or \"post-Marxist\". One historian calls Satin's writing \"post-hip\".",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Mark_Satin_in_2011.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Mark_Satin",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
