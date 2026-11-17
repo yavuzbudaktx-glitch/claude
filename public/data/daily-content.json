@@ -1,25 +1,25 @@
 {
-  "date": "2026-11-16",
-  "generatedAt": "2026-11-16T21:21:17.483Z",
+  "date": "2026-11-17",
+  "generatedAt": "2026-11-17T16:02:43.727Z",
   "art": null,
   "bird": {
-    "name": "Speckle-breasted wren",
+    "name": "Short-tailed nighthawk",
     "scientific": "",
-    "blurb": "The speckle-breasted wren is a species of bird in the family Troglodytidae. It is found in Colombia, Ecuador, and Peru.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/2/23/Pheugopedius_sclateri_12870149.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "audioUrl": "/api/bird-audio?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fa%2Fae%2FPheugopedius_sclateri_-_Speckle-breasted_Wren_XC242957.mp3%3Futm_source%3Den.wikipedia.org%26utm_campaign%3Dimageinfo%26utm_content%3Doriginal",
+    "blurb": "The short-tailed nighthawk is a species of nightjar in the family Caprimulgidae. It is found in Mexico, in every Central American country except El Salvador, in Trinidad and Tobago, and in every mainland South American country except Chile and Uruguay.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Lurocalis_semitorquatus_-_Short-tailed_Nighthawk%3B_Botanic_Garden%2C_S%C3%A3o_Paulo%2C_Brazil.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Speckle-breasted_wren",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Speckle-breasted%20wren%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Short-tailed_nighthawk",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Short-tailed%20nighthawk%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Mark Satin",
-    "description": "American theorist and writer (born 1946)",
-    "extract": "Mark Ivor Satin is an American political theorist, writer, and newsletter publisher. He contributed to the development and dissemination of three political perspectives – neopacifism in the 1960s, New Age politics in the 1970s and 1980s, and radical centrism from the 1990s into the 2020s. Satin's work is sometimes seen as building toward a new political ideology, and then it is often labeled \"transformational\", \"post-liberal\", or \"post-Marxist\". One historian calls Satin's writing \"post-hip\".",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Mark_Satin_in_2011.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Mark_Satin",
+    "title": "Islands: Non-Places",
+    "description": "2016 art game",
+    "extract": "Islands: Non-Places is a 2016 abstract art game developed and published independently by artist and animator Carl Burton, who is best known for the animated GIF illustrations he created for season two of the Serial podcast. The game was released on November 17, 2016, on iOS, Windows, Mac, and Linux, and consists of a series of anonymous, liminal environments – the eponymous \"non-places\". These scenes appear mundane at first, but become increasingly surreal as the player interacts with the objects within.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/2/22/Islands_Non_Places_header.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Islands%3A_Non-Places",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
