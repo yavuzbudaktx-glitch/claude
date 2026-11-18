@@ -1,25 +1,25 @@
 {
-  "date": "2026-11-17",
-  "generatedAt": "2026-11-17T20:10:04.132Z",
+  "date": "2026-11-18",
+  "generatedAt": "2026-11-18T15:42:55.557Z",
   "art": null,
   "bird": {
-    "name": "Short-tailed nighthawk",
+    "name": "Rusty-barred owl",
     "scientific": "",
-    "blurb": "The short-tailed nighthawk is a species of nightjar in the family Caprimulgidae. It is found in Mexico, in every Central American country except El Salvador, in Trinidad and Tobago, and in every mainland South American country except Chile and Uruguay.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Lurocalis_semitorquatus_-_Short-tailed_Nighthawk%3B_Botanic_Garden%2C_S%C3%A3o_Paulo%2C_Brazil.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The rusty-barred owl is a medium-sized \"typical owl\" in subfamily Striginae. It is found in Argentina, Brazil, and Paraguay.",
+    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d5/Coruja-listrada_%28Strix_hylophila%29_no_Parque_Estadual_Intervales.jpg/3840px-Coruja-listrada_%28Strix_hylophila%29_no_Parque_Estadual_Intervales.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Short-tailed_nighthawk",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Short-tailed%20nighthawk%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Rusty-barred_owl",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Rusty-barred%20owl%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Islands: Non-Places",
-    "description": "2016 art game",
-    "extract": "Islands: Non-Places is a 2016 abstract art game developed and published independently by artist and animator Carl Burton, who is best known for the animated GIF illustrations he created for season two of the Serial podcast. The game was released on November 17, 2016, on iOS, Windows, Mac, and Linux, and consists of a series of anonymous, liminal environments – the eponymous \"non-places\". These scenes appear mundane at first, but become increasingly surreal as the player interacts with the objects within.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/2/22/Islands_Non_Places_header.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Islands%3A_Non-Places",
+    "title": "W. S. Gilbert",
+    "description": "English dramatist, poet and illustrator (1836–1911)",
+    "extract": "Sir William Schwenck Gilbert was an English dramatist, librettist, poet and illustrator best known for his collaboration with the composer Arthur Sullivan, which produced fourteen comic operas. The most famous of these include H.M.S. Pinafore, The Pirates of Penzance and one of the most frequently performed works in the history of musical theatre, The Mikado. The popularity of these works was supported for over a century by year-round performances of them, in Britain and abroad, by the repertory company that Gilbert, Sullivan and their producer Richard D'Oyly Carte founded, the D'Oyly Carte Opera Company. These Savoy operas are still frequently performed in the English-speaking world and beyond.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Elliott_%26_Fry_-_photograph_W._S._Gilbert.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/W._S._Gilbert",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
