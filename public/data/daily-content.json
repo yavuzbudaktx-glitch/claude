@@ -1,6 +1,6 @@
 {
   "date": "2026-11-19",
-  "generatedAt": "2026-11-19T15:48:34.409Z",
+  "generatedAt": "2026-11-19T17:01:01.358Z",
   "art": null,
   "bird": {
     "name": "Ivory-billed aracari",
@@ -17,7 +17,7 @@
   "wiki": {
     "title": "Iron Gate (Antioch)",
     "description": "Dam in Antakya, Turkey",
-    "extract": "The Iron Gate is a sixth-century dam located in the mountains to the east of Antakya in Turkey. It is one of the earliest known arch dams and is now the oldest to survive. It was built in the mid-sixth century on the order of the Byzantine emperor Justinian I to impound and slow the waters of the Parmenios stream, which in the rainy season could cause torrential floods endangering Antioch's city centre. Previous attempts to channel the floodwaters into underground passageways had not fully solved the problem.",
+    "extract": "The Iron Gate is a sixth-century dam located in the mountains to the east of Antakya in Turkey. It is one of the earliest known arch dams and is the oldest to survive. It was built in the mid-sixth century on the order of the Byzantine emperor Justinian I to impound and slow the waters of the Parmenios stream, which in the rainy season could cause torrential floods endangering Antioch's city centre. Previous attempts to channel the floodwaters into underground passageways had not fully solved the problem.",
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/7/71/RUINS_OF_IRON_GATE%2C_ANTIOCH_ANTAKYA%2C_TURKEY_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
     "pageUrl": "https://en.wikipedia.org/wiki/Iron_Gate_(Antioch)",
     "source": "Wikipedia · Today's Featured Article"
