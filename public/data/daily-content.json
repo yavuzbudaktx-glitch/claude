@@ -1,25 +1,25 @@
 {
-  "date": "2026-11-19",
-  "generatedAt": "2026-11-19T19:45:41.006Z",
+  "date": "2026-11-20",
+  "generatedAt": "2026-11-20T15:26:31.189Z",
   "art": null,
   "bird": {
-    "name": "Ivory-billed aracari",
+    "name": "Sulawesi fantail",
     "scientific": "",
-    "blurb": "The ivory-billed aracari or ivory-billed araçari is a bird in the toucan family Ramphastidae. It is found in Brazil, Colombia, Ecuador, Peru, and Venezuela.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/43/Ivory-billed_aracari_%28Pteroglossus_azara_flavirostris%29_Rio_Napo.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The Sulawesi fantail is a species of bird in the family Rhipiduridae. It is endemic to Sulawesi in Indonesia. Its natural habitats are subtropical or tropical moist lowland forests and subtropical or tropical moist montane forests.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Rhipidura_teysmanni_-_Mount_Soputan_%281%29%2C_crop.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Ivory-billed_aracari",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Ivory-billed%20aracari%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Sulawesi_fantail",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Sulawesi%20fantail%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Iron Gate (Antioch)",
-    "description": "Dam in Antakya, Turkey",
-    "extract": "The Iron Gate is a sixth-century dam located in the mountains to the east of Antakya in Turkey. It is one of the earliest known arch dams and is the oldest to survive. It was built in the mid–sixth century on the order of the Byzantine emperor Justinian I to impound and slow the waters of the Parmenios stream, which in the rainy season could cause torrential floods endangering Antioch's city centre. Previous attempts to channel the floodwaters into underground passageways had not fully solved the problem.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/7/71/RUINS_OF_IRON_GATE%2C_ANTIOCH_ANTAKYA%2C_TURKEY_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Iron_Gate_(Antioch)",
+    "title": "Tôn Thất Đính",
+    "description": "South Vietnamese military officer and politician (1926–2013)",
+    "extract": "Lieutenant General Tôn Thất Đính was an officer who served in the Army of the Republic of Vietnam (ARVN). He is best known as one of the key figures in the November 1963 coup that led to the arrest and assassination of Ngô Đình Diệm, the first president of the Republic of Vietnam, commonly known as South Vietnam.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Ton_That_Dinh_December_1963.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/T%C3%B4n_Th%E1%BA%A5t_%C4%90%C3%ADnh",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
