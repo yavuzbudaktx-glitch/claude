@@ -1,26 +1,26 @@
 {
-  "date": "2026-11-20",
-  "generatedAt": "2026-11-20T19:24:13.671Z",
+  "date": "2026-11-21",
+  "generatedAt": "2026-11-21T14:43:09.489Z",
   "art": null,
   "bird": {
-    "name": "Sulawesi fantail",
+    "name": "Striated yuhina",
     "scientific": "",
-    "blurb": "The Sulawesi fantail is a species of bird in the family Rhipiduridae. It is endemic to Sulawesi in Indonesia. Its natural habitats are subtropical or tropical moist lowland forests and subtropical or tropical moist montane forests.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Rhipidura_teysmanni_-_Mount_Soputan_%281%29%2C_crop.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The striated yuhina is a bird species in the white-eye family Zosteropidae.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/10/Striated_Yuhina_-_Bhutan_S4E1473_%2819521210506%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Sulawesi_fantail",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Sulawesi%20fantail%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Striated_yuhina",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Striated%20yuhina%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Tôn Thất Đính",
-    "description": "South Vietnamese military officer and politician (1926–2013)",
-    "extract": "Lieutenant General Tôn Thất Đính was an officer who served in the Army of the Republic of Vietnam (ARVN). He was one of the key figures in the November 1963 coup that led to the arrest and assassination of Ngô Đình Diệm, the first president of the Republic of Vietnam, commonly known as South Vietnam.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/94/Ton_That_Dinh_December_1963_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/T%C3%B4n_Th%E1%BA%A5t_%C4%90%C3%ADnh",
-    "source": "Wikipedia · Today's Featured Article"
+    "title": "2015 Brussels lockdown",
+    "description": "Belgium government lockdown due to terrorism",
+    "extract": "From 21 to 25 November 2015, the government of Belgium imposed a security lockdown on Brussels, including the closure of shops, schools, public transportation, due to information about potential terrorist attacks in the wake of the series of coordinated terrorist attacks in Paris by Islamic State of Iraq and the Levant on 13 November. One of the perpetrators of the attack, Belgian-born French national Salah Abdeslam, was thought to be hiding in the city. As a result of warnings of a serious and imminent threat, the terror alert level was raised to the highest level (four) across the Brussels metropolitan area, and people were advised not to congregate publicly, effectively putting the city under lockdown.",
+    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/36/Brussels-Capital_Region_in_Belgium.svg/1280px-Brussels-Capital_Region_in_Belgium.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "pageUrl": "https://en.wikipedia.org/wiki/2015_Brussels_lockdown",
+    "source": "Wikipedia · On this day"
   },
   "nasa": {
     "title": "APOD",
