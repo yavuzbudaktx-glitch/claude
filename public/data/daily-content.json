@@ -1,6 +1,6 @@
 {
   "date": "2026-11-22",
-  "generatedAt": "2026-11-22T15:54:28.428Z",
+  "generatedAt": "2026-11-22T18:48:59.537Z",
   "art": null,
   "bird": {
     "name": "Stone partridge",
@@ -16,7 +16,7 @@
   },
   "wiki": {
     "title": "Mairzy Doates",
-    "description": "American Thoroughbred racehorse",
+    "description": "American Thoroughbred racehorse (1976–1998)",
     "extract": "Mairzy Doates was an American Thoroughbred racehorse and multiple graded stakes winner, most remembered for her victory at the inaugural Japan Cup in 1981. Owned by New York City art dealer Arno D. Schefler and trained primarily by future U.S. Racing Hall of Fame inductee Horatio Luro, she competed successfully across the United States from 1978 to 1981, including winning the Yerba Buena Handicap twice.",
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/8d/Mairzy_Doates_at_the_1981_Japan_Cup.jpeg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
     "pageUrl": "https://en.wikipedia.org/wiki/Mairzy_Doates",
