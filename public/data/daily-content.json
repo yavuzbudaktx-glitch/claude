@@ -1,26 +1,26 @@
 {
-  "date": "2026-11-21",
-  "generatedAt": "2026-11-21T18:19:15.422Z",
+  "date": "2026-11-22",
+  "generatedAt": "2026-11-22T14:38:58.374Z",
   "art": null,
   "bird": {
-    "name": "Striated yuhina",
+    "name": "Stone partridge",
     "scientific": "",
-    "blurb": "The striated yuhina is a bird species in the white-eye family Zosteropidae.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/10/Striated_Yuhina_-_Bhutan_S4E1473_%2819521210506%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The stone partridge is a bird of the New World quail family. This largely brown bird, which commonly holds its tail raised, is found in scrubland and lightly wooded habitats, often near rocks, from Kenya and Ethiopia to Gambia.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/11/Stone_Partridge.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Striated_yuhina",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Striated%20yuhina%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Stone_partridge",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Stone%20partridge%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "2015 Brussels lockdown",
-    "description": "Belgium government lockdown due to terrorism",
-    "extract": "From 21 to 25 November 2015, the government of Belgium imposed a security lockdown on Brussels, including the closure of shops, schools, public transportation, due to information about potential terrorist attacks in the wake of the series of coordinated terrorist attacks in Paris by Islamic State of Iraq and the Levant on 13 November. One of the perpetrators of the attack, Belgian-born French national Salah Abdeslam, was thought to be hiding in the city. As a result of warnings of a serious and imminent threat, the terror alert level was raised to the highest level (four) across the Brussels metropolitan area, and people were advised not to congregate publicly, effectively putting the city under lockdown.",
-    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/36/Brussels-Capital_Region_in_Belgium.svg/1280px-Brussels-Capital_Region_in_Belgium.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-    "pageUrl": "https://en.wikipedia.org/wiki/2015_Brussels_lockdown",
-    "source": "Wikipedia · On this day"
+    "title": "Mairzy Doates",
+    "description": "American Thoroughbred racehorse",
+    "extract": "Mairzy Doates was an American Thoroughbred racehorse and multiple graded stakes winner, most remembered for her victory at the inaugural Japan Cup in 1981. Owned by New York City art dealer Arno D. Schefler and trained primarily by future U.S. Racing Hall of Fame inductee Horatio Luro, she competed successfully across the United States from 1978 to 1981, including winning the Yerba Buena Handicap twice.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/8d/Mairzy_Doates_at_the_1981_Japan_Cup.jpeg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Mairzy_Doates",
+    "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
     "title": "APOD",
