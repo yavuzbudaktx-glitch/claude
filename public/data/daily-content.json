@@ -1,25 +1,25 @@
 {
-  "date": "2026-11-22",
-  "generatedAt": "2026-11-22T18:48:59.537Z",
+  "date": "2026-11-23",
+  "generatedAt": "2026-11-23T18:05:46.357Z",
   "art": null,
   "bird": {
-    "name": "Stone partridge",
+    "name": "Red-and-yellow barbet",
     "scientific": "",
-    "blurb": "The stone partridge is a bird of the New World quail family. This largely brown bird, which commonly holds its tail raised, is found in scrubland and lightly wooded habitats, often near rocks, from Kenya and Ethiopia to Gambia.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/11/Stone_Partridge.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "audioUrl": "",
+    "blurb": "The red-and-yellow barbet is a species of African barbet found in eastern Africa. Males have distinctive black, red, and yellow plumage; females and juveniles are similar, but less brightly colored. The species lives in broken terrain and nests and roosts in burrows. Omnivorous, the species feeds on seeds, fruit, and invertebrates. Where not hunted, they are tame, but their feathers are used by certain tribes, such as the Maasai.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Lake_Manyara_Bartvogel.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "audioUrl": "/api/bird-audio?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2F2%2F27%2FSong_of_Trachyphonus_erythrocephalus.ogg%3Futm_source%3Den.wikipedia.org%26utm_campaign%3Dimageinfo%26utm_content%3Doriginal",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Stone_partridge",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Stone%20partridge%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Red-and-yellow_barbet",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Red-and-yellow%20barbet%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Mairzy Doates",
-    "description": "American Thoroughbred racehorse (1976–1998)",
-    "extract": "Mairzy Doates was an American Thoroughbred racehorse and multiple graded stakes winner, most remembered for her victory at the inaugural Japan Cup in 1981. Owned by New York City art dealer Arno D. Schefler and trained primarily by future U.S. Racing Hall of Fame inductee Horatio Luro, she competed successfully across the United States from 1978 to 1981, including winning the Yerba Buena Handicap twice.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/8d/Mairzy_Doates_at_the_1981_Japan_Cup.jpeg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Mairzy_Doates",
+    "title": "Ice Warrior",
+    "description": "Doctor Who alien race",
+    "extract": "The Ice Warriors are a fictional extraterrestrial race of reptilian humanoids in the British science fiction television series Doctor Who. Natives of Mars, the Ice Warriors wear bio-mechanical armour to protect themselves from attack and temperature fluctuations. In their debut, the 1967 serial The Ice Warriors, they fought the Second Doctor. Two years later, they reappeared in The Seeds of Death. In 1972's The Curse of Peladon, they were allied with the Doctor, reverting to antagonists in The Monster of Peladon two years later. The Ice Warriors did not appear again on-screen until the show's 2005 revival series in the episode \"Cold War\" (2013), followed by the 2017 episode \"Empress of Mars\". They have also appeared in spin-off media for the series.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/5/5d/Ice_Warriors.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Ice_Warrior",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
