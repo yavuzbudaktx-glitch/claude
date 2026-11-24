@@ -1,25 +1,25 @@
 {
-  "date": "2026-11-23",
-  "generatedAt": "2026-11-23T23:00:08.559Z",
+  "date": "2026-11-24",
+  "generatedAt": "2026-11-24T17:35:59.712Z",
   "art": null,
   "bird": {
-    "name": "Red-and-yellow barbet",
+    "name": "Pygmy cupwing",
     "scientific": "",
-    "blurb": "The red-and-yellow barbet is a species of African barbet found in eastern Africa. Males have distinctive black, red, and yellow plumage; females and juveniles are similar, but less brightly colored. The species lives in broken terrain and nests and roosts in burrows. Omnivorous, the species feeds on seeds, fruit, and invertebrates. Where not hunted, they are tame, but their feathers are used by certain tribes, such as the Maasai.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Lake_Manyara_Bartvogel.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "audioUrl": "/api/bird-audio?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2F2%2F27%2FSong_of_Trachyphonus_erythrocephalus.ogg%3Futm_source%3Den.wikipedia.org%26utm_campaign%3Dimageinfo%26utm_content%3Doriginal",
+    "blurb": "The pygmy cupwing or pygmy wren-babbler, is a species of bird in the Pnoepyga wren-babblers family, Pnoepygidae. It is found in southern and eastern Asia from the Himalayas to the Lesser Sunda Islands. Its natural habitats are subtropical or tropical moist lowland forest and subtropical or tropical moist montane forest.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/19/Pygmy_Cupwing_0A2A1378.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Red-and-yellow_barbet",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Red-and-yellow%20barbet%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Pygmy_cupwing",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Pygmy%20cupwing%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Ice Warrior",
-    "description": "Doctor Who alien race",
-    "extract": "The Ice Warriors are a fictional extraterrestrial race of reptilian humanoids in the British science fiction television series Doctor Who. Natives of Mars, the Ice Warriors wear bio-mechanical armour to protect themselves from attack and temperature fluctuations. In their debut, the 1967 serial The Ice Warriors, they fought the Second Doctor. Two years later, they reappeared in The Seeds of Death. In 1972's The Curse of Peladon, they were allied with the Doctor, reverting to antagonists in The Monster of Peladon two years later. The Ice Warriors did not appear again on-screen until the show's 2005 revival series in the episode \"Cold War\" (2013), followed by the 2017 episode \"Empress of Mars\". They have also appeared in spin-off media for the series.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/5/5d/Ice_Warriors.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Ice_Warrior",
+    "title": "Great white shark",
+    "description": "Species of large lamniform shark",
+    "extract": "The great white shark, also known as the white shark, white pointer, or great white, is a large shark. It is closely related to the mako sharks, the porbeagle, and the salmon shark. It is a robustly built species with a grayish upperside and a white underside. The white shark is one of the largest living shark and fish species, though it is still smaller than the whale shark and basking shark. It has about three hundred triangular, serrated teeth that are continuously replaced. Its massive, fatty liver can reach over a quarter of its body weight, providing buoyancy and storing energy. The species is partially warm-blooded, an adaptation that allows it to remain active in colder waters.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/56/White_shark.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Great_white_shark",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
