@@ -1,6 +1,6 @@
 {
   "date": "2026-11-24",
-  "generatedAt": "2026-11-24T19:20:02.685Z",
+  "generatedAt": "2026-11-24T21:37:03.425Z",
   "art": null,
   "bird": {
     "name": "Pygmy cupwing",
@@ -17,7 +17,7 @@
   "wiki": {
     "title": "Great white shark",
     "description": "Species of large lamniform shark",
-    "extract": "The great white shark, also known as the white shark, white pointer, or great white, is a large shark. It is closely related to the mako sharks, the porbeagle, and the salmon shark. It is a robustly built species with a grayish upperside and a white underside. The white shark is one of the largest living shark and fish species, though it is still smaller than the whale shark and basking shark. It has about three hundred triangular, serrated teeth that are continuously replaced. Its massive, fatty liver can reach over a quarter of its body weight, providing buoyancy and storing energy. The species is partially warm-blooded, an adaptation that allows it to remain active in colder waters.",
+    "extract": "The great white shark, also known as the white shark, white pointer or great white, is a large shark. It is closely related to the mako sharks, the porbeagle and the salmon shark. It is a robustly built species with a grayish upperside and a white underside. The white shark is one of the largest living shark and fish species, though it is still smaller than the whale shark and basking shark. It has about three hundred triangular, serrated teeth that are continuously replaced. Its massive, fatty liver can reach over a quarter of its body weight, providing buoyancy and storing energy. The species is partially warm-blooded, an adaptation that allows it to remain active in colder waters.",
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/56/White_shark.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
     "pageUrl": "https://en.wikipedia.org/wiki/Great_white_shark",
     "source": "Wikipedia · Today's Featured Article"
