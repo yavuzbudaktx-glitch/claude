@@ -1,25 +1,25 @@
 {
-  "date": "2026-11-24",
-  "generatedAt": "2026-11-24T21:37:03.425Z",
+  "date": "2026-11-25",
+  "generatedAt": "2026-11-25T17:14:11.746Z",
   "art": null,
   "bird": {
-    "name": "Pygmy cupwing",
+    "name": "Long-trained nightjar",
     "scientific": "",
-    "blurb": "The pygmy cupwing or pygmy wren-babbler, is a species of bird in the Pnoepyga wren-babblers family, Pnoepygidae. It is found in southern and eastern Asia from the Himalayas to the Lesser Sunda Islands. Its natural habitats are subtropical or tropical moist lowland forest and subtropical or tropical moist montane forest.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/19/Pygmy_Cupwing_0A2A1378.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The long-trained nightjar is a species of nightjar in the family Caprimulgidae. It is found in Argentina and Brazil.",
+    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f4/Hydropsalis_forcipata_%28Macropsalis_creagra%29_Long-trained_Nightjar.JPG/3840px-Hydropsalis_forcipata_%28Macropsalis_creagra%29_Long-trained_Nightjar.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Pygmy_cupwing",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Pygmy%20cupwing%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Long-trained_nightjar",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Long-trained%20nightjar%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Great white shark",
-    "description": "Species of large lamniform shark",
-    "extract": "The great white shark, also known as the white shark, white pointer or great white, is a large shark. It is closely related to the mako sharks, the porbeagle and the salmon shark. It is a robustly built species with a grayish upperside and a white underside. The white shark is one of the largest living shark and fish species, though it is still smaller than the whale shark and basking shark. It has about three hundred triangular, serrated teeth that are continuously replaced. Its massive, fatty liver can reach over a quarter of its body weight, providing buoyancy and storing energy. The species is partially warm-blooded, an adaptation that allows it to remain active in colder waters.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/56/White_shark.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Great_white_shark",
+    "title": "Infancy Gospel of Thomas",
+    "description": "Gospel about the childhood of Jesus",
+    "extract": "The Infancy Gospel of Thomas is an apocryphal gospel about the childhood of Jesus. Together with the Gospel of James, it was one of the earliest and most influential sources detailing the activities and life of the young Jesus, although neither are included in the New Testament canon. Its creation is generally dated to the second century. The oldest extant fragmentary writing is in Koine Greek and dates to the fourth or fifth century; Latin and Syriac attestations to a short form exist from the fifth or sixth century; and an 11th-century manuscript in Greek contains the earliest extant long form of the work. Variants flourished that expanded the infancy gospel by combining it with other stories in larger works and anthologies; the Gospel of Pseudo-Matthew is one example that proved popular in the Latin-speaking Western Church during the Middle Ages.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Sbs-0008_028r_Jesus_macht_die_Tonv%C3%B6gelchen_lebendig.TIF?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Infancy_Gospel_of_Thomas",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
