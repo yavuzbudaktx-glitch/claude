@@ -1,25 +1,25 @@
 {
-  "date": "2026-11-25",
-  "generatedAt": "2026-11-25T20:45:25.942Z",
+  "date": "2026-11-26",
+  "generatedAt": "2026-11-26T16:56:50.680Z",
   "art": null,
   "bird": {
-    "name": "Long-trained nightjar",
+    "name": "Livingstone's flycatcher",
     "scientific": "",
-    "blurb": "The long-trained nightjar is a species of nightjar in the family Caprimulgidae. It is found in Argentina and Brazil.",
-    "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f4/Hydropsalis_forcipata_%28Macropsalis_creagra%29_Long-trained_Nightjar.JPG/3840px-Hydropsalis_forcipata_%28Macropsalis_creagra%29_Long-trained_Nightjar.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "blurb": "Livingstone's flycatcher is a species of bird in the family Erythrocercidae.\nIt is found in Malawi, Mozambique, Tanzania, Zambia, and Zimbabwe.\nIts natural habitats are subtropical or tropical dry forests and subtropical or tropical moist shrubland.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Livingstone%27s_Flycatcher_-_Malawi_S4E3726_%2818824261563%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Long-trained_nightjar",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Long-trained%20nightjar%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Livingstone's_flycatcher",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Livingstone's%20flycatcher%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Infancy Gospel of Thomas",
-    "description": "Gospel about the childhood of Jesus",
-    "extract": "The Infancy Gospel of Thomas is an apocryphal gospel about the childhood of Jesus. Together with the Gospel of James, it is one of the earliest and most influential sources detailing the activities and life of the young Jesus, although neither text is included in the New Testament canon. Its creation is generally dated to the second century. The oldest extant fragmentary writing is in Koine Greek and dates to the fourth or fifth century; Latin and Syriac attestations to a short form exist from the fifth or sixth century; and an 11th-century manuscript in Greek contains the earliest extant long form of the work. Variants flourished that expanded the infancy gospel by combining it with other stories in larger works and anthologies; the Gospel of Pseudo-Matthew is one example that proved popular in the Latin-speaking Western Church during the Middle Ages.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Sbs-0008_028r_Jesus_macht_die_Tonv%C3%B6gelchen_lebendig.TIF?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Infancy_Gospel_of_Thomas",
+    "title": "Tabancale language",
+    "description": "Extinct language of Peru and Ecuador",
+    "extract": "Tabancale is an extinct language formerly spoken in the village of Aconipa, located along the Chinchipe River in the Department of Cajamarca, Peru, as well as in neighboring Ecuador, by the Tabancale people. Only five words were collected in the 16th century and they are not demonstrably related to those in other languages. As a result, it has been categorized as a language isolate by some and left unclassified by others; a connection has been proposed with the Chicham languages, spoken in Peru and Ecuador. The Tabancale people are thought to have switched to Quechua after they were conquered in 1549.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Tabancale_language_map.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Tabancale_language",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
