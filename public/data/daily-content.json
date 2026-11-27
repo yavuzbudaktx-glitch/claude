@@ -1,25 +1,25 @@
 {
-  "date": "2026-11-26",
-  "generatedAt": "2026-11-26T20:32:13.602Z",
+  "date": "2026-11-27",
+  "generatedAt": "2026-11-27T16:43:03.184Z",
   "art": null,
   "bird": {
-    "name": "Livingstone's flycatcher",
+    "name": "Fiery-throated fruiteater",
     "scientific": "",
-    "blurb": "Livingstone's flycatcher is a species of bird in the family Erythrocercidae.\nIt is found in Malawi, Mozambique, Tanzania, Zambia, and Zimbabwe.\nIts natural habitats are subtropical or tropical dry forests and subtropical or tropical moist shrubland.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Livingstone%27s_Flycatcher_-_Malawi_S4E3726_%2818824261563%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "blurb": "The fiery-throated fruiteater is a species of bird in the family Cotingidae. It is found in Colombia, Ecuador, and Peru where its natural habitats are subtropical or tropical moist lowland forests and subtropical or tropical moist montane forests. It is becoming rare due to habitat destruction of its rainforest habitat.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/ca/Pipreola_chlorolepidota_-_Fiery-throated_Fruiteater_-_male_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "audioUrl": "",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Livingstone's_flycatcher",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Livingstone's%20flycatcher%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/Fiery-throated_fruiteater",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Fiery-throated%20fruiteater%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "Tabancale language",
-    "description": "Extinct language of Peru and Ecuador",
-    "extract": "Tabancale is an extinct language formerly spoken in the village of Aconipa, located along the Chinchipe River in the Department of Cajamarca, Peru, as well as in neighboring Ecuador, by the Tabancale people. Only five words were collected in the 16th century and they are not demonstrably related to those in other languages. As a result, it has been categorized as a language isolate by some and left unclassified by others; a connection has been proposed with the Chicham languages, spoken in Peru and Ecuador. The Tabancale people are thought to have switched to Quechua after they were conquered in 1549.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Tabancale_language_map.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/Tabancale_language",
+    "title": "1909 Chinese provincial elections",
+    "description": "First Chinese provincial elections",
+    "extract": "The Qing dynasty held its first set of provincial assembly elections from February to June 1909. Following a lengthy period of political turmoil which included the failure of the 1898 Hundred Days' Reform and the 1899–1901 Boxer Rebellion, the constitutionalist movement gained approval from the imperial court and Empress Dowager Cixi. Seeing local self-governance as a first step towards constitutionalism, in 1907 the Qing Government approved the creation of provincial assemblies. The following year, an indirect election system was outlined to fill these assemblies. They were held in 21 of the country's 22 provinces; Xinjiang elections were postponed due to low rates of literacy in Chinese. Suffrage and candidacy were limited to a small population of wealthy men, most of whom were members of the scholar-gentry. Public attitudes towards the elections were generally apathetic, and corruption, fraud, and vote buying were common across the country. Turnout greatly varied between provinces and regions, but was generally low.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/15/1909_Chinese_provincial_election_map_colored.svg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/1909_Chinese_provincial_elections",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
