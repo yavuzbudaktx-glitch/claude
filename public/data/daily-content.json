@@ -1,25 +1,25 @@
 {
-  "date": "2026-11-27",
-  "generatedAt": "2026-11-27T20:16:32.946Z",
+  "date": "2026-11-28",
+  "generatedAt": "2026-11-28T15:34:40.578Z",
   "art": null,
   "bird": {
-    "name": "Fiery-throated fruiteater",
+    "name": "European robin",
     "scientific": "",
-    "blurb": "The fiery-throated fruiteater is a species of bird in the family Cotingidae. It is found in Colombia, Ecuador, and Peru where its natural habitats are subtropical or tropical moist lowland forests and subtropical or tropical moist montane forests. It is becoming rare due to habitat destruction of its rainforest habitat.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/ca/Pipreola_chlorolepidota_-_Fiery-throated_Fruiteater_-_male_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "audioUrl": "",
+    "blurb": "The European robin, known simply as the robin or robin redbreast in the British Isles, is a small insectivorous passerine bird belonging to the Old World flycatcher family Muscicapidae. It is found across Europe, as far east as Western Siberia, and as far south as North Africa. It is sedentary in the west and south of its range, and migratory in the north and east of its range where winters are harsher.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Erithacus_rubecula_with_cocked_head.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "audioUrl": "/api/bird-audio?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2F7%2F74%2FPechuguero_de_Gran_Canaria_%2528Erithacus_Rubecula_Marionae%2529.ogg%3Futm_source%3Den.wikipedia.org%26utm_campaign%3Dimageinfo%26utm_content%3Doriginal",
     "recordist": "",
     "place": "",
-    "pageUrl": "https://en.wikipedia.org/wiki/Fiery-throated_fruiteater",
-    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=Fiery-throated%20fruiteater%20audio",
+    "pageUrl": "https://en.wikipedia.org/wiki/European_robin",
+    "xcUrl": "https://commons.wikimedia.org/w/index.php?search=European%20robin%20audio",
     "source": "Wikipedia · Wikimedia Commons"
   },
   "wiki": {
-    "title": "1909 Chinese provincial elections",
-    "description": "First Chinese provincial elections",
-    "extract": "The Qing dynasty held its first set of provincial assembly elections from February to June 1909. Following a lengthy period of political turmoil which included the failure of the 1898 Hundred Days' Reform and the 1899–1901 Boxer Rebellion, the constitutionalist movement gained approval from the imperial court and Empress Dowager Cixi. Seeing local self-governance as a first step towards constitutionalism, in 1907, the Qing Government approved the creation of provincial assemblies. The following year, an indirect election system was outlined to fill these assemblies. They were held in 21 of the country's 22 provinces; Xinjiang elections were postponed due to low rates of literacy in Chinese. Suffrage and candidacy were limited to a small population of wealthy men, most of whom were members of the scholar-gentry. Public attitudes towards the elections were generally apathetic, and corruption, fraud, and vote buying were common across the country. Turnout greatly varied between provinces and regions, but was generally low.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/15/1909_Chinese_provincial_election_map_colored.svg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
-    "pageUrl": "https://en.wikipedia.org/wiki/1909_Chinese_provincial_elections",
+    "title": "Indiana-class battleship",
+    "description": "Pre-dreadnought battleship class of the United States Navy",
+    "extract": "The Indiana class was a class of three pre-dreadnought battleships launched in 1893. These were the first battleships built by the United States Navy comparable to contemporary European ships, such as the British HMS Hood. Authorized in 1890 and commissioned between November 1895 and April 1896, these were relatively small battleships with heavy armor and ordnance that pioneered the use of an intermediate battery. Specifically intended for coastal defense, they were built with insufficient freeboard to deal well with the waves of the open ocean. The turrets lacked counterweights, and the main belt armor was placed too low to be effective under most conditions.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4f/USS_Indiana_%28BB-1%29_-_NH_73975.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=original",
+    "pageUrl": "https://en.wikipedia.org/wiki/Indiana-class_battleship",
     "source": "Wikipedia · Today's Featured Article"
   },
   "nasa": {
